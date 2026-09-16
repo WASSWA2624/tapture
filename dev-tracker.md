@@ -1,11 +1,5 @@
 # Tapture — development tracker
 
-Implementation progress against the 522 prompts in [dev-plan/INDEX.md](dev-plan/INDEX.md).
-
-A task is ticked here only when every box in its own **Definition of done** is ticked and the
-verify gate is green. A task that is mostly working stays open — see
-[`frontend/.rules/13-workflow.md`](frontend/.rules/13-workflow.md) FE-FLOW-03.
-
 **11 of 522 tasks complete (2.1%)** · last updated 2026-09-09
 
 `░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
