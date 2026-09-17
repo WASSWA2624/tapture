@@ -160,8 +160,29 @@ def reset_dir(path: Path) -> Path:
     return path
 
 
+def _reexec_with_console() -> None:
+    """Windows file association often launches `.py` files with pythonw.
+
+    pythonw has no console, so the build looks like it never started. Re-run
+    with python.exe and unbuffered stdout when that happens.
+    """
+    os.environ.setdefault("PYTHONUNBUFFERED", "1")
+    if Path(sys.executable).name.lower() != "pythonw.exe":
+        return
+    console = Path(sys.executable).with_name("python.exe")
+    if not console.is_file():
+        found = shutil.which("python")
+        if found is None:
+            return
+        console = Path(found)
+    raise SystemExit(
+        subprocess.call([str(console), "-u", *sys.argv], cwd=os.getcwd())
+    )
+
+
 def main(entry) -> None:
     """Run a script entry point, turning BuildError into a clean exit."""
+    _reexec_with_console()
     try:
         entry()
     except BuildError as error:

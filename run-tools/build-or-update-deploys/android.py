@@ -49,26 +49,28 @@ def drop_mismatched_android_package() -> None:
 
 
 def refresh_platform(clean: bool, env: dict[str, str]) -> None:
+    android_dir = FRONTEND / "android"
+    recreate = clean or not android_dir.is_dir()
     if clean:
         step("Discarding build output")
         flutter(["clean"], env=env)
-
-    step("Refreshing the Android platform folder")
-    flutter(
-        [
-            "create",
-            "--platforms=android",
-            "--org",
-            "com.tapture",
-            "--project-name",
-            "tapture",
-            ".",
-        ],
-        env=env,
-    )
-    drop_regenerated_demo()
-    drop_mismatched_android_package()
-    apply_branding()
+    if recreate:
+        step("Refreshing the Android platform folder")
+        flutter(
+            [
+                "create",
+                "--platforms=android",
+                "--org",
+                "com.tapture",
+                "--project-name",
+                "tapture",
+                ".",
+            ],
+            env=env,
+        )
+        drop_regenerated_demo()
+        drop_mismatched_android_package()
+        apply_branding()
 
     step("Resolving dependencies")
     flutter(["pub", "get"], env=env)
@@ -96,6 +98,7 @@ def entry() -> None:
     dest = _APK_DIR / f"app-{mode}.apk"
     existed = dest.is_file()
     step(f"{'Updating' if existed else 'Creating'} {dest.relative_to(REPO_ROOT)}")
+    info("A release APK often sits on Gradle for several minutes with no new lines.")
 
     refresh_platform(args.clean, env)
 

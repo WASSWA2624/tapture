@@ -34,14 +34,15 @@ _BUNDLE = DIST / "web"
 
 
 def refresh_platform(clean: bool) -> None:
+    recreate = clean or not (FRONTEND / "web").is_dir()
     if clean:
         step("Discarding build output")
         flutter(["clean"])
-
-    step("Refreshing the web platform folder")
-    flutter(["create", "--platforms=web", "--project-name", "tapture", "."])
-    drop_regenerated_demo()
-    apply_branding()
+    if recreate:
+        step("Refreshing the web platform folder")
+        flutter(["create", "--platforms=web", "--project-name", "tapture", "."])
+        drop_regenerated_demo()
+        apply_branding()
 
     step("Resolving dependencies")
     flutter(["pub", "get"])
