@@ -79,9 +79,15 @@ class AppDatabase extends _$AppDatabase {
   }
 
   /// On-disk database in [directoryPath], or the application support
-  /// directory when omitted.
-  factory AppDatabase.open({String? directoryPath}) {
-    return AppDatabase(sqlite.openFileExecutor(directoryPath: directoryPath));
+  /// directory when omitted. When [encryptionKey] is set, the same factory
+  /// opens the encrypted file produced by DatabaseEncryption.
+  factory AppDatabase.open({String? directoryPath, String? encryptionKey}) {
+    return AppDatabase(
+      sqlite.openFileExecutor(
+        directoryPath: directoryPath,
+        encryptionKey: encryptionKey,
+      ),
+    );
   }
 
   @override

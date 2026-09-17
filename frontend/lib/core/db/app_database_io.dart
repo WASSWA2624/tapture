@@ -5,9 +5,7 @@ import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
-
-/// File name written under the application support directory.
-const String _databaseFileName = 'tapture.sqlite';
+import 'package:tapture/core/db/encryption.dart';
 
 /// Enables WAL and foreign keys on a new native connection.
 void _configureSqliteConnection(Database database) {
@@ -22,7 +20,8 @@ QueryExecutor openMemoryExecutor() {
 
 /// Lazy WAL file executor. [directoryPath] overrides the application support
 /// directory so a suite can simulate a hot restart without the real file.
-QueryExecutor openFileExecutor({String? directoryPath}) {
+/// [encryptionKey] decrypts a ciphertext produced by [DatabaseEncryption].
+QueryExecutor openFileExecutor({String? directoryPath, String? encryptionKey}) {
   return LazyDatabase(() async {
     await applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
     final Directory directory = directoryPath == null
@@ -31,10 +30,9 @@ QueryExecutor openFileExecutor({String? directoryPath}) {
     if (!directory.existsSync()) {
       directory.createSync(recursive: true);
     }
-    final File file = File('${directory.path}/$_databaseFileName');
-    return NativeDatabase.createInBackground(
-      file,
-      setup: _configureSqliteConnection,
+    return resolveFileExecutor(
+      directory: directory,
+      encryptionKey: encryptionKey,
     );
   });
 }

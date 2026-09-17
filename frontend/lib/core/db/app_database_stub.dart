@@ -6,9 +6,10 @@ QueryExecutor openMemoryExecutor() {
 }
 
 /// Web stand-in: the on-disk database is a later native-only path.
-QueryExecutor openFileExecutor({String? directoryPath}) {
+QueryExecutor openFileExecutor({String? directoryPath, String? encryptionKey}) {
   throw UnsupportedError(
     'AppDatabase.open is not available on web'
-    '${directoryPath == null ? '' : ': $directoryPath'}',
+    '${directoryPath == null ? '' : ': $directoryPath'}'
+    '${encryptionKey == null ? '' : ' (encrypted)'}',
   );
 }

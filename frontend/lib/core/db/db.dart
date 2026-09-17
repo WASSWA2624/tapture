@@ -4,6 +4,7 @@ library;
 export 'app_database.dart';
 export 'base_dao.dart';
 export 'columns.dart';
+export 'encryption.dart';
 export 'integrity_check.dart';
 export 'migrations.dart';
 export 'tables/attachments.dart';

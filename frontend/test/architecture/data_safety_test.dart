@@ -215,9 +215,9 @@ Iterable<_Violation> _hardDeleteViolations(String path, String source) sync* {
   }
 }
 
-/// `File(...).delete` outside the purge job.
+/// `File(...).delete` outside the purge job or encryption migration.
 Iterable<_Violation> _fileDeleteViolations(String path, String source) sync* {
-  if (_isPurgeJob(path)) {
+  if (_isPurgeJob(path) || _isEncryption(path)) {
     return;
   }
   final List<String> lines = source.split('\n');
@@ -256,6 +256,10 @@ bool _isRepository(String path) {
 
 bool _isPurgeJob(String path) {
   return _basenameFromPath(path).contains('purge');
+}
+
+bool _isEncryption(String path) {
+  return _basenameFromPath(path).contains('encryption');
 }
 
 List<File> _sources(Directory root) {

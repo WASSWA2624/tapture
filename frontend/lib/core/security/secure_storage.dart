@@ -61,6 +61,9 @@ abstract interface class SecureStorage {
 
   /// Removes every [SecretKey], leaving no readable residue.
   Future<void> deleteAll();
+
+  /// Removes one [key], leaving the rest of the set untouched.
+  Future<Result<void>> deleteSecret(SecretKey key);
 }
 
 /// Closed set of secret names. Arbitrary strings cannot be stored.
@@ -85,6 +88,9 @@ enum SecretKey {
 
   /// Cloud destination refresh token.
   cloudRefresh,
+
+  /// Symmetric key for optional at-rest database encryption (task 064).
+  databaseEncryption,
 }
 
 final class _SecureStorage implements SecureStorage {
@@ -132,6 +138,23 @@ final class _SecureStorage implements SecureStorage {
             ? error
             : const StorageFailure(
                 message: 'The secret could not be read on this device.',
+                recoveryAction: 'Try again.',
+              ),
+      );
+    }
+  }
+
+  @override
+  Future<Result<void>> deleteSecret(SecretKey key) async {
+    try {
+      await _delete(key);
+      return const Success<void>(null);
+    } on Object catch (error) {
+      return FailureResult<void>(
+        error is Failure
+            ? error
+            : const StorageFailure(
+                message: 'The secret could not be removed from this device.',
                 recoveryAction: 'Try again.',
               ),
       );
@@ -196,5 +219,7 @@ String _name(SecretKey key) {
       return AppConstants.secrets.cloudAccess;
     case SecretKey.cloudRefresh:
       return AppConstants.secrets.cloudRefresh;
+    case SecretKey.databaseEncryption:
+      return AppConstants.secrets.databaseEncryption;
   }
 }

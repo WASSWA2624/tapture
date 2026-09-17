@@ -115,6 +115,7 @@ void main() {
       AppConstants.secrets.relayProject,
       AppConstants.secrets.cloudAccess,
       AppConstants.secrets.cloudRefresh,
+      AppConstants.secrets.databaseEncryption,
       AppConstants.preferences.themeMode,
     ];
 

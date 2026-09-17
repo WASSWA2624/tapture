@@ -41,8 +41,8 @@ abstract interface class DatabaseEncryption {
 
 ## Definition of done
 
-- [ ] Enabling encryption preserves every row and every table's row count matches before the plain file is removed.
-- [ ] A kill part-way through leaves either the plain database or the verified encrypted one, never a half-copied file.
-- [ ] Disabling requires explicit typed confirmation; a lost key produces a stated failure rather than data loss.
-- [ ] Tests: `frontend/test/core/db/encryption_test.dart` asserts the encrypted file fails to open without the key,
+- [x] Enabling encryption preserves every row and every table's row count matches before the plain file is removed.
+- [x] A kill part-way through leaves either the plain database or the verified encrypted one, never a half-copied file.
+- [x] Disabling requires explicit typed confirmation; a lost key produces a stated failure rather than data loss.
+- [x] Tests: `frontend/test/core/db/encryption_test.dart` asserts the encrypted file fails to open without the key,
       opens with it, that row counts survive enable and disable, and that an interrupted enable is resumable.

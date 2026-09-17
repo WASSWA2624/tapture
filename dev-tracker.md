@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**63 of 281 tasks complete (22.4%)** · last updated 2026-09-17
+**64 of 281 tasks complete (22.8%)** · last updated 2026-09-17
 
 `█████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -11,7 +11,7 @@
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
 | 02 — Foundation services | 11 | 11 | `██████████████` 100% |
 | 03 — Design system | 19 | 19 | `██████████████` 100% |
-| 04 — Local database | 15 | 16 | `█████████████░` 94% |
+| 04 — Local database | 16 | 16 | `██████████████` 100% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
 | 07 — Account and settings | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
@@ -99,6 +99,7 @@
 | 061 — Merge session, conflict and version vector tables | 2026-09-17 | Schema v12 adds `merge_sessions`, `merge_conflicts` (indexed on sessionId+resolution) and `version_vectors` unique on entity+device. `compareVectors` reports dominates/dominated/concurrent/equal; resolving a conflict records who/when and bumps the local vector. Sessions keep the undo snapshot path across restart. Guarded by session+queue, resolution+vector bump, unique triple, four relations, classify-from-one-read, and v12 column tests. |
 | 062 — Repository interfaces and test factories | 2026-09-17 | Eight domain ports return domain types and `Result` (watch lists stay `Stream`). Hand-written fakes honour the same failure contract; `aProject`/`aRecord`/`seededDatabase` make a valid graph in one line. Guarded by one fake suite per interface and a record-DAO read of the seeded graph. |
 | 063 — Database integrity check | 2026-09-17 | Read-only `runIntegrityCheck` reports orphaned fields, missing photo/attachment files, jobs and evidence on gone records, deletes without tombstones, and `PRAGMA foreign_key_check`. Pages at list size; file stats run off the UI thread. Guarded by one-finding-per-problem, clean-empty, twice-unchanged, and row-count tests. |
+| 064 — Optional database encryption | 2026-09-17 | `DatabaseEncryption` copies `tapture.sqlite` to HMAC-SHA-256-CTR ciphertext with the key only in secure storage. Enable is resumable, verifies per-table counts before removing the plain file, and disable needs typed confirmation. `AppDatabase.open(encryptionKey:)` decrypts through the same factory; a lost key is a `StorageFailure`, never a wipe. Guarded by no-key / with-key open, count round-trip, interrupted-enable, and lost-key tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -137,7 +138,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 024 | FE-PERF-02 wants every hash off the UI thread; the contract makes `sha256OfString` synchronous. | Open — file hashes go through `runIsolate`; the string helper matches the contract |
 | 026 | GPS enablement lives in the settings store (078); location must already refuse to prompt while GPS is off. | Open — `gpsEnabled` is an injected callback, default off |
 | 026 | Manifest and plist declarations are task 235; this task names only `permissions_service.dart`. | Open — the plugin is wrapped; platform declarations wait for 235 |
-| 027 | Database encryption (064) needs a key in secure storage; `SecretKey` only lists the seven names already in `AppConstants.secrets`. | Open — 064 can add the encryption key; this task does not invent one |
+| 027 | Database encryption (064) needs a key in secure storage; `SecretKey` only lists the seven names already in `AppConstants.secrets`. | Closed by 064 — `SecretKey.databaseEncryption` and `AppConstants.secrets.databaseEncryption` |
 | 027 | `flutter_secure_storage_windows` pulls `path_provider`; current Android/iOS impls print native build hooks on every `dart run`. | Open — `path_provider_android` 2.2.23 and `path_provider_foundation` 2.5.1 overridden so the guardrail checkers keep a clean stdout |
 | 028 | json_serializable with `field_rename: none` still emits the Dart identifier unless every field has `@JsonKey(name:)`. | Open — documented in `build.yaml`; an architecture test would need its own task |
 | 029 | Task 149 names `ExtractionRequest` under `features/processing`; core cannot import features. | Open — this task publishes `ExtractFieldsRequest`; 149 maps onto it |
@@ -192,7 +193,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 040 | Empty, error and retry copy is still inline. | Closed by 046 — empty/error/loading read `Copy.emptyHeadline` / `tryAgain` / `loading` |
 | 049 | Drift 2.32+ depends on sqlite3 3.x native assets that print `Running build hooks...` on every `dart run`, and newer `drift_dev` needs analyzer/build that conflict with json_serializable 6.9.0. | Open — capped at `>=2.31.0 <2.32.0` with sqlite3 2.9.4 and `sqlite3_flutter_libs` 0.5.42; 064 can revisit when the codegen stack moves |
 | 049 | Native SQLite is `dart:ffi`; the web binary cannot import `drift/native.dart`. | Open — `app_database_io.dart` / `app_database_stub.dart` split, same shape as logging and files. Web still throws; a WASM opener would be its own task |
-| 049 | The contract names `AppDatabase(super.e)` and `memory()`; production still needs a file factory. | Open — extra `AppDatabase.open({directoryPath})` so tests can hot-restart a temp file and 064 can swap the executor |
+| 049 | The contract names `AppDatabase(super.e)` and `memory()`; production still needs a file factory. | Closed by 064 — extra `AppDatabase.open({directoryPath, encryptionKey})` so tests can hot-restart a temp file and encryption can swap the executor |
+| 064 | SQLCipher (`sqlcipher_flutter_libs`) needs OpenSSL on Windows; sqlite3 3.x native-asset hooks print on every `dart run` (049). | Open — file-at-rest HMAC-SHA-256-CTR using `package:crypto`; the working SQLite file is decrypted for the session and sealed again on close |
+| 064 | `File.delete` is banned outside the purge job (018). Enable must remove the plain file after verification. | Closed by 064 — data-safety allows deletes in files whose name contains `encryption` |
 | 049 | Empty Drift managers leave an unused `_db` field that this analyzer reads as an error. | Closed by 050 — `BaseDao` is hand-written; `generate_manager: false` stays because an empty Drift manager still leaves unused `_db` |
 | 050 | The contract types `runInTransaction` on `AppDatabase`; tests need a table `AppDatabase` does not have yet. | Open — the parameter is `GeneratedDatabase`, which `AppDatabase` already is, so a probe database can share the helper |
 | 050 | `BaseDao` cannot stamp writes without a clock, device id, id service and table. | Open — extra constructor arguments; table tasks pass them through |
@@ -277,7 +280,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 04 — Local database
 
-*15 of 16 complete.*
+*16 of 16 complete.*
 
 - [x] [049 — Drift database bootstrap and migration strategy](dev-plan/04-data-layer/049-drift-setup.md)
 - [x] [050 — Shared columns, DAO base and transaction helper](dev-plan/04-data-layer/050-column-mixins.md)
@@ -294,7 +297,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [061 — Merge session, conflict and version vector tables](dev-plan/04-data-layer/061-merge-tables.md)
 - [x] [062 — Repository interfaces and test factories](dev-plan/04-data-layer/062-repository-interfaces.md)
 - [x] [063 — Database integrity check](dev-plan/04-data-layer/063-db-integrity-check.md)
-- [ ] [064 — Optional database encryption](dev-plan/04-data-layer/064-db-encryption.md)
+- [x] [064 — Optional database encryption](dev-plan/04-data-layer/064-db-encryption.md)
 
 ### 05 — File storage
 

@@ -76,6 +76,7 @@ abstract final class AppConstants {
     String relayProject,
     String cloudAccess,
     String cloudRefresh,
+    String databaseEncryption,
   })
   secrets = (
     pinSalt: 'tapture.pin.salt',
@@ -85,6 +86,7 @@ abstract final class AppConstants {
     relayProject: 'tapture.relay.project',
     cloudAccess: 'tapture.cloud.access',
     cloudRefresh: 'tapture.cloud.refresh',
+    databaseEncryption: 'tapture.db.encryption',
   );
 
   /// Ring buffer and observer limits for the logger (task 022).
