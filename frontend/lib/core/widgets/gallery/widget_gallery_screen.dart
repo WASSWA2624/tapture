@@ -452,7 +452,7 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),
-      AppSearchField(hint: 'Search records', resultCount: 2, onChanged: (_) {}),
+      AppSearchField(hint: Copy.search, resultCount: 2, onChanged: (_) {}),
       const SizedBox(height: Space.x4),
       AppChoiceField<String>(
         label: 'Grade',

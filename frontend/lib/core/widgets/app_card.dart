@@ -33,7 +33,7 @@ class AppCard extends StatelessWidget {
       level: elevationLevel,
     );
     final BorderRadius radius = BorderRadius.circular(Radii.md);
-    final EdgeInsets insets = padding ?? const EdgeInsets.all(Space.x3);
+    final EdgeInsets insets = padding ?? const EdgeInsets.all(Space.x4);
     final Widget body = Padding(padding: insets, child: child);
     final Widget interactive = onTap == null
         ? body

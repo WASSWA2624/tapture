@@ -56,54 +56,63 @@ class AppSwitchTile extends StatelessWidget {
         onTap: enabled ? _toggle : null,
         child: Material(
           color: colors.surface,
-          child: InkWell(
-            onTap: enabled ? _toggle : null,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: Space.x3,
-                  vertical: Space.x2,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: colors.outline, width: Space.x0 / 2),
+              ),
+            ),
+            child: InkWell(
+              onTap: enabled ? _toggle : null,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  minHeight: Sizes.minTapTarget,
                 ),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            title,
-                            style: AppText.bodyStrong.copyWith(
-                              color: colors.onSurface,
-                            ),
-                          ),
-                          if (description != null) ...<Widget>[
-                            const SizedBox(height: Space.x1),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: Space.x4,
+                    vertical: Space.x2,
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
                             Text(
-                              description!,
-                              style: AppText.caption.copyWith(
+                              title,
+                              style: AppText.bodyStrong.copyWith(
                                 color: colors.onSurface,
                               ),
                             ),
-                          ],
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: Space.x3),
-                    IgnorePointer(
-                      child: ExcludeSemantics(
-                        child: _useCheckbox
-                            ? Checkbox(
-                                value: value,
-                                onChanged: enabled ? (_) {} : null,
-                              )
-                            : Switch(
-                                value: value,
-                                onChanged: enabled ? (_) {} : null,
+                            if (description != null) ...<Widget>[
+                              const SizedBox(height: Space.x1),
+                              Text(
+                                description!,
+                                style: AppText.caption.copyWith(
+                                  color: colors.onSurface,
+                                ),
                               ),
+                            ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: Space.x3),
+                      IgnorePointer(
+                        child: ExcludeSemantics(
+                          child: _useCheckbox
+                              ? Checkbox(
+                                  value: value,
+                                  onChanged: enabled ? (_) {} : null,
+                                )
+                              : Switch(
+                                  value: value,
+                                  onChanged: enabled ? (_) {} : null,
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

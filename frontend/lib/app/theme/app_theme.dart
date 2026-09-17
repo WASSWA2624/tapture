@@ -19,7 +19,7 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
   final TextTheme textTheme = _textTheme(colors);
   final BorderSide outline = _outline(colors, outdoor);
   const RoundedRectangleBorder controlShape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(Radius.circular(Radii.md)),
+    borderRadius: BorderRadius.all(Radius.circular(Radii.lg)),
   );
   const ButtonStyle controlStyle = ButtonStyle(
     minimumSize: WidgetStatePropertyAll<Size>(
@@ -183,7 +183,7 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
       elevation: 0,
       shadowColor: const Color(0x00000000),
       surfaceTintColor: colors.surface,
-      margin: const EdgeInsets.all(Space.x2),
+      margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Radii.md),
         side: outline,
@@ -194,11 +194,11 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
       textColor: colors.onSurface,
       titleTextStyle: AppText.bodyStrong.copyWith(color: colors.onSurface),
       subtitleTextStyle: AppText.caption.copyWith(color: colors.onSurface),
-      minVerticalPadding: Space.x1,
+      minVerticalPadding: Space.x2,
       minLeadingWidth: Sizes.minTapTarget,
       contentPadding: const EdgeInsets.symmetric(
-        horizontal: Space.x3,
-        vertical: Space.x1,
+        horizontal: Space.x4,
+        vertical: Space.x2,
       ),
     ),
     navigationBarTheme: NavigationBarThemeData(
@@ -208,24 +208,39 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
       surfaceTintColor: colors.surface,
       height: Sizes.minTapTarget + Space.x4,
       indicatorColor: colors.surfaceVariant,
-      labelTextStyle: WidgetStatePropertyAll<TextStyle>(
-        AppText.caption.copyWith(color: colors.onSurface),
+      indicatorShape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Radii.lg),
       ),
-      iconTheme: WidgetStatePropertyAll<IconThemeData>(
-        IconThemeData(color: colors.onSurface, size: Space.x6),
-      ),
+      labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((
+        Set<WidgetState> states,
+      ) {
+        final bool selected = states.contains(WidgetState.selected);
+        return AppText.caption.copyWith(
+          color: selected ? colors.primary : colors.onSurface,
+          fontWeight: selected ? FontWeight.w500 : FontWeight.w400,
+        );
+      }),
+      iconTheme: WidgetStateProperty.resolveWith<IconThemeData>((
+        Set<WidgetState> states,
+      ) {
+        final bool selected = states.contains(WidgetState.selected);
+        return IconThemeData(
+          color: selected ? colors.primary : colors.onSurface,
+          size: Space.x6,
+        );
+      }),
     ),
     navigationRailTheme: NavigationRailThemeData(
-      backgroundColor: colors.background,
+      backgroundColor: colors.surface,
       elevation: 0,
       minWidth: Sizes.minTapTarget + Space.x4,
       useIndicator: true,
       indicatorColor: colors.surfaceVariant,
-      selectedLabelTextStyle: AppText.caption.copyWith(color: colors.onSurface),
+      selectedLabelTextStyle: AppText.caption.copyWith(color: colors.primary),
       unselectedLabelTextStyle: AppText.caption.copyWith(
         color: colors.onSurface,
       ),
-      selectedIconTheme: const IconThemeData(size: Space.x6),
+      selectedIconTheme: IconThemeData(size: Space.x6, color: colors.primary),
       unselectedIconTheme: IconThemeData(
         size: Space.x6,
         color: colors.onSurface,
@@ -234,7 +249,24 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
     dividerTheme: DividerThemeData(
       color: colors.outline,
       thickness: outline.width,
-      space: Space.x4,
+      space: Space.x0,
+    ),
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith<Color>((
+        Set<WidgetState> states,
+      ) {
+        return states.contains(WidgetState.selected)
+            ? colors.onPrimary
+            : colors.surface;
+      }),
+      trackColor: WidgetStateProperty.resolveWith<Color>((
+        Set<WidgetState> states,
+      ) {
+        return states.contains(WidgetState.selected)
+            ? colors.primary
+            : colors.surfaceVariant;
+      }),
+      trackOutlineColor: WidgetStatePropertyAll<Color>(colors.outline),
     ),
   );
 }
@@ -302,7 +334,7 @@ BorderSide _outline(AppColors colors, bool outdoor) {
 
 OutlineInputBorder _fieldBorder(BorderSide side) {
   return OutlineInputBorder(
-    borderRadius: BorderRadius.circular(Radii.md),
+    borderRadius: BorderRadius.circular(Radii.sm),
     borderSide: side,
   );
 }

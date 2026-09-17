@@ -64,7 +64,7 @@ class AppBottomSheet extends StatelessWidget {
                     alignment: AlignmentDirectional.centerStart,
                     child: Text(
                       title,
-                      style: AppText.section.copyWith(color: colors.onSurface),
+                      style: AppText.title.copyWith(color: colors.onSurface),
                     ),
                   ),
                 ),

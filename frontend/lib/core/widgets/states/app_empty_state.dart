@@ -42,14 +42,14 @@ class AppEmptyState extends StatelessWidget {
       label: headline,
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: Space.x3,
-          vertical: Space.x4,
+          horizontal: Space.x4,
+          vertical: Space.x6,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Icon(icon, size: Space.x10, color: colors.secondary),
-            const SizedBox(height: Space.x3),
+            Icon(icon, size: Space.x12, color: colors.secondary),
+            const SizedBox(height: Space.x4),
             Text(
               headline,
               textAlign: TextAlign.center,
@@ -59,7 +59,7 @@ class AppEmptyState extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: AppText.body.copyWith(color: colors.onSurface),
+              style: AppText.caption.copyWith(color: colors.onSurface),
             ),
             if (actionLabel != null && onAction != null) ...<Widget>[
               const SizedBox(height: Space.x4),

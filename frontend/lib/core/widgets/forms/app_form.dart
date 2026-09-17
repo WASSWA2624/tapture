@@ -212,7 +212,7 @@ class _AppFormState extends State<AppForm> {
     ];
     for (int i = 0; i < widget.fields.length; i++) {
       if (i > 0) {
-        children.add(const SizedBox(height: Space.x4));
+        children.add(const SizedBox(height: Space.x3));
       }
       children.add(
         FocusTraversalOrder(
@@ -260,7 +260,7 @@ class _ErrorSummary extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(Space.x4),
+          padding: const EdgeInsets.all(Space.x3),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

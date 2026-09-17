@@ -21,6 +21,6 @@ void main() {
     expect(tester.takeException(), same(error));
     expect(find.byType(TaptureApp), findsOneWidget);
     expect(find.byType(MaterialApp), findsOneWidget);
-    expect(find.byType(Scaffold), findsOneWidget);
+    expect(find.byType(Scaffold), findsAtLeastNWidgets(1));
   });
 }

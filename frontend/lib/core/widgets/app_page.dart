@@ -70,7 +70,7 @@ class AppPage extends StatelessWidget {
                   color: context.colors.onSurface,
                 ),
               ),
-              const SizedBox(height: Space.x3),
+              const SizedBox(height: Space.x2),
             ],
             body,
           ],
@@ -118,9 +118,9 @@ class AppPage extends StatelessWidget {
 
 EdgeInsets _paddingFor(BuildContext context) {
   final double horizontal = context.responsive(
-    compact: Space.x3,
+    compact: Space.x4,
     medium: Space.x4,
-    expanded: Space.x4,
+    expanded: Space.x5,
   );
   return EdgeInsets.symmetric(horizontal: horizontal, vertical: Space.x2);
 }

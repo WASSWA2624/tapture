@@ -78,7 +78,7 @@ class AppDialog extends StatelessWidget {
               const SizedBox(height: Space.x3),
               Text(
                 message,
-                style: AppText.body.copyWith(color: colors.onSurface),
+                style: AppText.caption.copyWith(color: colors.onSurface),
               ),
               const SizedBox(height: Space.x4),
               Wrap(

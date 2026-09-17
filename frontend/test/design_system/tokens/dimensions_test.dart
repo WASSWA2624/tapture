@@ -23,7 +23,7 @@ void main() {
   test('radii and control sizes are the contract values', () {
     expect(Radii.sm, 8);
     expect(Radii.md, 12);
-    expect(Radii.lg, 16);
+    expect(Radii.lg, 24);
     expect(Radii.pill, greaterThan(Radii.lg));
     expect(Sizes.minTapTarget, 48);
     expect(Sizes.controlHeight, 52);

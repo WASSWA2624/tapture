@@ -272,6 +272,9 @@ abstract final class Copy {
   /// Product name in chrome and the system window.
   static const String appName = 'Tapture';
 
+  /// Prompt on list-pane and picker search fields.
+  static const String search = 'Search';
+
   /// Shell destination: the project list.
   static const String navProjects = 'Projects';
 

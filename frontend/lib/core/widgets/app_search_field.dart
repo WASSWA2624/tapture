@@ -62,36 +62,62 @@ class _AppSearchFieldState extends State<AppSearchField> {
   @override
   Widget build(BuildContext context) {
     final int? count = widget.resultCount;
-    return AppTextField(
-      label: widget.hint,
-      controller: _controller,
-      hint: widget.hint,
-      enabled: widget.enabled,
-      clearable: true,
-      textInputAction: TextInputAction.search,
-      keyboardType: TextInputType.text,
-      prefix: ExcludeSemantics(
-        child: Icon(
-          Icons.search,
-          color: context.colors.onSurface,
-          size: Space.x6,
+    final AppColors colors = context.colors;
+    final ThemeData theme = Theme.of(context);
+    final BorderSide side = switch (theme.inputDecorationTheme.enabledBorder) {
+      final OutlineInputBorder border => border.borderSide,
+      _ => BorderSide(
+        color: colors.outline,
+        width: Space.x0 / 2,
+        strokeAlign: BorderSide.strokeAlignInside,
+      ),
+    };
+    final OutlineInputBorder pill = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(Radii.pill),
+      borderSide: side,
+    );
+    return Theme(
+      data: theme.copyWith(
+        inputDecorationTheme: theme.inputDecorationTheme.copyWith(
+          filled: true,
+          fillColor: colors.surfaceVariant,
+          floatingLabelBehavior: FloatingLabelBehavior.never,
+          border: pill,
+          enabledBorder: pill,
+          focusedBorder: pill,
+          errorBorder: pill.copyWith(
+            borderSide: side.copyWith(color: colors.danger),
+          ),
+          focusedErrorBorder: pill.copyWith(
+            borderSide: side.copyWith(color: colors.danger),
+          ),
         ),
       ),
-      trailing: count == null
-          ? null
-          : Padding(
-              padding: const EdgeInsetsDirectional.only(end: Space.x3),
-              child: Text(
-                NumberFormat.decimalPattern(
-                  Localizations.localeOf(context).toString(),
-                ).format(count),
-                style: AppText.caption.copyWith(
-                  color: context.colors.onSurface,
+      child: AppTextField(
+        label: widget.hint,
+        controller: _controller,
+        hint: widget.hint,
+        enabled: widget.enabled,
+        clearable: true,
+        textInputAction: TextInputAction.search,
+        keyboardType: TextInputType.text,
+        prefix: ExcludeSemantics(
+          child: Icon(Icons.search, color: colors.onSurface, size: Space.x6),
+        ),
+        trailing: count == null
+            ? null
+            : Padding(
+                padding: const EdgeInsetsDirectional.only(end: Space.x3),
+                child: Text(
+                  NumberFormat.decimalPattern(
+                    Localizations.localeOf(context).toString(),
+                  ).format(count),
+                  style: AppText.caption.copyWith(color: colors.onSurface),
                 ),
               ),
-            ),
-      onChanged: _schedule,
-      onSubmitted: (_) => _submit(),
+        onChanged: _schedule,
+        onSubmitted: (_) => _submit(),
+      ),
     );
   }
 

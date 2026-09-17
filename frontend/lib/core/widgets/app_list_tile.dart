@@ -59,7 +59,7 @@ class AppListTile extends StatelessWidget {
       constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
       child: Padding(
         padding: EdgeInsets.symmetric(
-          horizontal: Space.x3,
+          horizontal: Space.x4,
           vertical: dense ? Space.x1 : Space.x2,
         ),
         child: Row(
@@ -69,7 +69,7 @@ class AppListTile extends StatelessWidget {
               const SizedBox(width: Space.x3),
             ],
             if (leading != null) ...<Widget>[
-              leading!,
+              _LeadingWell(colors: colors, child: leading!),
               const SizedBox(width: Space.x3),
             ],
             Expanded(
@@ -78,16 +78,16 @@ class AppListTile extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     title,
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: (dense ? AppText.label : AppText.bodyStrong)
                         .copyWith(color: foreground),
                   ),
                   if (subtitle != null) ...<Widget>[
-                    const SizedBox(height: Space.x1),
+                    const SizedBox(height: Space.x0),
                     Text(
                       subtitle!,
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppText.caption.copyWith(color: foreground),
                     ),
@@ -117,9 +117,37 @@ class AppListTile extends StatelessWidget {
       onLongPress: onLongPress,
       child: Material(
         color: selected ? colors.surfaceVariant : colors.surface,
-        child: interactive
-            ? InkWell(onTap: onTap, onLongPress: onLongPress, child: content)
-            : content,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: colors.outline, width: Space.x0 / 2),
+            ),
+          ),
+          child: interactive
+              ? InkWell(onTap: onTap, onLongPress: onLongPress, child: content)
+              : content,
+        ),
+      ),
+    );
+  }
+}
+
+class _LeadingWell extends StatelessWidget {
+  const _LeadingWell({required this.colors, required this.child});
+
+  final AppColors colors;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: Sizes.minTapTarget,
+      height: Sizes.minTapTarget,
+      child: ClipOval(
+        child: ColoredBox(
+          color: colors.surfaceVariant,
+          child: Center(child: child),
+        ),
       ),
     );
   }

@@ -60,7 +60,7 @@ class AppBanner extends StatelessWidget {
                   Expanded(
                     child: Text(
                       message,
-                      style: AppText.body.copyWith(color: colors.onSurface),
+                      style: AppText.caption.copyWith(color: colors.onSurface),
                     ),
                   ),
                   if (onDismiss != null)

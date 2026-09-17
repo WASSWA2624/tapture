@@ -44,7 +44,12 @@ class AppBrandLockup extends StatelessWidget {
           ),
           if (showName) ...<Widget>[
             const SizedBox(width: Space.x2),
-            Text(Copy.appName, style: AppText.section.copyWith(color: ink)),
+            Text(
+              Copy.appName,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppText.title.copyWith(color: ink),
+            ),
           ],
         ],
       ),

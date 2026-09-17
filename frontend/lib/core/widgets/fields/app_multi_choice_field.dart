@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
-import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 
-import 'app_text_field.dart';
 import 'choice.dart';
 
 /// Multiple selection. The closed field shows the current values as chips;
@@ -127,7 +127,6 @@ class _MultiChoiceSheet<T> extends StatefulWidget {
 }
 
 class _MultiChoiceSheetState<T> extends State<_MultiChoiceSheet<T>> {
-  final TextEditingController _search = TextEditingController();
   late Set<T> _selected;
   String _query = '';
 
@@ -135,12 +134,6 @@ class _MultiChoiceSheetState<T> extends State<_MultiChoiceSheet<T>> {
   void initState() {
     super.initState();
     _selected = Set<T>.of(widget.value);
-  }
-
-  @override
-  void dispose() {
-    _search.dispose();
-    super.dispose();
   }
 
   @override
@@ -154,20 +147,12 @@ class _MultiChoiceSheetState<T> extends State<_MultiChoiceSheet<T>> {
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: Space.x4,
+            horizontal: Space.x3,
             vertical: Space.x2,
           ),
-          child: AppTextField(
-            label: widget.label,
-            controller: _search,
-            clearable: true,
-            prefix: ExcludeSemantics(
-              child: Icon(
-                Icons.search,
-                color: colors.onSurface,
-                size: Space.x6,
-              ),
-            ),
+          child: AppSearchField(
+            hint: Copy.search,
+            debounce: Duration.zero,
             onChanged: (String value) => setState(() => _query = value),
           ),
         ),
@@ -203,19 +188,12 @@ class _MultiChoiceSheetState<T> extends State<_MultiChoiceSheet<T>> {
             itemBuilder: (BuildContext context, int index) {
               final Choice<T> option = visible[index];
               final bool selected = _selected.contains(option.value);
-              return ListTile(
-                minTileHeight: Sizes.minTapTarget,
+              return AppListTile(
+                title: option.label,
                 selected: selected,
                 leading: option.icon == null
                     ? null
                     : Icon(option.icon, color: colors.onSurface),
-                title: Text(
-                  option.label,
-                  style: AppText.body.copyWith(color: colors.onSurface),
-                ),
-                trailing: selected
-                    ? Icon(Icons.check, color: colors.primary)
-                    : null,
                 onTap: () {
                   final Set<T> next = Set<T>.of(_selected);
                   if (selected) {

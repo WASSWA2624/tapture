@@ -6,7 +6,9 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/app/widgets/offline_banner.dart';
 import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/responsive/responsive_builder.dart';
+import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 /// The four-destination frame: bar on compact, rail on medium, rail plus a
 /// list pane on expanded. [shell] keeps each branch's stack (FE-RESP-03).
@@ -159,37 +161,39 @@ class _Pane extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            SizedBox(
-              height: Sizes.minTapTarget,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: Space.x3),
-                child: Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text(
-                    _destinations[index].label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppText.bodyStrong.copyWith(
-                      color: context.colors.onSurface,
-                    ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                Space.x4,
+                Space.x2,
+                Space.x4,
+                Space.x2,
+              ),
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  _destinations[index].label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppText.title.copyWith(
+                    color: context.colors.onSurface,
                   ),
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                Space.x3,
+                Space.x0,
+                Space.x3,
+                Space.x2,
+              ),
+              child: AppSearchField(hint: Copy.search, onChanged: (_) {}),
+            ),
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(
-                  Space.x3,
-                  Space.x1,
-                  Space.x3,
-                  Space.x3,
-                ),
-                child: Text(
-                  Copy.emptyMessage,
-                  style: AppText.caption.copyWith(
-                    color: context.colors.onSurface,
-                  ),
-                ),
+              child: AppEmptyState(
+                icon: _destinations[index].icon,
+                headline: Copy.emptyHeadline,
+                message: Copy.emptyMessage,
               ),
             ),
           ],
@@ -215,7 +219,9 @@ class _NavIcon extends StatelessWidget {
       icon,
       key: ValueKey<String>('nav-icon-$index'),
       size: destination.dominant ? Space.x8 : Space.x6,
-      color: destination.dominant ? context.colors.primary : null,
+      color: destination.dominant || selected
+          ? context.colors.primary
+          : context.colors.onSurface,
     );
   }
 }

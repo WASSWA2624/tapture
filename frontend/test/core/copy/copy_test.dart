@@ -169,6 +169,7 @@ List<String> get _values {
     Copy.galleryScale100,
     Copy.galleryScale200,
     Copy.appName,
+    Copy.search,
     Copy.navProjects,
     Copy.navCapture,
     Copy.navRecords,

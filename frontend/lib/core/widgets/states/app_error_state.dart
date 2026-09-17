@@ -31,12 +31,15 @@ class AppErrorState extends StatelessWidget {
       liveRegion: true,
       label: failure.message,
       child: Padding(
-        padding: const EdgeInsets.all(Space.x4),
+        padding: const EdgeInsets.symmetric(
+          horizontal: Space.x4,
+          vertical: Space.x6,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Icon(icon, size: Space.x10, color: color),
-            const SizedBox(height: Space.x3),
+            Icon(icon, size: Space.x12, color: color),
+            const SizedBox(height: Space.x4),
             Text(
               failure.message,
               textAlign: TextAlign.center,
@@ -47,7 +50,7 @@ class AppErrorState extends StatelessWidget {
               Text(
                 recovery,
                 textAlign: TextAlign.center,
-                style: AppText.body.copyWith(color: colors.onSurface),
+                style: AppText.caption.copyWith(color: colors.onSurface),
               ),
             ],
             if (onRetry != null) ...<Widget>[

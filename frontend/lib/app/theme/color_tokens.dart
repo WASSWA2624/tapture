@@ -83,12 +83,12 @@ final class AppColors extends ThemeExtension<AppColors> {
   /// Extraction or match confidence below the medium band.
   final Color confidenceLow;
 
-  /// Daylight palette: tinted page, white surfaces, brand primary.
+  /// Daylight palette: white rows on a recessed page, brand primary.
   static const AppColors light = AppColors(
     surface: _white,
-    surfaceVariant: _brand100,
-    background: _brand50,
-    onSurface: _brand950,
+    surfaceVariant: _pageLight,
+    background: _pageLight,
+    onSurface: _inkLight,
     outline: _outlineLight,
     primary: _brand600,
     onPrimary: _white,
@@ -102,15 +102,15 @@ final class AppColors extends ThemeExtension<AppColors> {
     confidenceLow: _dangerLight,
   );
 
-  /// Dim palette: navy surfaces, lighter primary, lighter status.
+  /// Dim palette: charcoal panels, lighter primary, lighter status.
   static const AppColors dark = AppColors(
-    surface: _brand900,
-    surfaceVariant: _brand800,
-    background: _brand950,
-    onSurface: _brand50,
+    surface: _panelDark,
+    surfaceVariant: _wellDark,
+    background: _pageDark,
+    onSurface: _inkDark,
     outline: _outlineDark,
     primary: _brand300,
-    onPrimary: _brand950,
+    onPrimary: _pageDark,
     secondary: _brand200,
     danger: _dangerDark,
     warning: _warningDark,
@@ -223,17 +223,21 @@ extension AppColorsX on BuildContext {
 
 // Brand ramp (`branding/palette.json`). Public tokens stay semantic
 // (FE-THEME-04); these names are the private source of the hex values.
-const Color _brand50 = Color(0xFFF5F8FD);
-const Color _brand100 = Color(0xFFE8F0FA);
 const Color _brand200 = Color(0xFFC8DBF6);
 const Color _brand300 = Color(0xFF95B9F1);
 const Color _brand600 = Color(0xFF2662EB);
 const Color _brand700 = Color(0xFF1748C7);
-const Color _brand800 = Color(0xFF143494);
-const Color _brand900 = Color(0xFF0F215F);
 const Color _brand950 = Color(0xFF0A1236);
 const Color _white = Color(0xFFFFFFFF);
 const Color _black = Color(0xFF000000);
+
+/// Recessed page and wells, matching a messaging-client chrome.
+const Color _pageLight = Color(0xFFF0F2F5);
+const Color _inkLight = Color(0xFF111B21);
+const Color _pageDark = Color(0xFF0B141A);
+const Color _panelDark = Color(0xFF111B21);
+const Color _wellDark = Color(0xFF202C33);
+const Color _inkDark = Color(0xFFE9EDEF);
 
 /// Interactive outline on light surfaces; brand-200 is 1.4:1 on white.
 const Color _outlineLight = Color(0xFF5C6C7F);

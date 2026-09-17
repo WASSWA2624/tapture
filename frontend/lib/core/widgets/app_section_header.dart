@@ -26,9 +26,11 @@ class AppSectionHeader extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: Space.x3,
-            vertical: Space.x1,
+          padding: const EdgeInsets.fromLTRB(
+            Space.x4,
+            Space.x4,
+            Space.x4,
+            Space.x1,
           ),
           child: Row(
             children: <Widget>[
