@@ -22,6 +22,10 @@ void main() {
       AppConstants.interaction.debounce.inMilliseconds,
       inInclusiveRange(100, 800),
     );
+    expect(
+      AppConstants.feedback.snack.inMilliseconds,
+      inInclusiveRange(2000, 8000),
+    );
   });
 
   test('list, image and cache numbers sit in a sane range', () {

@@ -18,6 +18,11 @@ abstract final class AppConstants {
     long: Duration(milliseconds: 450),
   );
 
+  /// How long a snack stays up so a second message can queue behind it.
+  static const ({Duration snack}) feedback = (
+    snack: Duration(milliseconds: 4000),
+  );
+
   /// Intervals that wait for the operator to finish typing or scanning.
   static const ({Duration debounce}) interaction = (
     debounce: Duration(milliseconds: 300),

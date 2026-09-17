@@ -51,10 +51,10 @@ class AppBanner extends StatelessWidget {
 
 ## Definition of done
 
-- [ ] Delete flows across the app look and behave identically, and every destructive action can offer undo through one
+- [x] Delete flows across the app look and behave identically, and every destructive action can offer undo through one
       call.
-- [ ] Pickers and option sheets share one presentation and become a side panel on expanded layouts.
-- [ ] Offline state is visible through the banner without stealing focus from the field being edited.
-- [ ] Tests: widget tests of the confirm and cancel paths, of undo invoking its callback, of two snacks queueing rather
+- [x] Pickers and option sheets share one presentation and become a side panel on expanded layouts.
+- [x] Offline state is visible through the banner without stealing focus from the field being edited.
+- [x] Tests: widget tests of the confirm and cancel paths, of undo invoking its callback, of two snacks queueing rather
       than overlapping, and of the sheet at compact and expanded widths; goldens of dialog, sheet, snack and banner in
       light, dark and outdoor.

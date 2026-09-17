@@ -6,6 +6,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
+import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 
 import 'app_text_field.dart';
 import 'choice.dart';
@@ -92,10 +93,9 @@ class AppMultiChoiceField<T> extends StatelessWidget {
   }
 
   Future<void> _open(BuildContext context) async {
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
+    await showAppSheet<void>(
+      context,
+      title: label,
       builder: (BuildContext sheetContext) {
         return _MultiChoiceSheet<T>(
           label: label,
@@ -149,93 +149,86 @@ class _MultiChoiceSheetState<T> extends State<_MultiChoiceSheet<T>> {
       for (final Choice<T> option in widget.options)
         if (_labelContains(option.label, _query)) option,
     ];
-    return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
-      child: SizedBox(
-        height: MediaQuery.sizeOf(context).height * 3 / 4,
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: Space.x4,
-                vertical: Space.x2,
-              ),
-              child: AppTextField(
-                label: widget.label,
-                controller: _search,
-                clearable: true,
-                prefix: ExcludeSemantics(
-                  child: Icon(
-                    Icons.search,
-                    color: colors.onSurface,
-                    size: Space.x6,
-                  ),
-                ),
-                onChanged: (String value) => setState(() => _query = value),
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: Space.x4,
+            vertical: Space.x2,
+          ),
+          child: AppTextField(
+            label: widget.label,
+            controller: _search,
+            clearable: true,
+            prefix: ExcludeSemantics(
+              child: Icon(
+                Icons.search,
+                color: colors.onSurface,
+                size: Space.x6,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Space.x2),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: AppButton(
-                      label: 'Select all',
-                      variant: AppButtonVariant.text,
-                      onPressed: visible.isEmpty
-                          ? null
-                          : () => _emit(<T>{
-                              ..._selected,
-                              for (final Choice<T> option in visible)
-                                option.value,
-                            }),
-                    ),
-                  ),
-                  Expanded(
-                    child: AppButton(
-                      label: 'Clear',
-                      variant: AppButtonVariant.text,
-                      onPressed: _selected.isEmpty ? null : () => _emit(<T>{}),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: visible.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final Choice<T> option = visible[index];
-                  final bool selected = _selected.contains(option.value);
-                  return ListTile(
-                    minTileHeight: Sizes.minTapTarget,
-                    selected: selected,
-                    leading: option.icon == null
-                        ? null
-                        : Icon(option.icon, color: colors.onSurface),
-                    title: Text(
-                      option.label,
-                      style: AppText.body.copyWith(color: colors.onSurface),
-                    ),
-                    trailing: selected
-                        ? Icon(Icons.check, color: colors.primary)
-                        : null,
-                    onTap: () {
-                      final Set<T> next = Set<T>.of(_selected);
-                      if (selected) {
-                        next.remove(option.value);
-                      } else {
-                        next.add(option.value);
-                      }
-                      _emit(next);
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
+            onChanged: (String value) => setState(() => _query = value),
+          ),
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Space.x2),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: AppButton(
+                  label: 'Select all',
+                  variant: AppButtonVariant.text,
+                  onPressed: visible.isEmpty
+                      ? null
+                      : () => _emit(<T>{
+                          ..._selected,
+                          for (final Choice<T> option in visible) option.value,
+                        }),
+                ),
+              ),
+              Expanded(
+                child: AppButton(
+                  label: 'Clear',
+                  variant: AppButtonVariant.text,
+                  onPressed: _selected.isEmpty ? null : () => _emit(<T>{}),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: visible.length,
+            itemBuilder: (BuildContext context, int index) {
+              final Choice<T> option = visible[index];
+              final bool selected = _selected.contains(option.value);
+              return ListTile(
+                minTileHeight: Sizes.minTapTarget,
+                selected: selected,
+                leading: option.icon == null
+                    ? null
+                    : Icon(option.icon, color: colors.onSurface),
+                title: Text(
+                  option.label,
+                  style: AppText.body.copyWith(color: colors.onSurface),
+                ),
+                trailing: selected
+                    ? Icon(Icons.check, color: colors.primary)
+                    : null,
+                onTap: () {
+                  final Set<T> next = Set<T>.of(_selected);
+                  if (selected) {
+                    next.remove(option.value);
+                  } else {
+                    next.add(option.value);
+                  }
+                  _emit(next);
+                },
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 

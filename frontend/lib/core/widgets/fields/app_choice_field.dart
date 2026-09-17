@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 
 import 'app_text_field.dart';
 import 'choice.dart';
@@ -267,10 +268,9 @@ class _SheetChoice<T> extends StatelessWidget {
   }
 
   Future<void> _open(BuildContext context) async {
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
+    await showAppSheet<void>(
+      context,
+      title: label,
       builder: (BuildContext sheetContext) {
         return _ChoiceSheet<T>(
           label: label,
@@ -320,58 +320,52 @@ class _ChoiceSheetState<T> extends State<_ChoiceSheet<T>> {
       for (final Choice<T> option in widget.options)
         if (_labelContains(option.label, _query)) option,
     ];
-    return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
-      child: SizedBox(
-        height: MediaQuery.sizeOf(context).height * 3 / 4,
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: Space.x4,
-                vertical: Space.x2,
-              ),
-              child: AppTextField(
-                label: widget.label,
-                controller: _search,
-                clearable: true,
-                prefix: ExcludeSemantics(
-                  child: Icon(
-                    Icons.search,
-                    color: colors.onSurface,
-                    size: Space.x6,
-                  ),
-                ),
-                onChanged: (String value) => setState(() => _query = value),
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: Space.x4,
+            vertical: Space.x2,
+          ),
+          child: AppTextField(
+            label: widget.label,
+            controller: _search,
+            clearable: true,
+            prefix: ExcludeSemantics(
+              child: Icon(
+                Icons.search,
+                color: colors.onSurface,
+                size: Space.x6,
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: visible.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final Choice<T> option = visible[index];
-                  final bool selected = option.value == widget.value;
-                  return ListTile(
-                    minTileHeight: Sizes.minTapTarget,
-                    selected: selected,
-                    leading: option.icon == null
-                        ? null
-                        : Icon(option.icon, color: colors.onSurface),
-                    title: Text(
-                      option.label,
-                      style: AppText.body.copyWith(color: colors.onSurface),
-                    ),
-                    trailing: selected
-                        ? Icon(Icons.check, color: colors.primary)
-                        : null,
-                    onTap: () => widget.onPick(option.value),
-                  );
-                },
-              ),
-            ),
-          ],
+            onChanged: (String value) => setState(() => _query = value),
+          ),
         ),
-      ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: visible.length,
+            itemBuilder: (BuildContext context, int index) {
+              final Choice<T> option = visible[index];
+              final bool selected = option.value == widget.value;
+              return ListTile(
+                minTileHeight: Sizes.minTapTarget,
+                selected: selected,
+                leading: option.icon == null
+                    ? null
+                    : Icon(option.icon, color: colors.onSurface),
+                title: Text(
+                  option.label,
+                  style: AppText.body.copyWith(color: colors.onSurface),
+                ),
+                trailing: selected
+                    ? Icon(Icons.check, color: colors.primary)
+                    : null,
+                onTap: () => widget.onPick(option.value),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
