@@ -22,6 +22,11 @@ android {
         versionName = flutter.versionName
     }
 
+    // AGP 9 turns resValues off by default. The flavour labels below use it.
+    buildFeatures {
+        resValues = true
+    }
+
     // Distinct application ids and labels so a development install sits
     // alongside a production one (dev-plan 02-foundation/019).
     flavorDimensions += "flavor"
