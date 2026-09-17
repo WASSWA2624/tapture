@@ -30,6 +30,6 @@ Future<Result<void>> putSecret(SecretKey k, String v);  Future<Result<String?>> 
 
 ## Definition of done
 
-- [ ] Secrets survive a restart and are absent from the database and every export.
-- [ ] `deleteAll` leaves no readable residue for any `SecretKey`.
-- [ ] Tests: `frontend/test/core/security/secure_storage_test.dart` uses a fake backing store and asserts isolation from the preferences store and the database.
+- [x] Secrets survive a restart and are absent from the database and every export.
+- [x] `deleteAll` leaves no readable residue for any `SecretKey`.
+- [x] Tests: `frontend/test/core/security/secure_storage_test.dart` uses a fake backing store and asserts isolation from the preferences store and the database.

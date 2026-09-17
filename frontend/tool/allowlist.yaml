@@ -27,6 +27,26 @@ packages:
     version: ^7.3.1
     purpose: Platform radio state (online / metered / offline). Reached only through connectivity_service (FE-STR-11). Replaces a hand-rolled reachability check.
     task: "025"
+  permission_handler:
+    version: ^12.0.3
+    purpose: Runtime camera, microphone, location and storage requests. Reached only through permissions_service (FE-STR-11). Replaces a hand-rolled permission channel.
+    task: "026"
+  flutter_secure_storage:
+    version: ^9.2.4
+    purpose: Platform Keystore/Keychain for keys and credentials. Reached only through secure_storage (FE-STR-11, FE-SEC-01). Replaces writing secrets to preferences or the database.
+    task: "027"
+  json_annotation:
+    version: ^4.9.0
+    purpose: JsonConverter and @JsonKey so models declare wire names explicitly (FE-CODE-13). Replaces hand-rolled codecs that would follow Dart identifiers.
+    task: "028"
+  build_runner:
+    version: ^2.4.13
+    purpose: Runs json_serializable (and later Drift) so generated output is committed (FE-CODE-13). Replaces invoking the generator by hand.
+    task: "028"
+  json_serializable:
+    version: ^6.9.0
+    purpose: Generates fromJson/toJson using @JsonKey names from build.yaml. Replaces deriving wire keys from Dart field names.
+    task: "028"
   flutter_test:
     version: sdk
     purpose: The widget and unit test harness every guardrail suite runs on.

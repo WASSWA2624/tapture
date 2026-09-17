@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**25 of 281 tasks complete (8.9%)** · last updated 2026-09-17
+**28 of 281 tasks complete (10.0%)** · last updated 2026-09-17
 
 `███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -9,7 +9,7 @@
 | Phase | Done | Total | Progress |
 | :--- | ---: | ---: | :--- |
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
-| 02 — Foundation services | 7 | 11 | `█████████░░░░░` 64% |
+| 02 — Foundation services | 10 | 11 | `█████████████░` 91% |
 | 03 — Design system | 0 | 19 | `░░░░░░░░░░░░░░` 0% |
 | 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **25** | **281** | `█░░░░░░░░░░░░░` 8.9% |
+| **Total** | **28** | **281** | `█░░░░░░░░░░░░░` 10.0% |
 
 ## Completed
 
@@ -61,6 +61,9 @@
 | 023 — Clock, identifiers and device identity | 2026-09-17 | `Clock` (`SystemClock` / `FixedClock`), `IdService` / `UuidV7Service` (time-ordered, sequence fake for tests), and `deviceId` / `deviceDescriptor`. `DateTime.now` is documented as legal only in `SystemClock`. Device id is minted once and read back from memory or a file. Guarded by 10 tests. |
 | 024 — Hashing service and isolate runner | 2026-09-17 | `sha256OfFile` streams 64KiB chunks on `runIsolate`; `sha256OfString` is the sync digest. `CancellationToken` kills the worker and returns `CancelledFailure`. `crypto` ^3.0.7 pinned on the allowlist. Guarded by 8 tests. |
 | 025 — Connectivity service | 2026-09-17 | `watch()` folds the radio and the manual override; override on is always `offline`. `metered` is distinct from `online`. Plugin reached only here; tests use `ConnectivityService.fake`. `connectivity_plus` ^7.3.1 pinned on the allowlist. Guarded by 3 tests. |
+| 026 — Runtime permissions service | 2026-09-17 | `request`/`status` wrap camera, microphone, location and storage. A denial is `PermissionFailure` with a recovery action; permanent denial opens settings instead of prompting again. Location is not requested while GPS is off. `permission_handler` ^12.0.3 pinned on the allowlist. Guarded by 13 tests. |
+| 027 — Secure storage service | 2026-09-17 | Typed `putSecret`/`readSecret`/`deleteAll` over a closed `SecretKey` enum mapped to `AppConstants.secrets`. Fake backing store survives a simulated restart; debug asserts keep values out of preferences and the database. `flutter_secure_storage` ^9.2.4 pinned on the allowlist. Guarded by 3 tests. |
+| 028 — Serialisation conventions | 2026-09-17 | `build.yaml` pins json_serializable to explicit `@JsonKey` wire names (`field_rename: none`). `UtcDateTimeConverter`, `JsonMapConverter` and `EnumWireConverter` round-trip UTC dates, maps (null → empty) and enums; an unknown wire name throws. `json_annotation` ^4.9.0, `json_serializable` ^6.9.0 and `build_runner` ^2.4.13 pinned on the allowlist. Guarded by 3 tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -97,6 +100,11 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 023 | `Clock` says `DateTime.now` lives only in `SystemClock`; `Logger` still defaults to `DateTime.now`. | Open — recorded on `Clock`; wiring the logger is a later task |
 | 023 | Device model is `Platform.operatingSystem` because no `device_info` package is on the allowlist. | Open — implemented with dart:io; a later task can approve a plugin |
 | 024 | FE-PERF-02 wants every hash off the UI thread; the contract makes `sha256OfString` synchronous. | Open — file hashes go through `runIsolate`; the string helper matches the contract |
+| 026 | GPS enablement lives in the settings store (078); location must already refuse to prompt while GPS is off. | Open — `gpsEnabled` is an injected callback, default off |
+| 026 | Manifest and plist declarations are task 235; this task names only `permissions_service.dart`. | Open — the plugin is wrapped; platform declarations wait for 235 |
+| 027 | Database encryption (064) needs a key in secure storage; `SecretKey` only lists the seven names already in `AppConstants.secrets`. | Open — 064 can add the encryption key; this task does not invent one |
+| 027 | `flutter_secure_storage_windows` pulls `path_provider`; current Android/iOS impls print native build hooks on every `dart run`. | Open — `path_provider_android` 2.2.23 and `path_provider_foundation` 2.5.1 overridden so the guardrail checkers keep a clean stdout |
+| 028 | json_serializable with `field_rename: none` still emits the Dart identifier unless every field has `@JsonKey(name:)`. | Open — documented in `build.yaml`; an architecture test would need its own task |
 
 ## Checklist
 
@@ -125,7 +133,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 02 — Foundation services
 
-*7 of 11 complete.*
+*10 of 11 complete.*
 
 - [x] [019 — Application bootstrap, flavours and lifecycle](dev-plan/02-foundation/019-app-bootstrap.md)
 - [x] [020 — Shared constants](dev-plan/02-foundation/020-app-constants.md)
@@ -134,9 +142,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [023 — Clock, identifiers and device identity](dev-plan/02-foundation/023-clock-service.md)
 - [x] [024 — Hashing service and isolate runner](dev-plan/02-foundation/024-hashing-service.md)
 - [x] [025 — Connectivity service](dev-plan/02-foundation/025-connectivity-service.md)
-- [ ] [026 — Runtime permissions service](dev-plan/02-foundation/026-permissions-service.md)
-- [ ] [027 — Secure storage service](dev-plan/02-foundation/027-secure-storage-service.md)
-- [ ] [028 — Serialisation conventions](dev-plan/02-foundation/028-json-codec-setup.md)
+- [x] [026 — Runtime permissions service](dev-plan/02-foundation/026-permissions-service.md)
+- [x] [027 — Secure storage service](dev-plan/02-foundation/027-secure-storage-service.md)
+- [x] [028 — Serialisation conventions](dev-plan/02-foundation/028-json-codec-setup.md)
 - [ ] [029 — AI service interface](dev-plan/02-foundation/029-ai-service-interface.md)
 
 ### 03 — Design system

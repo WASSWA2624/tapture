@@ -1,0 +1,21 @@
+# json_serializable options every model in this package inherits.
+#
+# Wire names are never derived from a Dart identifier that may be renamed
+# (dev-plan 02-foundation/028). `field_rename: none` turns off kebab/snake
+# rewriting; each field still states its key with `@JsonKey(name: …)`.
+# `checked` and `disallow_unrecognized_keys` make an unknown shape fail
+# loudly rather than drop fields.
+
+targets:
+  $default:
+    builders:
+      json_serializable:
+        options:
+          any_map: false
+          checked: true
+          create_factory: true
+          create_to_json: true
+          disallow_unrecognized_keys: true
+          explicit_to_json: true
+          field_rename: none
+          include_if_null: true

@@ -31,6 +31,6 @@ class UtcDateTimeConverter implements JsonConverter<DateTime, String>;  class Js
 
 ## Definition of done
 
-- [ ] Renaming a Dart field does not change the serialised key.
-- [ ] Date-times round-trip as UTC regardless of the device offset, and an unknown enum wire name fails loudly rather than defaulting silently.
-- [ ] Tests: `frontend/test/core/serialisation/converters_test.dart` round-trips each converter, including the unknown-enum and null cases.
+- [x] Renaming a Dart field does not change the serialised key.
+- [x] Date-times round-trip as UTC regardless of the device offset, and an unknown enum wire name fails loudly rather than defaulting silently.
+- [x] Tests: `frontend/test/core/serialisation/converters_test.dart` round-trips each converter, including the unknown-enum and null cases.

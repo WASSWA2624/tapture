@@ -36,7 +36,7 @@ void main() {
         _fixture(
           pubspec: _realPubspec().replaceAll(
             '  flutter_lints: ^6.0.0',
-            '  flutter_lints: ^6.0.0\n  build_runner: ^2.4.0',
+            '  flutter_lints: ^6.0.0\n  chopper: ^8.0.0',
           ),
         ).path,
       );
@@ -56,7 +56,7 @@ void main() {
           pubspec: _realPubspec()
               .replaceAll(
                 '  flutter_lints: ^6.0.0',
-                '  build_runner: ^2.4.0\n  mockito: ^5.4.0',
+                '  chopper: ^8.0.0\n  mockito: ^5.4.0',
               )
               .replaceAll('  flutter:\n    sdk: flutter', '  dio: ^5.0.0'),
         ).path,
@@ -79,7 +79,7 @@ void main() {
     test('a package nobody approved fails the check', () {
       expect(
         unapproved.violations,
-        contains(contains('build_runner is not on the allowlist')),
+        contains(contains('chopper is not on the allowlist')),
       );
       expect(unapproved.exitCode, 1);
     });
@@ -123,7 +123,7 @@ void main() {
       expect(
         several.violations,
         containsAll(<Matcher>[
-          contains('build_runner is not on the allowlist'),
+          contains('chopper is not on the allowlist'),
           contains('mockito is not on the allowlist'),
           contains('dio is not on the allowlist'),
           contains('flutter is approved but pubspec.yaml no longer asks'),

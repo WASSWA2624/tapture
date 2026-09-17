@@ -29,6 +29,6 @@ Future<Result<PermissionState>> request(AppPermission p);  Future<PermissionStat
 
 ## Definition of done
 
-- [ ] A denied permission returns `PermissionFailure` with a recovery action, never an exception.
-- [ ] A permanently denied permission offers the settings page rather than repeating the prompt.
-- [ ] Tests: `frontend/test/core/permissions/permissions_service_test.dart` covers granted, denied and permanently denied for camera, microphone, location and storage.
+- [x] A denied permission returns `PermissionFailure` with a recovery action, never an exception.
+- [x] A permanently denied permission offers the settings page rather than repeating the prompt.
+- [x] Tests: `frontend/test/core/permissions/permissions_service_test.dart` covers granted, denied and permanently denied for camera, microphone, location and storage.
