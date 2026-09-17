@@ -12,7 +12,7 @@ before the first frame, and the build knows which flavour it is: a development i
 - `frontend/lib/main.dart` (edit)
 - `frontend/lib/app/app.dart` (new)
 - `frontend/lib/app/env.dart` (new)
-- `frontend/android/app/build.gradle` (edit)
+- `frontend/android/app/build.gradle.kts` (edit — the project ships Kotlin Gradle, not `build.gradle`)
 - `frontend/lib/core/lifecycle/lifecycle_observer.dart` (new)
 
 ## Contract
@@ -45,3 +45,14 @@ class LifecycleObserver with WidgetsBindingObserver { Stream<AppLifecycleState> 
 - [x] A development build installs alongside a production build, and `Env.flavor` reports the flavour it was compiled with.
 - [x] Backgrounding during capture never loses an unsaved photo reference.
 - [x] Tests: `frontend/test/app/bootstrap_test.dart` pumps the app and asserts a thrown error reaches the handler; `frontend/test/app/env_test.dart` asserts the default and an override; `frontend/test/core/lifecycle/lifecycle_observer_test.dart` drives pause and resume and asserts the flush.
+
+## As built
+
+`TaptureApp` is no longer a router placeholder. After 031 / 072 / 076 it is the one root widget:
+
+- `theme` / `darkTheme` from `buildTheme` (outdoor when `themeModeProvider` is `AppThemeMode.outdoor`)
+- `routerConfig: ref.watch(routerProvider)`
+- `builder` wraps the route child in `ErrorBoundary` → `GlobalErrorPage`
+- `typedef App = TaptureApp` so `app.dart` satisfies FE-STR-06
+
+Do not add a second `MaterialApp` or a second `ProviderScope`. Flavour-dependent chrome stays on a provider (`_appTitleProvider`), never `if (Env.isDev)` in a feature.

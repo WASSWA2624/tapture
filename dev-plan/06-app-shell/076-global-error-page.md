@@ -1,11 +1,14 @@
 # 076 — Global error and crash recovery screen
 
-**Phase** 06 · Application shell  |  **Depends on** [021](../02-foundation/021-result-and-failures.md), [022](../02-foundation/022-logger-service.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
+**Phase** 06 · Application shell  |  **Depends on** [021](../02-foundation/021-result-and-failures.md), [022](../02-foundation/022-logger-service.md), [033](../03-design-system/033-app-page.md), [040](../03-design-system/040-app-empty-state.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement
 
 The last-resort screen the top-level `ErrorBoundary` renders. It offers exactly three ways forward — restart, export
 the diagnostics log, open the recycle bin — and no way to destroy data.
+
+Compose `AppPage` + `AppErrorState` (typed `Failure`). Title-bar actions stay icon-only; if a labelled command is
+needed, put it in `AppPage.overflow` (075), never as a text button in the app bar.
 
 ## Files
 
@@ -14,11 +17,14 @@ the diagnostics log, open the recycle bin — and no way to destroy data.
 
 ## Steps
 
-1. Wrap the router's builder in `ErrorBoundary` with this page as its fallback, so a build failure anywhere lands here.
-2. Restart rebuilds the provider scope rather than killing the process, so nothing unsaved is discarded.
-3. Export the log through `exportLog` and hand the file to the platform share sheet.
-4. State in plain language that the user's data is still on the device. Offer no "clear data", no "reset" and no
-   "reinstall" action.
+1. Wrap `MaterialApp.router`'s `builder` in `ErrorBoundary` with this page as its fallback, so a build failure
+   anywhere lands here. `TaptureApp` already owns theme and `routerProvider`; do not add a second `MaterialApp`.
+2. Restart remounts the failed subtree under the existing `ProviderScope` (`ErrorBoundary`'s retry). It does not
+   kill the process and does not discard unsaved work.
+3. Export the log through `exportLog` and hand the file to the platform share sheet. The file is dated and
+   device-named; redaction stays in `Logger`.
+4. Recycle bin navigates through `AppRoutes.more` (the settings branch). State in plain language that the user's
+   data is still on the device (`Copy.workStillOnDevice`). Offer no "clear data", no "reset" and no "reinstall".
 
 ## Constraints
 

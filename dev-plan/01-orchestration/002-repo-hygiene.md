@@ -29,9 +29,9 @@ Write the ignore and editor configuration that keeps generated output and secret
 
 ## Definition of done
 
-- [ ] A clean checkout followed by a build produces no untracked files.
-- [ ] Tests written and passing: `frontend/tool/check_repo_hygiene.dart` fails if a build artefact path is missing from `.gitignore`.
-- [ ] Analyzer clean, formatter applied, guardrail suites green.
+- [x] A clean checkout followed by a build produces no untracked files.
+- [x] Tests written and passing: `frontend/tool/check_repo_hygiene.dart` fails if a build artefact path is missing from `.gitignore`.
+- [x] Analyzer clean, formatter applied, guardrail suites green.
 
 ## Out of scope
 

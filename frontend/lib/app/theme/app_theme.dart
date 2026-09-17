@@ -11,13 +11,17 @@ typedef AppTheme = ThemeData;
 /// Material 3 [ThemeData] for [brightness], optionally the high-contrast
 /// outdoor variant (FE-THEME-02, FE-THEME-07).
 ///
-/// Stock buttons, fields, chips, dialogs, sheets and app bars pick up Tapture
-/// styling here, so a screen that redecorates one is a defect.
+/// Stock buttons, fields, chips, dialogs, sheets and app bars pick up
+/// messaging-client styling here, so a screen that redecorates one is a
+/// defect.
 ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
   final AppColors colors = _palette(brightness: brightness, outdoor: outdoor);
   final ColorScheme scheme = _scheme(brightness, colors);
   final TextTheme textTheme = _textTheme(colors);
   final BorderSide outline = _outline(colors, outdoor);
+  final bool dark = brightness == Brightness.dark;
+  final Color barFill = dark ? colors.surfaceVariant : colors.primary;
+  final Color barInk = dark ? colors.onSurface : colors.onPrimary;
   const RoundedRectangleBorder controlShape = RoundedRectangleBorder(
     borderRadius: BorderRadius.all(Radius.circular(Radii.lg)),
   );
@@ -38,7 +42,7 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
   return ThemeData(
     useMaterial3: true,
     fontFamily: AppText.themeFamily,
-    fontFamilyFallback: AppText.fontFallback,
+    fontFamilyFallback: AppText.themeFallback,
     colorScheme: scheme,
     textTheme: textTheme,
     primaryTextTheme: textTheme,
@@ -52,36 +56,16 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
       elevation: 0,
       scrolledUnderElevation: 0,
       toolbarHeight: Sizes.minTapTarget + Space.x2,
-      backgroundColor: brightness == Brightness.dark
-          ? colors.surface
-          : colors.primary,
-      foregroundColor: brightness == Brightness.dark
-          ? colors.onSurface
-          : colors.onPrimary,
-      surfaceTintColor: brightness == Brightness.dark
-          ? colors.surface
-          : colors.primary,
+      backgroundColor: barFill,
+      foregroundColor: barInk,
+      surfaceTintColor: barFill,
       shadowColor: const Color(0x00000000),
       centerTitle: false,
       titleSpacing: Space.x3,
       actionsPadding: const EdgeInsetsDirectional.only(end: Space.x1),
-      titleTextStyle: AppText.title.copyWith(
-        color: brightness == Brightness.dark
-            ? colors.onSurface
-            : colors.onPrimary,
-      ),
-      iconTheme: IconThemeData(
-        color: brightness == Brightness.dark
-            ? colors.onSurface
-            : colors.onPrimary,
-        size: Space.x6,
-      ),
-      actionsIconTheme: IconThemeData(
-        color: brightness == Brightness.dark
-            ? colors.onSurface
-            : colors.onPrimary,
-        size: Space.x6,
-      ),
+      titleTextStyle: AppText.title.copyWith(color: barInk),
+      iconTheme: IconThemeData(color: barInk, size: Space.x6),
+      actionsIconTheme: IconThemeData(color: barInk, size: Space.x6),
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: controlStyle.copyWith(
@@ -111,6 +95,15 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
         visualDensity: VisualDensity.standard,
         iconSize: Space.x6,
       ),
+    ),
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: colors.primary,
+      foregroundColor: colors.onPrimary,
+      elevation: 0,
+      focusElevation: 0,
+      hoverElevation: 0,
+      highlightElevation: 0,
+      shape: const CircleBorder(),
     ),
     inputDecorationTheme: InputDecorationThemeData(
       filled: true,
@@ -142,9 +135,6 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Radii.pill),
       ),
-      // Chip layout includes stroke width, so the weight stays a hairline
-      // in every mode; outdoor contrast still comes from [AppColors.outline]
-      // (FE-THEME-03).
       side: BorderSide(
         color: colors.outline,
         width: Space.x0 / 2,
@@ -233,7 +223,7 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
       }),
     ),
     navigationRailTheme: NavigationRailThemeData(
-      backgroundColor: colors.surfaceVariant,
+      backgroundColor: dark ? colors.surfaceVariant : colors.surfaceVariant,
       elevation: 0,
       minWidth: Sizes.minTapTarget + Space.x6,
       useIndicator: true,
@@ -269,6 +259,61 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
             : colors.surfaceVariant;
       }),
       trackOutlineColor: WidgetStatePropertyAll<Color>(colors.outline),
+    ),
+    checkboxTheme: CheckboxThemeData(
+      fillColor: WidgetStateProperty.resolveWith<Color>((
+        Set<WidgetState> states,
+      ) {
+        return states.contains(WidgetState.selected)
+            ? colors.primary
+            : colors.surface;
+      }),
+      checkColor: WidgetStatePropertyAll<Color>(colors.onPrimary),
+      side: outline,
+    ),
+    radioTheme: RadioThemeData(
+      fillColor: WidgetStateProperty.resolveWith<Color>((
+        Set<WidgetState> states,
+      ) {
+        return states.contains(WidgetState.selected)
+            ? colors.primary
+            : colors.outline;
+      }),
+    ),
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: colors.primary,
+      linearTrackColor: colors.surfaceVariant,
+      circularTrackColor: colors.surfaceVariant,
+    ),
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: colors.surface,
+      contentTextStyle: AppText.caption.copyWith(color: colors.onSurface),
+      actionTextColor: colors.primary,
+      elevation: 0,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Radii.md),
+        side: outline,
+      ),
+    ),
+    tooltipTheme: TooltipThemeData(
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(Radii.sm),
+        border: Border.fromBorderSide(outline),
+      ),
+      textStyle: AppText.caption.copyWith(color: colors.onSurface),
+    ),
+    popupMenuTheme: PopupMenuThemeData(
+      color: colors.surface,
+      elevation: 0,
+      shadowColor: const Color(0x00000000),
+      surfaceTintColor: colors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Radii.md),
+        side: outline,
+      ),
+      textStyle: AppText.body.copyWith(color: colors.onSurface),
     ),
   );
 }
@@ -336,7 +381,7 @@ BorderSide _outline(AppColors colors, bool outdoor) {
 
 OutlineInputBorder _fieldBorder(BorderSide side) {
   return OutlineInputBorder(
-    borderRadius: BorderRadius.circular(Radii.sm),
+    borderRadius: BorderRadius.circular(Radii.md),
     borderSide: side,
   );
 }

@@ -48,7 +48,11 @@ class AppEmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Icon(icon, size: Space.x12 + Space.x8, color: colors.secondary),
+            _Well(
+              icon: icon,
+              color: colors.secondary,
+              fill: colors.surfaceVariant,
+            ),
             const SizedBox(height: Space.x4),
             Text(
               headline,
@@ -67,6 +71,34 @@ class AppEmptyState extends StatelessWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _Well extends StatelessWidget {
+  const _Well({required this.icon, required this.color, required this.fill});
+
+  final IconData icon;
+  final Color color;
+  final Color fill;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: Space.x12 + Space.x8,
+      height: Space.x12 + Space.x8,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: fill,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: color,
+            width: Space.x0 / 2,
+            strokeAlign: BorderSide.strokeAlignInside,
+          ),
+        ),
+        child: Icon(icon, size: Space.x10, color: color),
       ),
     );
   }

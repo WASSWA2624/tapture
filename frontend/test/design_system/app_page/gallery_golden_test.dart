@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/outdoor_theme.dart';
+import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 
 import '../../support/a11y_matchers.dart';
@@ -63,11 +65,15 @@ Future<void> _pumpGallery(
         title: 'Records',
         subtitle: 'Today',
         actions: <Widget>[
-          IconButton(
+          AppIconButton(
+            icon: Icons.search,
+            semanticLabel: 'Search',
             tooltip: 'Search',
             onPressed: _ignorePress,
-            icon: Icon(Icons.search),
           ),
+        ],
+        overflow: <AppOverflowAction>[
+          AppOverflowAction(label: 'Save', onTap: _ignorePress),
         ],
         body: Text('A record list would sit here.'),
         footer: FilledButton(onPressed: _ignorePress, child: Text('Save')),

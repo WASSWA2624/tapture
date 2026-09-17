@@ -38,7 +38,22 @@ class AppErrorState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Icon(icon, size: Space.x12 + Space.x8, color: color),
+            SizedBox(
+              width: Space.x12 + Space.x8,
+              height: Space.x12 + Space.x8,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: colors.surfaceVariant,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: color,
+                    width: Space.x0 / 2,
+                    strokeAlign: BorderSide.strokeAlignInside,
+                  ),
+                ),
+                child: Icon(icon, size: Space.x10, color: color),
+              ),
+            ),
             const SizedBox(height: Space.x4),
             Text(
               failure.message,

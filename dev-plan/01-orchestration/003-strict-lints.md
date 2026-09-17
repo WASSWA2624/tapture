@@ -29,10 +29,10 @@ Configure the analyzer as the first reviewer, with warnings treated as failures.
 
 ## Definition of done
 
-- [ ] Running the analyzer on the fresh project reports zero issues.
-- [ ] Introducing an implicit dynamic cast fails the analyzer.
-- [ ] Tests written and passing: `frontend/tool/verify.dart` runs the analyzer and fails on any issue.
-- [ ] Analyzer clean, formatter applied, guardrail suites green.
+- [x] Running the analyzer on the fresh project reports zero issues.
+- [x] Introducing an implicit dynamic cast fails the analyzer.
+- [x] Tests written and passing: `frontend/tool/verify.dart` runs the analyzer and fails on any issue.
+- [x] Analyzer clean, formatter applied, guardrail suites green.
 
 ## Out of scope
 

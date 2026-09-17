@@ -37,10 +37,10 @@ ImportGraph buildImportGraph(Directory libDir);  List<Violation> checkLayering(I
 
 ## Definition of done
 
-- [ ] The test passes on the empty scaffold and fails when a deliberate cross-layer import is added.
-- [ ] Tests written and passing: The test itself, plus a negative fixture under `frontend/test/architecture/fixtures/`.
-- [ ] Contract above is implemented exactly, with nothing else made public.
-- [ ] Analyzer clean, formatter applied, guardrail suites green.
+- [x] The test passes on the empty scaffold and fails when a deliberate cross-layer import is added.
+- [x] Tests written and passing: The test itself, plus a negative fixture under `frontend/test/architecture/fixtures/`.
+- [x] Contract above is implemented exactly, with nothing else made public.
+- [x] Analyzer clean, formatter applied, guardrail suites green.
 
 ## Out of scope
 

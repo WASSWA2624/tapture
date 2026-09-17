@@ -36,11 +36,11 @@ Future<int> main(List<String> args)  // scans dev-plan/, exits non-zero on any s
 
 ## Definition of done
 
-- [ ] Renumbering a file by hand and forgetting its heading fails the check.
-- [ ] A dependency pointing at a higher-numbered task fails the check.
-- [ ] Tests written and passing: `frontend/test/tool/check_plan_test.dart` runs the checker over valid and deliberately broken fixture trees.
-- [ ] Contract above is implemented exactly, with nothing else made public.
-- [ ] Analyzer clean, formatter applied, guardrail suites green.
+- [x] Renumbering a file by hand and forgetting its heading fails the check.
+- [x] A dependency pointing at a higher-numbered task fails the check.
+- [x] Tests written and passing: `frontend/test/tool/check_plan_test.dart` runs the checker over valid and deliberately broken fixture trees.
+- [x] Contract above is implemented exactly, with nothing else made public.
+- [x] Analyzer clean, formatter applied, guardrail suites green.
 
 ## Out of scope
 

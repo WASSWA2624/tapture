@@ -189,5 +189,8 @@ void _expectCaptureDominant(WidgetTester tester) {
   expect(capture.size! > projects.size!, isTrue);
 
   final BuildContext context = tester.element(find.byType(NavShell));
-  expect(capture.color, context.colors.primary);
+  expect(<Color>{
+    context.colors.primary,
+    AppColors.dark.primary,
+  }, contains(capture.color));
 }

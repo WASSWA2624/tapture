@@ -36,11 +36,11 @@ Future<int> main(List<String> args)  // new_task <phase-folder> <slug> "<title>"
 
 ## Definition of done
 
-- [ ] Running the tool twice with the same slug fails rather than overwriting.
-- [ ] The generated file passes the plan integrity checker unchanged.
-- [ ] Tests written and passing: `frontend/test/tool/new_task_test.dart` generates into a temporary tree and asserts the result.
-- [ ] Contract above is implemented exactly, with nothing else made public.
-- [ ] Analyzer clean, formatter applied, guardrail suites green.
+- [x] Running the tool twice with the same slug fails rather than overwriting.
+- [x] The generated file passes the plan integrity checker unchanged.
+- [x] Tests written and passing: `frontend/test/tool/new_task_test.dart` generates into a temporary tree and asserts the result.
+- [x] Contract above is implemented exactly, with nothing else made public.
+- [x] Analyzer clean, formatter applied, guardrail suites green.
 
 ## Out of scope
 

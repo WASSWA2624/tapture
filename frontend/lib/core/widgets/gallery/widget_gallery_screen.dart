@@ -20,6 +20,7 @@ import 'package:tapture/core/widgets/app_card.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_photo_thumb.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
@@ -192,6 +193,13 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
                       semanticLabel: Copy.galleryTheme,
                       tooltip: Copy.galleryTheme,
                       onPressed: _noop,
+                    ),
+                  ],
+                  overflow: const <AppOverflowAction>[
+                    AppOverflowAction(
+                      icon: Icons.save_outlined,
+                      label: Copy.save,
+                      onTap: _noop,
                     ),
                   ],
                   footer: AppPrimaryAction(
@@ -391,6 +399,17 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         semanticLabel: Copy.galleryFields,
         tooltip: Copy.galleryFields,
         onPressed: _noop,
+      ),
+      const SizedBox(height: Space.x3),
+      const AppOverflowMenu(
+        key: ValueKey<String>('app-overflow'),
+        items: <AppOverflowAction>[
+          AppOverflowAction(
+            icon: Icons.save_outlined,
+            label: Copy.save,
+            onTap: _noop,
+          ),
+        ],
       ),
       const SizedBox(height: Space.x3),
       const AppPrimaryAction(label: Copy.save),

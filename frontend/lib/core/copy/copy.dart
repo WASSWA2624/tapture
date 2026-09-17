@@ -275,6 +275,9 @@ abstract final class Copy {
   /// Prompt on list-pane and picker search fields.
   static const String search = 'Search';
 
+  /// Semantic name of the title-bar overflow control.
+  static const String overflowMenu = 'More options';
+
   /// Shell destination: the project list.
   static const String navProjects = 'Projects';
 

@@ -26,9 +26,11 @@ class AppDatabase extends _$AppDatabase {
   MigrationStrategy get migration => appMigration(this);
 }
 
-const int kSchemaVersion = 1;
+const int kSchemaVersion = 1; // later table tasks bump this; head is 12 after 061
 MigrationStrategy appMigration(AppDatabase db);
 ```
+
+Open through `app_database_io.dart` / `app_database_stub.dart` (`dart.library.io` conditional import) so web tests do not load `dart:ffi`.
 
 ## Steps
 

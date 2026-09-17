@@ -1,0 +1,19 @@
+# OS and editor leftovers at the repository root
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*~
+
+# Local secrets. Only the machine that wrote one should ever hold it.
+.env
+.env.*
+
+# Tooling caches if Flutter or Python is run from the repo root
+.dart_tool/
+**/chrome-device/
+__pycache__/
+*.pyc
+
+# Logs
+*.log

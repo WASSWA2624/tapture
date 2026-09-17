@@ -39,7 +39,7 @@ class AppStatusPill extends StatelessWidget {
       label: label,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: colors.surfaceVariant,
+          color: _compact ? colors.surface : colors.surfaceVariant,
           borderRadius: BorderRadius.circular(Radii.pill),
           border: Border.all(
             color: color,

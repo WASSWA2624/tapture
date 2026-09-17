@@ -36,11 +36,11 @@ Future<int> main(List<String> args)  // exit 0 clean, 1 on violation
 
 ## Definition of done
 
-- [ ] Adding a package to pubspec without the allowlist entry fails the check.
-- [ ] Removing an allowlisted package reports a warning rather than an error.
-- [ ] Tests written and passing: `frontend/test/tool/check_dependencies_test.dart` covers approved, unapproved and version-drift fixtures.
-- [ ] Contract above is implemented exactly, with nothing else made public.
-- [ ] Analyzer clean, formatter applied, guardrail suites green.
+- [x] Adding a package to pubspec without the allowlist entry fails the check.
+- [x] Removing an allowlisted package reports a warning rather than an error.
+- [x] Tests written and passing: `frontend/test/tool/check_dependencies_test.dart` covers approved, unapproved and version-drift fixtures.
+- [x] Contract above is implemented exactly, with nothing else made public.
+- [x] Analyzer clean, formatter applied, guardrail suites green.
 
 ## Out of scope
 

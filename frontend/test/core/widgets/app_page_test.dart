@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 
 import '../../support/a11y_matchers.dart';
@@ -46,6 +49,43 @@ void main() {
     },
   );
 
+  testWidgets('visible actions stay icon-only; overflow rows carry a label', (
+    WidgetTester tester,
+  ) async {
+    bool overflowTapped = false;
+    await _pumpPage(
+      tester,
+      actions: const <Widget>[
+        AppIconButton(
+          icon: Icons.search,
+          semanticLabel: Copy.search,
+          tooltip: Copy.search,
+          onPressed: _ignorePress,
+        ),
+      ],
+      overflow: <AppOverflowAction>[
+        AppOverflowAction(
+          key: const ValueKey<String>('page-templates'),
+          label: Copy.navTemplates,
+          onTap: () => overflowTapped = true,
+        ),
+      ],
+    );
+
+    expect(find.byIcon(Icons.search), findsOneWidget);
+    expect(find.text(Copy.search), findsNothing);
+    expect(find.text(Copy.navTemplates), findsNothing);
+    expect(find.byIcon(Icons.more_vert), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey<String>('app-page-overflow')));
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.navTemplates), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey<String>('page-templates')));
+    await tester.pumpAndSettle();
+    expect(overflowTapped, isTrue);
+  });
+
   testWidgets('rotation keeps the body', (WidgetTester tester) async {
     await _pumpPage(
       tester,
@@ -61,11 +101,15 @@ void main() {
   });
 }
 
+void _ignorePress() {}
+
 Future<void> _pumpPage(
   WidgetTester tester, {
   Size size = const Size(400, 800),
   Widget? body,
   Future<void> Function()? onRefresh,
+  List<Widget> actions = const <Widget>[],
+  List<AppOverflowAction> overflow = const <AppOverflowAction>[],
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = size;
@@ -79,6 +123,8 @@ Future<void> _pumpPage(
       home: AppPage(
         title: 'Page',
         subtitle: 'Subtitle',
+        actions: actions,
+        overflow: overflow,
         onRefresh: onRefresh,
         body: body ?? const Text('Body', key: Key('app-page-body')),
         footer: FilledButton(onPressed: () {}, child: const Text('Save')),

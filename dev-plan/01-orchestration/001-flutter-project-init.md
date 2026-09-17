@@ -36,11 +36,11 @@ void main()  // renders an empty MaterialApp scaffold; no counter demo
 
 ## Definition of done
 
-- [ ] The app builds and launches to a blank scaffold on a device or emulator.
-- [ ] No generated demo code remains anywhere in lib/ or `frontend/test/`.
-- [ ] Tests written and passing: `frontend/test/smoke_test.dart` pumps the app and asserts it builds without exception.
-- [ ] Contract above is implemented exactly, with nothing else made public.
-- [ ] Analyzer clean, formatter applied, guardrail suites green.
+- [x] The app builds and launches to a blank scaffold on a device or emulator.
+- [x] No generated demo code remains anywhere in lib/ or `frontend/test/`.
+- [x] Tests written and passing: `frontend/test/smoke_test.dart` pumps the app and asserts it builds without exception.
+- [x] Contract above is implemented exactly, with nothing else made public.
+- [x] Analyzer clean, formatter applied, guardrail suites green.
 
 ## Out of scope
 

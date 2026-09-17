@@ -86,7 +86,7 @@ class _FirstRunScreenState extends ConsumerState<FirstRunScreen> {
     );
     const Widget welcome = Column(
       children: <Widget>[
-        SizedBox(height: Space.x4),
+        SizedBox(height: Space.x8),
         AppBrandLockup(),
         SizedBox(height: Space.x6),
       ],

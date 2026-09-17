@@ -8,40 +8,40 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 
 *The repository, and the executable guardrails that enforce every architectural rule. Policies here are code — lints, checkers and tests — not prose.*
 
-- [ ] [001 — Create the Flutter project](01-orchestration/001-flutter-project-init.md)
-- [ ] [002 — Repository hygiene files](01-orchestration/002-repo-hygiene.md)
-- [ ] [003 — Strict analyzer configuration](01-orchestration/003-strict-lints.md)
-- [ ] [004 — Create the folder skeleton](01-orchestration/004-folder-scaffold.md)
-- [ ] [005 — Dependency allowlist checker](01-orchestration/005-dependency-allowlist.md)
-- [ ] [006 — Plan integrity checker](01-orchestration/006-plan-integrity-checker.md)
-- [ ] [007 — Task scaffolding tool](01-orchestration/007-task-scaffolder.md)
-- [ ] [008 — The verify command](01-orchestration/008-verify-command.md)
-- [ ] [009 — Git hook installer](01-orchestration/009-git-hooks.md)
-- [ ] [010 — Layering enforcement test](01-orchestration/010-layering-test.md)
-- [ ] [011 — Naming and file-layout checker](01-orchestration/011-naming-checker.md)
-- [ ] [012 — Canonical domain names](01-orchestration/012-domain-names.md)
-- [ ] [013 — Design-token and responsive boundary tests](01-orchestration/013-design-token-test.md)
-- [ ] [014 — State and error-handling convention tests](01-orchestration/014-riverpod-test.md)
-- [ ] [015 — Logging discipline and secret scan](01-orchestration/015-logging-checker.md)
-- [ ] [016 — Test presence checker](01-orchestration/016-test-presence-checker.md)
-- [ ] [017 — Accessibility test matchers](01-orchestration/017-accessibility-matchers.md)
-- [ ] [018 — Network boundary and raw-data safety tests](01-orchestration/018-network-test.md)
+- [x] [001 — Create the Flutter project](01-orchestration/001-flutter-project-init.md)
+- [x] [002 — Repository hygiene files](01-orchestration/002-repo-hygiene.md)
+- [x] [003 — Strict analyzer configuration](01-orchestration/003-strict-lints.md)
+- [x] [004 — Create the folder skeleton](01-orchestration/004-folder-scaffold.md)
+- [x] [005 — Dependency allowlist checker](01-orchestration/005-dependency-allowlist.md)
+- [x] [006 — Plan integrity checker](01-orchestration/006-plan-integrity-checker.md)
+- [x] [007 — Task scaffolding tool](01-orchestration/007-task-scaffolder.md)
+- [x] [008 — The verify command](01-orchestration/008-verify-command.md)
+- [x] [009 — Git hook installer](01-orchestration/009-git-hooks.md)
+- [x] [010 — Layering enforcement test](01-orchestration/010-layering-test.md)
+- [x] [011 — Naming and file-layout checker](01-orchestration/011-naming-checker.md)
+- [x] [012 — Canonical domain names](01-orchestration/012-domain-names.md)
+- [x] [013 — Design-token and responsive boundary tests](01-orchestration/013-design-token-test.md)
+- [x] [014 — State and error-handling convention tests](01-orchestration/014-riverpod-test.md)
+- [x] [015 — Logging discipline and secret scan](01-orchestration/015-logging-checker.md)
+- [x] [016 — Test presence checker](01-orchestration/016-test-presence-checker.md)
+- [x] [017 — Accessibility test matchers](01-orchestration/017-accessibility-matchers.md)
+- [x] [018 — Network boundary and raw-data safety tests](01-orchestration/018-network-test.md)
 
 ## 02 — Foundation services
 
 *The empty app that boots, logs, fails safely, and the small services every later feature injects.*
 
-- [ ] [019 — Application bootstrap, flavours and lifecycle](02-foundation/019-app-bootstrap.md)
-- [ ] [020 — Shared constants](02-foundation/020-app-constants.md)
-- [ ] [021 — Result type, failure taxonomy and error boundary](02-foundation/021-result-and-failures.md)
-- [ ] [022 — Logger, diagnostics export and provider observer](02-foundation/022-logger-service.md)
-- [ ] [023 — Clock, identifiers and device identity](02-foundation/023-clock-service.md)
-- [ ] [024 — Hashing service and isolate runner](02-foundation/024-hashing-service.md)
-- [ ] [025 — Connectivity service](02-foundation/025-connectivity-service.md)
-- [ ] [026 — Runtime permissions service](02-foundation/026-permissions-service.md)
-- [ ] [027 — Secure storage service](02-foundation/027-secure-storage-service.md)
-- [ ] [028 — Serialisation conventions](02-foundation/028-json-codec-setup.md)
-- [ ] [029 — AI service interface](02-foundation/029-ai-service-interface.md)
+- [x] [019 — Application bootstrap, flavours and lifecycle](02-foundation/019-app-bootstrap.md)
+- [x] [020 — Shared constants](02-foundation/020-app-constants.md)
+- [x] [021 — Result type, failure taxonomy and error boundary](02-foundation/021-result-and-failures.md)
+- [x] [022 — Logger, diagnostics export and provider observer](02-foundation/022-logger-service.md)
+- [x] [023 — Clock, identifiers and device identity](02-foundation/023-clock-service.md)
+- [x] [024 — Hashing service and isolate runner](02-foundation/024-hashing-service.md)
+- [x] [025 — Connectivity service](02-foundation/025-connectivity-service.md)
+- [x] [026 — Runtime permissions service](02-foundation/026-permissions-service.md)
+- [x] [027 — Secure storage service](02-foundation/027-secure-storage-service.md)
+- [x] [028 — Serialisation conventions](02-foundation/028-json-codec-setup.md)
+- [x] [029 — AI service interface](02-foundation/029-ai-service-interface.md)
 
 ## 03 — Design system
 
@@ -71,11 +71,11 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 
 *Every table, with the merge columns present from the first migration.*
 
-- [ ] [049 — Drift database bootstrap and migration strategy](04-data-layer/049-drift-setup.md)
-- [ ] [050 — Shared columns, DAO base and transaction helper](04-data-layer/050-column-mixins.md)
-- [ ] [051 — Tombstones, audit log and device profile tables](04-data-layer/051-tombstones-table.md)
-- [ ] [052 — Projects and context tables](04-data-layer/052-projects-table.md)
-- [ ] [053 — Templates, template fields and template rows tables](04-data-layer/053-templates-table.md)
+- [x] [049 — Drift database bootstrap and migration strategy](04-data-layer/049-drift-setup.md)
+- [x] [050 — Shared columns, DAO base and transaction helper](04-data-layer/050-column-mixins.md)
+- [x] [051 — Tombstones, audit log and device profile tables](04-data-layer/051-tombstones-table.md)
+- [x] [052 — Projects and context tables](04-data-layer/052-projects-table.md)
+- [x] [053 — Templates, template fields and template rows tables](04-data-layer/053-templates-table.md)
 - [x] [054 — Records and record fields tables](04-data-layer/054-records-table.md)
 - [x] [055 — Photos, attachments and captions tables](04-data-layer/055-photos-table.md)
 - [x] [056 — Reference dataset tables](04-data-layer/056-reference-tables.md)
@@ -107,7 +107,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [072 — Router, route table and guards](06-app-shell/072-router-setup.md)
 - [x] [073 — Adaptive navigation shell](06-app-shell/073-nav-shell.md)
 - [x] [074 — First-run flow](06-app-shell/074-first-run.md)
-- [x] [075 — Global status line and offline banner](06-app-shell/075-status-line.md)
+- [x] [075 — Global status line and overflow menu](06-app-shell/075-status-line.md)
 - [x] [076 — Global error and crash recovery screen](06-app-shell/076-global-error-page.md)
 
 ## 07 — Account and settings

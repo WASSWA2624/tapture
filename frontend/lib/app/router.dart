@@ -6,6 +6,7 @@ import 'package:tapture/app/nav_shell.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/widgets/app_brand_lockup.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
@@ -240,6 +241,11 @@ class _RoutePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           if (settings) ...<Widget>[
+            const AppListTile(
+              title: Copy.appName,
+              subtitle: Copy.firstRunSubtitle,
+              leading: AppBrandLockup(showName: false),
+            ),
             const AppSectionHeader(title: Copy.navMore),
             AppListTile(
               title: Copy.navTemplates,

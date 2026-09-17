@@ -50,6 +50,7 @@ class _Chrome extends StatelessWidget {
       width: Space.x0 / 2,
     );
     return Scaffold(
+      backgroundColor: context.colors.background,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -107,6 +108,7 @@ class _Bar extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
+        color: context.colors.surface,
         border: Border(
           top: BorderSide(color: context.colors.outline, width: Space.x0 / 2),
         ),
@@ -142,15 +144,16 @@ class _Rail extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppColors colors = context.colors;
     final Color railInk = inverted ? colors.surface : colors.onSurface;
+    final Color selected = inverted ? AppColors.dark.primary : colors.primary;
     return NavigationRail(
       key: const ValueKey<String>('nav-rail'),
       backgroundColor: inverted
-          ? AppColors.dark.surface
+          ? AppColors.dark.surfaceVariant
           : colors.surfaceVariant,
       selectedIndex: shell.currentIndex,
       onDestinationSelected: shell.goBranch,
       labelType: NavigationRailLabelType.all,
-      selectedLabelTextStyle: AppText.caption.copyWith(color: colors.primary),
+      selectedLabelTextStyle: AppText.caption.copyWith(color: selected),
       unselectedLabelTextStyle: AppText.caption.copyWith(color: railInk),
       destinations: <NavigationRailDestination>[
         for (int index = 0; index < _destinations.length; index++)
@@ -247,12 +250,13 @@ class _NavIcon extends StatelessWidget {
         ? destination.selectedIcon
         : destination.icon;
     final AppColors colors = context.colors;
+    final Color accent = inverted ? AppColors.dark.primary : colors.primary;
     return Icon(
       icon,
       key: ValueKey<String>('nav-icon-$index'),
       size: destination.dominant ? Space.x8 : Space.x6,
       color: destination.dominant || selected
-          ? colors.primary
+          ? accent
           : (inverted ? colors.surface : colors.onSurface),
     );
   }

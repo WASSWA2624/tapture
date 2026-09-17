@@ -3,6 +3,7 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 
+import 'app_overflow_menu.dart';
 import 'responsive/breakpoints.dart';
 import 'responsive/content_constraint.dart';
 
@@ -18,6 +19,7 @@ class AppPage extends StatelessWidget {
     required this.body,
     this.subtitle,
     this.actions = const <Widget>[],
+    this.overflow = const <AppOverflowAction>[],
     this.footer,
     this.onRefresh,
     this.showAppBar = true,
@@ -32,9 +34,12 @@ class AppPage extends StatelessWidget {
   /// percent text scale cannot clip the bar (FE-A11Y-03).
   final String? subtitle;
 
-  /// App bar actions. Each control the caller passes must already meet 48dp
-  /// and carry a label (FE-A11Y-01, FE-A11Y-02).
+  /// Icon-only app-bar actions. Visible chrome must not show a text label;
+  /// labelled commands belong in [overflow] (FE-A11Y-01, FE-A11Y-02).
   final List<Widget> actions;
+
+  /// Labelled commands behind the trailing three-dot control.
+  final List<AppOverflowAction> overflow;
 
   /// Page content. This widget owns scrolling, so [body] is not itself a
   /// scroll view.
@@ -87,7 +92,20 @@ class AppPage extends StatelessWidget {
     }
     final Widget? footer = this.footer;
     final Widget? leading = this.leading;
+    final bool invertedBar = Theme.of(context).brightness != Brightness.dark;
+    final List<Widget> barActions = <Widget>[
+      ...actions,
+      if (overflow.isNotEmpty)
+        AppOverflowMenu(
+          key: const ValueKey<String>('app-page-overflow'),
+          items: overflow,
+          inverted: invertedBar,
+        ),
+    ];
     return Scaffold(
+      backgroundColor: inset
+          ? context.colors.background
+          : context.colors.surface,
       resizeToAvoidBottomInset: true,
       appBar: showAppBar
           ? AppBar(
@@ -98,7 +116,7 @@ class AppPage extends StatelessWidget {
                   : Sizes.minTapTarget + Space.x2,
               titleSpacing: leading == null ? Space.x3 : Space.x2,
               title: Text(title),
-              actions: actions,
+              actions: barActions,
             )
           : null,
       body: Column(

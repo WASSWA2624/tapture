@@ -35,10 +35,10 @@ Future<int> main(List<String> args)
 
 ## Definition of done
 
-- [ ] Renaming a class without renaming its file fails the check.
-- [ ] Tests written and passing: `frontend/test/tool/check_naming_test.dart` covers each rule with a passing and a failing fixture.
-- [ ] Contract above is implemented exactly, with nothing else made public.
-- [ ] Analyzer clean, formatter applied, guardrail suites green.
+- [x] Renaming a class without renaming its file fails the check.
+- [x] Tests written and passing: `frontend/test/tool/check_naming_test.dart` covers each rule with a passing and a failing fixture.
+- [x] Contract above is implemented exactly, with nothing else made public.
+- [x] Analyzer clean, formatter applied, guardrail suites green.
 
 ## Out of scope
 

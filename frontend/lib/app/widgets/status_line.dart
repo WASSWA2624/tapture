@@ -9,14 +9,16 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/network/network.dart';
 import 'package:tapture/core/widgets/app_brand_lockup.dart';
-import 'package:tapture/core/widgets/app_chip.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 
 import '../router.dart';
 
 /// Permanent one-line strip: where the operator is, and what is queued.
 ///
-/// Each chip is a link. Counts are derived, never cached (FE-STATE-06).
+/// Visible chrome is the wordmark plus an icon-only overflow control.
+/// Labelled commands live in that menu. Counts are derived, never cached
+/// (FE-STATE-06).
 class StatusLine extends ConsumerWidget {
   /// Creates the status line.
   const StatusLine({super.key});
@@ -31,17 +33,25 @@ class StatusLine extends ConsumerWidget {
         ref.watch(networkStateProvider).value ?? NetworkState.online;
     final bool byChoice = ref.watch(offlineByChoiceProvider);
     final int unprocessed = ref.watch(unprocessedCountProvider);
+    final bool compact = context.sizeClass == SizeClass.compact;
     final bool inverted =
-        context.sizeClass == SizeClass.compact &&
-        Theme.of(context).brightness != Brightness.dark;
+        compact && Theme.of(context).brightness != Brightness.dark;
     final AppColors colors = context.colors;
+    final Color bar = inverted
+        ? colors.primary
+        : (compact ? colors.surfaceVariant : colors.surface);
     return Material(
-      color: inverted ? colors.primary : colors.surface,
+      color: bar,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: colors.outline, width: Space.x0 / 2),
-          ),
+          border: inverted
+              ? null
+              : Border(
+                  bottom: BorderSide(
+                    color: colors.outline,
+                    width: Space.x0 / 2,
+                  ),
+                ),
         ),
         child: SizedBox(
           width: double.infinity,
@@ -51,52 +61,38 @@ class StatusLine extends ConsumerWidget {
             child: Row(
               children: <Widget>[
                 AppBrandLockup(inverted: inverted),
-                const SizedBox(width: Space.x2),
-                Expanded(
-                  child: Theme(
-                    data: Theme.of(context).copyWith(
-                      extensions: <ThemeExtension<dynamic>>[
-                        inverted
-                            ? colors.copyWith(surfaceVariant: colors.surface)
-                            : colors,
-                      ],
+                const Spacer(),
+                AppOverflowMenu(
+                  key: const ValueKey<String>('status-overflow'),
+                  inverted: inverted,
+                  items: <AppOverflowAction>[
+                    AppOverflowAction(
+                      key: const ValueKey<String>('status-project'),
+                      icon: Icons.work_outline,
+                      label: _whereLabel(projectId, projectLabel, contextLabel),
+                      onTap: () {
+                        context.go(_projectLocation(projectId));
+                      },
                     ),
-                    child: AppChipRow(
-                      scrollable: true,
-                      chips: <AppChip>[
-                        AppChip(
-                          key: const ValueKey<String>('status-project'),
-                          icon: Icons.work_outline,
-                          label: _whereLabel(
-                            projectId,
-                            projectLabel,
-                            contextLabel,
-                          ),
-                          onTap: () {
-                            context.go(_projectLocation(projectId));
-                          },
-                        ),
-                        AppChip(
-                          key: const ValueKey<String>('status-template'),
-                          icon: Icons.article_outlined,
-                          label: templateLabel,
-                          onTap: () => context.go(AppRoutes.templates),
-                        ),
-                        AppChip(
-                          key: const ValueKey<String>('status-network'),
-                          icon: _networkIcon(network, byChoice),
-                          label: _networkLabel(network, byChoice),
-                          onTap: () => context.go(AppRoutes.more),
-                        ),
-                        AppChip(
-                          key: const ValueKey<String>('status-unprocessed'),
-                          icon: Icons.pending_outlined,
-                          label: Copy.unprocessedCount(unprocessed),
-                          onTap: () => context.go(AppRoutes.queue),
-                        ),
-                      ],
+                    AppOverflowAction(
+                      key: const ValueKey<String>('status-template'),
+                      icon: Icons.article_outlined,
+                      label: templateLabel,
+                      onTap: () => context.go(AppRoutes.templates),
                     ),
-                  ),
+                    AppOverflowAction(
+                      key: const ValueKey<String>('status-network'),
+                      icon: _networkIcon(network, byChoice),
+                      label: _networkLabel(network, byChoice),
+                      onTap: () => context.go(AppRoutes.more),
+                    ),
+                    AppOverflowAction(
+                      key: const ValueKey<String>('status-unprocessed'),
+                      icon: Icons.pending_outlined,
+                      label: Copy.unprocessedCount(unprocessed),
+                      onTap: () => context.go(AppRoutes.queue),
+                    ),
+                  ],
                 ),
               ],
             ),

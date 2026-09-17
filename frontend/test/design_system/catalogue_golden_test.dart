@@ -16,6 +16,7 @@ import 'package:tapture/core/widgets/app_card.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_photo_thumb.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
@@ -223,8 +224,25 @@ Widget _sample(String name, TextEditingController field) {
       );
     case 'app_number_field':
       return const AppNumberField(label: 'Count', onChanged: _ignoreNum);
+    case 'app_overflow_menu':
+      return const AppOverflowMenu(
+        key: ValueKey<String>('app-overflow'),
+        items: <AppOverflowAction>[
+          AppOverflowAction(
+            icon: Icons.save_outlined,
+            label: Copy.save,
+            onTap: _noop,
+          ),
+        ],
+      );
     case 'app_page':
-      return const AppPage(title: Copy.galleryTitle, body: Text(Copy.save));
+      return const AppPage(
+        title: Copy.galleryTitle,
+        overflow: <AppOverflowAction>[
+          AppOverflowAction(label: Copy.save, onTap: _noop),
+        ],
+        body: Text(Copy.save),
+      );
     case 'app_photo_thumb':
       return AppPhotoThumb(
         photo: const PhotoAsset(sha256: 'abc', photoType: PhotoType.front),

@@ -6,21 +6,20 @@ import 'package:flutter/material.dart';
 typedef Typography = AppText;
 
 /// Type roles sized like a messaging client: platform UI fonts, compact
-/// headers, readable list rows.
+/// headers, readable list rows and 12dp timestamps.
 ///
 /// Metrics are identical in light, dark and outdoor (FE-THEME-03). Colour
 /// comes from [AppColors] at the call site, never from a one-mode default
 /// baked into the style (FE-THEME-02).
 abstract final class AppText {
-  /// System UI stack used by WhatsApp-class clients: Segoe on Windows,
-  /// Helvetica Neue on Apple, Roboto on Android, then generic sans.
+  /// System UI stack used by WhatsApp-class clients. Web keeps Roboto
+  /// because CanvasKit cannot load OS-installed faces.
   static const List<String> fontFallback = <String>[
+    'Roboto',
     'Segoe UI',
     'Helvetica Neue',
     'Helvetica',
-    'Roboto',
     'Arial',
-    'sans-serif',
   ];
 
   /// First-choice UI face for the running platform. Goldens pin Ahem on
@@ -34,13 +33,23 @@ abstract final class AppText {
     };
   }
 
-  /// [ThemeData.fontFamily] for the running app. Tests keep the engine
-  /// default (Ahem) so contrast and goldens stay machine-stable.
+  /// [ThemeData.fontFamily] for the running app. Tests and web keep the
+  /// engine default so glyphs (including space) always resolve; CanvasKit
+  /// cannot load an OS-installed face by family name.
   static String? get themeFamily {
-    if (const bool.fromEnvironment('FLUTTER_TEST')) {
+    if (const bool.fromEnvironment('FLUTTER_TEST') || kIsWeb) {
       return null;
     }
     return uiFamily;
+  }
+
+  /// Native-only fallback list. CanvasKit cannot load OS faces, so web
+  /// and tests omit this and stay on the bundled Roboto / Ahem.
+  static List<String>? get themeFallback {
+    if (const bool.fromEnvironment('FLUTTER_TEST') || kIsWeb) {
+      return null;
+    }
+    return fontFallback;
   }
 
   /// Screen or hero heading.
@@ -48,8 +57,6 @@ abstract final class AppText {
     fontSize: 22,
     fontWeight: FontWeight.w600,
     height: 1.25,
-    letterSpacing: 0,
-    fontFamilyFallback: fontFallback,
   );
 
   /// Page and app-bar title.
@@ -57,26 +64,20 @@ abstract final class AppText {
     fontSize: 20,
     fontWeight: FontWeight.w500,
     height: 1.25,
-    letterSpacing: 0,
-    fontFamilyFallback: fontFallback,
   );
 
   /// Group heading inside a list or form.
   static const TextStyle section = TextStyle(
     fontSize: 14,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
     height: 1.3,
-    letterSpacing: 0,
-    fontFamilyFallback: fontFallback,
   );
 
   /// Running text and message body.
   static const TextStyle body = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w400,
-    height: 1.3,
-    letterSpacing: 0,
-    fontFamilyFallback: fontFallback,
+    height: 1.35,
   );
 
   /// List-row title and emphasised running text.
@@ -84,8 +85,6 @@ abstract final class AppText {
     fontSize: 17,
     fontWeight: FontWeight.w500,
     height: 1.3,
-    letterSpacing: 0,
-    fontFamilyFallback: fontFallback,
   );
 
   /// Control labels and chip text.
@@ -93,17 +92,13 @@ abstract final class AppText {
     fontSize: 14,
     fontWeight: FontWeight.w400,
     height: 1.25,
-    letterSpacing: 0,
-    fontFamilyFallback: fontFallback,
   );
 
   /// Helper, timestamp and secondary copy.
   static const TextStyle caption = TextStyle(
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: FontWeight.w400,
-    height: 1.25,
-    letterSpacing: 0,
-    fontFamilyFallback: fontFallback,
+    height: 1.3,
   );
 
   /// Identifiers, codes and verbatim values.
@@ -113,6 +108,5 @@ abstract final class AppText {
     height: 1.3,
     fontFamily: 'monospace',
     letterSpacing: 0.2,
-    fontFamilyFallback: fontFallback,
   );
 }

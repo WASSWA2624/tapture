@@ -40,7 +40,7 @@ class AppSectionHeader extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: AppText.section.copyWith(
-                    color: context.colors.onSurface,
+                    color: context.colors.primary,
                   ),
                 ),
               ),

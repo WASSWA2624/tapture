@@ -32,9 +32,9 @@ Create every directory the architecture requires under frontend/, each with a ba
 
 ## Definition of done
 
-- [ ] Every directory named in the plan exists and contains a barrel file.
-- [ ] Tests written and passing: `frontend/tool/check_structure.dart` fails when a required directory is missing or an unexpected top-level directory appears.
-- [ ] Analyzer clean, formatter applied, guardrail suites green.
+- [x] Every directory named in the plan exists and contains a barrel file.
+- [x] Tests written and passing: `frontend/tool/check_structure.dart` fails when a required directory is missing or an unexpected top-level directory appears.
+- [x] Analyzer clean, formatter applied, guardrail suites green.
 
 ## Out of scope
 

@@ -33,6 +33,11 @@ void main() {
 
     expect(find.byType(StatusLine), findsOneWidget);
     expect(find.text(Copy.appName), findsOneWidget);
+    expect(find.byIcon(Icons.more_vert), findsOneWidget);
+    expect(find.text('Alpha · Ward 1'), findsNothing);
+    expect(find.text(Copy.networkOnline), findsNothing);
+
+    await _openOverflow(tester);
     expect(find.text('Alpha · Ward 1'), findsOneWidget);
     expect(find.text('Asset'), findsOneWidget);
     expect(find.text(Copy.networkOnline), findsOneWidget);
@@ -48,23 +53,17 @@ void main() {
       AppRoutes.project('p1'),
     );
 
-    await tester.ensureVisible(
-      find.byKey(const ValueKey<String>('status-template')),
-    );
+    await _openOverflow(tester);
     await tester.tap(find.byKey(const ValueKey<String>('status-template')));
     await tester.pumpAndSettle();
     expect(container.read(routerProvider).state.uri.path, AppRoutes.templates);
 
-    await tester.ensureVisible(
-      find.byKey(const ValueKey<String>('status-network')),
-    );
+    await _openOverflow(tester);
     await tester.tap(find.byKey(const ValueKey<String>('status-network')));
     await tester.pumpAndSettle();
     expect(container.read(routerProvider).state.uri.path, AppRoutes.more);
 
-    await tester.ensureVisible(
-      find.byKey(const ValueKey<String>('status-unprocessed')),
-    );
+    await _openOverflow(tester);
     await tester.tap(find.byKey(const ValueKey<String>('status-unprocessed')));
     await tester.pumpAndSettle();
     expect(container.read(routerProvider).state.uri.path, AppRoutes.queue);
@@ -81,15 +80,20 @@ void main() {
 
     await _pump(tester, radio: radio);
 
+    await _openOverflow(tester);
     expect(find.text(Copy.networkOnline), findsOneWidget);
+    await _closeOverflow(tester);
 
     radio.add(NetworkState.metered);
     await tester.pump();
+    await _openOverflow(tester);
     expect(find.text(Copy.networkMetered), findsOneWidget);
     expect(find.byIcon(Icons.signal_cellular_alt), findsOneWidget);
+    await _closeOverflow(tester);
 
     radio.add(NetworkState.offline);
     await tester.pump();
+    await _openOverflow(tester);
     expect(find.text(Copy.networkOffline), findsOneWidget);
     expect(find.byIcon(Icons.cloud_off), findsWidgets);
   });
@@ -105,6 +109,7 @@ void main() {
 
     await _pump(tester, radio: radio, byChoice: true);
 
+    await _openOverflow(tester);
     expect(find.text(Copy.networkOfflineByChoice), findsOneWidget);
     expect(find.byIcon(Icons.cloud_off), findsWidgets);
     expect(find.text(Copy.networkOnline), findsNothing);
@@ -140,6 +145,16 @@ Future<ProviderContainer> _pump(
   await tester.pump();
   await tester.pumpAndSettle();
   return ProviderScope.containerOf(tester.element(find.byType(TaptureApp)));
+}
+
+Future<void> _openOverflow(WidgetTester tester) async {
+  await tester.tap(find.byKey(const ValueKey<String>('status-overflow')));
+  await tester.pumpAndSettle();
+}
+
+Future<void> _closeOverflow(WidgetTester tester) async {
+  await tester.tapAt(const Offset(8, 8));
+  await tester.pumpAndSettle();
 }
 
 Override _connectivityOverride(StreamController<NetworkState> radio) {

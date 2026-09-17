@@ -31,10 +31,10 @@ Write the installer that puts the pre-commit and commit-message hooks in place, 
 
 ## Definition of done
 
-- [ ] A commit message without a task number is rejected.
-- [ ] Running the installer twice leaves exactly one copy of each hook.
-- [ ] Tests written and passing: `frontend/test/tool/commit_msg_test.dart` covers valid and invalid subjects.
-- [ ] Analyzer clean, formatter applied, guardrail suites green.
+- [x] A commit message without a task number is rejected.
+- [x] Running the installer twice leaves exactly one copy of each hook.
+- [x] Tests written and passing: `frontend/test/tool/commit_msg_test.dart` covers valid and invalid subjects.
+- [x] Analyzer clean, formatter applied, guardrail suites green.
 
 ## Out of scope
 

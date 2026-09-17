@@ -20,9 +20,9 @@ Future<int> main(List<String> args)  // --fast skips golden and integration suit
 
 ## Steps
 
-1. Run in order: format check, analyzer, dependency allowlist, structure check, plan check, guardrail tests, unit and widget tests.
+1. Run in this order (as built in `frontend/tool/verify.dart`): format (`dart format --output=none --set-exit-if-changed .`), analyzer (`flutter analyze`), dependency allowlist, structure, plan, **test presence `--strict`**, guardrail tests, unit and widget tests, then golden tests and integration tests.
 2. Print a single summary table of gate names and outcomes, and exit non-zero if any gate fails.
-3. Support --fast for the pre-commit path and the full run for continuous integration.
+3. Support `--fast` for the pre-commit path: goldens and integration are set aside. Naming and repo-hygiene checkers are reached through their own guardrail suites, not as extra rows.
 
 ## Constraints
 
@@ -35,10 +35,10 @@ Future<int> main(List<String> args)  // --fast skips golden and integration suit
 
 ## Definition of done
 
-- [ ] One command reproduces the entire review gate locally.
-- [ ] Tests written and passing: `frontend/test/tool/verify_test.dart` asserts the exit code aggregates gate failures correctly.
-- [ ] Contract above is implemented exactly, with nothing else made public.
-- [ ] Analyzer clean, formatter applied, guardrail suites green.
+- [x] One command reproduces the entire review gate locally.
+- [x] Tests written and passing: `frontend/test/tool/verify_test.dart` asserts the exit code aggregates gate failures correctly.
+- [x] Contract above is implemented exactly, with nothing else made public.
+- [x] Analyzer clean, formatter applied, guardrail suites green.
 
 ## Out of scope
 

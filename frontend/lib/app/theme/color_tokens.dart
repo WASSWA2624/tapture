@@ -83,16 +83,16 @@ final class AppColors extends ThemeExtension<AppColors> {
   /// Extraction or match confidence below the medium band.
   final Color confidenceLow;
 
-  /// Daylight palette: white rows on a recessed page, brand primary.
+  /// Daylight palette: white lists on a chat-wallpaper page, header teal.
   static const AppColors light = AppColors(
     surface: _white,
-    surfaceVariant: _pageLight,
+    surfaceVariant: _chromeLight,
     background: _pageLight,
     onSurface: _inkLight,
     outline: _outlineLight,
-    primary: _brand600,
+    primary: _headerLight,
     onPrimary: _white,
-    secondary: _brand700,
+    secondary: _accentLight,
     danger: _dangerLight,
     warning: _warningLight,
     success: _successLight,
@@ -102,16 +102,16 @@ final class AppColors extends ThemeExtension<AppColors> {
     confidenceLow: _dangerLight,
   );
 
-  /// Dim palette: charcoal panels, lighter primary, lighter status.
+  /// Dim palette: charcoal panels, bright accent, lighter status.
   static const AppColors dark = AppColors(
     surface: _panelDark,
     surfaceVariant: _wellDark,
     background: _pageDark,
     onSurface: _inkDark,
     outline: _outlineDark,
-    primary: _brand300,
+    primary: _accentDark,
     onPrimary: _pageDark,
-    secondary: _brand200,
+    secondary: _accentDarkSoft,
     danger: _dangerDark,
     warning: _warningDark,
     success: _successDark,
@@ -131,9 +131,9 @@ final class AppColors extends ThemeExtension<AppColors> {
     background: _white,
     onSurface: _black,
     outline: _black,
-    primary: _brand700,
+    primary: _headerLight,
     onPrimary: _white,
-    secondary: _brand950,
+    secondary: _accentOutdoor,
     danger: _dangerOutdoor,
     warning: _warningOutdoor,
     success: _successOutdoor,
@@ -221,30 +221,40 @@ extension AppColorsX on BuildContext {
   }
 }
 
-// Brand ramp (`branding/palette.json`). Public tokens stay semantic
-// (FE-THEME-04); these names are the private source of the hex values.
-const Color _brand200 = Color(0xFFC8DBF6);
-const Color _brand300 = Color(0xFF95B9F1);
-const Color _brand600 = Color(0xFF2662EB);
-const Color _brand700 = Color(0xFF1748C7);
-const Color _brand950 = Color(0xFF0A1236);
+// Messaging-client chrome. Public tokens stay semantic (FE-THEME-04);
+// these names are the private source of the hex values.
 const Color _white = Color(0xFFFFFFFF);
 const Color _black = Color(0xFF000000);
 
-/// Recessed page and wells, matching a messaging-client chrome.
-const Color _pageLight = Color(0xFFF0F2F5);
+/// Classic header teal; holds 4.5:1 as ink and as a fill for white.
+const Color _headerLight = Color(0xFF075E54);
+
+/// Supporting teal, darker than [ _headerLight ] so the two stay distinct.
+const Color _accentLight = Color(0xFF0A5C4E);
+
+/// High-contrast outdoor supporting ink.
+const Color _accentOutdoor = Color(0xFF042F28);
+
+/// Bright accent used as dark-mode ink and selected chrome.
+const Color _accentDark = Color(0xFF00A884);
+
+/// Softer mint for dark-mode supporting ink.
+const Color _accentDarkSoft = Color(0xFF8FE3C8);
+
+/// Chat-wallpaper page, list chrome, and ink.
+const Color _pageLight = Color(0xFFEFEAE2);
+const Color _chromeLight = Color(0xFFF0F2F5);
 const Color _inkLight = Color(0xFF111B21);
 const Color _pageDark = Color(0xFF0B141A);
 const Color _panelDark = Color(0xFF111B21);
 const Color _wellDark = Color(0xFF202C33);
 const Color _inkDark = Color(0xFFE9EDEF);
 
-/// Interactive outline on light surfaces; brand-200 is 1.4:1 on white.
-const Color _outlineLight = Color(0xFF5C6C7F);
+/// Interactive outline on light surfaces; also the secondary-text grey.
+const Color _outlineLight = Color(0xFF54656F);
 
-/// Interactive outline on dark surfaces; still clears 3:1 on the dim
-/// surface variant.
-const Color _outlineDark = Color(0xFF6496EF);
+/// Interactive outline on dark surfaces; still clears 3:1 on the well.
+const Color _outlineDark = Color(0xFF8696A0);
 
 const Color _dangerLight = Color(0xFFB42318);
 const Color _warningLight = Color(0xFF93370D);

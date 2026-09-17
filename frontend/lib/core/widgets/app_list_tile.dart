@@ -55,6 +55,10 @@ class AppListTile extends StatelessWidget {
     final AppColors colors = context.colors;
     final bool interactive = onTap != null || onLongPress != null;
     final Color foreground = colors.onSurface;
+    final double dividerIndent =
+        Space.x4 +
+        (selected ? Space.x6 + Space.x3 : 0) +
+        (leading != null ? Sizes.minTapTarget + Space.x3 : 0);
     final Widget content = ConstrainedBox(
       constraints: BoxConstraints(
         minHeight: dense ? Sizes.minTapTarget : Sizes.minTapTarget + Space.x6,
@@ -109,6 +113,9 @@ class AppListTile extends StatelessWidget {
         ),
       ),
     );
+    final Widget row = interactive
+        ? InkWell(onTap: onTap, onLongPress: onLongPress, child: content)
+        : content;
     return Semantics(
       button: onTap != null,
       selected: selected,
@@ -119,15 +126,19 @@ class AppListTile extends StatelessWidget {
       onLongPress: onLongPress,
       child: Material(
         color: selected ? colors.surfaceVariant : colors.surface,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: colors.outline, width: Space.x0 / 2),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            row,
+            Padding(
+              padding: EdgeInsetsDirectional.only(start: dividerIndent),
+              child: Divider(
+                height: Space.x0,
+                thickness: Space.x0 / 2,
+                color: colors.outline,
+              ),
             ),
-          ),
-          child: interactive
-              ? InkWell(onTap: onTap, onLongPress: onLongPress, child: content)
-              : content,
+          ],
         ),
       ),
     );
