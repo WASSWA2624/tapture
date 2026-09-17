@@ -85,7 +85,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [060 — Exports table](04-data-layer/060-exports-table.md)
 - [x] [061 — Merge session, conflict and version vector tables](04-data-layer/061-merge-tables.md)
 - [x] [062 — Repository interfaces and test factories](04-data-layer/062-repository-interfaces.md)
-- [ ] [063 — Database integrity check](04-data-layer/063-db-integrity-check.md)
+- [x] [063 — Database integrity check](04-data-layer/063-db-integrity-check.md)
 - [ ] [064 — Optional database encryption](04-data-layer/064-db-encryption.md)
 
 ## 05 — File storage

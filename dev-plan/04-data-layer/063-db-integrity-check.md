@@ -37,10 +37,10 @@ Future<Result<List<IntegrityFinding>>> runIntegrityCheck(AppDatabase db);
 
 ## Definition of done
 
-- [ ] A database with deliberately orphaned rows produces one finding per problem, each naming entity type and id.
-- [ ] A clean database produces an empty list and adds no measurable delay to cold start (FE-PERF-01).
-- [ ] Running the check twice changes nothing on disk.
-- [ ] Tests: `frontend/test/core/db/integrity_check_test.dart` seeds orphaned fields, a missing photo file, a job on a
+- [x] A database with deliberately orphaned rows produces one finding per problem, each naming entity type and id.
+- [x] A clean database produces an empty list and adds no measurable delay to cold start (FE-PERF-01).
+- [x] Running the check twice changes nothing on disk.
+- [x] Tests: `frontend/test/core/db/integrity_check_test.dart` seeds orphaned fields, a missing photo file, a job on a
       deleted record and a tombstone-less delete, and asserts one finding each plus an unchanged row count afterwards.
 
 ## Out of scope

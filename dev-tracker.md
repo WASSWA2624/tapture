@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**62 of 281 tasks complete (22.1%)** · last updated 2026-09-17
+**63 of 281 tasks complete (22.4%)** · last updated 2026-09-17
 
 `█████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -11,7 +11,7 @@
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
 | 02 — Foundation services | 11 | 11 | `██████████████` 100% |
 | 03 — Design system | 19 | 19 | `██████████████` 100% |
-| 04 — Local database | 14 | 16 | `████████████░░` 88% |
+| 04 — Local database | 15 | 16 | `█████████████░` 94% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
 | 07 — Account and settings | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **62** | **281** | `██░░░░░░░░░░░░` 22.1% |
+| **Total** | **63** | **281** | `██░░░░░░░░░░░░` 22.4% |
 
 ## Completed
 
@@ -98,6 +98,7 @@
 | 060 — Exports table | 2026-09-17 | Schema v11 adds `exports` indexed on projectId+createdAt. Completing an export inserts one row with a per-project version; re-export is a new row and never rewrites path or hash; an abandoned or incomplete run writes none. History lists newest first through the index. Guarded by version increment, history+index, failed-export absence, and v11 column tests. |
 | 061 — Merge session, conflict and version vector tables | 2026-09-17 | Schema v12 adds `merge_sessions`, `merge_conflicts` (indexed on sessionId+resolution) and `version_vectors` unique on entity+device. `compareVectors` reports dominates/dominated/concurrent/equal; resolving a conflict records who/when and bumps the local vector. Sessions keep the undo snapshot path across restart. Guarded by session+queue, resolution+vector bump, unique triple, four relations, classify-from-one-read, and v12 column tests. |
 | 062 — Repository interfaces and test factories | 2026-09-17 | Eight domain ports return domain types and `Result` (watch lists stay `Stream`). Hand-written fakes honour the same failure contract; `aProject`/`aRecord`/`seededDatabase` make a valid graph in one line. Guarded by one fake suite per interface and a record-DAO read of the seeded graph. |
+| 063 — Database integrity check | 2026-09-17 | Read-only `runIntegrityCheck` reports orphaned fields, missing photo/attachment files, jobs and evidence on gone records, deletes without tombstones, and `PRAGMA foreign_key_check`. Pages at list size; file stats run off the UI thread. Guarded by one-finding-per-problem, clean-empty, twice-unchanged, and row-count tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -276,7 +277,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 04 — Local database
 
-*14 of 16 complete.*
+*15 of 16 complete.*
 
 - [x] [049 — Drift database bootstrap and migration strategy](dev-plan/04-data-layer/049-drift-setup.md)
 - [x] [050 — Shared columns, DAO base and transaction helper](dev-plan/04-data-layer/050-column-mixins.md)
@@ -292,7 +293,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [060 — Exports table](dev-plan/04-data-layer/060-exports-table.md)
 - [x] [061 — Merge session, conflict and version vector tables](dev-plan/04-data-layer/061-merge-tables.md)
 - [x] [062 — Repository interfaces and test factories](dev-plan/04-data-layer/062-repository-interfaces.md)
-- [ ] [063 — Database integrity check](dev-plan/04-data-layer/063-db-integrity-check.md)
+- [x] [063 — Database integrity check](dev-plan/04-data-layer/063-db-integrity-check.md)
 - [ ] [064 — Optional database encryption](dev-plan/04-data-layer/064-db-encryption.md)
 
 ### 05 — File storage
