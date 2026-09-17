@@ -1,8 +1,8 @@
 # Tapture — development tracker
 
-**38 of 281 tasks complete (13.5%)** · last updated 2026-09-17
+**39 of 281 tasks complete (13.9%)** · last updated 2026-09-17
 
-`█████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
+`██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
 ## Phase progress
 
@@ -10,7 +10,7 @@
 | :--- | ---: | ---: | :--- |
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
 | 02 — Foundation services | 11 | 11 | `██████████████` 100% |
-| 03 — Design system | 9 | 19 | `███████░░░░░░░` 47% |
+| 03 — Design system | 10 | 19 | `███████░░░░░░░` 53% |
 | 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **38** | **281** | `█░░░░░░░░░░░░░` 13.5% |
+| **Total** | **39** | **281** | `██░░░░░░░░░░░░` 13.9% |
 
 ## Completed
 
@@ -74,6 +74,7 @@
 | 036 — Choice, multi-choice and boolean fields | 2026-09-17 | `Choice` is the shared option; `AppChoiceField` is segmented under four options and a searchable sheet at four or more; `AppMultiChoiceField` shows selected values as chips and offers select-all/clear in the sheet; `AppSwitchTile` (and `.checkbox`) is the full-width boolean. Guarded by the four-option boundary, 200-option search, whole-tile toggle, and 9 goldens. |
 | 037 — Chip and chip row | 2026-09-17 | `AppChip` is plain, selectable (tick plus tint) and dismissible from one widget; a chip with no callback is not a tap target. `AppChipRow` wraps or scrolls without clipping a label. Multi-choice now composes these. Guarded by tap/dismiss, wrap versus scroll, 200 percent ellipsis, and 3 goldens. |
 | 038 — Card, list tile and section header | 2026-09-17 | `AppCard` takes surface treatment from `Elevation.surface` and is tappable only with `onTap`. `AppListTile` is the one row for projects, records, templates and datasets — dense or comfortable, selected with a tick, status slot, trailing, tap opens and long-press selects. `AppSectionHeader` uses the section type role. Guarded by tap/long-press, selection+status not colour alone, 200 percent, and 9 goldens. |
+| 039 — Status pill and badge | 2026-09-17 | `AppStatusPill` and `StatusStyle.of` map every `RecordStatus` to colour, icon and label; `.badge` fits list rows. Screens cannot map status to colour themselves. Guarded by an exhaustive style test, icon-and-label widget tests, 200 percent, and 3 goldens of every status. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -139,7 +140,10 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 036 | Catalogue copy (`Select all`, `Clear`) is still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
 | 037 | FE-STR-06 wants one public class; the contract publishes `AppChip` and `AppChipRow`. | Closed by 037 — `AppChipRow` lives in a part file so one public class per file still holds |
 | 037 | Catalogue copy (`Dismiss {label}`) is still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
-| 038 | The contract types the status slot as `AppStatusPill`, which is task 039. | Open — implemented as `Widget? status`; 039 can pass `AppStatusPill` without changing the slot |
+| 038 | The contract types the status slot as `AppStatusPill`, which is task 039. | Closed by 039 — `AppListTile.status` is `AppStatusPill?`; `.badge` is the compact form |
+| 039 | FE-STR-06 wants one public class; the contract publishes `StatusStyle` too. | Closed by 039 — `StatusStyle` lives in a part file |
+| 039 | `StatusStyle.of` needs colours, and `RecordStatus` is named by task 162. | Open — `of` takes `AppColors` as well as the enum; the enum lives here so core does not import features. 162 should reuse it, not redeclare it, and may need a Dart-only home so domain stays Flutter-free |
+| 039 | Status labels are still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
 
 ## Checklist
 
@@ -184,7 +188,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 03 — Design system
 
-*9 of 19 complete.*
+*10 of 19 complete.*
 
 - [x] [030 — Design tokens: colour, type, spacing and elevation](dev-plan/03-design-system/030-color-tokens.md)
 - [x] [031 — Material 3 themes and the theme mode controller](dev-plan/03-design-system/031-theme-assembly.md)
@@ -195,7 +199,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [036 — Choice, multi-choice and boolean fields](dev-plan/03-design-system/036-app-choice-field.md)
 - [x] [037 — Chip and chip row](dev-plan/03-design-system/037-app-chip.md)
 - [x] [038 — Card, list tile and section header](dev-plan/03-design-system/038-app-card.md)
-- [ ] [039 — Status pill and badge](dev-plan/03-design-system/039-app-status-pill.md)
+- [x] [039 — Status pill and badge](dev-plan/03-design-system/039-app-status-pill.md)
 - [ ] [040 — Empty, error and loading states, and the async value view](dev-plan/03-design-system/040-app-empty-state.md)
 - [ ] [041 — Dialog, sheet, snackbar and banner services](dev-plan/03-design-system/041-app-dialog-service.md)
 - [ ] [042 — Step progress list](dev-plan/03-design-system/042-app-progress-steps.md)

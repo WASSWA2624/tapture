@@ -10,6 +10,7 @@ export 'app_page.dart';
 export 'app_primary_action.dart';
 export 'app_search_field.dart';
 export 'app_section_header.dart';
+export 'app_status_pill.dart';
 export 'error_boundary.dart';
 export 'fields/app_choice_field.dart';
 export 'fields/app_date_field.dart';

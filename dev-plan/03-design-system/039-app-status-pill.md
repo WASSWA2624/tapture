@@ -34,7 +34,7 @@ abstract final class StatusStyle { static (Color, IconData, String) of(RecordSta
 
 ## Definition of done
 
-- [ ] A colour-blind user in direct sunlight can still read the status.
-- [ ] Every status in the app renders through this widget; no screen maps status to colour itself.
-- [ ] Tests: golden of every `RecordStatus` in light, dark and outdoor; unit test that `StatusStyle.of` is exhaustive
+- [x] A colour-blind user in direct sunlight can still read the status.
+- [x] Every status in the app renders through this widget; no screen maps status to colour itself.
+- [x] Tests: golden of every `RecordStatus` in light, dark and outdoor; unit test that `StatusStyle.of` is exhaustive
       over the enum.

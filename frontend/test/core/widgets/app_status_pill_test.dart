@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
@@ -9,50 +10,44 @@ import 'package:tapture/core/widgets/app_status_pill.dart';
 import '../../support/a11y_matchers.dart';
 
 void main() {
-  testWidgets('tap opens and long-press selects', (WidgetTester tester) async {
-    bool opened = false;
-    bool selected = false;
+  testWidgets('every status shows an icon and a label, not colour alone', (
+    WidgetTester tester,
+  ) async {
     await _pump(
       tester,
-      AppListTile(
-        title: 'Boiler A',
-        subtitle: 'Plant 3',
-        onTap: () => opened = true,
-        onLongPress: () => selected = true,
+      Column(
+        children: <Widget>[
+          for (final RecordStatus status in RecordStatus.values)
+            AppStatusPill(status: status),
+        ],
       ),
     );
 
-    expect(find.byType(AppListTile), meetsTapTarget());
-    expect(find.byType(AppListTile), hasSemanticLabel('Boiler A'));
-
-    await tester.tap(find.byType(AppListTile));
-    await tester.pump();
-    expect(opened, isTrue);
-    expect(selected, isFalse);
-
-    await tester.longPress(find.byType(AppListTile));
-    await tester.pump();
-    expect(selected, isTrue);
+    const AppColors colors = AppColors.light;
+    for (final RecordStatus status in RecordStatus.values) {
+      final (_, IconData icon, String label) = StatusStyle.of(status, colors);
+      expect(find.text(label), findsOneWidget);
+      expect(find.byIcon(icon), findsOneWidget);
+    }
   });
 
-  testWidgets('selection and status are named, not colour alone', (
+  testWidgets('the badge form fits a list tile and stays labelled', (
     WidgetTester tester,
   ) async {
     await _pump(
       tester,
       const AppListTile(
         title: 'Boiler A',
-        selected: true,
-        status: AppStatusPill.badge(status: RecordStatus.draft),
+        status: AppStatusPill.badge(status: RecordStatus.needsReview),
       ),
     );
 
-    expect(find.byIcon(Icons.check), findsOneWidget);
-    expect(find.text('Draft'), findsOneWidget);
-    expect(find.byIcon(Icons.edit_note), findsOneWidget);
+    expect(find.text('Needs review'), findsOneWidget);
+    expect(find.byIcon(Icons.flag), findsOneWidget);
+    expect(find.byType(AppStatusPill), hasSemanticLabel('Needs review'));
   });
 
-  testWidgets('a dense row stays usable at 200 percent text scale', (
+  testWidgets('pills stay usable at 200 percent text scale', (
     WidgetTester tester,
   ) async {
     tester.platformDispatcher.textScaleFactorTestValue = 2;
@@ -61,13 +56,15 @@ void main() {
       MaterialApp(
         theme: buildTheme(brightness: Brightness.light),
         home: AppPage(
-          title: 'Row',
-          body: AppListTile(
-            dense: true,
-            title: 'A very long record title that must wrap rather than clip',
-            subtitle: 'Plant 3 · captured this morning',
-            onTap: () {},
-            onLongPress: () {},
+          title: 'Status',
+          body: Column(
+            children: <Widget>[
+              for (final RecordStatus status in RecordStatus.values)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: Space.x2),
+                  child: AppStatusPill(status: status),
+                ),
+            ],
           ),
         ),
       ),
@@ -79,7 +76,7 @@ void main() {
 
 Future<void> _pump(WidgetTester tester, Widget child) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(400, 800);
+  tester.view.physicalSize = const Size(400, 1200);
   addTearDown(() {
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();

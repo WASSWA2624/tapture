@@ -3,10 +3,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/outdoor_theme.dart';
-import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_status_pill.dart';
 
 void main() {
   group('app list tile', () {
@@ -71,7 +71,7 @@ Future<void> _pumpGallery(WidgetTester tester, ThemeData theme) async {
             const AppListTile(
               title: 'With status',
               subtitle: 'Plant 3',
-              status: AppChip(label: 'Draft', icon: Icons.edit_note),
+              status: AppStatusPill.badge(status: RecordStatus.draft),
             ),
             AppListTile(
               title: 'With trailing',

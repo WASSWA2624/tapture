@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/widgets/app_status_pill.dart';
 
 /// The one list row projects, records, templates and datasets render
 /// through (FE-CONS-06). Tap opens; long-press selects (FE-CONS-10).
@@ -32,10 +33,9 @@ class AppListTile extends StatelessWidget {
   /// Optional supporting line under [title].
   final String? subtitle;
 
-  /// Status-pill slot (task 039). Until that widget exists the caller
-  /// passes a labelled child so colour is not the only signal
-  /// (FE-A11Y-05).
-  final Widget? status;
+  /// Status pill. Always an [AppStatusPill] so colour is never mapped here
+  /// (FE-CONS-06, FE-A11Y-05).
+  final AppStatusPill? status;
 
   /// When true, vertical padding is tighter. Height still meets 48dp.
   final bool dense;
