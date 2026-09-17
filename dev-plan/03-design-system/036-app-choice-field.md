@@ -48,7 +48,7 @@ class AppSwitchTile extends StatelessWidget {
 
 ## Definition of done
 
-- [ ] A 200-option list stays usable on a compact screen, and selected values are readable without opening the sheet.
-- [ ] Settings and boolean template fields share one control.
-- [ ] Tests: widget tests of the presentation switch either side of the four-option boundary, of select-all and clear,
+- [x] A 200-option list stays usable on a compact screen, and selected values are readable without opening the sheet.
+- [x] Settings and boolean template fields share one control.
+- [x] Tests: widget tests of the presentation switch either side of the four-option boundary, of select-all and clear,
       and that tapping anywhere on a switch tile toggles it; goldens of all three in light, dark and outdoor.

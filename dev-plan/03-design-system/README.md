@@ -10,7 +10,7 @@ Tasks 030–048 (19). Each file is a standalone implementation prompt.
 - [x] [033 — Page scaffold](033-app-page.md)
 - [x] [034 — Buttons, icon buttons and the primary action](034-app-button.md)
 - [x] [035 — Text, number, date and search fields](035-app-text-field.md)
-- [ ] [036 — Choice, multi-choice and boolean fields](036-app-choice-field.md)
+- [x] [036 — Choice, multi-choice and boolean fields](036-app-choice-field.md)
 - [ ] [037 — Chip and chip row](037-app-chip.md)
 - [ ] [038 — Card, list tile and section header](038-app-card.md)
 - [ ] [039 — Status pill and badge](039-app-status-pill.md)
