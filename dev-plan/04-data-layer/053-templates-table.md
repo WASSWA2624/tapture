@@ -35,9 +35,9 @@ capture and export engines read, and the predefined checklist rows with their al
 
 ## Definition of done
 
-- [ ] A template with fields and rows round-trips, and a duplicate `fieldKey` within one template is refused by the
+- [x] A template with fields and rows round-trips, and a duplicate `fieldKey` within one template is refused by the
       unique index rather than by application code.
-- [ ] A shipped template with no `projectId` coexists with project-scoped templates.
-- [ ] Tests: `frontend/test/core/db/tables/templates_test.dart` covers header insert, version bump and the shipped case;
+- [x] A shipped template with no `projectId` coexists with project-scoped templates.
+- [x] Tests: `frontend/test/core/db/tables/templates_test.dart` covers header insert, version bump and the shipped case;
       `template_fields_test.dart` asserts the unique constraint and sort order; `template_rows_test.dart` covers alias
       lookup. All against an in-memory database, covering their migration steps.

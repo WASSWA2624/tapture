@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**52 of 281 tasks complete (18.5%)** · last updated 2026-09-17
+**53 of 281 tasks complete (18.9%)** · last updated 2026-09-17
 
 `███████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -11,7 +11,7 @@
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
 | 02 — Foundation services | 11 | 11 | `██████████████` 100% |
 | 03 — Design system | 19 | 19 | `██████████████` 100% |
-| 04 — Local database | 4 | 16 | `████░░░░░░░░░░` 25% |
+| 04 — Local database | 5 | 16 | `█████░░░░░░░░░` 31% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
 | 07 — Account and settings | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **52** | **281** | `██░░░░░░░░░░░░` 18.5% |
+| **Total** | **53** | **281** | `██░░░░░░░░░░░░` 18.9% |
 
 ## Completed
 
@@ -88,6 +88,7 @@
 | 050 — Shared columns, DAO base and transaction helper | 2026-09-17 | `MergeColumns` supplies id (UUIDv7 text), timestamps, device and rev. `BaseDao` watches, pages, upserts with a rev/`updatedAt` stamp, and soft-deletes through a tombstone hook. `runInTransaction` joins an open write instead of nesting. Sqlite uniqueness and busy map to `StorageFailure`. Guarded by rev-bump, skip-helper, watch/get/page, uniqueness mapping, and nested rollback tests. |
 | 051 — Tombstones, audit log and device profile tables | 2026-09-17 | Schema v2 adds `tombstones` (unique on entity type plus id), append-only `audit_log` with a history index, and a single `device_profile` row keyed `local`. `writeTombstone` is the `softDelete` hook; `appendAudit` and `ensureDeviceProfile` run in the caller's transaction. Guarded by delete-plus-tombstone atomicity, previous/new audit values, and idempotent first-launch tests. |
 | 052 — Projects and context tables | 2026-09-17 | Schema v3 adds `projects` (indexed on status plus `updatedAt`, settings JSON validated on write) and context definitions, state and presets. Setting a higher context level deletes lower state rows in one transaction. Guarded by paged status list/index, malformed-settings refusal, cascade-clear and preset round-trip tests. |
+| 053 — Templates, template fields and template rows tables | 2026-09-17 | Schema v4 adds `templates` (nullable `projectId` for shipped rows, version bump on header edit), `template_fields` unique on template plus field key, and `template_rows` with alias lookup in Dart. JSON columns are validated on write. Guarded by round-trip, uniqueness, sort-order, shipped-coexist and alias tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -193,6 +194,8 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 052 | The constraint says five tables; the steps name four (projects plus three context tables). | Open — implemented the four named tables; a later pass can add pins if 113 needs a fifth |
 | 052 | FE-STR-06 allows one public class per file; context definitions, state and presets are three classes. | Open — `ContextState` and `ContextPresets` live in part files of `context.dart`, the two files the task named |
 | 052 | Task 082 models organisation/description/`startsOn`; this task stores `client`/`startedAt`. | Open — columns follow 052; 082 maps onto them |
+| 053 | Dart cannot name a companion field `required`. | Open — SQL column is `required`; the getter is `isRequired`. 088's three-value `Requiredness` is still later |
+| 053 | The task has no Contract. | Open — extra `upsertTemplate` / `upsertTemplateField` / `listTemplateFields` / `upsertTemplateRow` / `lookupTemplateRow` so the named tests have a write path |
 | 049 | `*.g.dart` is gitignored (002) and FE-CODE-13 wants generated output committed. | Open — `app_database.g.dart` is force-added; the ignore rule or this constraint has to give |
 | 049 | Git-for-Windows hook `sh` has no `sed`; `core.autocrlf` leaves hook sources as CRLF. | Open — commit-msg reads the subject with `IFS= read`; hook installer strips leftover CR; 009 still wants `.gitattributes` |
 | 047 | Widget gallery measured `MediaQuery.sizeOf` to size the preview. | Closed by 049 — the preview uses `LayoutBuilder` constraints so only `core/widgets/responsive/` reads MediaQuery size |
@@ -264,13 +267,13 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 04 — Local database
 
-*4 of 16 complete.*
+*5 of 16 complete.*
 
 - [x] [049 — Drift database bootstrap and migration strategy](dev-plan/04-data-layer/049-drift-setup.md)
 - [x] [050 — Shared columns, DAO base and transaction helper](dev-plan/04-data-layer/050-column-mixins.md)
 - [x] [051 — Tombstones, audit log and device profile tables](dev-plan/04-data-layer/051-tombstones-table.md)
 - [x] [052 — Projects and context tables](dev-plan/04-data-layer/052-projects-table.md)
-- [ ] [053 — Templates, template fields and template rows tables](dev-plan/04-data-layer/053-templates-table.md)
+- [x] [053 — Templates, template fields and template rows tables](dev-plan/04-data-layer/053-templates-table.md)
 - [ ] [054 — Records and record fields tables](dev-plan/04-data-layer/054-records-table.md)
 - [ ] [055 — Photos, attachments and captions tables](dev-plan/04-data-layer/055-photos-table.md)
 - [ ] [056 — Reference dataset tables](dev-plan/04-data-layer/056-reference-tables.md)

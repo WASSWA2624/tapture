@@ -8,7 +8,7 @@ Tasks 049–064 (16). Each file is a standalone implementation prompt.
 - [x] [050 — Shared columns, DAO base and transaction helper](050-column-mixins.md)
 - [x] [051 — Tombstones, audit log and device profile tables](051-tombstones-table.md)
 - [x] [052 — Projects and context tables](052-projects-table.md)
-- [ ] [053 — Templates, template fields and template rows tables](053-templates-table.md)
+- [x] [053 — Templates, template fields and template rows tables](053-templates-table.md)
 - [ ] [054 — Records and record fields tables](054-records-table.md)
 - [ ] [055 — Photos, attachments and captions tables](055-photos-table.md)
 - [ ] [056 — Reference dataset tables](056-reference-tables.md)

@@ -9,5 +9,8 @@ export 'tables/audit_log.dart';
 export 'tables/context.dart';
 export 'tables/device_profile.dart';
 export 'tables/projects.dart';
+export 'tables/template_fields.dart';
+export 'tables/template_rows.dart';
+export 'tables/templates.dart';
 export 'tables/tombstones.dart';
 export 'transactions.dart';

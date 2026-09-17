@@ -4460,6 +4460,2860 @@ class ContextPresetsCompanion extends UpdateCompanion<ContextPreset> {
   }
 }
 
+class $TemplatesTable extends Templates
+    with TableInfo<$TemplatesTable, Template> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TemplatesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _projectIdMeta = const VerificationMeta(
+    'projectId',
+  );
+  @override
+  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
+    'project_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
+  @override
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+    'source',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sourceFilePathMeta = const VerificationMeta(
+    'sourceFilePath',
+  );
+  @override
+  late final GeneratedColumn<String> sourceFilePath = GeneratedColumn<String>(
+    'source_file_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _sheetNameMeta = const VerificationMeta(
+    'sheetName',
+  );
+  @override
+  late final GeneratedColumn<String> sheetName = GeneratedColumn<String>(
+    'sheet_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _headerRowMeta = const VerificationMeta(
+    'headerRow',
+  );
+  @override
+  late final GeneratedColumn<int> headerRow = GeneratedColumn<int>(
+    'header_row',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _identityFieldsMeta = const VerificationMeta(
+    'identityFields',
+  );
+  @override
+  late final GeneratedColumn<String> identityFields = GeneratedColumn<String>(
+    'identity_fields',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
+  static const VerificationMeta _detectionMeta = const VerificationMeta(
+    'detection',
+  );
+  @override
+  late final GeneratedColumn<String> detection = GeneratedColumn<String>(
+    'detection',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('{}'),
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    projectId,
+    name,
+    kind,
+    source,
+    sourceFilePath,
+    sheetName,
+    headerRow,
+    identityFields,
+    detection,
+    version,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'templates';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Template> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('project_id')) {
+      context.handle(
+        _projectIdMeta,
+        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+      );
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_kindMeta);
+    }
+    if (data.containsKey('source')) {
+      context.handle(
+        _sourceMeta,
+        source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceMeta);
+    }
+    if (data.containsKey('source_file_path')) {
+      context.handle(
+        _sourceFilePathMeta,
+        sourceFilePath.isAcceptableOrUnknown(
+          data['source_file_path']!,
+          _sourceFilePathMeta,
+        ),
+      );
+    }
+    if (data.containsKey('sheet_name')) {
+      context.handle(
+        _sheetNameMeta,
+        sheetName.isAcceptableOrUnknown(data['sheet_name']!, _sheetNameMeta),
+      );
+    }
+    if (data.containsKey('header_row')) {
+      context.handle(
+        _headerRowMeta,
+        headerRow.isAcceptableOrUnknown(data['header_row']!, _headerRowMeta),
+      );
+    }
+    if (data.containsKey('identity_fields')) {
+      context.handle(
+        _identityFieldsMeta,
+        identityFields.isAcceptableOrUnknown(
+          data['identity_fields']!,
+          _identityFieldsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('detection')) {
+      context.handle(
+        _detectionMeta,
+        detection.isAcceptableOrUnknown(data['detection']!, _detectionMeta),
+      );
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Template map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Template(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      projectId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}project_id'],
+      ),
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source'],
+      )!,
+      sourceFilePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_file_path'],
+      ),
+      sheetName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sheet_name'],
+      ),
+      headerRow: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}header_row'],
+      ),
+      identityFields: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}identity_fields'],
+      )!,
+      detection: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}detection'],
+      )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+    );
+  }
+
+  @override
+  $TemplatesTable createAlias(String alias) {
+    return $TemplatesTable(attachedDatabase, alias);
+  }
+}
+
+class Template extends DataClass implements Insertable<Template> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Owning project, or null when this row is a shipped template.
+  final String? projectId;
+
+  /// Display name.
+  final String name;
+
+  /// Kind of thing this template captures, stored as data.
+  final String kind;
+
+  /// Where the template came from (shipped, imported, built).
+  final String source;
+
+  /// Imported workbook path, when [source] is an import.
+  final String? sourceFilePath;
+
+  /// Imported sheet name, stored as data, never interpolated into a query.
+  final String? sheetName;
+
+  /// 1-based header row in the imported sheet, when known.
+  final int? headerRow;
+
+  /// Identity field keys JSON, stored as text.
+  final String identityFields;
+
+  /// Detection profile JSON, stored as text.
+  final String detection;
+
+  /// Structural version. Captured records keep the value they were taken at.
+  final int version;
+  const Template({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    this.projectId,
+    required this.name,
+    required this.kind,
+    required this.source,
+    this.sourceFilePath,
+    this.sheetName,
+    this.headerRow,
+    required this.identityFields,
+    required this.detection,
+    required this.version,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    if (!nullToAbsent || projectId != null) {
+      map['project_id'] = Variable<String>(projectId);
+    }
+    map['name'] = Variable<String>(name);
+    map['kind'] = Variable<String>(kind);
+    map['source'] = Variable<String>(source);
+    if (!nullToAbsent || sourceFilePath != null) {
+      map['source_file_path'] = Variable<String>(sourceFilePath);
+    }
+    if (!nullToAbsent || sheetName != null) {
+      map['sheet_name'] = Variable<String>(sheetName);
+    }
+    if (!nullToAbsent || headerRow != null) {
+      map['header_row'] = Variable<int>(headerRow);
+    }
+    map['identity_fields'] = Variable<String>(identityFields);
+    map['detection'] = Variable<String>(detection);
+    map['version'] = Variable<int>(version);
+    return map;
+  }
+
+  TemplatesCompanion toCompanion(bool nullToAbsent) {
+    return TemplatesCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      projectId: projectId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(projectId),
+      name: Value(name),
+      kind: Value(kind),
+      source: Value(source),
+      sourceFilePath: sourceFilePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sourceFilePath),
+      sheetName: sheetName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sheetName),
+      headerRow: headerRow == null && nullToAbsent
+          ? const Value.absent()
+          : Value(headerRow),
+      identityFields: Value(identityFields),
+      detection: Value(detection),
+      version: Value(version),
+    );
+  }
+
+  factory Template.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Template(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      projectId: serializer.fromJson<String?>(json['projectId']),
+      name: serializer.fromJson<String>(json['name']),
+      kind: serializer.fromJson<String>(json['kind']),
+      source: serializer.fromJson<String>(json['source']),
+      sourceFilePath: serializer.fromJson<String?>(json['sourceFilePath']),
+      sheetName: serializer.fromJson<String?>(json['sheetName']),
+      headerRow: serializer.fromJson<int?>(json['headerRow']),
+      identityFields: serializer.fromJson<String>(json['identityFields']),
+      detection: serializer.fromJson<String>(json['detection']),
+      version: serializer.fromJson<int>(json['version']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'projectId': serializer.toJson<String?>(projectId),
+      'name': serializer.toJson<String>(name),
+      'kind': serializer.toJson<String>(kind),
+      'source': serializer.toJson<String>(source),
+      'sourceFilePath': serializer.toJson<String?>(sourceFilePath),
+      'sheetName': serializer.toJson<String?>(sheetName),
+      'headerRow': serializer.toJson<int?>(headerRow),
+      'identityFields': serializer.toJson<String>(identityFields),
+      'detection': serializer.toJson<String>(detection),
+      'version': serializer.toJson<int>(version),
+    };
+  }
+
+  Template copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    Value<String?> projectId = const Value.absent(),
+    String? name,
+    String? kind,
+    String? source,
+    Value<String?> sourceFilePath = const Value.absent(),
+    Value<String?> sheetName = const Value.absent(),
+    Value<int?> headerRow = const Value.absent(),
+    String? identityFields,
+    String? detection,
+    int? version,
+  }) => Template(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    projectId: projectId.present ? projectId.value : this.projectId,
+    name: name ?? this.name,
+    kind: kind ?? this.kind,
+    source: source ?? this.source,
+    sourceFilePath: sourceFilePath.present
+        ? sourceFilePath.value
+        : this.sourceFilePath,
+    sheetName: sheetName.present ? sheetName.value : this.sheetName,
+    headerRow: headerRow.present ? headerRow.value : this.headerRow,
+    identityFields: identityFields ?? this.identityFields,
+    detection: detection ?? this.detection,
+    version: version ?? this.version,
+  );
+  Template copyWithCompanion(TemplatesCompanion data) {
+    return Template(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      name: data.name.present ? data.name.value : this.name,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      source: data.source.present ? data.source.value : this.source,
+      sourceFilePath: data.sourceFilePath.present
+          ? data.sourceFilePath.value
+          : this.sourceFilePath,
+      sheetName: data.sheetName.present ? data.sheetName.value : this.sheetName,
+      headerRow: data.headerRow.present ? data.headerRow.value : this.headerRow,
+      identityFields: data.identityFields.present
+          ? data.identityFields.value
+          : this.identityFields,
+      detection: data.detection.present ? data.detection.value : this.detection,
+      version: data.version.present ? data.version.value : this.version,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Template(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('projectId: $projectId, ')
+          ..write('name: $name, ')
+          ..write('kind: $kind, ')
+          ..write('source: $source, ')
+          ..write('sourceFilePath: $sourceFilePath, ')
+          ..write('sheetName: $sheetName, ')
+          ..write('headerRow: $headerRow, ')
+          ..write('identityFields: $identityFields, ')
+          ..write('detection: $detection, ')
+          ..write('version: $version')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    projectId,
+    name,
+    kind,
+    source,
+    sourceFilePath,
+    sheetName,
+    headerRow,
+    identityFields,
+    detection,
+    version,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Template &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.projectId == this.projectId &&
+          other.name == this.name &&
+          other.kind == this.kind &&
+          other.source == this.source &&
+          other.sourceFilePath == this.sourceFilePath &&
+          other.sheetName == this.sheetName &&
+          other.headerRow == this.headerRow &&
+          other.identityFields == this.identityFields &&
+          other.detection == this.detection &&
+          other.version == this.version);
+}
+
+class TemplatesCompanion extends UpdateCompanion<Template> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String?> projectId;
+  final Value<String> name;
+  final Value<String> kind;
+  final Value<String> source;
+  final Value<String?> sourceFilePath;
+  final Value<String?> sheetName;
+  final Value<int?> headerRow;
+  final Value<String> identityFields;
+  final Value<String> detection;
+  final Value<int> version;
+  final Value<int> rowid;
+  const TemplatesCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.projectId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.source = const Value.absent(),
+    this.sourceFilePath = const Value.absent(),
+    this.sheetName = const Value.absent(),
+    this.headerRow = const Value.absent(),
+    this.identityFields = const Value.absent(),
+    this.detection = const Value.absent(),
+    this.version = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TemplatesCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    this.projectId = const Value.absent(),
+    required String name,
+    required String kind,
+    required String source,
+    this.sourceFilePath = const Value.absent(),
+    this.sheetName = const Value.absent(),
+    this.headerRow = const Value.absent(),
+    this.identityFields = const Value.absent(),
+    this.detection = const Value.absent(),
+    this.version = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       name = Value(name),
+       kind = Value(kind),
+       source = Value(source);
+  static Insertable<Template> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? projectId,
+    Expression<String>? name,
+    Expression<String>? kind,
+    Expression<String>? source,
+    Expression<String>? sourceFilePath,
+    Expression<String>? sheetName,
+    Expression<int>? headerRow,
+    Expression<String>? identityFields,
+    Expression<String>? detection,
+    Expression<int>? version,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (projectId != null) 'project_id': projectId,
+      if (name != null) 'name': name,
+      if (kind != null) 'kind': kind,
+      if (source != null) 'source': source,
+      if (sourceFilePath != null) 'source_file_path': sourceFilePath,
+      if (sheetName != null) 'sheet_name': sheetName,
+      if (headerRow != null) 'header_row': headerRow,
+      if (identityFields != null) 'identity_fields': identityFields,
+      if (detection != null) 'detection': detection,
+      if (version != null) 'version': version,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TemplatesCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String?>? projectId,
+    Value<String>? name,
+    Value<String>? kind,
+    Value<String>? source,
+    Value<String?>? sourceFilePath,
+    Value<String?>? sheetName,
+    Value<int?>? headerRow,
+    Value<String>? identityFields,
+    Value<String>? detection,
+    Value<int>? version,
+    Value<int>? rowid,
+  }) {
+    return TemplatesCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      projectId: projectId ?? this.projectId,
+      name: name ?? this.name,
+      kind: kind ?? this.kind,
+      source: source ?? this.source,
+      sourceFilePath: sourceFilePath ?? this.sourceFilePath,
+      sheetName: sheetName ?? this.sheetName,
+      headerRow: headerRow ?? this.headerRow,
+      identityFields: identityFields ?? this.identityFields,
+      detection: detection ?? this.detection,
+      version: version ?? this.version,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (projectId.present) {
+      map['project_id'] = Variable<String>(projectId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
+    if (sourceFilePath.present) {
+      map['source_file_path'] = Variable<String>(sourceFilePath.value);
+    }
+    if (sheetName.present) {
+      map['sheet_name'] = Variable<String>(sheetName.value);
+    }
+    if (headerRow.present) {
+      map['header_row'] = Variable<int>(headerRow.value);
+    }
+    if (identityFields.present) {
+      map['identity_fields'] = Variable<String>(identityFields.value);
+    }
+    if (detection.present) {
+      map['detection'] = Variable<String>(detection.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TemplatesCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('projectId: $projectId, ')
+          ..write('name: $name, ')
+          ..write('kind: $kind, ')
+          ..write('source: $source, ')
+          ..write('sourceFilePath: $sourceFilePath, ')
+          ..write('sheetName: $sheetName, ')
+          ..write('headerRow: $headerRow, ')
+          ..write('identityFields: $identityFields, ')
+          ..write('detection: $detection, ')
+          ..write('version: $version, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $TemplateFieldsTable extends TemplateFields
+    with TableInfo<$TemplateFieldsTable, TemplateField> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TemplateFieldsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _templateIdMeta = const VerificationMeta(
+    'templateId',
+  );
+  @override
+  late final GeneratedColumn<String> templateId = GeneratedColumn<String>(
+    'template_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fieldKeyMeta = const VerificationMeta(
+    'fieldKey',
+  );
+  @override
+  late final GeneratedColumn<String> fieldKey = GeneratedColumn<String>(
+    'field_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _labelMeta = const VerificationMeta('label');
+  @override
+  late final GeneratedColumn<String> label = GeneratedColumn<String>(
+    'label',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _outputColumnMeta = const VerificationMeta(
+    'outputColumn',
+  );
+  @override
+  late final GeneratedColumn<String> outputColumn = GeneratedColumn<String>(
+    'output_column',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _isRequiredMeta = const VerificationMeta(
+    'isRequired',
+  );
+  @override
+  late final GeneratedColumn<bool> isRequired = GeneratedColumn<bool>(
+    'required',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("required" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _inputModeMeta = const VerificationMeta(
+    'inputMode',
+  );
+  @override
+  late final GeneratedColumn<String> inputMode = GeneratedColumn<String>(
+    'input_mode',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _stickableMeta = const VerificationMeta(
+    'stickable',
+  );
+  @override
+  late final GeneratedColumn<bool> stickable = GeneratedColumn<bool>(
+    'stickable',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("stickable" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _contextLevelMeta = const VerificationMeta(
+    'contextLevel',
+  );
+  @override
+  late final GeneratedColumn<int> contextLevel = GeneratedColumn<int>(
+    'context_level',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _autoFillMeta = const VerificationMeta(
+    'autoFill',
+  );
+  @override
+  late final GeneratedColumn<bool> autoFill = GeneratedColumn<bool>(
+    'auto_fill',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("auto_fill" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _defaultValueMeta = const VerificationMeta(
+    'defaultValue',
+  );
+  @override
+  late final GeneratedColumn<String> defaultValue = GeneratedColumn<String>(
+    'default_value',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _optionsMeta = const VerificationMeta(
+    'options',
+  );
+  @override
+  late final GeneratedColumn<String> options = GeneratedColumn<String>(
+    'options',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
+  static const VerificationMeta _unitMeta = const VerificationMeta('unit');
+  @override
+  late final GeneratedColumn<String> unit = GeneratedColumn<String>(
+    'unit',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _validationMeta = const VerificationMeta(
+    'validation',
+  );
+  @override
+  late final GeneratedColumn<String> validation = GeneratedColumn<String>(
+    'validation',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('{}'),
+  );
+  static const VerificationMeta _lookupMeta = const VerificationMeta('lookup');
+  @override
+  late final GeneratedColumn<String> lookup = GeneratedColumn<String>(
+    'lookup',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('{}'),
+  );
+  static const VerificationMeta _refineMeta = const VerificationMeta('refine');
+  @override
+  late final GeneratedColumn<bool> refine = GeneratedColumn<bool>(
+    'refine',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("refine" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _sortOrderMeta = const VerificationMeta(
+    'sortOrder',
+  );
+  @override
+  late final GeneratedColumn<int> sortOrder = GeneratedColumn<int>(
+    'sort_order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    templateId,
+    fieldKey,
+    label,
+    type,
+    outputColumn,
+    isRequired,
+    inputMode,
+    stickable,
+    contextLevel,
+    autoFill,
+    defaultValue,
+    options,
+    unit,
+    validation,
+    lookup,
+    refine,
+    sortOrder,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'template_fields';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TemplateField> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('template_id')) {
+      context.handle(
+        _templateIdMeta,
+        templateId.isAcceptableOrUnknown(data['template_id']!, _templateIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_templateIdMeta);
+    }
+    if (data.containsKey('field_key')) {
+      context.handle(
+        _fieldKeyMeta,
+        fieldKey.isAcceptableOrUnknown(data['field_key']!, _fieldKeyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fieldKeyMeta);
+    }
+    if (data.containsKey('label')) {
+      context.handle(
+        _labelMeta,
+        label.isAcceptableOrUnknown(data['label']!, _labelMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_labelMeta);
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('output_column')) {
+      context.handle(
+        _outputColumnMeta,
+        outputColumn.isAcceptableOrUnknown(
+          data['output_column']!,
+          _outputColumnMeta,
+        ),
+      );
+    }
+    if (data.containsKey('required')) {
+      context.handle(
+        _isRequiredMeta,
+        isRequired.isAcceptableOrUnknown(data['required']!, _isRequiredMeta),
+      );
+    }
+    if (data.containsKey('input_mode')) {
+      context.handle(
+        _inputModeMeta,
+        inputMode.isAcceptableOrUnknown(data['input_mode']!, _inputModeMeta),
+      );
+    }
+    if (data.containsKey('stickable')) {
+      context.handle(
+        _stickableMeta,
+        stickable.isAcceptableOrUnknown(data['stickable']!, _stickableMeta),
+      );
+    }
+    if (data.containsKey('context_level')) {
+      context.handle(
+        _contextLevelMeta,
+        contextLevel.isAcceptableOrUnknown(
+          data['context_level']!,
+          _contextLevelMeta,
+        ),
+      );
+    }
+    if (data.containsKey('auto_fill')) {
+      context.handle(
+        _autoFillMeta,
+        autoFill.isAcceptableOrUnknown(data['auto_fill']!, _autoFillMeta),
+      );
+    }
+    if (data.containsKey('default_value')) {
+      context.handle(
+        _defaultValueMeta,
+        defaultValue.isAcceptableOrUnknown(
+          data['default_value']!,
+          _defaultValueMeta,
+        ),
+      );
+    }
+    if (data.containsKey('options')) {
+      context.handle(
+        _optionsMeta,
+        options.isAcceptableOrUnknown(data['options']!, _optionsMeta),
+      );
+    }
+    if (data.containsKey('unit')) {
+      context.handle(
+        _unitMeta,
+        unit.isAcceptableOrUnknown(data['unit']!, _unitMeta),
+      );
+    }
+    if (data.containsKey('validation')) {
+      context.handle(
+        _validationMeta,
+        validation.isAcceptableOrUnknown(data['validation']!, _validationMeta),
+      );
+    }
+    if (data.containsKey('lookup')) {
+      context.handle(
+        _lookupMeta,
+        lookup.isAcceptableOrUnknown(data['lookup']!, _lookupMeta),
+      );
+    }
+    if (data.containsKey('refine')) {
+      context.handle(
+        _refineMeta,
+        refine.isAcceptableOrUnknown(data['refine']!, _refineMeta),
+      );
+    }
+    if (data.containsKey('sort_order')) {
+      context.handle(
+        _sortOrderMeta,
+        sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sortOrderMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {templateId, fieldKey},
+  ];
+  @override
+  TemplateField map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TemplateField(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      templateId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}template_id'],
+      )!,
+      fieldKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}field_key'],
+      )!,
+      label: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}label'],
+      )!,
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
+      outputColumn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}output_column'],
+      ),
+      isRequired: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}required'],
+      )!,
+      inputMode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}input_mode'],
+      )!,
+      stickable: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}stickable'],
+      )!,
+      contextLevel: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}context_level'],
+      ),
+      autoFill: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}auto_fill'],
+      )!,
+      defaultValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}default_value'],
+      ),
+      options: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}options'],
+      )!,
+      unit: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}unit'],
+      ),
+      validation: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}validation'],
+      )!,
+      lookup: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}lookup'],
+      )!,
+      refine: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}refine'],
+      )!,
+      sortOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_order'],
+      )!,
+    );
+  }
+
+  @override
+  $TemplateFieldsTable createAlias(String alias) {
+    return $TemplateFieldsTable(attachedDatabase, alias);
+  }
+}
+
+class TemplateField extends DataClass implements Insertable<TemplateField> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Template this field belongs to.
+  final String templateId;
+
+  /// Stable key within the template. Duplicate keys are a unique constraint.
+  final String fieldKey;
+
+  /// Operator-facing label, stored as data.
+  final String label;
+
+  /// Field type name, stored as data.
+  final String type;
+
+  /// Spreadsheet column or generated header this field writes to.
+  final String? outputColumn;
+
+  /// Whether a first capture must fill this field.
+  ///
+  /// Dart cannot name a companion field `required`, so the SQL column is
+  /// `required` and the getter is [isRequired].
+  final bool isRequired;
+
+  /// How the value is entered.
+  final String inputMode;
+
+  /// Whether the last value sticks onto the next record.
+  final bool stickable;
+
+  /// Context hierarchy level this field binds to, when it does.
+  final int? contextLevel;
+
+  /// Whether capture copies this value from context or a previous record.
+  final bool autoFill;
+
+  /// Default written when the operator leaves the field empty.
+  final String? defaultValue;
+
+  /// Choice options JSON. An object or array, validated on write.
+  final String options;
+
+  /// Unit label, when the type has one.
+  final String? unit;
+
+  /// Validation JSON. An object or array, validated on write.
+  final String validation;
+
+  /// Lookup JSON. An object or array, validated on write.
+  final String lookup;
+
+  /// Whether AI may propose a refined value beside the raw one.
+  final bool refine;
+
+  /// List order. Reads sort by this, then [label].
+  final int sortOrder;
+  const TemplateField({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.templateId,
+    required this.fieldKey,
+    required this.label,
+    required this.type,
+    this.outputColumn,
+    required this.isRequired,
+    required this.inputMode,
+    required this.stickable,
+    this.contextLevel,
+    required this.autoFill,
+    this.defaultValue,
+    required this.options,
+    this.unit,
+    required this.validation,
+    required this.lookup,
+    required this.refine,
+    required this.sortOrder,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['template_id'] = Variable<String>(templateId);
+    map['field_key'] = Variable<String>(fieldKey);
+    map['label'] = Variable<String>(label);
+    map['type'] = Variable<String>(type);
+    if (!nullToAbsent || outputColumn != null) {
+      map['output_column'] = Variable<String>(outputColumn);
+    }
+    map['required'] = Variable<bool>(isRequired);
+    map['input_mode'] = Variable<String>(inputMode);
+    map['stickable'] = Variable<bool>(stickable);
+    if (!nullToAbsent || contextLevel != null) {
+      map['context_level'] = Variable<int>(contextLevel);
+    }
+    map['auto_fill'] = Variable<bool>(autoFill);
+    if (!nullToAbsent || defaultValue != null) {
+      map['default_value'] = Variable<String>(defaultValue);
+    }
+    map['options'] = Variable<String>(options);
+    if (!nullToAbsent || unit != null) {
+      map['unit'] = Variable<String>(unit);
+    }
+    map['validation'] = Variable<String>(validation);
+    map['lookup'] = Variable<String>(lookup);
+    map['refine'] = Variable<bool>(refine);
+    map['sort_order'] = Variable<int>(sortOrder);
+    return map;
+  }
+
+  TemplateFieldsCompanion toCompanion(bool nullToAbsent) {
+    return TemplateFieldsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      templateId: Value(templateId),
+      fieldKey: Value(fieldKey),
+      label: Value(label),
+      type: Value(type),
+      outputColumn: outputColumn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(outputColumn),
+      isRequired: Value(isRequired),
+      inputMode: Value(inputMode),
+      stickable: Value(stickable),
+      contextLevel: contextLevel == null && nullToAbsent
+          ? const Value.absent()
+          : Value(contextLevel),
+      autoFill: Value(autoFill),
+      defaultValue: defaultValue == null && nullToAbsent
+          ? const Value.absent()
+          : Value(defaultValue),
+      options: Value(options),
+      unit: unit == null && nullToAbsent ? const Value.absent() : Value(unit),
+      validation: Value(validation),
+      lookup: Value(lookup),
+      refine: Value(refine),
+      sortOrder: Value(sortOrder),
+    );
+  }
+
+  factory TemplateField.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TemplateField(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      templateId: serializer.fromJson<String>(json['templateId']),
+      fieldKey: serializer.fromJson<String>(json['fieldKey']),
+      label: serializer.fromJson<String>(json['label']),
+      type: serializer.fromJson<String>(json['type']),
+      outputColumn: serializer.fromJson<String?>(json['outputColumn']),
+      isRequired: serializer.fromJson<bool>(json['isRequired']),
+      inputMode: serializer.fromJson<String>(json['inputMode']),
+      stickable: serializer.fromJson<bool>(json['stickable']),
+      contextLevel: serializer.fromJson<int?>(json['contextLevel']),
+      autoFill: serializer.fromJson<bool>(json['autoFill']),
+      defaultValue: serializer.fromJson<String?>(json['defaultValue']),
+      options: serializer.fromJson<String>(json['options']),
+      unit: serializer.fromJson<String?>(json['unit']),
+      validation: serializer.fromJson<String>(json['validation']),
+      lookup: serializer.fromJson<String>(json['lookup']),
+      refine: serializer.fromJson<bool>(json['refine']),
+      sortOrder: serializer.fromJson<int>(json['sortOrder']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'templateId': serializer.toJson<String>(templateId),
+      'fieldKey': serializer.toJson<String>(fieldKey),
+      'label': serializer.toJson<String>(label),
+      'type': serializer.toJson<String>(type),
+      'outputColumn': serializer.toJson<String?>(outputColumn),
+      'isRequired': serializer.toJson<bool>(isRequired),
+      'inputMode': serializer.toJson<String>(inputMode),
+      'stickable': serializer.toJson<bool>(stickable),
+      'contextLevel': serializer.toJson<int?>(contextLevel),
+      'autoFill': serializer.toJson<bool>(autoFill),
+      'defaultValue': serializer.toJson<String?>(defaultValue),
+      'options': serializer.toJson<String>(options),
+      'unit': serializer.toJson<String?>(unit),
+      'validation': serializer.toJson<String>(validation),
+      'lookup': serializer.toJson<String>(lookup),
+      'refine': serializer.toJson<bool>(refine),
+      'sortOrder': serializer.toJson<int>(sortOrder),
+    };
+  }
+
+  TemplateField copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? templateId,
+    String? fieldKey,
+    String? label,
+    String? type,
+    Value<String?> outputColumn = const Value.absent(),
+    bool? isRequired,
+    String? inputMode,
+    bool? stickable,
+    Value<int?> contextLevel = const Value.absent(),
+    bool? autoFill,
+    Value<String?> defaultValue = const Value.absent(),
+    String? options,
+    Value<String?> unit = const Value.absent(),
+    String? validation,
+    String? lookup,
+    bool? refine,
+    int? sortOrder,
+  }) => TemplateField(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    templateId: templateId ?? this.templateId,
+    fieldKey: fieldKey ?? this.fieldKey,
+    label: label ?? this.label,
+    type: type ?? this.type,
+    outputColumn: outputColumn.present ? outputColumn.value : this.outputColumn,
+    isRequired: isRequired ?? this.isRequired,
+    inputMode: inputMode ?? this.inputMode,
+    stickable: stickable ?? this.stickable,
+    contextLevel: contextLevel.present ? contextLevel.value : this.contextLevel,
+    autoFill: autoFill ?? this.autoFill,
+    defaultValue: defaultValue.present ? defaultValue.value : this.defaultValue,
+    options: options ?? this.options,
+    unit: unit.present ? unit.value : this.unit,
+    validation: validation ?? this.validation,
+    lookup: lookup ?? this.lookup,
+    refine: refine ?? this.refine,
+    sortOrder: sortOrder ?? this.sortOrder,
+  );
+  TemplateField copyWithCompanion(TemplateFieldsCompanion data) {
+    return TemplateField(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      templateId: data.templateId.present
+          ? data.templateId.value
+          : this.templateId,
+      fieldKey: data.fieldKey.present ? data.fieldKey.value : this.fieldKey,
+      label: data.label.present ? data.label.value : this.label,
+      type: data.type.present ? data.type.value : this.type,
+      outputColumn: data.outputColumn.present
+          ? data.outputColumn.value
+          : this.outputColumn,
+      isRequired: data.isRequired.present
+          ? data.isRequired.value
+          : this.isRequired,
+      inputMode: data.inputMode.present ? data.inputMode.value : this.inputMode,
+      stickable: data.stickable.present ? data.stickable.value : this.stickable,
+      contextLevel: data.contextLevel.present
+          ? data.contextLevel.value
+          : this.contextLevel,
+      autoFill: data.autoFill.present ? data.autoFill.value : this.autoFill,
+      defaultValue: data.defaultValue.present
+          ? data.defaultValue.value
+          : this.defaultValue,
+      options: data.options.present ? data.options.value : this.options,
+      unit: data.unit.present ? data.unit.value : this.unit,
+      validation: data.validation.present
+          ? data.validation.value
+          : this.validation,
+      lookup: data.lookup.present ? data.lookup.value : this.lookup,
+      refine: data.refine.present ? data.refine.value : this.refine,
+      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TemplateField(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('templateId: $templateId, ')
+          ..write('fieldKey: $fieldKey, ')
+          ..write('label: $label, ')
+          ..write('type: $type, ')
+          ..write('outputColumn: $outputColumn, ')
+          ..write('isRequired: $isRequired, ')
+          ..write('inputMode: $inputMode, ')
+          ..write('stickable: $stickable, ')
+          ..write('contextLevel: $contextLevel, ')
+          ..write('autoFill: $autoFill, ')
+          ..write('defaultValue: $defaultValue, ')
+          ..write('options: $options, ')
+          ..write('unit: $unit, ')
+          ..write('validation: $validation, ')
+          ..write('lookup: $lookup, ')
+          ..write('refine: $refine, ')
+          ..write('sortOrder: $sortOrder')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    templateId,
+    fieldKey,
+    label,
+    type,
+    outputColumn,
+    isRequired,
+    inputMode,
+    stickable,
+    contextLevel,
+    autoFill,
+    defaultValue,
+    options,
+    unit,
+    validation,
+    lookup,
+    refine,
+    sortOrder,
+  ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TemplateField &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.templateId == this.templateId &&
+          other.fieldKey == this.fieldKey &&
+          other.label == this.label &&
+          other.type == this.type &&
+          other.outputColumn == this.outputColumn &&
+          other.isRequired == this.isRequired &&
+          other.inputMode == this.inputMode &&
+          other.stickable == this.stickable &&
+          other.contextLevel == this.contextLevel &&
+          other.autoFill == this.autoFill &&
+          other.defaultValue == this.defaultValue &&
+          other.options == this.options &&
+          other.unit == this.unit &&
+          other.validation == this.validation &&
+          other.lookup == this.lookup &&
+          other.refine == this.refine &&
+          other.sortOrder == this.sortOrder);
+}
+
+class TemplateFieldsCompanion extends UpdateCompanion<TemplateField> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> templateId;
+  final Value<String> fieldKey;
+  final Value<String> label;
+  final Value<String> type;
+  final Value<String?> outputColumn;
+  final Value<bool> isRequired;
+  final Value<String> inputMode;
+  final Value<bool> stickable;
+  final Value<int?> contextLevel;
+  final Value<bool> autoFill;
+  final Value<String?> defaultValue;
+  final Value<String> options;
+  final Value<String?> unit;
+  final Value<String> validation;
+  final Value<String> lookup;
+  final Value<bool> refine;
+  final Value<int> sortOrder;
+  final Value<int> rowid;
+  const TemplateFieldsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.templateId = const Value.absent(),
+    this.fieldKey = const Value.absent(),
+    this.label = const Value.absent(),
+    this.type = const Value.absent(),
+    this.outputColumn = const Value.absent(),
+    this.isRequired = const Value.absent(),
+    this.inputMode = const Value.absent(),
+    this.stickable = const Value.absent(),
+    this.contextLevel = const Value.absent(),
+    this.autoFill = const Value.absent(),
+    this.defaultValue = const Value.absent(),
+    this.options = const Value.absent(),
+    this.unit = const Value.absent(),
+    this.validation = const Value.absent(),
+    this.lookup = const Value.absent(),
+    this.refine = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TemplateFieldsCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String templateId,
+    required String fieldKey,
+    required String label,
+    required String type,
+    this.outputColumn = const Value.absent(),
+    this.isRequired = const Value.absent(),
+    this.inputMode = const Value.absent(),
+    this.stickable = const Value.absent(),
+    this.contextLevel = const Value.absent(),
+    this.autoFill = const Value.absent(),
+    this.defaultValue = const Value.absent(),
+    this.options = const Value.absent(),
+    this.unit = const Value.absent(),
+    this.validation = const Value.absent(),
+    this.lookup = const Value.absent(),
+    this.refine = const Value.absent(),
+    required int sortOrder,
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       templateId = Value(templateId),
+       fieldKey = Value(fieldKey),
+       label = Value(label),
+       type = Value(type),
+       sortOrder = Value(sortOrder);
+  static Insertable<TemplateField> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? templateId,
+    Expression<String>? fieldKey,
+    Expression<String>? label,
+    Expression<String>? type,
+    Expression<String>? outputColumn,
+    Expression<bool>? isRequired,
+    Expression<String>? inputMode,
+    Expression<bool>? stickable,
+    Expression<int>? contextLevel,
+    Expression<bool>? autoFill,
+    Expression<String>? defaultValue,
+    Expression<String>? options,
+    Expression<String>? unit,
+    Expression<String>? validation,
+    Expression<String>? lookup,
+    Expression<bool>? refine,
+    Expression<int>? sortOrder,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (templateId != null) 'template_id': templateId,
+      if (fieldKey != null) 'field_key': fieldKey,
+      if (label != null) 'label': label,
+      if (type != null) 'type': type,
+      if (outputColumn != null) 'output_column': outputColumn,
+      if (isRequired != null) 'required': isRequired,
+      if (inputMode != null) 'input_mode': inputMode,
+      if (stickable != null) 'stickable': stickable,
+      if (contextLevel != null) 'context_level': contextLevel,
+      if (autoFill != null) 'auto_fill': autoFill,
+      if (defaultValue != null) 'default_value': defaultValue,
+      if (options != null) 'options': options,
+      if (unit != null) 'unit': unit,
+      if (validation != null) 'validation': validation,
+      if (lookup != null) 'lookup': lookup,
+      if (refine != null) 'refine': refine,
+      if (sortOrder != null) 'sort_order': sortOrder,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TemplateFieldsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? templateId,
+    Value<String>? fieldKey,
+    Value<String>? label,
+    Value<String>? type,
+    Value<String?>? outputColumn,
+    Value<bool>? isRequired,
+    Value<String>? inputMode,
+    Value<bool>? stickable,
+    Value<int?>? contextLevel,
+    Value<bool>? autoFill,
+    Value<String?>? defaultValue,
+    Value<String>? options,
+    Value<String?>? unit,
+    Value<String>? validation,
+    Value<String>? lookup,
+    Value<bool>? refine,
+    Value<int>? sortOrder,
+    Value<int>? rowid,
+  }) {
+    return TemplateFieldsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      templateId: templateId ?? this.templateId,
+      fieldKey: fieldKey ?? this.fieldKey,
+      label: label ?? this.label,
+      type: type ?? this.type,
+      outputColumn: outputColumn ?? this.outputColumn,
+      isRequired: isRequired ?? this.isRequired,
+      inputMode: inputMode ?? this.inputMode,
+      stickable: stickable ?? this.stickable,
+      contextLevel: contextLevel ?? this.contextLevel,
+      autoFill: autoFill ?? this.autoFill,
+      defaultValue: defaultValue ?? this.defaultValue,
+      options: options ?? this.options,
+      unit: unit ?? this.unit,
+      validation: validation ?? this.validation,
+      lookup: lookup ?? this.lookup,
+      refine: refine ?? this.refine,
+      sortOrder: sortOrder ?? this.sortOrder,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (templateId.present) {
+      map['template_id'] = Variable<String>(templateId.value);
+    }
+    if (fieldKey.present) {
+      map['field_key'] = Variable<String>(fieldKey.value);
+    }
+    if (label.present) {
+      map['label'] = Variable<String>(label.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (outputColumn.present) {
+      map['output_column'] = Variable<String>(outputColumn.value);
+    }
+    if (isRequired.present) {
+      map['required'] = Variable<bool>(isRequired.value);
+    }
+    if (inputMode.present) {
+      map['input_mode'] = Variable<String>(inputMode.value);
+    }
+    if (stickable.present) {
+      map['stickable'] = Variable<bool>(stickable.value);
+    }
+    if (contextLevel.present) {
+      map['context_level'] = Variable<int>(contextLevel.value);
+    }
+    if (autoFill.present) {
+      map['auto_fill'] = Variable<bool>(autoFill.value);
+    }
+    if (defaultValue.present) {
+      map['default_value'] = Variable<String>(defaultValue.value);
+    }
+    if (options.present) {
+      map['options'] = Variable<String>(options.value);
+    }
+    if (unit.present) {
+      map['unit'] = Variable<String>(unit.value);
+    }
+    if (validation.present) {
+      map['validation'] = Variable<String>(validation.value);
+    }
+    if (lookup.present) {
+      map['lookup'] = Variable<String>(lookup.value);
+    }
+    if (refine.present) {
+      map['refine'] = Variable<bool>(refine.value);
+    }
+    if (sortOrder.present) {
+      map['sort_order'] = Variable<int>(sortOrder.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TemplateFieldsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('templateId: $templateId, ')
+          ..write('fieldKey: $fieldKey, ')
+          ..write('label: $label, ')
+          ..write('type: $type, ')
+          ..write('outputColumn: $outputColumn, ')
+          ..write('isRequired: $isRequired, ')
+          ..write('inputMode: $inputMode, ')
+          ..write('stickable: $stickable, ')
+          ..write('contextLevel: $contextLevel, ')
+          ..write('autoFill: $autoFill, ')
+          ..write('defaultValue: $defaultValue, ')
+          ..write('options: $options, ')
+          ..write('unit: $unit, ')
+          ..write('validation: $validation, ')
+          ..write('lookup: $lookup, ')
+          ..write('refine: $refine, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $TemplateRowsTable extends TemplateRows
+    with TableInfo<$TemplateRowsTable, TemplateRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TemplateRowsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _templateIdMeta = const VerificationMeta(
+    'templateId',
+  );
+  @override
+  late final GeneratedColumn<String> templateId = GeneratedColumn<String>(
+    'template_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _outputRowNumberMeta = const VerificationMeta(
+    'outputRowNumber',
+  );
+  @override
+  late final GeneratedColumn<int> outputRowNumber = GeneratedColumn<int>(
+    'output_row_number',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _identifierMeta = const VerificationMeta(
+    'identifier',
+  );
+  @override
+  late final GeneratedColumn<String> identifier = GeneratedColumn<String>(
+    'identifier',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _labelMeta = const VerificationMeta('label');
+  @override
+  late final GeneratedColumn<String> label = GeneratedColumn<String>(
+    'label',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _aliasesMeta = const VerificationMeta(
+    'aliases',
+  );
+  @override
+  late final GeneratedColumn<String> aliases = GeneratedColumn<String>(
+    'aliases',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
+  static const VerificationMeta _metadataMeta = const VerificationMeta(
+    'metadata',
+  );
+  @override
+  late final GeneratedColumn<String> metadata = GeneratedColumn<String>(
+    'metadata',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('{}'),
+  );
+  static const VerificationMeta _foundStatusMeta = const VerificationMeta(
+    'foundStatus',
+  );
+  @override
+  late final GeneratedColumn<String> foundStatus = GeneratedColumn<String>(
+    'found_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('missing'),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    templateId,
+    outputRowNumber,
+    identifier,
+    label,
+    aliases,
+    metadata,
+    foundStatus,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'template_rows';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TemplateRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('template_id')) {
+      context.handle(
+        _templateIdMeta,
+        templateId.isAcceptableOrUnknown(data['template_id']!, _templateIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_templateIdMeta);
+    }
+    if (data.containsKey('output_row_number')) {
+      context.handle(
+        _outputRowNumberMeta,
+        outputRowNumber.isAcceptableOrUnknown(
+          data['output_row_number']!,
+          _outputRowNumberMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_outputRowNumberMeta);
+    }
+    if (data.containsKey('identifier')) {
+      context.handle(
+        _identifierMeta,
+        identifier.isAcceptableOrUnknown(data['identifier']!, _identifierMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_identifierMeta);
+    }
+    if (data.containsKey('label')) {
+      context.handle(
+        _labelMeta,
+        label.isAcceptableOrUnknown(data['label']!, _labelMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_labelMeta);
+    }
+    if (data.containsKey('aliases')) {
+      context.handle(
+        _aliasesMeta,
+        aliases.isAcceptableOrUnknown(data['aliases']!, _aliasesMeta),
+      );
+    }
+    if (data.containsKey('metadata')) {
+      context.handle(
+        _metadataMeta,
+        metadata.isAcceptableOrUnknown(data['metadata']!, _metadataMeta),
+      );
+    }
+    if (data.containsKey('found_status')) {
+      context.handle(
+        _foundStatusMeta,
+        foundStatus.isAcceptableOrUnknown(
+          data['found_status']!,
+          _foundStatusMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TemplateRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TemplateRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      templateId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}template_id'],
+      )!,
+      outputRowNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}output_row_number'],
+      )!,
+      identifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}identifier'],
+      )!,
+      label: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}label'],
+      )!,
+      aliases: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}aliases'],
+      )!,
+      metadata: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}metadata'],
+      )!,
+      foundStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}found_status'],
+      )!,
+    );
+  }
+
+  @override
+  $TemplateRowsTable createAlias(String alias) {
+    return $TemplateRowsTable(attachedDatabase, alias);
+  }
+}
+
+class TemplateRow extends DataClass implements Insertable<TemplateRow> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Template this row belongs to.
+  final String templateId;
+
+  /// Original spreadsheet row number, kept for write-back.
+  final int outputRowNumber;
+
+  /// Stable identifier within the template.
+  final String identifier;
+
+  /// Operator-facing label, stored as data.
+  final String label;
+
+  /// Alias list JSON. An object or array, validated on write.
+  final String aliases;
+
+  /// Extra row JSON. An object or array, validated on write.
+  final String metadata;
+
+  /// Found / missing status for the capture checklist.
+  final String foundStatus;
+  const TemplateRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.templateId,
+    required this.outputRowNumber,
+    required this.identifier,
+    required this.label,
+    required this.aliases,
+    required this.metadata,
+    required this.foundStatus,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['template_id'] = Variable<String>(templateId);
+    map['output_row_number'] = Variable<int>(outputRowNumber);
+    map['identifier'] = Variable<String>(identifier);
+    map['label'] = Variable<String>(label);
+    map['aliases'] = Variable<String>(aliases);
+    map['metadata'] = Variable<String>(metadata);
+    map['found_status'] = Variable<String>(foundStatus);
+    return map;
+  }
+
+  TemplateRowsCompanion toCompanion(bool nullToAbsent) {
+    return TemplateRowsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      templateId: Value(templateId),
+      outputRowNumber: Value(outputRowNumber),
+      identifier: Value(identifier),
+      label: Value(label),
+      aliases: Value(aliases),
+      metadata: Value(metadata),
+      foundStatus: Value(foundStatus),
+    );
+  }
+
+  factory TemplateRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TemplateRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      templateId: serializer.fromJson<String>(json['templateId']),
+      outputRowNumber: serializer.fromJson<int>(json['outputRowNumber']),
+      identifier: serializer.fromJson<String>(json['identifier']),
+      label: serializer.fromJson<String>(json['label']),
+      aliases: serializer.fromJson<String>(json['aliases']),
+      metadata: serializer.fromJson<String>(json['metadata']),
+      foundStatus: serializer.fromJson<String>(json['foundStatus']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'templateId': serializer.toJson<String>(templateId),
+      'outputRowNumber': serializer.toJson<int>(outputRowNumber),
+      'identifier': serializer.toJson<String>(identifier),
+      'label': serializer.toJson<String>(label),
+      'aliases': serializer.toJson<String>(aliases),
+      'metadata': serializer.toJson<String>(metadata),
+      'foundStatus': serializer.toJson<String>(foundStatus),
+    };
+  }
+
+  TemplateRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? templateId,
+    int? outputRowNumber,
+    String? identifier,
+    String? label,
+    String? aliases,
+    String? metadata,
+    String? foundStatus,
+  }) => TemplateRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    templateId: templateId ?? this.templateId,
+    outputRowNumber: outputRowNumber ?? this.outputRowNumber,
+    identifier: identifier ?? this.identifier,
+    label: label ?? this.label,
+    aliases: aliases ?? this.aliases,
+    metadata: metadata ?? this.metadata,
+    foundStatus: foundStatus ?? this.foundStatus,
+  );
+  TemplateRow copyWithCompanion(TemplateRowsCompanion data) {
+    return TemplateRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      templateId: data.templateId.present
+          ? data.templateId.value
+          : this.templateId,
+      outputRowNumber: data.outputRowNumber.present
+          ? data.outputRowNumber.value
+          : this.outputRowNumber,
+      identifier: data.identifier.present
+          ? data.identifier.value
+          : this.identifier,
+      label: data.label.present ? data.label.value : this.label,
+      aliases: data.aliases.present ? data.aliases.value : this.aliases,
+      metadata: data.metadata.present ? data.metadata.value : this.metadata,
+      foundStatus: data.foundStatus.present
+          ? data.foundStatus.value
+          : this.foundStatus,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TemplateRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('templateId: $templateId, ')
+          ..write('outputRowNumber: $outputRowNumber, ')
+          ..write('identifier: $identifier, ')
+          ..write('label: $label, ')
+          ..write('aliases: $aliases, ')
+          ..write('metadata: $metadata, ')
+          ..write('foundStatus: $foundStatus')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    templateId,
+    outputRowNumber,
+    identifier,
+    label,
+    aliases,
+    metadata,
+    foundStatus,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TemplateRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.templateId == this.templateId &&
+          other.outputRowNumber == this.outputRowNumber &&
+          other.identifier == this.identifier &&
+          other.label == this.label &&
+          other.aliases == this.aliases &&
+          other.metadata == this.metadata &&
+          other.foundStatus == this.foundStatus);
+}
+
+class TemplateRowsCompanion extends UpdateCompanion<TemplateRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> templateId;
+  final Value<int> outputRowNumber;
+  final Value<String> identifier;
+  final Value<String> label;
+  final Value<String> aliases;
+  final Value<String> metadata;
+  final Value<String> foundStatus;
+  final Value<int> rowid;
+  const TemplateRowsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.templateId = const Value.absent(),
+    this.outputRowNumber = const Value.absent(),
+    this.identifier = const Value.absent(),
+    this.label = const Value.absent(),
+    this.aliases = const Value.absent(),
+    this.metadata = const Value.absent(),
+    this.foundStatus = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TemplateRowsCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String templateId,
+    required int outputRowNumber,
+    required String identifier,
+    required String label,
+    this.aliases = const Value.absent(),
+    this.metadata = const Value.absent(),
+    this.foundStatus = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       templateId = Value(templateId),
+       outputRowNumber = Value(outputRowNumber),
+       identifier = Value(identifier),
+       label = Value(label);
+  static Insertable<TemplateRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? templateId,
+    Expression<int>? outputRowNumber,
+    Expression<String>? identifier,
+    Expression<String>? label,
+    Expression<String>? aliases,
+    Expression<String>? metadata,
+    Expression<String>? foundStatus,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (templateId != null) 'template_id': templateId,
+      if (outputRowNumber != null) 'output_row_number': outputRowNumber,
+      if (identifier != null) 'identifier': identifier,
+      if (label != null) 'label': label,
+      if (aliases != null) 'aliases': aliases,
+      if (metadata != null) 'metadata': metadata,
+      if (foundStatus != null) 'found_status': foundStatus,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TemplateRowsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? templateId,
+    Value<int>? outputRowNumber,
+    Value<String>? identifier,
+    Value<String>? label,
+    Value<String>? aliases,
+    Value<String>? metadata,
+    Value<String>? foundStatus,
+    Value<int>? rowid,
+  }) {
+    return TemplateRowsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      templateId: templateId ?? this.templateId,
+      outputRowNumber: outputRowNumber ?? this.outputRowNumber,
+      identifier: identifier ?? this.identifier,
+      label: label ?? this.label,
+      aliases: aliases ?? this.aliases,
+      metadata: metadata ?? this.metadata,
+      foundStatus: foundStatus ?? this.foundStatus,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (templateId.present) {
+      map['template_id'] = Variable<String>(templateId.value);
+    }
+    if (outputRowNumber.present) {
+      map['output_row_number'] = Variable<int>(outputRowNumber.value);
+    }
+    if (identifier.present) {
+      map['identifier'] = Variable<String>(identifier.value);
+    }
+    if (label.present) {
+      map['label'] = Variable<String>(label.value);
+    }
+    if (aliases.present) {
+      map['aliases'] = Variable<String>(aliases.value);
+    }
+    if (metadata.present) {
+      map['metadata'] = Variable<String>(metadata.value);
+    }
+    if (foundStatus.present) {
+      map['found_status'] = Variable<String>(foundStatus.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TemplateRowsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('templateId: $templateId, ')
+          ..write('outputRowNumber: $outputRowNumber, ')
+          ..write('identifier: $identifier, ')
+          ..write('label: $label, ')
+          ..write('aliases: $aliases, ')
+          ..write('metadata: $metadata, ')
+          ..write('foundStatus: $foundStatus, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   late final $TombstonesTable tombstones = $TombstonesTable(this);
@@ -4469,6 +7323,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ContextTable context = $ContextTable(this);
   late final $ContextStateTable contextState = $ContextStateTable(this);
   late final $ContextPresetsTable contextPresets = $ContextPresetsTable(this);
+  late final $TemplatesTable templates = $TemplatesTable(this);
+  late final $TemplateFieldsTable templateFields = $TemplateFieldsTable(this);
+  late final $TemplateRowsTable templateRows = $TemplateRowsTable(this);
   late final Index auditLogHistory = Index(
     'audit_log_history',
     'CREATE INDEX audit_log_history ON audit_log (entity_type, entity_id, at)',
@@ -4476,6 +7333,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final Index projectsByStatus = Index(
     'projects_by_status',
     'CREATE INDEX projects_by_status ON projects (status, updated_at)',
+  );
+  late final Index templateRowsByIdentifier = Index(
+    'template_rows_by_identifier',
+    'CREATE INDEX template_rows_by_identifier ON template_rows (template_id, identifier)',
   );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
@@ -4489,7 +7350,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     context,
     contextState,
     contextPresets,
+    templates,
+    templateFields,
+    templateRows,
     auditLogHistory,
     projectsByStatus,
+    templateRowsByIdentifier,
   ];
 }
