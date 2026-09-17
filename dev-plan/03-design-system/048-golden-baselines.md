@@ -33,9 +33,9 @@ Future<void> expectGolden(WidgetTester t, Widget w, String name, {List<AppThemeM
 
 ## Definition of done
 
-- [ ] An unintended styling change fails the suite and names the widget and mode that moved.
-- [ ] Regenerating baselines on a clean tree produces no diff.
-- [ ] Tests: the golden suite covers every widget built in this phase in all three modes and runs in continuous
+- [x] An unintended styling change fails the suite and names the widget and mode that moved.
+- [x] Regenerating baselines on a clean tree produces no diff.
+- [x] Tests: the golden suite covers every widget built in this phase in all three modes and runs in continuous
       integration; a fixture proving a deliberate one-pixel change is caught.
 
 ## Out of scope

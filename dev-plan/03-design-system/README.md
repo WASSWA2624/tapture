@@ -22,4 +22,4 @@ Tasks 030–048 (19). Each file is a standalone implementation prompt.
 - [x] [045 — Haptics service](045-haptics-service.md)
 - [x] [046 — User-facing copy helper](046-copy-helper.md)
 - [x] [047 — Widget gallery screen](047-widget-gallery.md)
-- [ ] [048 — Golden test baselines for the catalogue](048-golden-baselines.md)
+- [x] [048 — Golden test baselines for the catalogue](048-golden-baselines.md)

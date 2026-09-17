@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**47 of 281 tasks complete (16.7%)** · last updated 2026-09-17
+**48 of 281 tasks complete (17.1%)** · last updated 2026-09-17
 
 `███████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -10,7 +10,7 @@
 | :--- | ---: | ---: | :--- |
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
 | 02 — Foundation services | 11 | 11 | `██████████████` 100% |
-| 03 — Design system | 18 | 19 | `█████████████░` 95% |
+| 03 — Design system | 19 | 19 | `██████████████` 100% |
 | 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **47** | **281** | `██░░░░░░░░░░░░` 16.7% |
+| **Total** | **48** | **281** | `██░░░░░░░░░░░░` 17.1% |
 
 ## Completed
 
@@ -83,6 +83,7 @@
 | 045 — Haptics service | 2026-09-17 | `Haptics` is the one caller of `HapticFeedback`: shutter (heavy), save (medium), warning (light), error (vibrate) and selection (click). `Haptics.fake` records names for tests. Disabled haptics suppress all five; reduced motion skips selection so capture and save still confirm by touch. Guarded by fire-once, disabled, and reduced-motion unit tests. |
 | 046 — User-facing copy helper | 2026-09-17 | `Copy` is the one catalogue of visible strings, keyed by meaning, with ICU plurals for counts. Catalogue widgets read from it; template labels stay user data. Guarded by 0/1/2 plural tests and a synonym scan against the naming checker. |
 | 047 — Widget gallery screen | 2026-09-17 | `WidgetGalleryScreen` at `/_gallery` lists every catalogue widget by family, with theme, width and text-scale switchers. Debug router only. Guarded by an enumeration of `core/widgets/` and goldens of the index in light, dark and outdoor. |
+| 048 — Golden test baselines for the catalogue | 2026-09-17 | `expectGolden` pins Ahem, disables animation, and compares light, dark and outdoor under `test/design_system/goldens/`. Every catalogue widget plus the gallery index has a baseline; a one-pixel fixture fails and names the widget and mode. Guarded by an enumeration of `core/widgets/` and the CI golden gate. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -162,6 +163,8 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 047 | The contract sketches a `StatelessWidget`. | Open — switchers need State; implemented as `StatefulWidget`, same as 035 |
 | 047 | Extra `initialTheme` / `initialSize` / `initialTextScale`. | Open — goldens pin the matrix without a restart |
 | 047 | Extra `Copy.gallery*` keys. | Open — the screen has no user-facing literals (FE-L10N-01); ARB generation is 238 |
+| 048 | Per-widget gallery goldens from 030–047 stay in their folders. | Open — this task owns the shared harness and `test/design_system/goldens/`; collapsing the two trees is a later pass |
+| 048 | Ahem is the pinned test font. | Open — no `golden_toolkit` package (FE-FLOW-06); Ahem is always present in `flutter_test` |
 | 036 | Catalogue copy (`Select all`, `Clear`) is still inline. | Closed by 046 — multi-choice reads `Copy.selectAll` / `clear` |
 | 037 | FE-STR-06 wants one public class; the contract publishes `AppChip` and `AppChipRow`. | Closed by 037 — `AppChipRow` lives in a part file so one public class per file still holds |
 | 037 | Catalogue copy (`Dismiss {label}`) is still inline. | Closed by 046 — chips read `Copy.dismissChip` |
@@ -216,7 +219,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 03 — Design system
 
-*18 of 19 complete.*
+*19 of 19 complete.*
 
 - [x] [030 — Design tokens: colour, type, spacing and elevation](dev-plan/03-design-system/030-color-tokens.md)
 - [x] [031 — Material 3 themes and the theme mode controller](dev-plan/03-design-system/031-theme-assembly.md)
@@ -236,7 +239,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [045 — Haptics service](dev-plan/03-design-system/045-haptics-service.md)
 - [x] [046 — User-facing copy helper](dev-plan/03-design-system/046-copy-helper.md)
 - [x] [047 — Widget gallery screen](dev-plan/03-design-system/047-widget-gallery.md)
-- [ ] [048 — Golden test baselines for the catalogue](dev-plan/03-design-system/048-golden-baselines.md)
+- [x] [048 — Golden test baselines for the catalogue](dev-plan/03-design-system/048-golden-baselines.md)
 
 ### 04 — Local database
 
