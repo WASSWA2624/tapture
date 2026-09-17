@@ -44,11 +44,11 @@ final themeModeProvider = NotifierProvider<ThemeModeController, AppThemeMode>(..
 
 ## Definition of done
 
-- [ ] Every stock Material widget already looks like Tapture without local styling.
-- [ ] Switching to outdoor changes contrast and outline weight only — a widget test asserts identical geometry against
+- [x] Every stock Material widget already looks like Tapture without local styling.
+- [x] Switching to outdoor changes contrast and outline weight only — a widget test asserts identical geometry against
       light.
-- [ ] The chosen mode survives a restart and applies before the first frame, with no visible flash of the wrong theme.
-- [ ] Tests: golden of a sample screen in light, dark and outdoor; unit test that `AppThemeMode` round-trips through
+- [x] The chosen mode survives a restart and applies before the first frame, with no visible flash of the wrong theme.
+- [x] Tests: golden of a sample screen in light, dark and outdoor; unit test that `AppThemeMode` round-trips through
       storage; widget test comparing light and outdoor layout geometry.
 
 ## Out of scope

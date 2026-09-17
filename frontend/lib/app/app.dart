@@ -5,8 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'env.dart';
+import 'theme/app_theme.dart';
+import 'theme/theme_controller.dart';
 
 export 'env.dart';
+export 'theme/app_theme.dart';
+export 'theme/outdoor_theme.dart';
+export 'theme/theme_controller.dart';
 
 /// The type `app.dart` is named for (FE-STR-06). The contract name is
 /// [TaptureApp].
@@ -20,8 +25,17 @@ class TaptureApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final String title = ref.watch(_appTitleProvider);
+    final AppThemeMode mode = ref.watch(themeModeProvider);
+    final bool outdoor = mode == AppThemeMode.outdoor;
     return MaterialApp.router(
       title: title,
+      theme: buildTheme(brightness: Brightness.light, outdoor: outdoor),
+      darkTheme: buildTheme(brightness: Brightness.dark, outdoor: outdoor),
+      themeMode: switch (mode) {
+        AppThemeMode.light => ThemeMode.light,
+        AppThemeMode.dark => ThemeMode.dark,
+        AppThemeMode.system || AppThemeMode.outdoor => ThemeMode.system,
+      },
       routerDelegate: _placeholderDelegate,
       routeInformationParser: _placeholderParser,
     );

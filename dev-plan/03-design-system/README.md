@@ -5,7 +5,7 @@ Built before any feature. Every later screen is assembled from these parts and n
 Tasks 030–048 (19). Each file is a standalone implementation prompt.
 
 - [x] [030 — Design tokens: colour, type, spacing and elevation](030-color-tokens.md)
-- [ ] [031 — Material 3 themes and the theme mode controller](031-theme-assembly.md)
+- [x] [031 — Material 3 themes and the theme mode controller](031-theme-assembly.md)
 - [ ] [032 — Breakpoints, responsive builder and readable width](032-breakpoints.md)
 - [ ] [033 — Page scaffold](033-app-page.md)
 - [ ] [034 — Buttons, icon buttons and the primary action](034-app-button.md)

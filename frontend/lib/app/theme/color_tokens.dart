@@ -211,8 +211,8 @@ final class AppColors extends ThemeExtension<AppColors> {
 
 /// Resolves [AppColors] from [BuildContext].
 extension AppColorsX on BuildContext {
-  /// The palette of the active mode, falling back to light or dark from
-  /// [ThemeData.brightness] until task 031 installs the extension.
+  /// The palette of the active mode. Falls back to light or dark from
+  /// [ThemeData.brightness] when a tree has not installed the extension.
   AppColors get colors {
     return Theme.of(this).extension<AppColors>() ??
         (Theme.of(this).brightness == Brightness.dark

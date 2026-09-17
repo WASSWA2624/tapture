@@ -57,6 +57,11 @@ abstract final class AppConstants {
     medium: 0.60,
   );
 
+  /// Names written into the on-disk preference store. Values never live here.
+  static const ({String themeMode}) preferences = (
+    themeMode: 'tapture.theme.mode',
+  );
+
   /// Names written into platform secure storage. Values never live here.
   static const ({
     String pinSalt,

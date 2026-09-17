@@ -111,6 +111,7 @@ void main() {
       AppConstants.secrets.relayProject,
       AppConstants.secrets.cloudAccess,
       AppConstants.secrets.cloudRefresh,
+      AppConstants.preferences.themeMode,
     ];
 
     expect(keys.every((String key) => key.isNotEmpty), isTrue);
