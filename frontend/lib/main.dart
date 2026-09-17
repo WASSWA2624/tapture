@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app/app.dart';
+import 'app/provider_observer.dart' hide ProviderObserver;
 import 'core/lifecycle/lifecycle_observer.dart';
+import 'core/logging/logger.dart';
 
-/// Errors captured by the temporary handler until the logger (task 022) exists.
+/// Errors captured for bootstrap tests; the same objects are also logged.
 @visibleForTesting
 final List<Object> debugBootstrapErrors = <Object>[];
 
@@ -21,7 +23,16 @@ Future<void> main() async {
 }
 
 Future<void> _run() async {
-  runApp(const ProviderScope(child: TaptureApp()));
+  final Logger logger = Logger(persist: true);
+  Logger.current = logger;
+  runApp(
+    ProviderScope(
+      observers: Env.isDev
+          ? <ProviderObserver>[AppProviderObserver(logger)]
+          : const <ProviderObserver>[],
+      child: const TaptureApp(),
+    ),
+  );
 }
 
 void _installErrorHandlers() {
@@ -51,4 +62,10 @@ void _handleZoneError(Object error, StackTrace stackTrace) {
 
 void _captureError(Object error, StackTrace stackTrace) {
   debugBootstrapErrors.add(error);
+  final Logger logger = Logger.current;
+  logger.error(
+    'bootstrap',
+    'an uncaught error was captured $stackTrace',
+    error: error,
+  );
 }

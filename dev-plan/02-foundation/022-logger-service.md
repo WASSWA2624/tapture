@@ -38,7 +38,7 @@ class AppProviderObserver extends ProviderObserver
 
 ## Definition of done
 
-- [ ] No log line and no exported file contains a redacted pattern, a record value or a credential, even when one is passed deliberately.
-- [ ] The buffer drops oldest entries at its bound, and level filtering discards anything below the configured level.
-- [ ] A provider that throws produces exactly one logged error, and the observer is absent from a production build.
-- [ ] Tests: `frontend/test/core/logging/logger_test.dart` proves redaction, level filtering and buffer bounds; `frontend/test/core/logging/log_export_test.dart` scans the output against `secret_patterns.yaml`; `frontend/test/app/provider_observer_test.dart` asserts one log per failure.
+- [x] No log line and no exported file contains a redacted pattern, a record value or a credential, even when one is passed deliberately.
+- [x] The buffer drops oldest entries at its bound, and level filtering discards anything below the configured level.
+- [x] A provider that throws produces exactly one logged error, and the observer is absent from a production build.
+- [x] Tests: `frontend/test/core/logging/logger_test.dart` proves redaction, level filtering and buffer bounds; `frontend/test/core/logging/log_export_test.dart` scans the output against `secret_patterns.yaml`; `frontend/test/app/provider_observer_test.dart` asserts one log per failure.
