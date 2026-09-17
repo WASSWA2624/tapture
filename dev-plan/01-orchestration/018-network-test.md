@@ -29,6 +29,6 @@ allowed to do it, and `data_safety_test.dart` stops code overwriting or hard-del
 
 ## Definition of done
 
-- [ ] A HTTP call added inside a feature repository fails `network_test.dart`, while the same import under `core/backend/` passes.
-- [ ] An update to `valueRaw` in a refinement service, a hard row delete and a file delete outside the purge job each fail `data_safety_test.dart`.
-- [ ] Tests: both suites with compliant fixtures and one non-compliant fixture per violation, under `frontend/test/architecture/fixtures/`.
+- [x] A HTTP call added inside a feature repository fails `network_test.dart`, while the same import under `core/backend/` passes.
+- [x] An update to `valueRaw` in a refinement service, a hard row delete and a file delete outside the purge job each fail `data_safety_test.dart`.
+- [x] Tests: both suites with compliant fixtures and one non-compliant fixture per violation, under `frontend/test/architecture/fixtures/`.

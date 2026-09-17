@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**17 of 281 tasks complete (6.0%)** · last updated 2026-09-17
+**18 of 281 tasks complete (6.4%)** · last updated 2026-09-17
 
 `██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -8,7 +8,7 @@
 
 | Phase | Done | Total | Progress |
 | :--- | ---: | ---: | :--- |
-| 01 — Project setup and guardrails | 17 | 18 | `█████████████░` 94% |
+| 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
 | 02 — Foundation services | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
 | 03 — Design system | 0 | 19 | `░░░░░░░░░░░░░░` 0% |
 | 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
@@ -53,6 +53,7 @@
 | 015 — Logging discipline and secret scan | 2026-09-17 | `tool/check_logging.dart` bans `print`/`debugPrint` outside `tool/` and `test/`, requires a level and a tag, and fails a log line that interpolates a key, secret, token, password, credential, caption, transcript or value. `tool/check_secrets.dart` scans `lib/`, `android/`, `ios/` and `assets/` against named patterns in `tool/secret_patterns.yaml` and never prints the match. Guarded by 37 tests. |
 | 016 — Test presence checker | 2026-09-17 | `tool/check_tests.dart` reports every `domain/`, `data/` and `core/widgets/` file, plus presentation screens, that owes a test and has none; barrels, generated files and integration-covered screens are exempt. `--strict` fails the run and names the missing `test/…_test.dart` path. `verify.dart` calls the strict run. Guarded by 13 tests. |
 | 017 — Accessibility test matchers | 2026-09-17 | `test/support/a11y_matchers.dart` provides `hasSemanticLabel`, `meetsTapTarget` (48dp) and `expectNoA11yIssues`, which runs the framework guidelines and asserts 200 percent text scale does not clip in either orientation. Failures name the widget and the measured value. Guarded by 7 tests. |
+| 018 — Network boundary and raw-data safety tests | 2026-09-17 | `test/architecture/network_test.dart` fails an HTTP import outside `core/ai/`, `core/cloud/` and `core/backend/`, and a widget or `domain/` file that names a network client. `test/architecture/data_safety_test.dart` fails a write to `valueRaw`/`textRaw`/`transcriptRaw` outside a repository create method, a hard row delete, and a `File.delete` outside the purge job. Guarded by 18 tests over allowed and forbidden fixtures. Did not add `lib/core/backend/` — the task names only the two suites. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -103,7 +104,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [015 — Logging discipline and secret scan](dev-plan/01-orchestration/015-logging-checker.md)
 - [x] [016 — Test presence checker](dev-plan/01-orchestration/016-test-presence-checker.md)
 - [x] [017 — Accessibility test matchers](dev-plan/01-orchestration/017-accessibility-matchers.md)
-- [ ] [018 — Network boundary and raw-data safety tests](dev-plan/01-orchestration/018-network-test.md)
+- [x] [018 — Network boundary and raw-data safety tests](dev-plan/01-orchestration/018-network-test.md)
 
 ### 02 — Foundation services
 
