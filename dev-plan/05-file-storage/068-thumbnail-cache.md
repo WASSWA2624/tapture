@@ -49,11 +49,11 @@ abstract interface class CacheCleanup {
 
 ## Definition of done
 
-- [ ] A tray of thirty photos scrolls within the FE-PERF-01 budget on a mid-range device, decoding no full image.
-- [ ] A repeated thumbnail request hits the cache and performs no decode.
-- [ ] The original's hash is unchanged after compression, and the reduced copy is smaller.
-- [ ] Deleting `.cache` entirely loses nothing but speed; the next request rebuilds what it needs.
-- [ ] Tests: `frontend/test/core/files/thumbnail_cache_test.dart` counts decodes across two requests;
+- [x] A tray of thirty photos scrolls within the FE-PERF-01 budget on a mid-range device, decoding no full image.
+- [x] A repeated thumbnail request hits the cache and performs no decode.
+- [x] The original's hash is unchanged after compression, and the reduced copy is smaller.
+- [x] Deleting `.cache` entirely loses nothing but speed; the next request rebuilds what it needs.
+- [x] Tests: `frontend/test/core/files/thumbnail_cache_test.dart` counts decodes across two requests;
       `compressed_copy_test.dart` compares the source hash before and after and asserts the size reduction;
       `cache_cleanup_test.dart` prunes by age and by size against a fake clock and asserts nothing outside `.cache` is
       touched.

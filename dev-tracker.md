@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**67 of 281 tasks complete (23.8%)** · last updated 2026-09-17
+**68 of 281 tasks complete (24.2%)** · last updated 2026-09-17
 
 `█████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -12,7 +12,7 @@
 | 02 — Foundation services | 11 | 11 | `██████████████` 100% |
 | 03 — Design system | 19 | 19 | `██████████████` 100% |
 | 04 — Local database | 16 | 16 | `██████████████` 100% |
-| 05 — File storage | 3 | 7 | `██████░░░░░░░░` 43% |
+| 05 — File storage | 4 | 7 | `████████░░░░░░` 57% |
 | 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
 | 07 — Account and settings | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
 | 08 — Projects | 0 | 6 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **67** | **281** | `██░░░░░░░░░░░░` 23.8% |
+| **Total** | **68** | **281** | `██░░░░░░░░░░░░` 24.2% |
 
 ## Completed
 
@@ -103,6 +103,7 @@
 | 065 — Storage root resolution | 2026-09-17 | `StorageRoot` creates visible `Tapture/` and disposable `Tapture/.cache` under the documents directory, probes writability with a marker file, and memoises a successful resolve. Unwritable or missing locations return `StorageFailure` with the path and a recovery action; a storage denial is `PermissionFailure`. Guarded by temp-dir idempotent create, blocked-path / not-writable failure, and denial tests. |
 | 066 — Project folder tree, name sanitiser and photo path builder | 2026-09-17 | `sanitiseSegment` refuses traversal, absolute paths, drive prefixes, device names and empty results; display names keep letters/digits/hyphens. `ProjectFolders` creates the eight-folder tree under `Tapture/projects/<name>__<id>` from stored `folderName` so a rename does not move files. `buildPhotoPath` covers byContext (spec path plus `_unfiled` gaps), byTemplate, byCaptureDate and flat. Guarded by hostile-input, temp-dir idempotent/rename, and strategy tests. |
 | 067 — Atomic file writer and context relocation | 2026-09-17 | `FileWriter` streams to `<target>.part`, hashes in the same pass, flushes and renames so the target is absent or complete. Stale `.part` files are swept on the next write to that directory and never resumed. `FileRelocation` moves a record's photos (including `_unfiled` promotion) then updates `relativePath` in one transaction, rolling files back if the write fails. Guarded by interrupted-write, full-disk, hash-equality, unfiled, facility-rename, failed-move and failed-transaction tests. |
+| 068 — Derived image cache: thumbnails, compressed copies and cleanup | 2026-09-17 | `ThumbnailCache` keys `<sha256>_<edge>` under `.cache/thumbs/`, decodes at most `concurrentDecodes` originals, and serves a second request from disk. `CompressedCopy` writes a long-edge copy through `FileWriter` into `.cache/upload/` without changing the original hash. `CacheCleanup` prunes by age then by size, oldest first, and never leaves `.cache`. Guarded by decode-count, hash-and-size, and fake-clock prune tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -212,6 +213,10 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 067 | Attachments have no `recordId`, so `relocateRecord` cannot own the documents/audio tree. | Open — photos of the record are moved; an attachment row whose `relativePath` matches a moved photo is updated in the same transaction without a second rename |
 | 067 | A `Stream` cannot cross `runIsolate`; capture (123) already wraps the write in the isolate runner. | Open — `FileWriter` streams in `AppConstants.hashing.chunkBytes` on the caller isolate and reports progress through `IsolateRunner` |
 | 067 | `file_writer.dart` and `file_relocation.dart` use `dart:io` as the contract names. | Open — callers import them directly, same as 065 |
+| 068 | FE-FLOW-06 forbids adding `package:image`; dart:ui has no JPEG encoder. | Open — production resize uses `instantiateCodec` at the target long edge and writes PNG; tests inject `decode` so they can count original reads |
+| 068 | Task 018 bans `File.delete` outside the purge job. Cache prune must remove derived files. | Open — `await file.delete()` on a `File` variable, same seam as 065 |
+| 068 | `thumbnail_cache.dart` / `compressed_copy.dart` / `cache_cleanup.dart` use `dart:io`. | Open — callers import them directly, same as 065 |
+| 068 | A thirty-photo tray budget is a device measurement (FE-PERF-01). | Open — this task caps concurrent decodes and skips a second decode; the 400ms scroll assertion stays with the performance suite |
 | 049 | Empty Drift managers leave an unused `_db` field that this analyzer reads as an error. | Closed by 050 — `BaseDao` is hand-written; `generate_manager: false` stays because an empty Drift manager still leaves unused `_db` |
 | 050 | The contract types `runInTransaction` on `AppDatabase`; tests need a table `AppDatabase` does not have yet. | Open — the parameter is `GeneratedDatabase`, which `AppDatabase` already is, so a probe database can share the helper |
 | 050 | `BaseDao` cannot stamp writes without a clock, device id, id service and table. | Open — extra constructor arguments; table tasks pass them through |
@@ -317,12 +322,12 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 05 — File storage
 
-*3 of 7 complete.*
+*4 of 7 complete.*
 
 - [x] [065 — Storage root resolution](dev-plan/05-file-storage/065-storage-root.md)
 - [x] [066 — Project folder tree, name sanitiser and photo path builder](dev-plan/05-file-storage/066-project-folder-service.md)
 - [x] [067 — Atomic file writer and context relocation](dev-plan/05-file-storage/067-file-writer.md)
-- [ ] [068 — Derived image cache: thumbnails, compressed copies and cleanup](dev-plan/05-file-storage/068-thumbnail-cache.md)
+- [x] [068 — Derived image cache: thumbnails, compressed copies and cleanup](dev-plan/05-file-storage/068-thumbnail-cache.md)
 - [ ] [069 — Storage headroom guard](dev-plan/05-file-storage/069-storage-guard.md)
 - [ ] [070 — Orphan file scanner](dev-plan/05-file-storage/070-orphan-scanner.md)
 - [ ] [071 — Imported file validation](dev-plan/05-file-storage/071-file-validation.md)
