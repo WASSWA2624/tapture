@@ -14,6 +14,17 @@ abstract interface class TextStore {
   /// preference key.
   factory TextStore.file({String? path}) = _FileTextStore;
 
+  /// The first-run completion flag. [backing] is the in-memory fake; omitted,
+  /// a separate file from the theme preference is used.
+  factory TextStore.firstRun([Map<String, String>? backing]) {
+    if (backing != null) {
+      return _MemoryTextStore.keyed(backing, AppConstants.preferences.firstRun);
+    }
+    return _FileTextStore(
+      path: io.preferencePath(AppConstants.preferences.firstRun),
+    );
+  }
+
   /// The stored contents, or null when nothing has been written.
   String? read();
 
@@ -24,16 +35,22 @@ abstract interface class TextStore {
 
 final class _MemoryTextStore implements TextStore {
   _MemoryTextStore([Map<String, String>? backing])
-    : _backing = backing ?? <String, String>{};
+    : this.keyed(
+        backing ?? <String, String>{},
+        AppConstants.preferences.themeMode,
+      );
+
+  _MemoryTextStore.keyed(this._backing, this._key);
 
   final Map<String, String> _backing;
+  final String _key;
 
   @override
-  String? read() => _backing[AppConstants.preferences.themeMode];
+  String? read() => _backing[_key];
 
   @override
   Future<void> write(String contents) async {
-    _backing[AppConstants.preferences.themeMode] = contents;
+    _backing[_key] = contents;
   }
 }
 

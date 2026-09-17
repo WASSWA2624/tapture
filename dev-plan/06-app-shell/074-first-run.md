@@ -29,10 +29,10 @@ of it as a route change rather than a redesign (§56 rule 4, §71.1, FE-SIMP-04)
 
 ## Definition of done
 
-- [ ] A new install captures within thirty seconds of clearing this screen, having answered only the operator name.
-- [ ] The gate is one entry in the router guard chain, so sign-in can precede it without editing a later screen.
-- [ ] Skipping the project step still leaves a usable app.
-- [ ] Tests: `frontend/test/features/onboarding/first_run_screen_test.dart` covers the skip path, the
+- [x] A new install captures within thirty seconds of clearing this screen, having answered only the operator name.
+- [x] The gate is one entry in the router guard chain, so sign-in can precede it without editing a later screen.
+- [x] Skipping the project step still leaves a usable app.
+- [x] Tests: `frontend/test/features/onboarding/presentation/first_run_screen_test.dart` covers the skip path, the
   template path and the completed-flag short-circuit on second launch.
 
 ## Out of scope

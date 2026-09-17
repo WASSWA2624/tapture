@@ -172,5 +172,11 @@ List<String> get _values {
     Copy.navCapture,
     Copy.navRecords,
     Copy.navMore,
+    Copy.firstRunTitle,
+    Copy.firstRunSubtitle,
+    Copy.firstRunName,
+    Copy.firstRunStartProject,
+    Copy.firstRunStartCaption,
+    Copy.firstRunSkip,
   ];
 }

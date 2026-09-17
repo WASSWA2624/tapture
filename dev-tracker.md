@@ -1,8 +1,8 @@
 # Tapture — development tracker
 
-**73 of 281 tasks complete (26.0%)** · last updated 2026-09-17
+**74 of 281 tasks complete (26.3%)** · last updated 2026-09-17
 
-`██████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
+`███████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
 ## Phase progress
 
@@ -13,7 +13,7 @@
 | 03 — Design system | 19 | 19 | `██████████████` 100% |
 | 04 — Local database | 16 | 16 | `██████████████` 100% |
 | 05 — File storage | 7 | 7 | `██████████████` 100% |
-| 06 — Application shell | 2 | 5 | `██████░░░░░░░░` 40% |
+| 06 — Application shell | 3 | 5 | `████████░░░░░░` 60% |
 | 07 — Account and settings | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
 | 08 — Projects | 0 | 6 | `░░░░░░░░░░░░░░` 0% |
 | 09 — Templates | 0 | 17 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **73** | **281** | `████░░░░░░░░░░` 26.0% |
+| **Total** | **74** | **281** | `████░░░░░░░░░░` 26.3% |
 
 ## Completed
 
@@ -109,6 +109,7 @@
 | 071 — Imported file validation | 2026-09-17 | `FileValidation` is the one gate outside files pass: extension allow-list, a 64-byte magic sniff, per-kind size ceilings, then a ZIP central-directory walk for xlsx and bundles. Refusals quote the basename as data. Guarded by one passing case per kind plus mismatched xlsx, oversized image, empty file, traversal zip, symlink entry, and zip-bomb declaration. |
 | 072 — Router, route table and guards | 2026-09-17 | `routerProvider` installs GoRouter with `AppRoutes` helpers and a single `appGuards()` redirect chain. Project-scoped routes carry a metadata flag; a capture deep link with no open project diverts to `/projects?from=` and resumes when `OpenProjectId` is set. Unknown paths render `AppErrorState` with a way back. Guarded by a full route-table resolution plus diversion/resumption tests. |
 | 073 — Adaptive navigation shell | 2026-09-17 | `NavShell` wraps four `StatefulShellRoute` branches (Projects, Capture, Records, More) selected with `ResponsiveBuilder`: bar under 600dp, rail from 600, rail plus list pane from 1024. Capture is larger and primary-toned in every layout. Each branch keeps its stack and in-progress input across a destination switch and a size-class change. Guarded by 400/800/1200 widget tests plus stack-and-field preservation. |
+| 074 — First-run flow | 2026-09-17 | One skippable screen asks only for an operator name, then start-a-project or skip through to `/capture`. Completion is one `TextStore.firstRun` flag; `_firstRun` is the first `appGuards()` entry so 267 can prepend sign-in. Guarded by skip, template, and second-launch widget tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -239,6 +240,8 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 072 | Project screens do not exist yet; the guard still has to read an open project id. | Open — extra `openProjectIdProvider` / `OpenProjectId` until 083's `CurrentProject` becomes the source |
 | 072 | `route_guards.dart` needs `AppRoutes.projects` without a cycle. | Open — the two named files are one library (`part of`), same shape as `WrittenFile` |
 | 073 | Capture is a destination before `CurrentProject` exists. | Open — `/capture` is the unscoped branch root so the tab works; `/projects/:id/capture` stays project-scoped in the same branch |
+| 074 | Projects and shipped templates do not exist yet. | Open — "Start a project" persists `startProject=true` and opens `/capture`; 082/091 insert the row |
+| 074 | The operator name is not yet `device_profile.operatorName`. | Open — the first-run flag stores it until 077 owns the profile row |
 | 049 | Empty Drift managers leave an unused `_db` field that this analyzer reads as an error. | Closed by 050 — `BaseDao` is hand-written; `generate_manager: false` stays because an empty Drift manager still leaves unused `_db` |
 | 050 | The contract types `runInTransaction` on `AppDatabase`; tests need a table `AppDatabase` does not have yet. | Open — the parameter is `GeneratedDatabase`, which `AppDatabase` already is, so a probe database can share the helper |
 | 050 | `BaseDao` cannot stamp writes without a clock, device id, id service and table. | Open — extra constructor arguments; table tasks pass them through |
@@ -360,7 +363,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 - [x] [072 — Router, route table and guards](dev-plan/06-app-shell/072-router-setup.md)
 - [x] [073 — Adaptive navigation shell](dev-plan/06-app-shell/073-nav-shell.md)
-- [ ] [074 — First-run flow](dev-plan/06-app-shell/074-first-run.md)
+- [x] [074 — First-run flow](dev-plan/06-app-shell/074-first-run.md)
 - [ ] [075 — Global status line and offline banner](dev-plan/06-app-shell/075-status-line.md)
 - [ ] [076 — Global error and crash recovery screen](dev-plan/06-app-shell/076-global-error-page.md)
 

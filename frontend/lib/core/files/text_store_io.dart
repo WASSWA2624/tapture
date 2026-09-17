@@ -5,8 +5,12 @@ import 'package:tapture/core/constants/app_constants.dart';
 /// A writable path for the theme-mode preference until the settings store
 /// exists.
 String defaultPreferencesPath() {
-  return '${Directory.systemTemp.path}/tapture-prefs/'
-      '${AppConstants.preferences.themeMode}';
+  return preferencePath(AppConstants.preferences.themeMode);
+}
+
+/// Temp-dir file named for a preference key (FE-CODE-09).
+String preferencePath(String key) {
+  return '${Directory.systemTemp.path}/tapture-prefs/$key';
 }
 
 /// The file contents, or null when it is missing or empty.

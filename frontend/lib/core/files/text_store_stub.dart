@@ -1,6 +1,9 @@
 /// Web stand-in: no durable file.
 String defaultPreferencesPath() => '';
 
+/// Web stand-in: no durable file.
+String preferencePath(String key) => '';
+
 /// Web stand-in: nothing on disk.
 String? readTextFile(String path) {
   if (path.isEmpty) {

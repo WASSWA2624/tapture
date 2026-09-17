@@ -280,4 +280,23 @@ abstract final class Copy {
 
   /// Shell destination: settings and the rest.
   static const String navMore = 'More';
+
+  /// First-run screen title; the only question asked.
+  static const String firstRunTitle = 'Your name';
+
+  /// Why the name is asked, under the title.
+  static const String firstRunSubtitle =
+      'Used on every record you capture from this device.';
+
+  /// Label of the operator name field.
+  static const String firstRunName = 'Name';
+
+  /// Primary action: create a project from a shipped template.
+  static const String firstRunStartProject = 'Start a project';
+
+  /// Caption on the primary action naming the shipped template path.
+  static const String firstRunStartCaption = 'Uses a shipped template';
+
+  /// Secondary action: keep the name and go to capture without a project.
+  static const String firstRunSkip = 'Skip';
 }

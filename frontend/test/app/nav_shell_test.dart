@@ -7,6 +7,7 @@ import 'package:tapture/app/nav_shell.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/features/onboarding/presentation/first_run_screen.dart';
 
 void main() {
   testWidgets('compact width uses a bottom bar', (WidgetTester tester) async {
@@ -102,7 +103,12 @@ Future<GoRouter> _pump(
   String? projectId,
 }) async {
   _bindWidth(tester, width);
-  await tester.pumpWidget(const ProviderScope(child: TaptureApp()));
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [firstRunCompletedOverride()],
+      child: const TaptureApp(),
+    ),
+  );
   await tester.pump();
   final BuildContext context = tester.element(find.byType(TaptureApp));
   final ProviderContainer container = ProviderScope.containerOf(context);

@@ -6,6 +6,7 @@ import 'package:tapture/app/nav_shell.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
+import 'package:tapture/features/onboarding/onboarding.dart';
 
 part 'route_guards.dart';
 
@@ -23,6 +24,9 @@ abstract final class AppRoutes {
   /// Query key for the location a diverted deep link should resume at.
   static const String fromQuery = 'from';
 
+  /// The first-run gate. Task 267 can insert sign-in in front of this path.
+  static const String firstRun = '/first-run';
+
   /// One project's home.
   static String project(String id) => '$projects/${Uri.encodeComponent(id)}';
 
@@ -39,6 +43,12 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
   final ValueNotifier<int> refresh = ValueNotifier<int>(0);
   ref.onDispose(refresh.dispose);
   ref.listen<String?>(openProjectIdProvider, (String? previous, String? next) {
+    refresh.value++;
+  });
+  ref.listen<FirstRunSnapshot>(firstRunProvider, (
+    FirstRunSnapshot? previous,
+    FirstRunSnapshot next,
+  ) {
     refresh.value++;
   });
   final GoRouter router = GoRouter(
@@ -65,6 +75,12 @@ List<RouteBase> get _routes {
     GoRoute(
       path: '/',
       redirect: (BuildContext _, GoRouterState _) => AppRoutes.projects,
+    ),
+    GoRoute(
+      path: AppRoutes.firstRun,
+      builder: (BuildContext _, GoRouterState _) {
+        return const FirstRunScreen();
+      },
     ),
     StatefulShellRoute.indexedStack(
       builder:
@@ -94,7 +110,7 @@ List<RouteBase> get _routes {
         StatefulShellBranch(
           routes: <RouteBase>[
             GoRoute(
-              path: '/capture',
+              path: _captureTab,
               builder: (BuildContext _, GoRouterState _) {
                 return const _RoutePage(name: 'capture');
               },
@@ -189,6 +205,8 @@ class _RoutePage extends StatelessWidget {
 }
 
 const String _projectScopedKey = 'projectScoped';
+
+const String _captureTab = '/capture';
 
 const Map<String, dynamic> _projectScoped = <String, dynamic>{
   _projectScopedKey: true,

@@ -8,10 +8,12 @@ import 'package:tapture/app/app.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
+import 'package:tapture/features/onboarding/presentation/first_run_screen.dart';
 
 void main() {
   test('AppRoutes helpers are the declared paths', () {
     expect(AppRoutes.projects, '/projects');
+    expect(AppRoutes.firstRun, '/first-run');
     expect(AppRoutes.project('ab'), '/projects/ab');
     expect(AppRoutes.capture('ab'), '/projects/ab/capture');
     expect(AppRoutes.record('cd'), '/records/cd');
@@ -96,7 +98,12 @@ void main() {
 }
 
 Future<GoRouter> _pump(WidgetTester tester, {String? projectId}) async {
-  await tester.pumpWidget(const ProviderScope(child: TaptureApp()));
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [firstRunCompletedOverride()],
+      child: const TaptureApp(),
+    ),
+  );
   await tester.pump();
   final BuildContext context = tester.element(find.byType(TaptureApp));
   final ProviderContainer container = ProviderScope.containerOf(context);

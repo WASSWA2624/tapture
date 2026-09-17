@@ -3,12 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/app.dart';
+import 'package:tapture/features/onboarding/presentation/first_run_screen.dart';
 
 void main() {
   testWidgets(
     'a capture link with no project asks which project, then continues',
     (WidgetTester tester) async {
-      await tester.pumpWidget(const ProviderScope(child: TaptureApp()));
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [firstRunCompletedOverride()],
+          child: const TaptureApp(),
+        ),
+      );
       await tester.pump();
 
       final BuildContext context = tester.element(find.byType(TaptureApp));
@@ -41,7 +47,9 @@ void main() {
 
   test('guards divert a project-scoped location without a widget', () {
     TestWidgetsFlutterBinding.ensureInitialized();
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: [firstRunCompletedOverride()],
+    );
     addTearDown(container.dispose);
     final GoRouter router = container.read(routerProvider);
     final GoRouterState state = GoRouterState(
@@ -72,7 +80,9 @@ void main() {
 
   test('guards resume once a project is open, without a widget', () {
     TestWidgetsFlutterBinding.ensureInitialized();
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: [firstRunCompletedOverride()],
+    );
     addTearDown(container.dispose);
     container.read(openProjectIdProvider.notifier).open('p1');
     final GoRouter router = container.read(routerProvider);
