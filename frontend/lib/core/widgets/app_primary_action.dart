@@ -50,14 +50,12 @@ class AppPrimaryAction extends StatelessWidget {
           child: FilledButton(
             onPressed: visualPress,
             style: FilledButton.styleFrom(
-              minimumSize: const Size(
-                double.infinity,
-                Sizes.controlHeight + Space.x4,
-              ),
+              minimumSize: const Size(double.infinity, Sizes.controlHeight),
               padding: const EdgeInsets.symmetric(
                 horizontal: Space.x4,
-                vertical: Space.x3,
+                vertical: Space.x2,
               ),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               disabledBackgroundColor: context.colors.surfaceVariant,
               disabledForegroundColor: context.colors.onSurface,
             ),

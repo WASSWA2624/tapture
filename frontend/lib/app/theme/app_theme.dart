@@ -23,16 +23,16 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
   );
   const ButtonStyle controlStyle = ButtonStyle(
     minimumSize: WidgetStatePropertyAll<Size>(
-      Size(Sizes.minTapTarget, Sizes.controlHeight),
+      Size(Sizes.minTapTarget, Sizes.minTapTarget),
     ),
     padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(
-      EdgeInsets.symmetric(horizontal: Space.x4, vertical: Space.x2),
+      EdgeInsets.symmetric(horizontal: Space.x3, vertical: Space.x1),
     ),
     shape: WidgetStatePropertyAll<OutlinedBorder>(controlShape),
     elevation: WidgetStatePropertyAll<double>(0),
     shadowColor: WidgetStatePropertyAll<Color>(Color(0x00000000)),
     textStyle: WidgetStatePropertyAll<TextStyle>(AppText.label),
-    tapTargetSize: MaterialTapTargetSize.padded,
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
   );
 
   return ThemeData(
@@ -78,7 +78,7 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
       style: IconButton.styleFrom(
         foregroundColor: colors.onSurface,
         minimumSize: const Size(Sizes.minTapTarget, Sizes.minTapTarget),
-        tapTargetSize: MaterialTapTargetSize.padded,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
     ),
     inputDecorationTheme: InputDecorationThemeData(

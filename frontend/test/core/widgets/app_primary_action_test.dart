@@ -57,7 +57,7 @@ void main() {
 
       final Size size = tester.getSize(find.byType(AppPrimaryAction));
       expect(size.width, 400);
-      expect(size.height, greaterThanOrEqualTo(Sizes.controlHeight + Space.x4));
+      expect(size.height, greaterThanOrEqualTo(Sizes.controlHeight));
       expect(find.byType(AppPrimaryAction), meetsTapTarget());
       expect(find.byType(AppPrimaryAction), hasSemanticLabel('Capture'));
       await expectNoA11yIssues(tester);
