@@ -50,7 +50,7 @@ abstract interface class SettingsStore {
 
 ## Definition of done
 
-- [ ] No feature reads a preference by raw string key; each key is declared once with its type and default.
-- [ ] A stored map from an earlier version loads with new keys at their defaults and loses no existing value.
-- [ ] Tests: unit tests of defaults, round-trip write and read, one change event per committed write, no event on a
+- [x] No feature reads a preference by raw string key; each key is declared once with its type and default.
+- [x] A stored map from an earlier version loads with new keys at their defaults and loses no existing value.
+- [x] Tests: unit tests of defaults, round-trip write and read, one change event per committed write, no event on a
   failed write, and the version migration; the fake passes the same suite as the implementation.
