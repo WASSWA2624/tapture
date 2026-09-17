@@ -32,6 +32,6 @@ abstract final class DomainNames { static const project = 'Project'; ... }
 
 ## Definition of done
 
-- [ ] Declaring `RecordModel` or `PhotoItem` fails the test with `RecordEntry` and `PhotoAsset` in the message.
-- [ ] All twelve concepts resolve through `DomainNames`, with no second spelling anywhere in `lib/`.
-- [ ] Tests: `frontend/test/architecture/naming_test.dart` over fixtures for three synonyms and one compliant tree.
+- [x] Declaring `RecordModel` or `PhotoItem` fails the test with `RecordEntry` and `PhotoAsset` in the message.
+- [x] All twelve concepts resolve through `DomainNames`, with no second spelling anywhere in `lib/`.
+- [x] Tests: `frontend/test/architecture/naming_test.dart` over fixtures for three synonyms and one compliant tree.
