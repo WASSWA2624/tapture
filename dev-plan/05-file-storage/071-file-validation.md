@@ -40,10 +40,10 @@ abstract interface class FileValidation {
 
 ## Definition of done
 
-- [ ] A `.xlsx` that is really an executable, an oversized image and a zip with a `../` entry are each refused with a
+- [x] A `.xlsx` that is really an executable, an oversized image and a zip with a `../` entry are each refused with a
       message naming the reason.
-- [ ] A valid file of each supported kind passes and reports its kind.
-- [ ] No rejected file is ever opened by a parser, and none leaves a copy behind.
-- [ ] Tests: `frontend/test/core/files/file_validation_test.dart` runs crafted inputs — mismatched magic bytes, empty
+- [x] A valid file of each supported kind passes and reports its kind.
+- [x] No rejected file is ever opened by a parser, and none leaves a copy behind.
+- [x] Tests: `frontend/test/core/files/file_validation_test.dart` runs crafted inputs — mismatched magic bytes, empty
       file, oversized file, traversal zip, symlink entry, zip bomb declaration — and asserts one refusal each plus the
       passing cases.

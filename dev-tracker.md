@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**70 of 281 tasks complete (24.9%)** · last updated 2026-09-17
+**71 of 281 tasks complete (25.3%)** · last updated 2026-09-17
 
 `██████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -12,7 +12,7 @@
 | 02 — Foundation services | 11 | 11 | `██████████████` 100% |
 | 03 — Design system | 19 | 19 | `██████████████` 100% |
 | 04 — Local database | 16 | 16 | `██████████████` 100% |
-| 05 — File storage | 6 | 7 | `████████████░░` 86% |
+| 05 — File storage | 7 | 7 | `██████████████` 100% |
 | 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
 | 07 — Account and settings | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
 | 08 — Projects | 0 | 6 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **70** | **281** | `██░░░░░░░░░░░░` 24.9% |
+| **Total** | **71** | **281** | `███░░░░░░░░░░░` 25.3% |
 
 ## Completed
 
@@ -106,6 +106,7 @@
 | 068 — Derived image cache: thumbnails, compressed copies and cleanup | 2026-09-17 | `ThumbnailCache` keys `<sha256>_<edge>` under `.cache/thumbs/`, decodes at most `concurrentDecodes` originals, and serves a second request from disk. `CompressedCopy` writes a long-edge copy through `FileWriter` into `.cache/upload/` without changing the original hash. `CacheCleanup` prunes by age then by size, oldest first, and never leaves `.cache`. Guarded by decode-count, hash-and-size, and fake-clock prune tests. |
 | 069 — Storage headroom guard | 2026-09-17 | `StorageGuard` maps free bytes to `ample` / `low` / `critical` from `AppConstants.storage`, polls on resume and `beginSession` (not per shutter), warns once per low session while capture continues, and refuses a new capture at critical with export and cache cleanup on the `StorageFailure`. An in-flight `completeSave` still finishes. Guarded by a fake volume across both thresholds, one-warning, refusal, in-flight, and resume-versus-shutter tests. |
 | 070 — Orphan file scanner | 2026-09-17 | `OrphanScanner` walks a project tree in pages, skips `.cache` and `.part`, and reports files with no row and rows with no file plus reclaimable bytes. Adoption inserts through `upsertPhoto` / `upsertAttachment` with hash and merge columns; `flagMissing` writes an audit flag and leaves the row intact. A cancelled scan returns `CancelledFailure` and changes nothing. Guarded by stray/missing/.cache, cancel, and adopt+flag tests. |
+| 071 — Imported file validation | 2026-09-17 | `FileValidation` is the one gate outside files pass: extension allow-list, a 64-byte magic sniff, per-kind size ceilings, then a ZIP central-directory walk for xlsx and bundles. Refusals quote the basename as data. Guarded by one passing case per kind plus mismatched xlsx, oversized image, empty file, traversal zip, symlink entry, and zip-bomb declaration. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -227,6 +228,10 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 070 | Photos and attachments have no evidence-missing column. | Open — `flagMissing` appends an audit row with `fieldKey` `evidenceMissing` and does not rewrite the media row |
 | 070 | The contract omits cancellation; DoD requires a cancelled scan. | Open — extra `cancel` on `scan`, forwarded to `runIsolate` |
 | 070 | `orphan_scanner.dart` uses `dart:io`. | Open — callers import it directly, same as 065 |
+| 071 | The contract's `{Set<ImportKind> allowed}` is not valid Dart 3. | Open — `allowed` is `required`; callers name the kinds they will accept |
+| 071 | FE-FLOW-06 forbids an archive package. | Open — ZIP structure is read from the central directory only; nothing is extracted |
+| 071 | `file_validation.dart` uses `dart:io`. | Open — callers import it directly, same as 065 |
+| 071 | FE-STR-10 wants a split above ~300 lines; the task names one file. | Open — sniff, ceilings and the ZIP walk stay in `file_validation.dart` |
 | 049 | Empty Drift managers leave an unused `_db` field that this analyzer reads as an error. | Closed by 050 — `BaseDao` is hand-written; `generate_manager: false` stays because an empty Drift manager still leaves unused `_db` |
 | 050 | The contract types `runInTransaction` on `AppDatabase`; tests need a table `AppDatabase` does not have yet. | Open — the parameter is `GeneratedDatabase`, which `AppDatabase` already is, so a probe database can share the helper |
 | 050 | `BaseDao` cannot stamp writes without a clock, device id, id service and table. | Open — extra constructor arguments; table tasks pass them through |
@@ -332,7 +337,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 05 — File storage
 
-*6 of 7 complete.*
+*7 of 7 complete.*
 
 - [x] [065 — Storage root resolution](dev-plan/05-file-storage/065-storage-root.md)
 - [x] [066 — Project folder tree, name sanitiser and photo path builder](dev-plan/05-file-storage/066-project-folder-service.md)
@@ -340,7 +345,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [068 — Derived image cache: thumbnails, compressed copies and cleanup](dev-plan/05-file-storage/068-thumbnail-cache.md)
 - [x] [069 — Storage headroom guard](dev-plan/05-file-storage/069-storage-guard.md)
 - [x] [070 — Orphan file scanner](dev-plan/05-file-storage/070-orphan-scanner.md)
-- [ ] [071 — Imported file validation](dev-plan/05-file-storage/071-file-validation.md)
+- [x] [071 — Imported file validation](dev-plan/05-file-storage/071-file-validation.md)
 
 ### 06 — Application shell
 

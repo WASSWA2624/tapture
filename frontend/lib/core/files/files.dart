@@ -2,9 +2,9 @@
 ///
 /// `storage_root.dart`, `project_folders.dart`, `file_writer.dart`,
 /// `file_relocation.dart`, `thumbnail_cache.dart`, `compressed_copy.dart`,
-/// `cache_cleanup.dart`, `storage_guard.dart` and `orphan_scanner.dart` are
-/// imported directly: they use `dart:io`, and this barrel is reached from
-/// the web shell through TextStore.
+/// `cache_cleanup.dart`, `storage_guard.dart`, `orphan_scanner.dart` and
+/// `file_validation.dart` are imported directly: they use `dart:io`, and this
+/// barrel is reached from the web shell through TextStore.
 library;
 
 export 'path_sanitizer.dart';
