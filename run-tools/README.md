@@ -12,10 +12,10 @@ python run-tools/run-backend.py             # backend on :3000, nodemon reload
 Busy ports are freed first (`--keep-ports` fails instead). The web port is optional; a held backend port is not.
 Until `backend/package.json` exists, `run-backend.py` says so and exits.
 
-| Artefact | Build | Update |
-| :--- | :--- | :--- |
+| Artefact    | Build                                        | Update                                        |
+| :---------- | :------------------------------------------- | :-------------------------------------------- |
 | Android APK | `python run-tools/deploy/build-android.py` | `python run-tools/deploy/update-android.py` |
-| Web bundle | `python run-tools/deploy/build-web.py` | `python run-tools/deploy/update-web.py` |
+| Web bundle  | `python run-tools/deploy/build-web.py`     | `python run-tools/deploy/update-web.py`     |
 | Backend zip | `python run-tools/deploy/build-backend.py` | `python run-tools/deploy/update-backend.py` |
 
 Output: `run-tools/dist/{android,web,backend}/` (gitignored). `update-*` after a `pubspec.yaml` or Flutter change.

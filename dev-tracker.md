@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**15 of 281 tasks complete (5.3%)** · last updated 2026-09-17
+**16 of 281 tasks complete (5.7%)** · last updated 2026-09-17
 
 `██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -8,7 +8,7 @@
 
 | Phase | Done | Total | Progress |
 | :--- | ---: | ---: | :--- |
-| 01 — Project setup and guardrails | 15 | 18 | `████████████░░` 83% |
+| 01 — Project setup and guardrails | 16 | 18 | `█████████████░` 89% |
 | 02 — Foundation services | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
 | 03 — Design system | 0 | 19 | `░░░░░░░░░░░░░░` 0% |
 | 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **15** | **281** | `█░░░░░░░░░░░░░` 5.3% |
+| **Total** | **16** | **281** | `█░░░░░░░░░░░░░` 5.7% |
 
 ## Completed
 
@@ -51,6 +51,7 @@
 | 013 — Design-token and responsive boundary tests | 2026-09-17 | `test/architecture/tokens_test.dart` fails a feature that invents `Color`, `Colors.*`, `EdgeInsets.all(n)`, `BorderRadius.circular(n)`, `Duration(` or `TextStyle(` and names the token to use instead; `app/theme/` and `core/widgets/` keep those literals. `test/architecture/responsive_test.dart` fails a feature that compares `MediaQuery` width or hardcodes a width at or above 600, naming `context.sizeClass` / `SizeClass.expanded`; only `core/widgets/responsive/` may measure the window. Guarded by 14 tests over allowed and forbidden fixtures. |
 | 014 — State and error-handling convention tests | 2026-09-17 | `test/architecture/state_test.dart` fails a widget that calls a repository, a provider declared outside the feature its name belongs to, `setState` outside `core/widgets/` and animation code, and a controller with no intent method. `test/architecture/errors_test.dart` fails a repository method that is not `Result`/`Future<Result>`, a `Failure` with no `message`, and a `throw` of a non-`Failure` under `domain/` or `data/`. Guarded by 18 tests over compliant and non-compliant fixtures. Did not add Riverpod — the task names only the two suites. |
 | 015 — Logging discipline and secret scan | 2026-09-17 | `tool/check_logging.dart` bans `print`/`debugPrint` outside `tool/` and `test/`, requires a level and a tag, and fails a log line that interpolates a key, secret, token, password, credential, caption, transcript or value. `tool/check_secrets.dart` scans `lib/`, `android/`, `ios/` and `assets/` against named patterns in `tool/secret_patterns.yaml` and never prints the match. Guarded by 37 tests. |
+| 016 — Test presence checker | 2026-09-17 | `tool/check_tests.dart` reports every `domain/`, `data/` and `core/widgets/` file, plus presentation screens, that owes a test and has none; barrels, generated files and integration-covered screens are exempt. `--strict` fails the run and names the missing `test/…_test.dart` path. `verify.dart` calls the strict run. Guarded by 13 tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -82,7 +83,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 01 — Project setup and guardrails
 
-*15 of 18 complete.*
+*16 of 18 complete.*
 
 - [x] [001 — Create the Flutter project](dev-plan/01-orchestration/001-flutter-project-init.md)
 - [x] [002 — Repository hygiene files](dev-plan/01-orchestration/002-repo-hygiene.md)
@@ -99,7 +100,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [013 — Design-token and responsive boundary tests](dev-plan/01-orchestration/013-design-token-test.md)
 - [x] [014 — State and error-handling convention tests](dev-plan/01-orchestration/014-riverpod-test.md)
 - [x] [015 — Logging discipline and secret scan](dev-plan/01-orchestration/015-logging-checker.md)
-- [ ] [016 — Test presence checker](dev-plan/01-orchestration/016-test-presence-checker.md)
+- [x] [016 — Test presence checker](dev-plan/01-orchestration/016-test-presence-checker.md)
 - [ ] [017 — Accessibility test matchers](dev-plan/01-orchestration/017-accessibility-matchers.md)
 - [ ] [018 — Network boundary and raw-data safety tests](dev-plan/01-orchestration/018-network-test.md)
 

@@ -112,6 +112,11 @@ List<_Gate> _gates({required bool fast}) {
     ]),
     _command('structure', 'dart', <String>['run', 'tool/check_structure.dart']),
     _command('plan', 'dart', <String>['run', 'tool/check_plan.dart']),
+    _command('test presence', 'dart', <String>[
+      'run',
+      'tool/check_tests.dart',
+      '--strict',
+    ]),
     _suite('guardrail tests', _existing(_guardrailSuites)),
     _suite('unit and widget tests', _unitSuites()),
     _suite(

@@ -30,6 +30,6 @@ Future<int> main(List<String> args)  // --strict turns the report into a failure
 
 ## Definition of done
 
-- [ ] Adding a domain service without a test fails the strict run and names the missing test path.
-- [ ] A barrel, a generated file and an integration-covered screen produce no finding.
-- [ ] Tests: `frontend/test/tool/check_tests_test.dart` over a fixture tree holding one exempt file, one covered file and one uncovered file per layer.
+- [x] Adding a domain service without a test fails the strict run and names the missing test path.
+- [x] A barrel, a generated file and an integration-covered screen produce no finding.
+- [x] Tests: `frontend/test/tool/check_tests_test.dart` over a fixture tree holding one exempt file, one covered file and one uncovered file per layer.
