@@ -55,10 +55,10 @@ abstract interface class FileRelocation {
 
 ## Definition of done
 
-- [ ] A simulated failure mid-write leaves the target absent and no `.part` file visible to the app.
-- [ ] The hash returned by the writer equals the hash of the file re-read from disk.
-- [ ] Correcting a facility name relocates every file of the affected records with no stored path left dangling, and a
+- [x] A simulated failure mid-write leaves the target absent and no `.part` file visible to the app.
+- [x] The hash returned by the writer equals the hash of the file re-read from disk.
+- [x] Correcting a facility name relocates every file of the affected records with no stored path left dangling, and a
       failure part-way leaves paths and files still agreeing.
-- [ ] Tests: `frontend/test/core/files/file_writer_test.dart` covers the interrupted write, the full-disk failure and
+- [x] Tests: `frontend/test/core/files/file_writer_test.dart` covers the interrupted write, the full-disk failure and
       hash equality; `file_relocation_test.dart` asserts files and rows agree after success, after a failed move and
       after a failed transaction, including the `_unfiled` promotion.
