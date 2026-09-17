@@ -36,7 +36,7 @@ class ErrorBoundary extends StatefulWidget { final Widget child; final VoidCallb
 
 ## Definition of done
 
-- [ ] Domain methods return `Result` without importing Flutter.
-- [ ] All seven `Failure` variants expose a message and a recovery action in plain language.
-- [ ] A throwing child under `ErrorBoundary` produces a recoverable panel with a retry, not a red screen.
-- [ ] Tests: `frontend/test/core/errors/result_test.dart` covers mapping, folding, `getOrElse` and exception conversion; `frontend/test/core/widgets/error_boundary_test.dart` pumps a deliberately throwing child and asserts the retry path.
+- [x] Domain methods return `Result` without importing Flutter.
+- [x] All seven `Failure` variants expose a message and a recovery action in plain language.
+- [x] A throwing child under `ErrorBoundary` produces a recoverable panel with a retry, not a red screen.
+- [x] Tests: `frontend/test/core/errors/result_test.dart` covers mapping, folding, `getOrElse` and exception conversion; `frontend/test/core/widgets/error_boundary_test.dart` pumps a deliberately throwing child and asserts the retry path.

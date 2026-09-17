@@ -6,7 +6,7 @@ Tasks 019–029 (11). Each file is a standalone implementation prompt.
 
 - [x] [019 — Application bootstrap, flavours and lifecycle](019-app-bootstrap.md)
 - [x] [020 — Shared constants](020-app-constants.md)
-- [ ] [021 — Result type, failure taxonomy and error boundary](021-result-and-failures.md)
+- [x] [021 — Result type, failure taxonomy and error boundary](021-result-and-failures.md)
 - [ ] [022 — Logger, diagnostics export and provider observer](022-logger-service.md)
 - [ ] [023 — Clock, identifiers and device identity](023-clock-service.md)
 - [ ] [024 — Hashing service and isolate runner](024-hashing-service.md)

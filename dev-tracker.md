@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**20 of 281 tasks complete (7.1%)** · last updated 2026-09-17
+**21 of 281 tasks complete (7.5%)** · last updated 2026-09-17
 
 `██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -9,7 +9,7 @@
 | Phase | Done | Total | Progress |
 | :--- | ---: | ---: | :--- |
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
-| 02 — Foundation services | 2 | 11 | `██░░░░░░░░░░░░` 18% |
+| 02 — Foundation services | 3 | 11 | `███░░░░░░░░░░░` 27% |
 | 03 — Design system | 0 | 19 | `░░░░░░░░░░░░░░` 0% |
 | 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **20** | **281** | `█░░░░░░░░░░░░░` 7.1% |
+| **Total** | **21** | **281** | `█░░░░░░░░░░░░░` 7.5% |
 
 ## Completed
 
@@ -56,6 +56,7 @@
 | 018 — Network boundary and raw-data safety tests | 2026-09-17 | `test/architecture/network_test.dart` fails an HTTP import outside `core/ai/`, `core/cloud/` and `core/backend/`, and a widget or `domain/` file that names a network client. `test/architecture/data_safety_test.dart` fails a write to `valueRaw`/`textRaw`/`transcriptRaw` outside a repository create method, a hard row delete, and a `File.delete` outside the purge job. Guarded by 18 tests over allowed and forbidden fixtures. Did not add `lib/core/backend/` — the task names only the two suites. |
 | 019 — Application bootstrap, flavours and lifecycle | 2026-09-17 | Guarded `main()` installs `FlutterError`/`runZonedGuarded` handlers, `ProviderScope`, a `MaterialApp.router` placeholder and `LifecycleObserver` before the first frame. `Env` reads `FLAVOR` / `FLUTTER_APP_FLAVOR` (default prod) with a test override. Android `dev`/`prod` flavours get distinct application ids and labels. `flutter_riverpod` ^3.4.3 pinned on the allowlist so `ConsumerWidget` exists. Guarded by 3 new suites. |
 | 020 — Shared constants | 2026-09-17 | `AppConstants` holds page size 50, image long edge 1600, and every later-phase duration, ceiling, threshold and secure-storage key name, grouped by area as const records (`lists`, `images`, `secrets`, …). `test/core/app_constants_test.dart` asserts ranges and unique key names. |
+| 021 — Result type, failure taxonomy and error boundary | 2026-09-17 | Sealed `Failure` (seven variants, each with message and recovery action) and `Result<T>` (`map`/`flatMap`/`fold`/`getOrElse`/`capture`) in `core/errors/` with no Flutter import. `ErrorBoundary` replaces a throwing child with a retry panel. Variants live in `part` files so sealed and one-class-per-file both hold. Guarded by 8 tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -73,7 +74,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 005 | `tool/` now holds four hand-rolled YAML readers — analyzer config, dependencies, and a copy each in `check_logging.dart` and `check_secrets.dart` — because a `yaml` package would need its own task under FE-FLOW-06. The duplication is now worth collapsing into one `tool/yaml.dart`. | Open — needs a task, either for the shared reader or for approving the package |
 | 007 | A new task always takes the highest number in the plan, so adding one to any phase but the last leaves that phase's README saying something like `Tasks 001–282 (12)`. The count is true and the range is not a range any more. | Open — the summary line's shape assumes phases are contiguous, which new tasks break by design |
 | 010 | The barrel rule is checked between features only, as task 010 step 3 words it. `app/` reaching into a feature's internals crosses the same boundary and nothing reports it. | Open — needs a task to decide whether the shell is bound by FE-STR-08 too |
-| 011 | FE-CODE-06 wants `Failure` sealed with a variant per failure, and Dart keeps a sealed type's subtypes in one library; task 011 step 2 says a file declares at most one public class. Task 014 cannot satisfy both. | Open — implemented as step 2 says; the rule or the step has to give |
+| 011 | FE-CODE-06 wants `Failure` sealed with a variant per failure, and Dart keeps a sealed type's subtypes in one library; task 011 step 2 says a file declares at most one public class. Task 014 cannot satisfy both. | Closed by 021 — variants are `part` files of `failure.dart` / `result.dart`, one public class per file, one library |
 | 011 | A provider is recognised by sitting in a `_providers.dart` file or by a name that already ends in `Provider`. Task 019 approved `flutter_riverpod`, but the checker still does not look at the type. A provider declared elsewhere under another name is invisible. | Open — recognition stays name-based until a task teaches the checker the Riverpod type |
 | 011 | `tool/check_naming.dart` is not one of `tool/verify.dart`'s gates, and FE-FLOW-02 does not list naming among them. Like `check_repo_hygiene.dart` it is reached only through its own test under the guardrail gate. | Open — the same question as task 008's row; one task should cover both checkers |
 | 014 | Task 014 is named for Riverpod and FE-STATE-01 wants Riverpod only, but the Files list is two architecture suites and FE-FLOW-06 forbids adding a package without its own task. Provider recognition stays name- and `_providers.dart`-based. | Closed by 019 — `flutter_riverpod` ^3.4.3 is on the allowlist so `ProviderScope` and `ConsumerWidget` can exist |
@@ -114,11 +115,11 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 02 — Foundation services
 
-*2 of 11 complete.*
+*3 of 11 complete.*
 
 - [x] [019 — Application bootstrap, flavours and lifecycle](dev-plan/02-foundation/019-app-bootstrap.md)
 - [x] [020 — Shared constants](dev-plan/02-foundation/020-app-constants.md)
-- [ ] [021 — Result type, failure taxonomy and error boundary](dev-plan/02-foundation/021-result-and-failures.md)
+- [x] [021 — Result type, failure taxonomy and error boundary](dev-plan/02-foundation/021-result-and-failures.md)
 - [ ] [022 — Logger, diagnostics export and provider observer](dev-plan/02-foundation/022-logger-service.md)
 - [ ] [023 — Clock, identifiers and device identity](dev-plan/02-foundation/023-clock-service.md)
 - [ ] [024 — Hashing service and isolate runner](dev-plan/02-foundation/024-hashing-service.md)
