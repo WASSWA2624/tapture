@@ -1,4 +1,4 @@
-# Build artefacts produced by the deploy scripts.
+# Build artefacts from build-or-update-deploys.
 dist/
 __pycache__/
 

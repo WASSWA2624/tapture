@@ -1,4 +1,4 @@
-"""Shared helpers for the Tapture run and deploy scripts.
+"""Shared helpers for the Tapture run and build-or-update scripts.
 
 Every script in `run-tools/` resolves paths through here so that the repository
 can be moved or cloned anywhere without editing a script.
@@ -127,6 +127,19 @@ def run(
 
 def flutter(args: list[str], env: dict[str, str] | None = None) -> None:
     run([tool("flutter"), *args], cwd=FRONTEND, env=env)
+
+
+def drop_regenerated_demo() -> None:
+    """Remove the counter demo `flutter create` restores on every run.
+
+    The template rewrites test/widget_test.dart whenever a platform is
+    regenerated. It tests a widget this app does not have, so it fails the
+    suite the moment it reappears.
+    """
+    demo = FRONTEND / "test" / "widget_test.dart"
+    if demo.is_file():
+        demo.unlink()
+        info(f"removed regenerated demo test {demo.name}")
 
 
 def reset_dir(path: Path) -> Path:

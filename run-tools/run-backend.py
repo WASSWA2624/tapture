@@ -146,7 +146,7 @@ def resolve_entry() -> tuple[str, str]:
     raise BuildError(
         f"{relative_entry} is TypeScript but neither "
         f"{' nor '.join(TS_RUNNERS)} is installed in backend/. "
-        "Run: python run-tools/deploy/update-backend.py"
+        "Run: python run-tools/build-or-update-deploys/backend.py"
     )
 
 

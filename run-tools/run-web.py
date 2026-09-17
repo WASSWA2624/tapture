@@ -41,7 +41,7 @@ def entry() -> None:
     args = parse_args()
     if not (FRONTEND / "web").is_dir():
         raise BuildError(
-            "frontend/web is missing. Run: python run-tools/deploy/update-web.py"
+            "frontend/web is missing. Run: python run-tools/build-or-update-deploys/web.py"
         )
     tool("flutter")
 
