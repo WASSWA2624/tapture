@@ -24,3 +24,17 @@ plugins {
 }
 
 include(":app")
+
+gradle.beforeProject {
+    if (name != "sqlite3_flutter_libs") {
+        return@beforeProject
+    }
+    buildscript.configurations.maybeCreate("classpath").resolutionStrategy
+        .eachDependency {
+            if (requested.group == "com.android.tools.build" &&
+                requested.name == "gradle"
+            ) {
+                useVersion("9.0.1")
+            }
+        }
+}
