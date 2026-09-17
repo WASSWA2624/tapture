@@ -2,6 +2,7 @@
 library;
 
 export 'app_button.dart';
+export 'app_chip.dart';
 export 'app_icon_button.dart';
 export 'app_page.dart';
 export 'app_primary_action.dart';

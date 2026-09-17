@@ -37,7 +37,7 @@ class AppChipRow extends StatelessWidget { final List<AppChip> chips; final bool
 
 ## Definition of done
 
-- [ ] The context bar and filter bar are assembled from this and define no chip of their own.
-- [ ] A long chip label at 200 percent text scale truncates or wraps rather than clipping.
-- [ ] Tests: goldens of every variant and an overflowing row in light, dark and outdoor; widget tests that tap selects
+- [x] The context bar and filter bar are assembled from this and define no chip of their own.
+- [x] A long chip label at 200 percent text scale truncates or wraps rather than clipping.
+- [x] Tests: goldens of every variant and an overflowing row in light, dark and outdoor; widget tests that tap selects
       and dismiss removes.

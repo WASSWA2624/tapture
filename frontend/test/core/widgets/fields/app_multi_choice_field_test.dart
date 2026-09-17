@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/fields/app_multi_choice_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
 
@@ -30,7 +31,7 @@ void main() {
     expect(find.text('Alpha'), findsOneWidget);
     expect(find.text('Charlie'), findsOneWidget);
     expect(find.text('Bravo'), findsNothing);
-    expect(find.byType(Chip), findsNWidgets(2));
+    expect(find.byType(AppChip), findsNWidgets(2));
     expect(find.byType(AppMultiChoiceField<String>), meetsTapTarget());
     expect(find.byType(AppMultiChoiceField<String>), hasSemanticLabel('Tags'));
   });

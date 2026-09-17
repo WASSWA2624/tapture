@@ -5,6 +5,7 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_chip.dart';
 
 import 'app_text_field.dart';
 import 'choice.dart';
@@ -75,21 +76,10 @@ class AppMultiChoiceField<T> extends StatelessWidget {
                   : Padding(
                       padding: const EdgeInsets.symmetric(vertical: Space.x2),
                       child: ExcludeSemantics(
-                        child: Wrap(
-                          spacing: Space.x2,
-                          runSpacing: Space.x2,
-                          children: <Widget>[
+                        child: AppChipRow(
+                          chips: <AppChip>[
                             for (final Choice<T> option in selected)
-                              Chip(
-                                avatar: Icon(
-                                  Icons.check,
-                                  size: Space.x4,
-                                  color: colors.onSurface,
-                                ),
-                                label: Text(option.label),
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
-                              ),
+                              AppChip(label: option.label, selected: true),
                           ],
                         ),
                       ),
