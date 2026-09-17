@@ -29,9 +29,9 @@ as-recorded versus as-found differences that verification mode produces.
 
 ## Definition of done
 
-- [ ] Detecting the same pair twice updates the existing row rather than inserting a second.
-- [ ] An unresolved queue can be listed by project and status through the index.
-- [ ] Resolving either kind stores the operator and timestamp and leaves both source records intact.
-- [ ] Tests: `frontend/test/core/db/tables/duplicates_test.dart` asserts pair uniqueness regardless of argument order
+- [x] Detecting the same pair twice updates the existing row rather than inserting a second.
+- [x] An unresolved queue can be listed by project and status through the index.
+- [x] Resolving either kind stores the operator and timestamp and leaves both source records intact.
+- [x] Tests: `frontend/test/core/db/tables/duplicates_test.dart` asserts pair uniqueness regardless of argument order
       and resolution recording; `variances_test.dart` covers the register-versus-found round-trip and its unique index.
       Both against an in-memory database, covering their migration steps.

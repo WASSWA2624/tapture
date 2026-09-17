@@ -80,7 +80,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [055 — Photos, attachments and captions tables](04-data-layer/055-photos-table.md)
 - [x] [056 — Reference dataset tables](04-data-layer/056-reference-tables.md)
 - [x] [057 — Processing jobs, results and field evidence tables](04-data-layer/057-jobs-table.md)
-- [ ] [058 — Duplicates and variances tables](04-data-layer/058-duplicates-table.md)
+- [x] [058 — Duplicates and variances tables](04-data-layer/058-duplicates-table.md)
 - [ ] [059 — Meeting tables](04-data-layer/059-meetings-tables.md)
 - [ ] [060 — Exports table](04-data-layer/060-exports-table.md)
 - [ ] [061 — Merge session, conflict and version vector tables](04-data-layer/061-merge-tables.md)

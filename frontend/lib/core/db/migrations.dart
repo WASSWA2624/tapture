@@ -24,6 +24,7 @@ kUpgradeSteps = <int, _UpgradeStep>{
   6: migrateToV6,
   7: migrateToV7,
   8: migrateToV8,
+  9: migrateToV9,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -122,6 +123,16 @@ Future<void> migrateToV8(Migrator migrator, AppDatabase db) async {
   await migrator.createTable(db.fieldEvidence);
   await migrator.createIndex(db.processingJobsByStatus);
   await migrator.createIndex(db.fieldEvidenceByField);
+}
+
+/// Schema version 9: duplicate pairs and as-recorded versus as-found variances.
+Future<void> migrateToV9(Migrator migrator, AppDatabase db) async {
+  await migrator.createTable(db.duplicates);
+  await migrator.createTable(db.variances);
+  await migrator.createIndex(db.duplicatesByPair);
+  await migrator.createIndex(db.duplicatesByProjectStatus);
+  await migrator.createIndex(db.variancesByField);
+  await migrator.createIndex(db.variancesByProjectStatus);
 }
 
 /// Runs the named step for [version], after the destructive-migration gate.

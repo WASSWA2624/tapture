@@ -15689,6 +15689,1645 @@ class FieldEvidenceCompanion extends UpdateCompanion<FieldEvidenceRow> {
   }
 }
 
+class $DuplicatesTable extends Duplicates
+    with TableInfo<$DuplicatesTable, DuplicatePair> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DuplicatesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _projectIdMeta = const VerificationMeta(
+    'projectId',
+  );
+  @override
+  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
+    'project_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _leftRecordIdMeta = const VerificationMeta(
+    'leftRecordId',
+  );
+  @override
+  late final GeneratedColumn<String> leftRecordId = GeneratedColumn<String>(
+    'left_record_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _rightRecordIdMeta = const VerificationMeta(
+    'rightRecordId',
+  );
+  @override
+  late final GeneratedColumn<String> rightRecordId = GeneratedColumn<String>(
+    'right_record_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _signalMeta = const VerificationMeta('signal');
+  @override
+  late final GeneratedColumn<String> signal = GeneratedColumn<String>(
+    'signal',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _scoreMeta = const VerificationMeta('score');
+  @override
+  late final GeneratedColumn<double> score = GeneratedColumn<double>(
+    'score',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<DuplicatePairStatus, String>
+  status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  ).withConverter<DuplicatePairStatus>($DuplicatesTable.$converterstatus);
+  static const VerificationMeta _resolutionMeta = const VerificationMeta(
+    'resolution',
+  );
+  @override
+  late final GeneratedColumn<String> resolution = GeneratedColumn<String>(
+    'resolution',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _resolvedByMeta = const VerificationMeta(
+    'resolvedBy',
+  );
+  @override
+  late final GeneratedColumn<String> resolvedBy = GeneratedColumn<String>(
+    'resolved_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _resolvedAtMeta = const VerificationMeta(
+    'resolvedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> resolvedAt = GeneratedColumn<DateTime>(
+    'resolved_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    projectId,
+    leftRecordId,
+    rightRecordId,
+    signal,
+    score,
+    status,
+    resolution,
+    resolvedBy,
+    resolvedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'duplicates';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DuplicatePair> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('project_id')) {
+      context.handle(
+        _projectIdMeta,
+        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_projectIdMeta);
+    }
+    if (data.containsKey('left_record_id')) {
+      context.handle(
+        _leftRecordIdMeta,
+        leftRecordId.isAcceptableOrUnknown(
+          data['left_record_id']!,
+          _leftRecordIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_leftRecordIdMeta);
+    }
+    if (data.containsKey('right_record_id')) {
+      context.handle(
+        _rightRecordIdMeta,
+        rightRecordId.isAcceptableOrUnknown(
+          data['right_record_id']!,
+          _rightRecordIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_rightRecordIdMeta);
+    }
+    if (data.containsKey('signal')) {
+      context.handle(
+        _signalMeta,
+        signal.isAcceptableOrUnknown(data['signal']!, _signalMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_signalMeta);
+    }
+    if (data.containsKey('score')) {
+      context.handle(
+        _scoreMeta,
+        score.isAcceptableOrUnknown(data['score']!, _scoreMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_scoreMeta);
+    }
+    if (data.containsKey('resolution')) {
+      context.handle(
+        _resolutionMeta,
+        resolution.isAcceptableOrUnknown(data['resolution']!, _resolutionMeta),
+      );
+    }
+    if (data.containsKey('resolved_by')) {
+      context.handle(
+        _resolvedByMeta,
+        resolvedBy.isAcceptableOrUnknown(data['resolved_by']!, _resolvedByMeta),
+      );
+    }
+    if (data.containsKey('resolved_at')) {
+      context.handle(
+        _resolvedAtMeta,
+        resolvedAt.isAcceptableOrUnknown(data['resolved_at']!, _resolvedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DuplicatePair map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DuplicatePair(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      projectId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}project_id'],
+      )!,
+      leftRecordId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}left_record_id'],
+      )!,
+      rightRecordId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}right_record_id'],
+      )!,
+      signal: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}signal'],
+      )!,
+      score: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}score'],
+      )!,
+      status: $DuplicatesTable.$converterstatus.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}status'],
+        )!,
+      ),
+      resolution: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}resolution'],
+      ),
+      resolvedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}resolved_by'],
+      ),
+      resolvedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}resolved_at'],
+      ),
+    );
+  }
+
+  @override
+  $DuplicatesTable createAlias(String alias) {
+    return $DuplicatesTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<DuplicatePairStatus, String, String>
+  $converterstatus = const EnumNameConverter<DuplicatePairStatus>(
+    DuplicatePairStatus.values,
+  );
+}
+
+class DuplicatePair extends DataClass implements Insertable<DuplicatePair> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Project both records belong to.
+  final String projectId;
+
+  /// Lower record id of the ordered pair.
+  final String leftRecordId;
+
+  /// Higher record id of the ordered pair.
+  final String rightRecordId;
+
+  /// Detection signal that ranked this pair, stored as data.
+  final String signal;
+
+  /// Combined score from detection. A proposal, never a decision.
+  final double score;
+
+  /// unresolved or resolved. The review list filters on this column.
+  final DuplicatePairStatus status;
+
+  /// Human choice. Null until a person resolves the pair.
+  final String? resolution;
+
+  /// Operator who resolved it.
+  final String? resolvedBy;
+
+  /// When it was resolved.
+  final DateTime? resolvedAt;
+  const DuplicatePair({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.projectId,
+    required this.leftRecordId,
+    required this.rightRecordId,
+    required this.signal,
+    required this.score,
+    required this.status,
+    this.resolution,
+    this.resolvedBy,
+    this.resolvedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['project_id'] = Variable<String>(projectId);
+    map['left_record_id'] = Variable<String>(leftRecordId);
+    map['right_record_id'] = Variable<String>(rightRecordId);
+    map['signal'] = Variable<String>(signal);
+    map['score'] = Variable<double>(score);
+    {
+      map['status'] = Variable<String>(
+        $DuplicatesTable.$converterstatus.toSql(status),
+      );
+    }
+    if (!nullToAbsent || resolution != null) {
+      map['resolution'] = Variable<String>(resolution);
+    }
+    if (!nullToAbsent || resolvedBy != null) {
+      map['resolved_by'] = Variable<String>(resolvedBy);
+    }
+    if (!nullToAbsent || resolvedAt != null) {
+      map['resolved_at'] = Variable<DateTime>(resolvedAt);
+    }
+    return map;
+  }
+
+  DuplicatesCompanion toCompanion(bool nullToAbsent) {
+    return DuplicatesCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      projectId: Value(projectId),
+      leftRecordId: Value(leftRecordId),
+      rightRecordId: Value(rightRecordId),
+      signal: Value(signal),
+      score: Value(score),
+      status: Value(status),
+      resolution: resolution == null && nullToAbsent
+          ? const Value.absent()
+          : Value(resolution),
+      resolvedBy: resolvedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(resolvedBy),
+      resolvedAt: resolvedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(resolvedAt),
+    );
+  }
+
+  factory DuplicatePair.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DuplicatePair(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      projectId: serializer.fromJson<String>(json['projectId']),
+      leftRecordId: serializer.fromJson<String>(json['leftRecordId']),
+      rightRecordId: serializer.fromJson<String>(json['rightRecordId']),
+      signal: serializer.fromJson<String>(json['signal']),
+      score: serializer.fromJson<double>(json['score']),
+      status: $DuplicatesTable.$converterstatus.fromJson(
+        serializer.fromJson<String>(json['status']),
+      ),
+      resolution: serializer.fromJson<String?>(json['resolution']),
+      resolvedBy: serializer.fromJson<String?>(json['resolvedBy']),
+      resolvedAt: serializer.fromJson<DateTime?>(json['resolvedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'projectId': serializer.toJson<String>(projectId),
+      'leftRecordId': serializer.toJson<String>(leftRecordId),
+      'rightRecordId': serializer.toJson<String>(rightRecordId),
+      'signal': serializer.toJson<String>(signal),
+      'score': serializer.toJson<double>(score),
+      'status': serializer.toJson<String>(
+        $DuplicatesTable.$converterstatus.toJson(status),
+      ),
+      'resolution': serializer.toJson<String?>(resolution),
+      'resolvedBy': serializer.toJson<String?>(resolvedBy),
+      'resolvedAt': serializer.toJson<DateTime?>(resolvedAt),
+    };
+  }
+
+  DuplicatePair copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? projectId,
+    String? leftRecordId,
+    String? rightRecordId,
+    String? signal,
+    double? score,
+    DuplicatePairStatus? status,
+    Value<String?> resolution = const Value.absent(),
+    Value<String?> resolvedBy = const Value.absent(),
+    Value<DateTime?> resolvedAt = const Value.absent(),
+  }) => DuplicatePair(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    projectId: projectId ?? this.projectId,
+    leftRecordId: leftRecordId ?? this.leftRecordId,
+    rightRecordId: rightRecordId ?? this.rightRecordId,
+    signal: signal ?? this.signal,
+    score: score ?? this.score,
+    status: status ?? this.status,
+    resolution: resolution.present ? resolution.value : this.resolution,
+    resolvedBy: resolvedBy.present ? resolvedBy.value : this.resolvedBy,
+    resolvedAt: resolvedAt.present ? resolvedAt.value : this.resolvedAt,
+  );
+  DuplicatePair copyWithCompanion(DuplicatesCompanion data) {
+    return DuplicatePair(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      leftRecordId: data.leftRecordId.present
+          ? data.leftRecordId.value
+          : this.leftRecordId,
+      rightRecordId: data.rightRecordId.present
+          ? data.rightRecordId.value
+          : this.rightRecordId,
+      signal: data.signal.present ? data.signal.value : this.signal,
+      score: data.score.present ? data.score.value : this.score,
+      status: data.status.present ? data.status.value : this.status,
+      resolution: data.resolution.present
+          ? data.resolution.value
+          : this.resolution,
+      resolvedBy: data.resolvedBy.present
+          ? data.resolvedBy.value
+          : this.resolvedBy,
+      resolvedAt: data.resolvedAt.present
+          ? data.resolvedAt.value
+          : this.resolvedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DuplicatePair(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('projectId: $projectId, ')
+          ..write('leftRecordId: $leftRecordId, ')
+          ..write('rightRecordId: $rightRecordId, ')
+          ..write('signal: $signal, ')
+          ..write('score: $score, ')
+          ..write('status: $status, ')
+          ..write('resolution: $resolution, ')
+          ..write('resolvedBy: $resolvedBy, ')
+          ..write('resolvedAt: $resolvedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    projectId,
+    leftRecordId,
+    rightRecordId,
+    signal,
+    score,
+    status,
+    resolution,
+    resolvedBy,
+    resolvedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DuplicatePair &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.projectId == this.projectId &&
+          other.leftRecordId == this.leftRecordId &&
+          other.rightRecordId == this.rightRecordId &&
+          other.signal == this.signal &&
+          other.score == this.score &&
+          other.status == this.status &&
+          other.resolution == this.resolution &&
+          other.resolvedBy == this.resolvedBy &&
+          other.resolvedAt == this.resolvedAt);
+}
+
+class DuplicatesCompanion extends UpdateCompanion<DuplicatePair> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> projectId;
+  final Value<String> leftRecordId;
+  final Value<String> rightRecordId;
+  final Value<String> signal;
+  final Value<double> score;
+  final Value<DuplicatePairStatus> status;
+  final Value<String?> resolution;
+  final Value<String?> resolvedBy;
+  final Value<DateTime?> resolvedAt;
+  final Value<int> rowid;
+  const DuplicatesCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.projectId = const Value.absent(),
+    this.leftRecordId = const Value.absent(),
+    this.rightRecordId = const Value.absent(),
+    this.signal = const Value.absent(),
+    this.score = const Value.absent(),
+    this.status = const Value.absent(),
+    this.resolution = const Value.absent(),
+    this.resolvedBy = const Value.absent(),
+    this.resolvedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DuplicatesCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String projectId,
+    required String leftRecordId,
+    required String rightRecordId,
+    required String signal,
+    required double score,
+    required DuplicatePairStatus status,
+    this.resolution = const Value.absent(),
+    this.resolvedBy = const Value.absent(),
+    this.resolvedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       projectId = Value(projectId),
+       leftRecordId = Value(leftRecordId),
+       rightRecordId = Value(rightRecordId),
+       signal = Value(signal),
+       score = Value(score),
+       status = Value(status);
+  static Insertable<DuplicatePair> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? projectId,
+    Expression<String>? leftRecordId,
+    Expression<String>? rightRecordId,
+    Expression<String>? signal,
+    Expression<double>? score,
+    Expression<String>? status,
+    Expression<String>? resolution,
+    Expression<String>? resolvedBy,
+    Expression<DateTime>? resolvedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (projectId != null) 'project_id': projectId,
+      if (leftRecordId != null) 'left_record_id': leftRecordId,
+      if (rightRecordId != null) 'right_record_id': rightRecordId,
+      if (signal != null) 'signal': signal,
+      if (score != null) 'score': score,
+      if (status != null) 'status': status,
+      if (resolution != null) 'resolution': resolution,
+      if (resolvedBy != null) 'resolved_by': resolvedBy,
+      if (resolvedAt != null) 'resolved_at': resolvedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DuplicatesCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? projectId,
+    Value<String>? leftRecordId,
+    Value<String>? rightRecordId,
+    Value<String>? signal,
+    Value<double>? score,
+    Value<DuplicatePairStatus>? status,
+    Value<String?>? resolution,
+    Value<String?>? resolvedBy,
+    Value<DateTime?>? resolvedAt,
+    Value<int>? rowid,
+  }) {
+    return DuplicatesCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      projectId: projectId ?? this.projectId,
+      leftRecordId: leftRecordId ?? this.leftRecordId,
+      rightRecordId: rightRecordId ?? this.rightRecordId,
+      signal: signal ?? this.signal,
+      score: score ?? this.score,
+      status: status ?? this.status,
+      resolution: resolution ?? this.resolution,
+      resolvedBy: resolvedBy ?? this.resolvedBy,
+      resolvedAt: resolvedAt ?? this.resolvedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (projectId.present) {
+      map['project_id'] = Variable<String>(projectId.value);
+    }
+    if (leftRecordId.present) {
+      map['left_record_id'] = Variable<String>(leftRecordId.value);
+    }
+    if (rightRecordId.present) {
+      map['right_record_id'] = Variable<String>(rightRecordId.value);
+    }
+    if (signal.present) {
+      map['signal'] = Variable<String>(signal.value);
+    }
+    if (score.present) {
+      map['score'] = Variable<double>(score.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(
+        $DuplicatesTable.$converterstatus.toSql(status.value),
+      );
+    }
+    if (resolution.present) {
+      map['resolution'] = Variable<String>(resolution.value);
+    }
+    if (resolvedBy.present) {
+      map['resolved_by'] = Variable<String>(resolvedBy.value);
+    }
+    if (resolvedAt.present) {
+      map['resolved_at'] = Variable<DateTime>(resolvedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DuplicatesCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('projectId: $projectId, ')
+          ..write('leftRecordId: $leftRecordId, ')
+          ..write('rightRecordId: $rightRecordId, ')
+          ..write('signal: $signal, ')
+          ..write('score: $score, ')
+          ..write('status: $status, ')
+          ..write('resolution: $resolution, ')
+          ..write('resolvedBy: $resolvedBy, ')
+          ..write('resolvedAt: $resolvedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $VariancesTable extends Variances
+    with TableInfo<$VariancesTable, Variance> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $VariancesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _projectIdMeta = const VerificationMeta(
+    'projectId',
+  );
+  @override
+  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
+    'project_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recordIdMeta = const VerificationMeta(
+    'recordId',
+  );
+  @override
+  late final GeneratedColumn<String> recordId = GeneratedColumn<String>(
+    'record_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fieldKeyMeta = const VerificationMeta(
+    'fieldKey',
+  );
+  @override
+  late final GeneratedColumn<String> fieldKey = GeneratedColumn<String>(
+    'field_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _registerValueMeta = const VerificationMeta(
+    'registerValue',
+  );
+  @override
+  late final GeneratedColumn<String> registerValue = GeneratedColumn<String>(
+    'register_value',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _foundValueMeta = const VerificationMeta(
+    'foundValue',
+  );
+  @override
+  late final GeneratedColumn<String> foundValue = GeneratedColumn<String>(
+    'found_value',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _resolvedByMeta = const VerificationMeta(
+    'resolvedBy',
+  );
+  @override
+  late final GeneratedColumn<String> resolvedBy = GeneratedColumn<String>(
+    'resolved_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _resolvedAtMeta = const VerificationMeta(
+    'resolvedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> resolvedAt = GeneratedColumn<DateTime>(
+    'resolved_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    projectId,
+    recordId,
+    fieldKey,
+    registerValue,
+    foundValue,
+    status,
+    resolvedBy,
+    resolvedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'variances';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Variance> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('project_id')) {
+      context.handle(
+        _projectIdMeta,
+        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_projectIdMeta);
+    }
+    if (data.containsKey('record_id')) {
+      context.handle(
+        _recordIdMeta,
+        recordId.isAcceptableOrUnknown(data['record_id']!, _recordIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_recordIdMeta);
+    }
+    if (data.containsKey('field_key')) {
+      context.handle(
+        _fieldKeyMeta,
+        fieldKey.isAcceptableOrUnknown(data['field_key']!, _fieldKeyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fieldKeyMeta);
+    }
+    if (data.containsKey('register_value')) {
+      context.handle(
+        _registerValueMeta,
+        registerValue.isAcceptableOrUnknown(
+          data['register_value']!,
+          _registerValueMeta,
+        ),
+      );
+    }
+    if (data.containsKey('found_value')) {
+      context.handle(
+        _foundValueMeta,
+        foundValue.isAcceptableOrUnknown(data['found_value']!, _foundValueMeta),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('resolved_by')) {
+      context.handle(
+        _resolvedByMeta,
+        resolvedBy.isAcceptableOrUnknown(data['resolved_by']!, _resolvedByMeta),
+      );
+    }
+    if (data.containsKey('resolved_at')) {
+      context.handle(
+        _resolvedAtMeta,
+        resolvedAt.isAcceptableOrUnknown(data['resolved_at']!, _resolvedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Variance map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Variance(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      projectId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}project_id'],
+      )!,
+      recordId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}record_id'],
+      )!,
+      fieldKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}field_key'],
+      )!,
+      registerValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}register_value'],
+      ),
+      foundValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}found_value'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      resolvedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}resolved_by'],
+      ),
+      resolvedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}resolved_at'],
+      ),
+    );
+  }
+
+  @override
+  $VariancesTable createAlias(String alias) {
+    return $VariancesTable(attachedDatabase, alias);
+  }
+}
+
+class Variance extends DataClass implements Insertable<Variance> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Project this variance belongs to. The review list filters on it.
+  final String projectId;
+
+  /// Record the two values were taken from.
+  final String recordId;
+
+  /// Template field key that differs.
+  final String fieldKey;
+
+  /// Value as recorded, stored as data.
+  final String? registerValue;
+
+  /// Value as found, stored as data.
+  final String? foundValue;
+
+  /// Queue or classification status, stored as text.
+  final String status;
+
+  /// Operator who resolved it.
+  final String? resolvedBy;
+
+  /// When it was resolved.
+  final DateTime? resolvedAt;
+  const Variance({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.projectId,
+    required this.recordId,
+    required this.fieldKey,
+    this.registerValue,
+    this.foundValue,
+    required this.status,
+    this.resolvedBy,
+    this.resolvedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['project_id'] = Variable<String>(projectId);
+    map['record_id'] = Variable<String>(recordId);
+    map['field_key'] = Variable<String>(fieldKey);
+    if (!nullToAbsent || registerValue != null) {
+      map['register_value'] = Variable<String>(registerValue);
+    }
+    if (!nullToAbsent || foundValue != null) {
+      map['found_value'] = Variable<String>(foundValue);
+    }
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || resolvedBy != null) {
+      map['resolved_by'] = Variable<String>(resolvedBy);
+    }
+    if (!nullToAbsent || resolvedAt != null) {
+      map['resolved_at'] = Variable<DateTime>(resolvedAt);
+    }
+    return map;
+  }
+
+  VariancesCompanion toCompanion(bool nullToAbsent) {
+    return VariancesCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      projectId: Value(projectId),
+      recordId: Value(recordId),
+      fieldKey: Value(fieldKey),
+      registerValue: registerValue == null && nullToAbsent
+          ? const Value.absent()
+          : Value(registerValue),
+      foundValue: foundValue == null && nullToAbsent
+          ? const Value.absent()
+          : Value(foundValue),
+      status: Value(status),
+      resolvedBy: resolvedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(resolvedBy),
+      resolvedAt: resolvedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(resolvedAt),
+    );
+  }
+
+  factory Variance.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Variance(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      projectId: serializer.fromJson<String>(json['projectId']),
+      recordId: serializer.fromJson<String>(json['recordId']),
+      fieldKey: serializer.fromJson<String>(json['fieldKey']),
+      registerValue: serializer.fromJson<String?>(json['registerValue']),
+      foundValue: serializer.fromJson<String?>(json['foundValue']),
+      status: serializer.fromJson<String>(json['status']),
+      resolvedBy: serializer.fromJson<String?>(json['resolvedBy']),
+      resolvedAt: serializer.fromJson<DateTime?>(json['resolvedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'projectId': serializer.toJson<String>(projectId),
+      'recordId': serializer.toJson<String>(recordId),
+      'fieldKey': serializer.toJson<String>(fieldKey),
+      'registerValue': serializer.toJson<String?>(registerValue),
+      'foundValue': serializer.toJson<String?>(foundValue),
+      'status': serializer.toJson<String>(status),
+      'resolvedBy': serializer.toJson<String?>(resolvedBy),
+      'resolvedAt': serializer.toJson<DateTime?>(resolvedAt),
+    };
+  }
+
+  Variance copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? projectId,
+    String? recordId,
+    String? fieldKey,
+    Value<String?> registerValue = const Value.absent(),
+    Value<String?> foundValue = const Value.absent(),
+    String? status,
+    Value<String?> resolvedBy = const Value.absent(),
+    Value<DateTime?> resolvedAt = const Value.absent(),
+  }) => Variance(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    projectId: projectId ?? this.projectId,
+    recordId: recordId ?? this.recordId,
+    fieldKey: fieldKey ?? this.fieldKey,
+    registerValue: registerValue.present
+        ? registerValue.value
+        : this.registerValue,
+    foundValue: foundValue.present ? foundValue.value : this.foundValue,
+    status: status ?? this.status,
+    resolvedBy: resolvedBy.present ? resolvedBy.value : this.resolvedBy,
+    resolvedAt: resolvedAt.present ? resolvedAt.value : this.resolvedAt,
+  );
+  Variance copyWithCompanion(VariancesCompanion data) {
+    return Variance(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      recordId: data.recordId.present ? data.recordId.value : this.recordId,
+      fieldKey: data.fieldKey.present ? data.fieldKey.value : this.fieldKey,
+      registerValue: data.registerValue.present
+          ? data.registerValue.value
+          : this.registerValue,
+      foundValue: data.foundValue.present
+          ? data.foundValue.value
+          : this.foundValue,
+      status: data.status.present ? data.status.value : this.status,
+      resolvedBy: data.resolvedBy.present
+          ? data.resolvedBy.value
+          : this.resolvedBy,
+      resolvedAt: data.resolvedAt.present
+          ? data.resolvedAt.value
+          : this.resolvedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Variance(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('projectId: $projectId, ')
+          ..write('recordId: $recordId, ')
+          ..write('fieldKey: $fieldKey, ')
+          ..write('registerValue: $registerValue, ')
+          ..write('foundValue: $foundValue, ')
+          ..write('status: $status, ')
+          ..write('resolvedBy: $resolvedBy, ')
+          ..write('resolvedAt: $resolvedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    projectId,
+    recordId,
+    fieldKey,
+    registerValue,
+    foundValue,
+    status,
+    resolvedBy,
+    resolvedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Variance &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.projectId == this.projectId &&
+          other.recordId == this.recordId &&
+          other.fieldKey == this.fieldKey &&
+          other.registerValue == this.registerValue &&
+          other.foundValue == this.foundValue &&
+          other.status == this.status &&
+          other.resolvedBy == this.resolvedBy &&
+          other.resolvedAt == this.resolvedAt);
+}
+
+class VariancesCompanion extends UpdateCompanion<Variance> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> projectId;
+  final Value<String> recordId;
+  final Value<String> fieldKey;
+  final Value<String?> registerValue;
+  final Value<String?> foundValue;
+  final Value<String> status;
+  final Value<String?> resolvedBy;
+  final Value<DateTime?> resolvedAt;
+  final Value<int> rowid;
+  const VariancesCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.projectId = const Value.absent(),
+    this.recordId = const Value.absent(),
+    this.fieldKey = const Value.absent(),
+    this.registerValue = const Value.absent(),
+    this.foundValue = const Value.absent(),
+    this.status = const Value.absent(),
+    this.resolvedBy = const Value.absent(),
+    this.resolvedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  VariancesCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String projectId,
+    required String recordId,
+    required String fieldKey,
+    this.registerValue = const Value.absent(),
+    this.foundValue = const Value.absent(),
+    required String status,
+    this.resolvedBy = const Value.absent(),
+    this.resolvedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       projectId = Value(projectId),
+       recordId = Value(recordId),
+       fieldKey = Value(fieldKey),
+       status = Value(status);
+  static Insertable<Variance> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? projectId,
+    Expression<String>? recordId,
+    Expression<String>? fieldKey,
+    Expression<String>? registerValue,
+    Expression<String>? foundValue,
+    Expression<String>? status,
+    Expression<String>? resolvedBy,
+    Expression<DateTime>? resolvedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (projectId != null) 'project_id': projectId,
+      if (recordId != null) 'record_id': recordId,
+      if (fieldKey != null) 'field_key': fieldKey,
+      if (registerValue != null) 'register_value': registerValue,
+      if (foundValue != null) 'found_value': foundValue,
+      if (status != null) 'status': status,
+      if (resolvedBy != null) 'resolved_by': resolvedBy,
+      if (resolvedAt != null) 'resolved_at': resolvedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  VariancesCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? projectId,
+    Value<String>? recordId,
+    Value<String>? fieldKey,
+    Value<String?>? registerValue,
+    Value<String?>? foundValue,
+    Value<String>? status,
+    Value<String?>? resolvedBy,
+    Value<DateTime?>? resolvedAt,
+    Value<int>? rowid,
+  }) {
+    return VariancesCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      projectId: projectId ?? this.projectId,
+      recordId: recordId ?? this.recordId,
+      fieldKey: fieldKey ?? this.fieldKey,
+      registerValue: registerValue ?? this.registerValue,
+      foundValue: foundValue ?? this.foundValue,
+      status: status ?? this.status,
+      resolvedBy: resolvedBy ?? this.resolvedBy,
+      resolvedAt: resolvedAt ?? this.resolvedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (projectId.present) {
+      map['project_id'] = Variable<String>(projectId.value);
+    }
+    if (recordId.present) {
+      map['record_id'] = Variable<String>(recordId.value);
+    }
+    if (fieldKey.present) {
+      map['field_key'] = Variable<String>(fieldKey.value);
+    }
+    if (registerValue.present) {
+      map['register_value'] = Variable<String>(registerValue.value);
+    }
+    if (foundValue.present) {
+      map['found_value'] = Variable<String>(foundValue.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (resolvedBy.present) {
+      map['resolved_by'] = Variable<String>(resolvedBy.value);
+    }
+    if (resolvedAt.present) {
+      map['resolved_at'] = Variable<DateTime>(resolvedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VariancesCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('projectId: $projectId, ')
+          ..write('recordId: $recordId, ')
+          ..write('fieldKey: $fieldKey, ')
+          ..write('registerValue: $registerValue, ')
+          ..write('foundValue: $foundValue, ')
+          ..write('status: $status, ')
+          ..write('resolvedBy: $resolvedBy, ')
+          ..write('resolvedAt: $resolvedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   late final $TombstonesTable tombstones = $TombstonesTable(this);
@@ -15712,6 +17351,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ProcessingResultsTable processingResults =
       $ProcessingResultsTable(this);
   late final $FieldEvidenceTable fieldEvidence = $FieldEvidenceTable(this);
+  late final $DuplicatesTable duplicates = $DuplicatesTable(this);
+  late final $VariancesTable variances = $VariancesTable(this);
   late final Index auditLogHistory = Index(
     'audit_log_history',
     'CREATE INDEX audit_log_history ON audit_log (entity_type, entity_id, at)',
@@ -15764,6 +17405,22 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'field_evidence_by_field',
     'CREATE INDEX field_evidence_by_field ON field_evidence (record_field_id)',
   );
+  late final Index duplicatesByPair = Index(
+    'duplicates_by_pair',
+    'CREATE UNIQUE INDEX duplicates_by_pair ON duplicates (left_record_id, right_record_id)',
+  );
+  late final Index duplicatesByProjectStatus = Index(
+    'duplicates_by_project_status',
+    'CREATE INDEX duplicates_by_project_status ON duplicates (project_id, status)',
+  );
+  late final Index variancesByField = Index(
+    'variances_by_field',
+    'CREATE UNIQUE INDEX variances_by_field ON variances (record_id, field_key)',
+  );
+  late final Index variancesByProjectStatus = Index(
+    'variances_by_project_status',
+    'CREATE INDEX variances_by_project_status ON variances (project_id, status)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -15789,6 +17446,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     processing,
     processingResults,
     fieldEvidence,
+    duplicates,
+    variances,
     auditLogHistory,
     projectsByStatus,
     templateRowsByIdentifier,
@@ -15802,5 +17461,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     referenceRowsByNormalised,
     processingJobsByStatus,
     fieldEvidenceByField,
+    duplicatesByPair,
+    duplicatesByProjectStatus,
+    variancesByField,
+    variancesByProjectStatus,
   ];
 }
