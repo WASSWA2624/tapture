@@ -30,7 +30,7 @@ void main() {
   });
 
   test(
-    'upgrade from a seeded version 1 file through version 2 and version 3 and version 4 and version 5 to head preserves rows and columns',
+    'upgrade from a seeded version 1 file through version 2 and version 3 and version 4 and version 5 and version 6 to head preserves rows and columns',
     () async {
       final Directory directory = Directory.systemTemp.createTempSync(
         'tapture_migrate_',

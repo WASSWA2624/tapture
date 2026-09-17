@@ -9316,6 +9316,2687 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
   }
 }
 
+class $PhotosTable extends Photos with TableInfo<$PhotosTable, Photo> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PhotosTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _projectIdMeta = const VerificationMeta(
+    'projectId',
+  );
+  @override
+  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
+    'project_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recordIdMeta = const VerificationMeta(
+    'recordId',
+  );
+  @override
+  late final GeneratedColumn<String> recordId = GeneratedColumn<String>(
+    'record_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _captureSessionIdMeta = const VerificationMeta(
+    'captureSessionId',
+  );
+  @override
+  late final GeneratedColumn<String> captureSessionId = GeneratedColumn<String>(
+    'capture_session_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _originalFilenameMeta = const VerificationMeta(
+    'originalFilename',
+  );
+  @override
+  late final GeneratedColumn<String> originalFilename = GeneratedColumn<String>(
+    'original_filename',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _storedFilenameMeta = const VerificationMeta(
+    'storedFilename',
+  );
+  @override
+  late final GeneratedColumn<String> storedFilename = GeneratedColumn<String>(
+    'stored_filename',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _relativePathMeta = const VerificationMeta(
+    'relativePath',
+  );
+  @override
+  late final GeneratedColumn<String> relativePath = GeneratedColumn<String>(
+    'relative_path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _photoTypeMeta = const VerificationMeta(
+    'photoType',
+  );
+  @override
+  late final GeneratedColumn<String> photoType = GeneratedColumn<String>(
+    'photo_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sortOrderMeta = const VerificationMeta(
+    'sortOrder',
+  );
+  @override
+  late final GeneratedColumn<int> sortOrder = GeneratedColumn<int>(
+    'sort_order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _widthMeta = const VerificationMeta('width');
+  @override
+  late final GeneratedColumn<int> width = GeneratedColumn<int>(
+    'width',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _heightMeta = const VerificationMeta('height');
+  @override
+  late final GeneratedColumn<int> height = GeneratedColumn<int>(
+    'height',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fileSizeMeta = const VerificationMeta(
+    'fileSize',
+  );
+  @override
+  late final GeneratedColumn<int> fileSize = GeneratedColumn<int>(
+    'file_size',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _mimeTypeMeta = const VerificationMeta(
+    'mimeType',
+  );
+  @override
+  late final GeneratedColumn<String> mimeType = GeneratedColumn<String>(
+    'mime_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sha256Meta = const VerificationMeta('sha256');
+  @override
+  late final GeneratedColumn<String> sha256 = GeneratedColumn<String>(
+    'sha256',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _capturedAtMeta = const VerificationMeta(
+    'capturedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> capturedAt = GeneratedColumn<DateTime>(
+    'captured_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _gpsLatMeta = const VerificationMeta('gpsLat');
+  @override
+  late final GeneratedColumn<double> gpsLat = GeneratedColumn<double>(
+    'gps_lat',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _gpsLonMeta = const VerificationMeta('gpsLon');
+  @override
+  late final GeneratedColumn<double> gpsLon = GeneratedColumn<double>(
+    'gps_lon',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    projectId,
+    recordId,
+    captureSessionId,
+    originalFilename,
+    storedFilename,
+    relativePath,
+    photoType,
+    sortOrder,
+    width,
+    height,
+    fileSize,
+    mimeType,
+    sha256,
+    capturedAt,
+    gpsLat,
+    gpsLon,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'photos';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Photo> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('project_id')) {
+      context.handle(
+        _projectIdMeta,
+        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_projectIdMeta);
+    }
+    if (data.containsKey('record_id')) {
+      context.handle(
+        _recordIdMeta,
+        recordId.isAcceptableOrUnknown(data['record_id']!, _recordIdMeta),
+      );
+    }
+    if (data.containsKey('capture_session_id')) {
+      context.handle(
+        _captureSessionIdMeta,
+        captureSessionId.isAcceptableOrUnknown(
+          data['capture_session_id']!,
+          _captureSessionIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_captureSessionIdMeta);
+    }
+    if (data.containsKey('original_filename')) {
+      context.handle(
+        _originalFilenameMeta,
+        originalFilename.isAcceptableOrUnknown(
+          data['original_filename']!,
+          _originalFilenameMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_originalFilenameMeta);
+    }
+    if (data.containsKey('stored_filename')) {
+      context.handle(
+        _storedFilenameMeta,
+        storedFilename.isAcceptableOrUnknown(
+          data['stored_filename']!,
+          _storedFilenameMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_storedFilenameMeta);
+    }
+    if (data.containsKey('relative_path')) {
+      context.handle(
+        _relativePathMeta,
+        relativePath.isAcceptableOrUnknown(
+          data['relative_path']!,
+          _relativePathMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_relativePathMeta);
+    }
+    if (data.containsKey('photo_type')) {
+      context.handle(
+        _photoTypeMeta,
+        photoType.isAcceptableOrUnknown(data['photo_type']!, _photoTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_photoTypeMeta);
+    }
+    if (data.containsKey('sort_order')) {
+      context.handle(
+        _sortOrderMeta,
+        sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sortOrderMeta);
+    }
+    if (data.containsKey('width')) {
+      context.handle(
+        _widthMeta,
+        width.isAcceptableOrUnknown(data['width']!, _widthMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_widthMeta);
+    }
+    if (data.containsKey('height')) {
+      context.handle(
+        _heightMeta,
+        height.isAcceptableOrUnknown(data['height']!, _heightMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_heightMeta);
+    }
+    if (data.containsKey('file_size')) {
+      context.handle(
+        _fileSizeMeta,
+        fileSize.isAcceptableOrUnknown(data['file_size']!, _fileSizeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fileSizeMeta);
+    }
+    if (data.containsKey('mime_type')) {
+      context.handle(
+        _mimeTypeMeta,
+        mimeType.isAcceptableOrUnknown(data['mime_type']!, _mimeTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_mimeTypeMeta);
+    }
+    if (data.containsKey('sha256')) {
+      context.handle(
+        _sha256Meta,
+        sha256.isAcceptableOrUnknown(data['sha256']!, _sha256Meta),
+      );
+    } else if (isInserting) {
+      context.missing(_sha256Meta);
+    }
+    if (data.containsKey('captured_at')) {
+      context.handle(
+        _capturedAtMeta,
+        capturedAt.isAcceptableOrUnknown(data['captured_at']!, _capturedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_capturedAtMeta);
+    }
+    if (data.containsKey('gps_lat')) {
+      context.handle(
+        _gpsLatMeta,
+        gpsLat.isAcceptableOrUnknown(data['gps_lat']!, _gpsLatMeta),
+      );
+    }
+    if (data.containsKey('gps_lon')) {
+      context.handle(
+        _gpsLonMeta,
+        gpsLon.isAcceptableOrUnknown(data['gps_lon']!, _gpsLonMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {projectId, sha256},
+  ];
+  @override
+  Photo map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Photo(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      projectId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}project_id'],
+      )!,
+      recordId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}record_id'],
+      ),
+      captureSessionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}capture_session_id'],
+      )!,
+      originalFilename: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}original_filename'],
+      )!,
+      storedFilename: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}stored_filename'],
+      )!,
+      relativePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}relative_path'],
+      )!,
+      photoType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}photo_type'],
+      )!,
+      sortOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_order'],
+      )!,
+      width: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}width'],
+      )!,
+      height: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}height'],
+      )!,
+      fileSize: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}file_size'],
+      )!,
+      mimeType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mime_type'],
+      )!,
+      sha256: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sha256'],
+      )!,
+      capturedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}captured_at'],
+      )!,
+      gpsLat: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}gps_lat'],
+      ),
+      gpsLon: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}gps_lon'],
+      ),
+    );
+  }
+
+  @override
+  $PhotosTable createAlias(String alias) {
+    return $PhotosTable(attachedDatabase, alias);
+  }
+}
+
+class Photo extends DataClass implements Insertable<Photo> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Project this file belongs to.
+  final String projectId;
+
+  /// Record this photo is filed on, or null while it is still unfiled.
+  final String? recordId;
+
+  /// Capture session that produced the file.
+  final String captureSessionId;
+
+  /// Filename as imported or captured, stored as data.
+  final String originalFilename;
+
+  /// Filename under the project folder.
+  final String storedFilename;
+
+  /// Path relative to the project folder.
+  final String relativePath;
+
+  /// Photo type name, stored as text so this table does not import Flutter.
+  final String photoType;
+
+  /// Order within the record or session.
+  final int sortOrder;
+
+  /// Pixel width of the stored file.
+  final int width;
+
+  /// Pixel height of the stored file.
+  final int height;
+
+  /// Size of the stored file in bytes.
+  final int fileSize;
+
+  /// MIME type of the stored file.
+  final String mimeType;
+
+  /// Content hash. Merge identity for the file.
+  final String sha256;
+
+  /// When the photo was captured. Written once at insert.
+  final DateTime capturedAt;
+
+  /// GPS latitude at capture, when location recording is on.
+  final double? gpsLat;
+
+  /// GPS longitude at capture, when location recording is on.
+  final double? gpsLon;
+  const Photo({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.projectId,
+    this.recordId,
+    required this.captureSessionId,
+    required this.originalFilename,
+    required this.storedFilename,
+    required this.relativePath,
+    required this.photoType,
+    required this.sortOrder,
+    required this.width,
+    required this.height,
+    required this.fileSize,
+    required this.mimeType,
+    required this.sha256,
+    required this.capturedAt,
+    this.gpsLat,
+    this.gpsLon,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['project_id'] = Variable<String>(projectId);
+    if (!nullToAbsent || recordId != null) {
+      map['record_id'] = Variable<String>(recordId);
+    }
+    map['capture_session_id'] = Variable<String>(captureSessionId);
+    map['original_filename'] = Variable<String>(originalFilename);
+    map['stored_filename'] = Variable<String>(storedFilename);
+    map['relative_path'] = Variable<String>(relativePath);
+    map['photo_type'] = Variable<String>(photoType);
+    map['sort_order'] = Variable<int>(sortOrder);
+    map['width'] = Variable<int>(width);
+    map['height'] = Variable<int>(height);
+    map['file_size'] = Variable<int>(fileSize);
+    map['mime_type'] = Variable<String>(mimeType);
+    map['sha256'] = Variable<String>(sha256);
+    map['captured_at'] = Variable<DateTime>(capturedAt);
+    if (!nullToAbsent || gpsLat != null) {
+      map['gps_lat'] = Variable<double>(gpsLat);
+    }
+    if (!nullToAbsent || gpsLon != null) {
+      map['gps_lon'] = Variable<double>(gpsLon);
+    }
+    return map;
+  }
+
+  PhotosCompanion toCompanion(bool nullToAbsent) {
+    return PhotosCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      projectId: Value(projectId),
+      recordId: recordId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recordId),
+      captureSessionId: Value(captureSessionId),
+      originalFilename: Value(originalFilename),
+      storedFilename: Value(storedFilename),
+      relativePath: Value(relativePath),
+      photoType: Value(photoType),
+      sortOrder: Value(sortOrder),
+      width: Value(width),
+      height: Value(height),
+      fileSize: Value(fileSize),
+      mimeType: Value(mimeType),
+      sha256: Value(sha256),
+      capturedAt: Value(capturedAt),
+      gpsLat: gpsLat == null && nullToAbsent
+          ? const Value.absent()
+          : Value(gpsLat),
+      gpsLon: gpsLon == null && nullToAbsent
+          ? const Value.absent()
+          : Value(gpsLon),
+    );
+  }
+
+  factory Photo.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Photo(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      projectId: serializer.fromJson<String>(json['projectId']),
+      recordId: serializer.fromJson<String?>(json['recordId']),
+      captureSessionId: serializer.fromJson<String>(json['captureSessionId']),
+      originalFilename: serializer.fromJson<String>(json['originalFilename']),
+      storedFilename: serializer.fromJson<String>(json['storedFilename']),
+      relativePath: serializer.fromJson<String>(json['relativePath']),
+      photoType: serializer.fromJson<String>(json['photoType']),
+      sortOrder: serializer.fromJson<int>(json['sortOrder']),
+      width: serializer.fromJson<int>(json['width']),
+      height: serializer.fromJson<int>(json['height']),
+      fileSize: serializer.fromJson<int>(json['fileSize']),
+      mimeType: serializer.fromJson<String>(json['mimeType']),
+      sha256: serializer.fromJson<String>(json['sha256']),
+      capturedAt: serializer.fromJson<DateTime>(json['capturedAt']),
+      gpsLat: serializer.fromJson<double?>(json['gpsLat']),
+      gpsLon: serializer.fromJson<double?>(json['gpsLon']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'projectId': serializer.toJson<String>(projectId),
+      'recordId': serializer.toJson<String?>(recordId),
+      'captureSessionId': serializer.toJson<String>(captureSessionId),
+      'originalFilename': serializer.toJson<String>(originalFilename),
+      'storedFilename': serializer.toJson<String>(storedFilename),
+      'relativePath': serializer.toJson<String>(relativePath),
+      'photoType': serializer.toJson<String>(photoType),
+      'sortOrder': serializer.toJson<int>(sortOrder),
+      'width': serializer.toJson<int>(width),
+      'height': serializer.toJson<int>(height),
+      'fileSize': serializer.toJson<int>(fileSize),
+      'mimeType': serializer.toJson<String>(mimeType),
+      'sha256': serializer.toJson<String>(sha256),
+      'capturedAt': serializer.toJson<DateTime>(capturedAt),
+      'gpsLat': serializer.toJson<double?>(gpsLat),
+      'gpsLon': serializer.toJson<double?>(gpsLon),
+    };
+  }
+
+  Photo copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? projectId,
+    Value<String?> recordId = const Value.absent(),
+    String? captureSessionId,
+    String? originalFilename,
+    String? storedFilename,
+    String? relativePath,
+    String? photoType,
+    int? sortOrder,
+    int? width,
+    int? height,
+    int? fileSize,
+    String? mimeType,
+    String? sha256,
+    DateTime? capturedAt,
+    Value<double?> gpsLat = const Value.absent(),
+    Value<double?> gpsLon = const Value.absent(),
+  }) => Photo(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    projectId: projectId ?? this.projectId,
+    recordId: recordId.present ? recordId.value : this.recordId,
+    captureSessionId: captureSessionId ?? this.captureSessionId,
+    originalFilename: originalFilename ?? this.originalFilename,
+    storedFilename: storedFilename ?? this.storedFilename,
+    relativePath: relativePath ?? this.relativePath,
+    photoType: photoType ?? this.photoType,
+    sortOrder: sortOrder ?? this.sortOrder,
+    width: width ?? this.width,
+    height: height ?? this.height,
+    fileSize: fileSize ?? this.fileSize,
+    mimeType: mimeType ?? this.mimeType,
+    sha256: sha256 ?? this.sha256,
+    capturedAt: capturedAt ?? this.capturedAt,
+    gpsLat: gpsLat.present ? gpsLat.value : this.gpsLat,
+    gpsLon: gpsLon.present ? gpsLon.value : this.gpsLon,
+  );
+  Photo copyWithCompanion(PhotosCompanion data) {
+    return Photo(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      recordId: data.recordId.present ? data.recordId.value : this.recordId,
+      captureSessionId: data.captureSessionId.present
+          ? data.captureSessionId.value
+          : this.captureSessionId,
+      originalFilename: data.originalFilename.present
+          ? data.originalFilename.value
+          : this.originalFilename,
+      storedFilename: data.storedFilename.present
+          ? data.storedFilename.value
+          : this.storedFilename,
+      relativePath: data.relativePath.present
+          ? data.relativePath.value
+          : this.relativePath,
+      photoType: data.photoType.present ? data.photoType.value : this.photoType,
+      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+      width: data.width.present ? data.width.value : this.width,
+      height: data.height.present ? data.height.value : this.height,
+      fileSize: data.fileSize.present ? data.fileSize.value : this.fileSize,
+      mimeType: data.mimeType.present ? data.mimeType.value : this.mimeType,
+      sha256: data.sha256.present ? data.sha256.value : this.sha256,
+      capturedAt: data.capturedAt.present
+          ? data.capturedAt.value
+          : this.capturedAt,
+      gpsLat: data.gpsLat.present ? data.gpsLat.value : this.gpsLat,
+      gpsLon: data.gpsLon.present ? data.gpsLon.value : this.gpsLon,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Photo(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('projectId: $projectId, ')
+          ..write('recordId: $recordId, ')
+          ..write('captureSessionId: $captureSessionId, ')
+          ..write('originalFilename: $originalFilename, ')
+          ..write('storedFilename: $storedFilename, ')
+          ..write('relativePath: $relativePath, ')
+          ..write('photoType: $photoType, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('width: $width, ')
+          ..write('height: $height, ')
+          ..write('fileSize: $fileSize, ')
+          ..write('mimeType: $mimeType, ')
+          ..write('sha256: $sha256, ')
+          ..write('capturedAt: $capturedAt, ')
+          ..write('gpsLat: $gpsLat, ')
+          ..write('gpsLon: $gpsLon')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    projectId,
+    recordId,
+    captureSessionId,
+    originalFilename,
+    storedFilename,
+    relativePath,
+    photoType,
+    sortOrder,
+    width,
+    height,
+    fileSize,
+    mimeType,
+    sha256,
+    capturedAt,
+    gpsLat,
+    gpsLon,
+  ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Photo &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.projectId == this.projectId &&
+          other.recordId == this.recordId &&
+          other.captureSessionId == this.captureSessionId &&
+          other.originalFilename == this.originalFilename &&
+          other.storedFilename == this.storedFilename &&
+          other.relativePath == this.relativePath &&
+          other.photoType == this.photoType &&
+          other.sortOrder == this.sortOrder &&
+          other.width == this.width &&
+          other.height == this.height &&
+          other.fileSize == this.fileSize &&
+          other.mimeType == this.mimeType &&
+          other.sha256 == this.sha256 &&
+          other.capturedAt == this.capturedAt &&
+          other.gpsLat == this.gpsLat &&
+          other.gpsLon == this.gpsLon);
+}
+
+class PhotosCompanion extends UpdateCompanion<Photo> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> projectId;
+  final Value<String?> recordId;
+  final Value<String> captureSessionId;
+  final Value<String> originalFilename;
+  final Value<String> storedFilename;
+  final Value<String> relativePath;
+  final Value<String> photoType;
+  final Value<int> sortOrder;
+  final Value<int> width;
+  final Value<int> height;
+  final Value<int> fileSize;
+  final Value<String> mimeType;
+  final Value<String> sha256;
+  final Value<DateTime> capturedAt;
+  final Value<double?> gpsLat;
+  final Value<double?> gpsLon;
+  final Value<int> rowid;
+  const PhotosCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.projectId = const Value.absent(),
+    this.recordId = const Value.absent(),
+    this.captureSessionId = const Value.absent(),
+    this.originalFilename = const Value.absent(),
+    this.storedFilename = const Value.absent(),
+    this.relativePath = const Value.absent(),
+    this.photoType = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.width = const Value.absent(),
+    this.height = const Value.absent(),
+    this.fileSize = const Value.absent(),
+    this.mimeType = const Value.absent(),
+    this.sha256 = const Value.absent(),
+    this.capturedAt = const Value.absent(),
+    this.gpsLat = const Value.absent(),
+    this.gpsLon = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  PhotosCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String projectId,
+    this.recordId = const Value.absent(),
+    required String captureSessionId,
+    required String originalFilename,
+    required String storedFilename,
+    required String relativePath,
+    required String photoType,
+    required int sortOrder,
+    required int width,
+    required int height,
+    required int fileSize,
+    required String mimeType,
+    required String sha256,
+    required DateTime capturedAt,
+    this.gpsLat = const Value.absent(),
+    this.gpsLon = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       projectId = Value(projectId),
+       captureSessionId = Value(captureSessionId),
+       originalFilename = Value(originalFilename),
+       storedFilename = Value(storedFilename),
+       relativePath = Value(relativePath),
+       photoType = Value(photoType),
+       sortOrder = Value(sortOrder),
+       width = Value(width),
+       height = Value(height),
+       fileSize = Value(fileSize),
+       mimeType = Value(mimeType),
+       sha256 = Value(sha256),
+       capturedAt = Value(capturedAt);
+  static Insertable<Photo> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? projectId,
+    Expression<String>? recordId,
+    Expression<String>? captureSessionId,
+    Expression<String>? originalFilename,
+    Expression<String>? storedFilename,
+    Expression<String>? relativePath,
+    Expression<String>? photoType,
+    Expression<int>? sortOrder,
+    Expression<int>? width,
+    Expression<int>? height,
+    Expression<int>? fileSize,
+    Expression<String>? mimeType,
+    Expression<String>? sha256,
+    Expression<DateTime>? capturedAt,
+    Expression<double>? gpsLat,
+    Expression<double>? gpsLon,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (projectId != null) 'project_id': projectId,
+      if (recordId != null) 'record_id': recordId,
+      if (captureSessionId != null) 'capture_session_id': captureSessionId,
+      if (originalFilename != null) 'original_filename': originalFilename,
+      if (storedFilename != null) 'stored_filename': storedFilename,
+      if (relativePath != null) 'relative_path': relativePath,
+      if (photoType != null) 'photo_type': photoType,
+      if (sortOrder != null) 'sort_order': sortOrder,
+      if (width != null) 'width': width,
+      if (height != null) 'height': height,
+      if (fileSize != null) 'file_size': fileSize,
+      if (mimeType != null) 'mime_type': mimeType,
+      if (sha256 != null) 'sha256': sha256,
+      if (capturedAt != null) 'captured_at': capturedAt,
+      if (gpsLat != null) 'gps_lat': gpsLat,
+      if (gpsLon != null) 'gps_lon': gpsLon,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  PhotosCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? projectId,
+    Value<String?>? recordId,
+    Value<String>? captureSessionId,
+    Value<String>? originalFilename,
+    Value<String>? storedFilename,
+    Value<String>? relativePath,
+    Value<String>? photoType,
+    Value<int>? sortOrder,
+    Value<int>? width,
+    Value<int>? height,
+    Value<int>? fileSize,
+    Value<String>? mimeType,
+    Value<String>? sha256,
+    Value<DateTime>? capturedAt,
+    Value<double?>? gpsLat,
+    Value<double?>? gpsLon,
+    Value<int>? rowid,
+  }) {
+    return PhotosCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      projectId: projectId ?? this.projectId,
+      recordId: recordId ?? this.recordId,
+      captureSessionId: captureSessionId ?? this.captureSessionId,
+      originalFilename: originalFilename ?? this.originalFilename,
+      storedFilename: storedFilename ?? this.storedFilename,
+      relativePath: relativePath ?? this.relativePath,
+      photoType: photoType ?? this.photoType,
+      sortOrder: sortOrder ?? this.sortOrder,
+      width: width ?? this.width,
+      height: height ?? this.height,
+      fileSize: fileSize ?? this.fileSize,
+      mimeType: mimeType ?? this.mimeType,
+      sha256: sha256 ?? this.sha256,
+      capturedAt: capturedAt ?? this.capturedAt,
+      gpsLat: gpsLat ?? this.gpsLat,
+      gpsLon: gpsLon ?? this.gpsLon,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (projectId.present) {
+      map['project_id'] = Variable<String>(projectId.value);
+    }
+    if (recordId.present) {
+      map['record_id'] = Variable<String>(recordId.value);
+    }
+    if (captureSessionId.present) {
+      map['capture_session_id'] = Variable<String>(captureSessionId.value);
+    }
+    if (originalFilename.present) {
+      map['original_filename'] = Variable<String>(originalFilename.value);
+    }
+    if (storedFilename.present) {
+      map['stored_filename'] = Variable<String>(storedFilename.value);
+    }
+    if (relativePath.present) {
+      map['relative_path'] = Variable<String>(relativePath.value);
+    }
+    if (photoType.present) {
+      map['photo_type'] = Variable<String>(photoType.value);
+    }
+    if (sortOrder.present) {
+      map['sort_order'] = Variable<int>(sortOrder.value);
+    }
+    if (width.present) {
+      map['width'] = Variable<int>(width.value);
+    }
+    if (height.present) {
+      map['height'] = Variable<int>(height.value);
+    }
+    if (fileSize.present) {
+      map['file_size'] = Variable<int>(fileSize.value);
+    }
+    if (mimeType.present) {
+      map['mime_type'] = Variable<String>(mimeType.value);
+    }
+    if (sha256.present) {
+      map['sha256'] = Variable<String>(sha256.value);
+    }
+    if (capturedAt.present) {
+      map['captured_at'] = Variable<DateTime>(capturedAt.value);
+    }
+    if (gpsLat.present) {
+      map['gps_lat'] = Variable<double>(gpsLat.value);
+    }
+    if (gpsLon.present) {
+      map['gps_lon'] = Variable<double>(gpsLon.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PhotosCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('projectId: $projectId, ')
+          ..write('recordId: $recordId, ')
+          ..write('captureSessionId: $captureSessionId, ')
+          ..write('originalFilename: $originalFilename, ')
+          ..write('storedFilename: $storedFilename, ')
+          ..write('relativePath: $relativePath, ')
+          ..write('photoType: $photoType, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('width: $width, ')
+          ..write('height: $height, ')
+          ..write('fileSize: $fileSize, ')
+          ..write('mimeType: $mimeType, ')
+          ..write('sha256: $sha256, ')
+          ..write('capturedAt: $capturedAt, ')
+          ..write('gpsLat: $gpsLat, ')
+          ..write('gpsLon: $gpsLon, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AttachmentsTable extends Attachments
+    with TableInfo<$AttachmentsTable, Attachment> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AttachmentsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _projectIdMeta = const VerificationMeta(
+    'projectId',
+  );
+  @override
+  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
+    'project_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _relativePathMeta = const VerificationMeta(
+    'relativePath',
+  );
+  @override
+  late final GeneratedColumn<String> relativePath = GeneratedColumn<String>(
+    'relative_path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _mimeTypeMeta = const VerificationMeta(
+    'mimeType',
+  );
+  @override
+  late final GeneratedColumn<String> mimeType = GeneratedColumn<String>(
+    'mime_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fileSizeMeta = const VerificationMeta(
+    'fileSize',
+  );
+  @override
+  late final GeneratedColumn<int> fileSize = GeneratedColumn<int>(
+    'file_size',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sha256Meta = const VerificationMeta('sha256');
+  @override
+  late final GeneratedColumn<String> sha256 = GeneratedColumn<String>(
+    'sha256',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<AttachmentKind, String> kind =
+      GeneratedColumn<String>(
+        'kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<AttachmentKind>($AttachmentsTable.$converterkind);
+  static const VerificationMeta _durationMsMeta = const VerificationMeta(
+    'durationMs',
+  );
+  @override
+  late final GeneratedColumn<int> durationMs = GeneratedColumn<int>(
+    'duration_ms',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _pageCountMeta = const VerificationMeta(
+    'pageCount',
+  );
+  @override
+  late final GeneratedColumn<int> pageCount = GeneratedColumn<int>(
+    'page_count',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    projectId,
+    relativePath,
+    mimeType,
+    fileSize,
+    sha256,
+    kind,
+    durationMs,
+    pageCount,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'attachments';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Attachment> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('project_id')) {
+      context.handle(
+        _projectIdMeta,
+        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_projectIdMeta);
+    }
+    if (data.containsKey('relative_path')) {
+      context.handle(
+        _relativePathMeta,
+        relativePath.isAcceptableOrUnknown(
+          data['relative_path']!,
+          _relativePathMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_relativePathMeta);
+    }
+    if (data.containsKey('mime_type')) {
+      context.handle(
+        _mimeTypeMeta,
+        mimeType.isAcceptableOrUnknown(data['mime_type']!, _mimeTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_mimeTypeMeta);
+    }
+    if (data.containsKey('file_size')) {
+      context.handle(
+        _fileSizeMeta,
+        fileSize.isAcceptableOrUnknown(data['file_size']!, _fileSizeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fileSizeMeta);
+    }
+    if (data.containsKey('sha256')) {
+      context.handle(
+        _sha256Meta,
+        sha256.isAcceptableOrUnknown(data['sha256']!, _sha256Meta),
+      );
+    } else if (isInserting) {
+      context.missing(_sha256Meta);
+    }
+    if (data.containsKey('duration_ms')) {
+      context.handle(
+        _durationMsMeta,
+        durationMs.isAcceptableOrUnknown(data['duration_ms']!, _durationMsMeta),
+      );
+    }
+    if (data.containsKey('page_count')) {
+      context.handle(
+        _pageCountMeta,
+        pageCount.isAcceptableOrUnknown(data['page_count']!, _pageCountMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {projectId, sha256},
+  ];
+  @override
+  Attachment map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Attachment(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      projectId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}project_id'],
+      )!,
+      relativePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}relative_path'],
+      )!,
+      mimeType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mime_type'],
+      )!,
+      fileSize: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}file_size'],
+      )!,
+      sha256: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sha256'],
+      )!,
+      kind: $AttachmentsTable.$converterkind.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}kind'],
+        )!,
+      ),
+      durationMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}duration_ms'],
+      ),
+      pageCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}page_count'],
+      ),
+    );
+  }
+
+  @override
+  $AttachmentsTable createAlias(String alias) {
+    return $AttachmentsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<AttachmentKind, String, String> $converterkind =
+      const EnumNameConverter<AttachmentKind>(AttachmentKind.values);
+}
+
+class Attachment extends DataClass implements Insertable<Attachment> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Project this file belongs to.
+  final String projectId;
+
+  /// Path relative to the project folder.
+  final String relativePath;
+
+  /// MIME type of the stored file.
+  final String mimeType;
+
+  /// Size of the stored file in bytes.
+  final int fileSize;
+
+  /// Content hash. Merge identity for the file.
+  final String sha256;
+
+  /// Document or audio.
+  final AttachmentKind kind;
+
+  /// Duration for audio, in milliseconds.
+  final int? durationMs;
+
+  /// Page count for documents, when the format reports one.
+  final int? pageCount;
+  const Attachment({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.projectId,
+    required this.relativePath,
+    required this.mimeType,
+    required this.fileSize,
+    required this.sha256,
+    required this.kind,
+    this.durationMs,
+    this.pageCount,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['project_id'] = Variable<String>(projectId);
+    map['relative_path'] = Variable<String>(relativePath);
+    map['mime_type'] = Variable<String>(mimeType);
+    map['file_size'] = Variable<int>(fileSize);
+    map['sha256'] = Variable<String>(sha256);
+    {
+      map['kind'] = Variable<String>(
+        $AttachmentsTable.$converterkind.toSql(kind),
+      );
+    }
+    if (!nullToAbsent || durationMs != null) {
+      map['duration_ms'] = Variable<int>(durationMs);
+    }
+    if (!nullToAbsent || pageCount != null) {
+      map['page_count'] = Variable<int>(pageCount);
+    }
+    return map;
+  }
+
+  AttachmentsCompanion toCompanion(bool nullToAbsent) {
+    return AttachmentsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      projectId: Value(projectId),
+      relativePath: Value(relativePath),
+      mimeType: Value(mimeType),
+      fileSize: Value(fileSize),
+      sha256: Value(sha256),
+      kind: Value(kind),
+      durationMs: durationMs == null && nullToAbsent
+          ? const Value.absent()
+          : Value(durationMs),
+      pageCount: pageCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pageCount),
+    );
+  }
+
+  factory Attachment.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Attachment(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      projectId: serializer.fromJson<String>(json['projectId']),
+      relativePath: serializer.fromJson<String>(json['relativePath']),
+      mimeType: serializer.fromJson<String>(json['mimeType']),
+      fileSize: serializer.fromJson<int>(json['fileSize']),
+      sha256: serializer.fromJson<String>(json['sha256']),
+      kind: $AttachmentsTable.$converterkind.fromJson(
+        serializer.fromJson<String>(json['kind']),
+      ),
+      durationMs: serializer.fromJson<int?>(json['durationMs']),
+      pageCount: serializer.fromJson<int?>(json['pageCount']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'projectId': serializer.toJson<String>(projectId),
+      'relativePath': serializer.toJson<String>(relativePath),
+      'mimeType': serializer.toJson<String>(mimeType),
+      'fileSize': serializer.toJson<int>(fileSize),
+      'sha256': serializer.toJson<String>(sha256),
+      'kind': serializer.toJson<String>(
+        $AttachmentsTable.$converterkind.toJson(kind),
+      ),
+      'durationMs': serializer.toJson<int?>(durationMs),
+      'pageCount': serializer.toJson<int?>(pageCount),
+    };
+  }
+
+  Attachment copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? projectId,
+    String? relativePath,
+    String? mimeType,
+    int? fileSize,
+    String? sha256,
+    AttachmentKind? kind,
+    Value<int?> durationMs = const Value.absent(),
+    Value<int?> pageCount = const Value.absent(),
+  }) => Attachment(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    projectId: projectId ?? this.projectId,
+    relativePath: relativePath ?? this.relativePath,
+    mimeType: mimeType ?? this.mimeType,
+    fileSize: fileSize ?? this.fileSize,
+    sha256: sha256 ?? this.sha256,
+    kind: kind ?? this.kind,
+    durationMs: durationMs.present ? durationMs.value : this.durationMs,
+    pageCount: pageCount.present ? pageCount.value : this.pageCount,
+  );
+  Attachment copyWithCompanion(AttachmentsCompanion data) {
+    return Attachment(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      relativePath: data.relativePath.present
+          ? data.relativePath.value
+          : this.relativePath,
+      mimeType: data.mimeType.present ? data.mimeType.value : this.mimeType,
+      fileSize: data.fileSize.present ? data.fileSize.value : this.fileSize,
+      sha256: data.sha256.present ? data.sha256.value : this.sha256,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      durationMs: data.durationMs.present
+          ? data.durationMs.value
+          : this.durationMs,
+      pageCount: data.pageCount.present ? data.pageCount.value : this.pageCount,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Attachment(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('projectId: $projectId, ')
+          ..write('relativePath: $relativePath, ')
+          ..write('mimeType: $mimeType, ')
+          ..write('fileSize: $fileSize, ')
+          ..write('sha256: $sha256, ')
+          ..write('kind: $kind, ')
+          ..write('durationMs: $durationMs, ')
+          ..write('pageCount: $pageCount')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    projectId,
+    relativePath,
+    mimeType,
+    fileSize,
+    sha256,
+    kind,
+    durationMs,
+    pageCount,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Attachment &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.projectId == this.projectId &&
+          other.relativePath == this.relativePath &&
+          other.mimeType == this.mimeType &&
+          other.fileSize == this.fileSize &&
+          other.sha256 == this.sha256 &&
+          other.kind == this.kind &&
+          other.durationMs == this.durationMs &&
+          other.pageCount == this.pageCount);
+}
+
+class AttachmentsCompanion extends UpdateCompanion<Attachment> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> projectId;
+  final Value<String> relativePath;
+  final Value<String> mimeType;
+  final Value<int> fileSize;
+  final Value<String> sha256;
+  final Value<AttachmentKind> kind;
+  final Value<int?> durationMs;
+  final Value<int?> pageCount;
+  final Value<int> rowid;
+  const AttachmentsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.projectId = const Value.absent(),
+    this.relativePath = const Value.absent(),
+    this.mimeType = const Value.absent(),
+    this.fileSize = const Value.absent(),
+    this.sha256 = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.durationMs = const Value.absent(),
+    this.pageCount = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AttachmentsCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String projectId,
+    required String relativePath,
+    required String mimeType,
+    required int fileSize,
+    required String sha256,
+    required AttachmentKind kind,
+    this.durationMs = const Value.absent(),
+    this.pageCount = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       projectId = Value(projectId),
+       relativePath = Value(relativePath),
+       mimeType = Value(mimeType),
+       fileSize = Value(fileSize),
+       sha256 = Value(sha256),
+       kind = Value(kind);
+  static Insertable<Attachment> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? projectId,
+    Expression<String>? relativePath,
+    Expression<String>? mimeType,
+    Expression<int>? fileSize,
+    Expression<String>? sha256,
+    Expression<String>? kind,
+    Expression<int>? durationMs,
+    Expression<int>? pageCount,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (projectId != null) 'project_id': projectId,
+      if (relativePath != null) 'relative_path': relativePath,
+      if (mimeType != null) 'mime_type': mimeType,
+      if (fileSize != null) 'file_size': fileSize,
+      if (sha256 != null) 'sha256': sha256,
+      if (kind != null) 'kind': kind,
+      if (durationMs != null) 'duration_ms': durationMs,
+      if (pageCount != null) 'page_count': pageCount,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AttachmentsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? projectId,
+    Value<String>? relativePath,
+    Value<String>? mimeType,
+    Value<int>? fileSize,
+    Value<String>? sha256,
+    Value<AttachmentKind>? kind,
+    Value<int?>? durationMs,
+    Value<int?>? pageCount,
+    Value<int>? rowid,
+  }) {
+    return AttachmentsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      projectId: projectId ?? this.projectId,
+      relativePath: relativePath ?? this.relativePath,
+      mimeType: mimeType ?? this.mimeType,
+      fileSize: fileSize ?? this.fileSize,
+      sha256: sha256 ?? this.sha256,
+      kind: kind ?? this.kind,
+      durationMs: durationMs ?? this.durationMs,
+      pageCount: pageCount ?? this.pageCount,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (projectId.present) {
+      map['project_id'] = Variable<String>(projectId.value);
+    }
+    if (relativePath.present) {
+      map['relative_path'] = Variable<String>(relativePath.value);
+    }
+    if (mimeType.present) {
+      map['mime_type'] = Variable<String>(mimeType.value);
+    }
+    if (fileSize.present) {
+      map['file_size'] = Variable<int>(fileSize.value);
+    }
+    if (sha256.present) {
+      map['sha256'] = Variable<String>(sha256.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(
+        $AttachmentsTable.$converterkind.toSql(kind.value),
+      );
+    }
+    if (durationMs.present) {
+      map['duration_ms'] = Variable<int>(durationMs.value);
+    }
+    if (pageCount.present) {
+      map['page_count'] = Variable<int>(pageCount.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AttachmentsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('projectId: $projectId, ')
+          ..write('relativePath: $relativePath, ')
+          ..write('mimeType: $mimeType, ')
+          ..write('fileSize: $fileSize, ')
+          ..write('sha256: $sha256, ')
+          ..write('kind: $kind, ')
+          ..write('durationMs: $durationMs, ')
+          ..write('pageCount: $pageCount, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CaptionsTable extends Captions with TableInfo<$CaptionsTable, Caption> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CaptionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<CaptionOwnerType, String>
+  ownerType = GeneratedColumn<String>(
+    'owner_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  ).withConverter<CaptionOwnerType>($CaptionsTable.$converterownerType);
+  static const VerificationMeta _ownerIdMeta = const VerificationMeta(
+    'ownerId',
+  );
+  @override
+  late final GeneratedColumn<String> ownerId = GeneratedColumn<String>(
+    'owner_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _textRawMeta = const VerificationMeta(
+    'textRaw',
+  );
+  @override
+  late final GeneratedColumn<String> textRaw = GeneratedColumn<String>(
+    'text_raw',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _textRefinedMeta = const VerificationMeta(
+    'textRefined',
+  );
+  @override
+  late final GeneratedColumn<String> textRefined = GeneratedColumn<String>(
+    'text_refined',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<CaptionInputMode, String>
+  inputMode = GeneratedColumn<String>(
+    'input_mode',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  ).withConverter<CaptionInputMode>($CaptionsTable.$converterinputMode);
+  static const VerificationMeta _refinedAtMeta = const VerificationMeta(
+    'refinedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> refinedAt = GeneratedColumn<DateTime>(
+    'refined_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    ownerType,
+    ownerId,
+    textRaw,
+    textRefined,
+    inputMode,
+    refinedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'captions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Caption> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('owner_id')) {
+      context.handle(
+        _ownerIdMeta,
+        ownerId.isAcceptableOrUnknown(data['owner_id']!, _ownerIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ownerIdMeta);
+    }
+    if (data.containsKey('text_raw')) {
+      context.handle(
+        _textRawMeta,
+        textRaw.isAcceptableOrUnknown(data['text_raw']!, _textRawMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_textRawMeta);
+    }
+    if (data.containsKey('text_refined')) {
+      context.handle(
+        _textRefinedMeta,
+        textRefined.isAcceptableOrUnknown(
+          data['text_refined']!,
+          _textRefinedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('refined_at')) {
+      context.handle(
+        _refinedAtMeta,
+        refinedAt.isAcceptableOrUnknown(data['refined_at']!, _refinedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Caption map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Caption(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      ownerType: $CaptionsTable.$converterownerType.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}owner_type'],
+        )!,
+      ),
+      ownerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_id'],
+      )!,
+      textRaw: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}text_raw'],
+      )!,
+      textRefined: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}text_refined'],
+      ),
+      inputMode: $CaptionsTable.$converterinputMode.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}input_mode'],
+        )!,
+      ),
+      refinedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}refined_at'],
+      ),
+    );
+  }
+
+  @override
+  $CaptionsTable createAlias(String alias) {
+    return $CaptionsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<CaptionOwnerType, String, String>
+  $converterownerType = const EnumNameConverter<CaptionOwnerType>(
+    CaptionOwnerType.values,
+  );
+  static JsonTypeConverter2<CaptionInputMode, String, String>
+  $converterinputMode = const EnumNameConverter<CaptionInputMode>(
+    CaptionInputMode.values,
+  );
+}
+
+class Caption extends DataClass implements Insertable<Caption> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Record or photo.
+  final CaptionOwnerType ownerType;
+
+  /// Merge id of the record or photo this caption describes.
+  final String ownerId;
+
+  /// Original caption as entered. Written once at insert, never updated.
+  final String textRaw;
+
+  /// Refined caption written beside the original, never over it.
+  final String? textRefined;
+
+  /// Typed or spoken.
+  final CaptionInputMode inputMode;
+
+  /// When a refined value was written, if one has been.
+  final DateTime? refinedAt;
+  const Caption({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.ownerType,
+    required this.ownerId,
+    required this.textRaw,
+    this.textRefined,
+    required this.inputMode,
+    this.refinedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    {
+      map['owner_type'] = Variable<String>(
+        $CaptionsTable.$converterownerType.toSql(ownerType),
+      );
+    }
+    map['owner_id'] = Variable<String>(ownerId);
+    map['text_raw'] = Variable<String>(textRaw);
+    if (!nullToAbsent || textRefined != null) {
+      map['text_refined'] = Variable<String>(textRefined);
+    }
+    {
+      map['input_mode'] = Variable<String>(
+        $CaptionsTable.$converterinputMode.toSql(inputMode),
+      );
+    }
+    if (!nullToAbsent || refinedAt != null) {
+      map['refined_at'] = Variable<DateTime>(refinedAt);
+    }
+    return map;
+  }
+
+  CaptionsCompanion toCompanion(bool nullToAbsent) {
+    return CaptionsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      ownerType: Value(ownerType),
+      ownerId: Value(ownerId),
+      textRaw: Value(textRaw),
+      textRefined: textRefined == null && nullToAbsent
+          ? const Value.absent()
+          : Value(textRefined),
+      inputMode: Value(inputMode),
+      refinedAt: refinedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(refinedAt),
+    );
+  }
+
+  factory Caption.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Caption(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      ownerType: $CaptionsTable.$converterownerType.fromJson(
+        serializer.fromJson<String>(json['ownerType']),
+      ),
+      ownerId: serializer.fromJson<String>(json['ownerId']),
+      textRaw: serializer.fromJson<String>(json['textRaw']),
+      textRefined: serializer.fromJson<String?>(json['textRefined']),
+      inputMode: $CaptionsTable.$converterinputMode.fromJson(
+        serializer.fromJson<String>(json['inputMode']),
+      ),
+      refinedAt: serializer.fromJson<DateTime?>(json['refinedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'ownerType': serializer.toJson<String>(
+        $CaptionsTable.$converterownerType.toJson(ownerType),
+      ),
+      'ownerId': serializer.toJson<String>(ownerId),
+      'textRaw': serializer.toJson<String>(textRaw),
+      'textRefined': serializer.toJson<String?>(textRefined),
+      'inputMode': serializer.toJson<String>(
+        $CaptionsTable.$converterinputMode.toJson(inputMode),
+      ),
+      'refinedAt': serializer.toJson<DateTime?>(refinedAt),
+    };
+  }
+
+  Caption copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    CaptionOwnerType? ownerType,
+    String? ownerId,
+    String? textRaw,
+    Value<String?> textRefined = const Value.absent(),
+    CaptionInputMode? inputMode,
+    Value<DateTime?> refinedAt = const Value.absent(),
+  }) => Caption(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    ownerType: ownerType ?? this.ownerType,
+    ownerId: ownerId ?? this.ownerId,
+    textRaw: textRaw ?? this.textRaw,
+    textRefined: textRefined.present ? textRefined.value : this.textRefined,
+    inputMode: inputMode ?? this.inputMode,
+    refinedAt: refinedAt.present ? refinedAt.value : this.refinedAt,
+  );
+  Caption copyWithCompanion(CaptionsCompanion data) {
+    return Caption(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      ownerType: data.ownerType.present ? data.ownerType.value : this.ownerType,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
+      textRaw: data.textRaw.present ? data.textRaw.value : this.textRaw,
+      textRefined: data.textRefined.present
+          ? data.textRefined.value
+          : this.textRefined,
+      inputMode: data.inputMode.present ? data.inputMode.value : this.inputMode,
+      refinedAt: data.refinedAt.present ? data.refinedAt.value : this.refinedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Caption(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('textRaw: $textRaw, ')
+          ..write('textRefined: $textRefined, ')
+          ..write('inputMode: $inputMode, ')
+          ..write('refinedAt: $refinedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    ownerType,
+    ownerId,
+    textRaw,
+    textRefined,
+    inputMode,
+    refinedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Caption &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.ownerType == this.ownerType &&
+          other.ownerId == this.ownerId &&
+          other.textRaw == this.textRaw &&
+          other.textRefined == this.textRefined &&
+          other.inputMode == this.inputMode &&
+          other.refinedAt == this.refinedAt);
+}
+
+class CaptionsCompanion extends UpdateCompanion<Caption> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<CaptionOwnerType> ownerType;
+  final Value<String> ownerId;
+  final Value<String> textRaw;
+  final Value<String?> textRefined;
+  final Value<CaptionInputMode> inputMode;
+  final Value<DateTime?> refinedAt;
+  final Value<int> rowid;
+  const CaptionsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.ownerType = const Value.absent(),
+    this.ownerId = const Value.absent(),
+    this.textRaw = const Value.absent(),
+    this.textRefined = const Value.absent(),
+    this.inputMode = const Value.absent(),
+    this.refinedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CaptionsCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required CaptionOwnerType ownerType,
+    required String ownerId,
+    required String textRaw,
+    this.textRefined = const Value.absent(),
+    required CaptionInputMode inputMode,
+    this.refinedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       ownerType = Value(ownerType),
+       ownerId = Value(ownerId),
+       textRaw = Value(textRaw),
+       inputMode = Value(inputMode);
+  static Insertable<Caption> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? ownerType,
+    Expression<String>? ownerId,
+    Expression<String>? textRaw,
+    Expression<String>? textRefined,
+    Expression<String>? inputMode,
+    Expression<DateTime>? refinedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (ownerType != null) 'owner_type': ownerType,
+      if (ownerId != null) 'owner_id': ownerId,
+      if (textRaw != null) 'text_raw': textRaw,
+      if (textRefined != null) 'text_refined': textRefined,
+      if (inputMode != null) 'input_mode': inputMode,
+      if (refinedAt != null) 'refined_at': refinedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CaptionsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<CaptionOwnerType>? ownerType,
+    Value<String>? ownerId,
+    Value<String>? textRaw,
+    Value<String?>? textRefined,
+    Value<CaptionInputMode>? inputMode,
+    Value<DateTime?>? refinedAt,
+    Value<int>? rowid,
+  }) {
+    return CaptionsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      ownerType: ownerType ?? this.ownerType,
+      ownerId: ownerId ?? this.ownerId,
+      textRaw: textRaw ?? this.textRaw,
+      textRefined: textRefined ?? this.textRefined,
+      inputMode: inputMode ?? this.inputMode,
+      refinedAt: refinedAt ?? this.refinedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (ownerType.present) {
+      map['owner_type'] = Variable<String>(
+        $CaptionsTable.$converterownerType.toSql(ownerType.value),
+      );
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<String>(ownerId.value);
+    }
+    if (textRaw.present) {
+      map['text_raw'] = Variable<String>(textRaw.value);
+    }
+    if (textRefined.present) {
+      map['text_refined'] = Variable<String>(textRefined.value);
+    }
+    if (inputMode.present) {
+      map['input_mode'] = Variable<String>(
+        $CaptionsTable.$converterinputMode.toSql(inputMode.value),
+      );
+    }
+    if (refinedAt.present) {
+      map['refined_at'] = Variable<DateTime>(refinedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CaptionsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('textRaw: $textRaw, ')
+          ..write('textRefined: $textRefined, ')
+          ..write('inputMode: $inputMode, ')
+          ..write('refinedAt: $refinedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   late final $TombstonesTable tombstones = $TombstonesTable(this);
@@ -9330,6 +12011,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $TemplateRowsTable templateRows = $TemplateRowsTable(this);
   late final $RecordsTable records = $RecordsTable(this);
   late final $RecordFieldsTable recordFields = $RecordFieldsTable(this);
+  late final $PhotosTable photos = $PhotosTable(this);
+  late final $AttachmentsTable attachments = $AttachmentsTable(this);
+  late final $CaptionsTable captions = $CaptionsTable(this);
   late final Index auditLogHistory = Index(
     'audit_log_history',
     'CREATE INDEX audit_log_history ON audit_log (entity_type, entity_id, at)',
@@ -9362,6 +12046,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'record_fields_by_final',
     'CREATE INDEX record_fields_by_final ON record_fields (field_key, value_final)',
   );
+  late final Index captionsByOwner = Index(
+    'captions_by_owner',
+    'CREATE INDEX captions_by_owner ON captions (owner_type, owner_id)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -9379,6 +12067,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     templateRows,
     records,
     recordFields,
+    photos,
+    attachments,
+    captions,
     auditLogHistory,
     projectsByStatus,
     templateRowsByIdentifier,
@@ -9387,5 +12078,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     recordsByCapturedAt,
     recordsByTemplate,
     recordFieldsByFinal,
+    captionsByOwner,
   ];
 }

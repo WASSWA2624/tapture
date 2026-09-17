@@ -10,7 +10,7 @@ Tasks 049–064 (16). Each file is a standalone implementation prompt.
 - [x] [052 — Projects and context tables](052-projects-table.md)
 - [x] [053 — Templates, template fields and template rows tables](053-templates-table.md)
 - [x] [054 — Records and record fields tables](054-records-table.md)
-- [ ] [055 — Photos, attachments and captions tables](055-photos-table.md)
+- [x] [055 — Photos, attachments and captions tables](055-photos-table.md)
 - [ ] [056 — Reference dataset tables](056-reference-tables.md)
 - [ ] [057 — Processing jobs, results and field evidence tables](057-jobs-table.md)
 - [ ] [058 — Duplicates and variances tables](058-duplicates-table.md)

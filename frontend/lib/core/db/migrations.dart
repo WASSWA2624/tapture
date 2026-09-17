@@ -21,6 +21,7 @@ kUpgradeSteps = <int, _UpgradeStep>{
   3: migrateToV3,
   4: migrateToV4,
   5: migrateToV5,
+  6: migrateToV6,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -94,6 +95,14 @@ Future<void> migrateToV5(Migrator migrator, AppDatabase db) async {
   await migrator.createIndex(db.recordsByCapturedAt);
   await migrator.createIndex(db.recordsByTemplate);
   await migrator.createIndex(db.recordFieldsByFinal);
+}
+
+/// Schema version 6: photos, attachments and captions.
+Future<void> migrateToV6(Migrator migrator, AppDatabase db) async {
+  await migrator.createTable(db.photos);
+  await migrator.createTable(db.attachments);
+  await migrator.createTable(db.captions);
+  await migrator.createIndex(db.captionsByOwner);
 }
 
 /// Runs the named step for [version], after the destructive-migration gate.

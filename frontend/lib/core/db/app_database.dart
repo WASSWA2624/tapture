@@ -5,9 +5,12 @@ import 'app_database_stub.dart'
     as sqlite;
 import 'columns.dart';
 import 'migrations.dart';
+import 'tables/attachments.dart';
 import 'tables/audit_log.dart';
+import 'tables/captions.dart';
 import 'tables/context.dart';
 import 'tables/device_profile.dart';
+import 'tables/photos.dart';
 import 'tables/projects.dart';
 import 'tables/record_fields.dart';
 import 'tables/records.dart';
@@ -20,7 +23,7 @@ part 'app_database.g.dart';
 
 /// Current schema version. Later table tasks bump this and append a named
 /// upgrade step; they never edit earlier steps.
-const int kSchemaVersion = 5;
+const int kSchemaVersion = 6;
 
 /// The local SQLite database. Opens on a WAL connection under the application
 /// support directory, or in memory for tests.
@@ -38,6 +41,9 @@ const int kSchemaVersion = 5;
     TemplateRows,
     Records,
     RecordFields,
+    Photos,
+    Attachments,
+    Captions,
   ],
 )
 class AppDatabase extends _$AppDatabase {

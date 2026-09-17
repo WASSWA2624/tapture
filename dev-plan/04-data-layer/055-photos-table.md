@@ -36,10 +36,10 @@ text.
 
 ## Definition of done
 
-- [ ] Importing the same file twice into one project is refused by the unique hash index, not by application code.
-- [ ] Applying one caption to thirty photos writes thirty rows and leaves each independently editable.
-- [ ] Refining a caption leaves `textRaw` unchanged.
-- [ ] Tests: `frontend/test/core/db/tables/photos_test.dart` asserts hash uniqueness per project and unfiled capture
+- [x] Importing the same file twice into one project is refused by the unique hash index, not by application code.
+- [x] Applying one caption to thirty photos writes thirty rows and leaves each independently editable.
+- [x] Refining a caption leaves `textRaw` unchanged.
+- [x] Tests: `frontend/test/core/db/tables/photos_test.dart` asserts hash uniqueness per project and unfiled capture
       with a null `recordId`; `attachments_test.dart` covers the document and audio variants; `captions_test.dart`
       asserts the many-photo write and raw immutability. All against an in-memory database, covering their migration
       steps.

@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**54 of 281 tasks complete (19.2%)** · last updated 2026-09-17
+**55 of 281 tasks complete (19.6%)** · last updated 2026-09-17
 
 `███████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -11,7 +11,7 @@
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
 | 02 — Foundation services | 11 | 11 | `██████████████` 100% |
 | 03 — Design system | 19 | 19 | `██████████████` 100% |
-| 04 — Local database | 6 | 16 | `██████░░░░░░░░` 38% |
+| 04 — Local database | 7 | 16 | `███████░░░░░░░` 44% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
 | 07 — Account and settings | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **54** | **281** | `██░░░░░░░░░░░░` 19.2% |
+| **Total** | **55** | **281** | `██░░░░░░░░░░░░` 19.6% |
 
 ## Completed
 
@@ -90,6 +90,7 @@
 | 052 — Projects and context tables | 2026-09-17 | Schema v3 adds `projects` (indexed on status plus `updatedAt`, settings JSON validated on write) and context definitions, state and presets. Setting a higher context level deletes lower state rows in one transaction. Guarded by paged status list/index, malformed-settings refusal, cascade-clear and preset round-trip tests. |
 | 053 — Templates, template fields and template rows tables | 2026-09-17 | Schema v4 adds `templates` (nullable `projectId` for shipped rows, version bump on header edit), `template_fields` unique on template plus field key, and `template_rows` with alias lookup in Dart. JSON columns are validated on write. Guarded by round-trip, uniqueness, sort-order, shipped-coexist and alias tests. |
 | 054 — Records and record fields tables | 2026-09-17 | Schema v5 adds `records` (`RecordRow`, indexed on project+status, identity hash, capturedAt, template) and `record_fields` unique on record plus field key. `valueRaw` is append-only; refinement and approval write beside it and `appendAudit` in the same transaction. Guarded by paged list/index, identityHash lookup, raw-untouched, uniqueness, and v5 column tests. |
+| 055 — Photos, attachments and captions tables | 2026-09-17 | Schema v6 adds `photos` and `attachments` unique on project plus sha256, and `captions` indexed by owner. Unfiled photos keep a null `recordId`; applying one caption writes one row per photo; `textRaw` is append-only. Guarded by hash uniqueness, document/audio variants, thirty-row apply, raw immutability, and v6 column tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -268,7 +269,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 04 — Local database
 
-*6 of 16 complete.*
+*7 of 16 complete.*
 
 - [x] [049 — Drift database bootstrap and migration strategy](dev-plan/04-data-layer/049-drift-setup.md)
 - [x] [050 — Shared columns, DAO base and transaction helper](dev-plan/04-data-layer/050-column-mixins.md)
@@ -276,7 +277,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [052 — Projects and context tables](dev-plan/04-data-layer/052-projects-table.md)
 - [x] [053 — Templates, template fields and template rows tables](dev-plan/04-data-layer/053-templates-table.md)
 - [x] [054 — Records and record fields tables](dev-plan/04-data-layer/054-records-table.md)
-- [ ] [055 — Photos, attachments and captions tables](dev-plan/04-data-layer/055-photos-table.md)
+- [x] [055 — Photos, attachments and captions tables](dev-plan/04-data-layer/055-photos-table.md)
 - [ ] [056 — Reference dataset tables](dev-plan/04-data-layer/056-reference-tables.md)
 - [ ] [057 — Processing jobs, results and field evidence tables](dev-plan/04-data-layer/057-jobs-table.md)
 - [ ] [058 — Duplicates and variances tables](dev-plan/04-data-layer/058-duplicates-table.md)
