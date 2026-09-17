@@ -1,8 +1,10 @@
 /// The application shell: entry, router, theme and navigation.
 library;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 
 import 'env.dart';
 import 'theme/app_theme.dart';
@@ -57,33 +59,50 @@ final _PlaceholderRouterDelegate _placeholderDelegate =
 final _PlaceholderRouteInformationParser _placeholderParser =
     _PlaceholderRouteInformationParser();
 
-class _PlaceholderRouterDelegate extends RouterDelegate<Object>
-    with ChangeNotifier, PopNavigatorRouterDelegateMixin<Object> {
+class _PlaceholderRouterDelegate extends RouterDelegate<String>
+    with ChangeNotifier, PopNavigatorRouterDelegateMixin<String> {
+  String _path = '/';
+
   @override
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
-  Object get currentConfiguration => const Object();
+  String get currentConfiguration => _path;
 
   @override
   Widget build(BuildContext context) {
+    final Widget child = kDebugMode && _path == WidgetGalleryScreen.route
+        ? const WidgetGalleryScreen()
+        : const Scaffold();
     return Navigator(
       key: navigatorKey,
-      pages: const <Page<void>>[MaterialPage<void>(child: Scaffold())],
+      pages: <Page<void>>[MaterialPage<void>(name: _path, child: child)],
       onDidRemovePage: (Page<Object?> page) {},
     );
   }
 
   @override
-  Future<void> setNewRoutePath(Object configuration) async {}
+  Future<void> setNewRoutePath(String configuration) async {
+    _path = configuration;
+    notifyListeners();
+  }
 }
 
 class _PlaceholderRouteInformationParser
-    extends RouteInformationParser<Object> {
+    extends RouteInformationParser<String> {
   @override
-  Future<Object> parseRouteInformation(
+  Future<String> parseRouteInformation(
     RouteInformation routeInformation,
   ) async {
-    return const Object();
+    final String path = routeInformation.uri.path;
+    if (kDebugMode && path == WidgetGalleryScreen.route) {
+      return WidgetGalleryScreen.route;
+    }
+    return '/';
+  }
+
+  @override
+  RouteInformation restoreRouteInformation(String configuration) {
+    return RouteInformation(uri: Uri(path: configuration));
   }
 }

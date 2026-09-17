@@ -29,6 +29,7 @@ export 'fields/choice.dart';
 export 'forms/app_form.dart';
 export 'forms/focus_actions.dart';
 export 'forms/keep_focused_visible.dart';
+export 'gallery/widget_gallery_screen.dart';
 export 'responsive/breakpoints.dart';
 export 'responsive/content_constraint.dart';
 export 'responsive/responsive_builder.dart';

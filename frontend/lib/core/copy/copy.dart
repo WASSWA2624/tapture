@@ -205,4 +205,67 @@ abstract final class Copy {
 
   /// Retries a failed load.
   static const String tryAgain = 'Try again';
+
+  /// Persists the current form or record.
+  static const String save = 'Save';
+
+  /// Reverses the last destructive action.
+  static const String undo = 'Undo';
+
+  /// Developer gallery title.
+  static const String galleryTitle = 'Widget gallery';
+
+  /// Theme-mode switcher.
+  static const String galleryTheme = 'Theme';
+
+  /// Simulated-width switcher.
+  static const String galleryWidth = 'Width';
+
+  /// Text-scale switcher.
+  static const String galleryTextScale = 'Text scale';
+
+  /// Token family heading.
+  static const String galleryTokens = 'Tokens';
+
+  /// Layout family heading.
+  static const String galleryLayout = 'Layout';
+
+  /// Button family heading.
+  static const String galleryButtons = 'Buttons';
+
+  /// Field family heading.
+  static const String galleryFields = 'Fields';
+
+  /// Container family heading.
+  static const String galleryContainers = 'Containers';
+
+  /// State family heading.
+  static const String galleryStates = 'States';
+
+  /// Feedback family heading.
+  static const String galleryFeedback = 'Feedback';
+
+  /// Light appearance.
+  static const String galleryLight = 'Light';
+
+  /// Dark appearance.
+  static const String galleryDark = 'Dark';
+
+  /// Outdoor appearance.
+  static const String galleryOutdoor = 'Outdoor';
+
+  /// Compact width.
+  static const String galleryCompact = 'Compact';
+
+  /// Medium width.
+  static const String galleryMedium = 'Medium';
+
+  /// Expanded width.
+  static const String galleryExpanded = 'Expanded';
+
+  /// Default text scale.
+  static const String galleryScale100 = '100%';
+
+  /// Double text scale.
+  static const String galleryScale200 = '200%';
 }

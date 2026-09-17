@@ -34,7 +34,7 @@ class WidgetGalleryScreen extends StatelessWidget { static const route = '/_gall
 
 ## Definition of done
 
-- [ ] Every widget built in this phase appears here in every state it can render.
-- [ ] A developer can compare light, dark and outdoor side by side at three widths without restarting the app.
-- [ ] Tests: widget test enumerating `core/widgets/` and failing when a public catalogue widget has no gallery entry;
+- [x] Every widget built in this phase appears here in every state it can render.
+- [x] A developer can compare light, dark and outdoor side by side at three widths without restarting the app.
+- [x] Tests: widget test enumerating `core/widgets/` and failing when a public catalogue widget has no gallery entry;
       goldens of the gallery index in light, dark and outdoor.
