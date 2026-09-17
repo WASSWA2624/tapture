@@ -15,6 +15,10 @@ packages:
     version: sdk
     purpose: The Flutter framework the application is built on.
     task: "001"
+  flutter_riverpod:
+    version: ^3.4.3
+    purpose: ProviderScope and ConsumerWidget — the only state library (FE-STATE-01). Replaces nothing; this is the first approved state package.
+    task: "019"
   flutter_test:
     version: sdk
     purpose: The widget and unit test harness every guardrail suite runs on.

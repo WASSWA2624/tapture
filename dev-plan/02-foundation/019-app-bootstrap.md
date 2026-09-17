@@ -41,7 +41,7 @@ class LifecycleObserver with WidgetsBindingObserver { Stream<AppLifecycleState> 
 
 ## Definition of done
 
-- [ ] An uncaught error is captured rather than lost, and the app still renders.
-- [ ] A development build installs alongside a production build, and `Env.flavor` reports the flavour it was compiled with.
-- [ ] Backgrounding during capture never loses an unsaved photo reference.
-- [ ] Tests: `frontend/test/app/bootstrap_test.dart` pumps the app and asserts a thrown error reaches the handler; `frontend/test/app/env_test.dart` asserts the default and an override; `frontend/test/core/lifecycle/lifecycle_observer_test.dart` drives pause and resume and asserts the flush.
+- [x] An uncaught error is captured rather than lost, and the app still renders.
+- [x] A development build installs alongside a production build, and `Env.flavor` reports the flavour it was compiled with.
+- [x] Backgrounding during capture never loses an unsaved photo reference.
+- [x] Tests: `frontend/test/app/bootstrap_test.dart` pumps the app and asserts a thrown error reaches the handler; `frontend/test/app/env_test.dart` asserts the default and an override; `frontend/test/core/lifecycle/lifecycle_observer_test.dart` drives pause and resume and asserts the flush.

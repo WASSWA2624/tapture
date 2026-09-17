@@ -164,10 +164,10 @@ void main() {
         final String yaml = File(
           'tool/secret_patterns.yaml',
         ).readAsStringSync();
-      for (final String name in _fixtures.keys) {
-        expect(yaml, contains('$name:'));
-        expect(yaml, contains('pattern:'));
-      }
+        for (final String name in _fixtures.keys) {
+          expect(yaml, contains('$name:'));
+          expect(yaml, contains('pattern:'));
+        }
       },
     );
   });

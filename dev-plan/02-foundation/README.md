@@ -4,7 +4,7 @@ The empty app that boots, logs, fails safely, and the small services every later
 
 Tasks 019–029 (11). Each file is a standalone implementation prompt.
 
-- [ ] [019 — Application bootstrap, flavours and lifecycle](019-app-bootstrap.md)
+- [x] [019 — Application bootstrap, flavours and lifecycle](019-app-bootstrap.md)
 - [ ] [020 — Shared constants](020-app-constants.md)
 - [ ] [021 — Result type, failure taxonomy and error boundary](021-result-and-failures.md)
 - [ ] [022 — Logger, diagnostics export and provider observer](022-logger-service.md)

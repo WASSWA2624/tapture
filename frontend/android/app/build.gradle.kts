@@ -22,6 +22,21 @@ android {
         versionName = flutter.versionName
     }
 
+    // Distinct application ids and labels so a development install sits
+    // alongside a production one (dev-plan 02-foundation/019).
+    flavorDimensions += "flavor"
+    productFlavors {
+        create("dev") {
+            dimension = "flavor"
+            applicationIdSuffix = ".dev"
+            resValue("string", "app_name", "Tapture Dev")
+        }
+        create("prod") {
+            dimension = "flavor"
+            resValue("string", "app_name", "Tapture")
+        }
+    }
+
     buildTypes {
         release {
             // Debug keys keep `flutter run --release` working until dev-plan task 278

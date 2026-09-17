@@ -51,7 +51,14 @@ def entry() -> None:
 
     mode = "debug" if args.debug else "release"
     step(f"Building the {mode} APK")
-    command = ["build", "apk", f"--{mode}"]
+    command = [
+        "build",
+        "apk",
+        f"--{mode}",
+        "--flavor",
+        "prod",
+        "--dart-define=FLAVOR=prod",
+    ]
     if args.split:
         command.append("--split-per-abi")
     flutter(command, env=env)
