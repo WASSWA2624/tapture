@@ -38,6 +38,29 @@ void main() {
     expect(find.byKey(const ValueKey<String>('nav-rail')), findsOneWidget);
     expect(find.byKey(const ValueKey<String>('nav-pane')), findsOneWidget);
     expect(find.byKey(const ValueKey<String>('nav-bar')), findsNothing);
+    expect(
+      tester.getSize(find.byKey(const ValueKey<String>('nav-pane'))).width,
+      Sizes.listPane,
+    );
+    expect(tester.getSize(find.byType(StatusLine)).width, 1200);
+  });
+
+  testWidgets('expanded capture and more drop the list pane', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter router = await _pump(tester, width: 1200);
+
+    router.go('/capture');
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey<String>('nav-rail')), findsOneWidget);
+    expect(find.byKey(const ValueKey<String>('nav-pane')), findsNothing);
+
+    router.go(AppRoutes.more);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey<String>('nav-rail')), findsOneWidget);
+    expect(find.byKey(const ValueKey<String>('nav-pane')), findsNothing);
+    expect(find.text(Copy.navMore), findsWidgets);
+    expect(find.text(Copy.emptyHeadline), findsOneWidget);
   });
 
   testWidgets('Capture is the dominant destination at 400, 800 and 1200dp', (
@@ -67,7 +90,7 @@ void main() {
       );
       expect(find.text('half typed'), findsOneWidget);
 
-      await tester.tap(find.text(Copy.navRecords));
+      await tester.tap(_shellLabel(tester, Copy.navRecords));
       await tester.pumpAndSettle();
       expect(router.state.uri.path, '/records');
       expect(
@@ -75,7 +98,7 @@ void main() {
         findsOneWidget,
       );
 
-      await tester.tap(find.text(Copy.navProjects));
+      await tester.tap(_shellLabel(tester, Copy.navProjects));
       await tester.pumpAndSettle();
       expect(router.state.uri.path, AppRoutes.project('p1'));
       expect(
@@ -132,6 +155,20 @@ void _bindWidth(WidgetTester tester, double width) {
 Future<void> _setWidth(WidgetTester tester, double width) async {
   _bindWidth(tester, width);
   await tester.pump();
+}
+
+Finder _shellLabel(WidgetTester tester, String label) {
+  final Finder inBar = find.descendant(
+    of: find.byKey(const ValueKey<String>('nav-bar')),
+    matching: find.text(label),
+  );
+  if (inBar.evaluate().isNotEmpty) {
+    return inBar;
+  }
+  return find.descendant(
+    of: find.byKey(const ValueKey<String>('nav-rail')),
+    matching: find.text(label),
+  );
 }
 
 void _expectCaptureDominant(WidgetTester tester) {

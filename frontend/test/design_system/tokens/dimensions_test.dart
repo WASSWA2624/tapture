@@ -27,6 +27,7 @@ void main() {
     expect(Radii.pill, greaterThan(Radii.lg));
     expect(Sizes.minTapTarget, 48);
     expect(Sizes.controlHeight, 52);
+    expect(Sizes.listPane, 280);
     expect(Sizes.controlHeight, greaterThanOrEqualTo(Sizes.minTapTarget));
   });
 

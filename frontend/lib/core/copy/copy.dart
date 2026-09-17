@@ -281,6 +281,12 @@ abstract final class Copy {
   /// Shell destination: settings and the rest.
   static const String navMore = 'More';
 
+  /// Pinned-template destination the status line opens.
+  static const String navTemplates = 'Templates';
+
+  /// Unprocessed-queue destination the status line opens.
+  static const String navQueue = 'Unprocessed';
+
   /// First-run screen title; the only question asked.
   static const String firstRunTitle = 'Your name';
 

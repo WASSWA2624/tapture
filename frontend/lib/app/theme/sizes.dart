@@ -7,4 +7,8 @@ abstract final class Sizes {
 
   /// Default height of buttons and text fields.
   static const double controlHeight = 52;
+
+  /// Master-detail list column on expanded windows. Below the readable
+  /// column cap so the detail pane keeps most of the width (FE-RESP-04).
+  static const double listPane = 280;
 }

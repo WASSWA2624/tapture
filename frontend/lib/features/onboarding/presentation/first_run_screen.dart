@@ -9,6 +9,7 @@ import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
+import 'package:tapture/core/widgets/responsive/responsive_builder.dart';
 
 // The notifier is private so this file holds one public class (FE-STR-06).
 // ignore_for_file: library_private_types_in_public_api
@@ -35,54 +36,75 @@ class _FirstRunScreenState extends ConsumerState<FirstRunScreen> {
   @override
   Widget build(BuildContext context) {
     final FirstRunSnapshot run = ref.watch(firstRunProvider);
-    return AppPage(
-      title: Copy.firstRunTitle,
-      subtitle: Copy.firstRunSubtitle,
-      body: AppTextField(
-        label: Copy.firstRunName,
-        controller: _name,
-        textInputAction: TextInputAction.done,
-        onSubmitted: (String value) {
-          if (value.trim().isEmpty) {
-            return;
-          }
-          ref.read(firstRunProvider.notifier).startProject(value);
-        },
-      ),
-      footer: ListenableBuilder(
-        listenable: _name,
-        builder: (BuildContext _, Widget? _) {
-          final bool ready = _name.text.trim().isNotEmpty;
-          return Column(
+    final Widget field = AppTextField(
+      label: Copy.firstRunName,
+      controller: _name,
+      textInputAction: TextInputAction.done,
+      onSubmitted: (String value) {
+        if (value.trim().isEmpty) {
+          return;
+        }
+        ref.read(firstRunProvider.notifier).startProject(value);
+      },
+    );
+    final Widget actions = ListenableBuilder(
+      listenable: _name,
+      builder: (BuildContext _, Widget? _) {
+        final bool ready = _name.text.trim().isNotEmpty;
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            AppPrimaryAction(
+              label: Copy.firstRunStartProject,
+              caption: Copy.firstRunStartCaption,
+              busy: run.busy,
+              onPressed: ready
+                  ? () {
+                      ref
+                          .read(firstRunProvider.notifier)
+                          .startProject(_name.text);
+                    }
+                  : null,
+            ),
+            const SizedBox(height: Space.x2),
+            AppButton(
+              label: Copy.firstRunSkip,
+              variant: AppButtonVariant.text,
+              busy: run.busy,
+              onPressed: ready
+                  ? () {
+                      ref.read(firstRunProvider.notifier).skip(_name.text);
+                    }
+                  : null,
+            ),
+          ],
+        );
+      },
+    );
+    return ResponsiveBuilder(
+      compact: (BuildContext _) {
+        return AppPage(
+          title: Copy.firstRunTitle,
+          subtitle: Copy.firstRunSubtitle,
+          body: field,
+          footer: actions,
+        );
+      },
+      medium: (BuildContext _) {
+        return AppPage(
+          title: Copy.firstRunTitle,
+          subtitle: Copy.firstRunSubtitle,
+          body: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              AppPrimaryAction(
-                label: Copy.firstRunStartProject,
-                caption: Copy.firstRunStartCaption,
-                busy: run.busy,
-                onPressed: ready
-                    ? () {
-                        ref
-                            .read(firstRunProvider.notifier)
-                            .startProject(_name.text);
-                      }
-                    : null,
-              ),
-              const SizedBox(height: Space.x2),
-              AppButton(
-                label: Copy.firstRunSkip,
-                variant: AppButtonVariant.text,
-                busy: run.busy,
-                onPressed: ready
-                    ? () {
-                        ref.read(firstRunProvider.notifier).skip(_name.text);
-                      }
-                    : null,
-              ),
+              field,
+              const SizedBox(height: Space.x6),
+              actions,
             ],
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

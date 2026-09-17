@@ -3,7 +3,12 @@ import 'package:flutter/material.dart' hide Router;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/nav_shell.dart';
+import 'package:tapture/app/theme/color_tokens.dart';
+import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/onboarding/onboarding.dart';
@@ -218,16 +223,44 @@ class _RoutePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
+    final String title = _titleFor(name);
+    return AppPage(
+      key: ValueKey<String>('route-$name'),
+      title: title,
+      body: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(name, key: ValueKey<String>('route-$name')),
-          TextField(key: ValueKey<String>('field-$name')),
+          Text(
+            Copy.emptyHeadline,
+            style: AppText.bodyStrong.copyWith(color: context.colors.onSurface),
+          ),
+          const SizedBox(height: Space.x2),
+          Text(
+            Copy.emptyMessage,
+            style: AppText.body.copyWith(color: context.colors.onSurface),
+          ),
+          SizedBox(
+            width: 0,
+            height: 0,
+            child: TextField(key: ValueKey<String>('field-$name')),
+          ),
         ],
       ),
     );
   }
+}
+
+String _titleFor(String name) {
+  return switch (name) {
+    'projects' || 'project' => Copy.navProjects,
+    'capture' => Copy.navCapture,
+    'records' || 'record' => Copy.navRecords,
+    'more' => Copy.navMore,
+    'templates' => Copy.navTemplates,
+    'queue' => Copy.navQueue,
+    _ => Copy.emptyHeadline,
+  };
 }
 
 const String _projectScopedKey = 'projectScoped';

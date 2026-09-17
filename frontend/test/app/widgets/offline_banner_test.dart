@@ -53,7 +53,18 @@ void main() {
       await tester.pump();
       expect(find.byType(AppBanner), findsNothing);
 
-      await tester.tap(find.text(Copy.navRecords));
+      final Finder recordsInBar = find.descendant(
+        of: find.byKey(const ValueKey<String>('nav-bar')),
+        matching: find.text(Copy.navRecords),
+      );
+      await tester.tap(
+        recordsInBar.evaluate().isNotEmpty
+            ? recordsInBar
+            : find.descendant(
+                of: find.byKey(const ValueKey<String>('nav-rail')),
+                matching: find.text(Copy.navRecords),
+              ),
+      );
       await tester.pumpAndSettle();
       expect(find.byType(AppBanner), findsNothing);
       expect(find.text(Copy.offlineWorking), findsNothing);

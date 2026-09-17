@@ -29,43 +29,56 @@ class StatusLine extends ConsumerWidget {
         ref.watch(networkStateProvider).value ?? NetworkState.online;
     final bool byChoice = ref.watch(offlineByChoiceProvider);
     final int unprocessed = ref.watch(unprocessedCountProvider);
-    return Material(
-      color: context.colors.surfaceVariant,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: Space.x3,
-          vertical: Space.x1,
-        ),
-        child: AppChipRow(
-          scrollable: true,
-          chips: <AppChip>[
-            AppChip(
-              key: const ValueKey<String>('status-project'),
-              icon: Icons.work_outline,
-              label: _whereLabel(projectId, projectLabel, contextLabel),
-              onTap: () {
-                context.go(_projectLocation(projectId));
-              },
+    return SizedBox(
+      width: double.infinity,
+      child: Material(
+        color: context.colors.surface,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: context.colors.outline,
+                width: Space.x0 / 2,
+              ),
             ),
-            AppChip(
-              key: const ValueKey<String>('status-template'),
-              icon: Icons.article_outlined,
-              label: templateLabel,
-              onTap: () => context.go(AppRoutes.templates),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: Space.x3,
+              vertical: Space.x1,
             ),
-            AppChip(
-              key: const ValueKey<String>('status-network'),
-              icon: _networkIcon(network, byChoice),
-              label: _networkLabel(network, byChoice),
-              onTap: () => context.go(AppRoutes.more),
+            child: AppChipRow(
+              scrollable: true,
+              chips: <AppChip>[
+                AppChip(
+                  key: const ValueKey<String>('status-project'),
+                  icon: Icons.work_outline,
+                  label: _whereLabel(projectId, projectLabel, contextLabel),
+                  onTap: () {
+                    context.go(_projectLocation(projectId));
+                  },
+                ),
+                AppChip(
+                  key: const ValueKey<String>('status-template'),
+                  icon: Icons.article_outlined,
+                  label: templateLabel,
+                  onTap: () => context.go(AppRoutes.templates),
+                ),
+                AppChip(
+                  key: const ValueKey<String>('status-network'),
+                  icon: _networkIcon(network, byChoice),
+                  label: _networkLabel(network, byChoice),
+                  onTap: () => context.go(AppRoutes.more),
+                ),
+                AppChip(
+                  key: const ValueKey<String>('status-unprocessed'),
+                  icon: Icons.pending_outlined,
+                  label: Copy.unprocessedCount(unprocessed),
+                  onTap: () => context.go(AppRoutes.queue),
+                ),
+              ],
             ),
-            AppChip(
-              key: const ValueKey<String>('status-unprocessed'),
-              icon: Icons.pending_outlined,
-              label: Copy.unprocessedCount(unprocessed),
-              onTap: () => context.go(AppRoutes.queue),
-            ),
-          ],
+          ),
         ),
       ),
     );

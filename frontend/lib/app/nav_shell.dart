@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/app/widgets/offline_banner.dart';
 import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
@@ -41,28 +42,48 @@ class _Chrome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool showPane = pane && _destinations[shell.currentIndex].hasList;
+    final BorderSide hairline = BorderSide(
+      color: context.colors.outline,
+      width: Space.x0 / 2,
+    );
     return Scaffold(
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           const SafeArea(
             bottom: false,
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[StatusLine(), OfflineBanner()],
             ),
           ),
           Expanded(
-            child: Row(
-              children: <Widget>[
-                rail ? _Rail(shell: shell) : const SizedBox.shrink(),
-                if (pane)
-                  Expanded(flex: 2, child: _Pane(index: shell.currentIndex)),
-                Expanded(
-                  key: const ValueKey<String>('nav-body-slot'),
-                  flex: 3,
-                  child: shell,
-                ),
-              ],
+            child: SafeArea(
+              top: false,
+              child: Row(
+                children: <Widget>[
+                  if (rail)
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        border: showPane
+                            ? null
+                            : BorderDirectional(end: hairline),
+                      ),
+                      child: _Rail(shell: shell),
+                    ),
+                  if (showPane)
+                    SizedBox(
+                      width: Sizes.listPane,
+                      child: _Pane(index: shell.currentIndex),
+                    ),
+                  Expanded(
+                    key: const ValueKey<String>('nav-body-slot'),
+                    child: shell,
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -102,21 +123,19 @@ class _Rail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: NavigationRail(
-        key: const ValueKey<String>('nav-rail'),
-        selectedIndex: shell.currentIndex,
-        onDestinationSelected: shell.goBranch,
-        labelType: NavigationRailLabelType.all,
-        destinations: <NavigationRailDestination>[
-          for (int index = 0; index < _destinations.length; index++)
-            NavigationRailDestination(
-              icon: _NavIcon(index: index, selected: false),
-              selectedIcon: _NavIcon(index: index, selected: true),
-              label: Text(_destinations[index].label),
-            ),
-        ],
-      ),
+    return NavigationRail(
+      key: const ValueKey<String>('nav-rail'),
+      selectedIndex: shell.currentIndex,
+      onDestinationSelected: shell.goBranch,
+      labelType: NavigationRailLabelType.all,
+      destinations: <NavigationRailDestination>[
+        for (int index = 0; index < _destinations.length; index++)
+          NavigationRailDestination(
+            icon: _NavIcon(index: index, selected: false),
+            selectedIcon: _NavIcon(index: index, selected: true),
+            label: Text(_destinations[index].label),
+          ),
+      ],
     );
   }
 }
@@ -130,10 +149,51 @@ class _Pane extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       key: const ValueKey<String>('nav-pane'),
-      color: context.colors.surfaceVariant,
-      child: Align(
-        alignment: AlignmentDirectional.topStart,
-        child: Text(_destinations[index].label),
+      color: context.colors.surface,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: BorderDirectional(
+            end: BorderSide(color: context.colors.outline, width: Space.x0 / 2),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            SizedBox(
+              height: Sizes.minTapTarget + Space.x2,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Space.x4),
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    _destinations[index].label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppText.section.copyWith(
+                      color: context.colors.onSurface,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(
+                  Space.x4,
+                  Space.x1,
+                  Space.x4,
+                  Space.x4,
+                ),
+                child: Text(
+                  Copy.emptyMessage,
+                  style: AppText.caption.copyWith(
+                    color: context.colors.onSurface,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -166,12 +226,14 @@ class _Destination {
     required this.selectedIcon,
     required this.label,
     this.dominant = false,
+    this.hasList = false,
   });
 
   final IconData icon;
   final IconData selectedIcon;
   final String label;
   final bool dominant;
+  final bool hasList;
 }
 
 const List<_Destination> _destinations = <_Destination>[
@@ -179,6 +241,7 @@ const List<_Destination> _destinations = <_Destination>[
     icon: Icons.work_outline,
     selectedIcon: Icons.work,
     label: Copy.navProjects,
+    hasList: true,
   ),
   _Destination(
     icon: Icons.photo_camera_outlined,
@@ -190,6 +253,7 @@ const List<_Destination> _destinations = <_Destination>[
     icon: Icons.list_alt_outlined,
     selectedIcon: Icons.list_alt,
     label: Copy.navRecords,
+    hasList: true,
   ),
   _Destination(
     icon: Icons.more_horiz,

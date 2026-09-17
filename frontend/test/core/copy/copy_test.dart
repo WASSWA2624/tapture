@@ -172,6 +172,8 @@ List<String> get _values {
     Copy.navCapture,
     Copy.navRecords,
     Copy.navMore,
+    Copy.navTemplates,
+    Copy.navQueue,
     Copy.firstRunTitle,
     Copy.firstRunSubtitle,
     Copy.firstRunName,

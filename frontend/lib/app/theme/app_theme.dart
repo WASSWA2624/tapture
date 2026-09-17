@@ -167,6 +167,36 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
       subtitleTextStyle: AppText.caption.copyWith(color: colors.onSurface),
       minVerticalPadding: Space.x2,
     ),
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: colors.surface,
+      elevation: 0,
+      shadowColor: const Color(0x00000000),
+      surfaceTintColor: colors.surface,
+      height: Sizes.minTapTarget + Space.x6,
+      indicatorColor: colors.surfaceVariant,
+      labelTextStyle: WidgetStatePropertyAll<TextStyle>(
+        AppText.caption.copyWith(color: colors.onSurface),
+      ),
+      iconTheme: WidgetStatePropertyAll<IconThemeData>(
+        IconThemeData(color: colors.onSurface, size: Space.x6),
+      ),
+    ),
+    navigationRailTheme: NavigationRailThemeData(
+      backgroundColor: colors.background,
+      elevation: 0,
+      minWidth: Sizes.minTapTarget + Space.x4,
+      useIndicator: true,
+      indicatorColor: colors.surfaceVariant,
+      selectedLabelTextStyle: AppText.caption.copyWith(color: colors.onSurface),
+      unselectedLabelTextStyle: AppText.caption.copyWith(
+        color: colors.onSurface,
+      ),
+      selectedIconTheme: const IconThemeData(size: Space.x6),
+      unselectedIconTheme: IconThemeData(
+        size: Space.x6,
+        color: colors.onSurface,
+      ),
+    ),
     dividerTheme: DividerThemeData(
       color: colors.outline,
       thickness: outline.width,
