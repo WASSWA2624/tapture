@@ -142,6 +142,16 @@ def drop_regenerated_demo() -> None:
         info(f"removed regenerated demo test {demo.name}")
 
 
+def apply_branding() -> None:
+    """Stamp branding/ masters onto launcher icons, splash and favicons.
+
+    `flutter create` restores the template Flutter logo; this puts Tapture
+    back. Pillow must be installed for the rasters.
+    """
+    script = REPO_ROOT / "branding" / "tool" / "apply.py"
+    run([sys.executable, str(script)], cwd=REPO_ROOT)
+
+
 def reset_dir(path: Path) -> Path:
     """An empty directory at `path`, creating or clearing it."""
     if path.exists():

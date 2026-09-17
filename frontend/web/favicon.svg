@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-label="Tapture">
+  <title>Tapture &#8212; favicon and touch icon</title>
+  <defs>
+    <linearGradient id="tapture-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2662EB"/>
+      <stop offset="1" stop-color="#0F215F"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1024" height="1024" rx="225.28" fill="url(#tapture-bg)"/>
+  <path d="M 214.56 300.49 A 85.93 85.93 0 0 1 300.49 214.56" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
+  <path d="M 214.56 300.49 L 214.56 429.38" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
+  <path d="M 300.49 214.56 L 429.38 214.56" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
+  <path d="M 723.51 214.56 A 85.93 85.93 0 0 1 809.44 300.49" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
+  <path d="M 723.51 214.56 L 594.62 214.56" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
+  <path d="M 809.44 300.49 L 809.44 429.38" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
+  <path d="M 809.44 723.51 A 85.93 85.93 0 0 1 723.51 809.44" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
+  <path d="M 809.44 723.51 L 809.44 594.62" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
+  <path d="M 723.51 809.44 L 594.62 809.44" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
+  <path d="M 300.49 809.44 A 85.93 85.93 0 0 1 214.56 723.51" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
+  <path d="M 300.49 809.44 L 429.38 809.44" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
+  <path d="M 214.56 723.51 L 214.56 594.62" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
+  <circle cx="512" cy="512" r="183.42" fill="none" stroke="#FFFFFF" stroke-width="36.35"/>
+  <rect x="421.12" y="421.12" width="181.77" height="181.77" rx="52.88" fill="#FFFFFF"/>
+</svg>

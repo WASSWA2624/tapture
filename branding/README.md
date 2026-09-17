@@ -65,14 +65,19 @@ Machine-readable colour. The ramp plus the semantic roles, and the input to dev-
 
 ```bash
 python branding/tool/generate.py
+python branding/tool/apply.py
 ```
 
-Writes every SVG and PNG listed above, plus `palette.json`. Pillow is needed for the rasters; the SVGs need
+`generate.py` writes every SVG and PNG listed above, plus `palette.json`. Pillow is needed for the rasters; the SVGs need
 nothing. The run is deterministic — a clean tree after regenerating means nothing drifted.
+
+`apply.py` copies those masters into `frontend/` — Android launcher and adaptive icons, light/dark splash, web
+favicon, PWA icons, and `assets/branding/`. `flutter create` restores the template Flutter logo, so apply again
+afterwards (the Android and web deploy scripts already do). Missing platforms (iOS, macOS, Windows, Linux) are
+skipped until those folders exist.
 
 ## Where this meets the build
 
-These are the masters. Dev-plan task
-[452 — App icon, splash and store branding](../dev-plan/23-hardening/452-branding-assets.md) is what copies the
-ones the app ships into `frontend/assets/branding/` and generates the per-density launcher icons. Nothing in
-`frontend/` should re-draw the mark or re-declare a colour; it takes them from here.
+These are the masters. The app ships copies produced by `apply.py`. Nothing in `frontend/` should re-draw the mark
+or re-declare a colour; it takes them from here. Typed asset constants land in task
+[242 — App icon, splash and store branding](../dev-plan/23-hardening/242-branding-assets.md).

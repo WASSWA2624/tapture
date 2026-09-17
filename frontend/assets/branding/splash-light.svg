@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1152 1152" width="1152" height="1152" role="img" aria-label="Tapture">
+  <title>Tapture &#8212; splash mark for the light background</title>
+  <path d="M 363.06 424.58 A 61.52 61.52 0 0 1 424.58 363.06" fill="none" stroke="#2662EB" stroke-width="57.97" stroke-linecap="round"/>
+  <path d="M 363.06 424.58 L 363.06 516.85" fill="none" stroke="#2662EB" stroke-width="57.97" stroke-linecap="round"/>
+  <path d="M 424.58 363.06 L 516.85 363.06" fill="none" stroke="#2662EB" stroke-width="57.97" stroke-linecap="round"/>
+  <path d="M 727.42 363.06 A 61.52 61.52 0 0 1 788.94 424.58" fill="none" stroke="#2662EB" stroke-width="57.97" stroke-linecap="round"/>
+  <path d="M 727.42 363.06 L 635.15 363.06" fill="none" stroke="#2662EB" stroke-width="57.97" stroke-linecap="round"/>
+  <path d="M 788.94 424.58 L 788.94 516.85" fill="none" stroke="#2662EB" stroke-width="57.97" stroke-linecap="round"/>
+  <path d="M 788.94 727.42 A 61.52 61.52 0 0 1 727.42 788.94" fill="none" stroke="#2662EB" stroke-width="57.97" stroke-linecap="round"/>
+  <path d="M 788.94 727.42 L 788.94 635.15" fill="none" stroke="#2662EB" stroke-width="57.97" stroke-linecap="round"/>
+  <path d="M 727.42 788.94 L 635.15 788.94" fill="none" stroke="#2662EB" stroke-width="57.97" stroke-linecap="round"/>
+  <path d="M 424.58 788.94 A 61.52 61.52 0 0 1 363.06 727.42" fill="none" stroke="#2662EB" stroke-width="57.97" stroke-linecap="round"/>
+  <path d="M 424.58 788.94 L 516.85 788.94" fill="none" stroke="#2662EB" stroke-width="57.97" stroke-linecap="round"/>
+  <path d="M 363.06 727.42 L 363.06 635.15" fill="none" stroke="#2662EB" stroke-width="57.97" stroke-linecap="round"/>
+  <circle cx="576" cy="576" r="131.31" fill="none" stroke="#2662EB" stroke-width="26.03"/>
+  <rect x="510.94" y="510.94" width="130.13" height="130.13" rx="37.86" fill="#2662EB"/>
+</svg>

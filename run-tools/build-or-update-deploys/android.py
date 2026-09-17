@@ -20,6 +20,7 @@ from common import (  # noqa: E402
     FRONTEND,
     REPO_ROOT,
     BuildError,
+    apply_branding,
     drop_regenerated_demo,
     flutter,
     gradle_env,
@@ -67,6 +68,7 @@ def refresh_platform(clean: bool, env: dict[str, str]) -> None:
     )
     drop_regenerated_demo()
     drop_mismatched_android_package()
+    apply_branding()
 
     step("Resolving dependencies")
     flutter(["pub", "get"], env=env)

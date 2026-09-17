@@ -20,6 +20,7 @@ from common import (  # noqa: E402
     FRONTEND,
     REPO_ROOT,
     BuildError,
+    apply_branding,
     drop_regenerated_demo,
     flutter,
     info,
@@ -40,6 +41,7 @@ def refresh_platform(clean: bool) -> None:
     step("Refreshing the web platform folder")
     flutter(["create", "--platforms=web", "--project-name", "tapture", "."])
     drop_regenerated_demo()
+    apply_branding()
 
     step("Resolving dependencies")
     flutter(["pub", "get"])

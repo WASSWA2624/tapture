@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="91 91 818 818" width="818" height="818" role="img" aria-label="Tapture">
+  <title>Tapture &#8212; symbol, for dark backgrounds</title>
+  <path d="M 140 244 A 104 104 0 0 1 244 140" fill="none" stroke="#FFFFFF" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 140 244 L 140 400" fill="none" stroke="#FFFFFF" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 244 140 L 400 140" fill="none" stroke="#FFFFFF" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 756 140 A 104 104 0 0 1 860 244" fill="none" stroke="#FFFFFF" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 756 140 L 600 140" fill="none" stroke="#FFFFFF" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 860 244 L 860 400" fill="none" stroke="#FFFFFF" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 860 756 A 104 104 0 0 1 756 860" fill="none" stroke="#FFFFFF" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 860 756 L 860 600" fill="none" stroke="#FFFFFF" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 756 860 L 600 860" fill="none" stroke="#FFFFFF" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 244 860 A 104 104 0 0 1 140 756" fill="none" stroke="#FFFFFF" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 244 860 L 400 860" fill="none" stroke="#FFFFFF" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 140 756 L 140 600" fill="none" stroke="#FFFFFF" stroke-width="98" stroke-linecap="round"/>
+  <circle cx="500" cy="500" r="222" fill="none" stroke="#FFFFFF" stroke-width="44"/>
+  <rect x="390" y="390" width="220" height="220" rx="64" fill="#FFFFFF"/>
+</svg>
