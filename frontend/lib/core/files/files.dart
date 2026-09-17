@@ -1,7 +1,10 @@
 /// The storage layout and the file operations built on it.
 ///
-/// `storage_root.dart` is imported directly: it uses `dart:io`, and this
-/// barrel is reached from the web shell through TextStore.
+/// `storage_root.dart` and `project_folders.dart` are imported directly:
+/// they use `dart:io`, and this barrel is reached from the web shell through
+/// TextStore.
 library;
 
+export 'path_sanitizer.dart';
+export 'photo_path_builder.dart';
 export 'text_store.dart';

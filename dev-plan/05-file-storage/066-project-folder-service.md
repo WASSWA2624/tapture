@@ -55,11 +55,11 @@ String buildPhotoPath({
 
 ## Definition of done
 
-- [ ] A project named with slashes, emoji, accents or 300 characters still produces one valid folder, and two projects
+- [x] A project named with slashes, emoji, accents or 300 characters still produces one valid folder, and two projects
       with the same name produce distinct folders.
-- [ ] Renaming a project changes nothing on disk and breaks no stored `relativePath`.
-- [ ] The tree produced for a fully set context matches the specification's example path exactly, and an unset level
+- [x] Renaming a project changes nothing on disk and breaks no stored `relativePath`.
+- [x] The tree produced for a fully set context matches the specification's example path exactly, and an unset level
       lands under `_unfiled`.
-- [ ] Tests: `frontend/test/core/files/path_sanitizer_test.dart` runs a table of hostile inputs including traversal and
+- [x] Tests: `frontend/test/core/files/path_sanitizer_test.dart` runs a table of hostile inputs including traversal and
       reserved names; `project_folders_test.dart` asserts idempotent tree creation and rename safety in a temporary
       directory; `photo_path_builder_test.dart` covers all four strategies and every partially set context.
