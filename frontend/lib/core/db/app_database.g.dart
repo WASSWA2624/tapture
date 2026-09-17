@@ -17328,6 +17328,2193 @@ class VariancesCompanion extends UpdateCompanion<Variance> {
   }
 }
 
+class $MeetingsTable extends Meetings
+    with TableInfo<$MeetingsTable, MeetingRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MeetingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _recordIdMeta = const VerificationMeta(
+    'recordId',
+  );
+  @override
+  late final GeneratedColumn<String> recordId = GeneratedColumn<String>(
+    'record_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _startAtMeta = const VerificationMeta(
+    'startAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startAt = GeneratedColumn<DateTime>(
+    'start_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _endAtMeta = const VerificationMeta('endAt');
+  @override
+  late final GeneratedColumn<DateTime> endAt = GeneratedColumn<DateTime>(
+    'end_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _chairMeta = const VerificationMeta('chair');
+  @override
+  late final GeneratedColumn<String> chair = GeneratedColumn<String>(
+    'chair',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _secretaryMeta = const VerificationMeta(
+    'secretary',
+  );
+  @override
+  late final GeneratedColumn<String> secretary = GeneratedColumn<String>(
+    'secretary',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _agendaMeta = const VerificationMeta('agenda');
+  @override
+  late final GeneratedColumn<String> agenda = GeneratedColumn<String>(
+    'agenda',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _transcriptRawMeta = const VerificationMeta(
+    'transcriptRaw',
+  );
+  @override
+  late final GeneratedColumn<String> transcriptRaw = GeneratedColumn<String>(
+    'transcript_raw',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _minutesRefinedMeta = const VerificationMeta(
+    'minutesRefined',
+  );
+  @override
+  late final GeneratedColumn<String> minutesRefined = GeneratedColumn<String>(
+    'minutes_refined',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    recordId,
+    title,
+    startAt,
+    endAt,
+    chair,
+    secretary,
+    agenda,
+    transcriptRaw,
+    minutesRefined,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'meetings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MeetingRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('record_id')) {
+      context.handle(
+        _recordIdMeta,
+        recordId.isAcceptableOrUnknown(data['record_id']!, _recordIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_recordIdMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('start_at')) {
+      context.handle(
+        _startAtMeta,
+        startAt.isAcceptableOrUnknown(data['start_at']!, _startAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_startAtMeta);
+    }
+    if (data.containsKey('end_at')) {
+      context.handle(
+        _endAtMeta,
+        endAt.isAcceptableOrUnknown(data['end_at']!, _endAtMeta),
+      );
+    }
+    if (data.containsKey('chair')) {
+      context.handle(
+        _chairMeta,
+        chair.isAcceptableOrUnknown(data['chair']!, _chairMeta),
+      );
+    }
+    if (data.containsKey('secretary')) {
+      context.handle(
+        _secretaryMeta,
+        secretary.isAcceptableOrUnknown(data['secretary']!, _secretaryMeta),
+      );
+    }
+    if (data.containsKey('agenda')) {
+      context.handle(
+        _agendaMeta,
+        agenda.isAcceptableOrUnknown(data['agenda']!, _agendaMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_agendaMeta);
+    }
+    if (data.containsKey('transcript_raw')) {
+      context.handle(
+        _transcriptRawMeta,
+        transcriptRaw.isAcceptableOrUnknown(
+          data['transcript_raw']!,
+          _transcriptRawMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_transcriptRawMeta);
+    }
+    if (data.containsKey('minutes_refined')) {
+      context.handle(
+        _minutesRefinedMeta,
+        minutesRefined.isAcceptableOrUnknown(
+          data['minutes_refined']!,
+          _minutesRefinedMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  MeetingRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MeetingRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      recordId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}record_id'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      startAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}start_at'],
+      )!,
+      endAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}end_at'],
+      ),
+      chair: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}chair'],
+      )!,
+      secretary: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}secretary'],
+      )!,
+      agenda: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}agenda'],
+      )!,
+      transcriptRaw: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}transcript_raw'],
+      )!,
+      minutesRefined: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}minutes_refined'],
+      ),
+    );
+  }
+
+  @override
+  $MeetingsTable createAlias(String alias) {
+    return $MeetingsTable(attachedDatabase, alias);
+  }
+}
+
+class MeetingRow extends DataClass implements Insertable<MeetingRow> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Record this meeting is filed on.
+  final String recordId;
+
+  /// Operator-facing title, stored as data.
+  final String title;
+
+  /// When the meeting started.
+  final DateTime startAt;
+
+  /// When the meeting ended, if it has.
+  final DateTime? endAt;
+
+  /// Chair as captured, stored as data.
+  final String chair;
+
+  /// Secretary as captured, stored as data.
+  final String secretary;
+
+  /// Agenda items JSON. An array, stored as text.
+  final String agenda;
+
+  /// Verbatim transcript. Written once at insert, never updated.
+  final String transcriptRaw;
+
+  /// Refined minutes written beside the transcript, never over it.
+  final String? minutesRefined;
+  const MeetingRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.recordId,
+    required this.title,
+    required this.startAt,
+    this.endAt,
+    required this.chair,
+    required this.secretary,
+    required this.agenda,
+    required this.transcriptRaw,
+    this.minutesRefined,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['record_id'] = Variable<String>(recordId);
+    map['title'] = Variable<String>(title);
+    map['start_at'] = Variable<DateTime>(startAt);
+    if (!nullToAbsent || endAt != null) {
+      map['end_at'] = Variable<DateTime>(endAt);
+    }
+    map['chair'] = Variable<String>(chair);
+    map['secretary'] = Variable<String>(secretary);
+    map['agenda'] = Variable<String>(agenda);
+    map['transcript_raw'] = Variable<String>(transcriptRaw);
+    if (!nullToAbsent || minutesRefined != null) {
+      map['minutes_refined'] = Variable<String>(minutesRefined);
+    }
+    return map;
+  }
+
+  MeetingsCompanion toCompanion(bool nullToAbsent) {
+    return MeetingsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      recordId: Value(recordId),
+      title: Value(title),
+      startAt: Value(startAt),
+      endAt: endAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endAt),
+      chair: Value(chair),
+      secretary: Value(secretary),
+      agenda: Value(agenda),
+      transcriptRaw: Value(transcriptRaw),
+      minutesRefined: minutesRefined == null && nullToAbsent
+          ? const Value.absent()
+          : Value(minutesRefined),
+    );
+  }
+
+  factory MeetingRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MeetingRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      recordId: serializer.fromJson<String>(json['recordId']),
+      title: serializer.fromJson<String>(json['title']),
+      startAt: serializer.fromJson<DateTime>(json['startAt']),
+      endAt: serializer.fromJson<DateTime?>(json['endAt']),
+      chair: serializer.fromJson<String>(json['chair']),
+      secretary: serializer.fromJson<String>(json['secretary']),
+      agenda: serializer.fromJson<String>(json['agenda']),
+      transcriptRaw: serializer.fromJson<String>(json['transcriptRaw']),
+      minutesRefined: serializer.fromJson<String?>(json['minutesRefined']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'recordId': serializer.toJson<String>(recordId),
+      'title': serializer.toJson<String>(title),
+      'startAt': serializer.toJson<DateTime>(startAt),
+      'endAt': serializer.toJson<DateTime?>(endAt),
+      'chair': serializer.toJson<String>(chair),
+      'secretary': serializer.toJson<String>(secretary),
+      'agenda': serializer.toJson<String>(agenda),
+      'transcriptRaw': serializer.toJson<String>(transcriptRaw),
+      'minutesRefined': serializer.toJson<String?>(minutesRefined),
+    };
+  }
+
+  MeetingRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? recordId,
+    String? title,
+    DateTime? startAt,
+    Value<DateTime?> endAt = const Value.absent(),
+    String? chair,
+    String? secretary,
+    String? agenda,
+    String? transcriptRaw,
+    Value<String?> minutesRefined = const Value.absent(),
+  }) => MeetingRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    recordId: recordId ?? this.recordId,
+    title: title ?? this.title,
+    startAt: startAt ?? this.startAt,
+    endAt: endAt.present ? endAt.value : this.endAt,
+    chair: chair ?? this.chair,
+    secretary: secretary ?? this.secretary,
+    agenda: agenda ?? this.agenda,
+    transcriptRaw: transcriptRaw ?? this.transcriptRaw,
+    minutesRefined: minutesRefined.present
+        ? minutesRefined.value
+        : this.minutesRefined,
+  );
+  MeetingRow copyWithCompanion(MeetingsCompanion data) {
+    return MeetingRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      recordId: data.recordId.present ? data.recordId.value : this.recordId,
+      title: data.title.present ? data.title.value : this.title,
+      startAt: data.startAt.present ? data.startAt.value : this.startAt,
+      endAt: data.endAt.present ? data.endAt.value : this.endAt,
+      chair: data.chair.present ? data.chair.value : this.chair,
+      secretary: data.secretary.present ? data.secretary.value : this.secretary,
+      agenda: data.agenda.present ? data.agenda.value : this.agenda,
+      transcriptRaw: data.transcriptRaw.present
+          ? data.transcriptRaw.value
+          : this.transcriptRaw,
+      minutesRefined: data.minutesRefined.present
+          ? data.minutesRefined.value
+          : this.minutesRefined,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MeetingRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('recordId: $recordId, ')
+          ..write('title: $title, ')
+          ..write('startAt: $startAt, ')
+          ..write('endAt: $endAt, ')
+          ..write('chair: $chair, ')
+          ..write('secretary: $secretary, ')
+          ..write('agenda: $agenda, ')
+          ..write('transcriptRaw: $transcriptRaw, ')
+          ..write('minutesRefined: $minutesRefined')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    recordId,
+    title,
+    startAt,
+    endAt,
+    chair,
+    secretary,
+    agenda,
+    transcriptRaw,
+    minutesRefined,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MeetingRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.recordId == this.recordId &&
+          other.title == this.title &&
+          other.startAt == this.startAt &&
+          other.endAt == this.endAt &&
+          other.chair == this.chair &&
+          other.secretary == this.secretary &&
+          other.agenda == this.agenda &&
+          other.transcriptRaw == this.transcriptRaw &&
+          other.minutesRefined == this.minutesRefined);
+}
+
+class MeetingsCompanion extends UpdateCompanion<MeetingRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> recordId;
+  final Value<String> title;
+  final Value<DateTime> startAt;
+  final Value<DateTime?> endAt;
+  final Value<String> chair;
+  final Value<String> secretary;
+  final Value<String> agenda;
+  final Value<String> transcriptRaw;
+  final Value<String?> minutesRefined;
+  final Value<int> rowid;
+  const MeetingsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.recordId = const Value.absent(),
+    this.title = const Value.absent(),
+    this.startAt = const Value.absent(),
+    this.endAt = const Value.absent(),
+    this.chair = const Value.absent(),
+    this.secretary = const Value.absent(),
+    this.agenda = const Value.absent(),
+    this.transcriptRaw = const Value.absent(),
+    this.minutesRefined = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MeetingsCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String recordId,
+    required String title,
+    required DateTime startAt,
+    this.endAt = const Value.absent(),
+    this.chair = const Value.absent(),
+    this.secretary = const Value.absent(),
+    required String agenda,
+    required String transcriptRaw,
+    this.minutesRefined = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       recordId = Value(recordId),
+       title = Value(title),
+       startAt = Value(startAt),
+       agenda = Value(agenda),
+       transcriptRaw = Value(transcriptRaw);
+  static Insertable<MeetingRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? recordId,
+    Expression<String>? title,
+    Expression<DateTime>? startAt,
+    Expression<DateTime>? endAt,
+    Expression<String>? chair,
+    Expression<String>? secretary,
+    Expression<String>? agenda,
+    Expression<String>? transcriptRaw,
+    Expression<String>? minutesRefined,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (recordId != null) 'record_id': recordId,
+      if (title != null) 'title': title,
+      if (startAt != null) 'start_at': startAt,
+      if (endAt != null) 'end_at': endAt,
+      if (chair != null) 'chair': chair,
+      if (secretary != null) 'secretary': secretary,
+      if (agenda != null) 'agenda': agenda,
+      if (transcriptRaw != null) 'transcript_raw': transcriptRaw,
+      if (minutesRefined != null) 'minutes_refined': minutesRefined,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MeetingsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? recordId,
+    Value<String>? title,
+    Value<DateTime>? startAt,
+    Value<DateTime?>? endAt,
+    Value<String>? chair,
+    Value<String>? secretary,
+    Value<String>? agenda,
+    Value<String>? transcriptRaw,
+    Value<String?>? minutesRefined,
+    Value<int>? rowid,
+  }) {
+    return MeetingsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      recordId: recordId ?? this.recordId,
+      title: title ?? this.title,
+      startAt: startAt ?? this.startAt,
+      endAt: endAt ?? this.endAt,
+      chair: chair ?? this.chair,
+      secretary: secretary ?? this.secretary,
+      agenda: agenda ?? this.agenda,
+      transcriptRaw: transcriptRaw ?? this.transcriptRaw,
+      minutesRefined: minutesRefined ?? this.minutesRefined,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (recordId.present) {
+      map['record_id'] = Variable<String>(recordId.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (startAt.present) {
+      map['start_at'] = Variable<DateTime>(startAt.value);
+    }
+    if (endAt.present) {
+      map['end_at'] = Variable<DateTime>(endAt.value);
+    }
+    if (chair.present) {
+      map['chair'] = Variable<String>(chair.value);
+    }
+    if (secretary.present) {
+      map['secretary'] = Variable<String>(secretary.value);
+    }
+    if (agenda.present) {
+      map['agenda'] = Variable<String>(agenda.value);
+    }
+    if (transcriptRaw.present) {
+      map['transcript_raw'] = Variable<String>(transcriptRaw.value);
+    }
+    if (minutesRefined.present) {
+      map['minutes_refined'] = Variable<String>(minutesRefined.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MeetingsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('recordId: $recordId, ')
+          ..write('title: $title, ')
+          ..write('startAt: $startAt, ')
+          ..write('endAt: $endAt, ')
+          ..write('chair: $chair, ')
+          ..write('secretary: $secretary, ')
+          ..write('agenda: $agenda, ')
+          ..write('transcriptRaw: $transcriptRaw, ')
+          ..write('minutesRefined: $minutesRefined, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AttendeesTable extends Attendees
+    with TableInfo<$AttendeesTable, MeetingAttendee> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AttendeesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _meetingIdMeta = const VerificationMeta(
+    'meetingId',
+  );
+  @override
+  late final GeneratedColumn<String> meetingId = GeneratedColumn<String>(
+    'meeting_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _organisationMeta = const VerificationMeta(
+    'organisation',
+  );
+  @override
+  late final GeneratedColumn<String> organisation = GeneratedColumn<String>(
+    'organisation',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _contactMeta = const VerificationMeta(
+    'contact',
+  );
+  @override
+  late final GeneratedColumn<String> contact = GeneratedColumn<String>(
+    'contact',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _signaturePresentMeta = const VerificationMeta(
+    'signaturePresent',
+  );
+  @override
+  late final GeneratedColumn<bool> signaturePresent = GeneratedColumn<bool>(
+    'signature_present',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("signature_present" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _matchedStaffIdMeta = const VerificationMeta(
+    'matchedStaffId',
+  );
+  @override
+  late final GeneratedColumn<String> matchedStaffId = GeneratedColumn<String>(
+    'matched_staff_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    meetingId,
+    name,
+    title,
+    organisation,
+    contact,
+    signaturePresent,
+    matchedStaffId,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'attendees';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MeetingAttendee> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('meeting_id')) {
+      context.handle(
+        _meetingIdMeta,
+        meetingId.isAcceptableOrUnknown(data['meeting_id']!, _meetingIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_meetingIdMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    }
+    if (data.containsKey('organisation')) {
+      context.handle(
+        _organisationMeta,
+        organisation.isAcceptableOrUnknown(
+          data['organisation']!,
+          _organisationMeta,
+        ),
+      );
+    }
+    if (data.containsKey('contact')) {
+      context.handle(
+        _contactMeta,
+        contact.isAcceptableOrUnknown(data['contact']!, _contactMeta),
+      );
+    }
+    if (data.containsKey('signature_present')) {
+      context.handle(
+        _signaturePresentMeta,
+        signaturePresent.isAcceptableOrUnknown(
+          data['signature_present']!,
+          _signaturePresentMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_signaturePresentMeta);
+    }
+    if (data.containsKey('matched_staff_id')) {
+      context.handle(
+        _matchedStaffIdMeta,
+        matchedStaffId.isAcceptableOrUnknown(
+          data['matched_staff_id']!,
+          _matchedStaffIdMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  MeetingAttendee map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MeetingAttendee(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      meetingId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}meeting_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      organisation: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}organisation'],
+      )!,
+      contact: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}contact'],
+      )!,
+      signaturePresent: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}signature_present'],
+      )!,
+      matchedStaffId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}matched_staff_id'],
+      ),
+    );
+  }
+
+  @override
+  $AttendeesTable createAlias(String alias) {
+    return $AttendeesTable(attachedDatabase, alias);
+  }
+}
+
+class MeetingAttendee extends DataClass implements Insertable<MeetingAttendee> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Meeting this person belongs to.
+  final String meetingId;
+
+  /// Name as captured, stored as data. A staff match never overwrites it.
+  final String name;
+
+  /// Role or job title as captured, stored as data.
+  final String title;
+
+  /// Organisation as captured, stored as data.
+  final String organisation;
+
+  /// Contact as captured, stored as data. Personal; never logged.
+  final String contact;
+
+  /// Whether a signature was present on the sheet.
+  final bool signaturePresent;
+
+  /// Staff dataset row the operator accepted, when they did.
+  final String? matchedStaffId;
+  const MeetingAttendee({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.meetingId,
+    required this.name,
+    required this.title,
+    required this.organisation,
+    required this.contact,
+    required this.signaturePresent,
+    this.matchedStaffId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['meeting_id'] = Variable<String>(meetingId);
+    map['name'] = Variable<String>(name);
+    map['title'] = Variable<String>(title);
+    map['organisation'] = Variable<String>(organisation);
+    map['contact'] = Variable<String>(contact);
+    map['signature_present'] = Variable<bool>(signaturePresent);
+    if (!nullToAbsent || matchedStaffId != null) {
+      map['matched_staff_id'] = Variable<String>(matchedStaffId);
+    }
+    return map;
+  }
+
+  AttendeesCompanion toCompanion(bool nullToAbsent) {
+    return AttendeesCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      meetingId: Value(meetingId),
+      name: Value(name),
+      title: Value(title),
+      organisation: Value(organisation),
+      contact: Value(contact),
+      signaturePresent: Value(signaturePresent),
+      matchedStaffId: matchedStaffId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(matchedStaffId),
+    );
+  }
+
+  factory MeetingAttendee.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MeetingAttendee(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      meetingId: serializer.fromJson<String>(json['meetingId']),
+      name: serializer.fromJson<String>(json['name']),
+      title: serializer.fromJson<String>(json['title']),
+      organisation: serializer.fromJson<String>(json['organisation']),
+      contact: serializer.fromJson<String>(json['contact']),
+      signaturePresent: serializer.fromJson<bool>(json['signaturePresent']),
+      matchedStaffId: serializer.fromJson<String?>(json['matchedStaffId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'meetingId': serializer.toJson<String>(meetingId),
+      'name': serializer.toJson<String>(name),
+      'title': serializer.toJson<String>(title),
+      'organisation': serializer.toJson<String>(organisation),
+      'contact': serializer.toJson<String>(contact),
+      'signaturePresent': serializer.toJson<bool>(signaturePresent),
+      'matchedStaffId': serializer.toJson<String?>(matchedStaffId),
+    };
+  }
+
+  MeetingAttendee copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? meetingId,
+    String? name,
+    String? title,
+    String? organisation,
+    String? contact,
+    bool? signaturePresent,
+    Value<String?> matchedStaffId = const Value.absent(),
+  }) => MeetingAttendee(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    meetingId: meetingId ?? this.meetingId,
+    name: name ?? this.name,
+    title: title ?? this.title,
+    organisation: organisation ?? this.organisation,
+    contact: contact ?? this.contact,
+    signaturePresent: signaturePresent ?? this.signaturePresent,
+    matchedStaffId: matchedStaffId.present
+        ? matchedStaffId.value
+        : this.matchedStaffId,
+  );
+  MeetingAttendee copyWithCompanion(AttendeesCompanion data) {
+    return MeetingAttendee(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      meetingId: data.meetingId.present ? data.meetingId.value : this.meetingId,
+      name: data.name.present ? data.name.value : this.name,
+      title: data.title.present ? data.title.value : this.title,
+      organisation: data.organisation.present
+          ? data.organisation.value
+          : this.organisation,
+      contact: data.contact.present ? data.contact.value : this.contact,
+      signaturePresent: data.signaturePresent.present
+          ? data.signaturePresent.value
+          : this.signaturePresent,
+      matchedStaffId: data.matchedStaffId.present
+          ? data.matchedStaffId.value
+          : this.matchedStaffId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MeetingAttendee(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('meetingId: $meetingId, ')
+          ..write('name: $name, ')
+          ..write('title: $title, ')
+          ..write('organisation: $organisation, ')
+          ..write('contact: $contact, ')
+          ..write('signaturePresent: $signaturePresent, ')
+          ..write('matchedStaffId: $matchedStaffId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    meetingId,
+    name,
+    title,
+    organisation,
+    contact,
+    signaturePresent,
+    matchedStaffId,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MeetingAttendee &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.meetingId == this.meetingId &&
+          other.name == this.name &&
+          other.title == this.title &&
+          other.organisation == this.organisation &&
+          other.contact == this.contact &&
+          other.signaturePresent == this.signaturePresent &&
+          other.matchedStaffId == this.matchedStaffId);
+}
+
+class AttendeesCompanion extends UpdateCompanion<MeetingAttendee> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> meetingId;
+  final Value<String> name;
+  final Value<String> title;
+  final Value<String> organisation;
+  final Value<String> contact;
+  final Value<bool> signaturePresent;
+  final Value<String?> matchedStaffId;
+  final Value<int> rowid;
+  const AttendeesCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.meetingId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.title = const Value.absent(),
+    this.organisation = const Value.absent(),
+    this.contact = const Value.absent(),
+    this.signaturePresent = const Value.absent(),
+    this.matchedStaffId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AttendeesCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String meetingId,
+    required String name,
+    this.title = const Value.absent(),
+    this.organisation = const Value.absent(),
+    this.contact = const Value.absent(),
+    required bool signaturePresent,
+    this.matchedStaffId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       meetingId = Value(meetingId),
+       name = Value(name),
+       signaturePresent = Value(signaturePresent);
+  static Insertable<MeetingAttendee> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? meetingId,
+    Expression<String>? name,
+    Expression<String>? title,
+    Expression<String>? organisation,
+    Expression<String>? contact,
+    Expression<bool>? signaturePresent,
+    Expression<String>? matchedStaffId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (meetingId != null) 'meeting_id': meetingId,
+      if (name != null) 'name': name,
+      if (title != null) 'title': title,
+      if (organisation != null) 'organisation': organisation,
+      if (contact != null) 'contact': contact,
+      if (signaturePresent != null) 'signature_present': signaturePresent,
+      if (matchedStaffId != null) 'matched_staff_id': matchedStaffId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AttendeesCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? meetingId,
+    Value<String>? name,
+    Value<String>? title,
+    Value<String>? organisation,
+    Value<String>? contact,
+    Value<bool>? signaturePresent,
+    Value<String?>? matchedStaffId,
+    Value<int>? rowid,
+  }) {
+    return AttendeesCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      meetingId: meetingId ?? this.meetingId,
+      name: name ?? this.name,
+      title: title ?? this.title,
+      organisation: organisation ?? this.organisation,
+      contact: contact ?? this.contact,
+      signaturePresent: signaturePresent ?? this.signaturePresent,
+      matchedStaffId: matchedStaffId ?? this.matchedStaffId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (meetingId.present) {
+      map['meeting_id'] = Variable<String>(meetingId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (organisation.present) {
+      map['organisation'] = Variable<String>(organisation.value);
+    }
+    if (contact.present) {
+      map['contact'] = Variable<String>(contact.value);
+    }
+    if (signaturePresent.present) {
+      map['signature_present'] = Variable<bool>(signaturePresent.value);
+    }
+    if (matchedStaffId.present) {
+      map['matched_staff_id'] = Variable<String>(matchedStaffId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AttendeesCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('meetingId: $meetingId, ')
+          ..write('name: $name, ')
+          ..write('title: $title, ')
+          ..write('organisation: $organisation, ')
+          ..write('contact: $contact, ')
+          ..write('signaturePresent: $signaturePresent, ')
+          ..write('matchedStaffId: $matchedStaffId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $MeetingActionsTable extends MeetingActions
+    with TableInfo<$MeetingActionsTable, MeetingAction> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MeetingActionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _meetingIdMeta = const VerificationMeta(
+    'meetingId',
+  );
+  @override
+  late final GeneratedColumn<String> meetingId = GeneratedColumn<String>(
+    'meeting_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _actionMeta = const VerificationMeta('action');
+  @override
+  late final GeneratedColumn<String> action = GeneratedColumn<String>(
+    'action',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _ownerNameMeta = const VerificationMeta(
+    'ownerName',
+  );
+  @override
+  late final GeneratedColumn<String> ownerName = GeneratedColumn<String>(
+    'owner_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dueDateMeta = const VerificationMeta(
+    'dueDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> dueDate = GeneratedColumn<DateTime>(
+    'due_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    meetingId,
+    action,
+    ownerName,
+    dueDate,
+    status,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'meeting_actions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MeetingAction> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('meeting_id')) {
+      context.handle(
+        _meetingIdMeta,
+        meetingId.isAcceptableOrUnknown(data['meeting_id']!, _meetingIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_meetingIdMeta);
+    }
+    if (data.containsKey('action')) {
+      context.handle(
+        _actionMeta,
+        action.isAcceptableOrUnknown(data['action']!, _actionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_actionMeta);
+    }
+    if (data.containsKey('owner_name')) {
+      context.handle(
+        _ownerNameMeta,
+        ownerName.isAcceptableOrUnknown(data['owner_name']!, _ownerNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ownerNameMeta);
+    }
+    if (data.containsKey('due_date')) {
+      context.handle(
+        _dueDateMeta,
+        dueDate.isAcceptableOrUnknown(data['due_date']!, _dueDateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dueDateMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  MeetingAction map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MeetingAction(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      meetingId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}meeting_id'],
+      )!,
+      action: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}action'],
+      )!,
+      ownerName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_name'],
+      )!,
+      dueDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}due_date'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+    );
+  }
+
+  @override
+  $MeetingActionsTable createAlias(String alias) {
+    return $MeetingActionsTable(attachedDatabase, alias);
+  }
+}
+
+class MeetingAction extends DataClass implements Insertable<MeetingAction> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Meeting this action belongs to.
+  final String meetingId;
+
+  /// Action text as captured, stored as data.
+  final String action;
+
+  /// Owner name as captured, stored as data.
+  final String ownerName;
+
+  /// When the action is due.
+  final DateTime dueDate;
+
+  /// Lifecycle status, stored as text.
+  final String status;
+  const MeetingAction({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.meetingId,
+    required this.action,
+    required this.ownerName,
+    required this.dueDate,
+    required this.status,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['meeting_id'] = Variable<String>(meetingId);
+    map['action'] = Variable<String>(action);
+    map['owner_name'] = Variable<String>(ownerName);
+    map['due_date'] = Variable<DateTime>(dueDate);
+    map['status'] = Variable<String>(status);
+    return map;
+  }
+
+  MeetingActionsCompanion toCompanion(bool nullToAbsent) {
+    return MeetingActionsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      meetingId: Value(meetingId),
+      action: Value(action),
+      ownerName: Value(ownerName),
+      dueDate: Value(dueDate),
+      status: Value(status),
+    );
+  }
+
+  factory MeetingAction.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MeetingAction(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      meetingId: serializer.fromJson<String>(json['meetingId']),
+      action: serializer.fromJson<String>(json['action']),
+      ownerName: serializer.fromJson<String>(json['ownerName']),
+      dueDate: serializer.fromJson<DateTime>(json['dueDate']),
+      status: serializer.fromJson<String>(json['status']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'meetingId': serializer.toJson<String>(meetingId),
+      'action': serializer.toJson<String>(action),
+      'ownerName': serializer.toJson<String>(ownerName),
+      'dueDate': serializer.toJson<DateTime>(dueDate),
+      'status': serializer.toJson<String>(status),
+    };
+  }
+
+  MeetingAction copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? meetingId,
+    String? action,
+    String? ownerName,
+    DateTime? dueDate,
+    String? status,
+  }) => MeetingAction(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    meetingId: meetingId ?? this.meetingId,
+    action: action ?? this.action,
+    ownerName: ownerName ?? this.ownerName,
+    dueDate: dueDate ?? this.dueDate,
+    status: status ?? this.status,
+  );
+  MeetingAction copyWithCompanion(MeetingActionsCompanion data) {
+    return MeetingAction(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      meetingId: data.meetingId.present ? data.meetingId.value : this.meetingId,
+      action: data.action.present ? data.action.value : this.action,
+      ownerName: data.ownerName.present ? data.ownerName.value : this.ownerName,
+      dueDate: data.dueDate.present ? data.dueDate.value : this.dueDate,
+      status: data.status.present ? data.status.value : this.status,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MeetingAction(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('meetingId: $meetingId, ')
+          ..write('action: $action, ')
+          ..write('ownerName: $ownerName, ')
+          ..write('dueDate: $dueDate, ')
+          ..write('status: $status')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    meetingId,
+    action,
+    ownerName,
+    dueDate,
+    status,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MeetingAction &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.meetingId == this.meetingId &&
+          other.action == this.action &&
+          other.ownerName == this.ownerName &&
+          other.dueDate == this.dueDate &&
+          other.status == this.status);
+}
+
+class MeetingActionsCompanion extends UpdateCompanion<MeetingAction> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> meetingId;
+  final Value<String> action;
+  final Value<String> ownerName;
+  final Value<DateTime> dueDate;
+  final Value<String> status;
+  final Value<int> rowid;
+  const MeetingActionsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.meetingId = const Value.absent(),
+    this.action = const Value.absent(),
+    this.ownerName = const Value.absent(),
+    this.dueDate = const Value.absent(),
+    this.status = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MeetingActionsCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String meetingId,
+    required String action,
+    required String ownerName,
+    required DateTime dueDate,
+    required String status,
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       meetingId = Value(meetingId),
+       action = Value(action),
+       ownerName = Value(ownerName),
+       dueDate = Value(dueDate),
+       status = Value(status);
+  static Insertable<MeetingAction> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? meetingId,
+    Expression<String>? action,
+    Expression<String>? ownerName,
+    Expression<DateTime>? dueDate,
+    Expression<String>? status,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (meetingId != null) 'meeting_id': meetingId,
+      if (action != null) 'action': action,
+      if (ownerName != null) 'owner_name': ownerName,
+      if (dueDate != null) 'due_date': dueDate,
+      if (status != null) 'status': status,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MeetingActionsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? meetingId,
+    Value<String>? action,
+    Value<String>? ownerName,
+    Value<DateTime>? dueDate,
+    Value<String>? status,
+    Value<int>? rowid,
+  }) {
+    return MeetingActionsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      meetingId: meetingId ?? this.meetingId,
+      action: action ?? this.action,
+      ownerName: ownerName ?? this.ownerName,
+      dueDate: dueDate ?? this.dueDate,
+      status: status ?? this.status,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (meetingId.present) {
+      map['meeting_id'] = Variable<String>(meetingId.value);
+    }
+    if (action.present) {
+      map['action'] = Variable<String>(action.value);
+    }
+    if (ownerName.present) {
+      map['owner_name'] = Variable<String>(ownerName.value);
+    }
+    if (dueDate.present) {
+      map['due_date'] = Variable<DateTime>(dueDate.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MeetingActionsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('meetingId: $meetingId, ')
+          ..write('action: $action, ')
+          ..write('ownerName: $ownerName, ')
+          ..write('dueDate: $dueDate, ')
+          ..write('status: $status, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   late final $TombstonesTable tombstones = $TombstonesTable(this);
@@ -17353,6 +19540,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $FieldEvidenceTable fieldEvidence = $FieldEvidenceTable(this);
   late final $DuplicatesTable duplicates = $DuplicatesTable(this);
   late final $VariancesTable variances = $VariancesTable(this);
+  late final $MeetingsTable meetings = $MeetingsTable(this);
+  late final $AttendeesTable attendees = $AttendeesTable(this);
+  late final $MeetingActionsTable meetingActions = $MeetingActionsTable(this);
   late final Index auditLogHistory = Index(
     'audit_log_history',
     'CREATE INDEX audit_log_history ON audit_log (entity_type, entity_id, at)',
@@ -17421,6 +19611,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'variances_by_project_status',
     'CREATE INDEX variances_by_project_status ON variances (project_id, status)',
   );
+  late final Index meetingActionsByMeetingStatus = Index(
+    'meeting_actions_by_meeting_status',
+    'CREATE INDEX meeting_actions_by_meeting_status ON meeting_actions (meeting_id, status)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -17448,6 +19642,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     fieldEvidence,
     duplicates,
     variances,
+    meetings,
+    attendees,
+    meetingActions,
     auditLogHistory,
     projectsByStatus,
     templateRowsByIdentifier,
@@ -17465,5 +19662,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     duplicatesByProjectStatus,
     variancesByField,
     variancesByProjectStatus,
+    meetingActionsByMeetingStatus,
   ];
 }

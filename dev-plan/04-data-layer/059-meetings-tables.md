@@ -27,9 +27,9 @@ The meeting header with its raw transcript and refined minutes, its attendee lis
 
 ## Definition of done
 
-- [ ] A meeting with attendees and actions round-trips and deletes as one transaction with tombstones for each row.
-- [ ] Refining minutes leaves `transcriptRaw` byte-identical.
-- [ ] An attendee matched to a staff record keeps the free-text name that was captured.
-- [ ] Tests: `frontend/test/core/db/tables/meetings_test.dart` covers header, attendee and action inserts, transcript
+- [x] A meeting with attendees and actions round-trips and deletes as one transaction with tombstones for each row.
+- [x] Refining minutes leaves `transcriptRaw` byte-identical.
+- [x] An attendee matched to a staff record keeps the free-text name that was captured.
+- [x] Tests: `frontend/test/core/db/tables/meetings_test.dart` covers header, attendee and action inserts, transcript
       immutability under refinement, and cascade-with-tombstones on delete, against an in-memory database, covering the
       migration step.

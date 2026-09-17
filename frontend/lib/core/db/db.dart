@@ -12,6 +12,7 @@ export 'tables/context.dart';
 export 'tables/device_profile.dart';
 export 'tables/duplicates.dart';
 export 'tables/field_evidence.dart';
+export 'tables/meetings.dart';
 export 'tables/photos.dart';
 export 'tables/processing.dart';
 export 'tables/projects.dart';

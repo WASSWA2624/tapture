@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**58 of 281 tasks complete (20.6%)** · last updated 2026-09-17
+**59 of 281 tasks complete (21.0%)** · last updated 2026-09-17
 
 `████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -11,7 +11,7 @@
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
 | 02 — Foundation services | 11 | 11 | `██████████████` 100% |
 | 03 — Design system | 19 | 19 | `██████████████` 100% |
-| 04 — Local database | 10 | 16 | `██████████░░░░` 62% |
+| 04 — Local database | 11 | 16 | `███████████░░░` 69% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
 | 07 — Account and settings | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **58** | **281** | `██░░░░░░░░░░░░` 20.6% |
+| **Total** | **59** | **281** | `██░░░░░░░░░░░░` 21.0% |
 
 ## Completed
 
@@ -94,6 +94,7 @@
 | 056 — Reference dataset tables | 2026-09-17 | Schema v7 adds `reference_datasets` and `reference_rows` unique on dataset plus key, with `keyNormalised` folded on write. Re-importing the same source file updates the dataset and matching rows in place. Guarded by insert, keyed/normalised lookup, in-place re-import, 10k lookup under 300ms, and v7 column tests. |
 | 057 — Processing jobs, results and field evidence tables | 2026-09-17 | Schema v8 adds `processing_jobs` (indexed on status+queuedAt), append-only `processing_results`, and `field_evidence` indexed by record field. Claim is compare-and-swap on queued; retry increments attempts and keeps earlier results; deleting a field writes a tombstone so evidence is not orphaned. Guarded by queue/index, retry+immutability, three source types, tombstone, and v8 column tests. |
 | 058 — Duplicates and variances tables | 2026-09-17 | Schema v9 adds `duplicates` (unique ordered record pair; indexed on projectId+status) and `variances` (unique recordId+fieldKey, plus projectId so the same index shape serves the review list). Detection upserts the existing pair and never writes a resolution; a person records who/when; source records stay intact. Guarded by order-independent uniqueness, queue+index, resolution, register-versus-found round-trip, unique index, and v9 column tests. |
+| 059 — Meeting tables | 2026-09-17 | Schema v10 adds `meetings` (raw transcript written once, refined minutes beside it), `attendees` (captured name kept when a staff match is accepted), and `meeting_actions` indexed on meetingId+status. Delete is one transaction that tombstones the header and every child row without a hard delete. Guarded by round-trip+cascade tombstones, transcript immutability, staff-match name retention, and v10 column tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -272,7 +273,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 04 — Local database
 
-*10 of 16 complete.*
+*11 of 16 complete.*
 
 - [x] [049 — Drift database bootstrap and migration strategy](dev-plan/04-data-layer/049-drift-setup.md)
 - [x] [050 — Shared columns, DAO base and transaction helper](dev-plan/04-data-layer/050-column-mixins.md)
@@ -284,7 +285,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [056 — Reference dataset tables](dev-plan/04-data-layer/056-reference-tables.md)
 - [x] [057 — Processing jobs, results and field evidence tables](dev-plan/04-data-layer/057-jobs-table.md)
 - [x] [058 — Duplicates and variances tables](dev-plan/04-data-layer/058-duplicates-table.md)
-- [ ] [059 — Meeting tables](dev-plan/04-data-layer/059-meetings-tables.md)
+- [x] [059 — Meeting tables](dev-plan/04-data-layer/059-meetings-tables.md)
 - [ ] [060 — Exports table](dev-plan/04-data-layer/060-exports-table.md)
 - [ ] [061 — Merge session, conflict and version vector tables](dev-plan/04-data-layer/061-merge-tables.md)
 - [ ] [062 — Repository interfaces and test factories](dev-plan/04-data-layer/062-repository-interfaces.md)
