@@ -28,8 +28,8 @@ the diagnostics log, open the recycle bin — and no way to destroy data.
 
 ## Definition of done
 
-- [ ] A fatal build error renders this page instead of a red screen, with the app still running.
-- [ ] No path from this screen can destroy the user's work.
-- [ ] The exported log reaches a shareable file and contains no record values or credentials.
-- [ ] Tests: `frontend/test/app/widgets/global_error_page_test.dart` pumps a deliberately throwing subtree, asserts the
+- [x] A fatal build error renders this page instead of a red screen, with the app still running.
+- [x] No path from this screen can destroy the user's work.
+- [x] The exported log reaches a shareable file and contains no record values or credentials.
+- [x] Tests: `frontend/test/app/widgets/global_error_page_test.dart` pumps a deliberately throwing subtree, asserts the
   three actions, asserts restart preserves unsaved state, and asserts no destructive action is present.

@@ -3,11 +3,14 @@ library;
 
 import 'package:flutter/material.dart' hide Router;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/widgets/error_boundary.dart';
 
 import 'env.dart';
-import 'router.dart' show Router, routerProvider;
+import 'router.dart' show AppRoutes, Router, routerProvider;
 import 'theme/app_theme.dart';
 import 'theme/theme_controller.dart';
+import 'widgets/global_error_page.dart';
 
 export 'env.dart';
 export 'router.dart' hide Router;
@@ -38,6 +41,18 @@ class TaptureApp extends ConsumerWidget {
         AppThemeMode.light => ThemeMode.light,
         AppThemeMode.dark => ThemeMode.dark,
         AppThemeMode.system || AppThemeMode.outdoor => ThemeMode.system,
+      },
+      builder: (BuildContext _, Widget? child) {
+        return ErrorBoundary(
+          fallback: (Failure failure, VoidCallback retry) {
+            return GlobalErrorPage(
+              failure: failure,
+              onRestart: retry,
+              onOpenRecycleBin: () => router.go(AppRoutes.more),
+            );
+          },
+          child: child ?? const SizedBox.shrink(),
+        );
       },
       routerConfig: router,
     );

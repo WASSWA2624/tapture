@@ -108,7 +108,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [073 — Adaptive navigation shell](06-app-shell/073-nav-shell.md)
 - [x] [074 — First-run flow](06-app-shell/074-first-run.md)
 - [x] [075 — Global status line and offline banner](06-app-shell/075-status-line.md)
-- [ ] [076 — Global error and crash recovery screen](06-app-shell/076-global-error-page.md)
+- [x] [076 — Global error and crash recovery screen](06-app-shell/076-global-error-page.md)
 
 ## 07 — Account and settings
 

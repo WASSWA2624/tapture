@@ -190,5 +190,10 @@ List<String> get _values {
     Copy.unprocessedCount(1),
     Copy.unprocessedCount(2),
     Copy.offlineWorking,
+    Copy.somethingWentWrong,
+    Copy.workStillOnDevice,
+    Copy.restart,
+    Copy.exportLog,
+    Copy.openRecycleBin,
   ];
 }

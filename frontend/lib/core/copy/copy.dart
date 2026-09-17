@@ -339,4 +339,20 @@ abstract final class Copy {
   /// Why work continues without a network. Not an error.
   static const String offlineWorking =
       'You are offline. Captures stay on this device.';
+
+  /// Title of the last-resort crash recovery screen.
+  static const String somethingWentWrong = 'Something went wrong';
+
+  /// Reassurance that a crash did not wipe local work.
+  static const String workStillOnDevice = 'Your work is still on this device.';
+
+  /// Remounts the failed subtree under the existing provider scope.
+  static const String restart = 'Restart';
+
+  /// Writes the diagnostics buffer to a shareable file.
+  static const String exportLog = 'Export the log';
+
+  /// Opens restored records. The destination is the recycle bin once 168
+  /// exists.
+  static const String openRecycleBin = 'Open recycle bin';
 }

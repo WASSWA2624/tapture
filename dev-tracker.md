@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**75 of 281 tasks complete (26.7%)** · last updated 2026-09-17
+**76 of 281 tasks complete (27.0%)** · last updated 2026-09-17
 
 `███████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -13,7 +13,7 @@
 | 03 — Design system | 19 | 19 | `██████████████` 100% |
 | 04 — Local database | 16 | 16 | `██████████████` 100% |
 | 05 — File storage | 7 | 7 | `██████████████` 100% |
-| 06 — Application shell | 4 | 5 | `███████████░░░` 80% |
+| 06 — Application shell | 5 | 5 | `██████████████` 100% |
 | 07 — Account and settings | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
 | 08 — Projects | 0 | 6 | `░░░░░░░░░░░░░░` 0% |
 | 09 — Templates | 0 | 17 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **75** | **281** | `████░░░░░░░░░░` 26.7% |
+| **Total** | **76** | **281** | `████░░░░░░░░░░` 27.0% |
 
 ## Completed
 
@@ -111,6 +111,7 @@
 | 073 — Adaptive navigation shell | 2026-09-17 | `NavShell` wraps four `StatefulShellRoute` branches (Projects, Capture, Records, More) selected with `ResponsiveBuilder`: bar under 600dp, rail from 600, rail plus list pane from 1024. Capture is larger and primary-toned in every layout. Each branch keeps its stack and in-progress input across a destination switch and a size-class change. Guarded by 400/800/1200 widget tests plus stack-and-field preservation. |
 | 074 — First-run flow | 2026-09-17 | One skippable screen asks only for an operator name, then start-a-project or skip through to `/capture`. Completion is one `TextStore.firstRun` flag; `_firstRun` is the first `appGuards()` entry so 267 can prepend sign-in. Guarded by skip, template, and second-launch widget tests. |
 | 075 — Global status line and offline banner | 2026-09-17 | `StatusLine` chips (project+context, template, network, unprocessed) sit above the page body; each chip is a link through `AppRoutes`. `OfflineBanner` uses `AppBanner` on the transition into offline, dismisses until the next spell, and never dialogs. Guarded by fake-radio segment/navigation tests and an online→offline→online banner test. |
+| 076 — Global error and crash recovery screen | 2026-09-17 | `GlobalErrorPage` is the `ErrorBoundary` fallback around `MaterialApp.router`. Restart remounts the failed subtree under the existing `ProviderScope`. Export writes the redacted log to a shareable file. Recycle bin is offered; nothing on the screen deletes or resets work. Guarded by a throwing-subtree widget test for the three actions, unsaved-state restart, and a clean export. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -246,6 +247,10 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 075 | Project, context, template and unprocessed watches do not exist yet. | Open — stub providers return empty labels and 0; 083/115/141/159 replace them |
 | 075 | `NetworkState.offline` does not distinguish override from radio. | Open — extra `offlineByChoiceProvider` until 081 writes the flag |
 | 075 | Template and queue screens have no routes yet. | Open — `AppRoutes.templates` / `queue` with placeholder pages in the More branch |
+| 076 | `ErrorBoundary`'s 021 contract has no fallback slot. | Open — extra optional `fallback` so this page can be the last-resort screen |
+| 076 | `share_plus` is not on the allowlist (FE-FLOW-06). | Open — export writes the file; `shareFile` is injectable; production default leaves the file on disk until a later task approves a share plugin |
+| 076 | Recycle bin screen is task 168. | Open — the action goes to `AppRoutes.more` until 168 owns a route |
+| 076 | A replacement root can mount the next `ErrorBoundary` before the previous one disposes. | Closed by 076 — a static stack restores the original `ErrorWidget.builder` |
 | 049 | Empty Drift managers leave an unused `_db` field that this analyzer reads as an error. | Closed by 050 — `BaseDao` is hand-written; `generate_manager: false` stays because an empty Drift manager still leaves unused `_db` |
 | 050 | The contract types `runInTransaction` on `AppDatabase`; tests need a table `AppDatabase` does not have yet. | Open — the parameter is `GeneratedDatabase`, which `AppDatabase` already is, so a probe database can share the helper |
 | 050 | `BaseDao` cannot stamp writes without a clock, device id, id service and table. | Open — extra constructor arguments; table tasks pass them through |
@@ -363,13 +368,13 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 06 — Application shell
 
-*4 of 5 complete.*
+*5 of 5 complete.*
 
 - [x] [072 — Router, route table and guards](dev-plan/06-app-shell/072-router-setup.md)
 - [x] [073 — Adaptive navigation shell](dev-plan/06-app-shell/073-nav-shell.md)
 - [x] [074 — First-run flow](dev-plan/06-app-shell/074-first-run.md)
 - [x] [075 — Global status line and offline banner](dev-plan/06-app-shell/075-status-line.md)
-- [ ] [076 — Global error and crash recovery screen](dev-plan/06-app-shell/076-global-error-page.md)
+- [x] [076 — Global error and crash recovery screen](dev-plan/06-app-shell/076-global-error-page.md)
 
 ### 07 — Account and settings
 
