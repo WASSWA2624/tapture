@@ -30,6 +30,6 @@ uniform across features, and `errors_test.dart` keeps failures typed so no raw e
 
 ## Definition of done
 
-- [ ] A widget calling a repository method, and a provider declared outside its feature, each fail `state_test.dart`.
-- [ ] A repository method returning a bare `Future`, and a `Failure` subclass with no message field, each fail `errors_test.dart`.
-- [ ] Tests: both suites with a compliant and a non-compliant controller fixture, plus compliant and non-compliant repository and `Failure` fixtures under `frontend/test/architecture/fixtures/`.
+- [x] A widget calling a repository method, and a provider declared outside its feature, each fail `state_test.dart`.
+- [x] A repository method returning a bare `Future`, and a `Failure` subclass with no message field, each fail `errors_test.dart`.
+- [x] Tests: both suites with a compliant and a non-compliant controller fixture, plus compliant and non-compliant repository and `Failure` fixtures under `frontend/test/architecture/fixtures/`.

@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**13 of 281 tasks complete (4.6%)** · last updated 2026-09-17
+**14 of 281 tasks complete (5.0%)** · last updated 2026-09-17
 
 `██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -8,7 +8,7 @@
 
 | Phase | Done | Total | Progress |
 | :--- | ---: | ---: | :--- |
-| 01 — Project setup and guardrails | 13 | 18 | `██████████░░░░` 72% |
+| 01 — Project setup and guardrails | 14 | 18 | `███████████░░░` 78% |
 | 02 — Foundation services | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
 | 03 — Design system | 0 | 19 | `░░░░░░░░░░░░░░` 0% |
 | 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **13** | **281** | `█░░░░░░░░░░░░░` 4.6% |
+| **Total** | **14** | **281** | `█░░░░░░░░░░░░░` 5.0% |
 
 ## Completed
 
@@ -49,6 +49,7 @@
 | 011 — Naming and file-layout checker | 2026-09-09 | `tool/check_naming.dart` reads every hand-written file under `lib/` and reports a file name that is not snake_case, a first public type that is not the one the file is named for, a second public class sharing a file, a provider that is not lowerCamelCase ending in `Provider`, and a type built out of a banned word — matched a whole camel-case word at a time, so `ReferenceDataset` passes where `RecordData` does not, and read from declarations only, so Flutter's `ThemeData` is never flagged. Guarded by 42 tests. |
 | 012 — Canonical domain names | 2026-09-17 | `lib/core/naming/domain_names.dart` holds the twelve specification type names; `test/architecture/naming_test.dart` fails a declared synonym with the canonical replacement. Whole identifiers only, so `ReferenceDataset` passes and `RecordData` does not; uses of Flutter's `ThemeData` are ignored. Guarded by 9 tests. |
 | 013 — Design-token and responsive boundary tests | 2026-09-17 | `test/architecture/tokens_test.dart` fails a feature that invents `Color`, `Colors.*`, `EdgeInsets.all(n)`, `BorderRadius.circular(n)`, `Duration(` or `TextStyle(` and names the token to use instead; `app/theme/` and `core/widgets/` keep those literals. `test/architecture/responsive_test.dart` fails a feature that compares `MediaQuery` width or hardcodes a width at or above 600, naming `context.sizeClass` / `SizeClass.expanded`; only `core/widgets/responsive/` may measure the window. Guarded by 14 tests over allowed and forbidden fixtures. |
+| 014 — State and error-handling convention tests | 2026-09-17 | `test/architecture/state_test.dart` fails a widget that calls a repository, a provider declared outside the feature its name belongs to, `setState` outside `core/widgets/` and animation code, and a controller with no intent method. `test/architecture/errors_test.dart` fails a repository method that is not `Result`/`Future<Result>`, a `Failure` with no `message`, and a `throw` of a non-`Failure` under `domain/` or `data/`. Guarded by 18 tests over compliant and non-compliant fixtures. Did not add Riverpod — the task names only the two suites. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -67,8 +68,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 007 | A new task always takes the highest number in the plan, so adding one to any phase but the last leaves that phase's README saying something like `Tasks 001–282 (12)`. The count is true and the range is not a range any more. | Open — the summary line's shape assumes phases are contiguous, which new tasks break by design |
 | 010 | The barrel rule is checked between features only, as task 010 step 3 words it. `app/` reaching into a feature's internals crosses the same boundary and nothing reports it. | Open — needs a task to decide whether the shell is bound by FE-STR-08 too |
 | 011 | FE-CODE-06 wants `Failure` sealed with a variant per failure, and Dart keeps a sealed type's subtypes in one library; task 011 step 2 says a file declares at most one public class. Task 014 cannot satisfy both. | Open — implemented as step 2 says; the rule or the step has to give |
-| 011 | A provider is recognised by sitting in a `_providers.dart` file or by a name that already ends in `Provider`, because Riverpod is not an approved dependency yet and there is no type to look for. A provider declared elsewhere under another name is invisible. | Open — needs a task once task 014 brings the package in |
+| 011 | A provider is recognised by sitting in a `_providers.dart` file or by a name that already ends in `Provider`, because Riverpod is not an approved dependency yet and there is no type to look for. A provider declared elsewhere under another name is invisible. | Open — task 014 did not add the package (its Files list is the two test suites); still needs a task that approves `flutter_riverpod` |
 | 011 | `tool/check_naming.dart` is not one of `tool/verify.dart`'s gates, and FE-FLOW-02 does not list naming among them. Like `check_repo_hygiene.dart` it is reached only through its own test under the guardrail gate. | Open — the same question as task 008's row; one task should cover both checkers |
+| 014 | Task 014 is named for Riverpod and FE-STATE-01 wants Riverpod only, but the Files list is two architecture suites and FE-FLOW-06 forbids adding a package without its own task. Provider recognition stays name- and `_providers.dart`-based. | Open — needs a task that pins `flutter_riverpod` on the allowlist |
 | 009 | `core.autocrlf` is true and there is no `.gitattributes`, so a checkout rewrites shell scripts to CRLF and `#!/bin/sh` stops being a program any host has. The installer normalises on write, so the hooks survive; nothing else committed to this repository does. | Open — needs a task for `.gitattributes`, which is task 002's territory rather than 009's |
 | 009 | The commit-msg hook turns away every subject git writes itself: `Merge branch ...` and `Revert ...` carry no task number. Task 009 names no exemption and none was invented. | Open — needs a task if merging and reverting through git become awkward |
 | 008 | `dart run tool/verify.dart --fast` takes 79s, and 63s of that is the guardrail suite, over half of which is `verify_test.dart` starting six nested verify runs of its own. Correct, but the pre-commit path pays for it. | Open — needs a task if the wait starts costing more than the coverage is worth |
@@ -78,7 +80,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 01 — Project setup and guardrails
 
-*13 of 18 complete.*
+*14 of 18 complete.*
 
 - [x] [001 — Create the Flutter project](dev-plan/01-orchestration/001-flutter-project-init.md)
 - [x] [002 — Repository hygiene files](dev-plan/01-orchestration/002-repo-hygiene.md)
@@ -93,7 +95,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [011 — Naming and file-layout checker](dev-plan/01-orchestration/011-naming-checker.md)
 - [x] [012 — Canonical domain names](dev-plan/01-orchestration/012-domain-names.md)
 - [x] [013 — Design-token and responsive boundary tests](dev-plan/01-orchestration/013-design-token-test.md)
-- [ ] [014 — State and error-handling convention tests](dev-plan/01-orchestration/014-riverpod-test.md)
+- [x] [014 — State and error-handling convention tests](dev-plan/01-orchestration/014-riverpod-test.md)
 - [ ] [015 — Logging discipline and secret scan](dev-plan/01-orchestration/015-logging-checker.md)
 - [ ] [016 — Test presence checker](dev-plan/01-orchestration/016-test-presence-checker.md)
 - [ ] [017 — Accessibility test matchers](dev-plan/01-orchestration/017-accessibility-matchers.md)
