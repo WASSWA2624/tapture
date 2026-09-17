@@ -28,7 +28,7 @@ duration or text style, and `responsive_test.dart` fails a screen that measures 
 
 ## Definition of done
 
-- [ ] A literal colour added to a feature widget fails `tokens_test.dart`; the same literal under `frontend/lib/app/theme/` passes.
-- [ ] A screen comparing screen width fails `responsive_test.dart`; the same comparison under `frontend/lib/core/widgets/responsive/` passes.
-- [ ] Every violation message names the replacement token or `SizeClass` accessor, not just the offending line.
-- [ ] Tests: both suites, each with an allowed-location and a forbidden-location fixture under `frontend/test/architecture/fixtures/`.
+- [x] A literal colour added to a feature widget fails `tokens_test.dart`; the same literal under `frontend/lib/app/theme/` passes.
+- [x] A screen comparing screen width fails `responsive_test.dart`; the same comparison under `frontend/lib/core/widgets/responsive/` passes.
+- [x] Every violation message names the replacement token or `SizeClass` accessor, not just the offending line.
+- [x] Tests: both suites, each with an allowed-location and a forbidden-location fixture under `frontend/test/architecture/fixtures/`.

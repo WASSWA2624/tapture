@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**12 of 281 tasks complete (4.3%)** · last updated 2026-09-17
+**13 of 281 tasks complete (4.6%)** · last updated 2026-09-17
 
 `██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -8,7 +8,7 @@
 
 | Phase | Done | Total | Progress |
 | :--- | ---: | ---: | :--- |
-| 01 — Project setup and guardrails | 12 | 18 | `█████████░░░░░` 67% |
+| 01 — Project setup and guardrails | 13 | 18 | `██████████░░░░` 72% |
 | 02 — Foundation services | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
 | 03 — Design system | 0 | 19 | `░░░░░░░░░░░░░░` 0% |
 | 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **12** | **281** | `█░░░░░░░░░░░░░` 4.3% |
+| **Total** | **13** | **281** | `█░░░░░░░░░░░░░` 4.6% |
 
 ## Completed
 
@@ -48,6 +48,7 @@
 | 010 — Layering enforcement test | 2026-09-09 | `test/architecture/import_graph.dart` builds the graph from every directive under `lib/` and reads it against all four clauses of FE-STR-04 plus FE-STR-08; a clean and a violating fixture under `test/architecture/fixtures/` prove both directions. Guarded by 20 tests. |
 | 011 — Naming and file-layout checker | 2026-09-09 | `tool/check_naming.dart` reads every hand-written file under `lib/` and reports a file name that is not snake_case, a first public type that is not the one the file is named for, a second public class sharing a file, a provider that is not lowerCamelCase ending in `Provider`, and a type built out of a banned word — matched a whole camel-case word at a time, so `ReferenceDataset` passes where `RecordData` does not, and read from declarations only, so Flutter's `ThemeData` is never flagged. Guarded by 42 tests. |
 | 012 — Canonical domain names | 2026-09-17 | `lib/core/naming/domain_names.dart` holds the twelve specification type names; `test/architecture/naming_test.dart` fails a declared synonym with the canonical replacement. Whole identifiers only, so `ReferenceDataset` passes and `RecordData` does not; uses of Flutter's `ThemeData` are ignored. Guarded by 9 tests. |
+| 013 — Design-token and responsive boundary tests | 2026-09-17 | `test/architecture/tokens_test.dart` fails a feature that invents `Color`, `Colors.*`, `EdgeInsets.all(n)`, `BorderRadius.circular(n)`, `Duration(` or `TextStyle(` and names the token to use instead; `app/theme/` and `core/widgets/` keep those literals. `test/architecture/responsive_test.dart` fails a feature that compares `MediaQuery` width or hardcodes a width at or above 600, naming `context.sizeClass` / `SizeClass.expanded`; only `core/widgets/responsive/` may measure the window. Guarded by 14 tests over allowed and forbidden fixtures. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -77,7 +78,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 01 — Project setup and guardrails
 
-*12 of 18 complete.*
+*13 of 18 complete.*
 
 - [x] [001 — Create the Flutter project](dev-plan/01-orchestration/001-flutter-project-init.md)
 - [x] [002 — Repository hygiene files](dev-plan/01-orchestration/002-repo-hygiene.md)
@@ -91,7 +92,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [010 — Layering enforcement test](dev-plan/01-orchestration/010-layering-test.md)
 - [x] [011 — Naming and file-layout checker](dev-plan/01-orchestration/011-naming-checker.md)
 - [x] [012 — Canonical domain names](dev-plan/01-orchestration/012-domain-names.md)
-- [ ] [013 — Design-token and responsive boundary tests](dev-plan/01-orchestration/013-design-token-test.md)
+- [x] [013 — Design-token and responsive boundary tests](dev-plan/01-orchestration/013-design-token-test.md)
 - [ ] [014 — State and error-handling convention tests](dev-plan/01-orchestration/014-riverpod-test.md)
 - [ ] [015 — Logging discipline and secret scan](dev-plan/01-orchestration/015-logging-checker.md)
 - [ ] [016 — Test presence checker](dev-plan/01-orchestration/016-test-presence-checker.md)
