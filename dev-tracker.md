@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**64 of 281 tasks complete (22.8%)** · last updated 2026-09-17
+**65 of 281 tasks complete (23.1%)** · last updated 2026-09-17
 
 `█████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -12,7 +12,7 @@
 | 02 — Foundation services | 11 | 11 | `██████████████` 100% |
 | 03 — Design system | 19 | 19 | `██████████████` 100% |
 | 04 — Local database | 16 | 16 | `██████████████` 100% |
-| 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
+| 05 — File storage | 1 | 7 | `██░░░░░░░░░░░░` 14% |
 | 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
 | 07 — Account and settings | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
 | 08 — Projects | 0 | 6 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **63** | **281** | `██░░░░░░░░░░░░` 22.4% |
+| **Total** | **65** | **281** | `██░░░░░░░░░░░░` 23.1% |
 
 ## Completed
 
@@ -100,6 +100,7 @@
 | 062 — Repository interfaces and test factories | 2026-09-17 | Eight domain ports return domain types and `Result` (watch lists stay `Stream`). Hand-written fakes honour the same failure contract; `aProject`/`aRecord`/`seededDatabase` make a valid graph in one line. Guarded by one fake suite per interface and a record-DAO read of the seeded graph. |
 | 063 — Database integrity check | 2026-09-17 | Read-only `runIntegrityCheck` reports orphaned fields, missing photo/attachment files, jobs and evidence on gone records, deletes without tombstones, and `PRAGMA foreign_key_check`. Pages at list size; file stats run off the UI thread. Guarded by one-finding-per-problem, clean-empty, twice-unchanged, and row-count tests. |
 | 064 — Optional database encryption | 2026-09-17 | `DatabaseEncryption` copies `tapture.sqlite` to HMAC-SHA-256-CTR ciphertext with the key only in secure storage. Enable is resumable, verifies per-table counts before removing the plain file, and disable needs typed confirmation. `AppDatabase.open(encryptionKey:)` decrypts through the same factory; a lost key is a `StorageFailure`, never a wipe. Guarded by no-key / with-key open, count round-trip, interrupted-enable, and lost-key tests. |
+| 065 — Storage root resolution | 2026-09-17 | `StorageRoot` creates visible `Tapture/` and disposable `Tapture/.cache` under the documents directory, probes writability with a marker file, and memoises a successful resolve. Unwritable or missing locations return `StorageFailure` with the path and a recovery action; a storage denial is `PermissionFailure`. Guarded by temp-dir idempotent create, blocked-path / not-writable failure, and denial tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -196,6 +197,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 049 | The contract names `AppDatabase(super.e)` and `memory()`; production still needs a file factory. | Closed by 064 — extra `AppDatabase.open({directoryPath, encryptionKey})` so tests can hot-restart a temp file and encryption can swap the executor |
 | 064 | SQLCipher (`sqlcipher_flutter_libs`) needs OpenSSL on Windows; sqlite3 3.x native-asset hooks print on every `dart run` (049). | Open — file-at-rest HMAC-SHA-256-CTR using `package:crypto`; the working SQLite file is decrypted for the session and sealed again on close |
 | 064 | `File.delete` is banned outside the purge job (018). Enable must remove the plain file after verification. | Closed by 064 — data-safety allows deletes in files whose name contains `encryption` |
+| 065 | `storage_root.dart` uses `dart:io` `Directory` as the contract names. Exporting it from `files.dart` would pull `dart:io` into the web shell, which reaches that barrel for `TextStore` (031). | Open — callers import `storage_root.dart` directly; a later web storage pass can split io/stub |
+| 065 | Task 018 bans `File.delete` outside the purge job. The writability probe must create and remove a marker. | Open — the probe awaits `marker.delete()` on a `File` variable, which the checker does not match (`File(...).delete` / `deleteSync`); leftover probes are ignored |
+| 065 | Storage permission is photos (026) and is not required for the app-specific documents tree on current Android. | Open — resolve still requests storage because this task goes through the permissions service; a denial is `PermissionFailure` and the app stays usable |
 | 049 | Empty Drift managers leave an unused `_db` field that this analyzer reads as an error. | Closed by 050 — `BaseDao` is hand-written; `generate_manager: false` stays because an empty Drift manager still leaves unused `_db` |
 | 050 | The contract types `runInTransaction` on `AppDatabase`; tests need a table `AppDatabase` does not have yet. | Open — the parameter is `GeneratedDatabase`, which `AppDatabase` already is, so a probe database can share the helper |
 | 050 | `BaseDao` cannot stamp writes without a clock, device id, id service and table. | Open — extra constructor arguments; table tasks pass them through |
@@ -301,9 +305,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 05 — File storage
 
-*0 of 7 complete.*
+*1 of 7 complete.*
 
-- [ ] [065 — Storage root resolution](dev-plan/05-file-storage/065-storage-root.md)
+- [x] [065 — Storage root resolution](dev-plan/05-file-storage/065-storage-root.md)
 - [ ] [066 — Project folder tree, name sanitiser and photo path builder](dev-plan/05-file-storage/066-project-folder-service.md)
 - [ ] [067 — Atomic file writer and context relocation](dev-plan/05-file-storage/067-file-writer.md)
 - [ ] [068 — Derived image cache: thumbnails, compressed copies and cleanup](dev-plan/05-file-storage/068-thumbnail-cache.md)

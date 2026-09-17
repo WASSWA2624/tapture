@@ -38,8 +38,8 @@ final storageRootProvider = Provider<StorageRoot>(...);
 
 ## Definition of done
 
-- [ ] The folder is visible in a file manager and over a cable, with no media-scanner exclusion applied.
-- [ ] A read-only or missing location yields a failure carrying a recovery action, and the app stays usable.
-- [ ] Resolving twice creates the tree once and returns the same directory.
-- [ ] Tests: `frontend/test/core/files/storage_root_test.dart` resolves into a temporary directory, asserts idempotent
+- [x] The folder is visible in a file manager and over a cable, with no media-scanner exclusion applied.
+- [x] A read-only or missing location yields a failure carrying a recovery action, and the app stays usable.
+- [x] Resolving twice creates the tree once and returns the same directory.
+- [x] Tests: `frontend/test/core/files/storage_root_test.dart` resolves into a temporary directory, asserts idempotent
       creation, and asserts the failure variant when the location is not writable.
