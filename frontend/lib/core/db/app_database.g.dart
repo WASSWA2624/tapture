@@ -13362,6 +13362,2333 @@ class ReferenceRowsCompanion extends UpdateCompanion<ReferenceLookupRow> {
   }
 }
 
+class $ProcessingTable extends Processing
+    with TableInfo<$ProcessingTable, ProcessingJobRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ProcessingTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _recordIdMeta = const VerificationMeta(
+    'recordId',
+  );
+  @override
+  late final GeneratedColumn<String> recordId = GeneratedColumn<String>(
+    'record_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _stageMeta = const VerificationMeta('stage');
+  @override
+  late final GeneratedColumn<String> stage = GeneratedColumn<String>(
+    'stage',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<ProcessingJobStatus, String>
+  status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  ).withConverter<ProcessingJobStatus>($ProcessingTable.$converterstatus);
+  static const VerificationMeta _attemptsMeta = const VerificationMeta(
+    'attempts',
+  );
+  @override
+  late final GeneratedColumn<int> attempts = GeneratedColumn<int>(
+    'attempts',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _lastErrorMeta = const VerificationMeta(
+    'lastError',
+  );
+  @override
+  late final GeneratedColumn<String> lastError = GeneratedColumn<String>(
+    'last_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _queuedAtMeta = const VerificationMeta(
+    'queuedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> queuedAt = GeneratedColumn<DateTime>(
+    'queued_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _startedAtMeta = const VerificationMeta(
+    'startedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startedAt = GeneratedColumn<DateTime>(
+    'started_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _finishedAtMeta = const VerificationMeta(
+    'finishedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> finishedAt = GeneratedColumn<DateTime>(
+    'finished_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _providerMeta = const VerificationMeta(
+    'provider',
+  );
+  @override
+  late final GeneratedColumn<String> provider = GeneratedColumn<String>(
+    'provider',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _modelMeta = const VerificationMeta('model');
+  @override
+  late final GeneratedColumn<String> model = GeneratedColumn<String>(
+    'model',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    recordId,
+    stage,
+    status,
+    attempts,
+    lastError,
+    queuedAt,
+    startedAt,
+    finishedAt,
+    provider,
+    model,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'processing_jobs';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ProcessingJobRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('record_id')) {
+      context.handle(
+        _recordIdMeta,
+        recordId.isAcceptableOrUnknown(data['record_id']!, _recordIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_recordIdMeta);
+    }
+    if (data.containsKey('stage')) {
+      context.handle(
+        _stageMeta,
+        stage.isAcceptableOrUnknown(data['stage']!, _stageMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_stageMeta);
+    }
+    if (data.containsKey('attempts')) {
+      context.handle(
+        _attemptsMeta,
+        attempts.isAcceptableOrUnknown(data['attempts']!, _attemptsMeta),
+      );
+    }
+    if (data.containsKey('last_error')) {
+      context.handle(
+        _lastErrorMeta,
+        lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta),
+      );
+    }
+    if (data.containsKey('queued_at')) {
+      context.handle(
+        _queuedAtMeta,
+        queuedAt.isAcceptableOrUnknown(data['queued_at']!, _queuedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_queuedAtMeta);
+    }
+    if (data.containsKey('started_at')) {
+      context.handle(
+        _startedAtMeta,
+        startedAt.isAcceptableOrUnknown(data['started_at']!, _startedAtMeta),
+      );
+    }
+    if (data.containsKey('finished_at')) {
+      context.handle(
+        _finishedAtMeta,
+        finishedAt.isAcceptableOrUnknown(data['finished_at']!, _finishedAtMeta),
+      );
+    }
+    if (data.containsKey('provider')) {
+      context.handle(
+        _providerMeta,
+        provider.isAcceptableOrUnknown(data['provider']!, _providerMeta),
+      );
+    }
+    if (data.containsKey('model')) {
+      context.handle(
+        _modelMeta,
+        model.isAcceptableOrUnknown(data['model']!, _modelMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ProcessingJobRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ProcessingJobRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      recordId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}record_id'],
+      )!,
+      stage: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}stage'],
+      )!,
+      status: $ProcessingTable.$converterstatus.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}status'],
+        )!,
+      ),
+      attempts: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}attempts'],
+      )!,
+      lastError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_error'],
+      ),
+      queuedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}queued_at'],
+      )!,
+      startedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}started_at'],
+      ),
+      finishedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}finished_at'],
+      ),
+      provider: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}provider'],
+      ),
+      model: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}model'],
+      ),
+    );
+  }
+
+  @override
+  $ProcessingTable createAlias(String alias) {
+    return $ProcessingTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<ProcessingJobStatus, String, String>
+  $converterstatus = const EnumNameConverter<ProcessingJobStatus>(
+    ProcessingJobStatus.values,
+  );
+}
+
+class ProcessingJobRow extends DataClass
+    implements Insertable<ProcessingJobRow> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Record this job will process.
+  final String recordId;
+
+  /// Last stage the runner reached, stored as data.
+  final String stage;
+
+  /// queued, running, completed or failed.
+  final ProcessingJobStatus status;
+
+  /// How many times this job has been retried.
+  final int attempts;
+
+  /// Last failure reason, when one exists. Stored as data.
+  final String? lastError;
+
+  /// When the job entered the queue.
+  final DateTime queuedAt;
+
+  /// When a runner claimed it, if it has been claimed.
+  final DateTime? startedAt;
+
+  /// When the job last finished, if it has.
+  final DateTime? finishedAt;
+
+  /// Provider name, when an online stage ran.
+  final String? provider;
+
+  /// Model name, when an online stage ran.
+  final String? model;
+  const ProcessingJobRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.recordId,
+    required this.stage,
+    required this.status,
+    required this.attempts,
+    this.lastError,
+    required this.queuedAt,
+    this.startedAt,
+    this.finishedAt,
+    this.provider,
+    this.model,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['record_id'] = Variable<String>(recordId);
+    map['stage'] = Variable<String>(stage);
+    {
+      map['status'] = Variable<String>(
+        $ProcessingTable.$converterstatus.toSql(status),
+      );
+    }
+    map['attempts'] = Variable<int>(attempts);
+    if (!nullToAbsent || lastError != null) {
+      map['last_error'] = Variable<String>(lastError);
+    }
+    map['queued_at'] = Variable<DateTime>(queuedAt);
+    if (!nullToAbsent || startedAt != null) {
+      map['started_at'] = Variable<DateTime>(startedAt);
+    }
+    if (!nullToAbsent || finishedAt != null) {
+      map['finished_at'] = Variable<DateTime>(finishedAt);
+    }
+    if (!nullToAbsent || provider != null) {
+      map['provider'] = Variable<String>(provider);
+    }
+    if (!nullToAbsent || model != null) {
+      map['model'] = Variable<String>(model);
+    }
+    return map;
+  }
+
+  ProcessingCompanion toCompanion(bool nullToAbsent) {
+    return ProcessingCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      recordId: Value(recordId),
+      stage: Value(stage),
+      status: Value(status),
+      attempts: Value(attempts),
+      lastError: lastError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastError),
+      queuedAt: Value(queuedAt),
+      startedAt: startedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(startedAt),
+      finishedAt: finishedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(finishedAt),
+      provider: provider == null && nullToAbsent
+          ? const Value.absent()
+          : Value(provider),
+      model: model == null && nullToAbsent
+          ? const Value.absent()
+          : Value(model),
+    );
+  }
+
+  factory ProcessingJobRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ProcessingJobRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      recordId: serializer.fromJson<String>(json['recordId']),
+      stage: serializer.fromJson<String>(json['stage']),
+      status: $ProcessingTable.$converterstatus.fromJson(
+        serializer.fromJson<String>(json['status']),
+      ),
+      attempts: serializer.fromJson<int>(json['attempts']),
+      lastError: serializer.fromJson<String?>(json['lastError']),
+      queuedAt: serializer.fromJson<DateTime>(json['queuedAt']),
+      startedAt: serializer.fromJson<DateTime?>(json['startedAt']),
+      finishedAt: serializer.fromJson<DateTime?>(json['finishedAt']),
+      provider: serializer.fromJson<String?>(json['provider']),
+      model: serializer.fromJson<String?>(json['model']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'recordId': serializer.toJson<String>(recordId),
+      'stage': serializer.toJson<String>(stage),
+      'status': serializer.toJson<String>(
+        $ProcessingTable.$converterstatus.toJson(status),
+      ),
+      'attempts': serializer.toJson<int>(attempts),
+      'lastError': serializer.toJson<String?>(lastError),
+      'queuedAt': serializer.toJson<DateTime>(queuedAt),
+      'startedAt': serializer.toJson<DateTime?>(startedAt),
+      'finishedAt': serializer.toJson<DateTime?>(finishedAt),
+      'provider': serializer.toJson<String?>(provider),
+      'model': serializer.toJson<String?>(model),
+    };
+  }
+
+  ProcessingJobRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? recordId,
+    String? stage,
+    ProcessingJobStatus? status,
+    int? attempts,
+    Value<String?> lastError = const Value.absent(),
+    DateTime? queuedAt,
+    Value<DateTime?> startedAt = const Value.absent(),
+    Value<DateTime?> finishedAt = const Value.absent(),
+    Value<String?> provider = const Value.absent(),
+    Value<String?> model = const Value.absent(),
+  }) => ProcessingJobRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    recordId: recordId ?? this.recordId,
+    stage: stage ?? this.stage,
+    status: status ?? this.status,
+    attempts: attempts ?? this.attempts,
+    lastError: lastError.present ? lastError.value : this.lastError,
+    queuedAt: queuedAt ?? this.queuedAt,
+    startedAt: startedAt.present ? startedAt.value : this.startedAt,
+    finishedAt: finishedAt.present ? finishedAt.value : this.finishedAt,
+    provider: provider.present ? provider.value : this.provider,
+    model: model.present ? model.value : this.model,
+  );
+  ProcessingJobRow copyWithCompanion(ProcessingCompanion data) {
+    return ProcessingJobRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      recordId: data.recordId.present ? data.recordId.value : this.recordId,
+      stage: data.stage.present ? data.stage.value : this.stage,
+      status: data.status.present ? data.status.value : this.status,
+      attempts: data.attempts.present ? data.attempts.value : this.attempts,
+      lastError: data.lastError.present ? data.lastError.value : this.lastError,
+      queuedAt: data.queuedAt.present ? data.queuedAt.value : this.queuedAt,
+      startedAt: data.startedAt.present ? data.startedAt.value : this.startedAt,
+      finishedAt: data.finishedAt.present
+          ? data.finishedAt.value
+          : this.finishedAt,
+      provider: data.provider.present ? data.provider.value : this.provider,
+      model: data.model.present ? data.model.value : this.model,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProcessingJobRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('recordId: $recordId, ')
+          ..write('stage: $stage, ')
+          ..write('status: $status, ')
+          ..write('attempts: $attempts, ')
+          ..write('lastError: $lastError, ')
+          ..write('queuedAt: $queuedAt, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('finishedAt: $finishedAt, ')
+          ..write('provider: $provider, ')
+          ..write('model: $model')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    recordId,
+    stage,
+    status,
+    attempts,
+    lastError,
+    queuedAt,
+    startedAt,
+    finishedAt,
+    provider,
+    model,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ProcessingJobRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.recordId == this.recordId &&
+          other.stage == this.stage &&
+          other.status == this.status &&
+          other.attempts == this.attempts &&
+          other.lastError == this.lastError &&
+          other.queuedAt == this.queuedAt &&
+          other.startedAt == this.startedAt &&
+          other.finishedAt == this.finishedAt &&
+          other.provider == this.provider &&
+          other.model == this.model);
+}
+
+class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> recordId;
+  final Value<String> stage;
+  final Value<ProcessingJobStatus> status;
+  final Value<int> attempts;
+  final Value<String?> lastError;
+  final Value<DateTime> queuedAt;
+  final Value<DateTime?> startedAt;
+  final Value<DateTime?> finishedAt;
+  final Value<String?> provider;
+  final Value<String?> model;
+  final Value<int> rowid;
+  const ProcessingCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.recordId = const Value.absent(),
+    this.stage = const Value.absent(),
+    this.status = const Value.absent(),
+    this.attempts = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.queuedAt = const Value.absent(),
+    this.startedAt = const Value.absent(),
+    this.finishedAt = const Value.absent(),
+    this.provider = const Value.absent(),
+    this.model = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ProcessingCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String recordId,
+    required String stage,
+    required ProcessingJobStatus status,
+    this.attempts = const Value.absent(),
+    this.lastError = const Value.absent(),
+    required DateTime queuedAt,
+    this.startedAt = const Value.absent(),
+    this.finishedAt = const Value.absent(),
+    this.provider = const Value.absent(),
+    this.model = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       recordId = Value(recordId),
+       stage = Value(stage),
+       status = Value(status),
+       queuedAt = Value(queuedAt);
+  static Insertable<ProcessingJobRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? recordId,
+    Expression<String>? stage,
+    Expression<String>? status,
+    Expression<int>? attempts,
+    Expression<String>? lastError,
+    Expression<DateTime>? queuedAt,
+    Expression<DateTime>? startedAt,
+    Expression<DateTime>? finishedAt,
+    Expression<String>? provider,
+    Expression<String>? model,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (recordId != null) 'record_id': recordId,
+      if (stage != null) 'stage': stage,
+      if (status != null) 'status': status,
+      if (attempts != null) 'attempts': attempts,
+      if (lastError != null) 'last_error': lastError,
+      if (queuedAt != null) 'queued_at': queuedAt,
+      if (startedAt != null) 'started_at': startedAt,
+      if (finishedAt != null) 'finished_at': finishedAt,
+      if (provider != null) 'provider': provider,
+      if (model != null) 'model': model,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ProcessingCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? recordId,
+    Value<String>? stage,
+    Value<ProcessingJobStatus>? status,
+    Value<int>? attempts,
+    Value<String?>? lastError,
+    Value<DateTime>? queuedAt,
+    Value<DateTime?>? startedAt,
+    Value<DateTime?>? finishedAt,
+    Value<String?>? provider,
+    Value<String?>? model,
+    Value<int>? rowid,
+  }) {
+    return ProcessingCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      recordId: recordId ?? this.recordId,
+      stage: stage ?? this.stage,
+      status: status ?? this.status,
+      attempts: attempts ?? this.attempts,
+      lastError: lastError ?? this.lastError,
+      queuedAt: queuedAt ?? this.queuedAt,
+      startedAt: startedAt ?? this.startedAt,
+      finishedAt: finishedAt ?? this.finishedAt,
+      provider: provider ?? this.provider,
+      model: model ?? this.model,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (recordId.present) {
+      map['record_id'] = Variable<String>(recordId.value);
+    }
+    if (stage.present) {
+      map['stage'] = Variable<String>(stage.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(
+        $ProcessingTable.$converterstatus.toSql(status.value),
+      );
+    }
+    if (attempts.present) {
+      map['attempts'] = Variable<int>(attempts.value);
+    }
+    if (lastError.present) {
+      map['last_error'] = Variable<String>(lastError.value);
+    }
+    if (queuedAt.present) {
+      map['queued_at'] = Variable<DateTime>(queuedAt.value);
+    }
+    if (startedAt.present) {
+      map['started_at'] = Variable<DateTime>(startedAt.value);
+    }
+    if (finishedAt.present) {
+      map['finished_at'] = Variable<DateTime>(finishedAt.value);
+    }
+    if (provider.present) {
+      map['provider'] = Variable<String>(provider.value);
+    }
+    if (model.present) {
+      map['model'] = Variable<String>(model.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProcessingCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('recordId: $recordId, ')
+          ..write('stage: $stage, ')
+          ..write('status: $status, ')
+          ..write('attempts: $attempts, ')
+          ..write('lastError: $lastError, ')
+          ..write('queuedAt: $queuedAt, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('finishedAt: $finishedAt, ')
+          ..write('provider: $provider, ')
+          ..write('model: $model, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ProcessingResultsTable extends ProcessingResults
+    with TableInfo<$ProcessingResultsTable, ProcessingResult> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ProcessingResultsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _jobIdMeta = const VerificationMeta('jobId');
+  @override
+  late final GeneratedColumn<String> jobId = GeneratedColumn<String>(
+    'job_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _requestSummaryMeta = const VerificationMeta(
+    'requestSummary',
+  );
+  @override
+  late final GeneratedColumn<String> requestSummary = GeneratedColumn<String>(
+    'request_summary',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _rawResponseMeta = const VerificationMeta(
+    'rawResponse',
+  );
+  @override
+  late final GeneratedColumn<String> rawResponse = GeneratedColumn<String>(
+    'raw_response',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _parsedOkMeta = const VerificationMeta(
+    'parsedOk',
+  );
+  @override
+  late final GeneratedColumn<bool> parsedOk = GeneratedColumn<bool>(
+    'parsed_ok',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("parsed_ok" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _tokensOrCostMeta = const VerificationMeta(
+    'tokensOrCost',
+  );
+  @override
+  late final GeneratedColumn<String> tokensOrCost = GeneratedColumn<String>(
+    'tokens_or_cost',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    jobId,
+    requestSummary,
+    rawResponse,
+    parsedOk,
+    tokensOrCost,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'processing_results';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ProcessingResult> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('job_id')) {
+      context.handle(
+        _jobIdMeta,
+        jobId.isAcceptableOrUnknown(data['job_id']!, _jobIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_jobIdMeta);
+    }
+    if (data.containsKey('request_summary')) {
+      context.handle(
+        _requestSummaryMeta,
+        requestSummary.isAcceptableOrUnknown(
+          data['request_summary']!,
+          _requestSummaryMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_requestSummaryMeta);
+    }
+    if (data.containsKey('raw_response')) {
+      context.handle(
+        _rawResponseMeta,
+        rawResponse.isAcceptableOrUnknown(
+          data['raw_response']!,
+          _rawResponseMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_rawResponseMeta);
+    }
+    if (data.containsKey('parsed_ok')) {
+      context.handle(
+        _parsedOkMeta,
+        parsedOk.isAcceptableOrUnknown(data['parsed_ok']!, _parsedOkMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_parsedOkMeta);
+    }
+    if (data.containsKey('tokens_or_cost')) {
+      context.handle(
+        _tokensOrCostMeta,
+        tokensOrCost.isAcceptableOrUnknown(
+          data['tokens_or_cost']!,
+          _tokensOrCostMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ProcessingResult map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ProcessingResult(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      jobId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}job_id'],
+      )!,
+      requestSummary: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}request_summary'],
+      )!,
+      rawResponse: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}raw_response'],
+      )!,
+      parsedOk: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}parsed_ok'],
+      )!,
+      tokensOrCost: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tokens_or_cost'],
+      ),
+    );
+  }
+
+  @override
+  $ProcessingResultsTable createAlias(String alias) {
+    return $ProcessingResultsTable(attachedDatabase, alias);
+  }
+}
+
+class ProcessingResult extends DataClass
+    implements Insertable<ProcessingResult> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Job this result belongs to. Several rows may share a job across retries.
+  final String jobId;
+
+  /// Shape and size of the request. Never a key or bearer token.
+  final String requestSummary;
+
+  /// Provider output as it arrived. Written once.
+  final String rawResponse;
+
+  /// Whether the response parsed against the template schema.
+  final bool parsedOk;
+
+  /// Token count or cost figure, when the provider reported one.
+  final String? tokensOrCost;
+  const ProcessingResult({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.jobId,
+    required this.requestSummary,
+    required this.rawResponse,
+    required this.parsedOk,
+    this.tokensOrCost,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['job_id'] = Variable<String>(jobId);
+    map['request_summary'] = Variable<String>(requestSummary);
+    map['raw_response'] = Variable<String>(rawResponse);
+    map['parsed_ok'] = Variable<bool>(parsedOk);
+    if (!nullToAbsent || tokensOrCost != null) {
+      map['tokens_or_cost'] = Variable<String>(tokensOrCost);
+    }
+    return map;
+  }
+
+  ProcessingResultsCompanion toCompanion(bool nullToAbsent) {
+    return ProcessingResultsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      jobId: Value(jobId),
+      requestSummary: Value(requestSummary),
+      rawResponse: Value(rawResponse),
+      parsedOk: Value(parsedOk),
+      tokensOrCost: tokensOrCost == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tokensOrCost),
+    );
+  }
+
+  factory ProcessingResult.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ProcessingResult(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      jobId: serializer.fromJson<String>(json['jobId']),
+      requestSummary: serializer.fromJson<String>(json['requestSummary']),
+      rawResponse: serializer.fromJson<String>(json['rawResponse']),
+      parsedOk: serializer.fromJson<bool>(json['parsedOk']),
+      tokensOrCost: serializer.fromJson<String?>(json['tokensOrCost']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'jobId': serializer.toJson<String>(jobId),
+      'requestSummary': serializer.toJson<String>(requestSummary),
+      'rawResponse': serializer.toJson<String>(rawResponse),
+      'parsedOk': serializer.toJson<bool>(parsedOk),
+      'tokensOrCost': serializer.toJson<String?>(tokensOrCost),
+    };
+  }
+
+  ProcessingResult copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? jobId,
+    String? requestSummary,
+    String? rawResponse,
+    bool? parsedOk,
+    Value<String?> tokensOrCost = const Value.absent(),
+  }) => ProcessingResult(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    jobId: jobId ?? this.jobId,
+    requestSummary: requestSummary ?? this.requestSummary,
+    rawResponse: rawResponse ?? this.rawResponse,
+    parsedOk: parsedOk ?? this.parsedOk,
+    tokensOrCost: tokensOrCost.present ? tokensOrCost.value : this.tokensOrCost,
+  );
+  ProcessingResult copyWithCompanion(ProcessingResultsCompanion data) {
+    return ProcessingResult(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      jobId: data.jobId.present ? data.jobId.value : this.jobId,
+      requestSummary: data.requestSummary.present
+          ? data.requestSummary.value
+          : this.requestSummary,
+      rawResponse: data.rawResponse.present
+          ? data.rawResponse.value
+          : this.rawResponse,
+      parsedOk: data.parsedOk.present ? data.parsedOk.value : this.parsedOk,
+      tokensOrCost: data.tokensOrCost.present
+          ? data.tokensOrCost.value
+          : this.tokensOrCost,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProcessingResult(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('jobId: $jobId, ')
+          ..write('requestSummary: $requestSummary, ')
+          ..write('rawResponse: $rawResponse, ')
+          ..write('parsedOk: $parsedOk, ')
+          ..write('tokensOrCost: $tokensOrCost')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    jobId,
+    requestSummary,
+    rawResponse,
+    parsedOk,
+    tokensOrCost,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ProcessingResult &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.jobId == this.jobId &&
+          other.requestSummary == this.requestSummary &&
+          other.rawResponse == this.rawResponse &&
+          other.parsedOk == this.parsedOk &&
+          other.tokensOrCost == this.tokensOrCost);
+}
+
+class ProcessingResultsCompanion extends UpdateCompanion<ProcessingResult> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> jobId;
+  final Value<String> requestSummary;
+  final Value<String> rawResponse;
+  final Value<bool> parsedOk;
+  final Value<String?> tokensOrCost;
+  final Value<int> rowid;
+  const ProcessingResultsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.jobId = const Value.absent(),
+    this.requestSummary = const Value.absent(),
+    this.rawResponse = const Value.absent(),
+    this.parsedOk = const Value.absent(),
+    this.tokensOrCost = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ProcessingResultsCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String jobId,
+    required String requestSummary,
+    required String rawResponse,
+    required bool parsedOk,
+    this.tokensOrCost = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       jobId = Value(jobId),
+       requestSummary = Value(requestSummary),
+       rawResponse = Value(rawResponse),
+       parsedOk = Value(parsedOk);
+  static Insertable<ProcessingResult> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? jobId,
+    Expression<String>? requestSummary,
+    Expression<String>? rawResponse,
+    Expression<bool>? parsedOk,
+    Expression<String>? tokensOrCost,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (jobId != null) 'job_id': jobId,
+      if (requestSummary != null) 'request_summary': requestSummary,
+      if (rawResponse != null) 'raw_response': rawResponse,
+      if (parsedOk != null) 'parsed_ok': parsedOk,
+      if (tokensOrCost != null) 'tokens_or_cost': tokensOrCost,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ProcessingResultsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? jobId,
+    Value<String>? requestSummary,
+    Value<String>? rawResponse,
+    Value<bool>? parsedOk,
+    Value<String?>? tokensOrCost,
+    Value<int>? rowid,
+  }) {
+    return ProcessingResultsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      jobId: jobId ?? this.jobId,
+      requestSummary: requestSummary ?? this.requestSummary,
+      rawResponse: rawResponse ?? this.rawResponse,
+      parsedOk: parsedOk ?? this.parsedOk,
+      tokensOrCost: tokensOrCost ?? this.tokensOrCost,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (jobId.present) {
+      map['job_id'] = Variable<String>(jobId.value);
+    }
+    if (requestSummary.present) {
+      map['request_summary'] = Variable<String>(requestSummary.value);
+    }
+    if (rawResponse.present) {
+      map['raw_response'] = Variable<String>(rawResponse.value);
+    }
+    if (parsedOk.present) {
+      map['parsed_ok'] = Variable<bool>(parsedOk.value);
+    }
+    if (tokensOrCost.present) {
+      map['tokens_or_cost'] = Variable<String>(tokensOrCost.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProcessingResultsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('jobId: $jobId, ')
+          ..write('requestSummary: $requestSummary, ')
+          ..write('rawResponse: $rawResponse, ')
+          ..write('parsedOk: $parsedOk, ')
+          ..write('tokensOrCost: $tokensOrCost, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $FieldEvidenceTable extends FieldEvidence
+    with TableInfo<$FieldEvidenceTable, FieldEvidenceRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FieldEvidenceTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _recordFieldIdMeta = const VerificationMeta(
+    'recordFieldId',
+  );
+  @override
+  late final GeneratedColumn<String> recordFieldId = GeneratedColumn<String>(
+    'record_field_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<FieldEvidenceSource, String>
+  sourceType =
+      GeneratedColumn<String>(
+        'source_type',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<FieldEvidenceSource>(
+        $FieldEvidenceTable.$convertersourceType,
+      );
+  static const VerificationMeta _photoIdMeta = const VerificationMeta(
+    'photoId',
+  );
+  @override
+  late final GeneratedColumn<String> photoId = GeneratedColumn<String>(
+    'photo_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _documentIdMeta = const VerificationMeta(
+    'documentId',
+  );
+  @override
+  late final GeneratedColumn<String> documentId = GeneratedColumn<String>(
+    'document_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _pageMeta = const VerificationMeta('page');
+  @override
+  late final GeneratedColumn<int> page = GeneratedColumn<int>(
+    'page',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _regionMeta = const VerificationMeta('region');
+  @override
+  late final GeneratedColumn<String> region = GeneratedColumn<String>(
+    'region',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _snippetMeta = const VerificationMeta(
+    'snippet',
+  );
+  @override
+  late final GeneratedColumn<String> snippet = GeneratedColumn<String>(
+    'snippet',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _confidenceMeta = const VerificationMeta(
+    'confidence',
+  );
+  @override
+  late final GeneratedColumn<double> confidence = GeneratedColumn<double>(
+    'confidence',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    recordFieldId,
+    sourceType,
+    photoId,
+    documentId,
+    page,
+    region,
+    snippet,
+    confidence,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'field_evidence';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<FieldEvidenceRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('record_field_id')) {
+      context.handle(
+        _recordFieldIdMeta,
+        recordFieldId.isAcceptableOrUnknown(
+          data['record_field_id']!,
+          _recordFieldIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_recordFieldIdMeta);
+    }
+    if (data.containsKey('photo_id')) {
+      context.handle(
+        _photoIdMeta,
+        photoId.isAcceptableOrUnknown(data['photo_id']!, _photoIdMeta),
+      );
+    }
+    if (data.containsKey('document_id')) {
+      context.handle(
+        _documentIdMeta,
+        documentId.isAcceptableOrUnknown(data['document_id']!, _documentIdMeta),
+      );
+    }
+    if (data.containsKey('page')) {
+      context.handle(
+        _pageMeta,
+        page.isAcceptableOrUnknown(data['page']!, _pageMeta),
+      );
+    }
+    if (data.containsKey('region')) {
+      context.handle(
+        _regionMeta,
+        region.isAcceptableOrUnknown(data['region']!, _regionMeta),
+      );
+    }
+    if (data.containsKey('snippet')) {
+      context.handle(
+        _snippetMeta,
+        snippet.isAcceptableOrUnknown(data['snippet']!, _snippetMeta),
+      );
+    }
+    if (data.containsKey('confidence')) {
+      context.handle(
+        _confidenceMeta,
+        confidence.isAcceptableOrUnknown(data['confidence']!, _confidenceMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  FieldEvidenceRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FieldEvidenceRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      recordFieldId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}record_field_id'],
+      )!,
+      sourceType: $FieldEvidenceTable.$convertersourceType.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}source_type'],
+        )!,
+      ),
+      photoId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}photo_id'],
+      ),
+      documentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}document_id'],
+      ),
+      page: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}page'],
+      ),
+      region: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}region'],
+      ),
+      snippet: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}snippet'],
+      ),
+      confidence: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}confidence'],
+      ),
+    );
+  }
+
+  @override
+  $FieldEvidenceTable createAlias(String alias) {
+    return $FieldEvidenceTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<FieldEvidenceSource, String, String>
+  $convertersourceType = const EnumNameConverter<FieldEvidenceSource>(
+    FieldEvidenceSource.values,
+  );
+}
+
+class FieldEvidenceRow extends DataClass
+    implements Insertable<FieldEvidenceRow> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Record field this evidence supports.
+  final String recordFieldId;
+
+  /// Photo, document or transcript.
+  final FieldEvidenceSource sourceType;
+
+  /// Photo this region came from, when [sourceType] is photo.
+  final String? photoId;
+
+  /// Document this page came from, when [sourceType] is document.
+  final String? documentId;
+
+  /// Document page number, when known.
+  final int? page;
+
+  /// Bounding box JSON. An object, stored as text.
+  final String? region;
+
+  /// Transcript segment or OCR snippet, stored as data.
+  final String? snippet;
+
+  /// Confidence of the extraction, when the provider reported one.
+  final double? confidence;
+  const FieldEvidenceRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.recordFieldId,
+    required this.sourceType,
+    this.photoId,
+    this.documentId,
+    this.page,
+    this.region,
+    this.snippet,
+    this.confidence,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['record_field_id'] = Variable<String>(recordFieldId);
+    {
+      map['source_type'] = Variable<String>(
+        $FieldEvidenceTable.$convertersourceType.toSql(sourceType),
+      );
+    }
+    if (!nullToAbsent || photoId != null) {
+      map['photo_id'] = Variable<String>(photoId);
+    }
+    if (!nullToAbsent || documentId != null) {
+      map['document_id'] = Variable<String>(documentId);
+    }
+    if (!nullToAbsent || page != null) {
+      map['page'] = Variable<int>(page);
+    }
+    if (!nullToAbsent || region != null) {
+      map['region'] = Variable<String>(region);
+    }
+    if (!nullToAbsent || snippet != null) {
+      map['snippet'] = Variable<String>(snippet);
+    }
+    if (!nullToAbsent || confidence != null) {
+      map['confidence'] = Variable<double>(confidence);
+    }
+    return map;
+  }
+
+  FieldEvidenceCompanion toCompanion(bool nullToAbsent) {
+    return FieldEvidenceCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      recordFieldId: Value(recordFieldId),
+      sourceType: Value(sourceType),
+      photoId: photoId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(photoId),
+      documentId: documentId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(documentId),
+      page: page == null && nullToAbsent ? const Value.absent() : Value(page),
+      region: region == null && nullToAbsent
+          ? const Value.absent()
+          : Value(region),
+      snippet: snippet == null && nullToAbsent
+          ? const Value.absent()
+          : Value(snippet),
+      confidence: confidence == null && nullToAbsent
+          ? const Value.absent()
+          : Value(confidence),
+    );
+  }
+
+  factory FieldEvidenceRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FieldEvidenceRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      recordFieldId: serializer.fromJson<String>(json['recordFieldId']),
+      sourceType: $FieldEvidenceTable.$convertersourceType.fromJson(
+        serializer.fromJson<String>(json['sourceType']),
+      ),
+      photoId: serializer.fromJson<String?>(json['photoId']),
+      documentId: serializer.fromJson<String?>(json['documentId']),
+      page: serializer.fromJson<int?>(json['page']),
+      region: serializer.fromJson<String?>(json['region']),
+      snippet: serializer.fromJson<String?>(json['snippet']),
+      confidence: serializer.fromJson<double?>(json['confidence']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'recordFieldId': serializer.toJson<String>(recordFieldId),
+      'sourceType': serializer.toJson<String>(
+        $FieldEvidenceTable.$convertersourceType.toJson(sourceType),
+      ),
+      'photoId': serializer.toJson<String?>(photoId),
+      'documentId': serializer.toJson<String?>(documentId),
+      'page': serializer.toJson<int?>(page),
+      'region': serializer.toJson<String?>(region),
+      'snippet': serializer.toJson<String?>(snippet),
+      'confidence': serializer.toJson<double?>(confidence),
+    };
+  }
+
+  FieldEvidenceRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? recordFieldId,
+    FieldEvidenceSource? sourceType,
+    Value<String?> photoId = const Value.absent(),
+    Value<String?> documentId = const Value.absent(),
+    Value<int?> page = const Value.absent(),
+    Value<String?> region = const Value.absent(),
+    Value<String?> snippet = const Value.absent(),
+    Value<double?> confidence = const Value.absent(),
+  }) => FieldEvidenceRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    recordFieldId: recordFieldId ?? this.recordFieldId,
+    sourceType: sourceType ?? this.sourceType,
+    photoId: photoId.present ? photoId.value : this.photoId,
+    documentId: documentId.present ? documentId.value : this.documentId,
+    page: page.present ? page.value : this.page,
+    region: region.present ? region.value : this.region,
+    snippet: snippet.present ? snippet.value : this.snippet,
+    confidence: confidence.present ? confidence.value : this.confidence,
+  );
+  FieldEvidenceRow copyWithCompanion(FieldEvidenceCompanion data) {
+    return FieldEvidenceRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      recordFieldId: data.recordFieldId.present
+          ? data.recordFieldId.value
+          : this.recordFieldId,
+      sourceType: data.sourceType.present
+          ? data.sourceType.value
+          : this.sourceType,
+      photoId: data.photoId.present ? data.photoId.value : this.photoId,
+      documentId: data.documentId.present
+          ? data.documentId.value
+          : this.documentId,
+      page: data.page.present ? data.page.value : this.page,
+      region: data.region.present ? data.region.value : this.region,
+      snippet: data.snippet.present ? data.snippet.value : this.snippet,
+      confidence: data.confidence.present
+          ? data.confidence.value
+          : this.confidence,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FieldEvidenceRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('recordFieldId: $recordFieldId, ')
+          ..write('sourceType: $sourceType, ')
+          ..write('photoId: $photoId, ')
+          ..write('documentId: $documentId, ')
+          ..write('page: $page, ')
+          ..write('region: $region, ')
+          ..write('snippet: $snippet, ')
+          ..write('confidence: $confidence')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    recordFieldId,
+    sourceType,
+    photoId,
+    documentId,
+    page,
+    region,
+    snippet,
+    confidence,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FieldEvidenceRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.recordFieldId == this.recordFieldId &&
+          other.sourceType == this.sourceType &&
+          other.photoId == this.photoId &&
+          other.documentId == this.documentId &&
+          other.page == this.page &&
+          other.region == this.region &&
+          other.snippet == this.snippet &&
+          other.confidence == this.confidence);
+}
+
+class FieldEvidenceCompanion extends UpdateCompanion<FieldEvidenceRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> recordFieldId;
+  final Value<FieldEvidenceSource> sourceType;
+  final Value<String?> photoId;
+  final Value<String?> documentId;
+  final Value<int?> page;
+  final Value<String?> region;
+  final Value<String?> snippet;
+  final Value<double?> confidence;
+  final Value<int> rowid;
+  const FieldEvidenceCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.recordFieldId = const Value.absent(),
+    this.sourceType = const Value.absent(),
+    this.photoId = const Value.absent(),
+    this.documentId = const Value.absent(),
+    this.page = const Value.absent(),
+    this.region = const Value.absent(),
+    this.snippet = const Value.absent(),
+    this.confidence = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FieldEvidenceCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String recordFieldId,
+    required FieldEvidenceSource sourceType,
+    this.photoId = const Value.absent(),
+    this.documentId = const Value.absent(),
+    this.page = const Value.absent(),
+    this.region = const Value.absent(),
+    this.snippet = const Value.absent(),
+    this.confidence = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       recordFieldId = Value(recordFieldId),
+       sourceType = Value(sourceType);
+  static Insertable<FieldEvidenceRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? recordFieldId,
+    Expression<String>? sourceType,
+    Expression<String>? photoId,
+    Expression<String>? documentId,
+    Expression<int>? page,
+    Expression<String>? region,
+    Expression<String>? snippet,
+    Expression<double>? confidence,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (recordFieldId != null) 'record_field_id': recordFieldId,
+      if (sourceType != null) 'source_type': sourceType,
+      if (photoId != null) 'photo_id': photoId,
+      if (documentId != null) 'document_id': documentId,
+      if (page != null) 'page': page,
+      if (region != null) 'region': region,
+      if (snippet != null) 'snippet': snippet,
+      if (confidence != null) 'confidence': confidence,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FieldEvidenceCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? recordFieldId,
+    Value<FieldEvidenceSource>? sourceType,
+    Value<String?>? photoId,
+    Value<String?>? documentId,
+    Value<int?>? page,
+    Value<String?>? region,
+    Value<String?>? snippet,
+    Value<double?>? confidence,
+    Value<int>? rowid,
+  }) {
+    return FieldEvidenceCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      recordFieldId: recordFieldId ?? this.recordFieldId,
+      sourceType: sourceType ?? this.sourceType,
+      photoId: photoId ?? this.photoId,
+      documentId: documentId ?? this.documentId,
+      page: page ?? this.page,
+      region: region ?? this.region,
+      snippet: snippet ?? this.snippet,
+      confidence: confidence ?? this.confidence,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (recordFieldId.present) {
+      map['record_field_id'] = Variable<String>(recordFieldId.value);
+    }
+    if (sourceType.present) {
+      map['source_type'] = Variable<String>(
+        $FieldEvidenceTable.$convertersourceType.toSql(sourceType.value),
+      );
+    }
+    if (photoId.present) {
+      map['photo_id'] = Variable<String>(photoId.value);
+    }
+    if (documentId.present) {
+      map['document_id'] = Variable<String>(documentId.value);
+    }
+    if (page.present) {
+      map['page'] = Variable<int>(page.value);
+    }
+    if (region.present) {
+      map['region'] = Variable<String>(region.value);
+    }
+    if (snippet.present) {
+      map['snippet'] = Variable<String>(snippet.value);
+    }
+    if (confidence.present) {
+      map['confidence'] = Variable<double>(confidence.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FieldEvidenceCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('recordFieldId: $recordFieldId, ')
+          ..write('sourceType: $sourceType, ')
+          ..write('photoId: $photoId, ')
+          ..write('documentId: $documentId, ')
+          ..write('page: $page, ')
+          ..write('region: $region, ')
+          ..write('snippet: $snippet, ')
+          ..write('confidence: $confidence, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   late final $TombstonesTable tombstones = $TombstonesTable(this);
@@ -13381,6 +15708,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $CaptionsTable captions = $CaptionsTable(this);
   late final $ReferenceTable reference = $ReferenceTable(this);
   late final $ReferenceRowsTable referenceRows = $ReferenceRowsTable(this);
+  late final $ProcessingTable processing = $ProcessingTable(this);
+  late final $ProcessingResultsTable processingResults =
+      $ProcessingResultsTable(this);
+  late final $FieldEvidenceTable fieldEvidence = $FieldEvidenceTable(this);
   late final Index auditLogHistory = Index(
     'audit_log_history',
     'CREATE INDEX audit_log_history ON audit_log (entity_type, entity_id, at)',
@@ -13425,6 +15756,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'reference_rows_by_normalised',
     'CREATE INDEX reference_rows_by_normalised ON reference_rows (dataset_id, key_normalised)',
   );
+  late final Index processingJobsByStatus = Index(
+    'processing_jobs_by_status',
+    'CREATE INDEX processing_jobs_by_status ON processing_jobs (status, queued_at)',
+  );
+  late final Index fieldEvidenceByField = Index(
+    'field_evidence_by_field',
+    'CREATE INDEX field_evidence_by_field ON field_evidence (record_field_id)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -13447,6 +15786,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     captions,
     reference,
     referenceRows,
+    processing,
+    processingResults,
+    fieldEvidence,
     auditLogHistory,
     projectsByStatus,
     templateRowsByIdentifier,
@@ -13458,5 +15800,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     captionsByOwner,
     referenceRowsByKey,
     referenceRowsByNormalised,
+    processingJobsByStatus,
+    fieldEvidenceByField,
   ];
 }

@@ -229,6 +229,24 @@ String? _auditNew(RecordField value, Map<String, Expression<Object>> columns) {
   return value.valueRaw;
 }
 
+/// Marks a field deleted without removing the row, so evidence can still
+/// point at it.
+Future<Result<void>> softDeleteRecordField(
+  GeneratedDatabase db, {
+  required String id,
+  required String reason,
+  required Clock clock,
+  required String deviceId,
+  required IdService ids,
+}) {
+  return _RecordFieldsDao(
+    db as AppDatabase,
+    clock: clock,
+    deviceId: deviceId,
+    ids: ids,
+  ).softDelete(id, reason: reason);
+}
+
 final class _RecordFieldsDao extends BaseDao<RecordFields, RecordField> {
   _RecordFieldsDao(
     AppDatabase super.db, {

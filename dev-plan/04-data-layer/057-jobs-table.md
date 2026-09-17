@@ -31,10 +31,10 @@ rows that tie every extracted value back to the photo region, document page or t
 
 ## Definition of done
 
-- [ ] Claiming the next queued job is served by the status index and cannot hand the same job to two workers.
-- [ ] A retried job increments `attempts` and keeps every earlier result row.
-- [ ] Any final value can be traced to its evidence row and from there to a photo region, document page or transcript
+- [x] Claiming the next queued job is served by the status index and cannot hand the same job to two workers.
+- [x] A retried job increments `attempts` and keeps every earlier result row.
+- [x] Any final value can be traced to its evidence row and from there to a photo region, document page or transcript
       segment.
-- [ ] Tests: `frontend/test/core/db/tables/processing_test.dart` covers queue ordering, retry accounting and result
+- [x] Tests: `frontend/test/core/db/tables/processing_test.dart` covers queue ordering, retry accounting and result
       immutability; `field_evidence_test.dart` asserts the three source types resolve and that deleting a record field
       leaves a tombstone rather than an orphan. Both against an in-memory database, covering their migration steps.

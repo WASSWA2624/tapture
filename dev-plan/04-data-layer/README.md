@@ -12,7 +12,7 @@ Tasks 049–064 (16). Each file is a standalone implementation prompt.
 - [x] [054 — Records and record fields tables](054-records-table.md)
 - [x] [055 — Photos, attachments and captions tables](055-photos-table.md)
 - [x] [056 — Reference dataset tables](056-reference-tables.md)
-- [ ] [057 — Processing jobs, results and field evidence tables](057-jobs-table.md)
+- [x] [057 — Processing jobs, results and field evidence tables](057-jobs-table.md)
 - [ ] [058 — Duplicates and variances tables](058-duplicates-table.md)
 - [ ] [059 — Meeting tables](059-meetings-tables.md)
 - [ ] [060 — Exports table](060-exports-table.md)
