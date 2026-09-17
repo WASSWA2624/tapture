@@ -4,6 +4,8 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 
+import 'app_database.dart';
+import 'tables/tombstones.dart';
 import 'transactions.dart';
 
 /// Typed reads, watched lists and [Result] writes every table DAO extends.
@@ -70,7 +72,9 @@ abstract class BaseDao<T extends Table, R> {
     });
   }
 
-  /// Hook task 051 fills with `writeTombstone`. The base never hard-deletes.
+  /// Writes a tombstone for [id] in the same transaction as the caller.
+  ///
+  /// The entity row is left in place; this never issues a SQL DELETE.
   Future<void> recordTombstone({
     required String id,
     required String reason,
@@ -87,6 +91,18 @@ abstract class BaseDao<T extends Table, R> {
         recoveryAction: 'Say why this row should be removed, then try again.',
       );
     }
+    final GeneratedDatabase database = db;
+    if (database is! AppDatabase) {
+      return;
+    }
+    await writeTombstone(
+      database,
+      entityType: table.actualTableName,
+      entityId: id,
+      reason: reason,
+      clock: clock,
+      deviceId: deviceId,
+    );
   }
 
   Future<R> _upsert(Insertable<R> row) async {

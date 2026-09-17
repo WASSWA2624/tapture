@@ -56,10 +56,10 @@ Future<void> appendAudit(
 
 ## Definition of done
 
-- [ ] Deleting any entity produces exactly one tombstone, in the same transaction, and no hard delete anywhere.
-- [ ] Every value change writes exactly one audit row carrying both previous and new value.
-- [ ] The device profile row exists after first launch and a second launch does not duplicate it.
-- [ ] Tests: `frontend/test/core/db/tables/tombstones_test.dart` asserts delete-plus-tombstone atomicity and that a
+- [x] Deleting any entity produces exactly one tombstone, in the same transaction, and no hard delete anywhere.
+- [x] Every value change writes exactly one audit row carrying both previous and new value.
+- [x] The device profile row exists after first launch and a second launch does not duplicate it.
+- [x] Tests: `frontend/test/core/db/tables/tombstones_test.dart` asserts delete-plus-tombstone atomicity and that a
       failed delete writes neither; `audit_log_test.dart` asserts an update records previous and new values;
       `device_profile_test.dart` asserts idempotent first-launch creation. All against an in-memory database, each
       covering its table's migration step.
