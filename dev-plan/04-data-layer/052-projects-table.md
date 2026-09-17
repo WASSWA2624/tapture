@@ -30,9 +30,9 @@ it: the per-project level definitions, the values currently pinned, and saved pr
 
 ## Definition of done
 
-- [ ] A project can be created, listed by status and updated, with the list query served by the index.
-- [ ] Setting a higher context level clears every lower level, and no orphan state row survives.
-- [ ] Malformed settings JSON is refused on write with a recoverable failure, never stored.
-- [ ] Tests: `frontend/test/core/db/tables/projects_test.dart` covers create, paged list by status and update;
+- [x] A project can be created, listed by status and updated, with the list query served by the index.
+- [x] Setting a higher context level clears every lower level, and no orphan state row survives.
+- [x] Malformed settings JSON is refused on write with a recoverable failure, never stored.
+- [x] Tests: `frontend/test/core/db/tables/projects_test.dart` covers create, paged list by status and update;
       `context_test.dart` asserts the clear-lower-levels rule and preset round-trip. Both against an in-memory
       database, covering their migration steps.

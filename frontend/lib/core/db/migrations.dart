@@ -15,7 +15,11 @@ typedef Migrations = MigrationStrategy;
 /// function and bump [kSchemaVersion]; they never edit earlier steps, and they
 /// never back-fill `id`, `createdAt`, `updatedAt`, `updatedByDevice` or `rev`.
 final Map<int, Future<void> Function(Migrator migrator, AppDatabase db)>
-kUpgradeSteps = <int, _UpgradeStep>{1: migrateToV1, 2: migrateToV2};
+kUpgradeSteps = <int, _UpgradeStep>{
+  1: migrateToV1,
+  2: migrateToV2,
+  3: migrateToV3,
+};
 
 /// Versions that drop or rewrite a column and must not run without an export.
 const Set<int> kDestructiveSteps = <int>{};
@@ -60,6 +64,15 @@ Future<void> migrateToV2(Migrator migrator, AppDatabase db) async {
   await migrator.createTable(db.auditLog);
   await migrator.createTable(db.deviceProfile);
   await migrator.createIndex(db.auditLogHistory);
+}
+
+/// Schema version 3: projects and the context hierarchy that hangs off them.
+Future<void> migrateToV3(Migrator migrator, AppDatabase db) async {
+  await migrator.createTable(db.projects);
+  await migrator.createTable(db.context);
+  await migrator.createTable(db.contextState);
+  await migrator.createTable(db.contextPresets);
+  await migrator.createIndex(db.projectsByStatus);
 }
 
 /// Runs the named step for [version], after the destructive-migration gate.
