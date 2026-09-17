@@ -37,6 +37,8 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
 
   return ThemeData(
     useMaterial3: true,
+    fontFamily: AppText.themeFamily,
+    fontFamilyFallback: AppText.fontFallback,
     colorScheme: scheme,
     textTheme: textTheme,
     primaryTextTheme: textTheme,
@@ -207,7 +209,7 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
       shadowColor: const Color(0x00000000),
       surfaceTintColor: colors.surface,
       height: Sizes.minTapTarget + Space.x4,
-      indicatorColor: colors.surfaceVariant,
+      indicatorColor: const Color(0x00000000),
       indicatorShape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Radii.lg),
       ),
@@ -231,11 +233,11 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
       }),
     ),
     navigationRailTheme: NavigationRailThemeData(
-      backgroundColor: colors.surface,
+      backgroundColor: colors.surfaceVariant,
       elevation: 0,
-      minWidth: Sizes.minTapTarget + Space.x4,
+      minWidth: Sizes.minTapTarget + Space.x6,
       useIndicator: true,
-      indicatorColor: colors.surfaceVariant,
+      indicatorColor: const Color(0x00000000),
       selectedLabelTextStyle: AppText.caption.copyWith(color: colors.primary),
       unselectedLabelTextStyle: AppText.caption.copyWith(
         color: colors.onSurface,

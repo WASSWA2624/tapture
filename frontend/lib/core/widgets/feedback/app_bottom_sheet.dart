@@ -75,12 +75,15 @@ class AppBottomSheet extends StatelessWidget {
                     final double width = constraints.maxWidth < _readableWidth
                         ? constraints.maxWidth
                         : _readableWidth;
-                    return Align(
-                      alignment: Alignment.topCenter,
-                      child: SizedBox(
-                        width: width,
-                        height: constraints.maxHeight,
-                        child: child,
+                    return SizedBox(
+                      width: width,
+                      height: constraints.maxHeight,
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: DefaultTextStyle(
+                          style: AppText.body.copyWith(color: colors.onSurface),
+                          child: child,
+                        ),
                       ),
                     );
                   },

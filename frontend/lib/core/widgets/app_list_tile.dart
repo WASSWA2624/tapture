@@ -56,11 +56,13 @@ class AppListTile extends StatelessWidget {
     final bool interactive = onTap != null || onLongPress != null;
     final Color foreground = colors.onSurface;
     final Widget content = ConstrainedBox(
-      constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
+      constraints: BoxConstraints(
+        minHeight: dense ? Sizes.minTapTarget : Sizes.minTapTarget + Space.x6,
+      ),
       child: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: Space.x4,
-          vertical: dense ? Space.x1 : Space.x2,
+          vertical: dense ? Space.x1 : Space.x3,
         ),
         child: Row(
           children: <Widget>[

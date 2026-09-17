@@ -152,11 +152,11 @@ class _DetailSkeleton extends StatelessWidget {
 
 Widget _listRow(AppColors colors) {
   return ConstrainedBox(
-    constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
+    constraints: const BoxConstraints(minHeight: Sizes.minTapTarget + Space.x6),
     child: Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: Space.x4,
-        vertical: Space.x2,
+        vertical: Space.x3,
       ),
       child: Row(
         children: <Widget>[

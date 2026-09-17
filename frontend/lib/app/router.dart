@@ -3,10 +3,15 @@ import 'package:flutter/material.dart' hide Router;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/nav_shell.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_search_field.dart';
+import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
+import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/onboarding/onboarding.dart';
@@ -222,19 +227,49 @@ class _RoutePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String title = _titleFor(name);
+    final bool settings = name == 'more';
+    final bool listLike = _isListRoute(name);
+    final bool showSearch = listLike && context.sizeClass != SizeClass.expanded;
     return AppPage(
       key: ValueKey<String>('route-$name'),
       title: title,
       showAppBar: false,
+      inset: !listLike && !settings,
       body: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          AppEmptyState(
-            icon: _iconFor(name),
-            headline: Copy.emptyHeadline,
-            message: Copy.emptyMessage,
-          ),
+          if (settings) ...<Widget>[
+            const AppSectionHeader(title: Copy.navMore),
+            AppListTile(
+              title: Copy.navTemplates,
+              leading: const Icon(Icons.article_outlined),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.go(AppRoutes.templates),
+            ),
+            AppListTile(
+              title: Copy.navQueue,
+              leading: const Icon(Icons.pending_outlined),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.go(AppRoutes.queue),
+            ),
+          ],
+          if (showSearch)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                Space.x3,
+                Space.x1,
+                Space.x3,
+                Space.x2,
+              ),
+              child: AppSearchField(hint: Copy.search, onChanged: (_) {}),
+            ),
+          if (!settings)
+            AppEmptyState(
+              icon: _iconFor(name),
+              headline: Copy.emptyHeadline,
+              message: Copy.emptyMessage,
+            ),
           SizedBox(
             width: 0,
             height: 0,
@@ -260,14 +295,23 @@ String _titleFor(String name) {
 
 IconData _iconFor(String name) {
   return switch (name) {
-    'projects' || 'project' => Icons.work_outline,
+    'projects' || 'project' => Icons.chat_bubble_outline,
     'capture' => Icons.photo_camera_outlined,
-    'records' || 'record' => Icons.list_alt_outlined,
-    'more' => Icons.more_horiz,
+    'records' || 'record' => Icons.forum_outlined,
+    'more' => Icons.settings_outlined,
     'templates' => Icons.article_outlined,
     'queue' => Icons.pending_outlined,
     _ => Icons.inbox_outlined,
   };
+}
+
+bool _isListRoute(String name) {
+  return name == 'projects' ||
+      name == 'project' ||
+      name == 'records' ||
+      name == 'record' ||
+      name == 'templates' ||
+      name == 'queue';
 }
 
 const String _projectScopedKey = 'projectScoped';

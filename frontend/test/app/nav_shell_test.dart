@@ -60,7 +60,8 @@ void main() {
     expect(find.byKey(const ValueKey<String>('nav-rail')), findsOneWidget);
     expect(find.byKey(const ValueKey<String>('nav-pane')), findsNothing);
     expect(find.text(Copy.navMore), findsWidgets);
-    expect(find.text(Copy.emptyHeadline), findsOneWidget);
+    expect(find.text(Copy.navTemplates), findsOneWidget);
+    expect(find.text(Copy.navQueue), findsOneWidget);
   });
 
   testWidgets('Capture is the dominant destination at 400, 800 and 1200dp', (

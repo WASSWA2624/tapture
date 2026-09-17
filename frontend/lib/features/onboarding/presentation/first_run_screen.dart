@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/files/files.dart';
@@ -82,20 +84,15 @@ class _FirstRunScreenState extends ConsumerState<FirstRunScreen> {
         );
       },
     );
+    const Widget welcome = Column(
+      children: <Widget>[
+        SizedBox(height: Space.x4),
+        AppBrandLockup(),
+        SizedBox(height: Space.x6),
+      ],
+    );
     return ResponsiveBuilder(
       compact: (BuildContext _) {
-        return AppPage(
-          title: Copy.firstRunTitle,
-          subtitle: Copy.firstRunSubtitle,
-          leading: AppBrandLockup(
-            showName: false,
-            inverted: Theme.of(context).brightness != Brightness.dark,
-          ),
-          body: field,
-          footer: actions,
-        );
-      },
-      medium: (BuildContext _) {
         return AppPage(
           title: Copy.firstRunTitle,
           subtitle: Copy.firstRunSubtitle,
@@ -106,11 +103,38 @@ class _FirstRunScreenState extends ConsumerState<FirstRunScreen> {
           body: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              field,
-              const SizedBox(height: Space.x6),
-              actions,
-            ],
+            children: <Widget>[welcome, field],
+          ),
+          footer: actions,
+        );
+      },
+      medium: (BuildContext _) {
+        final ThemeData theme = Theme.of(context);
+        final AppColors colors = context.colors;
+        return Theme(
+          data: theme.copyWith(
+            appBarTheme: theme.appBarTheme.copyWith(
+              backgroundColor: colors.surface,
+              foregroundColor: colors.onSurface,
+              surfaceTintColor: colors.surface,
+              titleTextStyle: AppText.title.copyWith(color: colors.onSurface),
+              iconTheme: IconThemeData(color: colors.onSurface, size: Space.x6),
+            ),
+          ),
+          child: AppPage(
+            title: Copy.firstRunTitle,
+            subtitle: Copy.firstRunSubtitle,
+            leading: const AppBrandLockup(showName: false),
+            body: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                welcome,
+                field,
+                const SizedBox(height: Space.x6),
+                actions,
+              ],
+            ),
           ),
         );
       },

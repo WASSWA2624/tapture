@@ -21,6 +21,7 @@ class AppPage extends StatelessWidget {
     this.footer,
     this.onRefresh,
     this.showAppBar = true,
+    this.inset = true,
     this.leading,
   });
 
@@ -52,9 +53,12 @@ class AppPage extends StatelessWidget {
   /// When false, the page sits under shell chrome that already has a header.
   final bool showAppBar;
 
+  /// When false, list-style pages bleed to the edges like a chat list.
+  final bool inset;
+
   @override
   Widget build(BuildContext context) {
-    final EdgeInsets padding = _paddingFor(context);
+    final EdgeInsets padding = _paddingFor(context, inset: inset);
     Widget scroller = SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -116,7 +120,10 @@ class AppPage extends StatelessWidget {
   }
 }
 
-EdgeInsets _paddingFor(BuildContext context) {
+EdgeInsets _paddingFor(BuildContext context, {required bool inset}) {
+  if (!inset) {
+    return const EdgeInsets.symmetric(vertical: Space.x1);
+  }
   final double horizontal = context.responsive(
     compact: Space.x4,
     medium: Space.x4,

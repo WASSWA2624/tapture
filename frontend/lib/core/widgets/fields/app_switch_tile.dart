@@ -66,7 +66,7 @@ class AppSwitchTile extends StatelessWidget {
               onTap: enabled ? _toggle : null,
               child: ConstrainedBox(
                 constraints: const BoxConstraints(
-                  minHeight: Sizes.minTapTarget,
+                  minHeight: Sizes.minTapTarget + Space.x6,
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(

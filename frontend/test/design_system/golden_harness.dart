@@ -107,8 +107,17 @@ ThemeData _themeFor(AppThemeMode mode) {
 }
 
 ThemeData _pinnedTheme(ThemeData theme) {
+  final Color? ink = theme.textTheme.bodyMedium?.color;
   return theme.copyWith(
-    textTheme: theme.textTheme.apply(fontFamily: 'Ahem'),
-    primaryTextTheme: theme.primaryTextTheme.apply(fontFamily: 'Ahem'),
+    textTheme: theme.textTheme.apply(
+      fontFamily: 'Ahem',
+      displayColor: ink,
+      bodyColor: ink,
+    ),
+    primaryTextTheme: theme.primaryTextTheme.apply(
+      fontFamily: 'Ahem',
+      displayColor: ink,
+      bodyColor: ink,
+    ),
   );
 }

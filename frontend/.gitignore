@@ -64,3 +64,10 @@ key.properties
 /samples/
 *.bundle.zip
 *__*__*.zip
+
+# Golden comparison dumps. Baselines stay in goldens/; these are local diffs.
+**/failures/
+**/*_isolatedDiff.png
+**/*_maskedDiff.png
+**/*_masterImage.png
+**/*_testImage.png

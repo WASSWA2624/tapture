@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// The type this file is named for (FE-STR-06). The contract name is
@@ -22,6 +23,26 @@ abstract final class AppText {
     'sans-serif',
   ];
 
+  /// First-choice UI face for the running platform. Goldens pin Ahem on
+  /// [ThemeData] instead of this name.
+  static String get uiFamily {
+    return switch (defaultTargetPlatform) {
+      TargetPlatform.iOS || TargetPlatform.macOS => 'Helvetica Neue',
+      TargetPlatform.windows => 'Segoe UI',
+      TargetPlatform.linux => 'Ubuntu',
+      TargetPlatform.android || TargetPlatform.fuchsia => 'Roboto',
+    };
+  }
+
+  /// [ThemeData.fontFamily] for the running app. Tests keep the engine
+  /// default (Ahem) so contrast and goldens stay machine-stable.
+  static String? get themeFamily {
+    if (const bool.fromEnvironment('FLUTTER_TEST')) {
+      return null;
+    }
+    return uiFamily;
+  }
+
   /// Screen or hero heading.
   static const TextStyle display = TextStyle(
     fontSize: 22,
@@ -42,7 +63,7 @@ abstract final class AppText {
 
   /// Group heading inside a list or form.
   static const TextStyle section = TextStyle(
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1.3,
     letterSpacing: 0,
@@ -51,7 +72,7 @@ abstract final class AppText {
 
   /// Running text and message body.
   static const TextStyle body = TextStyle(
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: FontWeight.w400,
     height: 1.3,
     letterSpacing: 0,
@@ -60,7 +81,7 @@ abstract final class AppText {
 
   /// List-row title and emphasised running text.
   static const TextStyle bodyStrong = TextStyle(
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: FontWeight.w500,
     height: 1.3,
     letterSpacing: 0,

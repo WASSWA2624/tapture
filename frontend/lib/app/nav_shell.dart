@@ -73,7 +73,10 @@ class _Chrome extends StatelessWidget {
                             ? null
                             : BorderDirectional(end: hairline),
                       ),
-                      child: _Rail(shell: shell),
+                      child: _Rail(
+                        shell: shell,
+                        inverted: _darkDesktopRail(context),
+                      ),
                     ),
                   if (showPane)
                     SizedBox(
@@ -102,39 +105,62 @@ class _Bar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NavigationBar(
-      key: const ValueKey<String>('nav-bar'),
-      selectedIndex: shell.currentIndex,
-      onDestinationSelected: shell.goBranch,
-      destinations: <NavigationDestination>[
-        for (int index = 0; index < _destinations.length; index++)
-          NavigationDestination(
-            icon: _NavIcon(index: index, selected: false),
-            selectedIcon: _NavIcon(index: index, selected: true),
-            label: _destinations[index].label,
-          ),
-      ],
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(color: context.colors.outline, width: Space.x0 / 2),
+        ),
+      ),
+      child: NavigationBar(
+        key: const ValueKey<String>('nav-bar'),
+        selectedIndex: shell.currentIndex,
+        onDestinationSelected: shell.goBranch,
+        destinations: <NavigationDestination>[
+          for (int index = 0; index < _destinations.length; index++)
+            NavigationDestination(
+              icon: _NavIcon(index: index, selected: false, inverted: false),
+              selectedIcon: _NavIcon(
+                index: index,
+                selected: true,
+                inverted: false,
+              ),
+              label: _destinations[index].label,
+            ),
+        ],
+      ),
     );
   }
 }
 
 class _Rail extends StatelessWidget {
-  const _Rail({required this.shell});
+  const _Rail({required this.shell, required this.inverted});
 
   final StatefulNavigationShell shell;
+  final bool inverted;
 
   @override
   Widget build(BuildContext context) {
+    final AppColors colors = context.colors;
+    final Color railInk = inverted ? colors.surface : colors.onSurface;
     return NavigationRail(
       key: const ValueKey<String>('nav-rail'),
+      backgroundColor: inverted
+          ? AppColors.dark.surface
+          : colors.surfaceVariant,
       selectedIndex: shell.currentIndex,
       onDestinationSelected: shell.goBranch,
       labelType: NavigationRailLabelType.all,
+      selectedLabelTextStyle: AppText.caption.copyWith(color: colors.primary),
+      unselectedLabelTextStyle: AppText.caption.copyWith(color: railInk),
       destinations: <NavigationRailDestination>[
         for (int index = 0; index < _destinations.length; index++)
           NavigationRailDestination(
-            icon: _NavIcon(index: index, selected: false),
-            selectedIcon: _NavIcon(index: index, selected: true),
+            icon: _NavIcon(index: index, selected: false, inverted: inverted),
+            selectedIcon: _NavIcon(
+              index: index,
+              selected: true,
+              inverted: inverted,
+            ),
             label: Text(_destinations[index].label),
           ),
       ],
@@ -164,7 +190,7 @@ class _Pane extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(
                 Space.x4,
-                Space.x2,
+                Space.x4,
                 Space.x4,
                 Space.x2,
               ),
@@ -204,10 +230,15 @@ class _Pane extends StatelessWidget {
 }
 
 class _NavIcon extends StatelessWidget {
-  const _NavIcon({required this.index, required this.selected});
+  const _NavIcon({
+    required this.index,
+    required this.selected,
+    required this.inverted,
+  });
 
   final int index;
   final bool selected;
+  final bool inverted;
 
   @override
   Widget build(BuildContext context) {
@@ -215,13 +246,14 @@ class _NavIcon extends StatelessWidget {
     final IconData icon = selected
         ? destination.selectedIcon
         : destination.icon;
+    final AppColors colors = context.colors;
     return Icon(
       icon,
       key: ValueKey<String>('nav-icon-$index'),
       size: destination.dominant ? Space.x8 : Space.x6,
       color: destination.dominant || selected
-          ? context.colors.primary
-          : context.colors.onSurface,
+          ? colors.primary
+          : (inverted ? colors.surface : colors.onSurface),
     );
   }
 }
@@ -242,10 +274,19 @@ class _Destination {
   final bool hasList;
 }
 
+bool _darkDesktopRail(BuildContext context) {
+  final AppColors colors = context.colors;
+  final bool outdoor =
+      colors.surface == AppColors.outdoor.surface &&
+      colors.onSurface == AppColors.outdoor.onSurface &&
+      colors.outline == AppColors.outdoor.outline;
+  return Theme.of(context).brightness == Brightness.light && !outdoor;
+}
+
 const List<_Destination> _destinations = <_Destination>[
   _Destination(
-    icon: Icons.work_outline,
-    selectedIcon: Icons.work,
+    icon: Icons.chat_bubble_outline,
+    selectedIcon: Icons.chat_bubble,
     label: Copy.navProjects,
     hasList: true,
   ),
@@ -256,14 +297,14 @@ const List<_Destination> _destinations = <_Destination>[
     dominant: true,
   ),
   _Destination(
-    icon: Icons.list_alt_outlined,
-    selectedIcon: Icons.list_alt,
+    icon: Icons.forum_outlined,
+    selectedIcon: Icons.forum,
     label: Copy.navRecords,
     hasList: true,
   ),
   _Destination(
-    icon: Icons.more_horiz,
-    selectedIcon: Icons.more_horiz,
+    icon: Icons.settings_outlined,
+    selectedIcon: Icons.settings,
     label: Copy.navMore,
   ),
 ];
