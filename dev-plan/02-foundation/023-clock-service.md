@@ -38,7 +38,7 @@ Future<String> deviceId();  Future<DeviceDescriptor> deviceDescriptor();
 
 ## Definition of done
 
-- [ ] A test freezes time with `FixedClock` and asserts a stamped value exactly.
-- [ ] Identifiers generated in order sort in order as strings, and ten thousand contain no duplicate.
-- [ ] The device identifier is identical after a restart and after an app update.
-- [ ] Tests: `frontend/test/core/time/clock_test.dart` covers both clock implementations; `frontend/test/core/ids/uuid_service_test.dart` asserts ordering, uniqueness and format; `frontend/test/core/device/device_identity_test.dart` asserts persistence across two reads and the descriptor fields.
+- [x] A test freezes time with `FixedClock` and asserts a stamped value exactly.
+- [x] Identifiers generated in order sort in order as strings, and ten thousand contain no duplicate.
+- [x] The device identifier is identical after a restart and after an app update.
+- [x] Tests: `frontend/test/core/time/clock_test.dart` covers both clock implementations; `frontend/test/core/ids/uuid_service_test.dart` asserts ordering, uniqueness and format; `frontend/test/core/device/device_identity_test.dart` asserts persistence across two reads and the descriptor fields.

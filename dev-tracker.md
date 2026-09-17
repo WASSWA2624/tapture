@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**22 of 281 tasks complete (7.8%)** · last updated 2026-09-17
+**23 of 281 tasks complete (8.2%)** · last updated 2026-09-17
 
 `███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -9,7 +9,7 @@
 | Phase | Done | Total | Progress |
 | :--- | ---: | ---: | :--- |
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
-| 02 — Foundation services | 4 | 11 | `█████░░░░░░░░░` 36% |
+| 02 — Foundation services | 5 | 11 | `██████░░░░░░░░` 45% |
 | 03 — Design system | 0 | 19 | `░░░░░░░░░░░░░░` 0% |
 | 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **22** | **281** | `█░░░░░░░░░░░░░` 7.8% |
+| **Total** | **23** | **281** | `█░░░░░░░░░░░░░` 8.2% |
 
 ## Completed
 
@@ -58,6 +58,7 @@
 | 020 — Shared constants | 2026-09-17 | `AppConstants` holds page size 50, image long edge 1600, and every later-phase duration, ceiling, threshold and secure-storage key name, grouped by area as const records (`lists`, `images`, `secrets`, …). `test/core/app_constants_test.dart` asserts ranges and unique key names. |
 | 021 — Result type, failure taxonomy and error boundary | 2026-09-17 | Sealed `Failure` (seven variants, each with message and recovery action) and `Result<T>` (`map`/`flatMap`/`fold`/`getOrElse`/`capture`) in `core/errors/` with no Flutter import. `ErrorBoundary` replaces a throwing child with a retry panel. Variants live in `part` files so sealed and one-class-per-file both hold. Guarded by 8 tests. |
 | 022 — Logger, diagnostics export and provider observer | 2026-09-17 | `Logger` with levels, tags, a bounded redacting buffer and rotating-file persist (`persist: true`). `exportLog` writes a dated, device-named file. `AppProviderObserver` logs one error per provider failure and rebuilds above the threshold, installed only in the dev flavour. Guarded by 14 tests. |
+| 023 — Clock, identifiers and device identity | 2026-09-17 | `Clock` (`SystemClock` / `FixedClock`), `IdService` / `UuidV7Service` (time-ordered, sequence fake for tests), and `deviceId` / `deviceDescriptor`. `DateTime.now` is documented as legal only in `SystemClock`. Device id is minted once and read back from memory or a file. Guarded by 10 tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -88,9 +89,11 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 019 | FE-STR-06 wants `app.dart` to declare `App` first; the contract names `TaptureApp`. A `typedef App = TaptureApp` satisfies the checker without a second file. | Open — implemented so both hold; the rule or the contract has to give |
 | 020 | Step 2 asks for nested abstract final classes by area. Dart cannot declare a class inside a class, and a second public class in `app_constants.dart` fails FE-STR-06. Areas are const records on `AppConstants`. | Open — implemented so grouping holds; the step's "class" wording or the language has to give |
 | 020 | Task 013's token suite only allowed `Duration(` in `app/theme/` and `core/widgets/`. Task 020 puts animation and debounce durations in `AppConstants` (FE-CODE-09). `core/constants/` is now an allowed prefix. | Closed by 020 — the suite and FE-CODE-09 now name the same homes |
-| 022 | Export file names include a device id, but device identity is task 023. | Open — filename uses `unknown` until 023 supplies `deviceId()` |
+| 022 | Export file names include a device id, but device identity is task 023. | Closed by 023 — `deviceId()` exists; `Logger` still takes an explicit string until a later wiring task |
 | 022 | Rotating files would delete the oldest slot; `File.delete` is banned outside the purge job (task 018). | Open — slots are overwritten, not removed |
 | 022 | FE-STR-06 wants `provider_observer.dart` to declare `ProviderObserver` first; the contract names `AppProviderObserver`. | Closed by 022 — `typedef ProviderObserver = AppProviderObserver`, same shape as `App` / `TaptureApp` |
+| 023 | `Clock` says `DateTime.now` lives only in `SystemClock`; `Logger` still defaults to `DateTime.now`. | Open — recorded on `Clock`; wiring the logger is a later task |
+| 023 | Device model is `Platform.operatingSystem` because no `device_info` package is on the allowlist. | Open — implemented with dart:io; a later task can approve a plugin |
 
 ## Checklist
 
@@ -119,13 +122,13 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 02 — Foundation services
 
-*4 of 11 complete.*
+*5 of 11 complete.*
 
 - [x] [019 — Application bootstrap, flavours and lifecycle](dev-plan/02-foundation/019-app-bootstrap.md)
 - [x] [020 — Shared constants](dev-plan/02-foundation/020-app-constants.md)
 - [x] [021 — Result type, failure taxonomy and error boundary](dev-plan/02-foundation/021-result-and-failures.md)
 - [x] [022 — Logger, diagnostics export and provider observer](dev-plan/02-foundation/022-logger-service.md)
-- [ ] [023 — Clock, identifiers and device identity](dev-plan/02-foundation/023-clock-service.md)
+- [x] [023 — Clock, identifiers and device identity](dev-plan/02-foundation/023-clock-service.md)
 - [ ] [024 — Hashing service and isolate runner](dev-plan/02-foundation/024-hashing-service.md)
 - [ ] [025 — Connectivity service](dev-plan/02-foundation/025-connectivity-service.md)
 - [ ] [026 — Runtime permissions service](dev-plan/02-foundation/026-permissions-service.md)
