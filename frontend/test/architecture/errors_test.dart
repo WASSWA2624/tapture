@@ -220,7 +220,8 @@ Iterable<_Violation> _repositoryResultViolations(
         kind: 'result',
         message:
             '$path:$line: $name.$methodName returns $returns; a public '
-            'repository method returns Result or Future<Result> (FE-CODE-06)',
+            'repository method returns Result, Future<Result> or Stream '
+            '(FE-CODE-06)',
       );
     }
   }
@@ -286,13 +287,15 @@ bool _isFailure(String name, String? extendsType, String? implementsList) {
       .any((String type) => type == 'Failure' || type.endsWith('Failure'));
 }
 
-/// Whether [type] is `Result`, `Result<…>`, `Future<Result>` or
-/// `Future<Result<…>>`.
+/// Whether [type] is `Result`, `Result<…>`, `Future<Result>`,
+/// `Future<Result<…>>`, or a live `Stream` (FE-STATE-08 watch lists).
 bool _isResultReturn(String type) {
   return type == 'Result' ||
       type.startsWith('Result<') ||
       type == 'Future<Result>' ||
-      type.startsWith('Future<Result<');
+      type.startsWith('Future<Result<') ||
+      type == 'Stream' ||
+      type.startsWith('Stream<');
 }
 
 /// The `{…}` that opens at the class starting at [start].

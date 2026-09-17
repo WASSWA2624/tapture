@@ -29,9 +29,7 @@ final RegExp _rawWrite = RegExp(
 );
 
 /// A hard row delete, not `softDelete` or `writeTombstone`.
-final RegExp _hardDelete = RegExp(
-  r'(?:\.delete\s*\(|\bdeleteWhere\s*\(|\bdelete\s*\(\s*\w)',
-);
+final RegExp _hardDelete = RegExp(r'(?:\.delete\s*\(|\bdeleteWhere\s*\()');
 
 /// A `dart:io` file removal.
 final RegExp _fileDelete = RegExp(

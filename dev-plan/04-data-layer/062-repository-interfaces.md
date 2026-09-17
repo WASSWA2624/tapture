@@ -52,10 +52,10 @@ Future<AppDatabase> seededDatabase({int records = 0});
 
 ## Definition of done
 
-- [ ] Presentation and domain code compiles with the database package absent from their imports.
-- [ ] A valid project, template, record or photo is one line of test setup (FE-TEST-04).
-- [ ] Every declared interface has a fake, and each fake honours the same failure contract as the real one.
-- [ ] Tests: unit tests per `*_repository.dart` exercising each fake with no Flutter binding, plus
+- [x] Presentation and domain code compiles with the database package absent from their imports.
+- [x] A valid project, template, record or photo is one line of test setup (FE-TEST-04).
+- [x] Every declared interface has a fake, and each fake honours the same failure contract as the real one.
+- [x] Tests: unit tests per `*_repository.dart` exercising each fake with no Flutter binding, plus
       `frontend/test/support/factories_test.dart` proving `seededDatabase` yields a graph the record DAO can read.
 
 ## Out of scope
