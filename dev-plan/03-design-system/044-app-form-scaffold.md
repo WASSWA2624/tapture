@@ -42,9 +42,9 @@ class KeepFocusedVisible extends StatelessWidget { final Widget child; }
 
 ## Definition of done
 
-- [ ] Leaving a dirty form always prompts, on every screen that uses `AppForm`.
-- [ ] A long form stays usable on a compact phone with the keyboard open; the focused field is never hidden behind it.
-- [ ] Submitting twice runs `onSubmit` once.
-- [ ] Tests: widget test of the unsaved-changes guard; widget test that focus advances in visual order and the focused
+- [x] Leaving a dirty form always prompts, on every screen that uses `AppForm`.
+- [x] A long form stays usable on a compact phone with the keyboard open; the focused field is never hidden behind it.
+- [x] Submitting twice runs `onSubmit` once.
+- [x] Tests: widget test of the unsaved-changes guard; widget test that focus advances in visual order and the focused
       field stays visible under a simulated keyboard inset; goldens of the form with and without the error summary in
       light, dark and outdoor.
