@@ -48,8 +48,8 @@ class AppPrimaryAction extends StatelessWidget {
 
 ## Definition of done
 
-- [ ] No feature constructs an `ElevatedButton`, `TextButton`, `OutlinedButton` or `IconButton` directly.
-- [ ] A busy button ignores taps; an icon button without a semantic label fails to compile.
-- [ ] Capture and review use the identical primary action control.
-- [ ] Tests: goldens per variant and state in light, dark and outdoor; widget test that a busy button swallows taps;
+- [x] No feature constructs an `ElevatedButton`, `TextButton`, `OutlinedButton` or `IconButton` directly.
+- [x] A busy button ignores taps; an icon button without a semantic label fails to compile.
+- [x] Capture and review use the identical primary action control.
+- [x] Tests: goldens per variant and state in light, dark and outdoor; widget test that a busy button swallows taps;
       widget test asserting all three controls satisfy the 48dp accessibility matcher.
