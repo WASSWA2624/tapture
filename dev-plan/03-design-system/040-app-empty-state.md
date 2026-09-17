@@ -50,10 +50,10 @@ class AsyncValueView<T> extends StatelessWidget {
 
 ## Definition of done
 
-- [ ] Every list screen shows a helpful empty state rather than blank space, and no screen shows a raw exception string.
-- [ ] Screens do not jump when data arrives, because the skeleton occupies the same space as the content.
-- [ ] Feature screens contain no manual async state switching.
-- [ ] Tests: widget test per `Failure` subtype asserting its message and that retry fires; widget test of
+- [x] Every list screen shows a helpful empty state rather than blank space, and no screen shows a raw exception string.
+- [x] Screens do not jump when data arrives, because the skeleton occupies the same space as the content.
+- [x] Feature screens contain no manual async state switching.
+- [x] Tests: widget test per `Failure` subtype asserting its message and that retry fires; widget test of
       `AsyncValueView` across loading, error, empty and data; goldens of all four in light, dark and outdoor.
 
 ## Out of scope

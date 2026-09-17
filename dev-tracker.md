@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**39 of 281 tasks complete (13.9%)** · last updated 2026-09-17
+**40 of 281 tasks complete (14.2%)** · last updated 2026-09-17
 
 `██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -10,7 +10,7 @@
 | :--- | ---: | ---: | :--- |
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
 | 02 — Foundation services | 11 | 11 | `██████████████` 100% |
-| 03 — Design system | 10 | 19 | `███████░░░░░░░` 53% |
+| 03 — Design system | 11 | 19 | `████████░░░░░░` 58% |
 | 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **39** | **281** | `██░░░░░░░░░░░░` 13.9% |
+| **Total** | **40** | **281** | `██░░░░░░░░░░░░` 14.2% |
 
 ## Completed
 
@@ -75,6 +75,7 @@
 | 037 — Chip and chip row | 2026-09-17 | `AppChip` is plain, selectable (tick plus tint) and dismissible from one widget; a chip with no callback is not a tap target. `AppChipRow` wraps or scrolls without clipping a label. Multi-choice now composes these. Guarded by tap/dismiss, wrap versus scroll, 200 percent ellipsis, and 3 goldens. |
 | 038 — Card, list tile and section header | 2026-09-17 | `AppCard` takes surface treatment from `Elevation.surface` and is tappable only with `onTap`. `AppListTile` is the one row for projects, records, templates and datasets — dense or comfortable, selected with a tick, status slot, trailing, tap opens and long-press selects. `AppSectionHeader` uses the section type role. Guarded by tap/long-press, selection+status not colour alone, 200 percent, and 9 goldens. |
 | 039 — Status pill and badge | 2026-09-17 | `AppStatusPill` and `StatusStyle.of` map every `RecordStatus` to colour, icon and label; `.badge` fits list rows. Screens cannot map status to colour themselves. Guarded by an exhaustive style test, icon-and-label widget tests, 200 percent, and 3 goldens of every status. |
+| 040 — Empty, error, loading and async value view | 2026-09-17 | `AppEmptyState`, `AppErrorState`, `AppSkeleton` and `AsyncValueView` are the four non-data states. Failures render from a typed `Failure`; screens hand the provider to `AsyncValueView` and write no switch of their own. Guarded by a widget test per failure subtype, loading/error/empty/data, 200 percent, and 3 goldens. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -144,6 +145,10 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 039 | FE-STR-06 wants one public class; the contract publishes `StatusStyle` too. | Closed by 039 — `StatusStyle` lives in a part file |
 | 039 | `StatusStyle.of` needs colours, and `RecordStatus` is named by task 162. | Open — `of` takes `AppColors` as well as the enum; the enum lives here so core does not import features. 162 should reuse it, not redeclare it, and may need a Dart-only home so domain stays Flutter-free |
 | 039 | Status labels are still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
+| 040 | The file is `app_loading_state.dart`; the contract names `AppSkeleton`. | Closed by 040 — `AppLoadingState` is a typedef for `AppSkeleton`, matching the file name (FE-STR-06) |
+| 040 | `AsyncValueView` needs a skeleton shape while loading. | Open — extra `loadingShape` / `loadingCount` so the placeholder occupies the same space as the content |
+| 040 | Empty, error and retry copy is still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
+| 040 | Offline as a fourth visual state is a persistent banner. | Open — task 041 owns the banner; `NetworkFailure` already renders through `AppErrorState` |
 
 ## Checklist
 
@@ -188,7 +193,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 03 — Design system
 
-*10 of 19 complete.*
+*11 of 19 complete.*
 
 - [x] [030 — Design tokens: colour, type, spacing and elevation](dev-plan/03-design-system/030-color-tokens.md)
 - [x] [031 — Material 3 themes and the theme mode controller](dev-plan/03-design-system/031-theme-assembly.md)
@@ -200,7 +205,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [037 — Chip and chip row](dev-plan/03-design-system/037-app-chip.md)
 - [x] [038 — Card, list tile and section header](dev-plan/03-design-system/038-app-card.md)
 - [x] [039 — Status pill and badge](dev-plan/03-design-system/039-app-status-pill.md)
-- [ ] [040 — Empty, error and loading states, and the async value view](dev-plan/03-design-system/040-app-empty-state.md)
+- [x] [040 — Empty, error and loading states, and the async value view](dev-plan/03-design-system/040-app-empty-state.md)
 - [ ] [041 — Dialog, sheet, snackbar and banner services](dev-plan/03-design-system/041-app-dialog-service.md)
 - [ ] [042 — Step progress list](dev-plan/03-design-system/042-app-progress-steps.md)
 - [ ] [043 — Photo thumbnail](dev-plan/03-design-system/043-app-photo-thumb.md)

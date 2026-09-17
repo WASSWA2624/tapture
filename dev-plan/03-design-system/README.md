@@ -14,7 +14,7 @@ Tasks 030–048 (19). Each file is a standalone implementation prompt.
 - [x] [037 — Chip and chip row](037-app-chip.md)
 - [x] [038 — Card, list tile and section header](038-app-card.md)
 - [x] [039 — Status pill and badge](039-app-status-pill.md)
-- [ ] [040 — Empty, error and loading states, and the async value view](040-app-empty-state.md)
+- [x] [040 — Empty, error and loading states, and the async value view](040-app-empty-state.md)
 - [ ] [041 — Dialog, sheet, snackbar and banner services](041-app-dialog-service.md)
 - [ ] [042 — Step progress list](042-app-progress-steps.md)
 - [ ] [043 — Photo thumbnail](043-app-photo-thumb.md)
