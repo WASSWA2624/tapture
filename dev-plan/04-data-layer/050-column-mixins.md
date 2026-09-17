@@ -53,11 +53,11 @@ Future<Result<T>> runInTransaction<T>(AppDatabase db, Future<T> Function() body)
 
 ## Definition of done
 
-- [ ] No table declares `id`, `createdAt`, `updatedAt`, `updatedByDevice` or `rev` by hand.
-- [ ] Every update through the base DAO increments `rev` and advances `updatedAt`; a write that skips the helper is
+- [x] No table declares `id`, `createdAt`, `updatedAt`, `updatedByDevice` or `rev` by hand.
+- [x] Every update through the base DAO increments `rev` and advances `updatedAt`; a write that skips the helper is
       visible as an unchanged `rev`.
-- [ ] A failure part-way through a multi-table write leaves no partial rows, whether the call opened the transaction or
+- [x] A failure part-way through a multi-table write leaves no partial rows, whether the call opened the transaction or
       joined one.
-- [ ] Tests: `frontend/test/core/db/columns_test.dart` asserts the rev-and-timestamp bump on repeated writes;
+- [x] Tests: `frontend/test/core/db/columns_test.dart` asserts the rev-and-timestamp bump on repeated writes;
       `base_dao_test.dart` covers watch, get, upsert, paging and failure mapping against an in-memory database;
       `transactions_test.dart` asserts full rollback on a mid-transaction throw and on a nested call.
