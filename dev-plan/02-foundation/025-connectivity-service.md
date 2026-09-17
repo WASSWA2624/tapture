@@ -29,6 +29,6 @@ enum NetworkState { online, metered, offline }  Stream<NetworkState> watch();
 
 ## Definition of done
 
-- [ ] Enabling the manual override reports offline regardless of the radio state.
-- [ ] `metered` is distinguished from `online`, so later tasks can defer an upload without inventing their own check.
-- [ ] Tests: `frontend/test/core/network/connectivity_service_test.dart` uses a fake source and asserts the override wins from every radio state.
+- [x] Enabling the manual override reports offline regardless of the radio state.
+- [x] `metered` is distinguished from `online`, so later tasks can defer an upload without inventing their own check.
+- [x] Tests: `frontend/test/core/network/connectivity_service_test.dart` uses a fake source and asserts the override wins from every radio state.

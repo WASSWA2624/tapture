@@ -8,6 +8,7 @@ environment:
   sdk: ^3.12.2
 
 dependencies:
+  connectivity_plus: ^7.3.1
   crypto: ^3.0.7
   flutter:
     sdk: flutter
