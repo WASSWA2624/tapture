@@ -29,6 +29,6 @@ abstract final class AppConstants { static const listPageSize = 50; static const
 
 ## Definition of done
 
-- [ ] Every value later phases need — page size, image long edge and quality, retention days, confidence thresholds, secure-storage key names, animation durations, debounce interval — resolves here.
-- [ ] Grouping is by area, so a caller reaches a value through one nested class rather than a flat namespace.
-- [ ] Tests: `frontend/test/core/app_constants_test.dart` asserts each value sits in a sane range and that no two storage key names collide.
+- [x] Every value later phases need — page size, image long edge and quality, retention days, confidence thresholds, secure-storage key names, animation durations, debounce interval — resolves here.
+- [x] Grouping is by area, so a caller reaches a value through one nested class rather than a flat namespace.
+- [x] Tests: `frontend/test/core/app_constants_test.dart` asserts each value sits in a sane range and that no two storage key names collide.

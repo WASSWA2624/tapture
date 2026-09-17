@@ -15,8 +15,13 @@ final Directory _forbidden = Directory(
   'test/architecture/fixtures/tokens/forbidden/lib',
 );
 
-/// Paths, relative to a lib root, that may contain token literals (FE-THEME-01).
-const List<String> _allowedPrefixes = <String>['app/theme/', 'core/widgets/'];
+/// Paths, relative to a lib root, that may contain token literals
+/// (FE-THEME-01, FE-CODE-09).
+const List<String> _allowedPrefixes = <String>[
+  'app/theme/',
+  'core/widgets/',
+  'core/constants/',
+];
 
 /// A style construct and the token a feature should have used instead.
 final List<({RegExp pattern, String Function(Match match) token})> _rules =
@@ -124,7 +129,7 @@ void main() {
   });
 
   group('the shipped tree as a whole', () {
-    test('lets app/theme and core/widgets keep their literals', () {
+    test('lets theme, widgets and AppConstants keep their literals', () {
       expect(_findTokenViolations(_lib), isEmpty);
     });
   });
@@ -139,8 +144,8 @@ typedef _Violation = ({
   String message,
 });
 
-/// Reports every token literal under [root] that sits outside `app/theme/`
-/// and `core/widgets/`.
+/// Reports every token literal under [root] that sits outside `app/theme/`,
+/// `core/widgets/` and `core/constants/`.
 ///
 /// Reports all of them, with the token that should have been used.
 List<_Violation> _findTokenViolations(Directory root) {

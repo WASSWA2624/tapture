@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**19 of 281 tasks complete (6.8%)** · last updated 2026-09-17
+**20 of 281 tasks complete (7.1%)** · last updated 2026-09-17
 
 `██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -9,7 +9,7 @@
 | Phase | Done | Total | Progress |
 | :--- | ---: | ---: | :--- |
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
-| 02 — Foundation services | 1 | 11 | `█░░░░░░░░░░░░░` 9% |
+| 02 — Foundation services | 2 | 11 | `██░░░░░░░░░░░░` 18% |
 | 03 — Design system | 0 | 19 | `░░░░░░░░░░░░░░` 0% |
 | 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **19** | **281** | `█░░░░░░░░░░░░░` 6.8% |
+| **Total** | **20** | **281** | `█░░░░░░░░░░░░░` 7.1% |
 
 ## Completed
 
@@ -55,6 +55,7 @@
 | 017 — Accessibility test matchers | 2026-09-17 | `test/support/a11y_matchers.dart` provides `hasSemanticLabel`, `meetsTapTarget` (48dp) and `expectNoA11yIssues`, which runs the framework guidelines and asserts 200 percent text scale does not clip in either orientation. Failures name the widget and the measured value. Guarded by 7 tests. |
 | 018 — Network boundary and raw-data safety tests | 2026-09-17 | `test/architecture/network_test.dart` fails an HTTP import outside `core/ai/`, `core/cloud/` and `core/backend/`, and a widget or `domain/` file that names a network client. `test/architecture/data_safety_test.dart` fails a write to `valueRaw`/`textRaw`/`transcriptRaw` outside a repository create method, a hard row delete, and a `File.delete` outside the purge job. Guarded by 18 tests over allowed and forbidden fixtures. Did not add `lib/core/backend/` — the task names only the two suites. |
 | 019 — Application bootstrap, flavours and lifecycle | 2026-09-17 | Guarded `main()` installs `FlutterError`/`runZonedGuarded` handlers, `ProviderScope`, a `MaterialApp.router` placeholder and `LifecycleObserver` before the first frame. `Env` reads `FLAVOR` / `FLUTTER_APP_FLAVOR` (default prod) with a test override. Android `dev`/`prod` flavours get distinct application ids and labels. `flutter_riverpod` ^3.4.3 pinned on the allowlist so `ConsumerWidget` exists. Guarded by 3 new suites. |
+| 020 — Shared constants | 2026-09-17 | `AppConstants` holds page size 50, image long edge 1600, and every later-phase duration, ceiling, threshold and secure-storage key name, grouped by area as const records (`lists`, `images`, `secrets`, …). `test/core/app_constants_test.dart` asserts ranges and unique key names. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -83,6 +84,8 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 008 | Task 008 lists seven gates and `tool/check_repo_hygiene.dart` from task 002 is not among them. It is only reached through its own test under the guardrail gate. | Open — built the list as written; the checker runs as a test, not as a gate |
 | 019 | The Files list names `android/app/build.gradle`; the project ships `build.gradle.kts`. Flavours were added on the Kotlin file. | Open — implemented against the file that exists; the task or a later Android pass has to give |
 | 019 | FE-STR-06 wants `app.dart` to declare `App` first; the contract names `TaptureApp`. A `typedef App = TaptureApp` satisfies the checker without a second file. | Open — implemented so both hold; the rule or the contract has to give |
+| 020 | Step 2 asks for nested abstract final classes by area. Dart cannot declare a class inside a class, and a second public class in `app_constants.dart` fails FE-STR-06. Areas are const records on `AppConstants`. | Open — implemented so grouping holds; the step's "class" wording or the language has to give |
+| 020 | Task 013's token suite only allowed `Duration(` in `app/theme/` and `core/widgets/`. Task 020 puts animation and debounce durations in `AppConstants` (FE-CODE-09). `core/constants/` is now an allowed prefix. | Closed by 020 — the suite and FE-CODE-09 now name the same homes |
 
 ## Checklist
 
@@ -111,10 +114,10 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 02 — Foundation services
 
-*1 of 11 complete.*
+*2 of 11 complete.*
 
 - [x] [019 — Application bootstrap, flavours and lifecycle](dev-plan/02-foundation/019-app-bootstrap.md)
-- [ ] [020 — Shared constants](dev-plan/02-foundation/020-app-constants.md)
+- [x] [020 — Shared constants](dev-plan/02-foundation/020-app-constants.md)
 - [ ] [021 — Result type, failure taxonomy and error boundary](dev-plan/02-foundation/021-result-and-failures.md)
 - [ ] [022 — Logger, diagnostics export and provider observer](dev-plan/02-foundation/022-logger-service.md)
 - [ ] [023 — Clock, identifiers and device identity](dev-plan/02-foundation/023-clock-service.md)
