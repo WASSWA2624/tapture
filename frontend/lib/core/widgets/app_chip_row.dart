@@ -20,17 +20,16 @@ class AppChipRow extends StatelessWidget {
     if (scrollable) {
       return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        clipBehavior: Clip.none,
         child: Row(
           children: <Widget>[
             for (int i = 0; i < chips.length; i++) ...<Widget>[
-              if (i > 0) const SizedBox(width: Space.x2),
+              if (i > 0) const SizedBox(width: Space.x1),
               chips[i],
             ],
           ],
         ),
       );
     }
-    return Wrap(spacing: Space.x2, runSpacing: Space.x2, children: chips);
+    return Wrap(spacing: Space.x1, runSpacing: Space.x2, children: chips);
   }
 }

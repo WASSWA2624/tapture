@@ -269,6 +269,9 @@ abstract final class Copy {
   /// Double text scale.
   static const String galleryScale200 = '200%';
 
+  /// Product name in chrome and the system window.
+  static const String appName = 'Tapture';
+
   /// Shell destination: the project list.
   static const String navProjects = 'Projects';
 

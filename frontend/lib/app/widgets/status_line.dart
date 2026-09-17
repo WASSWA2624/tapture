@@ -8,6 +8,7 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/network/network.dart';
+import 'package:tapture/core/widgets/app_brand_lockup.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
 
 import '../router.dart';
@@ -29,52 +30,61 @@ class StatusLine extends ConsumerWidget {
         ref.watch(networkStateProvider).value ?? NetworkState.online;
     final bool byChoice = ref.watch(offlineByChoiceProvider);
     final int unprocessed = ref.watch(unprocessedCountProvider);
-    return SizedBox(
-      width: double.infinity,
-      child: Material(
-        color: context.colors.surface,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: context.colors.outline,
-                width: Space.x0 / 2,
-              ),
-            ),
+    final bool inverted = Theme.of(context).brightness != Brightness.dark;
+    final AppColors colors = context.colors;
+    return Material(
+      color: inverted ? colors.primary : colors.surface,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: colors.outline, width: Space.x0 / 2),
           ),
+        ),
+        child: SizedBox(
+          width: double.infinity,
+          height: Sizes.minTapTarget + Space.x2,
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: Space.x3,
-              vertical: Space.x1,
-            ),
-            child: AppChipRow(
-              scrollable: true,
-              chips: <AppChip>[
-                AppChip(
-                  key: const ValueKey<String>('status-project'),
-                  icon: Icons.work_outline,
-                  label: _whereLabel(projectId, projectLabel, contextLabel),
-                  onTap: () {
-                    context.go(_projectLocation(projectId));
-                  },
-                ),
-                AppChip(
-                  key: const ValueKey<String>('status-template'),
-                  icon: Icons.article_outlined,
-                  label: templateLabel,
-                  onTap: () => context.go(AppRoutes.templates),
-                ),
-                AppChip(
-                  key: const ValueKey<String>('status-network'),
-                  icon: _networkIcon(network, byChoice),
-                  label: _networkLabel(network, byChoice),
-                  onTap: () => context.go(AppRoutes.more),
-                ),
-                AppChip(
-                  key: const ValueKey<String>('status-unprocessed'),
-                  icon: Icons.pending_outlined,
-                  label: Copy.unprocessedCount(unprocessed),
-                  onTap: () => context.go(AppRoutes.queue),
+            padding: const EdgeInsets.symmetric(horizontal: Space.x3),
+            child: Row(
+              children: <Widget>[
+                AppBrandLockup(inverted: inverted),
+                const SizedBox(width: Space.x2),
+                Expanded(
+                  child: AppChipRow(
+                    scrollable: true,
+                    chips: <AppChip>[
+                      AppChip(
+                        key: const ValueKey<String>('status-project'),
+                        icon: Icons.work_outline,
+                        label: _whereLabel(
+                          projectId,
+                          projectLabel,
+                          contextLabel,
+                        ),
+                        onTap: () {
+                          context.go(_projectLocation(projectId));
+                        },
+                      ),
+                      AppChip(
+                        key: const ValueKey<String>('status-template'),
+                        icon: Icons.article_outlined,
+                        label: templateLabel,
+                        onTap: () => context.go(AppRoutes.templates),
+                      ),
+                      AppChip(
+                        key: const ValueKey<String>('status-network'),
+                        icon: _networkIcon(network, byChoice),
+                        label: _networkLabel(network, byChoice),
+                        onTap: () => context.go(AppRoutes.more),
+                      ),
+                      AppChip(
+                        key: const ValueKey<String>('status-unprocessed'),
+                        icon: Icons.pending_outlined,
+                        label: Copy.unprocessedCount(unprocessed),
+                        onTap: () => context.go(AppRoutes.queue),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

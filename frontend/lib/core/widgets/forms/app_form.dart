@@ -191,7 +191,7 @@ class _AppFormState extends State<AppForm> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   ..._fieldSlate(),
-                  const SizedBox(height: Space.x6),
+                  const SizedBox(height: Space.x4),
                   _submitBar(widget.fields.length),
                 ],
               ),

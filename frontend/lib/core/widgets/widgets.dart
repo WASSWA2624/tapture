@@ -1,6 +1,7 @@
 /// The shared widgets every feature assembles its screens from.
 library;
 
+export 'app_brand_lockup.dart';
 export 'app_button.dart';
 export 'app_card.dart';
 export 'app_chip.dart';

@@ -5,6 +5,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/files/files.dart';
+import 'package:tapture/core/widgets/app_brand_lockup.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
@@ -86,6 +87,10 @@ class _FirstRunScreenState extends ConsumerState<FirstRunScreen> {
         return AppPage(
           title: Copy.firstRunTitle,
           subtitle: Copy.firstRunSubtitle,
+          leading: AppBrandLockup(
+            showName: false,
+            inverted: Theme.of(context).brightness != Brightness.dark,
+          ),
           body: field,
           footer: actions,
         );
@@ -94,6 +99,10 @@ class _FirstRunScreenState extends ConsumerState<FirstRunScreen> {
         return AppPage(
           title: Copy.firstRunTitle,
           subtitle: Copy.firstRunSubtitle,
+          leading: AppBrandLockup(
+            showName: false,
+            inverted: Theme.of(context).brightness != Brightness.dark,
+          ),
           body: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,

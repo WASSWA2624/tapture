@@ -52,7 +52,7 @@ class AppBanner extends StatelessWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Space.x4),
+              padding: const EdgeInsets.symmetric(horizontal: Space.x3),
               child: Row(
                 children: <Widget>[
                   Icon(icon, color: accent, size: Space.x6),

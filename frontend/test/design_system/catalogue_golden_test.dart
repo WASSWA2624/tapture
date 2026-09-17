@@ -10,6 +10,7 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/core/widgets/app_brand_lockup.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_card.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
@@ -147,6 +148,8 @@ Widget _sample(String name, TextEditingController field) {
         title: 'Grade',
         child: Text(Copy.galleryFeedback),
       );
+    case 'app_brand_lockup':
+      return const AppBrandLockup();
     case 'app_button':
       return const AppButton(label: Copy.save, onPressed: _noop);
     case 'app_card':

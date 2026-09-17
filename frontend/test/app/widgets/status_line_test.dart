@@ -32,6 +32,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(StatusLine), findsOneWidget);
+    expect(find.text(Copy.appName), findsOneWidget);
     expect(find.text('Alpha · Ward 1'), findsOneWidget);
     expect(find.text('Asset'), findsOneWidget);
     expect(find.text(Copy.networkOnline), findsOneWidget);
@@ -47,14 +48,23 @@ void main() {
       AppRoutes.project('p1'),
     );
 
+    await tester.ensureVisible(
+      find.byKey(const ValueKey<String>('status-template')),
+    );
     await tester.tap(find.byKey(const ValueKey<String>('status-template')));
     await tester.pumpAndSettle();
     expect(container.read(routerProvider).state.uri.path, AppRoutes.templates);
 
+    await tester.ensureVisible(
+      find.byKey(const ValueKey<String>('status-network')),
+    );
     await tester.tap(find.byKey(const ValueKey<String>('status-network')));
     await tester.pumpAndSettle();
     expect(container.read(routerProvider).state.uri.path, AppRoutes.more);
 
+    await tester.ensureVisible(
+      find.byKey(const ValueKey<String>('status-unprocessed')),
+    );
     await tester.tap(find.byKey(const ValueKey<String>('status-unprocessed')));
     await tester.pumpAndSettle();
     expect(container.read(routerProvider).state.uri.path, AppRoutes.queue);

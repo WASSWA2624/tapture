@@ -17,7 +17,7 @@ class AppCard extends StatelessWidget {
   /// Card body. This widget does not scroll.
   final Widget child;
 
-  /// Insets around [child]. Defaults to [Space.x4] on every side.
+  /// Insets around [child]. Defaults to [Space.x3] on every side.
   final EdgeInsets? padding;
 
   /// When set, the whole card is a 48dp tap target. Null is display-only.
@@ -33,7 +33,7 @@ class AppCard extends StatelessWidget {
       level: elevationLevel,
     );
     final BorderRadius radius = BorderRadius.circular(Radii.md);
-    final EdgeInsets insets = padding ?? const EdgeInsets.all(Space.x4);
+    final EdgeInsets insets = padding ?? const EdgeInsets.all(Space.x3);
     final Widget body = Padding(padding: insets, child: child);
     final Widget interactive = onTap == null
         ? body

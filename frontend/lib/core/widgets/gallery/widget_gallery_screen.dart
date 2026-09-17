@@ -14,6 +14,7 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/core/widgets/app_brand_lockup.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_card.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
@@ -181,6 +182,10 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
                 width: width,
                 child: AppPage(
                   title: Copy.galleryTitle,
+                  leading: AppBrandLockup(
+                    showName: false,
+                    inverted: _theme != AppThemeMode.dark,
+                  ),
                   actions: const <Widget>[
                     AppIconButton(
                       icon: Icons.contrast,
@@ -327,6 +332,8 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
   List<Widget> _layout() {
     return <Widget>[
       const AppSectionHeader(title: Copy.galleryLayout),
+      const AppBrandLockup(),
+      const SizedBox(height: Space.x3),
       const ContentConstraint(
         child: AppCard(child: Text(Copy.galleryLayout, style: AppText.body)),
       ),

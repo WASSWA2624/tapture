@@ -66,7 +66,7 @@ class AppDialog extends StatelessWidget {
         label: title,
         explicitChildNodes: true,
         child: Padding(
-          padding: const EdgeInsets.all(Space.x6),
+          padding: const EdgeInsets.all(Space.x4),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -80,7 +80,7 @@ class AppDialog extends StatelessWidget {
                 message,
                 style: AppText.body.copyWith(color: colors.onSurface),
               ),
-              const SizedBox(height: Space.x6),
+              const SizedBox(height: Space.x4),
               Wrap(
                 alignment: WrapAlignment.end,
                 spacing: Space.x2,

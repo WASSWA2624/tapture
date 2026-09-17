@@ -41,16 +41,19 @@ class AppEmptyState extends StatelessWidget {
       container: true,
       label: headline,
       child: Padding(
-        padding: const EdgeInsets.all(Space.x6),
+        padding: const EdgeInsets.symmetric(
+          horizontal: Space.x3,
+          vertical: Space.x4,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Icon(icon, size: Space.x12, color: colors.secondary),
-            const SizedBox(height: Space.x4),
+            Icon(icon, size: Space.x10, color: colors.secondary),
+            const SizedBox(height: Space.x3),
             Text(
               headline,
               textAlign: TextAlign.center,
-              style: AppText.title.copyWith(color: colors.onSurface),
+              style: AppText.section.copyWith(color: colors.onSurface),
             ),
             const SizedBox(height: Space.x2),
             Text(
@@ -59,7 +62,7 @@ class AppEmptyState extends StatelessWidget {
               style: AppText.body.copyWith(color: colors.onSurface),
             ),
             if (actionLabel != null && onAction != null) ...<Widget>[
-              const SizedBox(height: Space.x6),
+              const SizedBox(height: Space.x4),
               AppButton(label: actionLabel, onPressed: onAction),
             ],
           ],

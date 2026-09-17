@@ -3,13 +3,11 @@ import 'package:flutter/material.dart' hide Router;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/nav_shell.dart';
-import 'package:tapture/app/theme/color_tokens.dart';
-import 'package:tapture/app/theme/dimensions.dart';
-import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
+import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/onboarding/onboarding.dart';
 
@@ -227,18 +225,15 @@ class _RoutePage extends StatelessWidget {
     return AppPage(
       key: ValueKey<String>('route-$name'),
       title: title,
+      showAppBar: false,
       body: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(
-            Copy.emptyHeadline,
-            style: AppText.bodyStrong.copyWith(color: context.colors.onSurface),
-          ),
-          const SizedBox(height: Space.x2),
-          Text(
-            Copy.emptyMessage,
-            style: AppText.body.copyWith(color: context.colors.onSurface),
+          AppEmptyState(
+            icon: _iconFor(name),
+            headline: Copy.emptyHeadline,
+            message: Copy.emptyMessage,
           ),
           SizedBox(
             width: 0,
@@ -260,6 +255,18 @@ String _titleFor(String name) {
     'templates' => Copy.navTemplates,
     'queue' => Copy.navQueue,
     _ => Copy.emptyHeadline,
+  };
+}
+
+IconData _iconFor(String name) {
+  return switch (name) {
+    'projects' || 'project' => Icons.work_outline,
+    'capture' => Icons.photo_camera_outlined,
+    'records' || 'record' => Icons.list_alt_outlined,
+    'more' => Icons.more_horiz,
+    'templates' => Icons.article_outlined,
+    'queue' => Icons.pending_outlined,
+    _ => Icons.inbox_outlined,
   };
 }
 

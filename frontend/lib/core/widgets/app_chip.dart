@@ -46,79 +46,85 @@ class AppChip extends StatelessWidget {
     final AppColors colors = context.colors;
     final Color background = selected ? colors.primary : colors.surfaceVariant;
     final Color foreground = selected ? colors.onPrimary : colors.onSurface;
-    final Widget body = _body(foreground);
-    final Widget painted = Material(
+    final Widget pill = Material(
       color: background,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Radii.sm),
+        borderRadius: BorderRadius.circular(Radii.pill),
         side: BorderSide(
           color: colors.outline,
           width: Space.x0 / 2,
           strokeAlign: BorderSide.strokeAlignInside,
         ),
       ),
-      child: onTap == null
-          ? body
-          : InkWell(
-              onTap: onTap,
-              borderRadius: BorderRadius.circular(Radii.sm),
-              child: body,
-            ),
+      child: Padding(
+        padding: EdgeInsetsDirectional.only(
+          start: Space.x2,
+          end: onDismiss == null ? Space.x2 : Space.x0,
+          top: Space.x0,
+          bottom: Space.x0,
+        ),
+        child: _labelRow(foreground),
+      ),
     );
+    if (!_interactive) {
+      return pill;
+    }
     return Semantics(
       button: onTap != null,
       selected: selected,
-      enabled: onTap != null,
+      enabled: onTap != null || onDismiss != null,
       label: label,
-      child: painted,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: onTap,
+          excludeFromSemantics: true,
+          customBorder: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(Radii.pill),
+          ),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              minHeight: Sizes.minTapTarget,
+              minWidth: Sizes.minTapTarget,
+            ),
+            child: Align(widthFactor: 1, heightFactor: 1, child: pill),
+          ),
+        ),
+      ),
     );
   }
 
-  Widget _body(Color foreground) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        minHeight: _interactive ? Sizes.minTapTarget : 0,
-        minWidth: _interactive ? Sizes.minTapTarget : 0,
-      ),
-      child: Padding(
-        padding: EdgeInsetsDirectional.only(
-          start: Space.x3,
-          end: onDismiss == null ? Space.x3 : Space.x1,
-          top: Space.x1,
-          bottom: Space.x1,
-        ),
-        child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            final bool bounded = constraints.maxWidth.isFinite;
-            final Widget text = Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppText.label.copyWith(color: foreground),
-            );
-            return Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                if (selected) ...<Widget>[
-                  Icon(Icons.check, color: foreground, size: Space.x4),
-                  const SizedBox(width: Space.x1),
-                ] else if (icon != null) ...<Widget>[
-                  Icon(icon, color: foreground, size: Space.x4),
-                  const SizedBox(width: Space.x1),
-                ],
-                if (bounded) Flexible(child: text) else text,
-                if (onDismiss != null)
-                  AppIconButton(
-                    icon: Icons.close,
-                    semanticLabel: Copy.dismissChip(label),
-                    tooltip: Copy.dismissChip(label),
-                    onPressed: onDismiss,
-                  ),
-              ],
-            );
-          },
-        ),
-      ),
+  Widget _labelRow(Color foreground) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final bool bounded = constraints.maxWidth.isFinite;
+        final Widget text = Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: AppText.label.copyWith(color: foreground),
+        );
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            if (selected) ...<Widget>[
+              Icon(Icons.check, color: foreground, size: Space.x4),
+              const SizedBox(width: Space.x1),
+            ] else if (icon != null) ...<Widget>[
+              Icon(icon, color: foreground, size: Space.x4),
+              const SizedBox(width: Space.x1),
+            ],
+            if (bounded) Flexible(child: text) else text,
+            if (onDismiss != null)
+              AppIconButton(
+                icon: Icons.close,
+                semanticLabel: Copy.dismissChip(label),
+                tooltip: Copy.dismissChip(label),
+                onPressed: onDismiss,
+              ),
+          ],
+        );
+      },
     );
   }
 }

@@ -160,16 +160,16 @@ class _Pane extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             SizedBox(
-              height: Sizes.minTapTarget + Space.x2,
+              height: Sizes.minTapTarget,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: Space.x4),
+                padding: const EdgeInsets.symmetric(horizontal: Space.x3),
                 child: Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: Text(
                     _destinations[index].label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: AppText.section.copyWith(
+                    style: AppText.bodyStrong.copyWith(
                       color: context.colors.onSurface,
                     ),
                   ),
@@ -179,10 +179,10 @@ class _Pane extends StatelessWidget {
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(
-                  Space.x4,
+                  Space.x3,
                   Space.x1,
-                  Space.x4,
-                  Space.x4,
+                  Space.x3,
+                  Space.x3,
                 ),
                 child: Text(
                   Copy.emptyMessage,

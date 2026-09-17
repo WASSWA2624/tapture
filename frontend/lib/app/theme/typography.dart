@@ -12,7 +12,7 @@ typedef Typography = AppText;
 abstract final class AppText {
   /// Screen or hero heading.
   static const TextStyle display = TextStyle(
-    fontSize: 34,
+    fontSize: 28,
     fontWeight: FontWeight.w700,
     height: 1.2,
     letterSpacing: -0.4,
@@ -20,7 +20,7 @@ abstract final class AppText {
 
   /// Page title.
   static const TextStyle title = TextStyle(
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: FontWeight.w600,
     height: 1.25,
     letterSpacing: -0.2,
@@ -28,42 +28,42 @@ abstract final class AppText {
 
   /// Group heading inside a list or form.
   static const TextStyle section = TextStyle(
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: FontWeight.w600,
     height: 1.3,
   );
 
   /// Running text.
   static const TextStyle body = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.w400,
-    height: 1.5,
-  );
-
-  /// Running text that carries emphasis.
-  static const TextStyle bodyStrong = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.w600,
-    height: 1.5,
-  );
-
-  /// Control labels and chip text.
-  static const TextStyle label = TextStyle(
     fontSize: 16,
-    fontWeight: FontWeight.w500,
-    height: 1.35,
-  );
-
-  /// Helper, timestamp and secondary copy.
-  static const TextStyle caption = TextStyle(
-    fontSize: 14,
     fontWeight: FontWeight.w400,
     height: 1.4,
   );
 
+  /// Running text that carries emphasis.
+  static const TextStyle bodyStrong = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    height: 1.4,
+  );
+
+  /// Control labels and chip text.
+  static const TextStyle label = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+    height: 1.3,
+  );
+
+  /// Helper, timestamp and secondary copy.
+  static const TextStyle caption = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w400,
+    height: 1.35,
+  );
+
   /// Identifiers, codes and verbatim values.
   static const TextStyle mono = TextStyle(
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: FontWeight.w400,
     height: 1.4,
     fontFamily: 'monospace',

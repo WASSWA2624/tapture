@@ -33,11 +33,26 @@ class AppIconButton extends StatelessWidget {
     return IconButton(
       onPressed: onPressed,
       tooltip: tooltip,
-      constraints: const BoxConstraints(
-        minWidth: Sizes.minTapTarget,
-        minHeight: Sizes.minTapTarget,
+      padding: EdgeInsets.zero,
+      visualDensity: VisualDensity.standard,
+      constraints: const BoxConstraints.tightFor(
+        width: Sizes.minTapTarget,
+        height: Sizes.minTapTarget,
       ),
-      icon: Icon(icon, semanticLabel: semanticLabel),
+      style: const ButtonStyle(
+        padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.zero),
+        minimumSize: WidgetStatePropertyAll<Size>(
+          Size(Sizes.minTapTarget, Sizes.minTapTarget),
+        ),
+        maximumSize: WidgetStatePropertyAll<Size>(
+          Size(Sizes.minTapTarget, Sizes.minTapTarget),
+        ),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        visualDensity: VisualDensity.standard,
+        iconSize: WidgetStatePropertyAll<double>(Space.x6),
+      ),
+      iconSize: Space.x6,
+      icon: Icon(icon, size: Space.x6, semanticLabel: semanticLabel),
     );
   }
 }

@@ -49,12 +49,37 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
     appBarTheme: AppBarThemeData(
       elevation: 0,
       scrolledUnderElevation: 0,
-      backgroundColor: colors.surface,
-      foregroundColor: colors.onSurface,
-      surfaceTintColor: colors.surface,
+      toolbarHeight: Sizes.minTapTarget + Space.x2,
+      backgroundColor: brightness == Brightness.dark
+          ? colors.surface
+          : colors.primary,
+      foregroundColor: brightness == Brightness.dark
+          ? colors.onSurface
+          : colors.onPrimary,
+      surfaceTintColor: brightness == Brightness.dark
+          ? colors.surface
+          : colors.primary,
       shadowColor: const Color(0x00000000),
       centerTitle: false,
-      titleTextStyle: AppText.title.copyWith(color: colors.onSurface),
+      titleSpacing: Space.x3,
+      actionsPadding: const EdgeInsetsDirectional.only(end: Space.x1),
+      titleTextStyle: AppText.title.copyWith(
+        color: brightness == Brightness.dark
+            ? colors.onSurface
+            : colors.onPrimary,
+      ),
+      iconTheme: IconThemeData(
+        color: brightness == Brightness.dark
+            ? colors.onSurface
+            : colors.onPrimary,
+        size: Space.x6,
+      ),
+      actionsIconTheme: IconThemeData(
+        color: brightness == Brightness.dark
+            ? colors.onSurface
+            : colors.onPrimary,
+        size: Space.x6,
+      ),
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: controlStyle.copyWith(
@@ -78,15 +103,19 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
       style: IconButton.styleFrom(
         foregroundColor: colors.onSurface,
         minimumSize: const Size(Sizes.minTapTarget, Sizes.minTapTarget),
+        maximumSize: const Size(Sizes.minTapTarget, Sizes.minTapTarget),
+        padding: EdgeInsets.zero,
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        visualDensity: VisualDensity.standard,
+        iconSize: Space.x6,
       ),
     ),
     inputDecorationTheme: InputDecorationThemeData(
       filled: true,
       fillColor: colors.surfaceVariant,
       contentPadding: const EdgeInsets.symmetric(
-        horizontal: Space.x4,
-        vertical: Space.x3,
+        horizontal: Space.x3,
+        vertical: Space.x2,
       ),
       hintStyle: AppText.body.copyWith(color: colors.onSurface),
       labelStyle: AppText.label.copyWith(color: colors.onSurface),
@@ -109,7 +138,7 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
         vertical: Space.x1,
       ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Radii.sm),
+        borderRadius: BorderRadius.circular(Radii.pill),
       ),
       // Chip layout includes stroke width, so the weight stays a hairline
       // in every mode; outdoor contrast still comes from [AppColors.outline]
@@ -165,14 +194,19 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
       textColor: colors.onSurface,
       titleTextStyle: AppText.bodyStrong.copyWith(color: colors.onSurface),
       subtitleTextStyle: AppText.caption.copyWith(color: colors.onSurface),
-      minVerticalPadding: Space.x2,
+      minVerticalPadding: Space.x1,
+      minLeadingWidth: Sizes.minTapTarget,
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: Space.x3,
+        vertical: Space.x1,
+      ),
     ),
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: colors.surface,
       elevation: 0,
       shadowColor: const Color(0x00000000),
       surfaceTintColor: colors.surface,
-      height: Sizes.minTapTarget + Space.x6,
+      height: Sizes.minTapTarget + Space.x4,
       indicatorColor: colors.surfaceVariant,
       labelTextStyle: WidgetStatePropertyAll<TextStyle>(
         AppText.caption.copyWith(color: colors.onSurface),

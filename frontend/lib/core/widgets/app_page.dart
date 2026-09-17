@@ -20,6 +20,8 @@ class AppPage extends StatelessWidget {
     this.actions = const <Widget>[],
     this.footer,
     this.onRefresh,
+    this.showAppBar = true,
+    this.leading,
   });
 
   /// App bar title.
@@ -43,6 +45,12 @@ class AppPage extends StatelessWidget {
   /// When set, the body can be pulled to refresh. Omitted, there is no
   /// indicator.
   final Future<void> Function()? onRefresh;
+
+  /// Optional control before the title (brand mark, back is implied).
+  final Widget? leading;
+
+  /// When false, the page sits under shell chrome that already has a header.
+  final bool showAppBar;
 
   @override
   Widget build(BuildContext context) {
@@ -74,9 +82,21 @@ class AppPage extends StatelessWidget {
       scroller = RefreshIndicator(onRefresh: refresh, child: scroller);
     }
     final Widget? footer = this.footer;
+    final Widget? leading = this.leading;
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(title: Text(title), actions: actions),
+      appBar: showAppBar
+          ? AppBar(
+              automaticallyImplyLeading: leading == null,
+              leading: leading == null ? null : Center(child: leading),
+              leadingWidth: leading == null
+                  ? null
+                  : Sizes.minTapTarget + Space.x2,
+              titleSpacing: leading == null ? Space.x3 : Space.x2,
+              title: Text(title),
+              actions: actions,
+            )
+          : null,
       body: Column(
         children: <Widget>[
           Expanded(
@@ -98,9 +118,9 @@ class AppPage extends StatelessWidget {
 
 EdgeInsets _paddingFor(BuildContext context) {
   final double horizontal = context.responsive(
-    compact: Space.x4,
-    medium: Space.x6,
-    expanded: Space.x8,
+    compact: Space.x3,
+    medium: Space.x4,
+    expanded: Space.x4,
   );
-  return EdgeInsets.symmetric(horizontal: horizontal, vertical: Space.x4);
+  return EdgeInsets.symmetric(horizontal: horizontal, vertical: Space.x2);
 }

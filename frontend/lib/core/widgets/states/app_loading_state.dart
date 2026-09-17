@@ -155,8 +155,8 @@ Widget _listRow(AppColors colors) {
     constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
     child: Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: Space.x4,
-        vertical: Space.x3,
+        horizontal: Space.x3,
+        vertical: Space.x2,
       ),
       child: Row(
         children: <Widget>[

@@ -70,7 +70,7 @@ class _ProgressStepRow extends StatelessWidget {
         constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: Space.x4,
+            horizontal: Space.x3,
             vertical: Space.x2,
           ),
           child: Row(
