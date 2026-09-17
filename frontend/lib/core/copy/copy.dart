@@ -315,6 +315,21 @@ abstract final class Copy {
   /// Secondary action: keep the name and go to capture without a project.
   static const String firstRunSkip = 'Skip';
 
+  /// Settings screen for the local operator identity.
+  static const String operatorProfileTitle = 'Operator';
+
+  /// Initials field on the operator profile.
+  static const String operatorInitials = 'Initials';
+
+  /// Optional contact field on the operator profile.
+  static const String operatorContact = 'Contact';
+
+  /// Name failed the non-empty rule.
+  static const String nameRequired = 'Enter a name';
+
+  /// Initials failed the one-to-three-character rule.
+  static const String initialsLength = 'Use one to three characters';
+
   /// Status line when no project is open.
   static const String statusNoProject = 'No project';
 

@@ -73,6 +73,18 @@ void main() {
       AppConstants.hashing.chunkBytes,
       inInclusiveRange(4 * 1024, 1024 * 1024),
     );
+    expect(AppConstants.operator.initialsMin, 1);
+    expect(AppConstants.operator.initialsMax, 3);
+    expect(
+      AppConstants.operator.initialsMin < AppConstants.operator.initialsMax,
+      isTrue,
+    );
+    expect(AppConstants.operator.initialsKey, isNotEmpty);
+    expect(AppConstants.operator.contactKey, isNotEmpty);
+    expect(
+      AppConstants.operator.initialsKey,
+      isNot(AppConstants.operator.contactKey),
+    );
   });
 
   test('folder and import ceilings stay below hostile sizes', () {

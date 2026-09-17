@@ -28,6 +28,7 @@ kUpgradeSteps = <int, _UpgradeStep>{
   10: migrateToV10,
   11: migrateToV11,
   12: migrateToV12,
+  13: migrateToV13,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -158,6 +159,20 @@ Future<void> migrateToV12(Migrator migrator, AppDatabase db) async {
   await migrator.createTable(db.mergeConflicts);
   await migrator.createTable(db.syncState);
   await migrator.createIndex(db.mergeConflictsBySessionResolution);
+}
+
+/// Schema version 13: nullable account id on the single device profile row.
+Future<void> migrateToV13(Migrator migrator, AppDatabase db) async {
+  final List<QueryRow> info = await db
+      .customSelect('PRAGMA table_info("device_profile")')
+      .get();
+  final Set<String> columns = <String>{
+    for (final QueryRow row in info) row.read<String>('name'),
+  };
+  if (columns.contains('account_id')) {
+    return;
+  }
+  await migrator.addColumn(db.deviceProfile, db.deviceProfile.accountId);
 }
 
 /// Runs the named step for [version], after the destructive-migration gate.

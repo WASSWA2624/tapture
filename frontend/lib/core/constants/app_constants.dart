@@ -148,6 +148,20 @@ abstract final class AppConstants {
 
   /// Streaming reads for hashing and other heavy file jobs (FE-PERF-07).
   static const ({int chunkBytes}) hashing = (chunkBytes: 64 * 1024);
+
+  /// Local operator identity: initials length and preference-map keys.
+  static const ({
+    int initialsMin,
+    int initialsMax,
+    String initialsKey,
+    String contactKey,
+  })
+  operator = (
+    initialsMin: 1,
+    initialsMax: 3,
+    initialsKey: 'operatorInitials',
+    contactKey: 'operatorContact',
+  );
 }
 
 /// One mebibyte, the unit storage and import ceilings are stated in.

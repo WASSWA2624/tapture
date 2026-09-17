@@ -4,7 +4,7 @@ The local identity that later becomes an account, the app lock, and the switches
 
 Tasks 077–081 (5). Each file is a standalone implementation prompt.
 
-- [ ] [077 — Operator profile](077-operator-profile.md)
+- [x] [077 — Operator profile](077-operator-profile.md)
 - [ ] [078 — Settings store](078-settings-store.md)
 - [ ] [079 — Settings shell and its section screens](079-settings-shell.md)
 - [ ] [080 — App lock: PIN and biometric unlock](080-app-lock-pin.md)

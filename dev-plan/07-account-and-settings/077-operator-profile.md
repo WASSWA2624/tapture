@@ -45,10 +45,10 @@ final class OperatorProfile {
 
 ## Definition of done
 
-- [ ] Every record captured afterwards carries this operator name in its attribution.
-- [ ] The stored row has a nullable `accountId` from its first migration, and an upgraded database reads it as null.
-- [ ] Nothing on this screen authenticates anyone.
-- [ ] Tests: `frontend/test/features/settings/operator_profile_screen_test.dart` covers validation, save and the
+- [x] Every record captured afterwards carries this operator name in its attribution.
+- [x] The stored row has a nullable `accountId` from its first migration, and an upgraded database reads it as null.
+- [x] Nothing on this screen authenticates anyone.
+- [x] Tests: `frontend/test/features/settings/operator_profile_screen_test.dart` covers validation, save and the
   unsaved-changes guard; a migration test against an in-memory database asserts `accountId` exists and is null.
 
 ## Out of scope

@@ -17,6 +17,9 @@ class DeviceProfile extends Table with MergeColumns {
 
   /// Preferences JSON. An object, stored as text.
   TextColumn get preferences => text().withDefault(const Constant('{}'))();
+
+  /// Backend account id, filled by enrolment. Null on every pre-backend install.
+  TextColumn get accountId => text().nullable()();
 }
 
 /// Inserts the single profile row on first launch. A second call is a no-op.
@@ -46,4 +49,58 @@ Future<DeviceProfileRow> ensureDeviceProfile(
   return (tx.select(
     db.deviceProfile,
   )..where(($DeviceProfileTable tbl) => tbl.id.equals(_rowId))).getSingle();
+}
+
+/// The identity fields of the single profile row.
+typedef DeviceProfileIdentity = ({
+  String operatorName,
+  String preferences,
+  String? accountId,
+});
+
+/// Reads the single profile row, inserting it when first launch has not.
+Future<DeviceProfileIdentity> readDeviceProfile(
+  GeneratedDatabase tx, {
+  required String deviceId,
+  Clock? clock,
+}) async {
+  final DeviceProfileRow row = await ensureDeviceProfile(
+    tx,
+    deviceId: deviceId,
+    clock: clock,
+  );
+  return (
+    operatorName: row.operatorName,
+    preferences: row.preferences,
+    accountId: row.accountId,
+  );
+}
+
+/// Updates the single profile row. Never inserts a second row.
+Future<DeviceProfileIdentity> writeDeviceProfile(
+  GeneratedDatabase tx, {
+  required String deviceId,
+  required String operatorName,
+  required String preferences,
+  Clock? clock,
+}) async {
+  final AppDatabase db = tx as AppDatabase;
+  final DeviceProfileRow existing = await ensureDeviceProfile(
+    tx,
+    deviceId: deviceId,
+    clock: clock,
+  );
+  final DateTime now = (clock ?? const SystemClock()).nowUtc();
+  await (tx.update(
+    db.deviceProfile,
+  )..where(($DeviceProfileTable tbl) => tbl.id.equals(_rowId))).write(
+    DeviceProfileCompanion(
+      operatorName: Value<String>(operatorName),
+      preferences: Value<String>(preferences),
+      updatedAt: Value<DateTime>(now),
+      updatedByDevice: Value<String>(deviceId),
+      rev: Value<int>(existing.rev + 1),
+    ),
+  );
+  return readDeviceProfile(tx, deviceId: deviceId, clock: clock);
 }

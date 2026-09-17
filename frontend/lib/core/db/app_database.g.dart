@@ -1617,6 +1617,17 @@ class $DeviceProfileTable extends DeviceProfile
     requiredDuringInsert: false,
     defaultValue: const Constant('{}'),
   );
+  static const VerificationMeta _accountIdMeta = const VerificationMeta(
+    'accountId',
+  );
+  @override
+  late final GeneratedColumn<String> accountId = GeneratedColumn<String>(
+    'account_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1627,6 +1638,7 @@ class $DeviceProfileTable extends DeviceProfile
     deviceId,
     operatorName,
     preferences,
+    accountId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1702,6 +1714,12 @@ class $DeviceProfileTable extends DeviceProfile
         ),
       );
     }
+    if (data.containsKey('account_id')) {
+      context.handle(
+        _accountIdMeta,
+        accountId.isAcceptableOrUnknown(data['account_id']!, _accountIdMeta),
+      );
+    }
     return context;
   }
 
@@ -1743,6 +1761,10 @@ class $DeviceProfileTable extends DeviceProfile
         DriftSqlType.string,
         data['${effectivePrefix}preferences'],
       )!,
+      accountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}account_id'],
+      ),
     );
   }
 
@@ -1777,6 +1799,9 @@ class DeviceProfileRow extends DataClass
 
   /// Preferences JSON. An object, stored as text.
   final String preferences;
+
+  /// Backend account id, filled by enrolment. Null on every pre-backend install.
+  final String? accountId;
   const DeviceProfileRow({
     required this.id,
     required this.createdAt,
@@ -1786,6 +1811,7 @@ class DeviceProfileRow extends DataClass
     required this.deviceId,
     required this.operatorName,
     required this.preferences,
+    this.accountId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1798,6 +1824,9 @@ class DeviceProfileRow extends DataClass
     map['device_id'] = Variable<String>(deviceId);
     map['operator_name'] = Variable<String>(operatorName);
     map['preferences'] = Variable<String>(preferences);
+    if (!nullToAbsent || accountId != null) {
+      map['account_id'] = Variable<String>(accountId);
+    }
     return map;
   }
 
@@ -1811,6 +1840,9 @@ class DeviceProfileRow extends DataClass
       deviceId: Value(deviceId),
       operatorName: Value(operatorName),
       preferences: Value(preferences),
+      accountId: accountId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(accountId),
     );
   }
 
@@ -1828,6 +1860,7 @@ class DeviceProfileRow extends DataClass
       deviceId: serializer.fromJson<String>(json['deviceId']),
       operatorName: serializer.fromJson<String>(json['operatorName']),
       preferences: serializer.fromJson<String>(json['preferences']),
+      accountId: serializer.fromJson<String?>(json['accountId']),
     );
   }
   @override
@@ -1842,6 +1875,7 @@ class DeviceProfileRow extends DataClass
       'deviceId': serializer.toJson<String>(deviceId),
       'operatorName': serializer.toJson<String>(operatorName),
       'preferences': serializer.toJson<String>(preferences),
+      'accountId': serializer.toJson<String?>(accountId),
     };
   }
 
@@ -1854,6 +1888,7 @@ class DeviceProfileRow extends DataClass
     String? deviceId,
     String? operatorName,
     String? preferences,
+    Value<String?> accountId = const Value.absent(),
   }) => DeviceProfileRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -1863,6 +1898,7 @@ class DeviceProfileRow extends DataClass
     deviceId: deviceId ?? this.deviceId,
     operatorName: operatorName ?? this.operatorName,
     preferences: preferences ?? this.preferences,
+    accountId: accountId.present ? accountId.value : this.accountId,
   );
   DeviceProfileRow copyWithCompanion(DeviceProfileCompanion data) {
     return DeviceProfileRow(
@@ -1880,6 +1916,7 @@ class DeviceProfileRow extends DataClass
       preferences: data.preferences.present
           ? data.preferences.value
           : this.preferences,
+      accountId: data.accountId.present ? data.accountId.value : this.accountId,
     );
   }
 
@@ -1893,7 +1930,8 @@ class DeviceProfileRow extends DataClass
           ..write('rev: $rev, ')
           ..write('deviceId: $deviceId, ')
           ..write('operatorName: $operatorName, ')
-          ..write('preferences: $preferences')
+          ..write('preferences: $preferences, ')
+          ..write('accountId: $accountId')
           ..write(')'))
         .toString();
   }
@@ -1908,6 +1946,7 @@ class DeviceProfileRow extends DataClass
     deviceId,
     operatorName,
     preferences,
+    accountId,
   );
   @override
   bool operator ==(Object other) =>
@@ -1920,7 +1959,8 @@ class DeviceProfileRow extends DataClass
           other.rev == this.rev &&
           other.deviceId == this.deviceId &&
           other.operatorName == this.operatorName &&
-          other.preferences == this.preferences);
+          other.preferences == this.preferences &&
+          other.accountId == this.accountId);
 }
 
 class DeviceProfileCompanion extends UpdateCompanion<DeviceProfileRow> {
@@ -1932,6 +1972,7 @@ class DeviceProfileCompanion extends UpdateCompanion<DeviceProfileRow> {
   final Value<String> deviceId;
   final Value<String> operatorName;
   final Value<String> preferences;
+  final Value<String?> accountId;
   final Value<int> rowid;
   const DeviceProfileCompanion({
     this.id = const Value.absent(),
@@ -1942,6 +1983,7 @@ class DeviceProfileCompanion extends UpdateCompanion<DeviceProfileRow> {
     this.deviceId = const Value.absent(),
     this.operatorName = const Value.absent(),
     this.preferences = const Value.absent(),
+    this.accountId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   DeviceProfileCompanion.insert({
@@ -1953,6 +1995,7 @@ class DeviceProfileCompanion extends UpdateCompanion<DeviceProfileRow> {
     required String deviceId,
     this.operatorName = const Value.absent(),
     this.preferences = const Value.absent(),
+    this.accountId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : createdAt = Value(createdAt),
        updatedAt = Value(updatedAt),
@@ -1967,6 +2010,7 @@ class DeviceProfileCompanion extends UpdateCompanion<DeviceProfileRow> {
     Expression<String>? deviceId,
     Expression<String>? operatorName,
     Expression<String>? preferences,
+    Expression<String>? accountId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1978,6 +2022,7 @@ class DeviceProfileCompanion extends UpdateCompanion<DeviceProfileRow> {
       if (deviceId != null) 'device_id': deviceId,
       if (operatorName != null) 'operator_name': operatorName,
       if (preferences != null) 'preferences': preferences,
+      if (accountId != null) 'account_id': accountId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1991,6 +2036,7 @@ class DeviceProfileCompanion extends UpdateCompanion<DeviceProfileRow> {
     Value<String>? deviceId,
     Value<String>? operatorName,
     Value<String>? preferences,
+    Value<String?>? accountId,
     Value<int>? rowid,
   }) {
     return DeviceProfileCompanion(
@@ -2002,6 +2048,7 @@ class DeviceProfileCompanion extends UpdateCompanion<DeviceProfileRow> {
       deviceId: deviceId ?? this.deviceId,
       operatorName: operatorName ?? this.operatorName,
       preferences: preferences ?? this.preferences,
+      accountId: accountId ?? this.accountId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2033,6 +2080,9 @@ class DeviceProfileCompanion extends UpdateCompanion<DeviceProfileRow> {
     if (preferences.present) {
       map['preferences'] = Variable<String>(preferences.value);
     }
+    if (accountId.present) {
+      map['account_id'] = Variable<String>(accountId.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2050,6 +2100,7 @@ class DeviceProfileCompanion extends UpdateCompanion<DeviceProfileRow> {
           ..write('deviceId: $deviceId, ')
           ..write('operatorName: $operatorName, ')
           ..write('preferences: $preferences, ')
+          ..write('accountId: $accountId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
