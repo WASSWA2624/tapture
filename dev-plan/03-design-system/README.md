@@ -6,7 +6,7 @@ Tasks 030–048 (19). Each file is a standalone implementation prompt.
 
 - [x] [030 — Design tokens: colour, type, spacing and elevation](030-color-tokens.md)
 - [x] [031 — Material 3 themes and the theme mode controller](031-theme-assembly.md)
-- [ ] [032 — Breakpoints, responsive builder and readable width](032-breakpoints.md)
+- [x] [032 — Breakpoints, responsive builder and readable width](032-breakpoints.md)
 - [ ] [033 — Page scaffold](033-app-page.md)
 - [ ] [034 — Buttons, icon buttons and the primary action](034-app-button.md)
 - [ ] [035 — Text, number, date and search fields](035-app-text-field.md)

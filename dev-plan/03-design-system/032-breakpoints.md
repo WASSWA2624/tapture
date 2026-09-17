@@ -42,10 +42,10 @@ class ContentConstraint extends StatelessWidget { final Widget child; final doub
 
 ## Definition of done
 
-- [ ] No widget outside `core/widgets/responsive/` compares a `MediaQuery` width.
-- [ ] A two-pane layout becomes a one-line change in a screen.
-- [ ] Text and forms stay centred and capped on expanded rather than stretching edge to edge.
-- [ ] Tests: unit test of size-class resolution at 599, 600, 1023 and 1024dp; widget test of `ResponsiveBuilder`
+- [x] No widget outside `core/widgets/responsive/` compares a `MediaQuery` width.
+- [x] A two-pane layout becomes a one-line change in a screen.
+- [x] Text and forms stay centred and capped on expanded rather than stretching edge to edge.
+- [x] Tests: unit test of size-class resolution at 599, 600, 1023 and 1024dp; widget test of `ResponsiveBuilder`
       fallback at three widths; goldens of `ContentConstraint` in light, dark and outdoor.
 
 ## Out of scope

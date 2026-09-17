@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**31 of 281 tasks complete (11.0%)** · last updated 2026-09-17
+**32 of 281 tasks complete (11.4%)** · last updated 2026-09-17
 
 `████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -10,7 +10,7 @@
 | :--- | ---: | ---: | :--- |
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
 | 02 — Foundation services | 11 | 11 | `██████████████` 100% |
-| 03 — Design system | 2 | 19 | `█░░░░░░░░░░░░░` 11% |
+| 03 — Design system | 3 | 19 | `██░░░░░░░░░░░░` 16% |
 | 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **31** | **281** | `█░░░░░░░░░░░░░` 11.0% |
+| **Total** | **32** | **281** | `█░░░░░░░░░░░░░` 11.4% |
 
 ## Completed
 
@@ -67,6 +67,7 @@
 | 029 — AI service interface | 2026-09-17 | `AiService` with typed requests/results for `readText`, `extractFields`, `refineText` and `transcribe`, each returning `Result`. `AiService.unavailable()` is the disabled stand-in: `ProviderFailure` plus a recovery action on every method, no key on the interface. Quoted OCR, transcripts and labels live on the request as data. Guarded by 7 tests. |
 | 030 — Design tokens: colour, type, spacing and elevation | 2026-09-17 | Light, dark and outdoor palettes on `context.colors`, type ramp, 4-point space scale and tone-plus-outline elevation. Swatch, type-ramp and surface-level gallery pages with goldens. Contrast is asserted, not eyeballed. Guarded by token-set, contrast, elevation and golden tests. |
 | 031 — Material 3 themes and the theme mode controller | 2026-09-17 | `buildTheme` / `buildOutdoorTheme` assemble ColorScheme, TextTheme and component themes from tokens. `ThemeModeController` persists `AppThemeMode` through `TextStore` (memory fake + file) and restores before the first frame. `TaptureApp` resolves the active `ThemeData`. Guarded by round-trip, first-frame, geometry and three-mode goldens. |
+| 032 — Breakpoints, responsive builder and readable width | 2026-09-17 | `SizeClass` owns 600/1024. `context.responsive` / `ResponsiveBuilder` fall back to the next smaller class. `ContentConstraint` centres a 720dp readable column. Guarded by edge-resolution, fallback, two-pane, resize-keeps-input and three-mode goldens. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -117,6 +118,8 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 031 | Persistent theme mode needs a core service with a fake (FE-STR-11); `shared_preferences` is not allowlisted and the settings store is task 078. | Open — implemented as `TextStore` under `core/files/` (memory map + temp file); 078 can replace the file backend |
 | 031 | The 030 outdoor palette is daylight-white; `ThemeMode.outdoor` still follows platform brightness. | Open — outdoor+dark flattens `AppColors.dark` surface tints; the contract or a later token pass has to give a dedicated dark-outdoor palette |
 | 031 | Chip layout includes stroke width, so thickening the chip outline moves the box (FE-THEME-03). | Open — chips keep a hairline in every mode; outdoor contrast is the outline colour. Buttons, fields, cards, dialogs and sheets still thicken inside the same geometry |
+| 032 | FE-STR-06 wants `breakpoints.dart` to declare `Breakpoints` first; the contract names `SizeClass`. | Closed by 032 — `typedef Breakpoints = SizeClass`, same shape as `App` / `TaptureApp` |
+| 032 | The readable column cap is not a size-class boundary, so it cannot live on `SizeClass` (FE-RESP-01). | Open — default is 720dp on `ContentConstraint`; a later token pass can promote it |
 
 ## Checklist
 
@@ -161,11 +164,11 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 03 — Design system
 
-*2 of 19 complete.*
+*3 of 19 complete.*
 
 - [x] [030 — Design tokens: colour, type, spacing and elevation](dev-plan/03-design-system/030-color-tokens.md)
 - [x] [031 — Material 3 themes and the theme mode controller](dev-plan/03-design-system/031-theme-assembly.md)
-- [ ] [032 — Breakpoints, responsive builder and readable width](dev-plan/03-design-system/032-breakpoints.md)
+- [x] [032 — Breakpoints, responsive builder and readable width](dev-plan/03-design-system/032-breakpoints.md)
 - [ ] [033 — Page scaffold](dev-plan/03-design-system/033-app-page.md)
 - [ ] [034 — Buttons, icon buttons and the primary action](dev-plan/03-design-system/034-app-button.md)
 - [ ] [035 — Text, number, date and search fields](dev-plan/03-design-system/035-app-text-field.md)
