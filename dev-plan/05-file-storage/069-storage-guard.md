@@ -39,8 +39,8 @@ abstract interface class StorageGuard {
 
 ## Definition of done
 
-- [ ] A device below 500 MB warns once and still captures; below 100 MB new capture is refused with a route to export.
-- [ ] A save already under way at the critical threshold completes and writes its row.
-- [ ] A full device never produces a truncated photo or a record without its file.
-- [ ] Tests: `frontend/test/core/files/storage_guard_test.dart` drives a fake free-space source across both thresholds,
+- [x] A device below 500 MB warns once and still captures; below 100 MB new capture is refused with a route to export.
+- [x] A save already under way at the critical threshold completes and writes its row.
+- [x] A full device never produces a truncated photo or a record without its file.
+- [x] Tests: `frontend/test/core/files/storage_guard_test.dart` drives a fake free-space source across both thresholds,
       asserts one warning per session, the refusal at critical, and completion of an in-flight save.
