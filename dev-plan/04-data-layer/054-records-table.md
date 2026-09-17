@@ -34,9 +34,9 @@ migration.
 
 ## Definition of done
 
-- [ ] Listing a project's records by status is paged and served by the index, never by a full scan.
-- [ ] Writing a refined or final value leaves `valueRaw` byte-identical; a second write to `valueRaw` is refused.
-- [ ] A duplicate `fieldKey` for one record is refused by the unique index.
-- [ ] Tests: `frontend/test/core/db/tables/records_test.dart` covers paged listing by project and status and lookup by
+- [x] Listing a project's records by status is paged and served by the index, never by a full scan.
+- [x] Writing a refined or final value leaves `valueRaw` byte-identical; a second write to `valueRaw` is refused.
+- [x] A duplicate `fieldKey` for one record is refused by the unique index.
+- [x] Tests: `frontend/test/core/db/tables/records_test.dart` covers paged listing by project and status and lookup by
       `identityHash`; `record_fields_test.dart` asserts raw is untouched by refinement and that the unique index holds.
       Both against an in-memory database, covering their migration steps.

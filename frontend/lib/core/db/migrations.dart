@@ -20,6 +20,7 @@ kUpgradeSteps = <int, _UpgradeStep>{
   2: migrateToV2,
   3: migrateToV3,
   4: migrateToV4,
+  5: migrateToV5,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -82,6 +83,17 @@ Future<void> migrateToV4(Migrator migrator, AppDatabase db) async {
   await migrator.createTable(db.templateFields);
   await migrator.createTable(db.templateRows);
   await migrator.createIndex(db.templateRowsByIdentifier);
+}
+
+/// Schema version 5: records and one-row-per-field values.
+Future<void> migrateToV5(Migrator migrator, AppDatabase db) async {
+  await migrator.createTable(db.records);
+  await migrator.createTable(db.recordFields);
+  await migrator.createIndex(db.recordsByProjectStatus);
+  await migrator.createIndex(db.recordsByIdentityHash);
+  await migrator.createIndex(db.recordsByCapturedAt);
+  await migrator.createIndex(db.recordsByTemplate);
+  await migrator.createIndex(db.recordFieldsByFinal);
 }
 
 /// Runs the named step for [version], after the destructive-migration gate.
