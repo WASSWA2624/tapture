@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**44 of 281 tasks complete (15.7%)** · last updated 2026-09-17
+**45 of 281 tasks complete (16.0%)** · last updated 2026-09-17
 
 `██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -10,7 +10,7 @@
 | :--- | ---: | ---: | :--- |
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
 | 02 — Foundation services | 11 | 11 | `██████████████` 100% |
-| 03 — Design system | 15 | 19 | `███████████░░░` 79% |
+| 03 — Design system | 16 | 19 | `████████████░░` 84% |
 | 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **44** | **281** | `██░░░░░░░░░░░░` 15.7% |
+| **Total** | **45** | **281** | `██░░░░░░░░░░░░` 16.0% |
 
 ## Completed
 
@@ -80,6 +80,7 @@
 | 042 — Step progress list | 2026-09-17 | `AppProgressSteps` renders done, running, waiting and failed with an icon plus text so colour is never the only signal. A state change is announced and does not move the steps below it. Guarded by a position-and-semantics widget test, 200 percent, and 3 goldens of every state plus a mixed list. |
 | 043 — Photo thumbnail | 2026-09-17 | `AppPhotoThumb` is the one square every photo renders through: type badge and caption overlays, selection tick plus border, missing-file placeholder, 1:1 `BoxFit.cover`, cached thumb path never the original. `PhotoAsset` / `PhotoType` live in a part file until capture owns them. Guarded by never-decode and missing-file widget tests, 200 percent, and 3 goldens of badge, caption, selected, unselected and error. |
 | 044 — Form scaffold, validation display and focus behaviour | 2026-09-17 | `AppForm` spaces fields, lists every invalid field at the top, pins a busy submit bar, and prompts on a dirty pop. `FocusActions` dismisses the keyboard and advances in visual order; `KeepFocusedVisible` keeps the focused field above the inset. Guarded by unsaved-guard, double-submit, focus-order and keyboard-inset widget tests, 200 percent, and 3 goldens with and without the error summary. |
+| 045 — Haptics service | 2026-09-17 | `Haptics` is the one caller of `HapticFeedback`: shutter (heavy), save (medium), warning (light), error (vibrate) and selection (click). `Haptics.fake` records names for tests. Disabled haptics suppress all five; reduced motion skips selection so capture and save still confirm by touch. Guarded by fire-once, disabled, and reduced-motion unit tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -153,6 +154,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 043 | Overlay copy (`Missing photo`, type labels) is still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
 | 044 | Error summary and unsaved-guard copy is still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
 | 044 | The contract has no `errors` or `dirty` fields. | Open — extra so the summary can list invalid fields and choice/date edits can mark dirty; text fields also mark dirty on first edit |
+| 045 | Flutter has no first-party "haptics enabled" flag. | Open — `enabled` is read once at construction (default on); the OS still no-ops `HapticFeedback` when the user has turned vibration off. Settings (078) can pass the flag |
 | 036 | Catalogue copy (`Select all`, `Clear`) is still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
 | 037 | FE-STR-06 wants one public class; the contract publishes `AppChip` and `AppChipRow`. | Closed by 037 — `AppChipRow` lives in a part file so one public class per file still holds |
 | 037 | Catalogue copy (`Dismiss {label}`) is still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
@@ -207,7 +209,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 03 — Design system
 
-*15 of 19 complete.*
+*16 of 19 complete.*
 
 - [x] [030 — Design tokens: colour, type, spacing and elevation](dev-plan/03-design-system/030-color-tokens.md)
 - [x] [031 — Material 3 themes and the theme mode controller](dev-plan/03-design-system/031-theme-assembly.md)
@@ -224,7 +226,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [042 — Step progress list](dev-plan/03-design-system/042-app-progress-steps.md)
 - [x] [043 — Photo thumbnail](dev-plan/03-design-system/043-app-photo-thumb.md)
 - [x] [044 — Form scaffold, validation display and focus behaviour](dev-plan/03-design-system/044-app-form-scaffold.md)
-- [ ] [045 — Haptics service](dev-plan/03-design-system/045-haptics-service.md)
+- [x] [045 — Haptics service](dev-plan/03-design-system/045-haptics-service.md)
 - [ ] [046 — User-facing copy helper](dev-plan/03-design-system/046-copy-helper.md)
 - [ ] [047 — Widget gallery screen](dev-plan/03-design-system/047-widget-gallery.md)
 - [ ] [048 — Golden test baselines for the catalogue](dev-plan/03-design-system/048-golden-baselines.md)

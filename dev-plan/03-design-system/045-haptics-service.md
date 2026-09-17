@@ -32,8 +32,8 @@ abstract interface class Haptics {
 
 ## Definition of done
 
-- [ ] Shutter and save feel distinct in the hand, and every pattern is silent when the system setting is off.
-- [ ] Tests: unit tests against the recording fake asserting each named pattern fires once, and that all five are
+- [x] Shutter and save feel distinct in the hand, and every pattern is silent when the system setting is off.
+- [x] Tests: unit tests against the recording fake asserting each named pattern fires once, and that all five are
       suppressed when haptics are disabled.
 
 ## Out of scope

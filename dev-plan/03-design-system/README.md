@@ -19,7 +19,7 @@ Tasks 030–048 (19). Each file is a standalone implementation prompt.
 - [x] [042 — Step progress list](042-app-progress-steps.md)
 - [x] [043 — Photo thumbnail](043-app-photo-thumb.md)
 - [x] [044 — Form scaffold, validation display and focus behaviour](044-app-form-scaffold.md)
-- [ ] [045 — Haptics service](045-haptics-service.md)
+- [x] [045 — Haptics service](045-haptics-service.md)
 - [ ] [046 — User-facing copy helper](046-copy-helper.md)
 - [ ] [047 — Widget gallery screen](047-widget-gallery.md)
 - [ ] [048 — Golden test baselines for the catalogue](048-golden-baselines.md)
