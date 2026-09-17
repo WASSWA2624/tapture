@@ -37,7 +37,7 @@ class AppPhotoThumb extends StatelessWidget {
 
 ## Definition of done
 
-- [ ] Every photo in the app renders through this widget (FE-CONS-06).
-- [ ] Scrolling a tray of thirty photos stays smooth, and a missing file shows a placeholder instead of throwing.
-- [ ] Tests: goldens of badge, caption, selection and error states in light, dark and outdoor; widget test asserting the
+- [x] Every photo in the app renders through this widget (FE-CONS-06).
+- [x] Scrolling a tray of thirty photos stays smooth, and a missing file shows a placeholder instead of throwing.
+- [x] Tests: goldens of badge, caption, selection and error states in light, dark and outdoor; widget test asserting the
       full-size image is never decoded; widget test of the missing-file path.
