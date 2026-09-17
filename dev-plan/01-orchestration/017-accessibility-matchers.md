@@ -30,7 +30,7 @@ Matcher hasSemanticLabel(String label);  Matcher meetsTapTarget({double min = 48
 
 ## Definition of done
 
-- [ ] A button without a semantic label fails `hasSemanticLabel` with a readable message.
-- [ ] A 40dp icon button fails `meetsTapTarget`, and a 48dp one passes.
-- [ ] `expectNoA11yIssues` fails a widget that breaks the framework guidelines and passes a compliant one.
-- [ ] Tests: `frontend/test/support/a11y_matchers_test.dart` proves each matcher both passes and fails correctly.
+- [x] A button without a semantic label fails `hasSemanticLabel` with a readable message.
+- [x] A 40dp icon button fails `meetsTapTarget`, and a 48dp one passes.
+- [x] `expectNoA11yIssues` fails a widget that breaks the framework guidelines and passes a compliant one.
+- [x] Tests: `frontend/test/support/a11y_matchers_test.dart` proves each matcher both passes and fails correctly.

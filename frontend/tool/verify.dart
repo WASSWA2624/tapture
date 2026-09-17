@@ -14,6 +14,7 @@ const String _usage = 'usage: dart run tool/verify.dart [$_fastFlag]';
 const List<String> _guardrailSuites = <String>[
   'test/tool',
   'test/architecture',
+  'test/support',
 ];
 
 /// The suite holding the design-system goldens, which `--fast` skips.
@@ -22,9 +23,10 @@ const String _goldenSuite = 'test/design_system';
 /// The suite holding the end-to-end flows, which `--fast` skips.
 const String _integrationSuite = 'integration_test';
 
-/// Folders under `test/` that no gate runs directly: the guardrail suites have
-/// their own gate, the goldens have theirs, and `support/` holds helpers
-/// rather than tests.
+/// Folders under `test/` that the unit-and-widget gate does not run: the
+/// guardrail suites have their own gate, the goldens have theirs, and
+/// `support/` is run with the guardrails because it holds the accessibility
+/// matchers.
 const List<String> _notUnitSuites = <String>[
   'tool',
   'architecture',
