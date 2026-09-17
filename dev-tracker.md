@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**71 of 281 tasks complete (25.3%)** · last updated 2026-09-17
+**72 of 281 tasks complete (25.6%)** · last updated 2026-09-17
 
 `██████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -13,7 +13,7 @@
 | 03 — Design system | 19 | 19 | `██████████████` 100% |
 | 04 — Local database | 16 | 16 | `██████████████` 100% |
 | 05 — File storage | 7 | 7 | `██████████████` 100% |
-| 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
+| 06 — Application shell | 1 | 5 | `███░░░░░░░░░░░` 20% |
 | 07 — Account and settings | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
 | 08 — Projects | 0 | 6 | `░░░░░░░░░░░░░░` 0% |
 | 09 — Templates | 0 | 17 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **71** | **281** | `███░░░░░░░░░░░` 25.3% |
+| **Total** | **72** | **281** | `████░░░░░░░░░░` 25.6% |
 
 ## Completed
 
@@ -107,6 +107,7 @@
 | 069 — Storage headroom guard | 2026-09-17 | `StorageGuard` maps free bytes to `ample` / `low` / `critical` from `AppConstants.storage`, polls on resume and `beginSession` (not per shutter), warns once per low session while capture continues, and refuses a new capture at critical with export and cache cleanup on the `StorageFailure`. An in-flight `completeSave` still finishes. Guarded by a fake volume across both thresholds, one-warning, refusal, in-flight, and resume-versus-shutter tests. |
 | 070 — Orphan file scanner | 2026-09-17 | `OrphanScanner` walks a project tree in pages, skips `.cache` and `.part`, and reports files with no row and rows with no file plus reclaimable bytes. Adoption inserts through `upsertPhoto` / `upsertAttachment` with hash and merge columns; `flagMissing` writes an audit flag and leaves the row intact. A cancelled scan returns `CancelledFailure` and changes nothing. Guarded by stray/missing/.cache, cancel, and adopt+flag tests. |
 | 071 — Imported file validation | 2026-09-17 | `FileValidation` is the one gate outside files pass: extension allow-list, a 64-byte magic sniff, per-kind size ceilings, then a ZIP central-directory walk for xlsx and bundles. Refusals quote the basename as data. Guarded by one passing case per kind plus mismatched xlsx, oversized image, empty file, traversal zip, symlink entry, and zip-bomb declaration. |
+| 072 — Router, route table and guards | 2026-09-17 | `routerProvider` installs GoRouter with `AppRoutes` helpers and a single `appGuards()` redirect chain. Project-scoped routes carry a metadata flag; a capture deep link with no open project diverts to `/projects?from=` and resumes when `OpenProjectId` is set. Unknown paths render `AppErrorState` with a way back. Guarded by a full route-table resolution plus diversion/resumption tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -232,6 +233,10 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 071 | FE-FLOW-06 forbids an archive package. | Open — ZIP structure is read from the central directory only; nothing is extracted |
 | 071 | `file_validation.dart` uses `dart:io`. | Open — callers import it directly, same as 065 |
 | 071 | FE-STR-10 wants a split above ~300 lines; the task names one file. | Open — sniff, ceilings and the ZIP walk stay in `file_validation.dart` |
+| 072 | The contract types guards with `WidgetRef`; that type is sealed. | Open — `RouteGuard` takes `Ref` so a `ProviderContainer` can exercise a guard without a widget |
+| 072 | `go_router` 18 pulls `material_ui` that needs `@awaitNotRequired`. | Open — pinned `^17.5.0`, which still has route `metadata` and runs on Dart 3.12.2 |
+| 072 | Project screens do not exist yet; the guard still has to read an open project id. | Open — extra `openProjectIdProvider` / `OpenProjectId` until 083's `CurrentProject` becomes the source |
+| 072 | `route_guards.dart` needs `AppRoutes.projects` without a cycle. | Open — the two named files are one library (`part of`), same shape as `WrittenFile` |
 | 049 | Empty Drift managers leave an unused `_db` field that this analyzer reads as an error. | Closed by 050 — `BaseDao` is hand-written; `generate_manager: false` stays because an empty Drift manager still leaves unused `_db` |
 | 050 | The contract types `runInTransaction` on `AppDatabase`; tests need a table `AppDatabase` does not have yet. | Open — the parameter is `GeneratedDatabase`, which `AppDatabase` already is, so a probe database can share the helper |
 | 050 | `BaseDao` cannot stamp writes without a clock, device id, id service and table. | Open — extra constructor arguments; table tasks pass them through |
@@ -349,9 +354,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 06 — Application shell
 
-*0 of 5 complete.*
+*1 of 5 complete.*
 
-- [ ] [072 — Router, route table and guards](dev-plan/06-app-shell/072-router-setup.md)
+- [x] [072 — Router, route table and guards](dev-plan/06-app-shell/072-router-setup.md)
 - [ ] [073 — Adaptive navigation shell](dev-plan/06-app-shell/073-nav-shell.md)
 - [ ] [074 — First-run flow](dev-plan/06-app-shell/074-first-run.md)
 - [ ] [075 — Global status line and offline banner](dev-plan/06-app-shell/075-status-line.md)

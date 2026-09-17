@@ -104,7 +104,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 
 *Navigation, the always-visible status line, and the frame every feature plugs into.*
 
-- [ ] [072 — Router, route table and guards](06-app-shell/072-router-setup.md)
+- [x] [072 — Router, route table and guards](06-app-shell/072-router-setup.md)
 - [ ] [073 — Adaptive navigation shell](06-app-shell/073-nav-shell.md)
 - [ ] [074 — First-run flow](06-app-shell/074-first-run.md)
 - [ ] [075 — Global status line and offline banner](06-app-shell/075-status-line.md)

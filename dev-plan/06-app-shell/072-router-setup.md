@@ -49,8 +49,8 @@ List<RouteGuard> appGuards();
 
 ## Definition of done
 
-- [ ] Deep linking to a record opens it directly, and no screen builds a path string by hand.
-- [ ] Opening a capture link with no project selected asks which project, then continues to that capture screen.
-- [ ] An unknown path renders the shared error state with a way back, never a blank page.
-- [ ] Tests: `frontend/test/app/router_test.dart` resolves every declared route plus the not-found path;
+- [x] Deep linking to a record opens it directly, and no screen builds a path string by hand.
+- [x] Opening a capture link with no project selected asks which project, then continues to that capture screen.
+- [x] An unknown path renders the shared error state with a way back, never a blank page.
+- [x] Tests: `frontend/test/app/router_test.dart` resolves every declared route plus the not-found path;
   `frontend/test/app/route_guards_test.dart` asserts diversion and resumption for a project-scoped location.

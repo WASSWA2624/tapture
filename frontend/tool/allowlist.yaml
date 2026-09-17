@@ -35,6 +35,10 @@ packages:
     version: ^9.2.4
     purpose: Platform Keystore/Keychain for keys and credentials. Reached only through secure_storage (FE-STR-11, FE-SEC-01). Replaces writing secrets to preferences or the database.
     task: "027"
+  go_router:
+    version: ^17.5.0
+    purpose: One declared route table, typed helpers and a single redirect chain (FE-STR-02). Replaces the MaterialApp.router placeholder in task 019. BSD-3-Clause. Capped below 18 because 18 pulls material_ui that needs @awaitNotRequired, which Dart 3.12.2 does not have.
+    task: "072"
   json_annotation:
     version: ^4.9.0
     purpose: JsonConverter and @JsonKey so models declare wire names explicitly (FE-CODE-13). Replaces hand-rolled codecs that would follow Dart identifiers.
