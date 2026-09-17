@@ -19,6 +19,10 @@ packages:
     version: ^3.4.3
     purpose: ProviderScope and ConsumerWidget — the only state library (FE-STATE-01). Replaces nothing; this is the first approved state package.
     task: "019"
+  crypto:
+    version: ^3.0.7
+    purpose: Incremental SHA-256 for file identity and duplicate detection (FE-PERF-07). Replaces a hand-rolled digest.
+    task: "024"
   flutter_test:
     version: sdk
     purpose: The widget and unit test harness every guardrail suite runs on.

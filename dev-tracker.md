@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**23 of 281 tasks complete (8.2%)** · last updated 2026-09-17
+**24 of 281 tasks complete (8.5%)** · last updated 2026-09-17
 
 `███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -9,7 +9,7 @@
 | Phase | Done | Total | Progress |
 | :--- | ---: | ---: | :--- |
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
-| 02 — Foundation services | 5 | 11 | `██████░░░░░░░░` 45% |
+| 02 — Foundation services | 6 | 11 | `████████░░░░░░` 55% |
 | 03 — Design system | 0 | 19 | `░░░░░░░░░░░░░░` 0% |
 | 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **23** | **281** | `█░░░░░░░░░░░░░` 8.2% |
+| **Total** | **24** | **281** | `█░░░░░░░░░░░░░` 8.5% |
 
 ## Completed
 
@@ -59,6 +59,7 @@
 | 021 — Result type, failure taxonomy and error boundary | 2026-09-17 | Sealed `Failure` (seven variants, each with message and recovery action) and `Result<T>` (`map`/`flatMap`/`fold`/`getOrElse`/`capture`) in `core/errors/` with no Flutter import. `ErrorBoundary` replaces a throwing child with a retry panel. Variants live in `part` files so sealed and one-class-per-file both hold. Guarded by 8 tests. |
 | 022 — Logger, diagnostics export and provider observer | 2026-09-17 | `Logger` with levels, tags, a bounded redacting buffer and rotating-file persist (`persist: true`). `exportLog` writes a dated, device-named file. `AppProviderObserver` logs one error per provider failure and rebuilds above the threshold, installed only in the dev flavour. Guarded by 14 tests. |
 | 023 — Clock, identifiers and device identity | 2026-09-17 | `Clock` (`SystemClock` / `FixedClock`), `IdService` / `UuidV7Service` (time-ordered, sequence fake for tests), and `deviceId` / `deviceDescriptor`. `DateTime.now` is documented as legal only in `SystemClock`. Device id is minted once and read back from memory or a file. Guarded by 10 tests. |
+| 024 — Hashing service and isolate runner | 2026-09-17 | `sha256OfFile` streams 64KiB chunks on `runIsolate`; `sha256OfString` is the sync digest. `CancellationToken` kills the worker and returns `CancelledFailure`. `crypto` ^3.0.7 pinned on the allowlist. Guarded by 8 tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -94,6 +95,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 022 | FE-STR-06 wants `provider_observer.dart` to declare `ProviderObserver` first; the contract names `AppProviderObserver`. | Closed by 022 — `typedef ProviderObserver = AppProviderObserver`, same shape as `App` / `TaptureApp` |
 | 023 | `Clock` says `DateTime.now` lives only in `SystemClock`; `Logger` still defaults to `DateTime.now`. | Open — recorded on `Clock`; wiring the logger is a later task |
 | 023 | Device model is `Platform.operatingSystem` because no `device_info` package is on the allowlist. | Open — implemented with dart:io; a later task can approve a plugin |
+| 024 | FE-PERF-02 wants every hash off the UI thread; the contract makes `sha256OfString` synchronous. | Open — file hashes go through `runIsolate`; the string helper matches the contract |
 
 ## Checklist
 
@@ -122,14 +124,14 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 02 — Foundation services
 
-*5 of 11 complete.*
+*6 of 11 complete.*
 
 - [x] [019 — Application bootstrap, flavours and lifecycle](dev-plan/02-foundation/019-app-bootstrap.md)
 - [x] [020 — Shared constants](dev-plan/02-foundation/020-app-constants.md)
 - [x] [021 — Result type, failure taxonomy and error boundary](dev-plan/02-foundation/021-result-and-failures.md)
 - [x] [022 — Logger, diagnostics export and provider observer](dev-plan/02-foundation/022-logger-service.md)
 - [x] [023 — Clock, identifiers and device identity](dev-plan/02-foundation/023-clock-service.md)
-- [ ] [024 — Hashing service and isolate runner](dev-plan/02-foundation/024-hashing-service.md)
+- [x] [024 — Hashing service and isolate runner](dev-plan/02-foundation/024-hashing-service.md)
 - [ ] [025 — Connectivity service](dev-plan/02-foundation/025-connectivity-service.md)
 - [ ] [026 — Runtime permissions service](dev-plan/02-foundation/026-permissions-service.md)
 - [ ] [027 — Secure storage service](dev-plan/02-foundation/027-secure-storage-service.md)

@@ -132,6 +132,9 @@ abstract final class AppConstants {
   /// Caps for extraction requests and perceptual matching.
   static const ({int extractionImageCap, int perceptualHashDistance})
   processing = (extractionImageCap: 8, perceptualHashDistance: 10);
+
+  /// Streaming reads for hashing and other heavy file jobs (FE-PERF-07).
+  static const ({int chunkBytes}) hashing = (chunkBytes: 64 * 1024);
 }
 
 /// One mebibyte, the unit storage and import ceilings are stated in.

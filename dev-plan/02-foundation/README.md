@@ -9,7 +9,7 @@ Tasks 019–029 (11). Each file is a standalone implementation prompt.
 - [x] [021 — Result type, failure taxonomy and error boundary](021-result-and-failures.md)
 - [x] [022 — Logger, diagnostics export and provider observer](022-logger-service.md)
 - [x] [023 — Clock, identifiers and device identity](023-clock-service.md)
-- [ ] [024 — Hashing service and isolate runner](024-hashing-service.md)
+- [x] [024 — Hashing service and isolate runner](024-hashing-service.md)
 - [ ] [025 — Connectivity service](025-connectivity-service.md)
 - [ ] [026 — Runtime permissions service](026-permissions-service.md)
 - [ ] [027 — Secure storage service](027-secure-storage-service.md)

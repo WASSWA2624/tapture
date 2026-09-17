@@ -32,6 +32,6 @@ Future<Result<R>> runIsolate<M, R>(FutureOr<R> Function(M) task, M message, {voi
 
 ## Definition of done
 
-- [ ] Hashing a hundred-megabyte file holds memory flat.
-- [ ] Cancelling mid-run completes with `CancelledFailure` and leaves no orphan isolate.
-- [ ] Tests: `frontend/test/core/hash/hashing_service_test.dart` uses known vectors and a large temporary file; `frontend/test/core/concurrency/isolate_runner_test.dart` covers success, progress, failure and cancellation.
+- [x] Hashing a hundred-megabyte file holds memory flat.
+- [x] Cancelling mid-run completes with `CancelledFailure` and leaves no orphan isolate.
+- [x] Tests: `frontend/test/core/hash/hashing_service_test.dart` uses known vectors and a large temporary file; `frontend/test/core/concurrency/isolate_runner_test.dart` covers success, progress, failure and cancellation.

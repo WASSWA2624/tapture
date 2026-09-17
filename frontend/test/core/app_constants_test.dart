@@ -65,6 +65,10 @@ void main() {
       AppConstants.processing.perceptualHashDistance,
       inInclusiveRange(1, 32),
     );
+    expect(
+      AppConstants.hashing.chunkBytes,
+      inInclusiveRange(4 * 1024, 1024 * 1024),
+    );
   });
 
   test('folder and import ceilings stay below hostile sizes', () {
