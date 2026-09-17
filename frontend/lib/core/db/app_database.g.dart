@@ -20299,6 +20299,2218 @@ class ExportsCompanion extends UpdateCompanion<ExportRow> {
   }
 }
 
+class $MergeTable extends Merge with TableInfo<$MergeTable, MergeSession> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MergeTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _bundleNameMeta = const VerificationMeta(
+    'bundleName',
+  );
+  @override
+  late final GeneratedColumn<String> bundleName = GeneratedColumn<String>(
+    'bundle_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sourceDeviceMeta = const VerificationMeta(
+    'sourceDevice',
+  );
+  @override
+  late final GeneratedColumn<String> sourceDevice = GeneratedColumn<String>(
+    'source_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _importedAtMeta = const VerificationMeta(
+    'importedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> importedAt = GeneratedColumn<DateTime>(
+    'imported_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _countsMeta = const VerificationMeta('counts');
+  @override
+  late final GeneratedColumn<String> counts = GeneratedColumn<String>(
+    'counts',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _undoSnapshotPathMeta = const VerificationMeta(
+    'undoSnapshotPath',
+  );
+  @override
+  late final GeneratedColumn<String> undoSnapshotPath = GeneratedColumn<String>(
+    'undo_snapshot_path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    bundleName,
+    sourceDevice,
+    importedAt,
+    counts,
+    status,
+    undoSnapshotPath,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'merge_sessions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MergeSession> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('bundle_name')) {
+      context.handle(
+        _bundleNameMeta,
+        bundleName.isAcceptableOrUnknown(data['bundle_name']!, _bundleNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bundleNameMeta);
+    }
+    if (data.containsKey('source_device')) {
+      context.handle(
+        _sourceDeviceMeta,
+        sourceDevice.isAcceptableOrUnknown(
+          data['source_device']!,
+          _sourceDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceDeviceMeta);
+    }
+    if (data.containsKey('imported_at')) {
+      context.handle(
+        _importedAtMeta,
+        importedAt.isAcceptableOrUnknown(data['imported_at']!, _importedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_importedAtMeta);
+    }
+    if (data.containsKey('counts')) {
+      context.handle(
+        _countsMeta,
+        counts.isAcceptableOrUnknown(data['counts']!, _countsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_countsMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('undo_snapshot_path')) {
+      context.handle(
+        _undoSnapshotPathMeta,
+        undoSnapshotPath.isAcceptableOrUnknown(
+          data['undo_snapshot_path']!,
+          _undoSnapshotPathMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_undoSnapshotPathMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  MergeSession map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MergeSession(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      bundleName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bundle_name'],
+      )!,
+      sourceDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_device'],
+      )!,
+      importedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}imported_at'],
+      )!,
+      counts: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}counts'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      undoSnapshotPath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}undo_snapshot_path'],
+      )!,
+    );
+  }
+
+  @override
+  $MergeTable createAlias(String alias) {
+    return $MergeTable(attachedDatabase, alias);
+  }
+}
+
+class MergeSession extends DataClass implements Insertable<MergeSession> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Bundle file name, stored as data.
+  final String bundleName;
+
+  /// Device the bundle came from.
+  final String sourceDevice;
+
+  /// When the bundle was imported.
+  final DateTime importedAt;
+
+  /// Per-category counts JSON. An object, stored as text.
+  final String counts;
+
+  /// imported, undone or failed, stored as text.
+  final String status;
+
+  /// Path of the pre-apply snapshot used by undo.
+  final String undoSnapshotPath;
+  const MergeSession({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.bundleName,
+    required this.sourceDevice,
+    required this.importedAt,
+    required this.counts,
+    required this.status,
+    required this.undoSnapshotPath,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['bundle_name'] = Variable<String>(bundleName);
+    map['source_device'] = Variable<String>(sourceDevice);
+    map['imported_at'] = Variable<DateTime>(importedAt);
+    map['counts'] = Variable<String>(counts);
+    map['status'] = Variable<String>(status);
+    map['undo_snapshot_path'] = Variable<String>(undoSnapshotPath);
+    return map;
+  }
+
+  MergeCompanion toCompanion(bool nullToAbsent) {
+    return MergeCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      bundleName: Value(bundleName),
+      sourceDevice: Value(sourceDevice),
+      importedAt: Value(importedAt),
+      counts: Value(counts),
+      status: Value(status),
+      undoSnapshotPath: Value(undoSnapshotPath),
+    );
+  }
+
+  factory MergeSession.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MergeSession(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      bundleName: serializer.fromJson<String>(json['bundleName']),
+      sourceDevice: serializer.fromJson<String>(json['sourceDevice']),
+      importedAt: serializer.fromJson<DateTime>(json['importedAt']),
+      counts: serializer.fromJson<String>(json['counts']),
+      status: serializer.fromJson<String>(json['status']),
+      undoSnapshotPath: serializer.fromJson<String>(json['undoSnapshotPath']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'bundleName': serializer.toJson<String>(bundleName),
+      'sourceDevice': serializer.toJson<String>(sourceDevice),
+      'importedAt': serializer.toJson<DateTime>(importedAt),
+      'counts': serializer.toJson<String>(counts),
+      'status': serializer.toJson<String>(status),
+      'undoSnapshotPath': serializer.toJson<String>(undoSnapshotPath),
+    };
+  }
+
+  MergeSession copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? bundleName,
+    String? sourceDevice,
+    DateTime? importedAt,
+    String? counts,
+    String? status,
+    String? undoSnapshotPath,
+  }) => MergeSession(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    bundleName: bundleName ?? this.bundleName,
+    sourceDevice: sourceDevice ?? this.sourceDevice,
+    importedAt: importedAt ?? this.importedAt,
+    counts: counts ?? this.counts,
+    status: status ?? this.status,
+    undoSnapshotPath: undoSnapshotPath ?? this.undoSnapshotPath,
+  );
+  MergeSession copyWithCompanion(MergeCompanion data) {
+    return MergeSession(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      bundleName: data.bundleName.present
+          ? data.bundleName.value
+          : this.bundleName,
+      sourceDevice: data.sourceDevice.present
+          ? data.sourceDevice.value
+          : this.sourceDevice,
+      importedAt: data.importedAt.present
+          ? data.importedAt.value
+          : this.importedAt,
+      counts: data.counts.present ? data.counts.value : this.counts,
+      status: data.status.present ? data.status.value : this.status,
+      undoSnapshotPath: data.undoSnapshotPath.present
+          ? data.undoSnapshotPath.value
+          : this.undoSnapshotPath,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MergeSession(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('bundleName: $bundleName, ')
+          ..write('sourceDevice: $sourceDevice, ')
+          ..write('importedAt: $importedAt, ')
+          ..write('counts: $counts, ')
+          ..write('status: $status, ')
+          ..write('undoSnapshotPath: $undoSnapshotPath')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    bundleName,
+    sourceDevice,
+    importedAt,
+    counts,
+    status,
+    undoSnapshotPath,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MergeSession &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.bundleName == this.bundleName &&
+          other.sourceDevice == this.sourceDevice &&
+          other.importedAt == this.importedAt &&
+          other.counts == this.counts &&
+          other.status == this.status &&
+          other.undoSnapshotPath == this.undoSnapshotPath);
+}
+
+class MergeCompanion extends UpdateCompanion<MergeSession> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> bundleName;
+  final Value<String> sourceDevice;
+  final Value<DateTime> importedAt;
+  final Value<String> counts;
+  final Value<String> status;
+  final Value<String> undoSnapshotPath;
+  final Value<int> rowid;
+  const MergeCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.bundleName = const Value.absent(),
+    this.sourceDevice = const Value.absent(),
+    this.importedAt = const Value.absent(),
+    this.counts = const Value.absent(),
+    this.status = const Value.absent(),
+    this.undoSnapshotPath = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MergeCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String bundleName,
+    required String sourceDevice,
+    required DateTime importedAt,
+    required String counts,
+    required String status,
+    required String undoSnapshotPath,
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       bundleName = Value(bundleName),
+       sourceDevice = Value(sourceDevice),
+       importedAt = Value(importedAt),
+       counts = Value(counts),
+       status = Value(status),
+       undoSnapshotPath = Value(undoSnapshotPath);
+  static Insertable<MergeSession> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? bundleName,
+    Expression<String>? sourceDevice,
+    Expression<DateTime>? importedAt,
+    Expression<String>? counts,
+    Expression<String>? status,
+    Expression<String>? undoSnapshotPath,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (bundleName != null) 'bundle_name': bundleName,
+      if (sourceDevice != null) 'source_device': sourceDevice,
+      if (importedAt != null) 'imported_at': importedAt,
+      if (counts != null) 'counts': counts,
+      if (status != null) 'status': status,
+      if (undoSnapshotPath != null) 'undo_snapshot_path': undoSnapshotPath,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MergeCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? bundleName,
+    Value<String>? sourceDevice,
+    Value<DateTime>? importedAt,
+    Value<String>? counts,
+    Value<String>? status,
+    Value<String>? undoSnapshotPath,
+    Value<int>? rowid,
+  }) {
+    return MergeCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      bundleName: bundleName ?? this.bundleName,
+      sourceDevice: sourceDevice ?? this.sourceDevice,
+      importedAt: importedAt ?? this.importedAt,
+      counts: counts ?? this.counts,
+      status: status ?? this.status,
+      undoSnapshotPath: undoSnapshotPath ?? this.undoSnapshotPath,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (bundleName.present) {
+      map['bundle_name'] = Variable<String>(bundleName.value);
+    }
+    if (sourceDevice.present) {
+      map['source_device'] = Variable<String>(sourceDevice.value);
+    }
+    if (importedAt.present) {
+      map['imported_at'] = Variable<DateTime>(importedAt.value);
+    }
+    if (counts.present) {
+      map['counts'] = Variable<String>(counts.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (undoSnapshotPath.present) {
+      map['undo_snapshot_path'] = Variable<String>(undoSnapshotPath.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MergeCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('bundleName: $bundleName, ')
+          ..write('sourceDevice: $sourceDevice, ')
+          ..write('importedAt: $importedAt, ')
+          ..write('counts: $counts, ')
+          ..write('status: $status, ')
+          ..write('undoSnapshotPath: $undoSnapshotPath, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $MergeConflictsTable extends MergeConflicts
+    with TableInfo<$MergeConflictsTable, MergeConflict> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MergeConflictsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _sessionIdMeta = const VerificationMeta(
+    'sessionId',
+  );
+  @override
+  late final GeneratedColumn<String> sessionId = GeneratedColumn<String>(
+    'session_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _entityTypeMeta = const VerificationMeta(
+    'entityType',
+  );
+  @override
+  late final GeneratedColumn<String> entityType = GeneratedColumn<String>(
+    'entity_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _entityIdMeta = const VerificationMeta(
+    'entityId',
+  );
+  @override
+  late final GeneratedColumn<String> entityId = GeneratedColumn<String>(
+    'entity_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fieldKeyMeta = const VerificationMeta(
+    'fieldKey',
+  );
+  @override
+  late final GeneratedColumn<String> fieldKey = GeneratedColumn<String>(
+    'field_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _mineValueMeta = const VerificationMeta(
+    'mineValue',
+  );
+  @override
+  late final GeneratedColumn<String> mineValue = GeneratedColumn<String>(
+    'mine_value',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _theirsValueMeta = const VerificationMeta(
+    'theirsValue',
+  );
+  @override
+  late final GeneratedColumn<String> theirsValue = GeneratedColumn<String>(
+    'theirs_value',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _mineMetaMeta = const VerificationMeta(
+    'mineMeta',
+  );
+  @override
+  late final GeneratedColumn<String> mineMeta = GeneratedColumn<String>(
+    'mine_meta',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _theirsMetaMeta = const VerificationMeta(
+    'theirsMeta',
+  );
+  @override
+  late final GeneratedColumn<String> theirsMeta = GeneratedColumn<String>(
+    'theirs_meta',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _resolutionMeta = const VerificationMeta(
+    'resolution',
+  );
+  @override
+  late final GeneratedColumn<String> resolution = GeneratedColumn<String>(
+    'resolution',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _resolvedAtMeta = const VerificationMeta(
+    'resolvedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> resolvedAt = GeneratedColumn<DateTime>(
+    'resolved_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _resolvedByMeta = const VerificationMeta(
+    'resolvedBy',
+  );
+  @override
+  late final GeneratedColumn<String> resolvedBy = GeneratedColumn<String>(
+    'resolved_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    sessionId,
+    entityType,
+    entityId,
+    fieldKey,
+    mineValue,
+    theirsValue,
+    mineMeta,
+    theirsMeta,
+    resolution,
+    resolvedAt,
+    resolvedBy,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'merge_conflicts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MergeConflict> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('session_id')) {
+      context.handle(
+        _sessionIdMeta,
+        sessionId.isAcceptableOrUnknown(data['session_id']!, _sessionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sessionIdMeta);
+    }
+    if (data.containsKey('entity_type')) {
+      context.handle(
+        _entityTypeMeta,
+        entityType.isAcceptableOrUnknown(data['entity_type']!, _entityTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entityTypeMeta);
+    }
+    if (data.containsKey('entity_id')) {
+      context.handle(
+        _entityIdMeta,
+        entityId.isAcceptableOrUnknown(data['entity_id']!, _entityIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entityIdMeta);
+    }
+    if (data.containsKey('field_key')) {
+      context.handle(
+        _fieldKeyMeta,
+        fieldKey.isAcceptableOrUnknown(data['field_key']!, _fieldKeyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fieldKeyMeta);
+    }
+    if (data.containsKey('mine_value')) {
+      context.handle(
+        _mineValueMeta,
+        mineValue.isAcceptableOrUnknown(data['mine_value']!, _mineValueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_mineValueMeta);
+    }
+    if (data.containsKey('theirs_value')) {
+      context.handle(
+        _theirsValueMeta,
+        theirsValue.isAcceptableOrUnknown(
+          data['theirs_value']!,
+          _theirsValueMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_theirsValueMeta);
+    }
+    if (data.containsKey('mine_meta')) {
+      context.handle(
+        _mineMetaMeta,
+        mineMeta.isAcceptableOrUnknown(data['mine_meta']!, _mineMetaMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_mineMetaMeta);
+    }
+    if (data.containsKey('theirs_meta')) {
+      context.handle(
+        _theirsMetaMeta,
+        theirsMeta.isAcceptableOrUnknown(data['theirs_meta']!, _theirsMetaMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_theirsMetaMeta);
+    }
+    if (data.containsKey('resolution')) {
+      context.handle(
+        _resolutionMeta,
+        resolution.isAcceptableOrUnknown(data['resolution']!, _resolutionMeta),
+      );
+    }
+    if (data.containsKey('resolved_at')) {
+      context.handle(
+        _resolvedAtMeta,
+        resolvedAt.isAcceptableOrUnknown(data['resolved_at']!, _resolvedAtMeta),
+      );
+    }
+    if (data.containsKey('resolved_by')) {
+      context.handle(
+        _resolvedByMeta,
+        resolvedBy.isAcceptableOrUnknown(data['resolved_by']!, _resolvedByMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  MergeConflict map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MergeConflict(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      sessionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}session_id'],
+      )!,
+      entityType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity_type'],
+      )!,
+      entityId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity_id'],
+      )!,
+      fieldKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}field_key'],
+      )!,
+      mineValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mine_value'],
+      )!,
+      theirsValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}theirs_value'],
+      )!,
+      mineMeta: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mine_meta'],
+      )!,
+      theirsMeta: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}theirs_meta'],
+      )!,
+      resolution: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}resolution'],
+      ),
+      resolvedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}resolved_at'],
+      ),
+      resolvedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}resolved_by'],
+      ),
+    );
+  }
+
+  @override
+  $MergeConflictsTable createAlias(String alias) {
+    return $MergeConflictsTable(attachedDatabase, alias);
+  }
+}
+
+class MergeConflict extends DataClass implements Insertable<MergeConflict> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Session that produced this conflict.
+  final String sessionId;
+
+  /// Table the entity belongs to.
+  final String entityType;
+
+  /// Merge id of the entity.
+  final String entityId;
+
+  /// Field that differs.
+  final String fieldKey;
+
+  /// Local value as stored, never normalised.
+  final String mineValue;
+
+  /// Incoming value as stored, never normalised.
+  final String theirsValue;
+
+  /// Local provenance JSON. An object, stored as text.
+  final String mineMeta;
+
+  /// Incoming provenance JSON. An object, stored as text.
+  final String theirsMeta;
+
+  /// Human choice. Null until a person resolves it.
+  final String? resolution;
+
+  /// When it was resolved.
+  final DateTime? resolvedAt;
+
+  /// Operator who resolved it.
+  final String? resolvedBy;
+  const MergeConflict({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.sessionId,
+    required this.entityType,
+    required this.entityId,
+    required this.fieldKey,
+    required this.mineValue,
+    required this.theirsValue,
+    required this.mineMeta,
+    required this.theirsMeta,
+    this.resolution,
+    this.resolvedAt,
+    this.resolvedBy,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['session_id'] = Variable<String>(sessionId);
+    map['entity_type'] = Variable<String>(entityType);
+    map['entity_id'] = Variable<String>(entityId);
+    map['field_key'] = Variable<String>(fieldKey);
+    map['mine_value'] = Variable<String>(mineValue);
+    map['theirs_value'] = Variable<String>(theirsValue);
+    map['mine_meta'] = Variable<String>(mineMeta);
+    map['theirs_meta'] = Variable<String>(theirsMeta);
+    if (!nullToAbsent || resolution != null) {
+      map['resolution'] = Variable<String>(resolution);
+    }
+    if (!nullToAbsent || resolvedAt != null) {
+      map['resolved_at'] = Variable<DateTime>(resolvedAt);
+    }
+    if (!nullToAbsent || resolvedBy != null) {
+      map['resolved_by'] = Variable<String>(resolvedBy);
+    }
+    return map;
+  }
+
+  MergeConflictsCompanion toCompanion(bool nullToAbsent) {
+    return MergeConflictsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      sessionId: Value(sessionId),
+      entityType: Value(entityType),
+      entityId: Value(entityId),
+      fieldKey: Value(fieldKey),
+      mineValue: Value(mineValue),
+      theirsValue: Value(theirsValue),
+      mineMeta: Value(mineMeta),
+      theirsMeta: Value(theirsMeta),
+      resolution: resolution == null && nullToAbsent
+          ? const Value.absent()
+          : Value(resolution),
+      resolvedAt: resolvedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(resolvedAt),
+      resolvedBy: resolvedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(resolvedBy),
+    );
+  }
+
+  factory MergeConflict.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MergeConflict(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      sessionId: serializer.fromJson<String>(json['sessionId']),
+      entityType: serializer.fromJson<String>(json['entityType']),
+      entityId: serializer.fromJson<String>(json['entityId']),
+      fieldKey: serializer.fromJson<String>(json['fieldKey']),
+      mineValue: serializer.fromJson<String>(json['mineValue']),
+      theirsValue: serializer.fromJson<String>(json['theirsValue']),
+      mineMeta: serializer.fromJson<String>(json['mineMeta']),
+      theirsMeta: serializer.fromJson<String>(json['theirsMeta']),
+      resolution: serializer.fromJson<String?>(json['resolution']),
+      resolvedAt: serializer.fromJson<DateTime?>(json['resolvedAt']),
+      resolvedBy: serializer.fromJson<String?>(json['resolvedBy']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'sessionId': serializer.toJson<String>(sessionId),
+      'entityType': serializer.toJson<String>(entityType),
+      'entityId': serializer.toJson<String>(entityId),
+      'fieldKey': serializer.toJson<String>(fieldKey),
+      'mineValue': serializer.toJson<String>(mineValue),
+      'theirsValue': serializer.toJson<String>(theirsValue),
+      'mineMeta': serializer.toJson<String>(mineMeta),
+      'theirsMeta': serializer.toJson<String>(theirsMeta),
+      'resolution': serializer.toJson<String?>(resolution),
+      'resolvedAt': serializer.toJson<DateTime?>(resolvedAt),
+      'resolvedBy': serializer.toJson<String?>(resolvedBy),
+    };
+  }
+
+  MergeConflict copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? sessionId,
+    String? entityType,
+    String? entityId,
+    String? fieldKey,
+    String? mineValue,
+    String? theirsValue,
+    String? mineMeta,
+    String? theirsMeta,
+    Value<String?> resolution = const Value.absent(),
+    Value<DateTime?> resolvedAt = const Value.absent(),
+    Value<String?> resolvedBy = const Value.absent(),
+  }) => MergeConflict(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    sessionId: sessionId ?? this.sessionId,
+    entityType: entityType ?? this.entityType,
+    entityId: entityId ?? this.entityId,
+    fieldKey: fieldKey ?? this.fieldKey,
+    mineValue: mineValue ?? this.mineValue,
+    theirsValue: theirsValue ?? this.theirsValue,
+    mineMeta: mineMeta ?? this.mineMeta,
+    theirsMeta: theirsMeta ?? this.theirsMeta,
+    resolution: resolution.present ? resolution.value : this.resolution,
+    resolvedAt: resolvedAt.present ? resolvedAt.value : this.resolvedAt,
+    resolvedBy: resolvedBy.present ? resolvedBy.value : this.resolvedBy,
+  );
+  MergeConflict copyWithCompanion(MergeConflictsCompanion data) {
+    return MergeConflict(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      sessionId: data.sessionId.present ? data.sessionId.value : this.sessionId,
+      entityType: data.entityType.present
+          ? data.entityType.value
+          : this.entityType,
+      entityId: data.entityId.present ? data.entityId.value : this.entityId,
+      fieldKey: data.fieldKey.present ? data.fieldKey.value : this.fieldKey,
+      mineValue: data.mineValue.present ? data.mineValue.value : this.mineValue,
+      theirsValue: data.theirsValue.present
+          ? data.theirsValue.value
+          : this.theirsValue,
+      mineMeta: data.mineMeta.present ? data.mineMeta.value : this.mineMeta,
+      theirsMeta: data.theirsMeta.present
+          ? data.theirsMeta.value
+          : this.theirsMeta,
+      resolution: data.resolution.present
+          ? data.resolution.value
+          : this.resolution,
+      resolvedAt: data.resolvedAt.present
+          ? data.resolvedAt.value
+          : this.resolvedAt,
+      resolvedBy: data.resolvedBy.present
+          ? data.resolvedBy.value
+          : this.resolvedBy,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MergeConflict(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('sessionId: $sessionId, ')
+          ..write('entityType: $entityType, ')
+          ..write('entityId: $entityId, ')
+          ..write('fieldKey: $fieldKey, ')
+          ..write('mineValue: $mineValue, ')
+          ..write('theirsValue: $theirsValue, ')
+          ..write('mineMeta: $mineMeta, ')
+          ..write('theirsMeta: $theirsMeta, ')
+          ..write('resolution: $resolution, ')
+          ..write('resolvedAt: $resolvedAt, ')
+          ..write('resolvedBy: $resolvedBy')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    sessionId,
+    entityType,
+    entityId,
+    fieldKey,
+    mineValue,
+    theirsValue,
+    mineMeta,
+    theirsMeta,
+    resolution,
+    resolvedAt,
+    resolvedBy,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MergeConflict &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.sessionId == this.sessionId &&
+          other.entityType == this.entityType &&
+          other.entityId == this.entityId &&
+          other.fieldKey == this.fieldKey &&
+          other.mineValue == this.mineValue &&
+          other.theirsValue == this.theirsValue &&
+          other.mineMeta == this.mineMeta &&
+          other.theirsMeta == this.theirsMeta &&
+          other.resolution == this.resolution &&
+          other.resolvedAt == this.resolvedAt &&
+          other.resolvedBy == this.resolvedBy);
+}
+
+class MergeConflictsCompanion extends UpdateCompanion<MergeConflict> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> sessionId;
+  final Value<String> entityType;
+  final Value<String> entityId;
+  final Value<String> fieldKey;
+  final Value<String> mineValue;
+  final Value<String> theirsValue;
+  final Value<String> mineMeta;
+  final Value<String> theirsMeta;
+  final Value<String?> resolution;
+  final Value<DateTime?> resolvedAt;
+  final Value<String?> resolvedBy;
+  final Value<int> rowid;
+  const MergeConflictsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.sessionId = const Value.absent(),
+    this.entityType = const Value.absent(),
+    this.entityId = const Value.absent(),
+    this.fieldKey = const Value.absent(),
+    this.mineValue = const Value.absent(),
+    this.theirsValue = const Value.absent(),
+    this.mineMeta = const Value.absent(),
+    this.theirsMeta = const Value.absent(),
+    this.resolution = const Value.absent(),
+    this.resolvedAt = const Value.absent(),
+    this.resolvedBy = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MergeConflictsCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String sessionId,
+    required String entityType,
+    required String entityId,
+    required String fieldKey,
+    required String mineValue,
+    required String theirsValue,
+    required String mineMeta,
+    required String theirsMeta,
+    this.resolution = const Value.absent(),
+    this.resolvedAt = const Value.absent(),
+    this.resolvedBy = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       sessionId = Value(sessionId),
+       entityType = Value(entityType),
+       entityId = Value(entityId),
+       fieldKey = Value(fieldKey),
+       mineValue = Value(mineValue),
+       theirsValue = Value(theirsValue),
+       mineMeta = Value(mineMeta),
+       theirsMeta = Value(theirsMeta);
+  static Insertable<MergeConflict> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? sessionId,
+    Expression<String>? entityType,
+    Expression<String>? entityId,
+    Expression<String>? fieldKey,
+    Expression<String>? mineValue,
+    Expression<String>? theirsValue,
+    Expression<String>? mineMeta,
+    Expression<String>? theirsMeta,
+    Expression<String>? resolution,
+    Expression<DateTime>? resolvedAt,
+    Expression<String>? resolvedBy,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (sessionId != null) 'session_id': sessionId,
+      if (entityType != null) 'entity_type': entityType,
+      if (entityId != null) 'entity_id': entityId,
+      if (fieldKey != null) 'field_key': fieldKey,
+      if (mineValue != null) 'mine_value': mineValue,
+      if (theirsValue != null) 'theirs_value': theirsValue,
+      if (mineMeta != null) 'mine_meta': mineMeta,
+      if (theirsMeta != null) 'theirs_meta': theirsMeta,
+      if (resolution != null) 'resolution': resolution,
+      if (resolvedAt != null) 'resolved_at': resolvedAt,
+      if (resolvedBy != null) 'resolved_by': resolvedBy,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MergeConflictsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? sessionId,
+    Value<String>? entityType,
+    Value<String>? entityId,
+    Value<String>? fieldKey,
+    Value<String>? mineValue,
+    Value<String>? theirsValue,
+    Value<String>? mineMeta,
+    Value<String>? theirsMeta,
+    Value<String?>? resolution,
+    Value<DateTime?>? resolvedAt,
+    Value<String?>? resolvedBy,
+    Value<int>? rowid,
+  }) {
+    return MergeConflictsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      sessionId: sessionId ?? this.sessionId,
+      entityType: entityType ?? this.entityType,
+      entityId: entityId ?? this.entityId,
+      fieldKey: fieldKey ?? this.fieldKey,
+      mineValue: mineValue ?? this.mineValue,
+      theirsValue: theirsValue ?? this.theirsValue,
+      mineMeta: mineMeta ?? this.mineMeta,
+      theirsMeta: theirsMeta ?? this.theirsMeta,
+      resolution: resolution ?? this.resolution,
+      resolvedAt: resolvedAt ?? this.resolvedAt,
+      resolvedBy: resolvedBy ?? this.resolvedBy,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (sessionId.present) {
+      map['session_id'] = Variable<String>(sessionId.value);
+    }
+    if (entityType.present) {
+      map['entity_type'] = Variable<String>(entityType.value);
+    }
+    if (entityId.present) {
+      map['entity_id'] = Variable<String>(entityId.value);
+    }
+    if (fieldKey.present) {
+      map['field_key'] = Variable<String>(fieldKey.value);
+    }
+    if (mineValue.present) {
+      map['mine_value'] = Variable<String>(mineValue.value);
+    }
+    if (theirsValue.present) {
+      map['theirs_value'] = Variable<String>(theirsValue.value);
+    }
+    if (mineMeta.present) {
+      map['mine_meta'] = Variable<String>(mineMeta.value);
+    }
+    if (theirsMeta.present) {
+      map['theirs_meta'] = Variable<String>(theirsMeta.value);
+    }
+    if (resolution.present) {
+      map['resolution'] = Variable<String>(resolution.value);
+    }
+    if (resolvedAt.present) {
+      map['resolved_at'] = Variable<DateTime>(resolvedAt.value);
+    }
+    if (resolvedBy.present) {
+      map['resolved_by'] = Variable<String>(resolvedBy.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MergeConflictsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('sessionId: $sessionId, ')
+          ..write('entityType: $entityType, ')
+          ..write('entityId: $entityId, ')
+          ..write('fieldKey: $fieldKey, ')
+          ..write('mineValue: $mineValue, ')
+          ..write('theirsValue: $theirsValue, ')
+          ..write('mineMeta: $mineMeta, ')
+          ..write('theirsMeta: $theirsMeta, ')
+          ..write('resolution: $resolution, ')
+          ..write('resolvedAt: $resolvedAt, ')
+          ..write('resolvedBy: $resolvedBy, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SyncStateTable extends SyncState
+    with TableInfo<$SyncStateTable, VersionVectorRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SyncStateTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _entityTypeMeta = const VerificationMeta(
+    'entityType',
+  );
+  @override
+  late final GeneratedColumn<String> entityType = GeneratedColumn<String>(
+    'entity_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _entityIdMeta = const VerificationMeta(
+    'entityId',
+  );
+  @override
+  late final GeneratedColumn<String> entityId = GeneratedColumn<String>(
+    'entity_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deviceIdMeta = const VerificationMeta(
+    'deviceId',
+  );
+  @override
+  late final GeneratedColumn<String> deviceId = GeneratedColumn<String>(
+    'device_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _seenRevMeta = const VerificationMeta(
+    'seenRev',
+  );
+  @override
+  late final GeneratedColumn<int> seenRev = GeneratedColumn<int>(
+    'seen_rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    entityType,
+    entityId,
+    deviceId,
+    seenRev,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'version_vectors';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<VersionVectorRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('entity_type')) {
+      context.handle(
+        _entityTypeMeta,
+        entityType.isAcceptableOrUnknown(data['entity_type']!, _entityTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entityTypeMeta);
+    }
+    if (data.containsKey('entity_id')) {
+      context.handle(
+        _entityIdMeta,
+        entityId.isAcceptableOrUnknown(data['entity_id']!, _entityIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entityIdMeta);
+    }
+    if (data.containsKey('device_id')) {
+      context.handle(
+        _deviceIdMeta,
+        deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_deviceIdMeta);
+    }
+    if (data.containsKey('seen_rev')) {
+      context.handle(
+        _seenRevMeta,
+        seenRev.isAcceptableOrUnknown(data['seen_rev']!, _seenRevMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_seenRevMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {entityType, entityId, deviceId},
+  ];
+  @override
+  VersionVectorRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return VersionVectorRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      entityType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity_type'],
+      )!,
+      entityId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity_id'],
+      )!,
+      deviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}device_id'],
+      )!,
+      seenRev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}seen_rev'],
+      )!,
+    );
+  }
+
+  @override
+  $SyncStateTable createAlias(String alias) {
+    return $SyncStateTable(attachedDatabase, alias);
+  }
+}
+
+class VersionVectorRow extends DataClass
+    implements Insertable<VersionVectorRow> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Table the entity belongs to.
+  final String entityType;
+
+  /// Merge id of the entity.
+  final String entityId;
+
+  /// Replica that produced [seenRev].
+  final String deviceId;
+
+  /// Highest entity revision seen from [deviceId].
+  final int seenRev;
+  const VersionVectorRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.entityType,
+    required this.entityId,
+    required this.deviceId,
+    required this.seenRev,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['entity_type'] = Variable<String>(entityType);
+    map['entity_id'] = Variable<String>(entityId);
+    map['device_id'] = Variable<String>(deviceId);
+    map['seen_rev'] = Variable<int>(seenRev);
+    return map;
+  }
+
+  SyncStateCompanion toCompanion(bool nullToAbsent) {
+    return SyncStateCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      entityType: Value(entityType),
+      entityId: Value(entityId),
+      deviceId: Value(deviceId),
+      seenRev: Value(seenRev),
+    );
+  }
+
+  factory VersionVectorRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return VersionVectorRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      entityType: serializer.fromJson<String>(json['entityType']),
+      entityId: serializer.fromJson<String>(json['entityId']),
+      deviceId: serializer.fromJson<String>(json['deviceId']),
+      seenRev: serializer.fromJson<int>(json['seenRev']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'entityType': serializer.toJson<String>(entityType),
+      'entityId': serializer.toJson<String>(entityId),
+      'deviceId': serializer.toJson<String>(deviceId),
+      'seenRev': serializer.toJson<int>(seenRev),
+    };
+  }
+
+  VersionVectorRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? entityType,
+    String? entityId,
+    String? deviceId,
+    int? seenRev,
+  }) => VersionVectorRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    entityType: entityType ?? this.entityType,
+    entityId: entityId ?? this.entityId,
+    deviceId: deviceId ?? this.deviceId,
+    seenRev: seenRev ?? this.seenRev,
+  );
+  VersionVectorRow copyWithCompanion(SyncStateCompanion data) {
+    return VersionVectorRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      entityType: data.entityType.present
+          ? data.entityType.value
+          : this.entityType,
+      entityId: data.entityId.present ? data.entityId.value : this.entityId,
+      deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
+      seenRev: data.seenRev.present ? data.seenRev.value : this.seenRev,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VersionVectorRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('entityType: $entityType, ')
+          ..write('entityId: $entityId, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('seenRev: $seenRev')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    entityType,
+    entityId,
+    deviceId,
+    seenRev,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is VersionVectorRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.entityType == this.entityType &&
+          other.entityId == this.entityId &&
+          other.deviceId == this.deviceId &&
+          other.seenRev == this.seenRev);
+}
+
+class SyncStateCompanion extends UpdateCompanion<VersionVectorRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> entityType;
+  final Value<String> entityId;
+  final Value<String> deviceId;
+  final Value<int> seenRev;
+  final Value<int> rowid;
+  const SyncStateCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.entityType = const Value.absent(),
+    this.entityId = const Value.absent(),
+    this.deviceId = const Value.absent(),
+    this.seenRev = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SyncStateCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String entityType,
+    required String entityId,
+    required String deviceId,
+    required int seenRev,
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       entityType = Value(entityType),
+       entityId = Value(entityId),
+       deviceId = Value(deviceId),
+       seenRev = Value(seenRev);
+  static Insertable<VersionVectorRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? entityType,
+    Expression<String>? entityId,
+    Expression<String>? deviceId,
+    Expression<int>? seenRev,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (entityType != null) 'entity_type': entityType,
+      if (entityId != null) 'entity_id': entityId,
+      if (deviceId != null) 'device_id': deviceId,
+      if (seenRev != null) 'seen_rev': seenRev,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SyncStateCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? entityType,
+    Value<String>? entityId,
+    Value<String>? deviceId,
+    Value<int>? seenRev,
+    Value<int>? rowid,
+  }) {
+    return SyncStateCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      entityType: entityType ?? this.entityType,
+      entityId: entityId ?? this.entityId,
+      deviceId: deviceId ?? this.deviceId,
+      seenRev: seenRev ?? this.seenRev,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (entityType.present) {
+      map['entity_type'] = Variable<String>(entityType.value);
+    }
+    if (entityId.present) {
+      map['entity_id'] = Variable<String>(entityId.value);
+    }
+    if (deviceId.present) {
+      map['device_id'] = Variable<String>(deviceId.value);
+    }
+    if (seenRev.present) {
+      map['seen_rev'] = Variable<int>(seenRev.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncStateCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('entityType: $entityType, ')
+          ..write('entityId: $entityId, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('seenRev: $seenRev, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   late final $TombstonesTable tombstones = $TombstonesTable(this);
@@ -20328,6 +22540,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $AttendeesTable attendees = $AttendeesTable(this);
   late final $MeetingActionsTable meetingActions = $MeetingActionsTable(this);
   late final $ExportsTable exports = $ExportsTable(this);
+  late final $MergeTable merge = $MergeTable(this);
+  late final $MergeConflictsTable mergeConflicts = $MergeConflictsTable(this);
+  late final $SyncStateTable syncState = $SyncStateTable(this);
   late final Index auditLogHistory = Index(
     'audit_log_history',
     'CREATE INDEX audit_log_history ON audit_log (entity_type, entity_id, at)',
@@ -20404,6 +22619,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'exports_by_project_created',
     'CREATE INDEX exports_by_project_created ON exports (project_id, created_at)',
   );
+  late final Index mergeConflictsBySessionResolution = Index(
+    'merge_conflicts_by_session_resolution',
+    'CREATE INDEX merge_conflicts_by_session_resolution ON merge_conflicts (session_id, resolution)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -20435,6 +22654,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     attendees,
     meetingActions,
     exports,
+    merge,
+    mergeConflicts,
+    syncState,
     auditLogHistory,
     projectsByStatus,
     templateRowsByIdentifier,
@@ -20454,5 +22676,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     variancesByProjectStatus,
     meetingActionsByMeetingStatus,
     exportsByProjectCreated,
+    mergeConflictsBySessionResolution,
   ];
 }

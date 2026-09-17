@@ -14,12 +14,14 @@ import 'tables/duplicates.dart';
 import 'tables/exports.dart';
 import 'tables/field_evidence.dart';
 import 'tables/meetings.dart';
+import 'tables/merge.dart';
 import 'tables/photos.dart';
 import 'tables/processing.dart';
 import 'tables/projects.dart';
 import 'tables/record_fields.dart';
 import 'tables/records.dart';
 import 'tables/reference.dart';
+import 'tables/sync_state.dart';
 import 'tables/template_fields.dart';
 import 'tables/template_rows.dart';
 import 'tables/templates.dart';
@@ -30,7 +32,7 @@ part 'app_database.g.dart';
 
 /// Current schema version. Later table tasks bump this and append a named
 /// upgrade step; they never edit earlier steps.
-const int kSchemaVersion = 11;
+const int kSchemaVersion = 12;
 
 /// The local SQLite database. Opens on a WAL connection under the application
 /// support directory, or in memory for tests.
@@ -62,6 +64,9 @@ const int kSchemaVersion = 11;
     Attendees,
     MeetingActions,
     Exports,
+    Merge,
+    MergeConflicts,
+    SyncState,
   ],
 )
 class AppDatabase extends _$AppDatabase {

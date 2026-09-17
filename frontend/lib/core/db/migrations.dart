@@ -27,6 +27,7 @@ kUpgradeSteps = <int, _UpgradeStep>{
   9: migrateToV9,
   10: migrateToV10,
   11: migrateToV11,
+  12: migrateToV12,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -149,6 +150,14 @@ Future<void> migrateToV10(Migrator migrator, AppDatabase db) async {
 Future<void> migrateToV11(Migrator migrator, AppDatabase db) async {
   await migrator.createTable(db.exports);
   await migrator.createIndex(db.exportsByProjectCreated);
+}
+
+/// Schema version 12: merge sessions, conflicts and version vectors.
+Future<void> migrateToV12(Migrator migrator, AppDatabase db) async {
+  await migrator.createTable(db.merge);
+  await migrator.createTable(db.mergeConflicts);
+  await migrator.createTable(db.syncState);
+  await migrator.createIndex(db.mergeConflictsBySessionResolution);
 }
 
 /// Runs the named step for [version], after the destructive-migration gate.

@@ -39,9 +39,9 @@ VectorRelation compareVectors(Map<String, int> mine, Map<String, int> theirs);
 
 ## Definition of done
 
-- [ ] Any incoming entity is classified as dominating, dominated, concurrent or equal from one vector read.
-- [ ] A session retains its undo snapshot path and its unresolved conflicts survive an app restart.
-- [ ] Resolving a conflict records the operator and timestamp and bumps the entity's vector entry.
-- [ ] Tests: `frontend/test/core/db/tables/merge_test.dart` covers session insert, the unresolved-conflict query and
+- [x] Any incoming entity is classified as dominating, dominated, concurrent or equal from one vector read.
+- [x] A session retains its undo snapshot path and its unresolved conflicts survive an app restart.
+- [x] Resolving a conflict records the operator and timestamp and bumps the entity's vector entry.
+- [x] Tests: `frontend/test/core/db/tables/merge_test.dart` covers session insert, the unresolved-conflict query and
       resolution recording; `sync_state_test.dart` asserts the unique triple and all four `compareVectors` outcomes.
       Both against an in-memory database, covering their migration steps.
