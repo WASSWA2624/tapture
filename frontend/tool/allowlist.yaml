@@ -47,6 +47,10 @@ packages:
     version: ^6.9.0
     purpose: Generates fromJson/toJson using @JsonKey names from build.yaml. Replaces deriving wire keys from Dart field names.
     task: "028"
+  intl:
+    version: ^0.20.2
+    purpose: Locale-aware date, time and number formatting for catalogue fields (FE-L10N-04, FE-CONS-09). Replaces hand-built day/month/year strings.
+    task: "035"
   flutter_test:
     version: sdk
     purpose: The widget and unit test harness every guardrail suite runs on.

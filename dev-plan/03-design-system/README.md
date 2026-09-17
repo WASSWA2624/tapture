@@ -9,7 +9,7 @@ Tasks 030–048 (19). Each file is a standalone implementation prompt.
 - [x] [032 — Breakpoints, responsive builder and readable width](032-breakpoints.md)
 - [x] [033 — Page scaffold](033-app-page.md)
 - [x] [034 — Buttons, icon buttons and the primary action](034-app-button.md)
-- [ ] [035 — Text, number, date and search fields](035-app-text-field.md)
+- [x] [035 — Text, number, date and search fields](035-app-text-field.md)
 - [ ] [036 — Choice, multi-choice and boolean fields](036-app-choice-field.md)
 - [ ] [037 — Chip and chip row](037-app-chip.md)
 - [ ] [038 — Card, list tile and section header](038-app-card.md)

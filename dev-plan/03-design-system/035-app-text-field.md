@@ -60,11 +60,11 @@ class AppSearchField extends StatelessWidget {
 
 ## Definition of done
 
-- [ ] Later fields and screens compose these instead of `TextFormField`; typing a letter into a number field is
+- [x] Later fields and screens compose these instead of `TextFormField`; typing a letter into a number field is
       impossible and out-of-range values show the shared error style.
-- [ ] Auto-filled dates are visibly distinct from typed ones in all three modes.
-- [ ] Search fires once per debounce window, not once per keystroke; records, datasets and template pickers all use it.
-- [ ] Tests: widget tests for error display, clearing, non-numeric rejection and range violation; widget test of the
+- [x] Auto-filled dates are visibly distinct from typed ones in all three modes.
+- [x] Search fires once per debounce window, not once per keystroke; records, datasets and template pickers all use it.
+- [x] Tests: widget tests for error display, clearing, non-numeric rejection and range violation; widget test of the
       date field against a frozen clock covering all three `DateFieldMode` values; widget test of the debounce window
       under fake async; goldens of all four in light, dark and outdoor.
 
