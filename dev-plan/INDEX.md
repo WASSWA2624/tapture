@@ -78,7 +78,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [ ] [053 — Templates, template fields and template rows tables](04-data-layer/053-templates-table.md)
 - [x] [054 — Records and record fields tables](04-data-layer/054-records-table.md)
 - [x] [055 — Photos, attachments and captions tables](04-data-layer/055-photos-table.md)
-- [ ] [056 — Reference dataset tables](04-data-layer/056-reference-tables.md)
+- [x] [056 — Reference dataset tables](04-data-layer/056-reference-tables.md)
 - [ ] [057 — Processing jobs, results and field evidence tables](04-data-layer/057-jobs-table.md)
 - [ ] [058 — Duplicates and variances tables](04-data-layer/058-duplicates-table.md)
 - [ ] [059 — Meeting tables](04-data-layer/059-meetings-tables.md)

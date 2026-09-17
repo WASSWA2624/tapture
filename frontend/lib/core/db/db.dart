@@ -14,6 +14,7 @@ export 'tables/photos.dart';
 export 'tables/projects.dart';
 export 'tables/record_fields.dart';
 export 'tables/records.dart';
+export 'tables/reference.dart';
 export 'tables/template_fields.dart';
 export 'tables/template_rows.dart';
 export 'tables/templates.dart';

@@ -27,7 +27,7 @@ index-served.
 
 ## Definition of done
 
-- [ ] A dataset of 10,000 rows imports and a key lookup stays within the search budget of FE-PERF-01.
-- [ ] Re-importing the same source file updates rows in place instead of creating a second dataset.
-- [ ] Tests: `frontend/test/core/db/tables/reference_test.dart` covers dataset insert, keyed lookup, normalised lookup
+- [x] A dataset of 10,000 rows imports and a key lookup stays within the search budget of FE-PERF-01.
+- [x] Re-importing the same source file updates rows in place instead of creating a second dataset.
+- [x] Tests: `frontend/test/core/db/tables/reference_test.dart` covers dataset insert, keyed lookup, normalised lookup
       and re-import, against an in-memory database, covering the migration step.

@@ -11997,6 +11997,1371 @@ class CaptionsCompanion extends UpdateCompanion<Caption> {
   }
 }
 
+class $ReferenceTable extends Reference
+    with TableInfo<$ReferenceTable, ReferenceDatasetRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ReferenceTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<ReferenceScope, String> scope =
+      GeneratedColumn<String>(
+        'scope',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<ReferenceScope>($ReferenceTable.$converterscope);
+  static const VerificationMeta _projectIdMeta = const VerificationMeta(
+    'projectId',
+  );
+  @override
+  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
+    'project_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _keyColumnMeta = const VerificationMeta(
+    'keyColumn',
+  );
+  @override
+  late final GeneratedColumn<String> keyColumn = GeneratedColumn<String>(
+    'key_column',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _columnsMeta = const VerificationMeta(
+    'columns',
+  );
+  @override
+  late final GeneratedColumn<String> columns = GeneratedColumn<String>(
+    'columns',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sourceFileMeta = const VerificationMeta(
+    'sourceFile',
+  );
+  @override
+  late final GeneratedColumn<String> sourceFile = GeneratedColumn<String>(
+    'source_file',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _importedAtMeta = const VerificationMeta(
+    'importedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> importedAt = GeneratedColumn<DateTime>(
+    'imported_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _rowCountMeta = const VerificationMeta(
+    'rowCount',
+  );
+  @override
+  late final GeneratedColumn<int> rowCount = GeneratedColumn<int>(
+    'row_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    name,
+    scope,
+    projectId,
+    keyColumn,
+    columns,
+    sourceFile,
+    importedAt,
+    rowCount,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'reference_datasets';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ReferenceDatasetRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('project_id')) {
+      context.handle(
+        _projectIdMeta,
+        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+      );
+    }
+    if (data.containsKey('key_column')) {
+      context.handle(
+        _keyColumnMeta,
+        keyColumn.isAcceptableOrUnknown(data['key_column']!, _keyColumnMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_keyColumnMeta);
+    }
+    if (data.containsKey('columns')) {
+      context.handle(
+        _columnsMeta,
+        columns.isAcceptableOrUnknown(data['columns']!, _columnsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_columnsMeta);
+    }
+    if (data.containsKey('source_file')) {
+      context.handle(
+        _sourceFileMeta,
+        sourceFile.isAcceptableOrUnknown(data['source_file']!, _sourceFileMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceFileMeta);
+    }
+    if (data.containsKey('imported_at')) {
+      context.handle(
+        _importedAtMeta,
+        importedAt.isAcceptableOrUnknown(data['imported_at']!, _importedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_importedAtMeta);
+    }
+    if (data.containsKey('row_count')) {
+      context.handle(
+        _rowCountMeta,
+        rowCount.isAcceptableOrUnknown(data['row_count']!, _rowCountMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_rowCountMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ReferenceDatasetRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReferenceDatasetRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      scope: $ReferenceTable.$converterscope.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}scope'],
+        )!,
+      ),
+      projectId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}project_id'],
+      ),
+      keyColumn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}key_column'],
+      )!,
+      columns: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}columns'],
+      )!,
+      sourceFile: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_file'],
+      )!,
+      importedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}imported_at'],
+      )!,
+      rowCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}row_count'],
+      )!,
+    );
+  }
+
+  @override
+  $ReferenceTable createAlias(String alias) {
+    return $ReferenceTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<ReferenceScope, String, String> $converterscope =
+      const EnumNameConverter<ReferenceScope>(ReferenceScope.values);
+}
+
+class ReferenceDatasetRow extends DataClass
+    implements Insertable<ReferenceDatasetRow> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Operator-facing name of the dataset.
+  final String name;
+
+  /// Global or project.
+  final ReferenceScope scope;
+
+  /// Owning project when [scope] is project.
+  final String? projectId;
+
+  /// Column used as the lookup key.
+  final String keyColumn;
+
+  /// Column names JSON, in import order. An array, stored as text.
+  final String columns;
+
+  /// Source path or name, stored as data, never interpolated into a query.
+  final String sourceFile;
+
+  /// When this import was written.
+  final DateTime importedAt;
+
+  /// Number of rows currently stored for this dataset.
+  final int rowCount;
+  const ReferenceDatasetRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.name,
+    required this.scope,
+    this.projectId,
+    required this.keyColumn,
+    required this.columns,
+    required this.sourceFile,
+    required this.importedAt,
+    required this.rowCount,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['name'] = Variable<String>(name);
+    {
+      map['scope'] = Variable<String>(
+        $ReferenceTable.$converterscope.toSql(scope),
+      );
+    }
+    if (!nullToAbsent || projectId != null) {
+      map['project_id'] = Variable<String>(projectId);
+    }
+    map['key_column'] = Variable<String>(keyColumn);
+    map['columns'] = Variable<String>(columns);
+    map['source_file'] = Variable<String>(sourceFile);
+    map['imported_at'] = Variable<DateTime>(importedAt);
+    map['row_count'] = Variable<int>(rowCount);
+    return map;
+  }
+
+  ReferenceCompanion toCompanion(bool nullToAbsent) {
+    return ReferenceCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      name: Value(name),
+      scope: Value(scope),
+      projectId: projectId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(projectId),
+      keyColumn: Value(keyColumn),
+      columns: Value(columns),
+      sourceFile: Value(sourceFile),
+      importedAt: Value(importedAt),
+      rowCount: Value(rowCount),
+    );
+  }
+
+  factory ReferenceDatasetRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReferenceDatasetRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      name: serializer.fromJson<String>(json['name']),
+      scope: $ReferenceTable.$converterscope.fromJson(
+        serializer.fromJson<String>(json['scope']),
+      ),
+      projectId: serializer.fromJson<String?>(json['projectId']),
+      keyColumn: serializer.fromJson<String>(json['keyColumn']),
+      columns: serializer.fromJson<String>(json['columns']),
+      sourceFile: serializer.fromJson<String>(json['sourceFile']),
+      importedAt: serializer.fromJson<DateTime>(json['importedAt']),
+      rowCount: serializer.fromJson<int>(json['rowCount']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'name': serializer.toJson<String>(name),
+      'scope': serializer.toJson<String>(
+        $ReferenceTable.$converterscope.toJson(scope),
+      ),
+      'projectId': serializer.toJson<String?>(projectId),
+      'keyColumn': serializer.toJson<String>(keyColumn),
+      'columns': serializer.toJson<String>(columns),
+      'sourceFile': serializer.toJson<String>(sourceFile),
+      'importedAt': serializer.toJson<DateTime>(importedAt),
+      'rowCount': serializer.toJson<int>(rowCount),
+    };
+  }
+
+  ReferenceDatasetRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? name,
+    ReferenceScope? scope,
+    Value<String?> projectId = const Value.absent(),
+    String? keyColumn,
+    String? columns,
+    String? sourceFile,
+    DateTime? importedAt,
+    int? rowCount,
+  }) => ReferenceDatasetRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    name: name ?? this.name,
+    scope: scope ?? this.scope,
+    projectId: projectId.present ? projectId.value : this.projectId,
+    keyColumn: keyColumn ?? this.keyColumn,
+    columns: columns ?? this.columns,
+    sourceFile: sourceFile ?? this.sourceFile,
+    importedAt: importedAt ?? this.importedAt,
+    rowCount: rowCount ?? this.rowCount,
+  );
+  ReferenceDatasetRow copyWithCompanion(ReferenceCompanion data) {
+    return ReferenceDatasetRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      name: data.name.present ? data.name.value : this.name,
+      scope: data.scope.present ? data.scope.value : this.scope,
+      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      keyColumn: data.keyColumn.present ? data.keyColumn.value : this.keyColumn,
+      columns: data.columns.present ? data.columns.value : this.columns,
+      sourceFile: data.sourceFile.present
+          ? data.sourceFile.value
+          : this.sourceFile,
+      importedAt: data.importedAt.present
+          ? data.importedAt.value
+          : this.importedAt,
+      rowCount: data.rowCount.present ? data.rowCount.value : this.rowCount,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReferenceDatasetRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('name: $name, ')
+          ..write('scope: $scope, ')
+          ..write('projectId: $projectId, ')
+          ..write('keyColumn: $keyColumn, ')
+          ..write('columns: $columns, ')
+          ..write('sourceFile: $sourceFile, ')
+          ..write('importedAt: $importedAt, ')
+          ..write('rowCount: $rowCount')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    name,
+    scope,
+    projectId,
+    keyColumn,
+    columns,
+    sourceFile,
+    importedAt,
+    rowCount,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReferenceDatasetRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.name == this.name &&
+          other.scope == this.scope &&
+          other.projectId == this.projectId &&
+          other.keyColumn == this.keyColumn &&
+          other.columns == this.columns &&
+          other.sourceFile == this.sourceFile &&
+          other.importedAt == this.importedAt &&
+          other.rowCount == this.rowCount);
+}
+
+class ReferenceCompanion extends UpdateCompanion<ReferenceDatasetRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> name;
+  final Value<ReferenceScope> scope;
+  final Value<String?> projectId;
+  final Value<String> keyColumn;
+  final Value<String> columns;
+  final Value<String> sourceFile;
+  final Value<DateTime> importedAt;
+  final Value<int> rowCount;
+  final Value<int> rowid;
+  const ReferenceCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.name = const Value.absent(),
+    this.scope = const Value.absent(),
+    this.projectId = const Value.absent(),
+    this.keyColumn = const Value.absent(),
+    this.columns = const Value.absent(),
+    this.sourceFile = const Value.absent(),
+    this.importedAt = const Value.absent(),
+    this.rowCount = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReferenceCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String name,
+    required ReferenceScope scope,
+    this.projectId = const Value.absent(),
+    required String keyColumn,
+    required String columns,
+    required String sourceFile,
+    required DateTime importedAt,
+    required int rowCount,
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       name = Value(name),
+       scope = Value(scope),
+       keyColumn = Value(keyColumn),
+       columns = Value(columns),
+       sourceFile = Value(sourceFile),
+       importedAt = Value(importedAt),
+       rowCount = Value(rowCount);
+  static Insertable<ReferenceDatasetRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? name,
+    Expression<String>? scope,
+    Expression<String>? projectId,
+    Expression<String>? keyColumn,
+    Expression<String>? columns,
+    Expression<String>? sourceFile,
+    Expression<DateTime>? importedAt,
+    Expression<int>? rowCount,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (name != null) 'name': name,
+      if (scope != null) 'scope': scope,
+      if (projectId != null) 'project_id': projectId,
+      if (keyColumn != null) 'key_column': keyColumn,
+      if (columns != null) 'columns': columns,
+      if (sourceFile != null) 'source_file': sourceFile,
+      if (importedAt != null) 'imported_at': importedAt,
+      if (rowCount != null) 'row_count': rowCount,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReferenceCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? name,
+    Value<ReferenceScope>? scope,
+    Value<String?>? projectId,
+    Value<String>? keyColumn,
+    Value<String>? columns,
+    Value<String>? sourceFile,
+    Value<DateTime>? importedAt,
+    Value<int>? rowCount,
+    Value<int>? rowid,
+  }) {
+    return ReferenceCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      name: name ?? this.name,
+      scope: scope ?? this.scope,
+      projectId: projectId ?? this.projectId,
+      keyColumn: keyColumn ?? this.keyColumn,
+      columns: columns ?? this.columns,
+      sourceFile: sourceFile ?? this.sourceFile,
+      importedAt: importedAt ?? this.importedAt,
+      rowCount: rowCount ?? this.rowCount,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (scope.present) {
+      map['scope'] = Variable<String>(
+        $ReferenceTable.$converterscope.toSql(scope.value),
+      );
+    }
+    if (projectId.present) {
+      map['project_id'] = Variable<String>(projectId.value);
+    }
+    if (keyColumn.present) {
+      map['key_column'] = Variable<String>(keyColumn.value);
+    }
+    if (columns.present) {
+      map['columns'] = Variable<String>(columns.value);
+    }
+    if (sourceFile.present) {
+      map['source_file'] = Variable<String>(sourceFile.value);
+    }
+    if (importedAt.present) {
+      map['imported_at'] = Variable<DateTime>(importedAt.value);
+    }
+    if (rowCount.present) {
+      map['row_count'] = Variable<int>(rowCount.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReferenceCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('name: $name, ')
+          ..write('scope: $scope, ')
+          ..write('projectId: $projectId, ')
+          ..write('keyColumn: $keyColumn, ')
+          ..write('columns: $columns, ')
+          ..write('sourceFile: $sourceFile, ')
+          ..write('importedAt: $importedAt, ')
+          ..write('rowCount: $rowCount, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ReferenceRowsTable extends ReferenceRows
+    with TableInfo<$ReferenceRowsTable, ReferenceLookupRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ReferenceRowsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _datasetIdMeta = const VerificationMeta(
+    'datasetId',
+  );
+  @override
+  late final GeneratedColumn<String> datasetId = GeneratedColumn<String>(
+    'dataset_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _keyValueMeta = const VerificationMeta(
+    'keyValue',
+  );
+  @override
+  late final GeneratedColumn<String> keyValue = GeneratedColumn<String>(
+    'key_value',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _keyNormalisedMeta = const VerificationMeta(
+    'keyNormalised',
+  );
+  @override
+  late final GeneratedColumn<String> keyNormalised = GeneratedColumn<String>(
+    'key_normalised',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _valuesMeta = const VerificationMeta('values');
+  @override
+  late final GeneratedColumn<String> values = GeneratedColumn<String>(
+    'values',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    datasetId,
+    keyValue,
+    keyNormalised,
+    values,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'reference_rows';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ReferenceLookupRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('dataset_id')) {
+      context.handle(
+        _datasetIdMeta,
+        datasetId.isAcceptableOrUnknown(data['dataset_id']!, _datasetIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_datasetIdMeta);
+    }
+    if (data.containsKey('key_value')) {
+      context.handle(
+        _keyValueMeta,
+        keyValue.isAcceptableOrUnknown(data['key_value']!, _keyValueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_keyValueMeta);
+    }
+    if (data.containsKey('key_normalised')) {
+      context.handle(
+        _keyNormalisedMeta,
+        keyNormalised.isAcceptableOrUnknown(
+          data['key_normalised']!,
+          _keyNormalisedMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_keyNormalisedMeta);
+    }
+    if (data.containsKey('values')) {
+      context.handle(
+        _valuesMeta,
+        values.isAcceptableOrUnknown(data['values']!, _valuesMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_valuesMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ReferenceLookupRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReferenceLookupRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      datasetId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}dataset_id'],
+      )!,
+      keyValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}key_value'],
+      )!,
+      keyNormalised: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}key_normalised'],
+      )!,
+      values: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}values'],
+      )!,
+    );
+  }
+
+  @override
+  $ReferenceRowsTable createAlias(String alias) {
+    return $ReferenceRowsTable(attachedDatabase, alias);
+  }
+}
+
+class ReferenceLookupRow extends DataClass
+    implements Insertable<ReferenceLookupRow> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Dataset this row belongs to.
+  final String datasetId;
+
+  /// Key as imported, stored as data.
+  final String keyValue;
+
+  /// Folded [keyValue] used for indexed lookup.
+  final String keyNormalised;
+
+  /// Cell values JSON. An object, stored as text.
+  final String values;
+  const ReferenceLookupRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.datasetId,
+    required this.keyValue,
+    required this.keyNormalised,
+    required this.values,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['dataset_id'] = Variable<String>(datasetId);
+    map['key_value'] = Variable<String>(keyValue);
+    map['key_normalised'] = Variable<String>(keyNormalised);
+    map['values'] = Variable<String>(values);
+    return map;
+  }
+
+  ReferenceRowsCompanion toCompanion(bool nullToAbsent) {
+    return ReferenceRowsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      datasetId: Value(datasetId),
+      keyValue: Value(keyValue),
+      keyNormalised: Value(keyNormalised),
+      values: Value(values),
+    );
+  }
+
+  factory ReferenceLookupRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReferenceLookupRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      datasetId: serializer.fromJson<String>(json['datasetId']),
+      keyValue: serializer.fromJson<String>(json['keyValue']),
+      keyNormalised: serializer.fromJson<String>(json['keyNormalised']),
+      values: serializer.fromJson<String>(json['values']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'datasetId': serializer.toJson<String>(datasetId),
+      'keyValue': serializer.toJson<String>(keyValue),
+      'keyNormalised': serializer.toJson<String>(keyNormalised),
+      'values': serializer.toJson<String>(values),
+    };
+  }
+
+  ReferenceLookupRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? datasetId,
+    String? keyValue,
+    String? keyNormalised,
+    String? values,
+  }) => ReferenceLookupRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    datasetId: datasetId ?? this.datasetId,
+    keyValue: keyValue ?? this.keyValue,
+    keyNormalised: keyNormalised ?? this.keyNormalised,
+    values: values ?? this.values,
+  );
+  ReferenceLookupRow copyWithCompanion(ReferenceRowsCompanion data) {
+    return ReferenceLookupRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      datasetId: data.datasetId.present ? data.datasetId.value : this.datasetId,
+      keyValue: data.keyValue.present ? data.keyValue.value : this.keyValue,
+      keyNormalised: data.keyNormalised.present
+          ? data.keyNormalised.value
+          : this.keyNormalised,
+      values: data.values.present ? data.values.value : this.values,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReferenceLookupRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('datasetId: $datasetId, ')
+          ..write('keyValue: $keyValue, ')
+          ..write('keyNormalised: $keyNormalised, ')
+          ..write('values: $values')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    datasetId,
+    keyValue,
+    keyNormalised,
+    values,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReferenceLookupRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.datasetId == this.datasetId &&
+          other.keyValue == this.keyValue &&
+          other.keyNormalised == this.keyNormalised &&
+          other.values == this.values);
+}
+
+class ReferenceRowsCompanion extends UpdateCompanion<ReferenceLookupRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> datasetId;
+  final Value<String> keyValue;
+  final Value<String> keyNormalised;
+  final Value<String> values;
+  final Value<int> rowid;
+  const ReferenceRowsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.datasetId = const Value.absent(),
+    this.keyValue = const Value.absent(),
+    this.keyNormalised = const Value.absent(),
+    this.values = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReferenceRowsCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String datasetId,
+    required String keyValue,
+    required String keyNormalised,
+    required String values,
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       datasetId = Value(datasetId),
+       keyValue = Value(keyValue),
+       keyNormalised = Value(keyNormalised),
+       values = Value(values);
+  static Insertable<ReferenceLookupRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? datasetId,
+    Expression<String>? keyValue,
+    Expression<String>? keyNormalised,
+    Expression<String>? values,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (datasetId != null) 'dataset_id': datasetId,
+      if (keyValue != null) 'key_value': keyValue,
+      if (keyNormalised != null) 'key_normalised': keyNormalised,
+      if (values != null) 'values': values,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReferenceRowsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? datasetId,
+    Value<String>? keyValue,
+    Value<String>? keyNormalised,
+    Value<String>? values,
+    Value<int>? rowid,
+  }) {
+    return ReferenceRowsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      datasetId: datasetId ?? this.datasetId,
+      keyValue: keyValue ?? this.keyValue,
+      keyNormalised: keyNormalised ?? this.keyNormalised,
+      values: values ?? this.values,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (datasetId.present) {
+      map['dataset_id'] = Variable<String>(datasetId.value);
+    }
+    if (keyValue.present) {
+      map['key_value'] = Variable<String>(keyValue.value);
+    }
+    if (keyNormalised.present) {
+      map['key_normalised'] = Variable<String>(keyNormalised.value);
+    }
+    if (values.present) {
+      map['values'] = Variable<String>(values.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReferenceRowsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('datasetId: $datasetId, ')
+          ..write('keyValue: $keyValue, ')
+          ..write('keyNormalised: $keyNormalised, ')
+          ..write('values: $values, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   late final $TombstonesTable tombstones = $TombstonesTable(this);
@@ -12014,6 +13379,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $PhotosTable photos = $PhotosTable(this);
   late final $AttachmentsTable attachments = $AttachmentsTable(this);
   late final $CaptionsTable captions = $CaptionsTable(this);
+  late final $ReferenceTable reference = $ReferenceTable(this);
+  late final $ReferenceRowsTable referenceRows = $ReferenceRowsTable(this);
   late final Index auditLogHistory = Index(
     'audit_log_history',
     'CREATE INDEX audit_log_history ON audit_log (entity_type, entity_id, at)',
@@ -12050,6 +13417,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'captions_by_owner',
     'CREATE INDEX captions_by_owner ON captions (owner_type, owner_id)',
   );
+  late final Index referenceRowsByKey = Index(
+    'reference_rows_by_key',
+    'CREATE UNIQUE INDEX reference_rows_by_key ON reference_rows (dataset_id, key_value)',
+  );
+  late final Index referenceRowsByNormalised = Index(
+    'reference_rows_by_normalised',
+    'CREATE INDEX reference_rows_by_normalised ON reference_rows (dataset_id, key_normalised)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -12070,6 +13445,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     photos,
     attachments,
     captions,
+    reference,
+    referenceRows,
     auditLogHistory,
     projectsByStatus,
     templateRowsByIdentifier,
@@ -12079,5 +13456,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     recordsByTemplate,
     recordFieldsByFinal,
     captionsByOwner,
+    referenceRowsByKey,
+    referenceRowsByNormalised,
   ];
 }
