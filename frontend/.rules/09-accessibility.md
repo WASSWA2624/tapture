@@ -1,6 +1,6 @@
 # 09 — Accessibility
 
-*Enforced by dev-plan task 019 (accessibility matchers); audited by tasks 441 and 442.*
+*Enforced by dev-plan task 017 (accessibility matchers); audited by task 236.*
 
 ## FE-A11Y-01 — 48dp minimum target
 Every interactive element, including icon buttons, chips and list actions. Enforced by matcher, not by eye.

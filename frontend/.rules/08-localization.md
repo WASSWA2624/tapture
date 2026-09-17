@@ -3,7 +3,7 @@
 The app is built in Uganda for multilingual field work. Translation may arrive after release; the code must never be
 the reason it cannot.
 
-*Built by dev-plan task 451 (localisation scaffold); strings routed through the copy helper from task 081.*
+*Built by dev-plan task 238 (localisation scaffold); strings routed through the copy helper from task 046.*
 
 ## FE-L10N-01 — No user-facing string in a widget
 Every visible string comes from the generated localisations or the copy helper. A literal in a widget is a defect.

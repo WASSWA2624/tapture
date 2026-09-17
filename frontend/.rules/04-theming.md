@@ -1,6 +1,6 @@
 # 04 — Theming
 
-*Enforced by dev-plan task 013 (design-token test); built by tasks 042-048.*
+*Enforced by dev-plan task 013 (design-token test); built by tasks 030-031.*
 
 ## FE-THEME-01 — Tokens are the only source of style
 Colour, spacing, radius, elevation, duration and text style come from the token files. A literal `Color(...)`,

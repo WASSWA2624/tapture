@@ -2,7 +2,7 @@
 
 Budgets, not aspirations. Each one has a test that measures it.
 
-*Enforced by dev-plan tasks 445-449 and the performance suites in phase 25.*
+*Enforced by dev-plan task 240 and the performance suites in phase 25.*
 
 ## FE-PERF-01 — The budgets
 Cold start to project list under 2s. Shutter to ready for the next shot under 400ms. Search over 10,000 records under

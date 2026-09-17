@@ -1,6 +1,6 @@
 # 07 — Consistency and uniformity
 
-*Enforced by dev-plan tasks 013 (tokens) and 082 (widget gallery); every design-system task adds to the catalogue.*
+*Enforced by dev-plan tasks 013 (tokens) and 047 (widget gallery); every design-system task adds to the catalogue.*
 
 ## FE-CONS-01 — Catalogue first
 Before writing a widget, look in `core/widgets/`. If something close exists, extend it rather than fork it. Building a

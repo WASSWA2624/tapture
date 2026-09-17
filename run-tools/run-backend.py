@@ -95,7 +95,7 @@ def require_backend() -> None:
     if not manifest.is_file():
         raise BuildError(
             "backend/package.json does not exist, so there is no server to run. "
-            "The backend is built in dev-plan phase 24, starting at task 455."
+            "The backend is built in dev-plan phase 24, starting at task 245."
         )
     try:
         json.loads(manifest.read_text(encoding="utf-8"))

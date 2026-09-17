@@ -1,6 +1,6 @@
 # 02 — Coding standards
 
-*Enforced by dev-plan tasks 003 (strict lints), 011 (naming), 015 (errors), 016 (logging).*
+*Enforced by dev-plan tasks 003 (strict lints), 011 (naming), 014 (errors), 015 (logging).*
 
 ## FE-CODE-01 — The analyzer is law
 `strict-casts`, `strict-inference` and `strict-raw-types` are on, and every warning is an error. A change that needs a

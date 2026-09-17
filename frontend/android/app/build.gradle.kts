@@ -24,7 +24,7 @@ android {
 
     buildTypes {
         release {
-            // Debug keys keep `flutter run --release` working until dev-plan task 518
+            // Debug keys keep `flutter run --release` working until dev-plan task 278
             // introduces the real signing configuration.
             signingConfig = signingConfigs.getByName("debug")
         }

@@ -1,39 +1,34 @@
-# 013 — Design-token enforcement test
+# 013 — Design-token and responsive boundary tests
 
-**Phase** 01 · Project setup and guardrails  |  **Depends on** [004](004-folder-scaffold.md)
-
-> **Implementation prompt.** Build exactly this task against the current repository state, then stop. The deliverable is working, analysed, tested Dart code — not a description of it.
+**Phase** 01 · Project setup and guardrails  |  **Depends on** [004](004-folder-scaffold.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement
 
-Write the test that fails when feature code hardcodes a colour, spacing value, radius, duration or text style.
+Two architecture suites over `frontend/lib/features/`: `tokens_test.dart` fails a hardcoded colour, spacing, radius,
+duration or text style, and `responsive_test.dart` fails a screen that measures the window itself.
 
 ## Files
 
 - `frontend/test/architecture/tokens_test.dart` (new)
+- `frontend/test/architecture/responsive_test.dart` (new)
 
 ## Steps
 
-1. Scan `frontend/lib/features/` for Color(, Colors., EdgeInsets.all( with a literal, BorderRadius.circular( with a literal, Duration( and TextStyle(.
-2. Allow these constructs only under `frontend/lib/app/theme/` and `frontend/lib/core/widgets/`.
+1. In `tokens_test.dart`, scan `frontend/lib/features/` for `Color(`, `Colors.`, `EdgeInsets.all(` with a literal, `BorderRadius.circular(` with a literal, `Duration(` and `TextStyle(`.
+2. Allow those constructs only under `frontend/lib/app/theme/` and `frontend/lib/core/widgets/`.
 3. Emit the token that should have been used in each violation message.
+4. In `responsive_test.dart`, fail on any comparison of `MediaQuery` size or width outside `frontend/lib/core/widgets/responsive/`.
+5. Fail on a hardcoded pixel width above the token maximum in a feature widget, naming the `SizeClass` accessor to use instead.
 
 ## Constraints
 
-- Obey `frontend/.rules/`. The ones that bite here: `frontend/.rules/01-structure.md`, `frontend/.rules/02-coding-standards.md`, `frontend/.rules/13-workflow.md`.
-- Checkers and guardrail tests must pass on the current tree and fail on a deliberate violation; ship a fixture proving both.
-- A guardrail reports every violation it finds, with file and line, rather than stopping at the first.
-- Build only what this file describes. Anything else you find becomes a new task file (`dart run tool/new_task.dart`), never extra scope here.
-- `dart format` applied, `flutter analyze` clean, and `dart run tool/verify.dart --fast` green before this task closes.
-- No `print`, no `TODO`, no hardcoded secret, no commented-out code left behind.
+- Colour, spacing, radius, elevation, duration and text style come from the token files; a literal in `lib/features/` fails the build (FE-THEME-01).
+- The 600dp and 1024dp breakpoints exist only inside `SizeClass`, and features never compare `MediaQuery` width (FE-RESP-01, FE-RESP-02).
+- Numbers and durations come from tokens or `AppConstants`, never from a call site (FE-CODE-09).
 
 ## Definition of done
 
-- [ ] A literal colour added to a feature widget fails the test.
-- [ ] The same literal inside the theme folder passes.
-- [ ] Tests written and passing: The test, with fixtures for an allowed and a forbidden location.
-- [ ] Analyzer clean, formatter applied, guardrail suites green.
-
-## Out of scope
-
-- Anything not named above. Raise it as its own task rather than widening this one.
+- [ ] A literal colour added to a feature widget fails `tokens_test.dart`; the same literal under `frontend/lib/app/theme/` passes.
+- [ ] A screen comparing screen width fails `responsive_test.dart`; the same comparison under `frontend/lib/core/widgets/responsive/` passes.
+- [ ] Every violation message names the replacement token or `SizeClass` accessor, not just the offending line.
+- [ ] Tests: both suites, each with an allowed-location and a forbidden-location fixture under `frontend/test/architecture/fixtures/`.

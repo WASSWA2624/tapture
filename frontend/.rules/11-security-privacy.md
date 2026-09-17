@@ -1,6 +1,6 @@
 # 11 — Security and privacy
 
-*Enforced by dev-plan tasks 020 (network boundary), 021 (raw-data safety), 022 (secret scan) and phase 22.*
+*Enforced by dev-plan tasks 018 (network boundary and raw-data safety), 015 (secret scan) and phase 22.*
 
 ## FE-SEC-01 — Secrets live in one place
 API keys and cloud credentials go to platform secure storage and nowhere else — never the database, logs, exports,

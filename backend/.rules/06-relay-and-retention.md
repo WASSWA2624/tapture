@@ -30,7 +30,7 @@ Package identifier, project, author device, byte size, created time, expiry, ack
 the package row. Adding a metadata column requires a task and a written justification.
 
 Version vectors are the one adjacent record, kept per project and device rather than per package, so a returning
-device can be told what it has yet to receive (task 481). They carry counters and device identifiers only — never a
+device can be told what it has yet to receive (task 260). They carry counters and device identifiers only — never a
 record identifier, a field name or anything else drawn from project content.
 
 ## BE-RELAY-07 — Access is membership-scoped

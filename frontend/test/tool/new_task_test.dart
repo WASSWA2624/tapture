@@ -52,13 +52,11 @@ void main() {
 
       expect(written, startsWith('# 003 — Shared YAML reader\n'));
       expect(written, contains('**Phase** 01 · Project setup and guardrails'));
+      expect(written, contains('**Standard** [STANDARD.md](../STANDARD.md)'));
       for (final String section in <String>[
         '## Implement',
         '## Files',
-        '## Steps',
-        '## Constraints',
         '## Definition of done',
-        '## Out of scope',
       ]) {
         expect(written, contains('\n$section\n'));
       }

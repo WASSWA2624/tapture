@@ -1,9 +1,9 @@
 # 06 — Simplicity
 
 The product's central claim is that a field worker can use it. These rules are how that claim survives contact with
-481 tasks.
+281 tasks.
 
-*Built into tasks 048, 052, 127-133; audited by 441 and 444.*
+*Built into tasks 031, 033, 072-076; audited by 236 and 239.*
 
 ## FE-SIMP-01 — One primary action per screen
 It is the largest control, it sits in the lower third, and it is reachable with one thumb. If a screen has two equally

@@ -2,7 +2,7 @@
 
 The repository, and the executable guardrails that enforce every architectural rule. Policies here are code — lints, checkers and tests — not prose.
 
-Tasks 001–022 (22). Each file is a standalone implementation prompt.
+Tasks 001–018 (18). Each file is a standalone implementation prompt.
 
 - [ ] [001 — Create the Flutter project](001-flutter-project-init.md)
 - [ ] [002 — Repository hygiene files](002-repo-hygiene.md)
@@ -16,13 +16,9 @@ Tasks 001–022 (22). Each file is a standalone implementation prompt.
 - [ ] [010 — Layering enforcement test](010-layering-test.md)
 - [ ] [011 — Naming and file-layout checker](011-naming-checker.md)
 - [ ] [012 — Canonical domain names](012-domain-names.md)
-- [ ] [013 — Design-token enforcement test](013-design-token-test.md)
-- [ ] [014 — Riverpod convention test](014-riverpod-test.md)
-- [ ] [015 — Error-handling enforcement test](015-error-handling-test.md)
-- [ ] [016 — Logging discipline checker](016-logging-checker.md)
-- [ ] [017 — Test presence checker](017-test-presence-checker.md)
-- [ ] [018 — Responsive boundary test](018-responsive-test.md)
-- [ ] [019 — Accessibility test matchers](019-accessibility-matchers.md)
-- [ ] [020 — Network boundary test](020-network-test.md)
-- [ ] [021 — Raw-data safety test](021-raw-data-test.md)
-- [ ] [022 — Hardcoded secret scan](022-secret-scan.md)
+- [ ] [013 — Design-token and responsive boundary tests](013-design-token-test.md)
+- [ ] [014 — State and error-handling convention tests](014-riverpod-test.md)
+- [ ] [015 — Logging discipline and secret scan](015-logging-checker.md)
+- [ ] [016 — Test presence checker](016-test-presence-checker.md)
+- [ ] [017 — Accessibility test matchers](017-accessibility-matchers.md)
+- [ ] [018 — Network boundary and raw-data safety tests](018-network-test.md)
