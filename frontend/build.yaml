@@ -19,3 +19,9 @@ targets:
           explicit_to_json: true
           field_rename: none
           include_if_null: true
+      drift_dev:
+        options:
+          # Managers are unused until DAOs exist (050). Generating an empty
+          # manager leaves an unused field that this project's analyzer
+          # reads as an error.
+          generate_manager: false

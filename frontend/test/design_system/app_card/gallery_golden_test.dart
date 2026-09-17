@@ -42,15 +42,15 @@ Future<void> _pumpGallery(WidgetTester tester, ThemeData theme) async {
       debugShowCheckedModeBanner: false,
       themeAnimationDuration: Duration.zero,
       theme: theme,
-      home: AppPage(
+      home: const AppPage(
         title: 'Cards',
         body: Column(
           children: <Widget>[
-            const AppCard(child: Text('Static card')),
-            const SizedBox(height: Space.x4),
-            AppCard(onTap: _ignore, child: const Text('Tappable card')),
-            const SizedBox(height: Space.x4),
-            const AppCard(elevationLevel: 2, child: Text('Raised card')),
+            AppCard(child: Text('Static card')),
+            SizedBox(height: Space.x4),
+            AppCard(onTap: _ignore, child: Text('Tappable card')),
+            SizedBox(height: Space.x4),
+            AppCard(elevationLevel: 2, child: Text('Raised card')),
           ],
         ),
       ),

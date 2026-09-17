@@ -48,7 +48,7 @@ void main() {
       await _generate(plan, 'shared-yaml-reader', 'Shared YAML reader');
       final String written = File(
         '${plan.path}/$_phase/003-shared-yaml-reader.md',
-      ).readAsStringSync();
+      ).readAsStringSync().replaceAll('\r\n', '\n');
 
       expect(written, startsWith('# 003 — Shared YAML reader\n'));
       expect(written, contains('**Phase** 01 · Project setup and guardrails'));

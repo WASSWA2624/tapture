@@ -43,12 +43,12 @@ Future<void> _pumpGallery(WidgetTester tester, ThemeData theme) async {
       debugShowCheckedModeBanner: false,
       themeAnimationDuration: Duration.zero,
       theme: theme,
-      home: AppPage(
+      home: const AppPage(
         title: 'Section headers',
         body: Column(
           children: <Widget>[
-            const AppSectionHeader(title: 'Records'),
-            const SizedBox(height: Space.x4),
+            AppSectionHeader(title: 'Records'),
+            SizedBox(height: Space.x4),
             AppSectionHeader(
               title: 'Templates',
               action: AppButton(

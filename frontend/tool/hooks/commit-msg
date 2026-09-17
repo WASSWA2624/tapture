@@ -7,7 +7,7 @@
 # request, and commit subjects start with the task number. A commit nobody can
 # trace back to a task is one nobody can review against its Definition of done.
 
-subject=$(sed -n '1p' "$1")
+IFS= read -r subject < "$1" || subject=""
 
 case "$subject" in
 [0-9][0-9][0-9]\ *)

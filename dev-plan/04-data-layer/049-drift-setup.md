@@ -46,11 +46,11 @@ MigrationStrategy appMigration(AppDatabase db);
 
 ## Definition of done
 
-- [ ] The database opens, closes and reopens across a hot restart with no lock left behind.
-- [ ] Upgrading from any released version to head preserves every row; a destructive step refuses to run without the
+- [x] The database opens, closes and reopens across a hot restart with no lock left behind.
+- [x] Upgrading from any released version to head preserves every row; a destructive step refuses to run without the
       export acknowledgement.
-- [ ] Adding a schema change without adding a migration step and its test fails the suite.
-- [ ] Tests: `frontend/test/core/db/app_database_test.dart` opens an in-memory database and asserts a clean close;
+- [x] Adding a schema change without adding a migration step and its test fails the suite.
+- [x] Tests: `frontend/test/core/db/app_database_test.dart` opens an in-memory database and asserts a clean close;
       `migrations_test.dart` walks a seeded version 1 file to head and compares row counts and column sets.
 
 ## Out of scope

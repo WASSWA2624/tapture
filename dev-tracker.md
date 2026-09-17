@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**48 of 281 tasks complete (17.1%)** · last updated 2026-09-17
+**49 of 281 tasks complete (17.4%)** · last updated 2026-09-17
 
 `███████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -11,7 +11,7 @@
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
 | 02 — Foundation services | 11 | 11 | `██████████████` 100% |
 | 03 — Design system | 19 | 19 | `██████████████` 100% |
-| 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
+| 04 — Local database | 1 | 16 | `█░░░░░░░░░░░░░` 6% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
 | 07 — Account and settings | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **48** | **281** | `██░░░░░░░░░░░░` 17.1% |
+| **Total** | **49** | **281** | `██░░░░░░░░░░░░` 17.4% |
 
 ## Completed
 
@@ -84,6 +84,7 @@
 | 046 — User-facing copy helper | 2026-09-17 | `Copy` is the one catalogue of visible strings, keyed by meaning, with ICU plurals for counts. Catalogue widgets read from it; template labels stay user data. Guarded by 0/1/2 plural tests and a synonym scan against the naming checker. |
 | 047 — Widget gallery screen | 2026-09-17 | `WidgetGalleryScreen` at `/_gallery` lists every catalogue widget by family, with theme, width and text-scale switchers. Debug router only. Guarded by an enumeration of `core/widgets/` and goldens of the index in light, dark and outdoor. |
 | 048 — Golden test baselines for the catalogue | 2026-09-17 | `expectGolden` pins Ahem, disables animation, and compares light, dark and outdoor under `test/design_system/goldens/`. Every catalogue widget plus the gallery index has a baseline; a one-pixel fixture fails and names the widget and mode. Guarded by an enumeration of `core/widgets/` and the CI golden gate. |
+| 049 — Drift database bootstrap and migration strategy | 2026-09-17 | `AppDatabase` opens a lazy WAL file in application support (or `memory()` for tests), `kSchemaVersion` is 1, and `appMigration` walks numbered named steps. Destructive steps throw `StorageFailure` until `acknowledgeExport`. Drift 2.31 / sqlite3 2.9.4 so native-asset hooks do not prefix `dart run`. Guarded by in-memory close, file reopen, v1-to-head column/row compare, and a missing-step/test check. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -175,6 +176,13 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 040 | The file is `app_loading_state.dart`; the contract names `AppSkeleton`. | Closed by 040 — `AppLoadingState` is a typedef for `AppSkeleton`, matching the file name (FE-STR-06) |
 | 040 | `AsyncValueView` needs a skeleton shape while loading. | Open — extra `loadingShape` / `loadingCount` so the placeholder occupies the same space as the content |
 | 040 | Empty, error and retry copy is still inline. | Closed by 046 — empty/error/loading read `Copy.emptyHeadline` / `tryAgain` / `loading` |
+| 049 | Drift 2.32+ depends on sqlite3 3.x native assets that print `Running build hooks...` on every `dart run`, and newer `drift_dev` needs analyzer/build that conflict with json_serializable 6.9.0. | Open — capped at `>=2.31.0 <2.32.0` with sqlite3 2.9.4 and `sqlite3_flutter_libs` 0.5.42; 064 can revisit when the codegen stack moves |
+| 049 | Native SQLite is `dart:ffi`; the web binary cannot import `drift/native.dart`. | Open — `app_database_io.dart` / `app_database_stub.dart` split, same shape as logging and files. Web still throws; a WASM opener would be its own task |
+| 049 | The contract names `AppDatabase(super.e)` and `memory()`; production still needs a file factory. | Open — extra `AppDatabase.open({directoryPath})` so tests can hot-restart a temp file and 064 can swap the executor |
+| 049 | Empty Drift managers leave an unused `_db` field that this analyzer reads as an error. | Open — `generate_manager: false` in `build.yaml` until DAOs exist (050) |
+| 049 | `*.g.dart` is gitignored (002) and FE-CODE-13 wants generated output committed. | Open — `app_database.g.dart` is force-added; the ignore rule or this constraint has to give |
+| 049 | Git-for-Windows hook `sh` has no `sed`; `core.autocrlf` leaves hook sources as CRLF. | Open — commit-msg reads the subject with `IFS= read`; hook installer strips leftover CR; 009 still wants `.gitattributes` |
+| 047 | Widget gallery measured `MediaQuery.sizeOf` to size the preview. | Closed by 049 — the preview uses `LayoutBuilder` constraints so only `core/widgets/responsive/` reads MediaQuery size |
 
 ## Checklist
 
@@ -243,9 +251,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 04 — Local database
 
-*0 of 16 complete.*
+*1 of 16 complete.*
 
-- [ ] [049 — Drift database bootstrap and migration strategy](dev-plan/04-data-layer/049-drift-setup.md)
+- [x] [049 — Drift database bootstrap and migration strategy](dev-plan/04-data-layer/049-drift-setup.md)
 - [ ] [050 — Shared columns, DAO base and transaction helper](dev-plan/04-data-layer/050-column-mixins.md)
 - [ ] [051 — Tombstones, audit log and device profile tables](dev-plan/04-data-layer/051-tombstones-table.md)
 - [ ] [052 — Projects and context tables](dev-plan/04-data-layer/052-projects-table.md)

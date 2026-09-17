@@ -179,7 +179,9 @@ Directory _package({bool carriageReturns = false}) {
 void _shipHooks(Directory package, {bool carriageReturns = false}) {
   Directory('${package.path}/$hookSource').createSync(recursive: true);
   for (final String name in hookNames) {
-    final String text = File('$hookSource/$name').readAsStringSync();
+    final String text = File(
+      '$hookSource/$name',
+    ).readAsStringSync().replaceAll('\r\n', '\n').replaceAll('\r', '');
     File(
       '${package.path}/$hookSource/$name',
     ).writeAsStringSync(carriageReturns ? text.replaceAll('\n', '\r\n') : text);

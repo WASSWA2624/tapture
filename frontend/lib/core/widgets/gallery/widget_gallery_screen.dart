@@ -161,53 +161,59 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Size window = MediaQuery.sizeOf(context);
-    final double width = _previewWidth(window.width);
-    final ThemeData theme = _themeData(_theme);
-    return Theme(
-      data: theme,
-      child: MediaQuery(
-        data: MediaQuery.of(context).copyWith(
-          textScaler: TextScaler.linear(_textScale),
-          size: Size(width, window.height),
-        ),
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: SizedBox(
-            width: width,
-            child: AppPage(
-              title: Copy.galleryTitle,
-              actions: const <Widget>[
-                AppIconButton(
-                  icon: Icons.contrast,
-                  semanticLabel: Copy.galleryTheme,
-                  tooltip: Copy.galleryTheme,
-                  onPressed: _noop,
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final double width = _previewWidth(constraints.maxWidth);
+        final double height = constraints.maxHeight.isFinite
+            ? constraints.maxHeight
+            : constraints.maxWidth;
+        final ThemeData theme = _themeData(_theme);
+        return Theme(
+          data: theme,
+          child: MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              textScaler: TextScaler.linear(_textScale),
+              size: Size(width, height),
+            ),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: SizedBox(
+                width: width,
+                child: AppPage(
+                  title: Copy.galleryTitle,
+                  actions: const <Widget>[
+                    AppIconButton(
+                      icon: Icons.contrast,
+                      semanticLabel: Copy.galleryTheme,
+                      tooltip: Copy.galleryTheme,
+                      onPressed: _noop,
+                    ),
+                  ],
+                  footer: AppPrimaryAction(
+                    label: Copy.save,
+                    caption: Copy.recordsCount(2),
+                    onPressed: _noop,
+                  ),
+                  body: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      ..._switchers(),
+                      ..._compare(),
+                      ..._tokens(),
+                      ..._layout(),
+                      ..._buttons(),
+                      ..._fields(),
+                      ..._containers(),
+                      ..._states(),
+                      ..._feedback(),
+                    ],
+                  ),
                 ),
-              ],
-              footer: AppPrimaryAction(
-                label: Copy.save,
-                caption: Copy.recordsCount(2),
-                onPressed: _noop,
-              ),
-              body: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  ..._switchers(),
-                  ..._compare(),
-                  ..._tokens(),
-                  ..._layout(),
-                  ..._buttons(),
-                  ..._fields(),
-                  ..._containers(),
-                  ..._states(),
-                  ..._feedback(),
-                ],
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

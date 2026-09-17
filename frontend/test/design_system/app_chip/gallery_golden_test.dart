@@ -61,9 +61,9 @@ class _GalleryBody extends StatelessWidget {
         const SizedBox(height: Space.x4),
         const AppChip(label: 'Icon', icon: Icons.place),
         const SizedBox(height: Space.x4),
-        AppChip(label: 'Tappable', selected: true, onTap: _ignore),
+        const AppChip(label: 'Tappable', selected: true, onTap: _ignore),
         const SizedBox(height: Space.x4),
-        AppChip(label: 'Dismissible', onDismiss: _ignore),
+        const AppChip(label: 'Dismissible', onDismiss: _ignore),
         const SizedBox(height: Space.x4),
         const AppChip(
           label: 'A long facility name that must ellipsize rather than clip',

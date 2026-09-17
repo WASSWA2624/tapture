@@ -47,6 +47,26 @@ packages:
     version: ^6.9.0
     purpose: Generates fromJson/toJson using @JsonKey names from build.yaml. Replaces deriving wire keys from Dart field names.
     task: "028"
+  drift:
+    version: ">=2.31.0 <2.32.0"
+    purpose: Typed SQLite access, lazy WAL connections and the MigrationStrategy later table tasks extend (FE-CODE-13). Replaces raw sqlite3 and an unversioned schema. Capped below 2.32 because 2.32+ needs sqlite3 3.x native assets that prefix dart run stdout, and newer drift_dev conflicts with json_serializable 6.9.0.
+    task: "049"
+  drift_dev:
+    version: ">=2.31.0 <2.32.0"
+    purpose: Generates AppDatabase and companions so Drift output is committed (FE-CODE-13). Replaces writing the .g.dart by hand.
+    task: "049"
+  path_provider:
+    version: ^2.1.5
+    purpose: Application support directory for the database file. Replaces a hardcoded platform path.
+    task: "049"
+  sqlite3:
+    version: ^2.9.4
+    purpose: Typed setup callback that turns WAL and foreign keys on for each native connection. Replaces an untyped pragma runner.
+    task: "049"
+  sqlite3_flutter_libs:
+    version: ^0.5.42
+    purpose: Bundles SQLite with the Flutter app so NativeDatabase opens on device. Replaces depending on a system sqlite3.
+    task: "049"
   intl:
     version: ^0.20.2
     purpose: Locale-aware date, time and number formatting for catalogue fields (FE-L10N-04, FE-CONS-09). Replaces hand-built day/month/year strings.

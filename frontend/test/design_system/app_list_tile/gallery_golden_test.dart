@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
-import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/outdoor_theme.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
@@ -44,7 +43,7 @@ Future<void> _pumpGallery(WidgetTester tester, ThemeData theme) async {
       debugShowCheckedModeBanner: false,
       themeAnimationDuration: Duration.zero,
       theme: theme,
-      home: AppPage(
+      home: const AppPage(
         title: 'List tiles',
         body: Column(
           children: <Widget>[
@@ -68,7 +67,7 @@ Future<void> _pumpGallery(WidgetTester tester, ThemeData theme) async {
               onTap: _ignore,
               onLongPress: _ignore,
             ),
-            const AppListTile(
+            AppListTile(
               title: 'With status',
               subtitle: 'Plant 3',
               status: AppStatusPill.badge(status: RecordStatus.draft),

@@ -163,7 +163,10 @@ Directory? _linkedGitDirectory(File marker) {
 /// to run, and `/bin/sh\r` is not a program anybody has, so the hook would
 /// fail to run at all rather than fail loudly.
 String _withUnixLineEndings(File source) {
-  return source.readAsStringSync().replaceAll('\r\n', '\n');
+  return source
+      .readAsStringSync()
+      .replaceAll('\r\n', '\n')
+      .replaceAll('\r', '');
 }
 
 /// Marks a hook executable, which git requires of one on a POSIX host.
