@@ -11,6 +11,7 @@ import 'tables/captions.dart';
 import 'tables/context.dart';
 import 'tables/device_profile.dart';
 import 'tables/duplicates.dart';
+import 'tables/exports.dart';
 import 'tables/field_evidence.dart';
 import 'tables/meetings.dart';
 import 'tables/photos.dart';
@@ -29,7 +30,7 @@ part 'app_database.g.dart';
 
 /// Current schema version. Later table tasks bump this and append a named
 /// upgrade step; they never edit earlier steps.
-const int kSchemaVersion = 10;
+const int kSchemaVersion = 11;
 
 /// The local SQLite database. Opens on a WAL connection under the application
 /// support directory, or in memory for tests.
@@ -60,6 +61,7 @@ const int kSchemaVersion = 10;
     Meetings,
     Attendees,
     MeetingActions,
+    Exports,
   ],
 )
 class AppDatabase extends _$AppDatabase {

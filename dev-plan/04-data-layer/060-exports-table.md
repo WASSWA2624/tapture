@@ -25,7 +25,7 @@ device.
 
 ## Definition of done
 
-- [ ] Completing an export writes exactly one row, and an abandoned export writes none.
-- [ ] The history for a project lists newest first through the index.
-- [ ] Tests: `frontend/test/core/db/tables/exports_test.dart` covers per-project version increment, history ordering and
+- [x] Completing an export writes exactly one row, and an abandoned export writes none.
+- [x] The history for a project lists newest first through the index.
+- [x] Tests: `frontend/test/core/db/tables/exports_test.dart` covers per-project version increment, history ordering and
       the absence of a row after a failed export, against an in-memory database, covering the migration step.

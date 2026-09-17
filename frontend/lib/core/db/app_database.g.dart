@@ -19515,6 +19515,790 @@ class MeetingActionsCompanion extends UpdateCompanion<MeetingAction> {
   }
 }
 
+class $ExportsTable extends Exports with TableInfo<$ExportsTable, ExportRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ExportsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _projectIdMeta = const VerificationMeta(
+    'projectId',
+  );
+  @override
+  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
+    'project_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _formatsMeta = const VerificationMeta(
+    'formats',
+  );
+  @override
+  late final GeneratedColumn<String> formats = GeneratedColumn<String>(
+    'formats',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _filtersMeta = const VerificationMeta(
+    'filters',
+  );
+  @override
+  late final GeneratedColumn<String> filters = GeneratedColumn<String>(
+    'filters',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recordCountMeta = const VerificationMeta(
+    'recordCount',
+  );
+  @override
+  late final GeneratedColumn<int> recordCount = GeneratedColumn<int>(
+    'record_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _filePathMeta = const VerificationMeta(
+    'filePath',
+  );
+  @override
+  late final GeneratedColumn<String> filePath = GeneratedColumn<String>(
+    'file_path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fileHashMeta = const VerificationMeta(
+    'fileHash',
+  );
+  @override
+  late final GeneratedColumn<String> fileHash = GeneratedColumn<String>(
+    'file_hash',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    projectId,
+    version,
+    formats,
+    filters,
+    recordCount,
+    filePath,
+    fileHash,
+    createdBy,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'exports';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ExportRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('project_id')) {
+      context.handle(
+        _projectIdMeta,
+        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_projectIdMeta);
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_versionMeta);
+    }
+    if (data.containsKey('formats')) {
+      context.handle(
+        _formatsMeta,
+        formats.isAcceptableOrUnknown(data['formats']!, _formatsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_formatsMeta);
+    }
+    if (data.containsKey('filters')) {
+      context.handle(
+        _filtersMeta,
+        filters.isAcceptableOrUnknown(data['filters']!, _filtersMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_filtersMeta);
+    }
+    if (data.containsKey('record_count')) {
+      context.handle(
+        _recordCountMeta,
+        recordCount.isAcceptableOrUnknown(
+          data['record_count']!,
+          _recordCountMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_recordCountMeta);
+    }
+    if (data.containsKey('file_path')) {
+      context.handle(
+        _filePathMeta,
+        filePath.isAcceptableOrUnknown(data['file_path']!, _filePathMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_filePathMeta);
+    }
+    if (data.containsKey('file_hash')) {
+      context.handle(
+        _fileHashMeta,
+        fileHash.isAcceptableOrUnknown(data['file_hash']!, _fileHashMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fileHashMeta);
+    }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdByMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {projectId, version},
+  ];
+  @override
+  ExportRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ExportRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      projectId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}project_id'],
+      )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      formats: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}formats'],
+      )!,
+      filters: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}filters'],
+      )!,
+      recordCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}record_count'],
+      )!,
+      filePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}file_path'],
+      )!,
+      fileHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}file_hash'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      )!,
+    );
+  }
+
+  @override
+  $ExportsTable createAlias(String alias) {
+    return $ExportsTable(attachedDatabase, alias);
+  }
+}
+
+class ExportRow extends DataClass implements Insertable<ExportRow> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Project this export belongs to.
+  final String projectId;
+
+  /// Per-project sequence. Successive exports increment this.
+  final int version;
+
+  /// Formats written, as a JSON array.
+  final String formats;
+
+  /// Query that selected the records. An object, never the exported values.
+  final String filters;
+
+  /// How many records the file contains.
+  final int recordCount;
+
+  /// Path of the finished file. Written once at insert.
+  final String filePath;
+
+  /// Hash of the finished file. Written once at insert.
+  final String fileHash;
+
+  /// Operator who produced the file.
+  final String createdBy;
+  const ExportRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.projectId,
+    required this.version,
+    required this.formats,
+    required this.filters,
+    required this.recordCount,
+    required this.filePath,
+    required this.fileHash,
+    required this.createdBy,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['project_id'] = Variable<String>(projectId);
+    map['version'] = Variable<int>(version);
+    map['formats'] = Variable<String>(formats);
+    map['filters'] = Variable<String>(filters);
+    map['record_count'] = Variable<int>(recordCount);
+    map['file_path'] = Variable<String>(filePath);
+    map['file_hash'] = Variable<String>(fileHash);
+    map['created_by'] = Variable<String>(createdBy);
+    return map;
+  }
+
+  ExportsCompanion toCompanion(bool nullToAbsent) {
+    return ExportsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      projectId: Value(projectId),
+      version: Value(version),
+      formats: Value(formats),
+      filters: Value(filters),
+      recordCount: Value(recordCount),
+      filePath: Value(filePath),
+      fileHash: Value(fileHash),
+      createdBy: Value(createdBy),
+    );
+  }
+
+  factory ExportRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ExportRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      projectId: serializer.fromJson<String>(json['projectId']),
+      version: serializer.fromJson<int>(json['version']),
+      formats: serializer.fromJson<String>(json['formats']),
+      filters: serializer.fromJson<String>(json['filters']),
+      recordCount: serializer.fromJson<int>(json['recordCount']),
+      filePath: serializer.fromJson<String>(json['filePath']),
+      fileHash: serializer.fromJson<String>(json['fileHash']),
+      createdBy: serializer.fromJson<String>(json['createdBy']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'projectId': serializer.toJson<String>(projectId),
+      'version': serializer.toJson<int>(version),
+      'formats': serializer.toJson<String>(formats),
+      'filters': serializer.toJson<String>(filters),
+      'recordCount': serializer.toJson<int>(recordCount),
+      'filePath': serializer.toJson<String>(filePath),
+      'fileHash': serializer.toJson<String>(fileHash),
+      'createdBy': serializer.toJson<String>(createdBy),
+    };
+  }
+
+  ExportRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? projectId,
+    int? version,
+    String? formats,
+    String? filters,
+    int? recordCount,
+    String? filePath,
+    String? fileHash,
+    String? createdBy,
+  }) => ExportRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    projectId: projectId ?? this.projectId,
+    version: version ?? this.version,
+    formats: formats ?? this.formats,
+    filters: filters ?? this.filters,
+    recordCount: recordCount ?? this.recordCount,
+    filePath: filePath ?? this.filePath,
+    fileHash: fileHash ?? this.fileHash,
+    createdBy: createdBy ?? this.createdBy,
+  );
+  ExportRow copyWithCompanion(ExportsCompanion data) {
+    return ExportRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      version: data.version.present ? data.version.value : this.version,
+      formats: data.formats.present ? data.formats.value : this.formats,
+      filters: data.filters.present ? data.filters.value : this.filters,
+      recordCount: data.recordCount.present
+          ? data.recordCount.value
+          : this.recordCount,
+      filePath: data.filePath.present ? data.filePath.value : this.filePath,
+      fileHash: data.fileHash.present ? data.fileHash.value : this.fileHash,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExportRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('projectId: $projectId, ')
+          ..write('version: $version, ')
+          ..write('formats: $formats, ')
+          ..write('filters: $filters, ')
+          ..write('recordCount: $recordCount, ')
+          ..write('filePath: $filePath, ')
+          ..write('fileHash: $fileHash, ')
+          ..write('createdBy: $createdBy')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    projectId,
+    version,
+    formats,
+    filters,
+    recordCount,
+    filePath,
+    fileHash,
+    createdBy,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ExportRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.projectId == this.projectId &&
+          other.version == this.version &&
+          other.formats == this.formats &&
+          other.filters == this.filters &&
+          other.recordCount == this.recordCount &&
+          other.filePath == this.filePath &&
+          other.fileHash == this.fileHash &&
+          other.createdBy == this.createdBy);
+}
+
+class ExportsCompanion extends UpdateCompanion<ExportRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> projectId;
+  final Value<int> version;
+  final Value<String> formats;
+  final Value<String> filters;
+  final Value<int> recordCount;
+  final Value<String> filePath;
+  final Value<String> fileHash;
+  final Value<String> createdBy;
+  final Value<int> rowid;
+  const ExportsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.projectId = const Value.absent(),
+    this.version = const Value.absent(),
+    this.formats = const Value.absent(),
+    this.filters = const Value.absent(),
+    this.recordCount = const Value.absent(),
+    this.filePath = const Value.absent(),
+    this.fileHash = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ExportsCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String projectId,
+    required int version,
+    required String formats,
+    required String filters,
+    required int recordCount,
+    required String filePath,
+    required String fileHash,
+    required String createdBy,
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       projectId = Value(projectId),
+       version = Value(version),
+       formats = Value(formats),
+       filters = Value(filters),
+       recordCount = Value(recordCount),
+       filePath = Value(filePath),
+       fileHash = Value(fileHash),
+       createdBy = Value(createdBy);
+  static Insertable<ExportRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? projectId,
+    Expression<int>? version,
+    Expression<String>? formats,
+    Expression<String>? filters,
+    Expression<int>? recordCount,
+    Expression<String>? filePath,
+    Expression<String>? fileHash,
+    Expression<String>? createdBy,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (projectId != null) 'project_id': projectId,
+      if (version != null) 'version': version,
+      if (formats != null) 'formats': formats,
+      if (filters != null) 'filters': filters,
+      if (recordCount != null) 'record_count': recordCount,
+      if (filePath != null) 'file_path': filePath,
+      if (fileHash != null) 'file_hash': fileHash,
+      if (createdBy != null) 'created_by': createdBy,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ExportsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? projectId,
+    Value<int>? version,
+    Value<String>? formats,
+    Value<String>? filters,
+    Value<int>? recordCount,
+    Value<String>? filePath,
+    Value<String>? fileHash,
+    Value<String>? createdBy,
+    Value<int>? rowid,
+  }) {
+    return ExportsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      projectId: projectId ?? this.projectId,
+      version: version ?? this.version,
+      formats: formats ?? this.formats,
+      filters: filters ?? this.filters,
+      recordCount: recordCount ?? this.recordCount,
+      filePath: filePath ?? this.filePath,
+      fileHash: fileHash ?? this.fileHash,
+      createdBy: createdBy ?? this.createdBy,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (projectId.present) {
+      map['project_id'] = Variable<String>(projectId.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (formats.present) {
+      map['formats'] = Variable<String>(formats.value);
+    }
+    if (filters.present) {
+      map['filters'] = Variable<String>(filters.value);
+    }
+    if (recordCount.present) {
+      map['record_count'] = Variable<int>(recordCount.value);
+    }
+    if (filePath.present) {
+      map['file_path'] = Variable<String>(filePath.value);
+    }
+    if (fileHash.present) {
+      map['file_hash'] = Variable<String>(fileHash.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExportsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('projectId: $projectId, ')
+          ..write('version: $version, ')
+          ..write('formats: $formats, ')
+          ..write('filters: $filters, ')
+          ..write('recordCount: $recordCount, ')
+          ..write('filePath: $filePath, ')
+          ..write('fileHash: $fileHash, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   late final $TombstonesTable tombstones = $TombstonesTable(this);
@@ -19543,6 +20327,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $MeetingsTable meetings = $MeetingsTable(this);
   late final $AttendeesTable attendees = $AttendeesTable(this);
   late final $MeetingActionsTable meetingActions = $MeetingActionsTable(this);
+  late final $ExportsTable exports = $ExportsTable(this);
   late final Index auditLogHistory = Index(
     'audit_log_history',
     'CREATE INDEX audit_log_history ON audit_log (entity_type, entity_id, at)',
@@ -19615,6 +20400,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'meeting_actions_by_meeting_status',
     'CREATE INDEX meeting_actions_by_meeting_status ON meeting_actions (meeting_id, status)',
   );
+  late final Index exportsByProjectCreated = Index(
+    'exports_by_project_created',
+    'CREATE INDEX exports_by_project_created ON exports (project_id, created_at)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -19645,6 +20434,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     meetings,
     attendees,
     meetingActions,
+    exports,
     auditLogHistory,
     projectsByStatus,
     templateRowsByIdentifier,
@@ -19663,5 +20453,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     variancesByField,
     variancesByProjectStatus,
     meetingActionsByMeetingStatus,
+    exportsByProjectCreated,
   ];
 }

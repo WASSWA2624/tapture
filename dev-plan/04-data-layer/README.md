@@ -15,7 +15,7 @@ Tasks 049–064 (16). Each file is a standalone implementation prompt.
 - [x] [057 — Processing jobs, results and field evidence tables](057-jobs-table.md)
 - [x] [058 — Duplicates and variances tables](058-duplicates-table.md)
 - [x] [059 — Meeting tables](059-meetings-tables.md)
-- [ ] [060 — Exports table](060-exports-table.md)
+- [x] [060 — Exports table](060-exports-table.md)
 - [ ] [061 — Merge session, conflict and version vector tables](061-merge-tables.md)
 - [ ] [062 — Repository interfaces and test factories](062-repository-interfaces.md)
 - [ ] [063 — Database integrity check](063-db-integrity-check.md)
