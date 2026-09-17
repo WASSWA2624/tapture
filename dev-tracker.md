@@ -1,8 +1,8 @@
 # Tapture — development tracker
 
-**29 of 281 tasks complete (10.3%)** · last updated 2026-09-17
+**30 of 281 tasks complete (10.7%)** · last updated 2026-09-17
 
-`███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
+`████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
 ## Phase progress
 
@@ -10,7 +10,7 @@
 | :--- | ---: | ---: | :--- |
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
 | 02 — Foundation services | 11 | 11 | `██████████████` 100% |
-| 03 — Design system | 0 | 19 | `░░░░░░░░░░░░░░` 0% |
+| 03 — Design system | 1 | 19 | `█░░░░░░░░░░░░░` 5% |
 | 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **29** | **281** | `█░░░░░░░░░░░░░` 10.3% |
+| **Total** | **30** | **281** | `█░░░░░░░░░░░░░` 10.7% |
 
 ## Completed
 
@@ -65,6 +65,7 @@
 | 027 — Secure storage service | 2026-09-17 | Typed `putSecret`/`readSecret`/`deleteAll` over a closed `SecretKey` enum mapped to `AppConstants.secrets`. Fake backing store survives a simulated restart; debug asserts keep values out of preferences and the database. `flutter_secure_storage` ^9.2.4 pinned on the allowlist. Guarded by 3 tests. |
 | 028 — Serialisation conventions | 2026-09-17 | `build.yaml` pins json_serializable to explicit `@JsonKey` wire names (`field_rename: none`). `UtcDateTimeConverter`, `JsonMapConverter` and `EnumWireConverter` round-trip UTC dates, maps (null → empty) and enums; an unknown wire name throws. `json_annotation` ^4.9.0, `json_serializable` ^6.9.0 and `build_runner` ^2.4.13 pinned on the allowlist. Guarded by 3 tests. |
 | 029 — AI service interface | 2026-09-17 | `AiService` with typed requests/results for `readText`, `extractFields`, `refineText` and `transcribe`, each returning `Result`. `AiService.unavailable()` is the disabled stand-in: `ProviderFailure` plus a recovery action on every method, no key on the interface. Quoted OCR, transcripts and labels live on the request as data. Guarded by 7 tests. |
+| 030 — Design tokens: colour, type, spacing and elevation | 2026-09-17 | Light, dark and outdoor palettes on `context.colors`, type ramp, 4-point space scale and tone-plus-outline elevation. Swatch, type-ramp and surface-level gallery pages with goldens. Contrast is asserted, not eyeballed. Guarded by token-set, contrast, elevation and golden tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -107,6 +108,10 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 027 | `flutter_secure_storage_windows` pulls `path_provider`; current Android/iOS impls print native build hooks on every `dart run`. | Open — `path_provider_android` 2.2.23 and `path_provider_foundation` 2.5.1 overridden so the guardrail checkers keep a clean stdout |
 | 028 | json_serializable with `field_rename: none` still emits the Dart identifier unless every field has `@JsonKey(name:)`. | Open — documented in `build.yaml`; an architecture test would need its own task |
 | 029 | Task 149 names `ExtractionRequest` under `features/processing`; core cannot import features. | Open — this task publishes `ExtractFieldsRequest`; 149 maps onto it |
+| 030 | The contract sketches `AppColors` as an abstract final class with instance fields, which Dart cannot construct; FE-STR-06 wants `color_tokens.dart` to declare `ColorTokens` first. | Closed by 030 — `typedef ColorTokens = AppColors` and a `ThemeExtension` with three const palettes, same shape as `App` / `TaptureApp` |
+| 030 | `dimensions.dart` is named for one type; the contract publishes `Space`, `Radii` and `Sizes`. | Closed by 030 — `typedef Dimensions = Space`; Radii and Sizes live in part files so one public class per file still holds |
+| 030 | The contract has no text-on-surface role; 4.5:1 body contrast still needs one. | Open — implemented as `onSurface` on every palette; the contract or a later token pass has to give |
+| 030 | Brand-200 as the light outline is 1.4:1 on white, below the 3:1 interactive-outline floor. | Open — the outline is a measured colour; branding or this token file has to agree |
 
 ## Checklist
 
@@ -151,9 +156,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 03 — Design system
 
-*0 of 19 complete.*
+*1 of 19 complete.*
 
-- [ ] [030 — Design tokens: colour, type, spacing and elevation](dev-plan/03-design-system/030-color-tokens.md)
+- [x] [030 — Design tokens: colour, type, spacing and elevation](dev-plan/03-design-system/030-color-tokens.md)
 - [ ] [031 — Material 3 themes and the theme mode controller](dev-plan/03-design-system/031-theme-assembly.md)
 - [ ] [032 — Breakpoints, responsive builder and readable width](dev-plan/03-design-system/032-breakpoints.md)
 - [ ] [033 — Page scaffold](dev-plan/03-design-system/033-app-page.md)

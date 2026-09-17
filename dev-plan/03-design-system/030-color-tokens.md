@@ -55,11 +55,11 @@ abstract final class Elevation { static BoxDecoration surface(BuildContext c, {i
 
 ## Definition of done
 
-- [ ] Changing the active mode restyles every screen with no per-widget work.
-- [ ] `Color(...)`, `TextStyle(...)`, `EdgeInsets.all(n)`, `BorderRadius.circular(n)` and `Duration(...)` literals are
+- [x] Changing the active mode restyles every screen with no per-widget work.
+- [x] `Color(...)`, `TextStyle(...)`, `EdgeInsets.all(n)`, `BorderRadius.circular(n)` and `Duration(...)` literals are
       absent from feature code; every widget reaches style through these four files (FE-THEME-01).
-- [ ] Cards, sheets and dialogs share one depth language that survives direct sunlight.
-- [ ] Tests: unit tests under `frontend/test/design_system/tokens/` asserting the colour, dimension and elevation
+- [x] Cards, sheets and dialogs share one depth language that survives direct sunlight.
+- [x] Tests: unit tests under `frontend/test/design_system/tokens/` asserting the colour, dimension and elevation
       token sets are identical across light, dark and outdoor; golden of the type ramp at default and 200 percent
       text scale.
 
