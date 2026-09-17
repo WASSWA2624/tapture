@@ -97,7 +97,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [067 — Atomic file writer and context relocation](05-file-storage/067-file-writer.md)
 - [x] [068 — Derived image cache: thumbnails, compressed copies and cleanup](05-file-storage/068-thumbnail-cache.md)
 - [x] [069 — Storage headroom guard](05-file-storage/069-storage-guard.md)
-- [ ] [070 — Orphan file scanner](05-file-storage/070-orphan-scanner.md)
+- [x] [070 — Orphan file scanner](05-file-storage/070-orphan-scanner.md)
 - [ ] [071 — Imported file validation](05-file-storage/071-file-validation.md)
 
 ## 06 — Application shell

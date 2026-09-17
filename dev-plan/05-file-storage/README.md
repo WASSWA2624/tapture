@@ -9,5 +9,5 @@ Tasks 065–071 (7). Each file is a standalone implementation prompt.
 - [x] [067 — Atomic file writer and context relocation](067-file-writer.md)
 - [x] [068 — Derived image cache: thumbnails, compressed copies and cleanup](068-thumbnail-cache.md)
 - [x] [069 — Storage headroom guard](069-storage-guard.md)
-- [ ] [070 — Orphan file scanner](070-orphan-scanner.md)
+- [x] [070 — Orphan file scanner](070-orphan-scanner.md)
 - [ ] [071 — Imported file validation](071-file-validation.md)

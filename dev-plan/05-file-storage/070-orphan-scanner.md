@@ -43,10 +43,10 @@ abstract interface class OrphanScanner {
 
 ## Definition of done
 
-- [ ] A project with one stray file and one deleted file reports exactly one entry on each side, with sizes.
-- [ ] A cancelled scan leaves no partial report and nothing changed on disk.
-- [ ] Adoption produces a normal media row with hash and merge columns; flagging leaves the row and its evidence intact.
-- [ ] Tests: `frontend/test/core/files/orphan_scanner_test.dart` seeds a stray file, a row whose file was removed and a
+- [x] A project with one stray file and one deleted file reports exactly one entry on each side, with sizes.
+- [x] A cancelled scan leaves no partial report and nothing changed on disk.
+- [x] Adoption produces a normal media row with hash and merge columns; flagging leaves the row and its evidence intact.
+- [x] Tests: `frontend/test/core/files/orphan_scanner_test.dart` seeds a stray file, a row whose file was removed and a
       `.cache` entry that must be ignored, then asserts the report, the adoption path and that nothing is deleted.
 
 ## Out of scope
