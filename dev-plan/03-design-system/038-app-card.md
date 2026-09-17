@@ -45,7 +45,7 @@ class AppSectionHeader extends StatelessWidget { final String title; final Widge
 
 ## Definition of done
 
-- [ ] Lists and detail sections share one container, and all four entity lists share one row.
-- [ ] Selection and status are readable without relying on colour.
-- [ ] Tests: goldens of the card, of the row in dense, comfortable, selected, with-status and with-trailing forms, and
+- [x] Lists and detail sections share one container, and all four entity lists share one row.
+- [x] Selection and status are readable without relying on colour.
+- [x] Tests: goldens of the card, of the row in dense, comfortable, selected, with-status and with-trailing forms, and
       of the section header, each in light, dark and outdoor; widget test that long-press selects and tap opens.

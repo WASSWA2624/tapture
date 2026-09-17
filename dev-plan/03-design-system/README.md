@@ -12,7 +12,7 @@ Tasks 030–048 (19). Each file is a standalone implementation prompt.
 - [x] [035 — Text, number, date and search fields](035-app-text-field.md)
 - [x] [036 — Choice, multi-choice and boolean fields](036-app-choice-field.md)
 - [x] [037 — Chip and chip row](037-app-chip.md)
-- [ ] [038 — Card, list tile and section header](038-app-card.md)
+- [x] [038 — Card, list tile and section header](038-app-card.md)
 - [ ] [039 — Status pill and badge](039-app-status-pill.md)
 - [ ] [040 — Empty, error and loading states, and the async value view](040-app-empty-state.md)
 - [ ] [041 — Dialog, sheet, snackbar and banner services](041-app-dialog-service.md)
