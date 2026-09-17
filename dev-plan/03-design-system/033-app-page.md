@@ -41,7 +41,7 @@ class AppPage extends StatelessWidget {
 
 ## Definition of done
 
-- [ ] Every screen in later phases composes `AppPage`; none builds its own `Scaffold`.
-- [ ] Pull-to-refresh appears only where refreshing means something.
-- [ ] Tests: goldens in light, dark and outdoor at compact, medium and expanded widths; widget test that the body
+- [x] Every screen in later phases composes `AppPage`; none builds its own `Scaffold`.
+- [x] Pull-to-refresh appears only where refreshing means something.
+- [x] Tests: goldens in light, dark and outdoor at compact, medium and expanded widths; widget test that the body
       scrolls without overflow at 200 percent text scale in both orientations.

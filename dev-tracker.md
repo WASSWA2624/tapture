@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**32 of 281 tasks complete (11.4%)** · last updated 2026-09-17
+**33 of 281 tasks complete (11.7%)** · last updated 2026-09-17
 
 `████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -10,7 +10,7 @@
 | :--- | ---: | ---: | :--- |
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
 | 02 — Foundation services | 11 | 11 | `██████████████` 100% |
-| 03 — Design system | 3 | 19 | `██░░░░░░░░░░░░` 16% |
+| 03 — Design system | 4 | 19 | `███░░░░░░░░░░░` 21% |
 | 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **32** | **281** | `█░░░░░░░░░░░░░` 11.4% |
+| **Total** | **33** | **281** | `█░░░░░░░░░░░░░` 11.7% |
 
 ## Completed
 
@@ -68,6 +68,7 @@
 | 030 — Design tokens: colour, type, spacing and elevation | 2026-09-17 | Light, dark and outdoor palettes on `context.colors`, type ramp, 4-point space scale and tone-plus-outline elevation. Swatch, type-ramp and surface-level gallery pages with goldens. Contrast is asserted, not eyeballed. Guarded by token-set, contrast, elevation and golden tests. |
 | 031 — Material 3 themes and the theme mode controller | 2026-09-17 | `buildTheme` / `buildOutdoorTheme` assemble ColorScheme, TextTheme and component themes from tokens. `ThemeModeController` persists `AppThemeMode` through `TextStore` (memory fake + file) and restores before the first frame. `TaptureApp` resolves the active `ThemeData`. Guarded by round-trip, first-frame, geometry and three-mode goldens. |
 | 032 — Breakpoints, responsive builder and readable width | 2026-09-17 | `SizeClass` owns 600/1024. `context.responsive` / `ResponsiveBuilder` fall back to the next smaller class. `ContentConstraint` centres a 720dp readable column. Guarded by edge-resolution, fallback, two-pane, resize-keeps-input and three-mode goldens. |
+| 033 — Page scaffold | 2026-09-17 | `AppPage` is the one `Scaffold`: themed app bar, optional subtitle, action slot, scrolling body, optional footer, size-class padding, `ContentConstraint`, safe-area and keyboard insets, and pull-to-refresh only when `onRefresh` is given. Guarded by refresh presence, 200 percent scroll in both orientations, rotation, and 9 goldens. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -120,6 +121,8 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 031 | Chip layout includes stroke width, so thickening the chip outline moves the box (FE-THEME-03). | Open — chips keep a hairline in every mode; outdoor contrast is the outline colour. Buttons, fields, cards, dialogs and sheets still thicken inside the same geometry |
 | 032 | FE-STR-06 wants `breakpoints.dart` to declare `Breakpoints` first; the contract names `SizeClass`. | Closed by 032 — `typedef Breakpoints = SizeClass`, same shape as `App` / `TaptureApp` |
 | 032 | The readable column cap is not a size-class boundary, so it cannot live on `SizeClass` (FE-RESP-01). | Open — default is 720dp on `ContentConstraint`; a later token pass can promote it |
+| 033 | `AppPage` lives in `core/widgets/` and needs tokens; `core/` had never imported `app/`. | Open — implemented by importing `app/theme/` from `app_page.dart`; a later task can move tokens into `core/` if the arrow should only go `app → core` |
+| 033 | An AppBar subtitle at 200 percent text scale clips the 56dp toolbar. | Closed by 033 — subtitle is the first line of the scrolling column, not a second AppBar title |
 
 ## Checklist
 
@@ -164,12 +167,12 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 03 — Design system
 
-*3 of 19 complete.*
+*4 of 19 complete.*
 
 - [x] [030 — Design tokens: colour, type, spacing and elevation](dev-plan/03-design-system/030-color-tokens.md)
 - [x] [031 — Material 3 themes and the theme mode controller](dev-plan/03-design-system/031-theme-assembly.md)
 - [x] [032 — Breakpoints, responsive builder and readable width](dev-plan/03-design-system/032-breakpoints.md)
-- [ ] [033 — Page scaffold](dev-plan/03-design-system/033-app-page.md)
+- [x] [033 — Page scaffold](dev-plan/03-design-system/033-app-page.md)
 - [ ] [034 — Buttons, icon buttons and the primary action](dev-plan/03-design-system/034-app-button.md)
 - [ ] [035 — Text, number, date and search fields](dev-plan/03-design-system/035-app-text-field.md)
 - [ ] [036 — Choice, multi-choice and boolean fields](dev-plan/03-design-system/036-app-choice-field.md)
