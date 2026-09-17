@@ -268,4 +268,16 @@ abstract final class Copy {
 
   /// Double text scale.
   static const String galleryScale200 = '200%';
+
+  /// Shell destination: the project list.
+  static const String navProjects = 'Projects';
+
+  /// Shell destination: capture. Visually dominant in the four-destination bar.
+  static const String navCapture = 'Capture';
+
+  /// Shell destination: the records list.
+  static const String navRecords = 'Records';
+
+  /// Shell destination: settings and the rest.
+  static const String navMore = 'More';
 }

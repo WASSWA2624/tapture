@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Router;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/nav_shell.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
@@ -65,21 +66,41 @@ List<RouteBase> get _routes {
       path: '/',
       redirect: (BuildContext _, GoRouterState _) => AppRoutes.projects,
     ),
-    GoRoute(
-      path: AppRoutes.projects,
-      builder: (BuildContext _, GoRouterState _) {
-        return const _RoutePage(name: 'projects');
-      },
-      routes: <RouteBase>[
-        GoRoute(
-          path: ':projectId',
-          metadata: _projectScoped,
-          builder: (BuildContext _, GoRouterState _) {
-            return const _RoutePage(name: 'project');
+    StatefulShellRoute.indexedStack(
+      builder:
+          (BuildContext _, GoRouterState _, StatefulNavigationShell shell) {
+            return NavShell(shell: shell);
           },
+      branches: <StatefulShellBranch>[
+        StatefulShellBranch(
           routes: <RouteBase>[
             GoRoute(
-              path: 'capture',
+              path: AppRoutes.projects,
+              builder: (BuildContext _, GoRouterState _) {
+                return const _RoutePage(name: 'projects');
+              },
+              routes: <RouteBase>[
+                GoRoute(
+                  path: ':projectId',
+                  metadata: _projectScoped,
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const _RoutePage(name: 'project');
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/capture',
+              builder: (BuildContext _, GoRouterState _) {
+                return const _RoutePage(name: 'capture');
+              },
+            ),
+            GoRoute(
+              path: '${AppRoutes.projects}/:projectId/capture',
               metadata: _projectScoped,
               builder: (BuildContext _, GoRouterState _) {
                 return const _RoutePage(name: 'capture');
@@ -87,13 +108,35 @@ List<RouteBase> get _routes {
             ),
           ],
         ),
+        StatefulShellBranch(
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/records',
+              builder: (BuildContext _, GoRouterState _) {
+                return const _RoutePage(name: 'records');
+              },
+              routes: <RouteBase>[
+                GoRoute(
+                  path: ':recordId',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const _RoutePage(name: 'record');
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/more',
+              builder: (BuildContext _, GoRouterState _) {
+                return const _RoutePage(name: 'more');
+              },
+            ),
+          ],
+        ),
       ],
-    ),
-    GoRoute(
-      path: '/records/:recordId',
-      builder: (BuildContext _, GoRouterState _) {
-        return const _RoutePage(name: 'record');
-      },
     ),
   ];
   if (kDebugMode) {
@@ -133,8 +176,14 @@ class _RoutePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: Text(name, key: ValueKey<String>('route-$name'))),
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(name, key: ValueKey<String>('route-$name')),
+          TextField(key: ValueKey<String>('field-$name')),
+        ],
+      ),
     );
   }
 }

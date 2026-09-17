@@ -168,5 +168,9 @@ List<String> get _values {
     Copy.galleryExpanded,
     Copy.galleryScale100,
     Copy.galleryScale200,
+    Copy.navProjects,
+    Copy.navCapture,
+    Copy.navRecords,
+    Copy.navMore,
   ];
 }

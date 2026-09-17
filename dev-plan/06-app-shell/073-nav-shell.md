@@ -39,8 +39,8 @@ class NavShell extends StatelessWidget {
 
 ## Definition of done
 
-- [ ] Rotating a tablet moves the navigation between bar and rail without losing the stack or a half-typed field.
-- [ ] Leaving a destination and returning shows the previous stack, not its root.
-- [ ] Capture is the dominant destination at all three widths.
-- [ ] Tests: `frontend/test/app/nav_shell_test.dart` widget-tests 400, 800 and 1200dp for bar, rail and rail-plus-pane,
+- [x] Rotating a tablet moves the navigation between bar and rail without losing the stack or a half-typed field.
+- [x] Leaving a destination and returning shows the previous stack, not its root.
+- [x] Capture is the dominant destination at all three widths.
+- [x] Tests: `frontend/test/app/nav_shell_test.dart` widget-tests 400, 800 and 1200dp for bar, rail and rail-plus-pane,
   and asserts stack preservation across both a destination switch and a width change.
