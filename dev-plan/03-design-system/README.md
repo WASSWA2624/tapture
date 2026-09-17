@@ -16,7 +16,7 @@ Tasks 030–048 (19). Each file is a standalone implementation prompt.
 - [x] [039 — Status pill and badge](039-app-status-pill.md)
 - [x] [040 — Empty, error and loading states, and the async value view](040-app-empty-state.md)
 - [x] [041 — Dialog, sheet, snackbar and banner services](041-app-dialog-service.md)
-- [ ] [042 — Step progress list](042-app-progress-steps.md)
+- [x] [042 — Step progress list](042-app-progress-steps.md)
 - [ ] [043 — Photo thumbnail](043-app-photo-thumb.md)
 - [ ] [044 — Form scaffold, validation display and focus behaviour](044-app-form-scaffold.md)
 - [ ] [045 — Haptics service](045-haptics-service.md)

@@ -8,6 +8,7 @@ export 'app_icon_button.dart';
 export 'app_list_tile.dart';
 export 'app_page.dart';
 export 'app_primary_action.dart';
+export 'app_progress_steps.dart';
 export 'app_search_field.dart';
 export 'app_section_header.dart';
 export 'app_status_pill.dart';

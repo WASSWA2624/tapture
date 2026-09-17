@@ -33,7 +33,7 @@ class AppProgressSteps extends StatelessWidget { final List<ProgressStep> steps;
 
 ## Definition of done
 
-- [ ] Processing and export reuse this component rather than each drawing its own progress list.
-- [ ] A step changing state does not move the steps below it.
-- [ ] Tests: goldens of every `StepState` and a mixed list in light, dark and outdoor; widget test that a state change
+- [x] Processing and export reuse this component rather than each drawing its own progress list.
+- [x] A step changing state does not move the steps below it.
+- [x] Tests: goldens of every `StepState` and a mixed list in light, dark and outdoor; widget test that a state change
       announces itself and shifts no other step's position.
