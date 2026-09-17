@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/app.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
+import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/files/files.dart';
 import 'package:tapture/features/onboarding/presentation/first_run_screen.dart';
@@ -47,6 +48,7 @@ void main() {
             () => ThemeModeController.withStore(TextStore.memory(backing)),
           ),
           firstRunCompletedOverride(),
+          networkOnlineOverride(),
         ],
         child: const TaptureApp(),
       ),

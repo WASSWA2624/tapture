@@ -299,4 +299,44 @@ abstract final class Copy {
 
   /// Secondary action: keep the name and go to capture without a project.
   static const String firstRunSkip = 'Skip';
+
+  /// Status line when no project is open.
+  static const String statusNoProject = 'No project';
+
+  /// Status line when no context is pinned.
+  static const String statusNoContext = 'No context';
+
+  /// Status line when no template is pinned.
+  static const String statusNoTemplate = 'No template';
+
+  /// Project and context together on the status line.
+  static String statusWhere(String project, String context) {
+    return '$project · $context';
+  }
+
+  /// Unmetered path.
+  static const String networkOnline = 'Online';
+
+  /// Metered path.
+  static const String networkMetered = 'Metered';
+
+  /// Radio is down; not an operator choice.
+  static const String networkOffline = 'Offline';
+
+  /// The operator forced offline.
+  static const String networkOfflineByChoice = 'Offline by choice';
+
+  /// How many records still need processing.
+  static String unprocessedCount(int n) {
+    return Intl.plural(
+      n,
+      zero: '0 unprocessed',
+      one: '1 unprocessed',
+      other: '$n unprocessed',
+    );
+  }
+
+  /// Why work continues without a network. Not an error.
+  static const String offlineWorking =
+      'You are offline. Captures stay on this device.';
 }

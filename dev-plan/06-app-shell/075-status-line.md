@@ -40,9 +40,9 @@ class OfflineBanner extends ConsumerWidget { const OfflineBanner({super.key}); }
 
 ## Definition of done
 
-- [ ] A user can answer "where am I and what is queued" without leaving the current screen, and every segment is a link.
-- [ ] Going offline shows the explanation once and never interrupts capture with a dialog.
-- [ ] Dismissing the banner keeps it dismissed until the next offline transition.
-- [ ] Tests: `frontend/test/app/widgets/status_line_test.dart` uses a fake connectivity source and stub counts to assert
+- [x] A user can answer "where am I and what is queued" without leaving the current screen, and every segment is a link.
+- [x] Going offline shows the explanation once and never interrupts capture with a dialog.
+- [x] Dismissing the banner keeps it dismissed until the next offline transition.
+- [x] Tests: `frontend/test/app/widgets/status_line_test.dart` uses a fake connectivity source and stub counts to assert
   every segment and its navigation; `frontend/test/app/widgets/offline_banner_test.dart` drives
   online → offline → online and asserts exactly one appearance per transition and that dismissal persists within it.

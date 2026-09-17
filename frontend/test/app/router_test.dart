@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/app.dart';
+import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
@@ -17,6 +18,10 @@ void main() {
     expect(AppRoutes.project('ab'), '/projects/ab');
     expect(AppRoutes.capture('ab'), '/projects/ab/capture');
     expect(AppRoutes.record('cd'), '/records/cd');
+    expect(AppRoutes.records, '/records');
+    expect(AppRoutes.more, '/more');
+    expect(AppRoutes.templates, '/templates');
+    expect(AppRoutes.queue, '/queue');
   });
 
   test('no screen concatenates a path string', () {
@@ -64,6 +69,15 @@ void main() {
     await _go(tester, router, AppRoutes.record('r1'));
     expect(find.byKey(const ValueKey<String>('route-record')), findsOneWidget);
 
+    await _go(tester, router, AppRoutes.templates);
+    expect(
+      find.byKey(const ValueKey<String>('route-templates')),
+      findsOneWidget,
+    );
+
+    await _go(tester, router, AppRoutes.queue);
+    expect(find.byKey(const ValueKey<String>('route-queue')), findsOneWidget);
+
     router.go(WidgetGalleryScreen.route);
     await tester.pump();
     await tester.pump();
@@ -100,7 +114,7 @@ void main() {
 Future<GoRouter> _pump(WidgetTester tester, {String? projectId}) async {
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [firstRunCompletedOverride()],
+      overrides: [firstRunCompletedOverride(), networkOnlineOverride()],
       child: const TaptureApp(),
     ),
   );

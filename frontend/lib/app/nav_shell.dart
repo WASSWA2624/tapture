@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/app/widgets/offline_banner.dart';
+import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/responsive/responsive_builder.dart';
 
@@ -40,14 +42,28 @@ class _Chrome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Row(
+      body: Column(
         children: <Widget>[
-          rail ? _Rail(shell: shell) : const SizedBox.shrink(),
-          if (pane) Expanded(flex: 2, child: _Pane(index: shell.currentIndex)),
+          const SafeArea(
+            bottom: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[StatusLine(), OfflineBanner()],
+            ),
+          ),
           Expanded(
-            key: const ValueKey<String>('nav-body-slot'),
-            flex: 3,
-            child: shell,
+            child: Row(
+              children: <Widget>[
+                rail ? _Rail(shell: shell) : const SizedBox.shrink(),
+                if (pane)
+                  Expanded(flex: 2, child: _Pane(index: shell.currentIndex)),
+                Expanded(
+                  key: const ValueKey<String>('nav-body-slot'),
+                  flex: 3,
+                  child: shell,
+                ),
+              ],
+            ),
           ),
         ],
       ),

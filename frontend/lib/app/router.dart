@@ -35,6 +35,20 @@ abstract final class AppRoutes {
 
   /// One record, opened directly from a deep link.
   static String record(String id) => '/records/${Uri.encodeComponent(id)}';
+
+  /// The records list.
+  static const String records = '/records';
+
+  /// Settings and the rest of the four-destination shell.
+  static const String more = '/more';
+
+  /// Pinned-template destination the status line opens. Task 092 owns the
+  /// screen.
+  static const String templates = '/templates';
+
+  /// Unprocessed-queue destination the status line opens. Task 159 owns the
+  /// screen.
+  static const String queue = '/queue';
 }
 
 /// The process-wide router. Kept alive: the shell watches it on every frame
@@ -127,7 +141,7 @@ List<RouteBase> get _routes {
         StatefulShellBranch(
           routes: <RouteBase>[
             GoRoute(
-              path: '/records',
+              path: AppRoutes.records,
               builder: (BuildContext _, GoRouterState _) {
                 return const _RoutePage(name: 'records');
               },
@@ -145,9 +159,21 @@ List<RouteBase> get _routes {
         StatefulShellBranch(
           routes: <RouteBase>[
             GoRoute(
-              path: '/more',
+              path: AppRoutes.more,
               builder: (BuildContext _, GoRouterState _) {
                 return const _RoutePage(name: 'more');
+              },
+            ),
+            GoRoute(
+              path: AppRoutes.templates,
+              builder: (BuildContext _, GoRouterState _) {
+                return const _RoutePage(name: 'templates');
+              },
+            ),
+            GoRoute(
+              path: AppRoutes.queue,
+              builder: (BuildContext _, GoRouterState _) {
+                return const _RoutePage(name: 'queue');
               },
             ),
           ],

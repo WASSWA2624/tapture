@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/app.dart';
+import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/features/onboarding/presentation/first_run_screen.dart';
@@ -85,7 +86,7 @@ Future<ProviderContainer> _pump(
   await tester.pumpWidget(
     ProviderScope(
       key: key,
-      overrides: [firstRunOverride(backing)],
+      overrides: [firstRunOverride(backing), networkOnlineOverride()],
       child: const TaptureApp(),
     ),
   );

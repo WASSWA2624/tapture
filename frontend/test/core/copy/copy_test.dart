@@ -178,5 +178,17 @@ List<String> get _values {
     Copy.firstRunStartProject,
     Copy.firstRunStartCaption,
     Copy.firstRunSkip,
+    Copy.statusNoProject,
+    Copy.statusNoContext,
+    Copy.statusNoTemplate,
+    Copy.statusWhere('Alpha', 'Ward 1'),
+    Copy.networkOnline,
+    Copy.networkMetered,
+    Copy.networkOffline,
+    Copy.networkOfflineByChoice,
+    Copy.unprocessedCount(0),
+    Copy.unprocessedCount(1),
+    Copy.unprocessedCount(2),
+    Copy.offlineWorking,
   ];
 }

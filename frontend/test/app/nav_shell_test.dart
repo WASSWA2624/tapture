@@ -6,6 +6,7 @@ import 'package:tapture/app/app.dart';
 import 'package:tapture/app/nav_shell.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/features/onboarding/presentation/first_run_screen.dart';
 
@@ -105,7 +106,7 @@ Future<GoRouter> _pump(
   _bindWidth(tester, width);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [firstRunCompletedOverride()],
+      overrides: [firstRunCompletedOverride(), networkOnlineOverride()],
       child: const TaptureApp(),
     ),
   );

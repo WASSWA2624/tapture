@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/app.dart';
+import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/features/onboarding/presentation/first_run_screen.dart';
 
 void main() {
@@ -11,7 +12,7 @@ void main() {
     (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [firstRunCompletedOverride()],
+          overrides: [firstRunCompletedOverride(), networkOnlineOverride()],
           child: const TaptureApp(),
         ),
       );
