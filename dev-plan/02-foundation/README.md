@@ -14,4 +14,4 @@ Tasks 019–029 (11). Each file is a standalone implementation prompt.
 - [x] [026 — Runtime permissions service](026-permissions-service.md)
 - [x] [027 — Secure storage service](027-secure-storage-service.md)
 - [x] [028 — Serialisation conventions](028-json-codec-setup.md)
-- [ ] [029 — AI service interface](029-ai-service-interface.md)
+- [x] [029 — AI service interface](029-ai-service-interface.md)

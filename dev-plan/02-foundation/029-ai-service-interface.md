@@ -24,6 +24,6 @@ swapped and AI can be switched off without a feature noticing.
 
 ## Definition of done
 
-- [ ] Every AI call in the app goes through `AiService`; no feature references a provider SDK type.
-- [ ] The null implementation returns a `ProviderFailure` carrying a recovery action for all four methods.
-- [ ] Tests: `frontend/test/core/ai/ai_service_test.dart` holds the contract tests every implementation must pass, run against the null implementation.
+- [x] Every AI call in the app goes through `AiService`; no feature references a provider SDK type.
+- [x] The null implementation returns a `ProviderFailure` carrying a recovery action for all four methods.
+- [x] Tests: `frontend/test/core/ai/ai_service_test.dart` holds the contract tests every implementation must pass, run against the null implementation.
