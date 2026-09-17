@@ -1,8 +1,8 @@
 # Tapture — development tracker
 
-**45 of 281 tasks complete (16.0%)** · last updated 2026-09-17
+**46 of 281 tasks complete (16.4%)** · last updated 2026-09-17
 
-`██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
+`███████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
 ## Phase progress
 
@@ -10,7 +10,7 @@
 | :--- | ---: | ---: | :--- |
 | 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
 | 02 — Foundation services | 11 | 11 | `██████████████` 100% |
-| 03 — Design system | 16 | 19 | `████████████░░` 84% |
+| 03 — Design system | 17 | 19 | `█████████████░` 89% |
 | 04 — Local database | 0 | 16 | `░░░░░░░░░░░░░░` 0% |
 | 05 — File storage | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 06 — Application shell | 0 | 5 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **45** | **281** | `██░░░░░░░░░░░░` 16.0% |
+| **Total** | **46** | **281** | `██░░░░░░░░░░░░` 16.4% |
 
 ## Completed
 
@@ -81,6 +81,7 @@
 | 043 — Photo thumbnail | 2026-09-17 | `AppPhotoThumb` is the one square every photo renders through: type badge and caption overlays, selection tick plus border, missing-file placeholder, 1:1 `BoxFit.cover`, cached thumb path never the original. `PhotoAsset` / `PhotoType` live in a part file until capture owns them. Guarded by never-decode and missing-file widget tests, 200 percent, and 3 goldens of badge, caption, selected, unselected and error. |
 | 044 — Form scaffold, validation display and focus behaviour | 2026-09-17 | `AppForm` spaces fields, lists every invalid field at the top, pins a busy submit bar, and prompts on a dirty pop. `FocusActions` dismisses the keyboard and advances in visual order; `KeepFocusedVisible` keeps the focused field above the inset. Guarded by unsaved-guard, double-submit, focus-order and keyboard-inset widget tests, 200 percent, and 3 goldens with and without the error summary. |
 | 045 — Haptics service | 2026-09-17 | `Haptics` is the one caller of `HapticFeedback`: shutter (heavy), save (medium), warning (light), error (vibrate) and selection (click). `Haptics.fake` records names for tests. Disabled haptics suppress all five; reduced motion skips selection so capture and save still confirm by touch. Guarded by fire-once, disabled, and reduced-motion unit tests. |
+| 046 — User-facing copy helper | 2026-09-17 | `Copy` is the one catalogue of visible strings, keyed by meaning, with ICU plurals for counts. Catalogue widgets read from it; template labels stay user data. Guarded by 0/1/2 plural tests and a synonym scan against the naming checker. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -139,32 +140,34 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 034 | `filledButtonTheme` uses `WidgetStatePropertyAll` for primary fill, so a disabled `FilledButton` still looks enabled. | Closed by 034 for catalogue buttons — `AppButton` and `AppPrimaryAction` set disabled colours from `surfaceVariant` / `onSurface`; the central theme still needs a later pass |
 | 035 | FE-L10N-04 wants `intl` helpers; FE-FLOW-06 wants a package to have its own task. | Closed by 035 — `intl` ^0.20.2 is allowlisted here because this task names the formatters; a later formatter module can lift the call sites |
 | 035 | The contract sketches StatelessWidgets, but number, date and search need a controller or a timer. | Open — implemented as `StatefulWidget` where state is required; the contract or a later pass can reword |
-| 035 | Catalogue copy (`Clear`, `Auto-filled`, `Out of range`) is still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
+| 035 | Catalogue copy (`Clear`, `Auto-filled`, `Out of range`) is still inline. | Closed by 046 — fields read `Copy.clearField` / `autoFilled` / `outOfRange` |
 | 036 | `enabled` is not on the contract, and the checkbox variant is a named constructor rather than a second type. | Open — galleries and settings need a disabled state; `AppSwitchTile.checkbox` keeps one public class (FE-STR-06) |
 | 036 | Closed multi-choice values render with Material `Chip` until `AppChip` exists. | Closed by 037 — `AppMultiChoiceField` now composes `AppChip` / `AppChipRow` |
 | 036 | Sheets call `showModalBottomSheet` directly. | Closed by 041 — `AppChoiceField` and `AppMultiChoiceField` open through `showAppSheet` |
 | 040 | Offline as a fourth visual state is a persistent banner. | Closed by 041 — `AppBanner` is dismissible, announced, and excluded from focus |
-| 041 | Confirm/alert/snack/banner copy is still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
+| 041 | Confirm/alert/snack/banner copy is still inline. | Closed by 046 — dialogs and banners read `Copy.ok` / `cancel` / `dismiss` |
 | 041 | `AppPage` has no banner slot. | Open — screens compose `AppBanner` under the app bar until a later scaffold pass |
 | 042 | FE-STR-06 wants one public class; the contract publishes `ProgressStep` too. | Closed by 042 — `ProgressStep` lives in a part file |
 | 042 | Material already names `StepState`. | Open — this catalogue hides Flutter's enum on import; a later rename would leave the contract |
-| 042 | Step state labels are still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
+| 042 | Step state labels are still inline. | Closed by 046 — steps read `Copy.stepDone` / `stepRunning` / `stepWaiting` / `failed` |
 | 043 | `PhotoAsset` and `PhotoType` are named by capture and the photos table (120, 055). | Open — they live in `photo_asset.dart` so core does not import features. Those tasks should reuse them, not redeclare them, and may need a Dart-only home so domain stays Flutter-free |
 | 043 | Thumbnails are cached by hash and size with a cap on concurrent decodes (FE-PERF-04). | Open — `AppPhotoThumb` only paints `<sha256>_<edge>` from `thumbPath`; `ThumbnailCache` (068) generates the files and caps decodes |
-| 043 | Overlay copy (`Missing photo`, type labels) is still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
-| 044 | Error summary and unsaved-guard copy is still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
+| 043 | Overlay copy (`Missing photo`, type labels) is still inline. | Closed by 046 — thumbs read `Copy.missingPhoto` and `PhotoType` labels |
+| 044 | Error summary and unsaved-guard copy is still inline. | Closed by 046 — forms read `Copy.fixFields` / `discardChangesTitle` / `unsavedChanges` |
 | 044 | The contract has no `errors` or `dirty` fields. | Open — extra so the summary can list invalid fields and choice/date edits can mark dirty; text fields also mark dirty on first edit |
 | 045 | Flutter has no first-party "haptics enabled" flag. | Open — `enabled` is read once at construction (default on); the OS still no-ops `HapticFeedback` when the user has turned vibration off. Settings (078) can pass the flag |
-| 036 | Catalogue copy (`Select all`, `Clear`) is still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
+| 046 | The contract names only `notDetected` and `recordsCount`. | Open — extra getters so catalogue widgets have no literals (FE-L10N-01); ARB generation is 238 |
+| 046 | Failure messages live on `Failure` in `core/errors/`, not widgets. | Open — 238's copy pass can lift them behind `Copy` |
+| 036 | Catalogue copy (`Select all`, `Clear`) is still inline. | Closed by 046 — multi-choice reads `Copy.selectAll` / `clear` |
 | 037 | FE-STR-06 wants one public class; the contract publishes `AppChip` and `AppChipRow`. | Closed by 037 — `AppChipRow` lives in a part file so one public class per file still holds |
-| 037 | Catalogue copy (`Dismiss {label}`) is still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
+| 037 | Catalogue copy (`Dismiss {label}`) is still inline. | Closed by 046 — chips read `Copy.dismissChip` |
 | 038 | The contract types the status slot as `AppStatusPill`, which is task 039. | Closed by 039 — `AppListTile.status` is `AppStatusPill?`; `.badge` is the compact form |
 | 039 | FE-STR-06 wants one public class; the contract publishes `StatusStyle` too. | Closed by 039 — `StatusStyle` lives in a part file |
 | 039 | `StatusStyle.of` needs colours, and `RecordStatus` is named by task 162. | Open — `of` takes `AppColors` as well as the enum; the enum lives here so core does not import features. 162 should reuse it, not redeclare it, and may need a Dart-only home so domain stays Flutter-free |
-| 039 | Status labels are still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
+| 039 | Status labels are still inline. | Closed by 046 — `StatusStyle` reads `Copy.statusDraft` and the rest of the vocabulary |
 | 040 | The file is `app_loading_state.dart`; the contract names `AppSkeleton`. | Closed by 040 — `AppLoadingState` is a typedef for `AppSkeleton`, matching the file name (FE-STR-06) |
 | 040 | `AsyncValueView` needs a skeleton shape while loading. | Open — extra `loadingShape` / `loadingCount` so the placeholder occupies the same space as the content |
-| 040 | Empty, error and retry copy is still inline. | Open — task 046 is the copy helper that strips literals from `core/widgets/` |
+| 040 | Empty, error and retry copy is still inline. | Closed by 046 — empty/error/loading read `Copy.emptyHeadline` / `tryAgain` / `loading` |
 
 ## Checklist
 
@@ -209,7 +212,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 03 — Design system
 
-*16 of 19 complete.*
+*17 of 19 complete.*
 
 - [x] [030 — Design tokens: colour, type, spacing and elevation](dev-plan/03-design-system/030-color-tokens.md)
 - [x] [031 — Material 3 themes and the theme mode controller](dev-plan/03-design-system/031-theme-assembly.md)
@@ -227,7 +230,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [043 — Photo thumbnail](dev-plan/03-design-system/043-app-photo-thumb.md)
 - [x] [044 — Form scaffold, validation display and focus behaviour](dev-plan/03-design-system/044-app-form-scaffold.md)
 - [x] [045 — Haptics service](dev-plan/03-design-system/045-haptics-service.md)
-- [ ] [046 — User-facing copy helper](dev-plan/03-design-system/046-copy-helper.md)
+- [x] [046 — User-facing copy helper](dev-plan/03-design-system/046-copy-helper.md)
 - [ ] [047 — Widget gallery screen](dev-plan/03-design-system/047-widget-gallery.md)
 - [ ] [048 — Golden test baselines for the catalogue](dev-plan/03-design-system/048-golden-baselines.md)
 

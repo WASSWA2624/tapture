@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 
 /// The catalogue text input later fields and screens compose instead of a
@@ -160,8 +161,8 @@ class AppTextField extends StatelessWidget {
         if (showClear)
           AppIconButton(
             icon: Icons.clear,
-            semanticLabel: 'Clear $label',
-            tooltip: 'Clear $label',
+            semanticLabel: Copy.clearField(label),
+            tooltip: Copy.clearField(label),
             onPressed: () {
               controller.clear();
               onChanged?.call('');

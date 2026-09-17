@@ -5,6 +5,7 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 
 part 'photo_asset.dart';
 
@@ -57,17 +58,12 @@ class AppPhotoThumb extends StatelessWidget {
   }
 
   String get _label {
-    final String type = photo.photoType?.label ?? 'Photo';
-    final StringBuffer buffer = StringBuffer(
-      _missing ? 'Missing photo, $type' : type,
+    return Copy.photoThumbLabel(
+      type: photo.photoType?.label ?? Copy.photo,
+      missing: _missing,
+      captioned: photo.hasCaption,
+      selected: selected,
     );
-    if (photo.hasCaption) {
-      buffer.write(', captioned');
-    }
-    if (selected) {
-      buffer.write(', selected');
-    }
-    return buffer.toString();
   }
 
   @override
@@ -263,7 +259,7 @@ class _MissingPlaceholder extends StatelessWidget {
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                'Missing photo',
+                Copy.missingPhoto,
                 maxLines: 1,
                 style: AppText.caption.copyWith(color: colors.onSurface),
               ),

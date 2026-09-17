@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/copy/copy.dart';
 
 /// The large, full-width action capture and review both compose.
 ///
@@ -75,7 +76,7 @@ class AppPrimaryAction extends StatelessWidget {
     final String semantics = <String>[
       label,
       ?caption,
-      if (busy) 'loading',
+      if (busy) Copy.busy,
     ].join('\n');
     return SizedBox(
       width: double.infinity,

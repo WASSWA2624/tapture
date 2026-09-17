@@ -87,25 +87,25 @@ enum PhotoType {
   /// Semantic and tray label.
   String get label {
     return switch (this) {
-      PhotoType.front => 'Front',
-      PhotoType.back => 'Back',
-      PhotoType.serial => 'Serial',
-      PhotoType.ratingPlate => 'Rating plate',
-      PhotoType.damage => 'Damage',
-      PhotoType.panel => 'Panel',
-      PhotoType.location => 'Location',
-      PhotoType.attendance => 'Attendance',
-      PhotoType.document => 'Document',
-      PhotoType.other => 'Other',
+      PhotoType.front => Copy.photoFront,
+      PhotoType.back => Copy.photoBack,
+      PhotoType.serial => Copy.photoSerial,
+      PhotoType.ratingPlate => Copy.photoRatingPlate,
+      PhotoType.damage => Copy.photoDamage,
+      PhotoType.panel => Copy.photoPanel,
+      PhotoType.location => Copy.photoLocation,
+      PhotoType.attendance => Copy.photoAttendance,
+      PhotoType.document => Copy.photoDocument,
+      PhotoType.other => Copy.photoOther,
     };
   }
 
   /// Short overlay text that fits a corner without covering the subject.
   String get badgeLabel {
     return switch (this) {
-      PhotoType.ratingPlate => 'Plate',
-      PhotoType.attendance => 'Attend',
-      PhotoType.document => 'Doc',
+      PhotoType.ratingPlate => Copy.photoRatingPlateBadge,
+      PhotoType.attendance => Copy.photoAttendanceBadge,
+      PhotoType.document => Copy.photoDocumentBadge,
       _ => label,
     };
   }

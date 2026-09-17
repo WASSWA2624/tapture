@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 
 /// Catalogue confirm and alert. Features call [showAppConfirm] and
@@ -25,7 +26,7 @@ class AppDialog extends StatelessWidget {
     required this.title,
     required this.message,
     this.onConfirm,
-  }) : confirmLabel = 'OK',
+  }) : confirmLabel = Copy.ok,
        destructive = false,
        onCancel = null,
        _alert = true;
@@ -87,7 +88,7 @@ class AppDialog extends StatelessWidget {
                 children: <Widget>[
                   if (!_alert)
                     AppButton(
-                      label: 'Cancel',
+                      label: Copy.cancel,
                       variant: AppButtonVariant.text,
                       onPressed: () => _cancel(context),
                     ),

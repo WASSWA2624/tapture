@@ -4,6 +4,8 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 
+import 'package:tapture/core/copy/copy.dart';
+
 import 'app_text_field.dart';
 
 /// Numeric entry with an optional unit suffix and range, built on
@@ -104,7 +106,7 @@ class _AppNumberFieldState extends State<AppNumberField> {
     if (!tooLow && !tooHigh) {
       return null;
     }
-    return 'Out of range';
+    return Copy.outOfRange;
   }
 
   num? _parse(String raw) {

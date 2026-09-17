@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 
@@ -84,11 +85,11 @@ class _AppDateFieldState extends State<AppDateField> {
       controller: _controller,
       enabled: widget.enabled,
       readOnly: true,
-      helper: showAuto ? 'Auto-filled' : null,
+      helper: showAuto ? Copy.autoFilled : null,
       prefix: showAuto
           ? Icon(
               Icons.auto_awesome,
-              semanticLabel: 'Auto-filled',
+              semanticLabel: Copy.autoFilled,
               color: context.colors.secondary,
               size: Space.x6,
             )
@@ -97,8 +98,8 @@ class _AppDateFieldState extends State<AppDateField> {
           ? null
           : AppIconButton(
               icon: Icons.clear,
-              semanticLabel: 'Clear ${widget.label}',
-              tooltip: 'Clear ${widget.label}',
+              semanticLabel: Copy.clearField(widget.label),
+              tooltip: Copy.clearField(widget.label),
               onPressed: () => widget.onChanged(null),
             ),
       onTap: widget.enabled ? () => unawaited(_open()) : null,

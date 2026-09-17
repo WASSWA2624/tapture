@@ -3,6 +3,8 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 
+import 'package:tapture/core/copy/copy.dart';
+
 part 'status_style.dart';
 
 /// Record and job status as colour plus icon plus text (FE-THEME-05).

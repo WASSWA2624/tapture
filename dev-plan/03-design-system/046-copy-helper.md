@@ -35,7 +35,7 @@ abstract final class Copy {
 
 ## Definition of done
 
-- [ ] No inline user-facing string remains in any `core/widgets/` file.
-- [ ] A count reads correctly at zero, one and many.
-- [ ] Tests: unit tests of the plural forms at 0, 1 and 2, and a test asserting no `Copy` value uses a synonym the
+- [x] No inline user-facing string remains in any `core/widgets/` file.
+- [x] A count reads correctly at zero, one and many.
+- [x] Tests: unit tests of the plural forms at 0, 1 and 2, and a test asserting no `Copy` value uses a synonym the
       naming checker rejects.

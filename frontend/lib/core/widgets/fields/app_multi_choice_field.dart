@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
@@ -176,7 +177,7 @@ class _MultiChoiceSheetState<T> extends State<_MultiChoiceSheet<T>> {
             children: <Widget>[
               Expanded(
                 child: AppButton(
-                  label: 'Select all',
+                  label: Copy.selectAll,
                   variant: AppButtonVariant.text,
                   onPressed: visible.isEmpty
                       ? null
@@ -188,7 +189,7 @@ class _MultiChoiceSheetState<T> extends State<_MultiChoiceSheet<T>> {
               ),
               Expanded(
                 child: AppButton(
-                  label: 'Clear',
+                  label: Copy.clear,
                   variant: AppButtonVariant.text,
                   onPressed: _selected.isEmpty ? null : () => _emit(<T>{}),
                 ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide StepState;
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/copy/copy.dart';
 
 part 'progress_step.dart';
 
@@ -56,9 +57,11 @@ class _ProgressStepRow extends StatelessWidget {
       colors,
     );
     final String caption = step.detail ?? stateLabel;
-    final String announcement = step.detail == null
-        ? '${step.label}, $stateLabel'
-        : '${step.label}, $stateLabel, ${step.detail}';
+    final String announcement = Copy.progressAnnouncement(
+      label: step.label,
+      state: stateLabel,
+      detail: step.detail,
+    );
     return Semantics(
       liveRegion: true,
       container: true,
@@ -130,9 +133,9 @@ class _RunningMark extends StatelessWidget {
 
 (Color, IconData, String) _style(StepState state, AppColors colors) {
   return switch (state) {
-    StepState.done => (colors.success, Icons.check_circle, 'Done'),
-    StepState.running => (colors.info, Icons.sync, 'Running'),
-    StepState.waiting => (colors.outline, Icons.schedule, 'Waiting'),
-    StepState.failed => (colors.danger, Icons.error_outline, 'Failed'),
+    StepState.done => (colors.success, Icons.check_circle, Copy.stepDone),
+    StepState.running => (colors.info, Icons.sync, Copy.stepRunning),
+    StepState.waiting => (colors.outline, Icons.schedule, Copy.stepWaiting),
+    StepState.failed => (colors.danger, Icons.error_outline, Copy.failed),
   };
 }

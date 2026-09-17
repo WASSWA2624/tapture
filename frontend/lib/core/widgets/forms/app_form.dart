@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
@@ -61,7 +62,7 @@ class _AppFormState extends State<AppForm> {
       if (field is AppTextField) {
         final String? error = field.errorText;
         if (error != null && error.isNotEmpty) {
-          lines.add('${field.label}: $error');
+          lines.add(Copy.fieldError(field.label, error));
         }
       }
     }
@@ -135,9 +136,9 @@ class _AppFormState extends State<AppForm> {
     }
     final bool discard = await showAppConfirm(
       context,
-      title: 'Discard changes?',
-      message: 'You have unsaved changes.',
-      confirmLabel: 'Discard',
+      title: Copy.discardChangesTitle,
+      message: Copy.unsavedChanges,
+      confirmLabel: Copy.discard,
       destructive: true,
     );
     if (discard && mounted) {
@@ -243,13 +244,11 @@ class _ErrorSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppColors colors = context.colors;
-    final String heading = errors.length == 1
-        ? 'Fix this field'
-        : 'Fix these fields';
+    final String heading = Copy.fixFields(errors.length);
     return Semantics(
       liveRegion: true,
       container: true,
-      label: '$heading. ${errors.join('. ')}',
+      label: Copy.validationAnnouncement(heading, errors),
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: colors.surfaceVariant,

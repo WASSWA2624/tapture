@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 
 part 'app_chip_row.dart';
@@ -109,8 +110,8 @@ class AppChip extends StatelessWidget {
                 if (onDismiss != null)
                   AppIconButton(
                     icon: Icons.close,
-                    semanticLabel: 'Dismiss $label',
-                    tooltip: 'Dismiss $label',
+                    semanticLabel: Copy.dismissChip(label),
+                    tooltip: Copy.dismissChip(label),
                     onPressed: onDismiss,
                   ),
               ],

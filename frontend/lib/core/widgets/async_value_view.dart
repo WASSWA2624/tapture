@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
@@ -52,9 +53,8 @@ class AsyncValueView<T> extends StatelessWidget {
           return empty?.call() ??
               const AppEmptyState(
                 icon: Icons.inbox_outlined,
-                headline: 'Nothing here yet',
-                message:
-                    'When there is something to show, it will appear here.',
+                headline: Copy.emptyHeadline,
+                message: Copy.emptyMessage,
               );
         }
         return data(loaded);

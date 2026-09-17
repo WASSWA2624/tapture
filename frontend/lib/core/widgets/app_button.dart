@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/copy/copy.dart';
 
 /// The catalogue button. Features compose this instead of a Material button.
 class AppButton extends StatelessWidget {
@@ -113,7 +114,7 @@ class AppButton extends StatelessWidget {
           label,
           style: AppText.label,
           textAlign: TextAlign.center,
-          semanticsLabel: busy ? '$label, loading' : null,
+          semanticsLabel: busy ? Copy.busyAction(label) : null,
         ),
       ],
     );

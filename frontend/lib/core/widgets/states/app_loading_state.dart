@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_card.dart';
 
 /// The type this file is named for (FE-STR-06). The contract name is
@@ -37,7 +38,7 @@ class AppSkeleton extends StatelessWidget {
     final AppColors colors = context.colors;
     if (_inline) {
       return Semantics(
-        label: 'Loading',
+        label: Copy.loading,
         child: ExcludeSemantics(
           child: SizedBox(
             width: Space.x5,
@@ -54,7 +55,7 @@ class AppSkeleton extends StatelessWidget {
       );
     }
     return Semantics(
-      label: 'Loading',
+      label: Copy.loading,
       child: ExcludeSemantics(
         child: switch (shape) {
           SkeletonShape.list => _ListSkeleton(colors: colors, count: count),

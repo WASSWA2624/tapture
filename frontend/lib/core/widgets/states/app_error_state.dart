@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 
@@ -51,7 +52,7 @@ class AppErrorState extends StatelessWidget {
             ],
             if (onRetry != null) ...<Widget>[
               const SizedBox(height: Space.x6),
-              AppButton(label: 'Try again', onPressed: onRetry),
+              AppButton(label: Copy.tryAgain, onPressed: onRetry),
             ],
           ],
         ),
