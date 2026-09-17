@@ -40,7 +40,7 @@ Future<int> main(List<String> args);
 
 ## Definition of done
 
-- [ ] Logging an API key variable fails `check_logging.dart` with the file and line; a log call missing a level or a tag fails too.
-- [ ] A pasted provider key in a Dart file, a Gradle file or an asset fails `check_secrets.dart`, and neither checker ever prints the matched value.
-- [ ] Every pattern in `secret_patterns.yaml` is named, so a violation report is readable without opening the file.
-- [ ] Tests: `frontend/test/tool/check_logging_test.dart` covers each banned pattern; `frontend/test/tool/check_secrets_test.dart` covers one fixture per pattern plus an allowed placeholder fixture.
+- [x] Logging an API key variable fails `check_logging.dart` with the file and line; a log call missing a level or a tag fails too.
+- [x] A pasted provider key in a Dart file, a Gradle file or an asset fails `check_secrets.dart`, and neither checker ever prints the matched value.
+- [x] Every pattern in `secret_patterns.yaml` is named, so a violation report is readable without opening the file.
+- [x] Tests: `frontend/test/tool/check_logging_test.dart` covers each banned pattern; `frontend/test/tool/check_secrets_test.dart` covers one fixture per pattern plus an allowed placeholder fixture.
