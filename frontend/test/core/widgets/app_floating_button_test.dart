@@ -57,6 +57,17 @@ void main() {
             as BoxDecoration;
     expect(outline.borderRadius, BorderRadius.circular(Radii.sm));
     expect(outline.border, isNotNull);
+    expect(
+      tester
+          .getSize(
+            find.descendant(
+              of: find.byType(AppFloatingButton),
+              matching: find.byType(DecoratedBox),
+            ),
+          )
+          .height,
+      lessThan(Sizes.minTapTarget),
+    );
 
     await mouse.moveTo(Offset.zero);
     await tester.pumpAndSettle();

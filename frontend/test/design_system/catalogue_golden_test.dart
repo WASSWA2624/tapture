@@ -4,6 +4,7 @@ import 'package:flutter/material.dart' hide StepState;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/color_swatches.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/surface_levels.dart';
 import 'package:tapture/app/theme/type_ramp.dart';
 import 'package:tapture/core/constants/app_constants.dart';
@@ -14,6 +15,7 @@ import 'package:tapture/core/widgets/app_brand_lockup.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_card.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
+import 'package:tapture/core/widgets/app_floating_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
@@ -29,6 +31,7 @@ import 'package:tapture/core/widgets/error_boundary.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
+import 'package:tapture/core/widgets/feedback/app_panel_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_date_field.dart';
@@ -193,6 +196,20 @@ Widget _sample(String name, TextEditingController field) {
         actionLabel: Copy.tryAgain,
         onAction: _noop,
       );
+    case 'app_floating_button':
+      return const SizedBox(
+        height: Sizes.minTapTarget * 3,
+        child: Stack(
+          children: <Widget>[
+            AppFloatingButton(
+              icon: Icons.feedback_outlined,
+              label: Copy.feedback,
+              hint: Copy.feedbackButtonHint,
+              onPressed: _ignoreAnchor,
+            ),
+          ],
+        ),
+      );
     case 'app_error_state':
       return const AppErrorState(failure: NetworkFailure(), onRetry: _noop);
     case 'app_form':
@@ -234,6 +251,12 @@ Widget _sample(String name, TextEditingController field) {
             onTap: _noop,
           ),
         ],
+      );
+    case 'app_panel_dialog':
+      return const AppPanelDialog(
+        title: Copy.save,
+        onClose: _noop,
+        child: Text(Copy.galleryFeedback),
       );
     case 'app_page':
       return const AppPage(
@@ -318,6 +341,8 @@ const List<Choice<String>> _grades = <Choice<String>>[
 final DateTime _stamp = DateTime.utc(2026, 9, 17, 12);
 
 void _noop() {}
+
+void _ignoreAnchor(Rect _) {}
 
 void _ignoreBool(bool value) {}
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 
 /// An icon-only action that cannot be constructed without a name.
@@ -30,6 +31,11 @@ class AppIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final BorderSide outline = BorderSide(
+      color: context.colors.outline,
+      width: Theme.of(context).dividerTheme.thickness ?? Space.x0 / 2,
+      strokeAlign: BorderSide.strokeAlignInside,
+    );
     return IconButton(
       onPressed: onPressed,
       tooltip: tooltip,
@@ -39,17 +45,17 @@ class AppIconButton extends StatelessWidget {
         width: Sizes.minTapTarget,
         height: Sizes.minTapTarget,
       ),
-      style: const ButtonStyle(
-        padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.zero),
-        minimumSize: WidgetStatePropertyAll<Size>(
-          Size(Sizes.minTapTarget, Sizes.minTapTarget),
-        ),
-        maximumSize: WidgetStatePropertyAll<Size>(
-          Size(Sizes.minTapTarget, Sizes.minTapTarget),
-        ),
+      style: IconButton.styleFrom(
+        padding: const EdgeInsets.all(Space.x0),
+        minimumSize: const Size(Sizes.minTapTarget, Sizes.minTapTarget),
+        maximumSize: const Size(Sizes.minTapTarget, Sizes.minTapTarget),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         visualDensity: VisualDensity.standard,
-        iconSize: WidgetStatePropertyAll<double>(Space.x6),
+        iconSize: Space.x6,
+        side: outline,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(Radii.sm)),
+        ),
       ),
       iconSize: Space.x6,
       icon: Icon(icon, size: Space.x6, semanticLabel: semanticLabel),

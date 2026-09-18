@@ -81,53 +81,64 @@ class _AppFloatingButtonState extends State<AppFloatingButton> {
                 ? (_) => setState(() => _hovering = false)
                 : null,
             child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onPanUpdate: _onPanUpdate,
               onTap: () => widget.onPressed(_anchor()),
               child: Semantics(
                 button: true,
                 label: widget.label,
                 hint: widget.hint,
-                child: DecoratedBox(
-                  key: _buttonKey,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(Radii.sm),
-                    border: Border.all(
-                      color: colors.outline,
-                      width: Space.x0 / 2,
-                      strokeAlign: BorderSide.strokeAlignInside,
-                    ),
-                  ),
-                  child: AnimatedSize(
-                    duration: MediaQuery.disableAnimationsOf(context)
-                        ? Duration.zero
-                        : AppConstants.motion.short,
-                    alignment: Alignment.centerRight,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        SizedBox(
-                          width: Sizes.minTapTarget,
-                          height: Sizes.minTapTarget,
-                          child: Center(
-                            child: Icon(
-                              widget.icon,
-                              size: Space.x6,
-                              color: colors.primary,
+                child: UnconstrainedBox(
+                  child: Stack(
+                    alignment: Alignment(2 * _fx - 1, 2 * _fy - 1),
+                    children: <Widget>[
+                      const SizedBox(
+                        width: Sizes.minTapTarget,
+                        height: Sizes.minTapTarget,
+                      ),
+                      DecoratedBox(
+                        key: _buttonKey,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(Radii.sm),
+                          border: Border.all(
+                            color: colors.outline,
+                            width:
+                                Theme.of(context).dividerTheme.thickness ??
+                                Space.x0 / 2,
+                            strokeAlign: BorderSide.strokeAlignInside,
+                          ),
+                        ),
+                        child: AnimatedSize(
+                          duration: MediaQuery.disableAnimationsOf(context)
+                              ? Duration.zero
+                              : AppConstants.motion.short,
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: const EdgeInsets.all(Space.x0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Icon(
+                                  widget.icon,
+                                  size: Space.x6,
+                                  color: colors.primary,
+                                ),
+                                if (_showLabel) ...<Widget>[
+                                  const SizedBox(width: Space.x1),
+                                  Text(
+                                    widget.label,
+                                    style: AppText.label.copyWith(
+                                      color: colors.primary,
+                                      decoration: TextDecoration.none,
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
                         ),
-                        if (_showLabel) ...<Widget>[
-                          Text(
-                            widget.label,
-                            style: AppText.label.copyWith(
-                              color: colors.primary,
-                              decoration: TextDecoration.none,
-                            ),
-                          ),
-                          const SizedBox(width: Space.x2),
-                        ],
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),

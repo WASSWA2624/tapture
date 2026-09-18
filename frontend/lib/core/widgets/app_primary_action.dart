@@ -52,8 +52,16 @@ class AppPrimaryAction extends StatelessWidget {
             style: FilledButton.styleFrom(
               minimumSize: const Size(double.infinity, Sizes.controlHeight),
               padding: const EdgeInsets.symmetric(
-                horizontal: Space.x4,
-                vertical: Space.x2,
+                horizontal: Space.x2,
+                vertical: Space.x0,
+              ),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(Radii.sm)),
+              ),
+              side: BorderSide(
+                color: context.colors.outline,
+                width: Theme.of(context).dividerTheme.thickness ?? Space.x0 / 2,
+                strokeAlign: BorderSide.strokeAlignInside,
               ),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               disabledBackgroundColor: context.colors.surfaceVariant,

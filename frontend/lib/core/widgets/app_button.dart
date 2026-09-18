@@ -91,8 +91,8 @@ class AppButton extends StatelessWidget {
     return Wrap(
       alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: Space.x2,
-      runSpacing: Space.x1,
+      spacing: Space.x1,
+      runSpacing: Space.x0,
       children: <Widget>[
         if (busy)
           ExcludeSemantics(

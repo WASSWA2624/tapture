@@ -55,6 +55,14 @@ void main() {
       _radius(light.dialogTheme.shape),
       _radius(outdoor.dialogTheme.shape),
     );
+    expect(_styleRadius(light.filledButtonTheme.style), Radii.sm);
+    expect(
+      _styleRadius(light.filledButtonTheme.style),
+      _styleRadius(outdoor.filledButtonTheme.style),
+    );
+    expect(_styleRadius(light.outlinedButtonTheme.style), Radii.sm);
+    expect(_styleRadius(light.textButtonTheme.style), Radii.sm);
+    expect(_styleRadius(light.iconButtonTheme.style), Radii.sm);
     expect(
       _sideWidth(outdoor.outlinedButtonTheme.style) >
           _sideWidth(light.outlinedButtonTheme.style),
@@ -72,6 +80,10 @@ double _radius(ShapeBorder? shape) {
     return shape.borderRadius.resolve(TextDirection.ltr).topLeft.x;
   }
   return 0;
+}
+
+double _styleRadius(ButtonStyle? style) {
+  return _radius(style?.shape?.resolve(const <WidgetState>{}));
 }
 
 double _sideWidth(ButtonStyle? style) {

@@ -23,14 +23,14 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
   final Color barFill = dark ? colors.surfaceVariant : colors.primary;
   final Color barInk = dark ? colors.onSurface : colors.onPrimary;
   const RoundedRectangleBorder controlShape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(Radius.circular(Radii.lg)),
+    borderRadius: BorderRadius.all(Radius.circular(Radii.sm)),
   );
   const ButtonStyle controlStyle = ButtonStyle(
     minimumSize: WidgetStatePropertyAll<Size>(
       Size(Sizes.minTapTarget, Sizes.minTapTarget),
     ),
     padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(
-      EdgeInsets.symmetric(horizontal: Space.x3, vertical: Space.x1),
+      EdgeInsets.symmetric(horizontal: Space.x1, vertical: Space.x0),
     ),
     shape: WidgetStatePropertyAll<OutlinedBorder>(controlShape),
     elevation: WidgetStatePropertyAll<double>(0),
@@ -71,6 +71,7 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
       style: controlStyle.copyWith(
         backgroundColor: WidgetStatePropertyAll<Color>(colors.primary),
         foregroundColor: WidgetStatePropertyAll<Color>(colors.onPrimary),
+        side: WidgetStatePropertyAll<BorderSide>(outline),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
@@ -83,6 +84,7 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
     textButtonTheme: TextButtonThemeData(
       style: controlStyle.copyWith(
         foregroundColor: WidgetStatePropertyAll<Color>(colors.primary),
+        side: WidgetStatePropertyAll<BorderSide>(outline),
       ),
     ),
     iconButtonTheme: IconButtonThemeData(
@@ -90,10 +92,12 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
         foregroundColor: colors.onSurface,
         minimumSize: const Size(Sizes.minTapTarget, Sizes.minTapTarget),
         maximumSize: const Size(Sizes.minTapTarget, Sizes.minTapTarget),
-        padding: EdgeInsets.zero,
+        padding: const EdgeInsets.all(Space.x0),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         visualDensity: VisualDensity.standard,
         iconSize: Space.x6,
+        side: outline,
+        shape: controlShape,
       ),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
