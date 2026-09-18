@@ -36,6 +36,15 @@
   <meta property="og:image" content="og-image.png">
   <title>Tapture</title>
   <link rel="manifest" href="manifest.json">
+  <!-- Flutter web exposes tappable semantics as <a href="#">; kill the
+       browser's hover underline so labelled controls stay unadorned. -->
+  <style>
+    flt-semantics a,
+    flt-semantics a:hover,
+    flt-semantics a:any-link {
+      text-decoration: none !important;
+    }
+  </style>
 </head>
 <body>
   <!--

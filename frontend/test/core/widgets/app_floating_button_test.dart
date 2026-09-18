@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_floating_button.dart';
 
@@ -40,6 +41,22 @@ void main() {
     await tester.pumpAndSettle();
     expect(_labelOnButton(), findsOneWidget);
     expect(find.byType(Tooltip), findsNothing);
+    expect(
+      tester.widget<Text>(_labelOnButton()).style?.decoration,
+      TextDecoration.none,
+    );
+    final BoxDecoration outline =
+        tester
+                .widget<DecoratedBox>(
+                  find.descendant(
+                    of: find.byType(AppFloatingButton),
+                    matching: find.byType(DecoratedBox),
+                  ),
+                )
+                .decoration
+            as BoxDecoration;
+    expect(outline.borderRadius, BorderRadius.circular(Radii.sm));
+    expect(outline.border, isNotNull);
 
     await mouse.moveTo(Offset.zero);
     await tester.pumpAndSettle();

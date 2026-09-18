@@ -5,8 +5,8 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 
 /// A draggable icon that sits over a [Stack]. On a pointing device the
-/// label stays hidden until hover; on touch it is icon-only. No fill, border
-/// or tooltip — the icon is the control.
+/// label stays hidden until hover; on touch it is icon-only. A hairline
+/// outline marks the tap target; there is no fill and no tooltip.
 ///
 /// Must be a direct child of a [Stack]: it fills the stack and only the
 /// control itself receives pointer events.
@@ -87,34 +87,47 @@ class _AppFloatingButtonState extends State<AppFloatingButton> {
                 button: true,
                 label: widget.label,
                 hint: widget.hint,
-                child: AnimatedSize(
+                child: DecoratedBox(
                   key: _buttonKey,
-                  duration: MediaQuery.disableAnimationsOf(context)
-                      ? Duration.zero
-                      : AppConstants.motion.short,
-                  alignment: Alignment.centerRight,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      SizedBox(
-                        width: Sizes.minTapTarget,
-                        height: Sizes.minTapTarget,
-                        child: Center(
-                          child: Icon(
-                            widget.icon,
-                            size: Space.x6,
-                            color: colors.primary,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(Radii.sm),
+                    border: Border.all(
+                      color: colors.outline,
+                      width: Space.x0 / 2,
+                      strokeAlign: BorderSide.strokeAlignInside,
+                    ),
+                  ),
+                  child: AnimatedSize(
+                    duration: MediaQuery.disableAnimationsOf(context)
+                        ? Duration.zero
+                        : AppConstants.motion.short,
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        SizedBox(
+                          width: Sizes.minTapTarget,
+                          height: Sizes.minTapTarget,
+                          child: Center(
+                            child: Icon(
+                              widget.icon,
+                              size: Space.x6,
+                              color: colors.primary,
+                            ),
                           ),
                         ),
-                      ),
-                      if (_showLabel) ...<Widget>[
-                        Text(
-                          widget.label,
-                          style: AppText.label.copyWith(color: colors.primary),
-                        ),
-                        const SizedBox(width: Space.x2),
+                        if (_showLabel) ...<Widget>[
+                          Text(
+                            widget.label,
+                            style: AppText.label.copyWith(
+                              color: colors.primary,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                          const SizedBox(width: Space.x2),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
               ),
