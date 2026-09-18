@@ -24,13 +24,15 @@ LifecycleObserver? _lifecycleObserver;
 
 /// Entry point for the Tapture application.
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  _installErrorHandlers();
-  _installLifecycleObserver();
   await runZonedGuarded(_run, _handleZoneError);
 }
 
 Future<void> _run() async {
+  // The binding is initialised in the guarded zone because runApp must run in
+  // the zone that created it; otherwise Flutter reports a zone mismatch.
+  WidgetsFlutterBinding.ensureInitialized();
+  _installErrorHandlers();
+  _installLifecycleObserver();
   final Logger logger = Logger(persist: true);
   Logger.current = logger;
   final PinLock lock = PinLock(

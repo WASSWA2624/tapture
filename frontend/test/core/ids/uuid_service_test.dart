@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
@@ -35,8 +37,42 @@ void main() {
     final Clock clock = FixedClock(DateTime.utc(2020, 1, 1));
     final String id = UuidV7Service.sequence(clock).newId();
     final int ms = DateTime.utc(2020, 1, 1).millisecondsSinceEpoch;
-    final String prefix = (ms >> 16).toRadixString(16).padLeft(8, '0');
+    final String prefix = (ms ~/ 0x10000).toRadixString(16).padLeft(8, '0');
 
     expect(id.startsWith(prefix), isTrue);
   });
+
+  // The web compiles ints to JS numbers, whose bitwise operators keep only 32
+  // bits. These exact values fail there if a timestamp byte above bit 32 or a
+  // tail with bit 31 set is built with `&` or `>>` on the full value.
+  test('encodes the timestamp and tail bytes exactly', () {
+    final Clock clock = FixedClock(DateTime.utc(2026, 9, 17, 8));
+    final IdService sequence = UuidV7Service.sequence(clock);
+    final IdService random = UuidV7Service(
+      clock,
+      random: _FixedRandom(0x7ffffffe),
+    );
+
+    expect(sequence.newId(), '01a0ae61-3000-7000-8000-000000000000');
+    expect(sequence.newId(), '01a0ae61-3000-7000-8000-000000000001');
+    expect(random.newId(), '01a0ae61-3000-7000-8000-00007ffffffe');
+    expect(random.newId(), '01a0ae61-3000-7000-8000-00007fffffff');
+    expect(random.newId(), '01a0ae61-3000-7000-8000-000080000000');
+  });
+}
+
+/// A [Random] whose every draw is [value].
+final class _FixedRandom implements Random {
+  _FixedRandom(this.value);
+
+  final int value;
+
+  @override
+  int nextInt(int max) => value;
+
+  @override
+  double nextDouble() => throw UnimplementedError();
+
+  @override
+  bool nextBool() => throw UnimplementedError();
 }

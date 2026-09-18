@@ -22,7 +22,7 @@ final class UuidV7Service implements IdService {
 
   @override
   String newId() {
-    final int ms = clock.nowUtc().millisecondsSinceEpoch & _timestampMask;
+    final int ms = clock.nowUtc().millisecondsSinceEpoch % _timestampModulus;
     if (_sequence) {
       _seq++;
       _lastMs = ms;
@@ -38,31 +38,40 @@ final class UuidV7Service implements IdService {
   }
 }
 
-/// 48-bit Unix-millisecond mask from RFC 9562.
-const int _timestampMask = 0xFFFFFFFFFFFF;
+/// 2^48: RFC 9562 keeps the low 48 bits of the Unix-millisecond timestamp.
+const int _timestampModulus = 0x1000000000000;
 
 /// Upper bound for the random tail drawn at the start of a millisecond.
 const int _newMsSeqBound = 0x7fffffff;
 
+/// 2^32. On the web an int is a JS number whose bitwise operators keep only
+/// 32 bits, so wider values are split into words with `~/` and `%` (exact up
+/// to 2^53) before any `&` or `>>`.
+const int _word = 0x100000000;
+
 String _format(int ms, int seq) {
-  final int randB = seq & _randBMask;
+  final int msHigh = ms ~/ _word;
+  final int msLow = ms % _word;
+  // rand_b is the low 62 bits of the tail: 30 in the high word, 32 in the low.
+  final int randBHigh = (seq ~/ _word) & 0x3FFFFFFF;
+  final int randBLow = seq % _word;
   final List<int> bytes = <int>[
-    (ms >> 40) & 0xFF,
-    (ms >> 32) & 0xFF,
-    (ms >> 24) & 0xFF,
-    (ms >> 16) & 0xFF,
-    (ms >> 8) & 0xFF,
-    ms & 0xFF,
+    (msHigh >> 8) & 0xFF,
+    msHigh & 0xFF,
+    (msLow >> 24) & 0xFF,
+    (msLow >> 16) & 0xFF,
+    (msLow >> 8) & 0xFF,
+    msLow & 0xFF,
     0x70,
     0x00,
-    0x80 | ((randB >> 56) & 0x3F),
-    (randB >> 48) & 0xFF,
-    (randB >> 40) & 0xFF,
-    (randB >> 32) & 0xFF,
-    (randB >> 24) & 0xFF,
-    (randB >> 16) & 0xFF,
-    (randB >> 8) & 0xFF,
-    randB & 0xFF,
+    0x80 | (randBHigh >> 24),
+    (randBHigh >> 16) & 0xFF,
+    (randBHigh >> 8) & 0xFF,
+    randBHigh & 0xFF,
+    (randBLow >> 24) & 0xFF,
+    (randBLow >> 16) & 0xFF,
+    (randBLow >> 8) & 0xFF,
+    randBLow & 0xFF,
   ];
   String hex(int index) => bytes[index].toRadixString(16).padLeft(2, '0');
   return '${hex(0)}${hex(1)}${hex(2)}${hex(3)}-'
@@ -71,6 +80,3 @@ String _format(int ms, int seq) {
       '${hex(8)}${hex(9)}-'
       '${hex(10)}${hex(11)}${hex(12)}${hex(13)}${hex(14)}${hex(15)}';
 }
-
-/// 62-bit rand_b mask from RFC 9562.
-const int _randBMask = 0x3FFFFFFFFFFFFFFF;
