@@ -861,11 +861,7 @@ abstract final class Copy {
 
   /// The attach checkbox, counting the images it covers.
   static String feedbackAttachImages(int n) {
-    return Intl.plural(
-      n,
-      one: 'Attach 1 image',
-      other: 'Attach $n images',
-    );
+    return Intl.plural(n, one: 'Attach 1 image', other: 'Attach $n images');
   }
 
   /// How many images a kept draft holds, for the compact bar.

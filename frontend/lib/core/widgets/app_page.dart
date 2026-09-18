@@ -3,6 +3,7 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 
+import 'app_icon_button.dart';
 import 'app_overflow_menu.dart';
 import 'responsive/breakpoints.dart';
 import 'responsive/content_constraint.dart';
@@ -79,7 +80,7 @@ class AppPage extends StatelessWidget {
         ? _scrollingBody(context, padding)
         : _fixedBody(context, padding);
     final Widget? footer = this.footer;
-    final Widget? leading = this.leading;
+    final Widget? leading = this.leading ?? _compactBack(context);
     final bool invertedBar = Theme.of(context).brightness != Brightness.dark;
     final List<Widget> barActions = <Widget>[
       ...actions,
@@ -137,6 +138,23 @@ class AppPage extends StatelessWidget {
 }
 
 extension on AppPage {
+  /// A compact bar's back control: the same borderless arrow as a field's
+  /// controls, so a compact header spends no weight on chrome. Null where
+  /// there is nothing to go back to, or the bar is not compact.
+  Widget? _compactBack(BuildContext context) {
+    if (!compactBar || !(ModalRoute.of(context)?.canPop ?? false)) {
+      return null;
+    }
+    final String back = MaterialLocalizations.of(context).backButtonTooltip;
+    return AppIconButton(
+      icon: Icons.arrow_back,
+      semanticLabel: back,
+      tooltip: back,
+      outlined: false,
+      onPressed: () => Navigator.of(context).maybePop(),
+    );
+  }
+
   /// [body] in the page's own scroll view, under an optional [subtitle].
   Widget _scrollingBody(BuildContext context, EdgeInsets padding) {
     Widget scroller = SingleChildScrollView(

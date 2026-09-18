@@ -71,7 +71,7 @@ class FeedbackShots extends ConsumerWidget {
             ),
             if (onAddScreen != null)
               AppIconButton(
-                icon: Icons.add_to_home_screen_outlined,
+                icon: Icons.screenshot_monitor_outlined,
                 semanticLabel: Copy.feedbackAddScreen,
                 tooltip: Copy.feedbackAddScreen,
                 outlined: false,

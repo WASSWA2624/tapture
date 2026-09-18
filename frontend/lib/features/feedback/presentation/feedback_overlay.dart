@@ -135,24 +135,16 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
       context,
       anchor: anchor,
       items: <AppOverflowAction>[
-        if (open)
-          AppOverflowAction(
-            key: const ValueKey<String>('feedback-continue'),
-            icon: Icons.rate_review_outlined,
-            label: Copy.feedbackContinue,
-            onTap: () => ref.read(feedbackDraftProvider.notifier).expand(),
-          )
-        else
-          AppOverflowAction(
-            key: const ValueKey<String>('feedback-give'),
-            icon: Icons.rate_review_outlined,
-            label: Copy.feedbackGive,
-            onTap: () => ref.read(feedbackDraftProvider.notifier).expand(),
-          ),
+        AppOverflowAction(
+          key: ValueKey<String>(open ? 'feedback-continue' : 'feedback-give'),
+          icon: Icons.rate_review_outlined,
+          label: open ? Copy.feedbackContinue : Copy.feedbackGive,
+          onTap: () => ref.read(feedbackDraftProvider.notifier).expand(),
+        ),
         if (open)
           AppOverflowAction(
             key: const ValueKey<String>('feedback-add-screen'),
-            icon: Icons.add_a_photo_outlined,
+            icon: Icons.screenshot_monitor_outlined,
             label: Copy.feedbackAddScreen,
             onTap: () => unawaited(_addThisScreen()),
           ),

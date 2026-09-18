@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "tapture-web-preview",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "cd /d frontend && flutter run -d web-server --web-port 5180 --web-hostname localhost"],
+      "port": 5180
+    }
+  ]
+}
