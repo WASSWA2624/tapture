@@ -46,6 +46,7 @@ class FeedbackShots extends ConsumerWidget {
       feedbackDraftProvider.select((FeedbackDraft? d) => d?.includeUi ?? false),
     );
     final bool canTakePhoto = ref.watch(feedbackPhotosProvider).canTakePhoto;
+    final bool canCapture = ref.watch(feedbackScreenCaptureProvider).canCapture;
     final GiveFeedbackController form = ref.read(
       giveFeedbackControllerProvider.notifier,
     );
@@ -93,6 +94,14 @@ class FeedbackShots extends ConsumerWidget {
                 onPressed: onAddScreen,
               ),
             ],
+            if (canCapture)
+              AppIconButton(
+                icon: Icons.desktop_windows_outlined,
+                semanticLabel: Copy.feedbackAddWindow,
+                tooltip: Copy.feedbackAddWindow,
+                outlined: false,
+                onPressed: () => unawaited(_addWindow(context, form)),
+              ),
             if (canTakePhoto)
               AppIconButton(
                 icon: Icons.photo_camera_outlined,
@@ -127,6 +136,16 @@ class FeedbackShots extends ConsumerWidget {
     required bool camera,
   }) async {
     final String? problem = await form.addPhotos(camera: camera);
+    if (problem != null && context.mounted) {
+      showAppSnack(context, problem, tone: SnackTone.warning);
+    }
+  }
+
+  Future<void> _addWindow(
+    BuildContext context,
+    GiveFeedbackController form,
+  ) async {
+    final String? problem = await form.addWindow();
     if (problem != null && context.mounted) {
       showAppSnack(context, problem, tone: SnackTone.warning);
     }

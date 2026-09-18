@@ -81,6 +81,36 @@ final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
     }
   }
 
+  /// Adds one still of another window, capped to the feedback long edge.
+  /// Returns why none was added, or null; a cancelled picker is not a
+  /// failure.
+  Future<String?> addWindow() async {
+    final FeedbackDraftController draft = ref.read(
+      feedbackDraftProvider.notifier,
+    );
+    final int room =
+        AppConstants.userFeedback.maxShots -
+        (ref.read(feedbackDraftProvider)?.shots.length ?? 0);
+    if (room <= 0) {
+      return Copy.feedbackShotsFull;
+    }
+    final Result<Uint8List> still = await ref
+        .read(feedbackScreenCaptureProvider)
+        .capture(longEdge: AppConstants.userFeedback.screenshotLongEdge);
+    switch (still) {
+      case FailureResult<Uint8List>(:final Failure failure):
+        return failure.message;
+      case Success<Uint8List>(:final Uint8List value):
+        if (value.isEmpty) {
+          return null;
+        }
+        return draft.addShot(
+          await FeedbackShotFit.cap(value),
+          label: Copy.feedbackOtherWindow,
+        );
+    }
+  }
+
   /// Saves the draft, and clears it once the entry is durable.
   Future<Result<FeedbackEntry>> save() async {
     final FeedbackDraftController drafts = ref.read(

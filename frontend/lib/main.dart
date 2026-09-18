@@ -12,6 +12,7 @@ import 'core/device/device_identity.dart';
 import 'core/device/platform_facts.dart';
 import 'core/files/download_service.dart';
 import 'core/files/photo_picker.dart';
+import 'core/files/screen_capture.dart';
 import 'core/ids/uuid_service.dart';
 import 'core/lifecycle/lifecycle_observer.dart';
 import 'core/logging/logger.dart';
@@ -68,6 +69,7 @@ Future<void> _run() async {
       }),
       feedbackDownloadsProvider.overrideWith((Ref _) => DownloadService()),
       feedbackPhotosProvider.overrideWith((Ref _) => PhotoPicker()),
+      feedbackScreenCaptureProvider.overrideWith((Ref _) => ScreenCapture()),
       sttServiceProvider.overrideWith((Ref ref) {
         final SttService speech = SttService();
         ref.onDispose(() => unawaited(speech.cancel()));

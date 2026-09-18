@@ -33,12 +33,21 @@ abstract final class Copy {
   static const String photoNoAccess =
       'Allow the camera or photos to attach one. Everything else still works.';
 
+  /// The browser display picker was refused.
+  static const String displayNoAccess =
+      'Allow screen capture to attach another window. Everything else still '
+      'works.';
+
   /// The device has no camera the app can open.
   static const String photoNoCamera = 'No camera is available on this device.';
 
   /// The picker failed for a reason it did not name.
   static const String photoPickFailed =
       'That photo could not be added. Try another.';
+
+  /// The display picker failed for a reason it did not name.
+  static const String displayCaptureFailed =
+      'That window could not be captured. Try another.';
 
   /// Starts dictation into a field, named for its label.
   static String dictateInto(String label) => 'Speak into $label';
@@ -870,6 +879,12 @@ abstract final class Copy {
 
   /// Opt-in so Add this screen includes the Give us feedback chrome.
   static const String feedbackIncludeUi = 'Include the feedback UI';
+
+  /// Opens the browser display picker for another window or OS surface.
+  static const String feedbackAddWindow = 'Add another window';
+
+  /// Label of a still taken from another window.
+  static const String feedbackOtherWindow = 'Other window';
 
   /// Opens the device camera for a photo to attach.
   static const String feedbackTakePhoto = 'Take a photo';

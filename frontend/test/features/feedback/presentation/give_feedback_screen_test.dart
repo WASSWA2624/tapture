@@ -11,6 +11,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/photo_picker.dart';
+import 'package:tapture/core/files/screen_capture.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/feedback/app_panel_dialog.dart';
 import 'package:tapture/core/widgets/fields/app_radio_group.dart';
@@ -194,6 +195,50 @@ void main() {
     expect(harness.draft!.shots, isEmpty);
   });
 
+  testWidgets('another window is offered only where capture is available', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester);
+    expect(find.byTooltip(Copy.feedbackAddWindow), findsNothing);
+    expect(find.byTooltip(Copy.feedbackAddScreen), findsOneWidget);
+    expect(find.byTooltip(Copy.feedbackTakePhoto), findsOneWidget);
+    expect(find.byTooltip(Copy.feedbackChoosePhoto), findsOneWidget);
+  });
+
+  testWidgets('another window attaches a still and turns attach on', (
+    WidgetTester tester,
+  ) async {
+    final _Harness harness = await _pump(
+      tester,
+      screenCapture: ScreenCapture.fake(canCapture: true, frame: aFeedbackPng),
+    );
+    expect(find.text(Copy.feedbackNoScreenshot), findsOneWidget);
+    await tester.tap(find.byTooltip(Copy.feedbackAddWindow));
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.feedbackAttachImages(1)), findsOneWidget);
+    expect(harness.draft!.shots, hasLength(1));
+    expect(harness.draft!.shots.single.label, Copy.feedbackOtherWindow);
+    expect(harness.draft!.attachShots, isTrue);
+    expect(find.byTooltip(Copy.feedbackAddScreen), findsOneWidget);
+    expect(find.byTooltip(Copy.feedbackChoosePhoto), findsOneWidget);
+  });
+
+  testWidgets('a refused display picker explains itself and adds nothing', (
+    WidgetTester tester,
+  ) async {
+    final _Harness harness = await _pump(
+      tester,
+      screenCapture: const ScreenCapture.fake(
+        canCapture: true,
+        failure: PermissionFailure(message: Copy.displayNoAccess),
+      ),
+    );
+    await tester.tap(find.byTooltip(Copy.feedbackAddWindow));
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.displayNoAccess), findsWidgets);
+    expect(harness.draft!.shots, isEmpty);
+  });
+
   testWidgets('close folds the form into the bar and keeps everything', (
     WidgetTester tester,
   ) async {
@@ -369,6 +414,41 @@ void main() {
       await expectNoA11yIssues(tester);
     });
   }
+
+  testWidgets('another window stays labelled and unclipped at 360 dp', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      size: const Size(360, 800),
+      screenCapture: ScreenCapture.fake(canCapture: true, frame: aFeedbackPng),
+    );
+    final Finder add = find.byTooltip(Copy.feedbackAddWindow);
+    expect(add, findsOneWidget);
+    expect(add, meetsTapTarget());
+    expect(add, hasSemanticLabel(Copy.feedbackAddWindow));
+    expect(tester.getRect(add).right, lessThanOrEqualTo(360));
+    expect(find.byTooltip(Copy.feedbackAddScreen), findsOneWidget);
+    expect(find.byTooltip(Copy.feedbackChoosePhoto), findsOneWidget);
+    await expectNoA11yIssues(tester);
+  });
+
+  for (final ({String name, ThemeData theme}) mode in _feedbackThemes) {
+    testWidgets('another window is labelled and 48dp in ${mode.name}', (
+      WidgetTester tester,
+    ) async {
+      await _pump(
+        tester,
+        theme: mode.theme,
+        screenCapture: const ScreenCapture.fake(canCapture: true),
+      );
+      final Finder add = find.byTooltip(Copy.feedbackAddWindow);
+      expect(add, findsOneWidget);
+      expect(add, meetsTapTarget());
+      expect(add, hasSemanticLabel(Copy.feedbackAddWindow));
+      await expectNoA11yIssues(tester);
+    });
+  }
 }
 
 const List<String> _types = <String>[
@@ -439,6 +519,7 @@ Future<_Harness> _pump(
   Uint8List? screenshot,
   Size size = const Size(400, 1200),
   PhotoPicker photos = const PhotoPicker.fake(),
+  ScreenCapture screenCapture = const ScreenCapture.fake(),
   ThemeData? theme,
 }) async {
   tester.view.devicePixelRatio = 1;
@@ -457,6 +538,7 @@ Future<_Harness> _pump(
       feedbackClockProvider.overrideWith((Ref _) => clock),
       feedbackRepositoryProvider.overrideWith((Ref _) => repo),
       feedbackPhotosProvider.overrideWith((Ref _) => photos),
+      feedbackScreenCaptureProvider.overrideWith((Ref _) => screenCapture),
       operatorProfileOverride(
         load: () async => const OperatorProfile(name: 'Ada', initials: 'A'),
         save: (OperatorProfile profile) async =>

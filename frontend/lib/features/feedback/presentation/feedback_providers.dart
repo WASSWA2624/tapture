@@ -5,6 +5,7 @@ import 'package:tapture/core/device/device.dart';
 import 'package:tapture/core/device/platform_facts.dart';
 import 'package:tapture/core/files/download_service.dart';
 import 'package:tapture/core/files/photo_picker.dart';
+import 'package:tapture/core/files/screen_capture.dart';
 import 'package:tapture/core/time/clock.dart';
 
 import '../feedback.dart';
@@ -56,6 +57,13 @@ final Provider<PhotoPicker> feedbackPhotosProvider = Provider<PhotoPicker>((
 ) {
   return const PhotoPicker.fake();
 });
+
+/// Another window's still for a draft. Tests keep the fake; [main] swaps
+/// in the platform capture.
+final Provider<ScreenCapture> feedbackScreenCaptureProvider =
+    Provider<ScreenCapture>((Ref _) {
+      return const ScreenCapture.fake();
+    });
 
 /// Every stored entry, oldest first. Kept alive with the repository.
 final StreamProvider<List<FeedbackEntry>> feedbackEntriesProvider =

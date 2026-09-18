@@ -1,6 +1,6 @@
 # Tapture — task index
 
-295 implementation prompts across 25 phases. Work top to bottom.
+296 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task.
 
@@ -376,6 +376,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [293 — Add feedback close control](23-hardening/293-add-feedback-close-control.md)
 - [ ] [294 — Split operator contact fields](23-hardening/294-split-operator-contact-fields.md)
 - [ ] [295 — Include feedback UI screenshot](23-hardening/295-include-feedback-ui-screenshot.md)
+- [x] [296 — Add other window screenshot](23-hardening/296-add-other-window-screenshot.md)
 
 ## 24 — The minimal backend
 
