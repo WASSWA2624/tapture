@@ -33,6 +33,7 @@ import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_panel_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
+import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_date_field.dart';
 import 'package:tapture/core/widgets/fields/app_multi_choice_field.dart';
@@ -170,6 +171,13 @@ Widget _sample(String name, TextEditingController field) {
           AppChip(label: 'Steam'),
           AppChip(label: 'Gas'),
         ],
+      );
+    case 'app_checkbox_group':
+      return const AppCheckboxGroup<String>(
+        label: 'Tags',
+        options: _grades,
+        value: <String>{'a'},
+        onChanged: _ignoreSet,
       );
     case 'app_choice_field':
       return const AppChoiceField<String>(
