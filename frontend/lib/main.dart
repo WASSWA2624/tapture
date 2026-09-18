@@ -14,7 +14,7 @@ import 'core/files/download_service.dart';
 import 'core/files/photo_picker.dart';
 import 'core/files/screen_capture.dart';
 import 'core/ids/uuid_service.dart';
-import 'core/lifecycle/lifecycle_observer.dart';
+import 'core/lifecycle/lifecycle.dart';
 import 'core/logging/logger.dart';
 import 'core/security/secure_storage.dart';
 import 'core/time/clock.dart';
@@ -53,6 +53,7 @@ Future<void> _run() async {
     appLockProvider.overrideWith((Ref ref) => lock),
     offlineStoreProvider.overrideWith((Ref _) => offlineStore),
     lifecycleObserverProvider.overrideWith((Ref ref) => _lifecycleObserver!),
+    leaveGuardProvider.overrideWith((Ref _) => LeaveGuard()),
   ];
   if (!_runningUnderTest) {
     final UuidV7Service ids = UuidV7Service(clock);

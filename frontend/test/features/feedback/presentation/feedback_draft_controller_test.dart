@@ -135,6 +135,43 @@ void main() {
     expect(harness.container.read(feedbackDraftProvider), isNull);
   });
 
+  test('hasWork is false for a closed draft and an empty open one', () {
+    final _Harness harness = _harness();
+    harness.draft.capture(
+      context: aFeedbackEntry().context,
+      screenshot: _bytes(1),
+    );
+    expect(harness.read().open, isFalse);
+    expect(harness.read().hasWork, isFalse);
+
+    harness.draft
+      ..clear()
+      ..capture(context: aFeedbackEntry().context)
+      ..expand();
+    expect(harness.read().open, isTrue);
+    expect(harness.read().shots, isEmpty);
+    expect(harness.read().hasWork, isFalse);
+  });
+
+  test('hasWork is true for text, an Other name or a shot', () {
+    final _Harness harness = _harness();
+    harness.draft
+      ..capture(context: aFeedbackEntry().context)
+      ..expand()
+      ..setText(message: 'Still writing');
+    expect(harness.read().hasWork, isTrue);
+
+    harness.draft.setText(message: '');
+    expect(harness.read().hasWork, isFalse);
+    harness.draft.setText(other: 'Named type');
+    expect(harness.read().hasWork, isTrue);
+
+    harness.draft.setText(other: '');
+    expect(harness.read().hasWork, isFalse);
+    expect(harness.draft.addShot(_bytes(1), label: Copy.photo), isNull);
+    expect(harness.read().hasWork, isTrue);
+  });
+
   test('includeUi stays off until the operator opts in', () {
     final _Harness harness = _harness();
     harness.draft.capture(context: aFeedbackEntry().context);

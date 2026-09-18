@@ -9,6 +9,7 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/lifecycle/lifecycle.dart';
 import 'package:tapture/core/widgets/app_floating_button.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
@@ -50,6 +51,32 @@ class FeedbackOverlay extends ConsumerStatefulWidget {
 class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
   final GlobalKey _boundaryKey = GlobalKey();
   final GlobalKey _workspaceKey = GlobalKey();
+  late final LeaveGuard _leaveGuard;
+  late final ProviderSubscription<bool> _leave;
+
+  @override
+  void initState() {
+    super.initState();
+    _leaveGuard = ref.read(leaveGuardProvider);
+    _leave = ref.listenManual<bool>(
+      feedbackDraftProvider.select((FeedbackDraft? d) => d?.hasWork ?? false),
+      (bool? _, bool next) {
+        if (next) {
+          _leaveGuard.hold(this);
+        } else {
+          _leaveGuard.release(this);
+        }
+      },
+      fireImmediately: true,
+    );
+  }
+
+  @override
+  void dispose() {
+    _leave.close();
+    _leaveGuard.release(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

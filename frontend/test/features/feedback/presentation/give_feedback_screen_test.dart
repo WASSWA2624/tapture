@@ -12,6 +12,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/files/screen_capture.dart';
+import 'package:tapture/core/lifecycle/lifecycle.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/feedback/app_panel_dialog.dart';
 import 'package:tapture/core/widgets/fields/app_radio_group.dart';
@@ -303,6 +304,42 @@ void main() {
     await tester.tap(find.text('App screen'));
   });
 
+  testWidgets('typing arms the leave guard', (WidgetTester tester) async {
+    final _Harness harness = await _pump(tester);
+    expect(harness.guard.isHeld, isFalse);
+    await tester.enterText(_message, 'Still writing');
+    await tester.pump();
+    expect(harness.guard.isHeld, isTrue);
+  });
+
+  testWidgets('a successful Save releases the leave guard', (
+    WidgetTester tester,
+  ) async {
+    final _Harness harness = await _pump(tester);
+    await tester.enterText(_message, 'The list is slow');
+    await tester.pump();
+    expect(harness.guard.isHeld, isTrue);
+    await tester.tap(find.text(Copy.feedbackSave));
+    await tester.pumpAndSettle();
+    expect(harness.guard.isHeld, isFalse);
+  });
+
+  testWidgets('a confirmed discard releases the leave guard', (
+    WidgetTester tester,
+  ) async {
+    final _Harness harness = await _pump(tester);
+    await tester.enterText(_message, 'Still writing');
+    await tester.pump();
+    expect(harness.guard.isHeld, isTrue);
+    await tester.tap(find.byKey(const ValueKey<String>('app-page-overflow')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.feedbackDiscardDraft));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.discard));
+    await tester.pumpAndSettle();
+    expect(harness.guard.isHeld, isFalse);
+  });
+
   testWidgets('discard asks first, then drops the draft', (
     WidgetTester tester,
   ) async {
@@ -470,6 +507,8 @@ final class _Harness {
   final ProviderContainer container;
 
   FeedbackDraft? get draft => container.read(feedbackDraftProvider);
+
+  LeaveGuard get guard => container.read(leaveGuardProvider);
 }
 
 Future<Uint8List> _addThisScreen(WidgetTester tester, _Harness harness) async {

@@ -46,6 +46,14 @@ final class FeedbackDraft {
   /// Whether Add this screen captures the visible feedback chrome.
   final bool includeUi;
 
+  /// Whether closing the tab would drop typed text, a named type or images.
+  bool get hasWork {
+    return open &&
+        (message.trim().isNotEmpty ||
+            other.trim().isNotEmpty ||
+            shots.isNotEmpty);
+  }
+
   /// A copy with the given parts replaced.
   FeedbackDraft copyWith({
     List<FeedbackShot>? shots,
