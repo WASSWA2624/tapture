@@ -46,6 +46,8 @@ checkbox.
 - `frontend/lib/core/files/photo_picker.dart` (new), `frontend/lib/core/widgets/fields/choice_layout.dart` (new)
 - `frontend/lib/features/feedback/presentation/` (`feedback_draft*`, `feedback_overlay`, `feedback_shots`, `feedback_browser`, `feedback_filter_panel`)
 - `frontend/pubspec.yaml`, `frontend/tool/allowlist.yaml` (`speech_to_text`, `image_picker`), platform microphone, camera, photo and speech usage strings
+- `frontend/android/gradle.properties` (`kotlin.incremental=false`: these are the first Kotlin plugins, and
+  they compile from the pub cache on another drive, which Kotlin's incremental caches cannot handle)
 
 ## Constraints
 
