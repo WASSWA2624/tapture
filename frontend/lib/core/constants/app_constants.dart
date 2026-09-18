@@ -162,6 +162,22 @@ abstract final class AppConstants {
     initialsKey: 'operatorInitials',
     contactKey: 'operatorContact',
   );
+
+  /// Optional app-lock PIN shape and the persisted attempt backoff.
+  static const ({int pinMin, int pinMax, int saltBytes, List<Duration> backoff})
+  lock = (
+    pinMin: 4,
+    pinMax: 8,
+    saltBytes: 16,
+    backoff: <Duration>[
+      Duration(seconds: 1),
+      Duration(seconds: 2),
+      Duration(seconds: 4),
+      Duration(seconds: 8),
+      Duration(seconds: 16),
+      Duration(seconds: 30),
+    ],
+  );
 }
 
 /// One mebibyte, the unit storage and import ceilings are stated in.

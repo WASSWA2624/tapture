@@ -113,6 +113,7 @@ Object _asError(Object error) {
 const String _operatorRoute = '/more/operator';
 const String _captureRoute = '/more/capture';
 const String _storageRoute = '/more/storage';
+const String _securityRoute = '/more/security';
 const String _aboutRoute = '/more/about';
 
 const List<_Section> _defaultSections = <_Section>[
@@ -145,7 +146,7 @@ const List<_Section> _defaultSections = <_Section>[
   (
     title: Copy.settingsSecurityTitle,
     subtitle: Copy.settingsSecuritySubtitle,
-    route: null,
+    route: _securityRoute,
   ),
   (
     title: Copy.settingsAboutTitle,

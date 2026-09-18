@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**79 of 281 tasks complete (28.1%)** · last updated 2026-09-18
+**80 of 281 tasks complete (28.5%)** · last updated 2026-09-18
 
 `███████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -14,7 +14,7 @@
 | 04 — Local database | 16 | 16 | `██████████████` 100% |
 | 05 — File storage | 7 | 7 | `██████████████` 100% |
 | 06 — Application shell | 5 | 5 | `██████████████` 100% |
-| 07 — Account and settings | 3 | 5 | `████████░░░░░░` 60% |
+| 07 — Account and settings | 4 | 5 | `███████████░░░` 80% |
 | 08 — Projects | 0 | 6 | `░░░░░░░░░░░░░░` 0% |
 | 09 — Templates | 0 | 17 | `░░░░░░░░░░░░░░` 0% |
 | 10 — Reference data | 0 | 8 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **79** | **281** | `████░░░░░░░░░░` 28.1% |
+| **Total** | **80** | **281** | `████░░░░░░░░░░` 28.5% |
 
 ## Completed
 
@@ -115,6 +115,7 @@
 | 077 — Operator profile | 2026-09-18 | `OperatorProfile` is the local identity on the single `device_profile` row. Schema v13 adds nullable `accountId` so enrolment can fill it later. `OperatorProfileScreen` is an `AppForm` of name, initials and optional contact — no credential. Initials default from the name. Guarded by validation/save/unsaved-guard widget tests and an in-memory v12→v13 migration that reads `accountId` as null. |
 | 078 — Settings store | 2026-09-18 | `SettingKey` / `SettingKeys` declare every app-wide preference beside its default. `SettingsStore` persists a versioned JSON map on the device-profile row, migrates a v0 map once, and emits only after a committed write. The same suite runs against `SettingsStore.open` and `SettingsStore.fake`. Guarded by defaults, round-trip, change-event, failed-write and migration unit tests. |
 | 079 — Settings shell and its section screens | 2026-09-18 | `/more` lists the eight specification sections as tiles. Capture, storage and About are routed now; AI, Language, Files and Security keep their tile until those phases. Capture rows read and write `SettingsStore`. Storage shows per-project use, headroom and a cache clear that leaves originals. About shows version, build, licences and the plan/spec links. Guarded by loading/empty/failure widget tests on all four screens plus a cache-clear test. |
+| 080 — App lock: PIN and biometric unlock | 2026-09-18 | Optional PIN lock on launch and resume. Salted hash and escalating backoff live in `SecureStorage`; the PIN never reaches the database, preferences or logs. Biometric path is an interface plus fake (`local_auth` is a later allowlist task); failure stays on the PIN. One guard covers every route including deep links. Recovery copy states nobody can reset the PIN and offers no wipe. Guarded by hashing, restart-backoff, biometric-fallback and set/change/remove widget tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -396,12 +397,12 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 07 — Account and settings
 
-*3 of 5 complete.*
+*4 of 5 complete.*
 
 - [x] [077 — Operator profile](dev-plan/07-account-and-settings/077-operator-profile.md)
 - [x] [078 — Settings store](dev-plan/07-account-and-settings/078-settings-store.md)
 - [x] [079 — Settings shell and its section screens](dev-plan/07-account-and-settings/079-settings-shell.md)
-- [ ] [080 — App lock: PIN and biometric unlock](dev-plan/07-account-and-settings/080-app-lock-pin.md)
+- [x] [080 — App lock: PIN and biometric unlock](dev-plan/07-account-and-settings/080-app-lock-pin.md)
 - [ ] [081 — Manual offline mode switch](dev-plan/07-account-and-settings/081-offline-switch.md)
 
 ### 08 — Projects

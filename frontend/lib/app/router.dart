@@ -16,6 +16,7 @@ import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/onboarding/onboarding.dart';
+import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
 import 'package:tapture/features/settings/presentation/capture_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/storage_settings_screen.dart';
 import 'package:tapture/features/settings/settings.dart';
@@ -38,6 +39,9 @@ abstract final class AppRoutes {
 
   /// The first-run gate. Task 267 can insert sign-in in front of this path.
   static const String firstRun = '/first-run';
+
+  /// App-lock unlock gate. Covers launch, resume and deep links.
+  static const String lock = '/lock';
 
   /// One project's home.
   static String project(String id) => '$projects/${Uri.encodeComponent(id)}';
@@ -80,7 +84,7 @@ abstract final class AppRoutes {
   /// Files section (specification "Data"). The screen arrives later.
   static const String settingsFiles = '$more/files';
 
-  /// Security section. The screen arrives in a later phase.
+  /// App lock under More.
   static const String settingsSecurity = '$more/security';
 
   /// About under More.
@@ -98,6 +102,12 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
   ref.listen<FirstRunSnapshot>(firstRunProvider, (
     FirstRunSnapshot? previous,
     FirstRunSnapshot next,
+  ) {
+    refresh.value++;
+  });
+  ref.listen<AppLockSession>(appLockSessionProvider, (
+    AppLockSession? previous,
+    AppLockSession next,
   ) {
     refresh.value++;
   });
@@ -130,6 +140,12 @@ List<RouteBase> get _routes {
       path: AppRoutes.firstRun,
       builder: (BuildContext _, GoRouterState _) {
         return const FirstRunScreen();
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.lock,
+      builder: (BuildContext _, GoRouterState _) {
+        return const AppLockScreen();
       },
     ),
     StatefulShellRoute.indexedStack(
@@ -216,6 +232,12 @@ List<RouteBase> get _routes {
                   path: 'storage',
                   builder: (BuildContext _, GoRouterState _) {
                     return const StorageSettingsScreen();
+                  },
+                ),
+                GoRoute(
+                  path: 'security',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const AppLockScreen.manage();
                   },
                 ),
                 GoRoute(

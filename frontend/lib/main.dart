@@ -2,11 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 
 import 'app/app.dart';
 import 'app/provider_observer.dart' hide ProviderObserver;
 import 'core/lifecycle/lifecycle_observer.dart';
 import 'core/logging/logger.dart';
+import 'core/security/secure_storage.dart';
+import 'core/time/clock.dart';
+import 'features/settings/settings.dart';
 
 /// Errors captured for bootstrap tests; the same objects are also logged.
 @visibleForTesting
@@ -25,11 +29,22 @@ Future<void> main() async {
 Future<void> _run() async {
   final Logger logger = Logger(persist: true);
   Logger.current = logger;
+  final PinLock lock = PinLock(
+    storage: SecureStorage(),
+    clock: const SystemClock(),
+    biometrics: BiometricLock(),
+  );
   runApp(
     ProviderScope(
       observers: Env.isDev
           ? <ProviderObserver>[AppProviderObserver(logger)]
           : const <ProviderObserver>[],
+      overrides: <Override>[
+        appLockProvider.overrideWith((Ref ref) => lock),
+        lifecycleObserverProvider.overrideWith(
+          (Ref ref) => _lifecycleObserver!,
+        ),
+      ],
       child: const TaptureApp(),
     ),
   );

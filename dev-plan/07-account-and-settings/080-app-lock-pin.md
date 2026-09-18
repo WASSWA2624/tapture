@@ -52,8 +52,19 @@ abstract interface class AppLock {
 
 ## Definition of done
 
-- [ ] With the lock on, launch and resume both prompt; turning it off deletes the hash and the backoff state.
-- [ ] Failing or cancelling biometrics falls back to the PIN, never to no lock.
-- [ ] The attempt backoff survives a restart, and the screen explains the recovery path without offering a wipe.
-- [ ] Tests: unit tests of hashing, of the persisted backoff across a simulated restart, and of the biometric-to-PIN
+- [x] With the lock on, launch and resume both prompt; turning it off deletes the hash and the backoff state.
+- [x] Failing or cancelling biometrics falls back to the PIN, never to no lock.
+- [x] The attempt backoff survives a restart, and the screen explains the recovery path without offering a wipe.
+- [x] Tests: unit tests of hashing, of the persisted backoff across a simulated restart, and of the biometric-to-PIN
   fallback against fakes for `secure_storage.dart` and the biometric wrapper; a widget test of set, change and remove.
+
+## Carried
+
+- `AppConstants.lock` — PIN length, salt size and backoff delays (FE-CODE-09).
+- `Copy` app-lock strings, including remaining-time and recovery copy that never says "data" or offers a wipe (FE-L10N-01, FE-SIMP-09).
+- `AppRoutes.lock`, `/more/security`, the Security tile route, and a router refresh on the lock session.
+- `hydrate` and `remainingBackoff` on `AppLock` so the sync guard and remaining-time copy have a source.
+- `lifecycleObserverProvider` plus a `main.dart` override so resume lock listens to the one observer (FE-STR-11).
+- Production `BiometricLock()` is unavailable: `local_auth` is not on the allowlist (FE-FLOW-06). The wrap factory and fake are this task.
+- `AppTextField.obscureText` so the PIN is not shown (FE-SEC-01).
+- Settings barrels export the new types; `app_lock_screen.dart` is not re-exported from `settings.dart` (FE-STR-04).

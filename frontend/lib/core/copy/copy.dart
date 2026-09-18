@@ -663,4 +663,76 @@ abstract final class Copy {
   /// Empty about next step.
   static const String settingsAboutEmptyMessage =
       'The version and licences will appear here.';
+
+  /// Unlock-gate title.
+  static const String appLockUnlockTitle = 'Unlock Tapture';
+
+  /// Settings title for the PIN lock.
+  static const String appLockTitle = 'App lock';
+
+  /// PIN field.
+  static const String appLockPin = 'PIN';
+
+  /// Current PIN when changing or removing the lock.
+  static const String appLockCurrentPin = 'Current PIN';
+
+  /// New PIN when setting or changing the lock.
+  static const String appLockNewPin = 'New PIN';
+
+  /// Confirm-PIN field.
+  static const String appLockConfirmPin = 'Confirm PIN';
+
+  /// Sets the lock for the first time.
+  static const String appLockSet = 'Set PIN';
+
+  /// Replaces the stored PIN.
+  static const String appLockChange = 'Change PIN';
+
+  /// Turns the lock off.
+  static const String appLockRemove = 'Remove PIN';
+
+  /// Unlock-gate submit.
+  static const String appLockUnlock = 'Unlock';
+
+  /// Offers the device biometric path when it is enrolled.
+  static const String appLockBiometrics = 'Unlock with this device';
+
+  /// Effect of setting a PIN.
+  static const String appLockSetEffect =
+      'Required the next time the app opens or returns.';
+
+  /// Effect of removing the PIN.
+  static const String appLockRemoveEffect =
+      'The next open will not ask for a PIN.';
+
+  /// Stated when the lock is armed.
+  static const String appLockOn = 'App lock is on.';
+
+  /// Stated when no PIN is stored.
+  static const String appLockOff =
+      'App lock is off. Set a PIN to require it on launch and resume.';
+
+  /// PIN shape.
+  static const String appLockPinLength = 'Use 4 to 8 digits.';
+
+  /// Confirm field does not match.
+  static const String appLockPinMismatch = 'The two PINs do not match.';
+
+  /// Submitted PIN does not match the stored hash.
+  static const String appLockWrongPin = 'That PIN does not match.';
+
+  /// Recovery path. Does not offer a wipe (FE-SIMP-09).
+  static const String appLockRecovery =
+      'Nobody can reset this PIN. Your files stay on this device. '
+      'Nothing here deletes them.';
+
+  /// Remaining backoff after a failed unlock.
+  static String appLockWait(Duration remaining) {
+    final int seconds = remaining.inSeconds < 1 ? 1 : remaining.inSeconds;
+    return Intl.plural(
+      seconds,
+      one: 'Wait 1 second before trying again.',
+      other: 'Wait $seconds seconds before trying again.',
+    );
+  }
 }

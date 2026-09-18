@@ -85,6 +85,17 @@ void main() {
       AppConstants.operator.initialsKey,
       isNot(AppConstants.operator.contactKey),
     );
+    expect(AppConstants.lock.pinMin, 4);
+    expect(AppConstants.lock.pinMax, 8);
+    expect(AppConstants.lock.pinMin < AppConstants.lock.pinMax, isTrue);
+    expect(AppConstants.lock.saltBytes, inInclusiveRange(8, 64));
+    expect(AppConstants.lock.backoff, isNotEmpty);
+    for (int i = 1; i < AppConstants.lock.backoff.length; i++) {
+      expect(
+        AppConstants.lock.backoff[i - 1] < AppConstants.lock.backoff[i],
+        isTrue,
+      );
+    }
   });
 
   test('folder and import ceilings stay below hostile sizes', () {

@@ -1,7 +1,10 @@
 /// The settings feature: the settings someone can change.
 library;
 
+export 'data/biometric_lock.dart';
+export 'data/pin_lock.dart';
 export 'data/settings_store.dart';
+export 'domain/app_lock.dart';
 export 'domain/operator_profile.dart';
 export 'domain/setting_key.dart';
 export 'domain/setting_keys.dart';

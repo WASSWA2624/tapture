@@ -32,6 +32,7 @@ class AppTextField extends StatelessWidget {
     this.onChanged,
     this.onSubmitted,
     this.onTap,
+    this.obscureText = false,
   });
 
   /// Visible label; also the semantic name of the control (FE-A11Y-02).
@@ -90,6 +91,10 @@ class AppTextField extends StatelessWidget {
   /// Called on a tap. Date fields open a picker from here.
   final VoidCallback? onTap;
 
+  /// Hides typed characters. PIN fields pass this so the secret is not
+  /// shown on screen (FE-SEC-01).
+  final bool obscureText;
+
   @override
   Widget build(BuildContext context) {
     final int lines = maxLines ?? 1;
@@ -113,6 +118,9 @@ class AppTextField extends StatelessWidget {
             onChanged: onChanged,
             onSubmitted: onSubmitted,
             onTap: onTap,
+            obscureText: obscureText,
+            enableSuggestions: !obscureText,
+            autocorrect: !obscureText,
             style: AppText.body.copyWith(color: context.colors.onSurface),
             decoration: InputDecoration(
               labelText: label,

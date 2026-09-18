@@ -13,7 +13,7 @@ typedef RouteGuard = String? Function(GoRouterState state, Ref ref);
 /// Ordered redirect chain. Later tasks append a gate — first run, app lock —
 /// as one entry rather than a second redirect.
 List<RouteGuard> appGuards() {
-  return <RouteGuard>[_firstRun, _projectScope, _resumeIntended];
+  return <RouteGuard>[_firstRun, _appLock, _projectScope, _resumeIntended];
 }
 
 /// Open project id the project-scope guard reads. Task 083's `CurrentProject`
@@ -46,6 +46,24 @@ String? _firstRun(GoRouterState state, Ref ref) {
   return AppRoutes.firstRun;
 }
 
+String? _appLock(GoRouterState state, Ref ref) {
+  final String path = state.uri.path;
+  if (path == AppRoutes.lock) {
+    return null;
+  }
+  if (kDebugMode && path == WidgetGalleryScreen.route) {
+    return null;
+  }
+  final AppLockSession session = ref.read(appLockSessionProvider);
+  if (!session.enabled || session.unlocked) {
+    return null;
+  }
+  return Uri(
+    path: AppRoutes.lock,
+    queryParameters: <String, String>{AppRoutes.fromQuery: _destination(state)},
+  ).toString();
+}
+
 String? _projectScope(GoRouterState state, Ref ref) {
   if (state.metadata[_projectScopedKey] != true) {
     return null;
@@ -60,6 +78,9 @@ String? _projectScope(GoRouterState state, Ref ref) {
 }
 
 String? _resumeIntended(GoRouterState state, Ref ref) {
+  if (state.uri.path == AppRoutes.lock) {
+    return null;
+  }
   final String? from = state.uri.queryParameters[AppRoutes.fromQuery];
   if (from == null || from.isEmpty) {
     return null;

@@ -2,6 +2,7 @@
 library;
 
 export 'about_screen.dart';
+export 'app_lock_screen.dart';
 export 'capture_settings_screen.dart';
 export 'operator_profile_screen.dart';
 export 'settings_screen.dart';

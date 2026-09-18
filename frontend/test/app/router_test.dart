@@ -15,6 +15,7 @@ void main() {
   test('AppRoutes helpers are the declared paths', () {
     expect(AppRoutes.projects, '/projects');
     expect(AppRoutes.firstRun, '/first-run');
+    expect(AppRoutes.lock, '/lock');
     expect(AppRoutes.project('ab'), '/projects/ab');
     expect(AppRoutes.capture('ab'), '/projects/ab/capture');
     expect(AppRoutes.record('cd'), '/records/cd');

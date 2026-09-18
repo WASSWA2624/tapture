@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// The app's only [WidgetsBindingObserver].
 ///
@@ -61,3 +62,13 @@ class LifecycleObserver with WidgetsBindingObserver {
     unawaited(_inFlight.whenComplete(_states.close));
   }
 }
+
+/// The process-wide observer. [main] replaces this with the instance
+/// registered on [WidgetsBinding] so features listen instead of adding a
+/// second observer (FE-STR-11).
+final Provider<LifecycleObserver> lifecycleObserverProvider =
+    Provider<LifecycleObserver>((Ref ref) {
+      final LifecycleObserver observer = LifecycleObserver.fake();
+      ref.onDispose(observer.dispose);
+      return observer;
+    });

@@ -35,6 +35,22 @@ void main() {
     expect(controller.text, isEmpty);
   });
 
+  testWidgets('obscureText hides typed characters', (
+    WidgetTester tester,
+  ) async {
+    final TextEditingController controller = TextEditingController();
+    addTearDown(controller.dispose);
+    await _pump(
+      tester,
+      AppTextField(label: 'PIN', controller: controller, obscureText: true),
+    );
+
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).obscureText,
+      isTrue,
+    );
+  });
+
   testWidgets('a multi-line field stays usable at 200 percent text scale', (
     WidgetTester tester,
   ) async {
