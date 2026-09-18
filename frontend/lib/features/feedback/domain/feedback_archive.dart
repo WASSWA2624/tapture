@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
@@ -5,14 +6,22 @@ import 'package:archive/archive.dart';
 import 'feedback_entry.dart';
 import 'feedback_workbook.dart';
 
-/// A feedback download: the [FeedbackWorkbook] spreadsheet plus the matching
-/// screenshot files, packed so they travel together.
+/// A feedback download: the [FeedbackWorkbook] spreadsheet, the matching
+/// screenshot files and, when given, the [guide] an AI agent follows to turn
+/// them into implementation prompts, packed so they travel together.
 final class FeedbackArchive {
   /// Creates the archive around [workbook].
-  const FeedbackArchive({required this.workbook});
+  const FeedbackArchive({required this.workbook, this.guide});
 
   /// The spreadsheet and the screenshot bytes it already holds.
   final FeedbackWorkbook workbook;
+
+  /// Markdown written at the archive root as [guideFileName]. Null leaves
+  /// it out, so a missing guide never blocks a download.
+  final String? guide;
+
+  /// The guide's name inside the archive.
+  static const String guideFileName = 'feedback-prompts-generator.md';
 
   /// Media type a browser or share sheet is given for the result.
   static const String mimeType = 'application/zip';
@@ -34,6 +43,11 @@ final class FeedbackArchive {
     final Uint8List xlsx = FeedbackWorkbook.encode(workbook);
     final Archive zip = Archive();
     zip.addFile(ArchiveFile.noCompress(workbook.fileName, xlsx.length, xlsx));
+    final String? guide = pack.guide;
+    if (guide != null && guide.trim().isNotEmpty) {
+      final List<int> text = utf8.encode(guide);
+      zip.addFile(ArchiveFile(guideFileName, text.length, text));
+    }
     for (final FeedbackEntry entry in workbook.entries) {
       final Uint8List? png = workbook.screenshots[entry.id];
       if (png != null && png.isNotEmpty) {

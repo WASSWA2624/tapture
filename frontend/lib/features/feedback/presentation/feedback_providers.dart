@@ -1,4 +1,6 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/constants/document_assets.dart';
 import 'package:tapture/core/device/device.dart';
 import 'package:tapture/core/device/platform_facts.dart';
 import 'package:tapture/core/files/download_service.dart';
@@ -61,3 +63,17 @@ final StreamProvider<List<FeedbackEntry>> feedbackEntriesProvider =
       (Ref ref) => ref.watch(feedbackRepositoryProvider).watch(),
       retry: (int _, Object _) => null,
     );
+
+/// The prompts generator every download ships beside the workbook. Null
+/// when the asset cannot be read, so a download is never blocked by it.
+/// Kept alive: the text never changes while the app runs.
+final FutureProvider<String?> feedbackPromptGuideProvider =
+    FutureProvider<String?>((Ref _) async {
+      try {
+        return await rootBundle.loadString(
+          DocumentAssets.feedbackPromptsGenerator,
+        );
+      } on Object {
+        return null;
+      }
+    });

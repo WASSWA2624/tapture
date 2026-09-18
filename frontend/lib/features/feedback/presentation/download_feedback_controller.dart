@@ -78,6 +78,10 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
     _cancel?.cancel();
     final CancellationToken cancel = CancellationToken();
     _cancel = cancel;
+    final String? guide = await ref.read(feedbackPromptGuideProvider.future);
+    if (!ref.mounted) {
+      return const FailureResult<String?>(CancelledFailure());
+    }
     final Map<String, Uint8List> shots = <String, Uint8List>{};
     for (final FeedbackEntry entry in matching) {
       final Result<List<Uint8List>> read = await repository.screenshots(
@@ -112,7 +116,10 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
       timeZone: clock.nowUtc().toLocal().timeZoneName,
       generatedBy: generatedBy,
     );
-    final FeedbackArchive pack = FeedbackArchive(workbook: workbook);
+    final FeedbackArchive pack = FeedbackArchive(
+      workbook: workbook,
+      guide: guide,
+    );
     final Result<Uint8List> encoded = await runIsolate(
       FeedbackArchive.encode,
       pack,

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
@@ -43,6 +44,24 @@ void main() {
       aFeedbackPng,
     );
     expect(zip.findFile('screenshots/${plain.reference}.png'), isNull);
+  });
+
+  test('the prompts guide sits at the archive root when given', () {
+    const String guide = '# Feedback prompts generator';
+    final FeedbackArchive pack = FeedbackArchive(
+      workbook: _book(),
+      guide: guide,
+    );
+    final Archive zip = ZipDecoder().decodeBytes(FeedbackArchive.encode(pack));
+    final ArchiveFile? file = zip.findFile(FeedbackArchive.guideFileName);
+    expect(FeedbackArchive.guideFileName, 'feedback-prompts-generator.md');
+    expect(utf8.decode(file!.content as List<int>), guide);
+  });
+
+  test('a blank guide is left out rather than shipped empty', () {
+    final FeedbackArchive pack = FeedbackArchive(workbook: _book(), guide: ' ');
+    final Archive zip = ZipDecoder().decodeBytes(FeedbackArchive.encode(pack));
+    expect(zip.findFile(FeedbackArchive.guideFileName), isNull);
   });
 
   test('a download with no screenshots is still a zip of the workbook', () {
