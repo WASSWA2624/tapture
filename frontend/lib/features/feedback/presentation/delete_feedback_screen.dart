@@ -79,8 +79,9 @@ class DeleteFeedbackScreen extends ConsumerWidget {
               onChanged: (bool _) => controller.toggleAll(matchingIds),
             ),
           ),
-          tile: (FeedbackEntry entry) => FeedbackEntryTile(
+          tile: (FeedbackEntry entry, int number) => FeedbackEntryTile(
             entry: entry,
+            number: number,
             selected: selected.contains(entry.id),
             onTap: () => controller.toggle(entry.id),
             onLongPress: () => controller.toggle(entry.id),

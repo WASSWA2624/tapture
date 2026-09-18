@@ -60,8 +60,8 @@ class FeedbackBrowser extends StatelessWidget {
   /// Shows another page.
   final VoidCallback onShowMore;
 
-  /// One matching entry as a row.
-  final Widget Function(FeedbackEntry entry) tile;
+  /// One matching entry as a row; [number] is 1-based in [matching].
+  final Widget Function(FeedbackEntry entry, int number) tile;
 
   /// Shown between the count and the rows, such as select-all.
   final Widget? lead;
@@ -114,7 +114,9 @@ class FeedbackBrowser extends StatelessWidget {
           )
         else ...<Widget>[
           ?lead,
-          for (final FeedbackEntry entry in matching.take(visible)) tile(entry),
+          for (final (int index, FeedbackEntry entry)
+              in matching.take(visible).indexed)
+            tile(entry, index + 1),
           if (visible < matching.length)
             AppButton(
               label: Copy.feedbackShowMore,

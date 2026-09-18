@@ -8,10 +8,11 @@ import 'feedback_labels.dart';
 
 /// One stored entry as a list row.
 class FeedbackEntryTile extends StatelessWidget {
-  /// Creates the row. [onTap] selects or opens; [selected] shows a tick.
+  /// Creates the row. [number] is the 1-based list position.
   const FeedbackEntryTile({
     super.key,
     required this.entry,
+    required this.number,
     this.selected = false,
     this.onTap,
     this.onLongPress,
@@ -19,6 +20,9 @@ class FeedbackEntryTile extends StatelessWidget {
 
   /// The entry to show.
   final FeedbackEntry entry;
+
+  /// 1-based position among matching entries.
+  final int number;
 
   /// Multi-select highlight.
   final bool selected;
@@ -35,8 +39,18 @@ class FeedbackEntryTile extends StatelessWidget {
     final String when = DateFormat.yMMMd(
       locale,
     ).add_jm().format(entry.submittedAtUtc.toLocal());
+    final String formattedNumber = NumberFormat.decimalPattern(
+      locale,
+    ).format(number);
+    final String oneLineMessage = entry.message
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
     return AppListTile(
-      title: entry.reference,
+      title: Copy.feedbackEntryTitle(
+        formattedNumber,
+        entry.reference,
+        oneLineMessage,
+      ),
       subtitle: Copy.feedbackEntryFacts(
         FeedbackLabels.category(entry.category),
         when,

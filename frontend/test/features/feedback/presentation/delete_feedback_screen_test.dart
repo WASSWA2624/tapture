@@ -10,6 +10,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
+import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/feedback/feedback.dart';
 import 'package:tapture/features/feedback/presentation/delete_feedback_controller.dart';
@@ -31,8 +32,8 @@ void main() {
     WidgetTester tester,
   ) async {
     final FeedbackRepositoryImpl repo = await _pump(tester, seed: true);
-    await _reveal(tester, find.text('FBK0000001'));
-    await tester.tap(find.text('FBK0000001'));
+    await _reveal(tester, find.textContaining('FBK0000001'));
+    await tester.tap(find.textContaining('FBK0000001'));
     await tester.pumpAndSettle();
     await tester.tap(find.text(Copy.feedbackDeleteCount(1)));
     await tester.pumpAndSettle();
@@ -52,8 +53,8 @@ void main() {
     );
     final String id = (await repo.watch().first).single.id;
     expect(_ok(await repo.screenshots(id)), <Uint8List>[aFeedbackPng]);
-    await _reveal(tester, find.text('FBK0000001'));
-    await tester.tap(find.text('FBK0000001'));
+    await _reveal(tester, find.textContaining('FBK0000001'));
+    await tester.tap(find.textContaining('FBK0000001'));
     await tester.pumpAndSettle();
     await tester.tap(find.text(Copy.feedbackDeleteCount(1)));
     await tester.pumpAndSettle();
@@ -87,6 +88,55 @@ void main() {
     await tester.tap(selectAll);
     await tester.pumpAndSettle();
     expect(find.text(Copy.feedbackDeleteCount(1)), findsOneWidget);
+  });
+
+  testWidgets('rows are numbered and ticking one keeps its number', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      entries: <({FeedbackCategory category, String message})>[
+        (category: FeedbackCategory.general, message: 'The list is slow'),
+        (category: FeedbackCategory.error, message: 'Crash on save'),
+      ],
+    );
+    final Finder older = find.text(
+      Copy.feedbackEntryTitle('2', 'FBK0000001', 'The list is slow'),
+    );
+    expect(older, findsOneWidget);
+    await _reveal(tester, older);
+    await tester.tap(older);
+    await tester.pumpAndSettle();
+    expect(older, findsOneWidget);
+    expect(find.text(Copy.feedbackDeleteCount(1)), findsOneWidget);
+  });
+
+  testWidgets('numbers restart at 1 after a filter', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      entries: <({FeedbackCategory category, String message})>[
+        (category: FeedbackCategory.general, message: 'The list is slow'),
+        (category: FeedbackCategory.error, message: 'Crash on save'),
+      ],
+    );
+    expect(
+      find.text(Copy.feedbackEntryTitle('2', 'FBK0000001', 'The list is slow')),
+      findsOneWidget,
+    );
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AppCheckboxGroup<FeedbackCategory>),
+        matching: find.text(Copy.feedbackCategoryGeneral),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.text(Copy.feedbackEntryTitle('1', 'FBK0000001', 'The list is slow')),
+      findsOneWidget,
+    );
+    expect(find.textContaining('FBK0000002'), findsNothing);
   });
 
   testWidgets('close pops the route', (WidgetTester tester) async {
@@ -139,6 +189,7 @@ Future<FeedbackRepositoryImpl> _pump(
   bool seed = false,
   bool withScreenshot = false,
   bool asRoute = false,
+  List<({FeedbackCategory category, String message})>? entries,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = const Size(400, 800);
@@ -150,15 +201,24 @@ Future<FeedbackRepositoryImpl> _pump(
   final FeedbackRepositoryImpl repo = FeedbackRepositoryImpl.memory(
     clock: clock,
   );
-  if (seed) {
-    _ok(
-      await repo.add(
-        category: FeedbackCategory.general,
-        message: 'The list is slow',
-        context: aFeedbackEntry().context,
-        screenshots: <Uint8List>[if (withScreenshot) aFeedbackPng],
-      ),
-    );
+  final List<({FeedbackCategory category, String message})>? toAdd =
+      entries ??
+      (seed
+          ? <({FeedbackCategory category, String message})>[
+              (category: FeedbackCategory.general, message: 'The list is slow'),
+            ]
+          : null);
+  if (toAdd != null) {
+    for (final ({FeedbackCategory category, String message}) row in toAdd) {
+      _ok(
+        await repo.add(
+          category: row.category,
+          message: row.message,
+          context: aFeedbackEntry().context,
+          screenshots: <Uint8List>[if (withScreenshot) aFeedbackPng],
+        ),
+      );
+    }
   }
   await tester.pumpWidget(
     ProviderScope(

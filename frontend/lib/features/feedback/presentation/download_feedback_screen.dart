@@ -64,7 +64,8 @@ class DownloadFeedbackScreen extends ConsumerWidget {
           onToggleMoreFilters: controller.toggleMoreFilters,
           onShowMore: controller.showMore,
           error: view.error,
-          tile: (FeedbackEntry entry) => FeedbackEntryTile(entry: entry),
+          tile: (FeedbackEntry entry, int number) =>
+              FeedbackEntryTile(entry: entry, number: number),
         );
         final Widget action = AppPrimaryAction(
           label: Copy.feedbackDownloadCount(matching.length),

@@ -59,6 +59,13 @@ void main() {
     expect(Copy.notDetected, isNotEmpty);
   });
 
+  test('feedbackEntryTitle joins the number, id and message', () {
+    expect(
+      Copy.feedbackEntryTitle('1', 'FBK0000001', 'The list is slow'),
+      '1. FBK0000001 · The list is slow',
+    );
+  });
+
   test('no Copy value uses a synonym the naming checker rejects', () {
     for (final String value in _values) {
       expect(value, isNotEmpty);
@@ -421,5 +428,6 @@ List<String> get _values {
     Copy.feedbackDeleted(2),
     Copy.feedbackShowMore,
     Copy.feedbackEntryFacts('Improvement', '18 Sep 2026, 10:02', 'Projects'),
+    Copy.feedbackEntryTitle('1', 'FBK0000001', 'The list is slow'),
   ];
 }

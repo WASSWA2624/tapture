@@ -1102,6 +1102,15 @@ abstract final class Copy {
     return '$type · $when · $screen';
   }
 
+  /// One entry's title on a list row: number, Feedback ID and message.
+  static String feedbackEntryTitle(
+    String number,
+    String reference,
+    String message,
+  ) {
+    return '$number. $reference · $message';
+  }
+
   /// Remaining backoff after a failed unlock.
   static String appLockWait(Duration remaining) {
     // Rounded up, so the count never reads lower than the real wait.

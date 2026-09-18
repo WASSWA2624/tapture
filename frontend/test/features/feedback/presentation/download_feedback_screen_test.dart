@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -29,7 +30,7 @@ void main() {
     WidgetTester tester,
   ) async {
     await _pump(tester, seed: true);
-    expect(find.text('FBK0000001'), findsOneWidget);
+    expect(find.textContaining('FBK0000001'), findsOneWidget);
     expect(find.text(Copy.feedbackMatching(1, 1)), findsOneWidget);
     expect(find.text(Copy.feedbackDownloadCount(1)), findsOneWidget);
     expect(find.text(Copy.feedbackSearch), findsWidgets);
@@ -66,7 +67,7 @@ void main() {
       tester.widget<TextField>(find.byType(TextField)).controller?.text,
       'crash',
     );
-    expect(find.text('FBK0000001'), findsNothing);
+    expect(find.textContaining('FBK0000001'), findsNothing);
     expect(find.text(Copy.feedbackMatching(0, 1)), findsOneWidget);
 
     await tester.tap(find.text(Copy.feedbackClearFilters));
@@ -75,7 +76,7 @@ void main() {
       tester.widget<TextField>(find.byType(TextField)).controller?.text,
       isEmpty,
     );
-    expect(find.text('FBK0000001'), findsOneWidget);
+    expect(find.textContaining('FBK0000001'), findsOneWidget);
     expect(find.text(Copy.feedbackClearFilters), findsNothing);
   });
 
@@ -85,13 +86,13 @@ void main() {
     await _pump(tester, seed: true);
     await tester.tap(find.text(Copy.feedbackCategoryError));
     await tester.pumpAndSettle();
-    expect(find.text('FBK0000001'), findsNothing);
+    expect(find.textContaining('FBK0000001'), findsNothing);
     expect(find.text(Copy.feedbackMatching(0, 1)), findsOneWidget);
     expect(find.text(Copy.feedbackDownloadCount(0)), findsOneWidget);
 
     await tester.tap(find.text(Copy.feedbackClearFilters));
     await tester.pumpAndSettle();
-    expect(find.text('FBK0000001'), findsOneWidget);
+    expect(find.textContaining('FBK0000001'), findsOneWidget);
     expect(find.text(Copy.feedbackClearFilters), findsNothing);
   });
 
@@ -107,7 +108,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byTooltip(Copy.feedbackMoreFilters(1)), findsOneWidget);
     expect(find.text('1'), findsOneWidget);
-    expect(find.text('FBK0000001'), findsNothing);
+    expect(find.textContaining('FBK0000001'), findsNothing);
   });
 
   testWidgets('an entry saved as Improvement can still be found', (
@@ -116,7 +117,75 @@ void main() {
     await _pump(tester, seed: true, category: FeedbackCategory.improvement);
     await tester.tap(find.text(Copy.feedbackCategoryImprovement));
     await tester.pumpAndSettle();
-    expect(find.text('FBK0000001'), findsOneWidget);
+    expect(find.textContaining('FBK0000001'), findsOneWidget);
+  });
+
+  testWidgets(
+    'rows are numbered in list order and show the message beside the ID',
+    (WidgetTester tester) async {
+      await _pump(
+        tester,
+        entries: <({FeedbackCategory category, String message})>[
+          (category: FeedbackCategory.general, message: 'The list is slow'),
+          (category: FeedbackCategory.error, message: 'Crash on save'),
+        ],
+      );
+      expect(
+        find.text(Copy.feedbackEntryTitle('1', 'FBK0000002', 'Crash on save')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          Copy.feedbackEntryTitle('2', 'FBK0000001', 'The list is slow'),
+        ),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets('a long message is cut to one line with an ellipsis at 360 dp', (
+    WidgetTester tester,
+  ) async {
+    final String message = List<String>.filled(40, 'slow').join(' ');
+    await _pump(
+      tester,
+      entries: <({FeedbackCategory category, String message})>[
+        (category: FeedbackCategory.general, message: message),
+      ],
+      size: const Size(360, 800),
+    );
+    for (final Size size in <Size>[
+      const Size(360, 800),
+      const Size(768, 800),
+      const Size(1280, 800),
+    ]) {
+      tester.view.physicalSize = size;
+      await tester.pump();
+      _expectOneLineTitle(tester, 'FBK0000001');
+    }
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    tester.view.physicalSize = const Size(360, 800);
+    await tester.pump();
+    _expectOneLineTitle(tester, 'FBK0000001');
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a message with line breaks reads as one line', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      entries: <({FeedbackCategory category, String message})>[
+        (category: FeedbackCategory.general, message: 'Line one\n\nLine  two'),
+      ],
+    );
+    expect(
+      find.text(
+        Copy.feedbackEntryTitle('1', 'FBK0000001', 'Line one Line two'),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('close pops the route', (WidgetTester tester) async {
@@ -145,14 +214,30 @@ void main() {
   });
 }
 
+void _expectOneLineTitle(WidgetTester tester, String fragment) {
+  final Finder title = find.textContaining(fragment);
+  expect(title, findsOneWidget);
+  final Text text = tester.widget<Text>(title);
+  expect(text.maxLines, 1);
+  expect(text.overflow, TextOverflow.ellipsis);
+  final double line = (TextPainter(
+    text: const TextSpan(text: 'Ag', style: AppText.bodyStrong),
+    textDirection: TextDirection.ltr,
+    textScaler: MediaQuery.of(tester.element(title)).textScaler,
+  )..layout()).height;
+  expect(tester.getSize(title).height, line);
+}
+
 Future<ProviderContainer> _pump(
   WidgetTester tester, {
   bool seed = false,
   bool asRoute = false,
   FeedbackCategory category = FeedbackCategory.general,
+  List<({FeedbackCategory category, String message})>? entries,
+  Size size = const Size(400, 800),
 }) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(400, 800);
+  tester.view.physicalSize = size;
   addTearDown(() {
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();
@@ -164,14 +249,23 @@ Future<ProviderContainer> _pump(
   final FeedbackRepositoryImpl repo = FeedbackRepositoryImpl.memory(
     clock: clock,
   );
-  if (seed) {
-    _ok(
-      await repo.add(
-        category: category,
-        message: 'The list is slow',
-        context: aFeedbackEntry().context,
-      ),
-    );
+  final List<({FeedbackCategory category, String message})>? toAdd =
+      entries ??
+      (seed
+          ? <({FeedbackCategory category, String message})>[
+              (category: category, message: 'The list is slow'),
+            ]
+          : null);
+  if (toAdd != null) {
+    for (final ({FeedbackCategory category, String message}) row in toAdd) {
+      _ok(
+        await repo.add(
+          category: row.category,
+          message: row.message,
+          context: aFeedbackEntry().context,
+        ),
+      );
+    }
   }
   final ProviderContainer container = ProviderContainer(
     retry: (int _, Object _) => null,
