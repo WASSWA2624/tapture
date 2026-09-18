@@ -2,7 +2,7 @@
 
 Making the finished app fast, legible, reachable and unbreakable in the field.
 
-Tasks 236–302 (30). Each file is a standalone implementation prompt.
+Tasks 236–303 (31). Each file is a standalone implementation prompt.
 
 - [ ] [236 — Layout, accessibility and text-scale audit](236-responsive-audit.md)
 - [ ] [237 — Landscape and foldables](237-orientation-support.md)
@@ -34,3 +34,4 @@ Tasks 236–302 (30). Each file is a standalone implementation prompt.
 - [ ] [300 — Soften input placeholder text](300-soften-input-placeholder-text.md)
 - [ ] [301 — Number feedback rows with their message](301-number-feedback-rows-with-message.md)
 - [ ] [302 — Add a window share session to screen capture](302-add-window-share-session-api.md)
+- [x] [303 — Add repeat external window screenshots](303-add-repeat-external-window-screenshots.md)

@@ -16,6 +16,7 @@ import 'feedback_draft.dart';
 import 'feedback_draft_controller.dart';
 import 'feedback_providers.dart';
 import 'feedback_shot.dart';
+import 'feedback_window_share_controller.dart';
 import 'give_feedback_controller.dart';
 
 /// The draft's images: attach and include-UI checkboxes, a row of capture
@@ -48,6 +49,7 @@ class FeedbackShots extends ConsumerWidget {
     );
     final bool canTakePhoto = ref.watch(feedbackPhotosProvider).canTakePhoto;
     final bool canCapture = ref.watch(feedbackScreenCaptureProvider).canCapture;
+    final bool sharing = ref.watch(feedbackWindowShareProvider);
     final GiveFeedbackController form = ref.read(
       giveFeedbackControllerProvider.notifier,
     );
@@ -94,8 +96,19 @@ class FeedbackShots extends ConsumerWidget {
                 icon: Icons.desktop_windows_outlined,
                 semanticLabel: Copy.feedbackAddWindow,
                 tooltip: Copy.feedbackAddWindow,
+                selected: sharing ? true : null,
                 outlined: false,
-                onPressed: () => unawaited(_addWindow(context, form)),
+                onPressed: () => unawaited(_addWindow(context, ref)),
+              ),
+            if (sharing)
+              AppIconButton(
+                icon: Icons.stop_screen_share_outlined,
+                semanticLabel: Copy.feedbackStopSharing,
+                tooltip: Copy.feedbackStopSharing,
+                outlined: false,
+                onPressed: () {
+                  ref.read(feedbackWindowShareProvider.notifier).stop();
+                },
               ),
             if (canTakePhoto)
               AppIconButton(
@@ -114,6 +127,15 @@ class FeedbackShots extends ConsumerWidget {
             ),
           ],
         ),
+        if (sharing) ...<Widget>[
+          const SizedBox(height: Space.x1),
+          Text(
+            Copy.feedbackSharingWindow,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppText.caption.copyWith(color: context.colors.onSurface),
+          ),
+        ],
         if (attach && shots.isNotEmpty) ...<Widget>[
           const SizedBox(height: Space.x1),
           _ShotGallery(
@@ -136,13 +158,20 @@ class FeedbackShots extends ConsumerWidget {
     }
   }
 
-  Future<void> _addWindow(
-    BuildContext context,
-    GiveFeedbackController form,
-  ) async {
-    final String? problem = await form.addWindow();
-    if (problem != null && context.mounted) {
+  Future<void> _addWindow(BuildContext context, WidgetRef ref) async {
+    final int before = ref.read(feedbackDraftProvider)?.shots.length ?? 0;
+    final String? problem = await ref
+        .read(feedbackWindowShareProvider.notifier)
+        .addStill();
+    if (!context.mounted) {
+      return;
+    }
+    if (problem != null) {
       showAppSnack(context, problem, tone: SnackTone.warning);
+      return;
+    }
+    if ((ref.read(feedbackDraftProvider)?.shots.length ?? 0) > before) {
+      showAppSnack(context, Copy.feedbackShotAdded(Copy.feedbackOtherWindow));
     }
   }
 }

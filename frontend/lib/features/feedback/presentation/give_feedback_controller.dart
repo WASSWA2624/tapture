@@ -6,7 +6,6 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/photo_picker.dart';
-import 'package:tapture/core/files/screen_capture.dart';
 
 import '../domain/feedback_category.dart';
 import '../domain/feedback_entry.dart';
@@ -79,50 +78,6 @@ final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
           }
         }
         return null;
-    }
-  }
-
-  /// Adds one still of another window, capped to the feedback long edge.
-  /// Returns why none was added, or null; a cancelled picker is not a
-  /// failure.
-  Future<String?> addWindow() async {
-    final FeedbackDraftController draft = ref.read(
-      feedbackDraftProvider.notifier,
-    );
-    final int room =
-        AppConstants.userFeedback.maxShots -
-        (ref.read(feedbackDraftProvider)?.shots.length ?? 0);
-    if (room <= 0) {
-      return Copy.feedbackShotsFull;
-    }
-    final ScreenCapture capture = ref.read(feedbackScreenCaptureProvider);
-    final Result<bool> started = await capture.start();
-    try {
-      switch (started) {
-        case FailureResult<bool>(:final Failure failure):
-          return failure.message;
-        case Success<bool>(:final bool value):
-          if (!value) {
-            return null;
-          }
-      }
-      final Result<Uint8List> still = await capture.still(
-        longEdge: AppConstants.userFeedback.screenshotLongEdge,
-      );
-      switch (still) {
-        case FailureResult<Uint8List>(:final Failure failure):
-          return failure.message;
-        case Success<Uint8List>(:final Uint8List value):
-          if (value.isEmpty) {
-            return null;
-          }
-          return draft.addShot(
-            await FeedbackShotFit.cap(value),
-            label: Copy.feedbackOtherWindow,
-          );
-      }
-    } finally {
-      capture.stop();
     }
   }
 

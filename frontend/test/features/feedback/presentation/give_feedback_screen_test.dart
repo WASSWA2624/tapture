@@ -228,6 +228,12 @@ void main() {
     expect(harness.draft!.shots, hasLength(1));
     expect(harness.draft!.shots.single.label, Copy.feedbackOtherWindow);
     expect(harness.draft!.attachShots, isTrue);
+    expect(find.byTooltip(Copy.feedbackStopSharing), findsOneWidget);
+    expect(find.text(Copy.feedbackSharingWindow), findsOneWidget);
+    expect(
+      find.text(Copy.feedbackShotAdded(Copy.feedbackOtherWindow)),
+      findsWidgets,
+    );
     expect(find.byTooltip(Copy.feedbackAddScreen), findsOneWidget);
     expect(find.byTooltip(Copy.feedbackChoosePhoto), findsOneWidget);
   });
@@ -246,7 +252,87 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(Copy.displayNoAccess), findsWidgets);
     expect(harness.draft!.shots, isEmpty);
+    expect(find.byTooltip(Copy.feedbackStopSharing), findsNothing);
+    expect(find.text(Copy.feedbackSharingWindow), findsNothing);
   });
+
+  testWidgets(
+    'while sharing, the bar offers another still and typing still works',
+    (WidgetTester tester) async {
+      final _Harness harness = await _pump(
+        tester,
+        screenCapture: ScreenCapture.fake(
+          canCapture: true,
+          frames: <Uint8List>[aFeedbackPng, aFeedbackPng],
+        ),
+      );
+      await tester.tap(find.byTooltip(Copy.feedbackAddWindow));
+      await tester.pumpAndSettle();
+      expect(harness.draft!.shots, hasLength(1));
+      await tester.enterText(_message, 'Typed while sharing');
+      await tester.tap(find.byTooltip(Copy.close));
+      await tester.pumpAndSettle();
+      expect(find.byType(FeedbackDraftBar), findsOneWidget);
+      final Finder barWindow = find.descendant(
+        of: find.byType(FeedbackDraftBar),
+        matching: find.byTooltip(Copy.feedbackAddWindow),
+      );
+      expect(barWindow, findsOneWidget);
+      await tester.enterText(
+        find.descendant(
+          of: find.byType(FeedbackDraftBar),
+          matching: find.byType(TextField),
+        ),
+        'Typed while sharing, from the bar',
+      );
+      await tester.tap(barWindow);
+      await tester.pumpAndSettle();
+      expect(harness.draft!.shots, hasLength(2));
+      expect(find.text('Typed while sharing, from the bar'), findsOneWidget);
+    },
+  );
+
+  testWidgets('Stop sharing hides the stop control', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      screenCapture: ScreenCapture.fake(canCapture: true, frame: aFeedbackPng),
+    );
+    await tester.tap(find.byTooltip(Copy.feedbackAddWindow));
+    await tester.pumpAndSettle();
+    expect(find.byTooltip(Copy.feedbackStopSharing), findsOneWidget);
+    await tester.tap(find.byTooltip(Copy.feedbackStopSharing));
+    await tester.pumpAndSettle();
+    expect(find.byTooltip(Copy.feedbackStopSharing), findsNothing);
+    expect(find.text(Copy.feedbackSharingWindow), findsNothing);
+    expect(find.byTooltip(Copy.feedbackAddWindow), findsOneWidget);
+  });
+
+  testWidgets(
+    'at 360 dp and 200 percent text the bar and shots row do not overflow',
+    (WidgetTester tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await _pump(
+        tester,
+        size: const Size(360, 800),
+        screenCapture: ScreenCapture.fake(
+          canCapture: true,
+          frame: aFeedbackPng,
+        ),
+      );
+      await tester.ensureVisible(find.byTooltip(Copy.feedbackAddWindow));
+      await tester.tap(find.byTooltip(Copy.feedbackAddWindow));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.byType(FeedbackShots), findsOneWidget);
+      await tester.tap(find.byTooltip(Copy.close));
+      await tester.pumpAndSettle();
+      expect(find.byType(FeedbackDraftBar), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('close folds the form into the bar and keeps everything', (
     WidgetTester tester,

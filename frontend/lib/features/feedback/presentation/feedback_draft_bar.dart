@@ -8,11 +8,13 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 
 import 'feedback_draft.dart';
 import 'feedback_draft_controller.dart';
+import 'feedback_window_share_controller.dart';
 
 /// The folded feedback draft: one line to keep typing or speaking into while
 /// the operator moves through the app, and the way back to the full form.
@@ -53,6 +55,7 @@ class _FeedbackDraftBarState extends ConsumerState<FeedbackDraftBar> {
     final int images = ref.watch(
       feedbackDraftProvider.select((FeedbackDraft? d) => d?.shots.length ?? 0),
     );
+    final bool sharing = ref.watch(feedbackWindowShareProvider);
     final AppColors colors = context.colors;
     return Material(
       color: colors.surface,
@@ -112,6 +115,15 @@ class _FeedbackDraftBarState extends ConsumerState<FeedbackDraftBar> {
                       ),
                     ),
                   ),
+                if (sharing)
+                  AppIconButton(
+                    icon: Icons.desktop_windows_outlined,
+                    semanticLabel: Copy.feedbackAddWindow,
+                    tooltip: Copy.feedbackAddWindow,
+                    selected: true,
+                    outlined: false,
+                    onPressed: () => unawaited(_addStill(context)),
+                  ),
                 AppIconButton(
                   icon: Icons.open_in_full,
                   semanticLabel: Copy.feedbackContinue,
@@ -132,6 +144,23 @@ class _FeedbackDraftBarState extends ConsumerState<FeedbackDraftBar> {
         ),
       ),
     );
+  }
+
+  Future<void> _addStill(BuildContext context) async {
+    final int before = ref.read(feedbackDraftProvider)?.shots.length ?? 0;
+    final String? problem = await ref
+        .read(feedbackWindowShareProvider.notifier)
+        .addStill();
+    if (!context.mounted) {
+      return;
+    }
+    if (problem != null) {
+      showAppSnack(context, problem, tone: SnackTone.warning);
+      return;
+    }
+    if ((ref.read(feedbackDraftProvider)?.shots.length ?? 0) > before) {
+      showAppSnack(context, Copy.feedbackShotAdded(Copy.feedbackOtherWindow));
+    }
   }
 
   Future<void> _discard() async {

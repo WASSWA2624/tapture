@@ -883,6 +883,13 @@ abstract final class Copy {
   /// Opens the browser display picker for another window or OS surface.
   static const String feedbackAddWindow = 'Screenshot external window';
 
+  /// Stops the shared window so later taps open the picker again.
+  static const String feedbackStopSharing = 'Stop sharing window';
+
+  /// Non-colour signal that Screenshot external window is live.
+  static const String feedbackSharingWindow =
+      'Sharing a window. Each tap adds a screenshot.';
+
   /// Label of a still taken from another window.
   static const String feedbackOtherWindow = 'External window';
 

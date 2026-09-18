@@ -351,6 +351,8 @@ List<String> get _values {
     Copy.feedbackAddScreen,
     Copy.feedbackIncludeUi,
     Copy.feedbackAddWindow,
+    Copy.feedbackStopSharing,
+    Copy.feedbackSharingWindow,
     Copy.feedbackOtherWindow,
     Copy.feedbackTakePhoto,
     Copy.feedbackChoosePhoto,
