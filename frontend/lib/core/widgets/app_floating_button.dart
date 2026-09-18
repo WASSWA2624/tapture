@@ -4,8 +4,9 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 
-/// A draggable round action that sits over a [Stack]. On a pointing device
-/// the label stays hidden until hover; on touch it is icon-only.
+/// A draggable icon that sits over a [Stack]. On a pointing device the
+/// label stays hidden until hover; on touch it is icon-only. No fill, border
+/// or tooltip — the icon is the control.
 ///
 /// Must be a direct child of a [Stack]: it fills the stack and only the
 /// control itself receives pointer events.
@@ -26,7 +27,7 @@ class AppFloatingButton extends StatefulWidget {
   /// Glyph inside the control.
   final IconData icon;
 
-  /// Visible name when expanded, tooltip, and semantic name.
+  /// Visible name when expanded, and the semantic name.
   final String label;
 
   /// How the control behaves, for screen readers.
@@ -72,6 +73,7 @@ class _AppFloatingButtonState extends State<AppFloatingButton> {
         child: Align(
           alignment: Alignment(2 * _fx - 1, 2 * _fy - 1),
           child: MouseRegion(
+            cursor: SystemMouseCursors.click,
             onEnter: widget.expandOnHover
                 ? (_) => setState(() => _hovering = true)
                 : null,
@@ -85,43 +87,34 @@ class _AppFloatingButtonState extends State<AppFloatingButton> {
                 button: true,
                 label: widget.label,
                 hint: widget.hint,
-                child: Tooltip(
-                  message: widget.label,
-                  child: Material(
-                    key: _buttonKey,
-                    color: colors.primary,
-                    shape: const StadiumBorder(),
-                    child: AnimatedContainer(
-                      duration: MediaQuery.disableAnimationsOf(context)
-                          ? Duration.zero
-                          : AppConstants.motion.short,
-                      constraints: const BoxConstraints(
-                        minWidth: Sizes.minTapTarget,
-                        minHeight: Sizes.minTapTarget,
-                      ),
-                      padding: _showLabel
-                          ? const EdgeInsets.symmetric(horizontal: Space.x3)
-                          : EdgeInsets.zero,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
+                child: AnimatedSize(
+                  key: _buttonKey,
+                  duration: MediaQuery.disableAnimationsOf(context)
+                      ? Duration.zero
+                      : AppConstants.motion.short,
+                  alignment: Alignment.centerRight,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      SizedBox(
+                        width: Sizes.minTapTarget,
+                        height: Sizes.minTapTarget,
+                        child: Center(
+                          child: Icon(
                             widget.icon,
                             size: Space.x6,
-                            color: colors.onPrimary,
+                            color: colors.primary,
                           ),
-                          if (_showLabel) ...<Widget>[
-                            const SizedBox(width: Space.x2),
-                            Text(
-                              widget.label,
-                              style: AppText.label.copyWith(
-                                color: colors.onPrimary,
-                              ),
-                            ),
-                          ],
-                        ],
+                        ),
                       ),
-                    ),
+                      if (_showLabel) ...<Widget>[
+                        Text(
+                          widget.label,
+                          style: AppText.label.copyWith(color: colors.primary),
+                        ),
+                        const SizedBox(width: Space.x2),
+                      ],
+                    ],
                   ),
                 ),
               ),

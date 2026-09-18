@@ -27,6 +27,7 @@ void main() {
 
     expect(find.byIcon(Icons.feedback_outlined), findsOneWidget);
     expect(find.text(Copy.feedback), findsNothing);
+    expect(find.byType(Tooltip), findsNothing);
     expect(find.byType(AppFloatingButton), meetsTapTarget());
     expect(find.byType(AppFloatingButton), hasSemanticLabel(Copy.feedback));
 
@@ -38,6 +39,7 @@ void main() {
     await mouse.moveTo(tester.getCenter(find.byIcon(Icons.feedback_outlined)));
     await tester.pumpAndSettle();
     expect(_labelOnButton(), findsOneWidget);
+    expect(find.byType(Tooltip), findsNothing);
 
     await mouse.moveTo(Offset.zero);
     await tester.pumpAndSettle();
@@ -99,7 +101,7 @@ void main() {
 
 Finder _labelOnButton() {
   return find.descendant(
-    of: find.byType(AnimatedContainer),
+    of: find.byType(AnimatedSize),
     matching: find.text(Copy.feedback),
   );
 }
