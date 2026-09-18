@@ -75,6 +75,10 @@ packages:
     version: ^0.20.2
     purpose: Locale-aware date, time and number formatting for catalogue fields (FE-L10N-04, FE-CONS-09). Replaces hand-built day/month/year strings.
     task: "035"
+  archive:
+    version: ^3.6.1
+    purpose: Pure-Dart ZIP writing (and reading, in tests) behind core/export's XLSX encoder, so a workbook builds on the web as well as on device. MIT. Replaces a hand-rolled ZIP container and CRC. Capped at 3.x because that is the release already in the offline cache this build runs from; task 205 reuses it for the data package.
+    task: "282"
   flutter_test:
     version: sdk
     purpose: The widget and unit test harness every guardrail suite runs on.

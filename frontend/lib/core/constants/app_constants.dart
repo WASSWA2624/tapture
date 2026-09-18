@@ -162,6 +162,37 @@ abstract final class AppConstants {
     contactKey: 'operatorContact',
   );
 
+  /// The operator's in-app feedback: where it is kept, how an entry is
+  /// numbered, how long it may be, how screenshots are sized, and where the
+  /// floating button first rests (as a fraction of the free width and
+  /// height, so a rotation keeps it on screen).
+  static const ({
+    String storeName,
+    String idPrefix,
+    int idDigits,
+    int maxMessageLength,
+    int maxOtherLength,
+    int screenshotLongEdge,
+    int workbookImageEdge,
+    int listPageSize,
+    Duration objectUrlLifetime,
+    double buttonStartX,
+    double buttonStartY,
+  })
+  userFeedback = (
+    storeName: 'feedback',
+    idPrefix: 'FBK',
+    idDigits: 7,
+    maxMessageLength: 2000,
+    maxOtherLength: 60,
+    screenshotLongEdge: imageLongEdge,
+    workbookImageEdge: 480,
+    listPageSize: listPageSize,
+    objectUrlLifetime: Duration(seconds: 60),
+    buttonStartX: 1,
+    buttonStartY: 0.78,
+  );
+
   /// Optional app-lock PIN shape, the persisted attempt backoff, and how
   /// often the unlock screen counts that backoff down.
   static const ({

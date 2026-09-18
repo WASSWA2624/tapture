@@ -727,6 +727,228 @@ abstract final class Copy {
       'Nobody can reset this PIN. Your files stay on this device. '
       'Nothing here deletes them.';
 
+  /// Closes a dialog or panel without acting.
+  static const String close = 'Close';
+
+  /// The floating feedback control: its label, tooltip and semantic name.
+  static const String feedback = 'Feedback';
+
+  /// How the floating feedback control behaves, for screen readers.
+  static const String feedbackButtonHint =
+      'Opens the feedback options. Drag to move it.';
+
+  /// Opens the form to write feedback.
+  static const String feedbackGive = 'Give us feedback';
+
+  /// Opens the filter to download feedback as a spreadsheet.
+  static const String feedbackDownload = 'Download feedback';
+
+  /// Opens the filter to delete feedback.
+  static const String feedbackDelete = 'Delete feedback';
+
+  /// Where feedback goes. Nothing is sent (FE-SEC-10).
+  static const String feedbackStaysOnDevice =
+      'Saved on this device only. Nothing is sent anywhere.';
+
+  /// Feedback type: anything that is not one of the others.
+  static const String feedbackCategoryGeneral = 'General feedback';
+
+  /// Feedback type: something that works but could work better.
+  static const String feedbackCategoryImprovement = 'Improvement';
+
+  /// Feedback type: something is wrong.
+  static const String feedbackCategoryError = 'Error in the app';
+
+  /// Feedback type: an idea.
+  static const String feedbackCategorySuggestion = 'Suggestion';
+
+  /// Feedback type: the operator names it.
+  static const String feedbackCategoryOther = 'Other';
+
+  /// Label of the feedback type choice.
+  static const String feedbackType = 'Type of feedback';
+
+  /// Label of the field that names an "other" type.
+  static const String feedbackOtherType = 'What kind of feedback is it?';
+
+  /// The "other" type was chosen but not named.
+  static const String feedbackOtherRequired = 'Say what kind of feedback it is';
+
+  /// Label of the feedback text.
+  static const String feedbackMessage = 'Your feedback';
+
+  /// Prompt inside the empty feedback text.
+  static const String feedbackMessageHint =
+      'What happened, or what would make this better?';
+
+  /// The feedback text was empty.
+  static const String feedbackMessageRequired = 'Write your feedback';
+
+  /// Attaches the screenshot taken when Feedback was tapped.
+  static const String feedbackAttachScreenshot = 'Attach a screenshot';
+
+  /// What the screenshot shows, named for the screen it was taken on.
+  static String feedbackScreenshotOf(String screen) {
+    return 'Of $screen, as it was when you tapped Feedback.';
+  }
+
+  /// No screenshot could be taken, so there is nothing to attach.
+  static const String feedbackNoScreenshot =
+      'No screenshot could be taken of that screen.';
+
+  /// Semantic name of the screenshot preview.
+  static const String feedbackScreenshotPreview = 'Screenshot preview';
+
+  /// Saves the feedback entry.
+  static const String feedbackSave = 'Save feedback';
+
+  /// Announced once the entry is durable.
+  static const String feedbackSaved = 'Feedback saved on this device.';
+
+  /// Heading over the feedback filters.
+  static const String feedbackWhich = 'Which feedback';
+
+  /// Filter: feedback types.
+  static const String feedbackTypes = 'Types';
+
+  /// Filter: earliest submission.
+  static const String feedbackFrom = 'Submitted from';
+
+  /// Filter: latest submission.
+  static const String feedbackTo = 'Submitted to';
+
+  /// The date range runs backwards.
+  static const String feedbackRangeBackwards =
+      'The start is after the end. Swap them or clear one.';
+
+  /// Filter: screens feedback was given on.
+  static const String feedbackScreens = 'Screens';
+
+  /// Filter: platforms.
+  static const String feedbackPlatforms = 'Platforms';
+
+  /// Filter: device types.
+  static const String feedbackDeviceTypes = 'Device types';
+
+  /// Filter: who submitted.
+  static const String feedbackSubmittedBy = 'Submitted by';
+
+  /// Filter: whether a screenshot is attached.
+  static const String feedbackScreenshot = 'Screenshot';
+
+  /// Screenshot filter: either way.
+  static const String feedbackScreenshotAny = 'Any';
+
+  /// Screenshot filter: attached.
+  static const String feedbackScreenshotWith = 'With';
+
+  /// Screenshot filter: not attached.
+  static const String feedbackScreenshotWithout = 'Without';
+
+  /// Prompt on the feedback text search.
+  static const String feedbackSearch = 'Search the feedback text';
+
+  /// Resets every feedback filter.
+  static const String feedbackClearFilters = 'Clear filters';
+
+  /// How many entries the filters let through.
+  static String feedbackMatching(int matching, int total) {
+    return Intl.plural(
+      total,
+      one: '$matching of 1 entry matches',
+      other: '$matching of $total entries match',
+    );
+  }
+
+  /// Downloads the matching entries.
+  static String feedbackDownloadCount(int n) {
+    return Intl.plural(
+      n,
+      zero: 'Nothing to download',
+      one: 'Download 1 entry',
+      other: 'Download $n entries',
+    );
+  }
+
+  /// The browser took the download.
+  static const String feedbackDownloadStarted = 'Download started.';
+
+  /// The workbook was written to [location] on this device.
+  static String feedbackDownloadedTo(String location) => 'Saved to $location';
+
+  /// Nothing has been written yet.
+  static const String feedbackEmptyHeadline = 'No feedback yet';
+
+  /// Next step when nothing has been written (FE-SIMP-11).
+  static const String feedbackEmptyMessage =
+      'Tap Feedback on any screen to write the first entry.';
+
+  /// The filters let nothing through.
+  static const String feedbackNoMatchHeadline = 'No feedback matches';
+
+  /// Next step when the filters let nothing through.
+  static const String feedbackNoMatchMessage =
+      'Change or clear the filters to see more.';
+
+  /// How many entries are ticked for deletion.
+  static String feedbackSelected(int n) {
+    return Intl.plural(
+      n,
+      zero: 'None selected',
+      one: '1 selected',
+      other: '$n selected',
+    );
+  }
+
+  /// Deletes the ticked entries.
+  static String feedbackDeleteCount(int n) {
+    return Intl.plural(
+      n,
+      zero: 'Select entries to delete',
+      one: 'Delete 1 entry',
+      other: 'Delete $n entries',
+    );
+  }
+
+  /// Title of the delete confirm, naming the count (FE-SIMP-07).
+  static String feedbackDeleteTitle(int n) {
+    return Intl.plural(
+      n,
+      one: 'Delete 1 feedback entry?',
+      other: 'Delete $n feedback entries?',
+    );
+  }
+
+  /// Body of the delete confirm, naming the consequence (FE-SIMP-07).
+  static String feedbackDeleteMessage(int n) {
+    return Intl.plural(
+      n,
+      one:
+          'It and its screenshot are removed from this device for good. '
+          'You can undo straight after.',
+      other:
+          'They and their screenshots are removed from this device for '
+          'good. You can undo straight after.',
+    );
+  }
+
+  /// Announced once the entries are gone.
+  static String feedbackDeleted(int n) {
+    return Intl.plural(
+      n,
+      one: '1 feedback entry deleted',
+      other: '$n feedback entries deleted',
+    );
+  }
+
+  /// Loads the next page of entries.
+  static const String feedbackShowMore = 'Show more';
+
+  /// One entry's facts on a list row: type, when and where.
+  static String feedbackEntryFacts(String type, String when, String screen) {
+    return '$type · $when · $screen';
+  }
+
   /// Remaining backoff after a failed unlock.
   static String appLockWait(Duration remaining) {
     // Rounded up, so the count never reads lower than the real wait.

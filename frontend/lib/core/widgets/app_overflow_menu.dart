@@ -44,12 +44,9 @@ class AppOverflowMenu extends StatelessWidget {
           offset: const Offset(0, Sizes.minTapTarget),
           color: colors.surface,
           elevation: 0,
-          shadowColor: const Color(0x00000000),
+          shadowColor: _noShadow,
           surfaceTintColor: colors.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(Radii.md),
-            side: BorderSide(color: colors.outline, width: Space.x0 / 2),
-          ),
+          shape: _menuShape(colors),
           icon: Icon(
             Icons.more_vert,
             size: Space.x6,
@@ -57,21 +54,62 @@ class AppOverflowMenu extends StatelessWidget {
             semanticLabel: Copy.overflowMenu,
           ),
           onSelected: (int index) => items[index].onTap(),
-          itemBuilder: (BuildContext context) {
-            return <PopupMenuEntry<int>>[
-              for (int index = 0; index < items.length; index++)
-                PopupMenuItem<int>(
-                  key: items[index].key,
-                  value: index,
-                  height: Sizes.minTapTarget,
-                  child: _OverflowRow(action: items[index]),
-                ),
-            ];
-          },
+          itemBuilder: (BuildContext context) => _menuItems(items),
         ),
       ),
     );
   }
+}
+
+/// Opens the rows [AppOverflowMenu] shows, anchored to [anchor] (a rectangle
+/// in global coordinates), for a control that is not the title-bar three-dot
+/// icon — a floating action, for example. Runs the chosen row's
+/// [AppOverflowAction.onTap] once the menu has closed.
+Future<void> showAppOverflowActions(
+  BuildContext context, {
+  required Rect anchor,
+  required List<AppOverflowAction> items,
+}) async {
+  final AppColors colors = context.colors;
+  final RenderBox overlay =
+      Overlay.of(context, rootOverlay: true).context.findRenderObject()!
+          as RenderBox;
+  final int? chosen = await showMenu<int>(
+    context: context,
+    useRootNavigator: true,
+    position: RelativeRect.fromRect(anchor, Offset.zero & overlay.size),
+    color: colors.surface,
+    elevation: 0,
+    shadowColor: _noShadow,
+    surfaceTintColor: colors.surface,
+    shape: _menuShape(colors),
+    items: _menuItems(items),
+  );
+  if (chosen != null) {
+    items[chosen].onTap();
+  }
+}
+
+/// Depth through tone and outline, not shadow (FE-THEME-06).
+const Color _noShadow = Color(0x00000000);
+
+ShapeBorder _menuShape(AppColors colors) {
+  return RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(Radii.md),
+    side: BorderSide(color: colors.outline, width: Space.x0 / 2),
+  );
+}
+
+List<PopupMenuEntry<int>> _menuItems(List<AppOverflowAction> items) {
+  return <PopupMenuEntry<int>>[
+    for (int index = 0; index < items.length; index++)
+      PopupMenuItem<int>(
+        key: items[index].key,
+        value: index,
+        height: Sizes.minTapTarget,
+        child: _OverflowRow(action: items[index]),
+      ),
+  ];
 }
 
 class _OverflowRow extends StatelessWidget {

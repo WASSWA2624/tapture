@@ -8,6 +8,7 @@ environment:
   sdk: ^3.12.2
 
 dependencies:
+  archive: ^3.6.1
   connectivity_plus: ^7.3.1
   crypto: ^3.0.7
   drift: '>=2.31.0 <2.32.0'

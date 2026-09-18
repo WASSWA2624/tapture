@@ -2,7 +2,7 @@
 
 Making the finished app fast, legible, reachable and unbreakable in the field.
 
-Tasks 236–244 (9). Each file is a standalone implementation prompt.
+Tasks 236–282 (10). Each file is a standalone implementation prompt.
 
 - [ ] [236 — Layout, accessibility and text-scale audit](236-responsive-audit.md)
 - [ ] [237 — Landscape and foldables](237-orientation-support.md)
@@ -13,3 +13,4 @@ Tasks 236–244 (9). Each file is a standalone implementation prompt.
 - [ ] [242 — App icon, splash and store branding](242-branding-assets.md)
 - [ ] [243 — Device matrix runner](243-device-matrix-testing.md)
 - [ ] [244 — In-app friction log](244-field-trial.md)
+- [ ] [282 — In-app feedback: floating button, capture, download and delete](282-in-app-feedback.md)

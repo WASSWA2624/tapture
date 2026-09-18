@@ -60,6 +60,7 @@ const List<String> featureDirectories = <String>[
   'cloud',
   'context',
   'exports',
+  'feedback',
   'import',
   'meetings',
   'merge',
