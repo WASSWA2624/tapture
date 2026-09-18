@@ -17,3 +17,14 @@ __pycache__/
 
 # Logs
 *.log
+
+# Operator-captured photos and local app data. Branding, icons and golden
+# PNG baselines stay tracked.
+/Tapture/
+**/photos/
+*.jpg
+*.jpeg
+*.heic
+*.heif
+*.webp
+TAPTURE-*.zip

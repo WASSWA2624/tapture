@@ -46,6 +46,7 @@ void main() {
       expect(reported, contains(contains('android/key.properties')));
       expect(reported, contains(contains('.env.local')));
       expect(reported, contains(contains('deviceA__2026-09-08T1030.zip')));
+      expect(reported, contains(contains('photos/front.jpg')));
     });
 
     test('every violation names the file and the line that must change', () {

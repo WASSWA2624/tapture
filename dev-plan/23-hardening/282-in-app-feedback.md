@@ -5,12 +5,12 @@
 ## Implement
 
 A draggable floating Feedback control on every shell screen. Desktop hides the label until hover; phone and tablet
-stay icon-only. The menu offers Give us feedback, Download feedback and Delete feedback. Give opens a dialog on a
-desktop with room and a screen on a phone or tablet: type (General, Improvement, Error, Suggestion, Other with a
-name), the written note, and an optional screenshot of the screen Feedback was tapped on. Each entry is stored on
-this device with the context the organisation's workbook already names. Download filters the store and writes
-`TAPTURE-DDMMYYYY-HHMM.zip` containing the spreadsheet and the matching screenshot files. Delete filters, ticks
-rows, and confirms before the entries and their screenshots are gone.
+stay icon-only. The menu offers Give us feedback, Download feedback and Delete feedback. Each item opens a screen on
+every form factor: type (General, Improvement, Error, Suggestion, Other with a name), the written note, and an
+optional screenshot of the screen Feedback was tapped on. Each entry is stored on this device with the context the
+organisation's workbook already names. Download filters the store and writes `TAPTURE-DDMMYYYY-HHMM.zip` containing
+the spreadsheet and the matching screenshot files. Delete filters, ticks rows, and confirms before the entries and
+their screenshots are gone.
 
 ## Files
 
@@ -34,7 +34,7 @@ rows, and confirms before the entries and their screenshots are gone.
 ## Definition of done
 
 - [x] The floating control is draggable. Desktop shows the label on hover; phone and tablet do not.
-- [x] Give, download and delete each open a dialog on desktop and a screen on phone and tablet.
+- [x] Give, download and delete each open a screen on every form factor.
 - [x] Give stores the typed note, type (including a named Other) and optional screenshot with the Excel-column context.
 - [x] Download writes `TAPTURE-DDMMYYYY-HHMM.zip` with the spreadsheet and matching screenshot files.
 - [x] Delete filters, selects, confirms, then removes the entries and their screenshots; undo restores what was just deleted.

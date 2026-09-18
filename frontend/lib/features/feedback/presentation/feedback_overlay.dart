@@ -177,9 +177,7 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
     ref.invalidate(giveFeedbackControllerProvider);
     final bool? saved = await openFeedbackFlow<bool>(
       context,
-      title: Copy.feedbackGive,
       page: const GiveFeedbackScreen(),
-      panel: const GiveFeedbackScreen.embedded(),
     );
     if (saved == true && mounted) {
       showAppSnack(context, Copy.feedbackSaved, tone: SnackTone.success);
@@ -188,21 +186,11 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
 
   Future<void> _openDownload() async {
     ref.invalidate(downloadFeedbackControllerProvider);
-    await openFeedbackFlow<void>(
-      context,
-      title: Copy.feedbackDownload,
-      page: const DownloadFeedbackScreen(),
-      panel: const DownloadFeedbackScreen.embedded(),
-    );
+    await openFeedbackFlow<void>(context, page: const DownloadFeedbackScreen());
   }
 
   Future<void> _openDelete() async {
     ref.invalidate(deleteFeedbackControllerProvider);
-    await openFeedbackFlow<void>(
-      context,
-      title: Copy.feedbackDelete,
-      page: const DeleteFeedbackScreen(),
-      panel: const DeleteFeedbackScreen.embedded(),
-    );
+    await openFeedbackFlow<void>(context, page: const DeleteFeedbackScreen());
   }
 }

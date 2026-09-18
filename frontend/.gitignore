@@ -67,6 +67,16 @@ key.properties
 /samples/
 *.bundle.zip
 *__*__*.zip
+TAPTURE-*.zip
+
+# Operator-captured photos and other user images. Branding, platform icons
+# and golden PNG baselines stay tracked.
+**/photos/
+*.jpg
+*.jpeg
+*.heic
+*.heif
+*.webp
 
 # Golden comparison dumps. Baselines stay in goldens/; these are local diffs.
 **/failures/

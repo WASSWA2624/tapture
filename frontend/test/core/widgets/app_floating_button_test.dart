@@ -45,24 +45,19 @@ void main() {
       tester.widget<Text>(_labelOnButton()).style?.decoration,
       TextDecoration.none,
     );
-    final BoxDecoration outline =
-        tester
-                .widget<DecoratedBox>(
-                  find.descendant(
-                    of: find.byType(AppFloatingButton),
-                    matching: find.byType(DecoratedBox),
-                  ),
-                )
-                .decoration
-            as BoxDecoration;
-    expect(outline.borderRadius, BorderRadius.circular(Radii.sm));
-    expect(outline.border, isNotNull);
+    expect(
+      find.descendant(
+        of: find.byType(AppFloatingButton),
+        matching: find.byType(DecoratedBox),
+      ),
+      findsNothing,
+    );
     expect(
       tester
           .getSize(
             find.descendant(
               of: find.byType(AppFloatingButton),
-              matching: find.byType(DecoratedBox),
+              matching: find.byType(AnimatedSize),
             ),
           )
           .height,

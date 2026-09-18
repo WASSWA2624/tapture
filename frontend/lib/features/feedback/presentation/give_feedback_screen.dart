@@ -22,17 +22,10 @@ import 'feedback_labels.dart';
 import 'give_feedback_controller.dart';
 import 'give_feedback_view.dart';
 
-/// Writes a feedback entry. A desktop hosts this in a panel; a phone opens
-/// it as a screen.
+/// Writes a feedback entry as a full-screen form.
 class GiveFeedbackScreen extends ConsumerWidget {
-  /// Creates the full-screen form.
-  const GiveFeedbackScreen({super.key, this.showAppBar = true});
-
-  /// Creates the form for a panel, without a second title.
-  const GiveFeedbackScreen.embedded({super.key}) : showAppBar = false;
-
-  /// When false, the panel already shows the title.
-  final bool showAppBar;
+  /// Creates the form.
+  const GiveFeedbackScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -92,9 +85,6 @@ class GiveFeedbackScreen extends ConsumerWidget {
         }
       },
     );
-    if (!showAppBar) {
-      return form;
-    }
     return AppPage(title: Copy.feedbackGive, body: form);
   }
 }

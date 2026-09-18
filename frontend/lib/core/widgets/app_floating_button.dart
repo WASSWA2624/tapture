@@ -5,8 +5,8 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 
 /// A draggable icon that sits over a [Stack]. On a pointing device the
-/// label stays hidden until hover; on touch it is icon-only. A hairline
-/// outline marks the tap target; there is no fill and no tooltip.
+/// label stays hidden until hover; on touch it is icon-only. There is no
+/// fill, outline or tooltip.
 ///
 /// Must be a direct child of a [Stack]: it fills the stack and only the
 /// control itself receives pointer events.
@@ -96,45 +96,33 @@ class _AppFloatingButtonState extends State<AppFloatingButton> {
                         width: Sizes.minTapTarget,
                         height: Sizes.minTapTarget,
                       ),
-                      DecoratedBox(
+                      AnimatedSize(
                         key: _buttonKey,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(Radii.sm),
-                          border: Border.all(
-                            color: colors.outline,
-                            width:
-                                Theme.of(context).dividerTheme.thickness ??
-                                Space.x0 / 2,
-                            strokeAlign: BorderSide.strokeAlignInside,
-                          ),
-                        ),
-                        child: AnimatedSize(
-                          duration: MediaQuery.disableAnimationsOf(context)
-                              ? Duration.zero
-                              : AppConstants.motion.short,
-                          alignment: Alignment.centerRight,
-                          child: Padding(
-                            padding: const EdgeInsets.all(Space.x0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Icon(
-                                  widget.icon,
-                                  size: Space.x6,
-                                  color: colors.primary,
-                                ),
-                                if (_showLabel) ...<Widget>[
-                                  const SizedBox(width: Space.x1),
-                                  Text(
-                                    widget.label,
-                                    style: AppText.label.copyWith(
-                                      color: colors.primary,
-                                      decoration: TextDecoration.none,
-                                    ),
+                        duration: MediaQuery.disableAnimationsOf(context)
+                            ? Duration.zero
+                            : AppConstants.motion.short,
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.all(Space.x0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Icon(
+                                widget.icon,
+                                size: Space.x6,
+                                color: colors.primary,
+                              ),
+                              if (_showLabel) ...<Widget>[
+                                const SizedBox(width: Space.x1),
+                                Text(
+                                  widget.label,
+                                  style: AppText.label.copyWith(
+                                    color: colors.primary,
+                                    decoration: TextDecoration.none,
                                   ),
-                                ],
+                                ),
                               ],
-                            ),
+                            ],
                           ),
                         ),
                       ),

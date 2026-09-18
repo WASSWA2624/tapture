@@ -27,13 +27,7 @@ import 'feedback_providers.dart';
 /// Filters stored feedback and deletes the entries the operator ticks.
 class DeleteFeedbackScreen extends ConsumerWidget {
   /// Creates the full-screen flow.
-  const DeleteFeedbackScreen({super.key, this.showAppBar = true});
-
-  /// Creates the flow for a panel, without a second title.
-  const DeleteFeedbackScreen.embedded({super.key}) : showAppBar = false;
-
-  /// When false, the panel already shows the title.
-  final bool showAppBar;
+  const DeleteFeedbackScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -134,16 +128,6 @@ class DeleteFeedbackScreen extends ConsumerWidget {
   }
 
   Widget _frame(Widget body, {Widget? footer}) {
-    if (!showAppBar) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Expanded(child: SingleChildScrollView(child: body)),
-          if (footer != null)
-            Padding(padding: const EdgeInsets.all(Space.x4), child: footer),
-        ],
-      );
-    }
     return AppPage(
       title: Copy.feedbackDelete,
       inset: false,

@@ -14,6 +14,7 @@ const List<String> _pathsGitMustIgnore = <String>[
   '.env',
   '.env.local',
   'samples/equipment-inventory__deviceA__2026-09-08T1030.zip',
+  'projects/site-a/photos/front.jpg',
 ];
 
 /// EditorConfig settings the repository fixes, by section header. A section

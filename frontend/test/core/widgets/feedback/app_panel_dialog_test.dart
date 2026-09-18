@@ -48,4 +48,42 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Write it here'), findsNothing);
   });
+
+  testWidgets('the title bar moves the panel', (WidgetTester tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(1200, 800);
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildTheme(brightness: Brightness.light),
+        home: Builder(
+          builder: (BuildContext context) {
+            return AppButton(
+              label: 'Open',
+              onPressed: () {
+                showAppPanelDialog<void>(
+                  context,
+                  title: Copy.feedbackGive,
+                  builder: (BuildContext _) => const Text('Write it here'),
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    final Offset before = tester.getTopLeft(find.text('Write it here'));
+    await tester.drag(find.text(Copy.feedbackGive), const Offset(80, 120));
+    await tester.pump();
+    final Offset after = tester.getTopLeft(find.text('Write it here'));
+    expect(after.dx, closeTo(before.dx + 80, 1));
+    expect(after.dy, closeTo(before.dy + 120, 1));
+  });
 }

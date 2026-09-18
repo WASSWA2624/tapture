@@ -26,13 +26,7 @@ import 'feedback_providers.dart';
 /// screenshots.
 class DownloadFeedbackScreen extends ConsumerWidget {
   /// Creates the full-screen flow.
-  const DownloadFeedbackScreen({super.key, this.showAppBar = true});
-
-  /// Creates the flow for a panel, without a second title.
-  const DownloadFeedbackScreen.embedded({super.key}) : showAppBar = false;
-
-  /// When false, the panel already shows the title.
-  final bool showAppBar;
+  const DownloadFeedbackScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -122,16 +116,6 @@ class DownloadFeedbackScreen extends ConsumerWidget {
   }
 
   Widget _frame(Widget body, {Widget? footer}) {
-    if (!showAppBar) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Expanded(child: SingleChildScrollView(child: body)),
-          if (footer != null)
-            Padding(padding: const EdgeInsets.all(Space.x4), child: footer),
-        ],
-      );
-    }
     return AppPage(
       title: Copy.feedbackDownload,
       inset: false,

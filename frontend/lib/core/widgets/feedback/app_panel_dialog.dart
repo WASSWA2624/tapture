@@ -11,8 +11,9 @@ import 'package:tapture/core/widgets/app_icon_button.dart';
 /// than composing [Dialog] (FE-CONS-05).
 ///
 /// Same surface, outline and radius as [AppDialog]; the body scrolls inside
-/// the dialog, so it never grows past the window (FE-RESP-06).
-class AppPanelDialog extends StatelessWidget {
+/// the dialog, so it never grows past the window (FE-RESP-06). The title
+/// bar moves the panel; the close control does not.
+class AppPanelDialog extends StatefulWidget {
   /// Creates the panel. [onClose] defaults to popping the dialog.
   const AppPanelDialog({
     super.key,
@@ -38,72 +39,133 @@ class AppPanelDialog extends StatelessWidget {
   final double maxWidth;
 
   @override
+  State<AppPanelDialog> createState() => _AppPanelDialogState();
+}
+
+class _AppPanelDialogState extends State<AppPanelDialog> {
+  final GlobalKey _panelKey = GlobalKey();
+  Offset _offset = Offset.zero;
+
+  @override
   Widget build(BuildContext context) {
     final AppColors colors = context.colors;
-    return Dialog(
-      backgroundColor: colors.surface,
-      insetPadding: const EdgeInsets.all(Space.x6),
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Radii.lg),
-        side: BorderSide(color: colors.outline, width: Space.x0 / 2),
-      ),
-      child: Semantics(
-        namesRoute: true,
-        scopesRoute: true,
-        label: title,
-        explicitChildNodes: true,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: maxWidth),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(
-                  Space.x4,
-                  Space.x2,
-                  Space.x2,
-                  Space.x2,
-                ),
-                child: Row(
+    return Transform.translate(
+      offset: _offset,
+      child: Dialog(
+        backgroundColor: colors.surface,
+        insetPadding: const EdgeInsets.all(Space.x6),
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Radii.lg),
+          side: BorderSide(color: colors.outline, width: Space.x0 / 2),
+        ),
+        child: Semantics(
+          namesRoute: true,
+          scopesRoute: true,
+          label: widget.title,
+          explicitChildNodes: true,
+          child: ConstrainedBox(
+            key: _panelKey,
+            constraints: BoxConstraints(maxWidth: widget.maxWidth),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Row(
                   children: <Widget>[
                     Expanded(
-                      child: Semantics(
-                        header: true,
-                        child: Text(
-                          title,
-                          style: AppText.title.copyWith(
-                            color: colors.onSurface,
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.move,
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onPanUpdate: _onDrag,
+                          child: Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                              Space.x4,
+                              Space.x2,
+                              Space.x2,
+                              Space.x2,
+                            ),
+                            child: Semantics(
+                              header: true,
+                              child: Text(
+                                widget.title,
+                                style: AppText.title.copyWith(
+                                  color: colors.onSurface,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                    AppIconButton(
-                      icon: Icons.close,
-                      semanticLabel: Copy.close,
-                      tooltip: Copy.close,
-                      onPressed: onClose ?? () => Navigator.of(context).pop(),
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                        0,
+                        Space.x2,
+                        Space.x2,
+                        Space.x2,
+                      ),
+                      child: AppIconButton(
+                        icon: Icons.close,
+                        semanticLabel: Copy.close,
+                        tooltip: Copy.close,
+                        onPressed:
+                            widget.onClose ?? () => Navigator.of(context).pop(),
+                      ),
                     ),
                   ],
                 ),
-              ),
-              Divider(
-                height: Space.x0 / 2,
-                thickness: Space.x0 / 2,
-                color: colors.outline,
-              ),
-              Flexible(
-                child: DefaultTextStyle(
-                  style: AppText.body.copyWith(color: colors.onSurface),
-                  child: child,
+                Divider(
+                  height: Space.x0 / 2,
+                  thickness: Space.x0 / 2,
+                  color: colors.outline,
                 ),
-              ),
-            ],
+                Flexible(
+                  child: DefaultTextStyle(
+                    style: AppText.body.copyWith(color: colors.onSurface),
+                    child: widget.child,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  void _onDrag(DragUpdateDetails details) {
+    final RenderBox? box =
+        _panelKey.currentContext?.findRenderObject() as RenderBox?;
+    Offset delta = details.delta;
+    if (box != null && box.hasSize) {
+      final RenderBox? overlay =
+          Overlay.maybeOf(context)?.context.findRenderObject() as RenderBox?;
+      final Size screen = overlay != null && overlay.hasSize
+          ? overlay.size
+          : box.size;
+      final Offset origin = box.localToGlobal(Offset.zero);
+      const double slop = Sizes.minTapTarget;
+      double dx = delta.dx;
+      double dy = delta.dy;
+      final double nextLeft = origin.dx + dx;
+      final double nextTop = origin.dy + dy;
+      final double nextRight = nextLeft + box.size.width;
+      final double nextBottom = nextTop + box.size.height;
+      if (nextRight < slop) {
+        dx += slop - nextRight;
+      } else if (nextLeft > screen.width - slop) {
+        dx -= nextLeft - (screen.width - slop);
+      }
+      if (nextBottom < slop) {
+        dy += slop - nextBottom;
+      } else if (nextTop > screen.height - slop) {
+        dy -= nextTop - (screen.height - slop);
+      }
+      delta = Offset(dx, dy);
+    }
+    setState(() => _offset += delta);
   }
 }
 
