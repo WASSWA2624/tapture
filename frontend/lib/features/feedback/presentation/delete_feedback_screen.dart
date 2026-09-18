@@ -11,12 +11,14 @@ import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/feedback_entry.dart';
+import '../domain/feedback_filter.dart';
 import '../domain/removed_feedback.dart';
 import 'delete_feedback_controller.dart';
 import 'delete_feedback_view.dart';
@@ -65,18 +67,29 @@ class DeleteFeedbackScreen extends ConsumerWidget {
               entries: all,
               clock: clock,
               onChanged: controller.setFilter,
+              expanded: view.moreFilters,
+              onToggleExpanded: controller.toggleMoreFilters,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: Space.x4,
-                vertical: Space.x2,
-              ),
-              child: Text(
-                '${Copy.feedbackMatching(matching.length, all.length)} · '
-                '${Copy.feedbackSelected(selected.length)}',
-                style: AppText.caption.copyWith(
-                  color: context.colors.onSurface,
-                ),
+            AppSectionHeader(
+              title:
+                  '${Copy.feedbackMatching(matching.length, all.length)} · '
+                  '${Copy.feedbackSelected(selected.length)}',
+              action: Wrap(
+                children: <Widget>[
+                  if (!view.filter.isEmpty)
+                    AppButton(
+                      label: Copy.feedbackClearFilters,
+                      variant: AppButtonVariant.text,
+                      onPressed: () =>
+                          controller.setFilter(const FeedbackFilter()),
+                    ),
+                  if (matching.isNotEmpty)
+                    AppButton(
+                      label: Copy.selectAll,
+                      variant: AppButtonVariant.text,
+                      onPressed: () => controller.toggleAll(matchingIds),
+                    ),
+                ],
               ),
             ),
             if (view.error != null)
@@ -94,11 +107,6 @@ class DeleteFeedbackScreen extends ConsumerWidget {
                 message: Copy.feedbackNoMatchMessage,
               )
             else ...<Widget>[
-              AppButton(
-                label: Copy.selectAll,
-                variant: AppButtonVariant.text,
-                onPressed: () => controller.toggleAll(matchingIds),
-              ),
               for (final FeedbackEntry entry in page)
                 FeedbackEntryTile(
                   entry: entry,

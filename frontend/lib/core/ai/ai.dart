@@ -2,3 +2,5 @@
 library;
 
 export 'ai_service.dart';
+export 'stt_result.dart';
+export 'stt_service.dart';

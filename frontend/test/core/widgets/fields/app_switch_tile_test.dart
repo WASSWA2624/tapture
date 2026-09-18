@@ -8,6 +8,8 @@ import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import '../../../support/a11y_matchers.dart';
 
 void main() {
+  _denseCases();
+
   testWidgets('tapping anywhere on the tile toggles the value', (
     WidgetTester tester,
   ) async {
@@ -89,6 +91,45 @@ void main() {
     );
     expect(tester.takeException(), isNull);
     await expectNoA11yIssues(tester);
+  });
+}
+
+void _denseCases() {
+  testWidgets('a dense tile is one 48dp line that announces its description', (
+    WidgetTester tester,
+  ) async {
+    bool value = true;
+    await _pump(
+      tester,
+      // In a form it sits in a scrolling column, so its height is its own.
+      SingleChildScrollView(
+        child: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AppSwitchTile(
+              title: 'Attach screenshot',
+              description: 'Of Projects',
+              value: value,
+              dense: true,
+              onChanged: (bool next) => setState(() => value = next),
+            );
+          },
+        ),
+      ),
+    );
+    expect(tester.getSize(find.byType(AppSwitchTile)).height, 48);
+    expect(find.text('Of Projects'), findsNothing);
+    expect(
+      tester.getSemantics(find.byType(AppSwitchTile)),
+      isSemantics(
+        label: 'Attach screenshot',
+        hint: 'Of Projects',
+        isToggled: true,
+      ),
+    );
+    expect(find.byType(AppSwitchTile), meetsTapTarget());
+    await tester.tap(find.text('Attach screenshot'));
+    await tester.pump();
+    expect(value, isFalse);
   });
 }
 

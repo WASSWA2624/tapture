@@ -94,6 +94,7 @@ class _OperatorProfileScreenState extends ConsumerState<OperatorProfileScreen> {
               AppTextField(
                 label: Copy.operatorInitials,
                 controller: _initials,
+                dictation: false,
                 textInputAction: TextInputAction.next,
                 maxLength: AppConstants.operator.initialsMax,
                 errorText: view.initialsError,

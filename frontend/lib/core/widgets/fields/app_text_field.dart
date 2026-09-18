@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -5,10 +7,24 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/normalise/spoken_text.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
+
+import 'dictation_phase.dart';
+import 'dictation_scope.dart';
+import 'dictation_session.dart';
+import 'dictation_status.dart';
+
+part 'app_text_field_dictation.dart';
 
 /// The catalogue text input later fields and screens compose instead of a
 /// raw [TextFormField].
+///
+/// Free-text fields end in a microphone when a [DictationScope] is above
+/// them: the words heard are tidied and land at the caret, never
+/// submitted. Secret, numeric, contact and read-only fields never offer it.
 class AppTextField extends StatefulWidget {
   /// Creates a labelled text field. [errorText] is rendered, not decided,
   /// here — validation lives with the caller.
@@ -35,6 +51,7 @@ class AppTextField extends StatefulWidget {
     this.onTap,
     this.obscureText = false,
     this.autofocus = false,
+    this.dictation = true,
   });
 
   /// Visible label; also the semantic name of the control (FE-A11Y-02).
@@ -105,19 +122,43 @@ class AppTextField extends StatefulWidget {
   /// into at once.
   final bool autofocus;
 
+  /// When false, no microphone is offered even where one would fit, for
+  /// values nobody speaks, such as initials.
+  final bool dictation;
+
   @override
   State<AppTextField> createState() => _AppTextFieldState();
 }
 
 class _AppTextFieldState extends State<AppTextField> {
   bool _revealed = false;
+  late final DictationSession _dictation = DictationSession(
+    onSpoken: (String spoken) => _insertSpoken(spoken),
+    onFailure: (Failure failure) => _explain(failure),
+  );
+
+  @override
+  void didUpdateWidget(AppTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_dictation.isActive &&
+        (oldWidget.controller != widget.controller || !_offersDictation)) {
+      unawaited(_dictation.cancel());
+    }
+  }
+
+  @override
+  void dispose() {
+    // Cancels a listen still running, so leaving never keeps the microphone.
+    _dictation.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final AppTextField field = widget;
     final int lines = field.maxLines ?? 1;
     return ListenableBuilder(
-      listenable: field.controller,
+      listenable: Listenable.merge(<Listenable>[field.controller, _dictation]),
       builder: (BuildContext context, Widget? _) {
         return ConstrainedBox(
           constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
@@ -146,7 +187,13 @@ class _AppTextFieldState extends State<AppTextField> {
             decoration: InputDecoration(
               labelText: field.label,
               hintText: field.hint,
-              helperText: field.helper,
+              helperText: _dictation.isActive ? null : field.helper,
+              helper: _dictation.isActive
+                  ? DictationStatus(
+                      phase: _dictation.phase,
+                      heard: _dictation.heard,
+                    )
+                  : null,
               errorText: field.errorText,
               alignLabelWithHint: lines > 1,
               prefixIcon: field.prefix,
@@ -184,9 +231,17 @@ class _AppTextFieldState extends State<AppTextField> {
         field.enabled &&
         !field.readOnly &&
         field.controller.text.isNotEmpty;
-    if (!showClear && field.trailing == null && !field.obscureText) {
+    final bool showMic = _offersDictation;
+    if (!showClear &&
+        field.trailing == null &&
+        !field.obscureText &&
+        !showMic) {
       return null;
     }
+    final bool on = _dictation.phase != DictationPhase.idle;
+    final String mic = on
+        ? Copy.stopDictating(field.label)
+        : Copy.dictateInto(field.label);
     final String reveal = _revealed
         ? Copy.hideField(field.label)
         : Copy.showField(field.label);
@@ -204,6 +259,15 @@ class _AppTextFieldState extends State<AppTextField> {
             },
           ),
         ?field.trailing,
+        if (showMic)
+          AppIconButton(
+            key: const ValueKey<String>('app-text-field-dictate'),
+            icon: on ? Icons.mic : Icons.mic_none,
+            semanticLabel: mic,
+            tooltip: mic,
+            selected: on,
+            onPressed: () => _toggleDictation(),
+          ),
         // Last, so the show / hide control is always the far end of the field.
         if (field.obscureText)
           AppIconButton(

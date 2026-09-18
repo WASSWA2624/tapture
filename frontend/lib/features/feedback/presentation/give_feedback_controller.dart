@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -12,24 +11,15 @@ import 'feedback_providers.dart';
 import 'give_feedback_view.dart';
 
 /// Saves a new feedback entry from the form.
+///
+/// The screen owns the text it edits; this holds only the choices and the
+/// verdicts, so a rebuild has nothing to re-create and nothing to leak.
 final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
   /// Creates the controller.
   GiveFeedbackController();
 
-  /// The feedback text.
-  late final TextEditingController message;
-
-  /// The operator's name for an "other" type.
-  late final TextEditingController other;
-
   @override
   GiveFeedbackView build() {
-    message = TextEditingController();
-    other = TextEditingController();
-    ref.onDispose(() {
-      message.dispose();
-      other.dispose();
-    });
     final bool hasShot = ref.read(feedbackDraftProvider)?.screenshot != null;
     return (
       category: FeedbackCategory.general,
@@ -62,10 +52,14 @@ final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
     );
   }
 
-  /// Persists the entry. Completes after the write is durable.
-  Future<Result<FeedbackEntry>> save() async {
-    final String text = message.text.trim();
-    final String named = other.text.trim();
+  /// Persists [message], and [other] as the type's name when the type is
+  /// Other. Completes after the write is durable.
+  Future<Result<FeedbackEntry>> save({
+    required String message,
+    String other = '',
+  }) async {
+    final String text = message.trim();
+    final String named = other.trim();
     String? messageError;
     String? otherError;
     if (text.isEmpty) {
@@ -91,44 +85,46 @@ final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
     }
     final FeedbackDraft? draft = ref.read(feedbackDraftProvider);
     if (draft == null) {
-      return const FailureResult<FeedbackEntry>(
-        ValidationFailure(
-          message: Copy.somethingWentWrong,
-          recoveryAction: 'Close this, tap Feedback, then try again.',
-        ),
+      const ValidationFailure missing = ValidationFailure(
+        message: Copy.somethingWentWrong,
+        recoveryAction: 'Close this, tap Feedback, then try again.',
       );
+      _failed(missing);
+      return const FailureResult<FeedbackEntry>(missing);
     }
+    final FeedbackCategory category = state.category;
     final Result<FeedbackEntry> result = await ref
         .read(feedbackRepositoryProvider)
         .add(
-          category: state.category,
+          category: category,
           message: text,
           context: draft.context,
-          otherCategory: state.category == FeedbackCategory.other
-              ? named
-              : null,
+          otherCategory: category == FeedbackCategory.other ? named : null,
           screenshot: state.attachScreenshot ? draft.screenshot : null,
         );
-    switch (result) {
-      case Success<FeedbackEntry>():
-        ref.read(feedbackDraftProvider.notifier).clear();
-        return result;
-      case FailureResult<FeedbackEntry>(:final Failure failure):
-        state = (
-          category: state.category,
-          attachScreenshot: state.attachScreenshot,
-          messageError: state.messageError,
-          otherError: state.otherError,
-          saveError: failure.message,
-        );
-        return result;
+    // The entry is durable either way; a closed screen has no state to set.
+    // The overlay drops the draft once the form has closed.
+    if (ref.mounted && result is FailureResult<FeedbackEntry>) {
+      _failed(result.failure);
     }
+    return result;
+  }
+
+  void _failed(Failure failure) {
+    state = (
+      category: state.category,
+      attachScreenshot: state.attachScreenshot,
+      messageError: state.messageError,
+      otherError: state.otherError,
+      saveError: failure.message,
+    );
   }
 }
 
-/// Form state for [GiveFeedbackScreen].
+/// Form state for [GiveFeedbackScreen]. Disposed with the screen, so every
+/// opening starts clean (FE-STATE-09).
 final NotifierProvider<GiveFeedbackController, GiveFeedbackView>
 giveFeedbackControllerProvider =
-    NotifierProvider<GiveFeedbackController, GiveFeedbackView>(
+    NotifierProvider.autoDispose<GiveFeedbackController, GiveFeedbackView>(
       GiveFeedbackController.new,
     );

@@ -1,6 +1,6 @@
 # Tapture — task index
 
-282 implementation prompts across 25 phases. Work top to bottom.
+283 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task.
 
@@ -363,6 +363,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [ ] [243 — Device matrix runner](23-hardening/243-device-matrix-testing.md)
 - [ ] [244 — In-app friction log](23-hardening/244-field-trial.md)
 - [x] [282 — In-app feedback: floating button, capture, download and delete](23-hardening/282-in-app-feedback.md)
+- [x] [283 — Feedback screens: compact layout, dictation and reopen safety](23-hardening/283-feedback-dictation-and-layout.md)
 
 ## 24 — The minimal backend
 

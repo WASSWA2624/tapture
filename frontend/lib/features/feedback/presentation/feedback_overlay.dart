@@ -15,15 +15,12 @@ import 'package:tapture/core/widgets/responsive/viewport_metrics.dart';
 import 'package:tapture/features/settings/settings.dart';
 
 import '../domain/feedback_origin.dart';
-import 'delete_feedback_controller.dart';
 import 'delete_feedback_screen.dart';
-import 'download_feedback_controller.dart';
 import 'download_feedback_screen.dart';
 import 'feedback_context_capture.dart';
 import 'feedback_draft.dart';
 import 'feedback_draft_controller.dart';
 import 'feedback_providers.dart';
-import 'give_feedback_controller.dart';
 import 'give_feedback_screen.dart';
 import 'open_feedback_flow.dart';
 
@@ -173,24 +170,28 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
     }
   }
 
+  // Each screen's controller is autoDispose: it is built fresh on open and
+  // released on close, so reopening never reuses a disposed form.
   Future<void> _openGive() async {
-    ref.invalidate(giveFeedbackControllerProvider);
     final bool? saved = await openFeedbackFlow<bool>(
       context,
       page: const GiveFeedbackScreen(),
     );
-    if (saved == true && mounted) {
+    if (!mounted) {
+      return;
+    }
+    // Release the screenshot; the next Feedback tap captures a new one.
+    ref.read(feedbackDraftProvider.notifier).clear();
+    if (saved == true) {
       showAppSnack(context, Copy.feedbackSaved, tone: SnackTone.success);
     }
   }
 
   Future<void> _openDownload() async {
-    ref.invalidate(downloadFeedbackControllerProvider);
     await openFeedbackFlow<void>(context, page: const DownloadFeedbackScreen());
   }
 
   Future<void> _openDelete() async {
-    ref.invalidate(deleteFeedbackControllerProvider);
     await openFeedbackFlow<void>(context, page: const DeleteFeedbackScreen());
   }
 }

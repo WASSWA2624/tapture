@@ -11,11 +11,13 @@ import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/feedback_entry.dart';
+import '../domain/feedback_filter.dart';
 import 'download_feedback_controller.dart';
 import 'download_feedback_view.dart';
 import 'feedback_entry_tile.dart';
@@ -64,18 +66,19 @@ class DownloadFeedbackScreen extends ConsumerWidget {
               entries: all,
               clock: clock,
               onChanged: controller.setFilter,
+              expanded: view.moreFilters,
+              onToggleExpanded: controller.toggleMoreFilters,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: Space.x4,
-                vertical: Space.x2,
-              ),
-              child: Text(
-                Copy.feedbackMatching(matching.length, all.length),
-                style: AppText.caption.copyWith(
-                  color: context.colors.onSurface,
-                ),
-              ),
+            AppSectionHeader(
+              title: Copy.feedbackMatching(matching.length, all.length),
+              action: view.filter.isEmpty
+                  ? null
+                  : AppButton(
+                      label: Copy.feedbackClearFilters,
+                      variant: AppButtonVariant.text,
+                      onPressed: () =>
+                          controller.setFilter(const FeedbackFilter()),
+                    ),
             ),
             if (view.error != null)
               Padding(

@@ -15,6 +15,7 @@ class AppSwitchTile extends StatelessWidget {
     this.description,
     this.enabled = true,
     this.divided = true,
+    this.dense = false,
   }) : _useCheckbox = false;
 
   /// Creates the same layout with a checkbox instead of a switch.
@@ -26,6 +27,7 @@ class AppSwitchTile extends StatelessWidget {
     this.description,
     this.enabled = true,
     this.divided = true,
+    this.dense = false,
   }) : _useCheckbox = true;
 
   /// Visible title; also the semantic name of the control (FE-A11Y-02).
@@ -47,6 +49,11 @@ class AppSwitchTile extends StatelessWidget {
   /// outline the control pass false.
   final bool divided;
 
+  /// When true, the tile is one 48dp line on the page background with no
+  /// inset, for a switch that sits inside a form rather than a list of
+  /// settings. [description] is then announced but not drawn.
+  final bool dense;
+
   final bool _useCheckbox;
 
   @override
@@ -61,10 +68,11 @@ class AppSwitchTile extends StatelessWidget {
         toggled: _useCheckbox ? null : value,
         onTap: enabled ? _toggle : null,
         child: Material(
-          color: colors.surface,
+          type: dense ? MaterialType.transparency : MaterialType.canvas,
+          color: dense ? null : colors.surface,
           child: DecoratedBox(
             decoration: BoxDecoration(
-              border: divided
+              border: divided && !dense
                   ? Border(
                       bottom: BorderSide(
                         color: colors.outline,
@@ -75,37 +83,48 @@ class AppSwitchTile extends StatelessWidget {
             ),
             child: InkWell(
               onTap: enabled ? _toggle : null,
+              borderRadius: dense
+                  ? const BorderRadius.all(Radius.circular(Radii.sm))
+                  : null,
               child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  minHeight: Sizes.minTapTarget + Space.x6,
+                constraints: BoxConstraints(
+                  minHeight: dense
+                      ? Sizes.minTapTarget
+                      : Sizes.minTapTarget + Space.x6,
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: Space.x4,
-                    vertical: Space.x2,
-                  ),
+                  padding: dense
+                      ? EdgeInsets.zero
+                      : const EdgeInsets.symmetric(
+                          horizontal: Space.x4,
+                          vertical: Space.x2,
+                        ),
                   child: Row(
                     children: <Widget>[
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              title,
-                              style: AppText.bodyStrong.copyWith(
-                                color: colors.onSurface,
-                              ),
-                            ),
-                            if (description != null) ...<Widget>[
-                              const SizedBox(height: Space.x1),
+                        // The tile's Semantics already carries both lines;
+                        // left in, a reader would announce them twice.
+                        child: ExcludeSemantics(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
                               Text(
-                                description!,
-                                style: AppText.caption.copyWith(
-                                  color: colors.onSurface,
-                                ),
+                                title,
+                                style:
+                                    (dense ? AppText.label : AppText.bodyStrong)
+                                        .copyWith(color: colors.onSurface),
                               ),
+                              if (description != null && !dense) ...<Widget>[
+                                const SizedBox(height: Space.x1),
+                                Text(
+                                  description!,
+                                  style: AppText.caption.copyWith(
+                                    color: colors.onSurface,
+                                  ),
+                                ),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
                       ),
                       const SizedBox(width: Space.x3),

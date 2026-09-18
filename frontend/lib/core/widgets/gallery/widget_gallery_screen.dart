@@ -44,6 +44,8 @@ import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
+import 'package:tapture/core/widgets/fields/dictation_phase.dart';
+import 'package:tapture/core/widgets/fields/dictation_status.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/forms/keep_focused_visible.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
@@ -397,11 +399,23 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         ),
         const SizedBox(height: Space.x3),
       ],
-      const AppIconButton(
-        icon: Icons.search,
-        semanticLabel: Copy.galleryFields,
-        tooltip: Copy.galleryFields,
-        onPressed: _noop,
+      const Row(
+        children: <Widget>[
+          AppIconButton(
+            icon: Icons.search,
+            semanticLabel: Copy.galleryFields,
+            tooltip: Copy.galleryFields,
+            onPressed: _noop,
+          ),
+          SizedBox(width: Space.x2),
+          AppIconButton(
+            icon: Icons.mic,
+            semanticLabel: Copy.dictationListening,
+            tooltip: Copy.dictationListening,
+            selected: true,
+            onPressed: _noop,
+          ),
+        ],
       ),
       const SizedBox(height: Space.x3),
       const AppOverflowMenu(
@@ -458,6 +472,13 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         controller: _multiline,
         maxLines: 4,
         maxLength: 80,
+      ),
+      const SizedBox(height: Space.x2),
+      const DictationStatus(phase: DictationPhase.starting),
+      const SizedBox(height: Space.x2),
+      const DictationStatus(
+        phase: DictationPhase.listening,
+        heard: 'The pump leaks at night',
       ),
       const SizedBox(height: Space.x4),
       AppNumberField(label: 'Count', min: 0, max: 10, onChanged: (_) {}),
@@ -523,6 +544,14 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),
+      AppRadioGroup<String>(
+        label: 'Grade',
+        options: _grades,
+        value: 'b',
+        direction: Axis.horizontal,
+        onChanged: (_) {},
+      ),
+      const SizedBox(height: Space.x4),
       AppMultiChoiceField<String>(
         label: 'Tags',
         options: _tags,
@@ -545,6 +574,14 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         onChanged: (_) {},
       ),
       AppSwitchTile.checkbox(title: 'GPS', value: true, onChanged: (_) {}),
+      const SizedBox(height: Space.x2),
+      AppSwitchTile(
+        title: 'GPS',
+        description: 'Stamp each capture',
+        value: true,
+        dense: true,
+        onChanged: (_) {},
+      ),
       const SizedBox(height: Space.x4),
       AppForm(
         fields: <Widget>[

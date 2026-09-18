@@ -7,7 +7,8 @@ enum FeedbackCategory {
   /// Anything that is not one of the others.
   general('general', 'General feedback'),
 
-  /// Something that works but could work better.
+  /// Something that works but could work better. No longer offered on the
+  /// form; kept so entries saved with it still read, filter and export.
   improvement('improvement', 'Improvement'),
 
   /// Something is wrong.
@@ -26,6 +27,24 @@ enum FeedbackCategory {
 
   /// Name in an exported workbook.
   final String exportLabel;
+
+  /// The types the form offers, in the order it shows them.
+  static const List<FeedbackCategory> offered = <FeedbackCategory>[
+    general,
+    error,
+    suggestion,
+    other,
+  ];
+
+  /// The types a filter offers: those the form offers, plus any retired
+  /// type that [stored] still holds, so old entries can still be found.
+  static List<FeedbackCategory> filterable(Iterable<FeedbackCategory> stored) {
+    final Set<FeedbackCategory> present = stored.toSet();
+    return <FeedbackCategory>[
+      for (final FeedbackCategory category in values)
+        if (offered.contains(category) || present.contains(category)) category,
+    ];
+  }
 
   /// The category stored as [name], or [general] for a name this build does
   /// not know.

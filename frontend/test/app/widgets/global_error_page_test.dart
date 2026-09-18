@@ -54,6 +54,52 @@ void main() {
     },
   );
 
+  testWidgets('Restart, Export log and Recycle bin share one row', (
+    WidgetTester tester,
+  ) async {
+    await _pumpThrowing(tester, size: const Size(1000, 700));
+    expect(tester.takeException(), isA<StateError>());
+    final double top = tester.getCenter(find.text(Copy.restart)).dy;
+    expect(tester.getCenter(find.text(Copy.exportLog)).dy, top);
+    expect(tester.getCenter(find.text(Copy.openRecycleBin)).dy, top);
+    expect(
+      tester.getCenter(find.text(Copy.restart)).dx,
+      lessThan(tester.getCenter(find.text(Copy.exportLog)).dx),
+    );
+    expect(
+      tester.getCenter(find.text(Copy.exportLog)).dx,
+      lessThan(tester.getCenter(find.text(Copy.openRecycleBin)).dx),
+    );
+    // Restart is the one filled action; the others are outlined.
+    final List<AppButtonVariant> variants = tester
+        .widgetList<AppButton>(find.byType(AppButton))
+        .map((AppButton button) => button.variant)
+        .toList();
+    expect(variants, <AppButtonVariant>[
+      AppButtonVariant.primary,
+      AppButtonVariant.secondary,
+      AppButtonVariant.secondary,
+    ]);
+  });
+
+  testWidgets('on a narrow screen the row wraps instead of clipping', (
+    WidgetTester tester,
+  ) async {
+    await _pumpThrowing(tester, size: const Size(320, 700));
+    expect(tester.takeException(), isA<StateError>());
+    await tester.pump();
+    expect(tester.takeException(), isNull);
+    for (final String label in <String>[
+      Copy.restart,
+      Copy.exportLog,
+      Copy.openRecycleBin,
+    ]) {
+      final Rect rect = tester.getRect(find.text(label));
+      expect(rect.left, greaterThanOrEqualTo(0));
+      expect(rect.right, lessThanOrEqualTo(320));
+    }
+  });
+
   testWidgets('restart remounts under the same scope and keeps unsaved state', (
     WidgetTester tester,
   ) async {
@@ -225,13 +271,14 @@ Future<Result<File>> _writeLogSync(Directory into) {
 
 Future<void> _pumpThrowing(
   WidgetTester tester, {
+  Size size = const Size(400, 900),
   VoidCallback? onOpenRecycleBin,
   Directory? exportDirectory,
   Future<void> Function(File file)? shareFile,
   Future<Result<File>> Function(Directory into)? writeLog,
 }) {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(400, 900);
+  tester.view.physicalSize = size;
   addTearDown(() {
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();

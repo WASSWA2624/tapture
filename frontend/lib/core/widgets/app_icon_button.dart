@@ -15,6 +15,7 @@ class AppIconButton extends StatelessWidget {
     required this.semanticLabel,
     required this.tooltip,
     this.onPressed,
+    this.selected,
   });
 
   /// The icon to draw. Colour and the default size come from the theme.
@@ -29,16 +30,24 @@ class AppIconButton extends StatelessWidget {
   /// Invoked on a press. Null is the disabled state.
   final VoidCallback? onPressed;
 
+  /// Null for a plain action. Otherwise the control is a toggle, filled
+  /// while on and announced as selected, so state is never colour alone
+  /// (FE-A11Y-05). Pair it with a [tooltip] that names the next press.
+  final bool? selected;
+
   @override
   Widget build(BuildContext context) {
+    final AppColors colors = context.colors;
+    final bool on = selected ?? false;
     final BorderSide outline = BorderSide(
-      color: context.colors.outline,
+      color: on ? colors.primary : colors.outline,
       width: Theme.of(context).dividerTheme.thickness ?? Space.x0 / 2,
       strokeAlign: BorderSide.strokeAlignInside,
     );
     return IconButton(
       onPressed: onPressed,
       tooltip: tooltip,
+      isSelected: selected,
       padding: EdgeInsets.zero,
       visualDensity: VisualDensity.standard,
       constraints: const BoxConstraints.tightFor(
@@ -52,6 +61,8 @@ class AppIconButton extends StatelessWidget {
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         visualDensity: VisualDensity.standard,
         iconSize: Space.x6,
+        backgroundColor: on ? colors.primary : null,
+        foregroundColor: on ? colors.onPrimary : null,
         side: outline,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(Radii.sm)),

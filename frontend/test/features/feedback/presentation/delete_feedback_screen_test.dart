@@ -10,6 +10,7 @@ import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/feedback/feedback.dart';
+import 'package:tapture/features/feedback/presentation/delete_feedback_controller.dart';
 import 'package:tapture/features/feedback/presentation/delete_feedback_screen.dart';
 import 'package:tapture/features/feedback/presentation/feedback_providers.dart';
 
@@ -64,6 +65,50 @@ void main() {
     expect(await repo.watch().first, isEmpty);
     expect(_ok(await repo.screenshot(id)), isNull);
     expect(find.text(Copy.feedbackDeleted(1)), findsOneWidget);
+  });
+
+  testWidgets('select all sits on the results line and ticks every match', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, seed: true);
+    await tester.tap(find.text(Copy.selectAll));
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.feedbackDeleteCount(1)), findsOneWidget);
+  });
+
+  test('undo still restores after the screen has closed', () async {
+    final FeedbackRepositoryImpl repo = FeedbackRepositoryImpl.memory(
+      clock: FixedClock(DateTime.utc(2026, 9, 18, 7, 2)),
+    );
+    final FeedbackEntry entry = _ok(
+      await repo.add(
+        category: FeedbackCategory.error,
+        message: 'Undo me',
+        context: aFeedbackEntry().context,
+      ),
+    );
+    final ProviderContainer container = ProviderContainer(
+      overrides: <Override>[
+        feedbackRepositoryProvider.overrideWith((Ref _) => repo),
+      ],
+    );
+    addTearDown(container.dispose);
+    final ProviderSubscription<Object?> screen = container.listen(
+      deleteFeedbackControllerProvider,
+      (Object? _, Object? _) {},
+    );
+    final DeleteFeedbackController controller = container.read(
+      deleteFeedbackControllerProvider.notifier,
+    );
+    controller.toggle(entry.id);
+    final List<RemovedFeedback> removed = _ok(
+      await controller.removeSelected(),
+    );
+    screen.close();
+    await container.pump();
+    expect(container.exists(deleteFeedbackControllerProvider), isFalse);
+    _ok(await controller.restore(removed));
+    expect((await repo.watch().first).single.message, 'Undo me');
   });
 }
 

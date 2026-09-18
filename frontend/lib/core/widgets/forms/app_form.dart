@@ -8,9 +8,14 @@ import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/forms/focus_actions.dart';
 import 'package:tapture/core/widgets/forms/keep_focused_visible.dart';
+import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 
 /// The form frame every editing screen composes: spaced fields, an error
 /// summary, a submit bar, and an unsaved-changes guard.
+///
+/// Given a bounded height (an [AppPage] with `scrollable: false`), the
+/// fields scroll in a readable column and the submit bar stays pinned
+/// below them. Given an unbounded one, the bar follows the last field.
 class AppForm extends StatefulWidget {
   /// Creates a form. [onSubmit] runs once even if the bar is pressed twice.
   const AppForm({
@@ -180,9 +185,11 @@ class _AppFormState extends State<AppForm> {
                             Space.x4,
                             Space.x2,
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: _fieldSlate(),
+                          child: ContentConstraint(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: _fieldSlate(),
+                            ),
                           ),
                         ),
                       ),
@@ -255,7 +262,7 @@ class _AppFormState extends State<AppForm> {
           Space.x4,
           Space.x4,
         ),
-        child: action,
+        child: ContentConstraint(child: action),
       ),
     );
   }

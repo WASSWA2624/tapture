@@ -29,6 +29,46 @@ abstract final class Copy {
   /// Hides a revealed field again, named for its label.
   static String hideField(String label) => 'Hide $label';
 
+  /// Starts dictation into a field, named for its label.
+  static String dictateInto(String label) => 'Speak into $label';
+
+  /// Stops dictation into a field, named for its label.
+  static String stopDictating(String label) => 'Stop speaking into $label';
+
+  /// Under a field while the microphone opens.
+  static const String dictationStarting = 'Opening the microphone…';
+
+  /// Under a field while nothing has been heard yet.
+  static const String dictationListening = 'Listening…';
+
+  /// Under a field after a stop, while the last words arrive.
+  static const String dictationFinishing = 'Adding what you said…';
+
+  /// The platform has no recogniser this app can reach.
+  static const String dictationUnavailable =
+      'Voice input is not available here. Type instead.';
+
+  /// The microphone was refused.
+  static const String dictationNoMicrophone =
+      'Allow the microphone to speak into a field. Typing still works.';
+
+  /// The recogniser heard nothing it could use.
+  static const String dictationNothingHeard =
+      'Nothing was heard. Tap the microphone and speak again.';
+
+  /// The recogniser needs a connection it does not have.
+  static const String dictationNeedsConnection =
+      'Voice input needs a connection on this device. Type instead.';
+
+  /// Offline by choice, and this device cannot recognise speech locally.
+  static const String dictationOfflineOnly =
+      'You are working offline, and this device cannot recognise speech '
+      'without a connection. Type instead.';
+
+  /// The recogniser stopped for a reason it did not name.
+  static const String dictationFailed =
+      'Voice input stopped. Try again, or type instead.';
+
   /// A value filled in rather than typed.
   static const String autoFilled = 'Auto-filled';
 
@@ -381,11 +421,11 @@ abstract final class Copy {
   static const String restart = 'Restart';
 
   /// Writes the diagnostics buffer to a shareable file.
-  static const String exportLog = 'Export the log';
+  static const String exportLog = 'Export log';
 
   /// Opens restored records. The destination is the recycle bin once 168
   /// exists.
-  static const String openRecycleBin = 'Open recycle bin';
+  static const String openRecycleBin = 'Recycle bin';
 
   /// Settings root title.
   static const String settingsTitle = 'Settings';
@@ -751,13 +791,13 @@ abstract final class Copy {
       'Saved on this device only. Nothing is sent anywhere.';
 
   /// Feedback type: anything that is not one of the others.
-  static const String feedbackCategoryGeneral = 'General feedback';
+  static const String feedbackCategoryGeneral = 'General';
 
   /// Feedback type: something that works but could work better.
   static const String feedbackCategoryImprovement = 'Improvement';
 
   /// Feedback type: something is wrong.
-  static const String feedbackCategoryError = 'Error in the app';
+  static const String feedbackCategoryError = 'Error';
 
   /// Feedback type: an idea.
   static const String feedbackCategorySuggestion = 'Suggestion';
@@ -803,11 +843,11 @@ abstract final class Copy {
   static const String feedbackMessageRequired = 'Write your feedback';
 
   /// Attaches the screenshot taken when Feedback was tapped.
-  static const String feedbackAttachScreenshot = 'Attach a screenshot';
+  static const String feedbackAttachScreenshot = 'Attach screenshot';
 
   /// What the screenshot shows, named for the screen it was taken on.
   static String feedbackScreenshotOf(String screen) {
-    return 'Of $screen, as it was when you tapped Feedback.';
+    return 'Screenshot of $screen, as it was when you tapped Feedback';
   }
 
   /// No screenshot could be taken, so there is nothing to attach.
@@ -822,9 +862,6 @@ abstract final class Copy {
 
   /// Announced once the entry is durable.
   static const String feedbackSaved = 'Feedback saved on this device.';
-
-  /// Heading over the feedback filters.
-  static const String feedbackWhich = 'Which feedback';
 
   /// Filter: feedback types.
   static const String feedbackTypes = 'Types';
@@ -868,6 +905,19 @@ abstract final class Copy {
 
   /// Resets every feedback filter.
   static const String feedbackClearFilters = 'Clear filters';
+
+  /// Opens the facets beyond search and type, counting those in use.
+  static String feedbackMoreFilters(int active) {
+    return Intl.plural(
+      active,
+      zero: 'More filters',
+      one: 'More filters (1)',
+      other: 'More filters ($active)',
+    );
+  }
+
+  /// Folds the extra facets away again.
+  static const String feedbackFewerFilters = 'Fewer filters';
 
   /// How many entries the filters let through.
   static String feedbackMatching(int matching, int total) {

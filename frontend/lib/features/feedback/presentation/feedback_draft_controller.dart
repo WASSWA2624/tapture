@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'feedback_draft.dart';
 
-/// Holds [FeedbackDraft] until the form saves or the operator cancels.
+/// Holds [FeedbackDraft] from a Feedback tap until the form it opened closes.
 final class FeedbackDraftController extends Notifier<FeedbackDraft?> {
   /// Creates the holder.
   FeedbackDraftController();

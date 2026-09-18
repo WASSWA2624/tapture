@@ -1,0 +1,136 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:tapture/core/ai/stt_result.dart';
+import 'package:tapture/core/ai/stt_service.dart';
+import 'package:tapture/core/errors/failure.dart';
+
+import 'dictation_phase.dart';
+
+/// One field's dictation: opens the recogniser on a tap, follows what it
+/// hears, and hands the final words to [onSpoken].
+///
+/// Disposing it cancels a listen that is still running, so a field that
+/// leaves the screen never keeps the microphone open.
+final class DictationSession extends ChangeNotifier {
+  /// Creates a session. Nothing listens until [start].
+  DictationSession({required this.onSpoken, required this.onFailure});
+
+  /// Receives the final words of a listen, exactly as recognised.
+  final ValueChanged<String> onSpoken;
+
+  /// Receives why a listen ended without words.
+  final ValueChanged<Failure> onFailure;
+
+  DictationPhase _phase = DictationPhase.idle;
+  String _heard = '';
+  SttService? _service;
+  StreamSubscription<SttResult>? _subscription;
+  bool _disposed = false;
+
+  /// Where the listen is.
+  DictationPhase get phase => _phase;
+
+  /// Words heard so far in this listen, before they reach the field.
+  String get heard => _heard;
+
+  /// Whether a listen is under way.
+  bool get isActive => _phase != DictationPhase.idle;
+
+  /// Starts listening, or stops when a listen is already under way.
+  void toggle(
+    SttService service, {
+    required String languageTag,
+    bool onDeviceOnly = false,
+  }) {
+    if (isActive) {
+      unawaited(stop());
+      return;
+    }
+    start(service, languageTag: languageTag, onDeviceOnly: onDeviceOnly);
+  }
+
+  /// Opens the recogniser. A listen already under way here is dropped.
+  void start(
+    SttService service, {
+    required String languageTag,
+    bool onDeviceOnly = false,
+  }) {
+    if (_disposed) {
+      return;
+    }
+    unawaited(_subscription?.cancel());
+    _service = service;
+    _heard = '';
+    _set(DictationPhase.starting);
+    _subscription = service
+        .listen(languageTag: languageTag, onDeviceOnly: onDeviceOnly)
+        .listen(_onResult, onError: _onError, onDone: _onDone);
+  }
+
+  /// Stops listening. Words already heard still reach the field.
+  Future<void> stop() async {
+    final SttService? service = _service;
+    if (!isActive || service == null) {
+      return;
+    }
+    if (_phase == DictationPhase.starting) {
+      // Nothing heard yet, so there is nothing to wait for.
+      await cancel();
+      return;
+    }
+    _set(DictationPhase.finishing);
+    await service.stop();
+  }
+
+  /// Stops listening and drops what was not yet final.
+  Future<void> cancel() async {
+    final StreamSubscription<SttResult>? subscription = _subscription;
+    _subscription = null;
+    _heard = '';
+    _set(DictationPhase.idle);
+    await subscription?.cancel();
+  }
+
+  void _onResult(SttResult result) {
+    if (result.isFinal) {
+      _heard = '';
+      if (result.text.trim().isNotEmpty) {
+        onSpoken(result.text);
+      }
+      return;
+    }
+    _heard = result.text;
+    _set(
+      _phase == DictationPhase.finishing
+          ? DictationPhase.finishing
+          : DictationPhase.listening,
+    );
+  }
+
+  void _onError(Object error) {
+    onFailure(Failure.from(error));
+  }
+
+  void _onDone() {
+    _subscription = null;
+    _heard = '';
+    _set(DictationPhase.idle);
+  }
+
+  void _set(DictationPhase phase) {
+    if (_disposed) {
+      return;
+    }
+    _phase = phase;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    unawaited(_subscription?.cancel());
+    _subscription = null;
+    super.dispose();
+  }
+}

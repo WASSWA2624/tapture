@@ -3,8 +3,12 @@ library;
 
 import 'package:flutter/material.dart' hide Router;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/ai/stt_service.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/error_boundary.dart';
+import 'package:tapture/core/widgets/fields/dictation_scope.dart';
+import 'package:tapture/features/settings/presentation/offline_switch.dart';
+import 'package:tapture/features/settings/settings.dart';
 
 import 'env.dart';
 import 'router.dart' show AppRoutes, Router, routerProvider;
@@ -33,6 +37,11 @@ class TaptureApp extends ConsumerWidget {
     final AppThemeMode mode = ref.watch(themeModeProvider);
     final bool outdoor = mode == AppThemeMode.outdoor;
     final Router router = ref.watch(routerProvider);
+    final SttService speech = ref.watch(sttServiceProvider);
+    final String voiceLanguage = ref
+        .watch(offlineStoreProvider)
+        .read(SettingKeys.voiceLanguage);
+    final bool offline = ref.watch(offlineByChoiceProvider);
     return MaterialApp.router(
       title: title,
       theme: buildTheme(brightness: Brightness.light, outdoor: outdoor),
@@ -43,15 +52,21 @@ class TaptureApp extends ConsumerWidget {
         AppThemeMode.system || AppThemeMode.outdoor => ThemeMode.system,
       },
       builder: (BuildContext _, Widget? child) {
-        return ErrorBoundary(
-          fallback: (Failure failure, VoidCallback retry) {
-            return GlobalErrorPage(
-              failure: failure,
-              onRestart: retry,
-              onOpenRecycleBin: () => router.go(AppRoutes.more),
-            );
-          },
-          child: child ?? const SizedBox.shrink(),
+        // Above the navigator, so pushed screens and sheets dictate too.
+        return DictationScope(
+          service: speech,
+          languageTag: voiceLanguage,
+          onDeviceOnly: offline,
+          child: ErrorBoundary(
+            fallback: (Failure failure, VoidCallback retry) {
+              return GlobalErrorPage(
+                failure: failure,
+                onRestart: retry,
+                onOpenRecycleBin: () => router.go(AppRoutes.more),
+              );
+            },
+            child: child ?? const SizedBox.shrink(),
+          ),
         );
       },
       routerConfig: router,

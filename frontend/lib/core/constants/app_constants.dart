@@ -28,6 +28,15 @@ abstract final class AppConstants {
     debounce: Duration(milliseconds: 300),
   );
 
+  /// How long dictation listens at most, how much silence ends it, and how
+  /// long the recogniser gets to hand over its last words after a stop.
+  static const ({Duration listenFor, Duration pauseFor, Duration settle})
+  dictation = (
+    listenFor: Duration(minutes: 1),
+    pauseFor: Duration(seconds: 4),
+    settle: Duration(seconds: 2),
+  );
+
   /// Bounds for virtualised lists and trays.
   static const ({int pageSize}) lists = (pageSize: listPageSize);
 

@@ -9,6 +9,8 @@ import 'package:tapture/core/widgets/app_page.dart';
 import '../../support/a11y_matchers.dart';
 
 void main() {
+  _nonScrollingCases();
+
   testWidgets('pull-to-refresh is absent until onRefresh is given', (
     WidgetTester tester,
   ) async {
@@ -98,6 +100,40 @@ void main() {
     await tester.pump();
 
     expect(find.text('kept'), findsOneWidget);
+  });
+}
+
+void _nonScrollingCases() {
+  testWidgets('a non-scrolling page gives its body the height to fill', (
+    WidgetTester tester,
+  ) async {
+    BoxConstraints? given;
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(400, 800);
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildTheme(brightness: Brightness.light),
+        home: AppPage(
+          title: 'Page',
+          subtitle: 'Subtitle',
+          scrollable: false,
+          body: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              given = constraints;
+              return const SizedBox.expand();
+            },
+          ),
+        ),
+      ),
+    );
+    expect(given?.hasBoundedHeight, isTrue);
+    expect(find.text('Subtitle'), findsOneWidget);
+    expect(find.byType(Scrollable), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 }
 

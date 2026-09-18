@@ -10,7 +10,6 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/logging/log_export.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_page.dart';
-import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 
 /// Last-resort screen the top-level error boundary shows for a build failure.
@@ -61,11 +60,19 @@ class GlobalErrorPage extends ConsumerWidget {
       title: Copy.somethingWentWrong,
       subtitle: Copy.workStillOnDevice,
       body: AppErrorState(failure: failure),
-      footer: Column(
-        mainAxisSize: MainAxisSize.min,
+      // One row that wraps only when it must. Restart is the one filled
+      // action (FE-SIMP-01); the other two are outlined, so all three align.
+      footer: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: Space.x2,
+        runSpacing: Space.x2,
         children: <Widget>[
-          AppPrimaryAction(label: Copy.restart, onPressed: onRestart),
-          const SizedBox(height: Space.x2),
+          AppButton(
+            key: const ValueKey<String>('global-error-restart'),
+            label: Copy.restart,
+            onPressed: onRestart,
+          ),
           AppButton(
             label: Copy.exportLog,
             variant: AppButtonVariant.secondary,
@@ -83,10 +90,9 @@ class GlobalErrorPage extends ConsumerWidget {
               );
             },
           ),
-          const SizedBox(height: Space.x2),
           AppButton(
             label: Copy.openRecycleBin,
-            variant: AppButtonVariant.text,
+            variant: AppButtonVariant.secondary,
             onPressed: onOpenRecycleBin,
           ),
         ],

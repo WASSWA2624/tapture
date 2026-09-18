@@ -25,6 +25,7 @@ class AppPage extends StatelessWidget {
     this.showAppBar = true,
     this.inset = true,
     this.leading,
+    this.scrollable = true,
   });
 
   /// App bar title.
@@ -61,35 +62,17 @@ class AppPage extends StatelessWidget {
   /// When false, list-style pages bleed to the edges like a chat list.
   final bool inset;
 
+  /// When false, [body] gets the whole height between the bar and the
+  /// [footer] and scrolls itself, so it can pin its own actions: an
+  /// [AppForm] keeps its submit bar in reach this way (FE-SIMP-01).
+  final bool scrollable;
+
   @override
   Widget build(BuildContext context) {
     final EdgeInsets padding = _paddingFor(context, inset: inset);
-    Widget scroller = SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      padding: padding,
-      child: ContentConstraint(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            if (subtitle != null) ...<Widget>[
-              Text(
-                subtitle!,
-                style: AppText.caption.copyWith(
-                  color: context.colors.onSurface,
-                ),
-              ),
-              const SizedBox(height: Space.x2),
-            ],
-            body,
-          ],
-        ),
-      ),
-    );
-    final Future<void> Function()? refresh = onRefresh;
-    if (refresh != null) {
-      scroller = RefreshIndicator(onRefresh: refresh, child: scroller);
-    }
+    final Widget content = scrollable
+        ? _scrollingBody(context, padding)
+        : _fixedBody(context, padding);
     final Widget? footer = this.footer;
     final Widget? leading = this.leading;
     final bool invertedBar = Theme.of(context).brightness != Brightness.dark;
@@ -122,18 +105,79 @@ class AppPage extends StatelessWidget {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: SafeArea(bottom: footer == null, child: scroller),
+            child: SafeArea(bottom: footer == null, child: content),
           ),
           if (footer != null)
             SafeArea(
               top: false,
               child: Padding(
-                padding: padding.copyWith(top: Space.x2),
+                // Inset even on edge-to-edge pages: a pinned action never
+                // touches the screen edge.
+                padding: _paddingFor(
+                  context,
+                  inset: true,
+                ).copyWith(top: Space.x2),
                 child: ContentConstraint(child: footer),
               ),
             ),
         ],
       ),
+    );
+  }
+}
+
+extension on AppPage {
+  /// [body] in the page's own scroll view, under an optional [subtitle].
+  Widget _scrollingBody(BuildContext context, EdgeInsets padding) {
+    Widget scroller = SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      padding: padding,
+      child: ContentConstraint(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            if (subtitle != null) ...<Widget>[
+              Text(
+                subtitle!,
+                style: AppText.caption.copyWith(
+                  color: context.colors.onSurface,
+                ),
+              ),
+              const SizedBox(height: Space.x2),
+            ],
+            body,
+          ],
+        ),
+      ),
+    );
+    final Future<void> Function()? refresh = onRefresh;
+    if (refresh != null) {
+      scroller = RefreshIndicator(onRefresh: refresh, child: scroller);
+    }
+    return scroller;
+  }
+
+  /// [body] under an optional [subtitle], given the remaining height.
+  Widget _fixedBody(BuildContext context, EdgeInsets padding) {
+    final String? subtitle = this.subtitle;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (subtitle != null)
+          Padding(
+            padding: padding.copyWith(bottom: Space.x0),
+            child: ContentConstraint(
+              child: Text(
+                subtitle,
+                style: AppText.caption.copyWith(
+                  color: context.colors.onSurface,
+                ),
+              ),
+            ),
+          ),
+        Expanded(child: body),
+      ],
     );
   }
 }

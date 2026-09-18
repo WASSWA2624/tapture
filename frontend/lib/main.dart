@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 
 import 'app/app.dart';
 import 'app/provider_observer.dart' hide ProviderObserver;
+import 'core/ai/stt_service.dart';
 import 'core/db/app_database.dart';
 import 'core/device/device_identity.dart';
 import 'core/device/platform_facts.dart';
@@ -65,6 +66,11 @@ Future<void> _run() async {
         return FeedbackRepositoryImpl.platform(clock: clock, ids: ids);
       }),
       feedbackDownloadsProvider.overrideWith((Ref _) => DownloadService()),
+      sttServiceProvider.overrideWith((Ref ref) {
+        final SttService speech = SttService();
+        ref.onDispose(() => unawaited(speech.cancel()));
+        return speech;
+      }),
     ]);
   }
   runApp(

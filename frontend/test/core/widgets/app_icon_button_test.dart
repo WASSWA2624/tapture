@@ -40,6 +40,51 @@ void main() {
     expect(find.byType(AppIconButton), meetsTapTarget());
     expect(find.byType(AppIconButton), hasSemanticLabel('Delete'));
   });
+
+  testWidgets('a toggle is announced as selected and filled while on', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      const AppIconButton(
+        icon: Icons.mic,
+        semanticLabel: 'Stop speaking',
+        tooltip: 'Stop speaking',
+        selected: true,
+        onPressed: _ignorePress,
+      ),
+    );
+    final IconButton button = tester.widget<IconButton>(
+      find.byType(IconButton),
+    );
+    expect(button.isSelected, isTrue);
+    expect(
+      button.style?.backgroundColor?.resolve(<WidgetState>{}),
+      isNot(Colors.transparent),
+    );
+    expect(
+      tester.getSemantics(find.byType(IconButton)),
+      isSemantics(isSelected: true, label: 'Stop speaking'),
+    );
+    expect(find.byType(AppIconButton), meetsTapTarget());
+    await expectNoA11yIssues(tester);
+  });
+
+  testWidgets('a plain action is not a toggle', (WidgetTester tester) async {
+    await _pump(
+      tester,
+      const AppIconButton(
+        icon: Icons.search,
+        semanticLabel: 'Search',
+        tooltip: 'Search',
+        onPressed: _ignorePress,
+      ),
+    );
+    expect(
+      tester.widget<IconButton>(find.byType(IconButton)).isSelected,
+      isNull,
+    );
+  });
 }
 
 Future<void> _pump(WidgetTester tester, Widget child) async {

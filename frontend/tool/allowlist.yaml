@@ -79,6 +79,10 @@ packages:
     version: ^3.6.1
     purpose: Pure-Dart ZIP writing (and reading, in tests) behind core/export's XLSX encoder, so a workbook builds on the web as well as on device. MIT. Replaces a hand-rolled ZIP container and CRC. Capped at 3.x because that is the release already in the offline cache this build runs from; task 205 reuses it for the data package.
     task: "282"
+  speech_to_text:
+    version: ^7.4.0
+    purpose: On-device and platform speech recognition behind core/ai/stt_service (FE-STR-11), so every free-text field can take dictation. BSD-3-Clause. Replaces a hand-rolled Android/iOS/web recogniser channel. Pinned at 7.4 because that is the release in the offline cache this build runs from.
+    task: "283"
   flutter_test:
     version: sdk
     purpose: The widget and unit test harness every guardrail suite runs on.
