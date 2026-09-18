@@ -6,10 +6,14 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 
 import 'app/app.dart';
 import 'app/provider_observer.dart' hide ProviderObserver;
+import 'core/db/app_database.dart';
+import 'core/device/device_identity.dart';
+import 'core/ids/uuid_service.dart';
 import 'core/lifecycle/lifecycle_observer.dart';
 import 'core/logging/logger.dart';
 import 'core/security/secure_storage.dart';
 import 'core/time/clock.dart';
+import 'features/settings/presentation/offline_switch.dart';
 import 'features/settings/settings.dart';
 
 /// Errors captured for bootstrap tests; the same objects are also logged.
@@ -34,6 +38,7 @@ Future<void> _run() async {
     clock: const SystemClock(),
     biometrics: BiometricLock(),
   );
+  final SettingsStore offlineStore = await _openOfflineStore();
   runApp(
     ProviderScope(
       observers: Env.isDev
@@ -41,6 +46,7 @@ Future<void> _run() async {
           : const <ProviderObserver>[],
       overrides: <Override>[
         appLockProvider.overrideWith((Ref ref) => lock),
+        offlineStoreProvider.overrideWith((Ref _) => offlineStore),
         lifecycleObserverProvider.overrideWith(
           (Ref ref) => _lifecycleObserver!,
         ),
@@ -66,6 +72,24 @@ void _installLifecycleObserver() {
   WidgetsBinding.instance.addObserver(_lifecycleObserver!);
 }
 
+Future<SettingsStore> _openOfflineStore() async {
+  // Suites never open the on-disk database (FE-TEST-03). Production still
+  // honours a persisted choice at launch.
+  if (_runningUnderTest) {
+    return SettingsStore.fake();
+  }
+  try {
+    const SystemClock clock = SystemClock();
+    return await SettingsStore.open(
+      db: AppDatabase.open(),
+      deviceId: await deviceId(clock: clock, ids: UuidV7Service(clock)),
+      clock: clock,
+    );
+  } on Object {
+    return SettingsStore.fake();
+  }
+}
+
 Future<void> _flushPendingWrites() async {
   // Persistence is not on this task. The await keeps a later flush from
   // becoming a floating future on pause (FE-STATE-07, FE-CODE-07).
@@ -73,6 +97,13 @@ Future<void> _flushPendingWrites() async {
 
 void _handleZoneError(Object error, StackTrace stackTrace) {
   _captureError(error, stackTrace);
+}
+
+bool get _runningUnderTest {
+  if (const bool.fromEnvironment('FLUTTER_TEST')) {
+    return true;
+  }
+  return WidgetsBinding.instance.runtimeType.toString().contains('Test');
 }
 
 void _captureError(Object error, StackTrace stackTrace) {

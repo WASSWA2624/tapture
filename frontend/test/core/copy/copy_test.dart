@@ -196,6 +196,8 @@ List<String> get _values {
     Copy.networkMetered,
     Copy.networkOffline,
     Copy.networkOfflineByChoice,
+    Copy.settingsOfflineTitle,
+    Copy.settingsOfflineEffect,
     Copy.unprocessedCount(0),
     Copy.unprocessedCount(1),
     Copy.unprocessedCount(2),

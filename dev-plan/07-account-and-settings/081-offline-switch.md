@@ -29,9 +29,21 @@ feature learns about the switch itself.
 
 ## Definition of done
 
-- [ ] With the switch on, no outbound call leaves the app from any feature, and capture, editing, review and export all
+- [x] With the switch on, no outbound call leaves the app from any feature, and capture, editing, review and export all
   still work.
-- [ ] Turning it off drains the queued work; turning it on retries nothing.
-- [ ] The status line distinguishes offline by choice from offline by radio.
-- [ ] Tests: an integration test with a recording HTTP boundary asserting zero outbound calls with the switch on and
+- [x] Turning it off drains the queued work; turning it on retries nothing.
+- [x] The status line distinguishes offline by choice from offline by radio.
+- [x] Tests: an integration test with a recording HTTP boundary asserting zero outbound calls with the switch on and
   drain on release, and a widget test asserting the switch is the only writer of the flag.
+
+## Carried
+
+- `OutboundQueue` in `core/network/` — the recording send boundary the DoD names. It never imports an HTTP package
+  (FE-FLOW-06, FE-SEC-03); allowed egress folders pass `send` in.
+- `Copy.settingsOfflineTitle` / `settingsOfflineEffect` (FE-L10N-01).
+- `offlineByChoiceProvider` moves from the 075 stub onto this switch so the status line can still tell radio from
+  choice. The persisted flag stays on `SettingsStore`; the provider re-reads it (FE-STATE-06).
+- `connectivityServiceProvider` now folds that provider into `ConnectivityService.offlineOverride`.
+- `SettingsScreen` composes the switch; it is no longer re-exported from `settings.dart` so `offline_switch.dart` can
+  import the barrel for `SettingsStore` (FE-STR-04).
+- `main.dart` opens the store for the live flag so a restart honours a previous choice. Widget tests keep the in-memory fake so bootstrap never opens Drift (FE-TEST-03).

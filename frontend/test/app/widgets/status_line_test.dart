@@ -9,6 +9,7 @@ import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/network/network.dart';
 import 'package:tapture/features/onboarding/presentation/first_run_screen.dart';
+import 'package:tapture/features/settings/presentation/offline_switch.dart';
 
 void main() {
   testWidgets('every segment is a link and navigates through AppRoutes', (
@@ -130,7 +131,7 @@ Future<ProviderContainer> _pump(
       overrides: [
         firstRunCompletedOverride(),
         _connectivityOverride(radio),
-        offlineByChoiceProvider.overrideWith((Ref _) => byChoice),
+        offlineByChoiceOverride(byChoice),
         if (projectLabel != null)
           statusProjectLabelProvider.overrideWith((Ref _) => projectLabel),
         if (contextLabel != null)

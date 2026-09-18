@@ -18,6 +18,7 @@ import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/onboarding/onboarding.dart';
 import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
 import 'package:tapture/features/settings/presentation/capture_settings_screen.dart';
+import 'package:tapture/features/settings/presentation/settings_screen.dart';
 import 'package:tapture/features/settings/presentation/storage_settings_screen.dart';
 import 'package:tapture/features/settings/settings.dart';
 

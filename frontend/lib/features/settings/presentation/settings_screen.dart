@@ -9,6 +9,8 @@ import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
+import 'offline_switch.dart';
+
 // The notifier is private so this file holds one public class (FE-STR-06).
 // ignore_for_file: library_private_types_in_public_api
 
@@ -44,6 +46,7 @@ class SettingsScreen extends ConsumerWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              const OfflineSwitch(),
               const AppSectionHeader(title: Copy.settingsTitle),
               for (final _Section section in sections)
                 AppListTile(

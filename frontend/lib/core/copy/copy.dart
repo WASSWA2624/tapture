@@ -356,6 +356,13 @@ abstract final class Copy {
   /// The operator forced offline.
   static const String networkOfflineByChoice = 'Offline by choice';
 
+  /// Manual offline switch title.
+  static const String settingsOfflineTitle = 'Stay offline';
+
+  /// What keeps working while the switch is on.
+  static const String settingsOfflineEffect =
+      'Everything still works except sending.';
+
   /// How many records still need processing.
   static String unprocessedCount(int n) {
     return Intl.plural(

@@ -11,6 +11,7 @@ import 'package:tapture/core/network/network.dart';
 import 'package:tapture/core/widgets/app_brand_lockup.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
+import 'package:tapture/features/settings/presentation/offline_switch.dart';
 
 import '../router.dart';
 
@@ -107,8 +108,24 @@ class StatusLine extends ConsumerWidget {
 /// shell reads it on every frame (FE-STATE-09).
 final Provider<ConnectivityService> connectivityServiceProvider =
     Provider<ConnectivityService>((Ref ref) {
-      final ConnectivityService service = ConnectivityService();
-      ref.onDispose(service.dispose);
+      final StreamController<bool> override = StreamController<bool>(
+        sync: true,
+      );
+      final ConnectivityService service = ConnectivityService(
+        offlineOverride: override.stream,
+      );
+      // Seed after listen so a persisted choice is not dropped (broadcast
+      // events added before a listener are lost).
+      override.add(ref.read(offlineByChoiceProvider));
+      ref.listen<bool>(offlineByChoiceProvider, (bool? _, bool next) {
+        if (!override.isClosed) {
+          override.add(next);
+        }
+      });
+      ref.onDispose(() {
+        unawaited(override.close());
+        unawaited(service.dispose());
+      });
       return service;
     });
 
@@ -117,10 +134,6 @@ final StreamProvider<NetworkState> networkStateProvider =
     StreamProvider<NetworkState>((Ref ref) {
       return ref.watch(connectivityServiceProvider).watch();
     });
-
-/// Whether the operator forced offline. Task 081 is the writer; until then
-/// this is false so a radio-off is labelled as offline-by-radio.
-final Provider<bool> offlineByChoiceProvider = Provider<bool>((Ref _) => false);
 
 /// Project name on the line. Task 083 replaces the label.
 final Provider<String> statusProjectLabelProvider = Provider<String>((Ref ref) {
