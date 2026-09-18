@@ -16,6 +16,9 @@ import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/onboarding/onboarding.dart';
+import 'package:tapture/features/settings/presentation/capture_settings_screen.dart';
+import 'package:tapture/features/settings/presentation/storage_settings_screen.dart';
+import 'package:tapture/features/settings/settings.dart';
 
 part 'route_guards.dart';
 
@@ -58,6 +61,30 @@ abstract final class AppRoutes {
   /// Unprocessed-queue destination the status line opens. Task 159 owns the
   /// screen.
   static const String queue = '/queue';
+
+  /// Operator profile under More.
+  static const String settingsOperator = '$more/operator';
+
+  /// Capture defaults under More.
+  static const String settingsCapture = '$more/capture';
+
+  /// AI section. The screen arrives in a later phase.
+  static const String settingsAi = '$more/ai';
+
+  /// Language section. The screen arrives in a later phase.
+  static const String settingsLanguage = '$more/language';
+
+  /// Storage usage under More.
+  static const String settingsStorage = '$more/storage';
+
+  /// Files section (specification "Data"). The screen arrives later.
+  static const String settingsFiles = '$more/files';
+
+  /// Security section. The screen arrives in a later phase.
+  static const String settingsSecurity = '$more/security';
+
+  /// About under More.
+  static const String settingsAbout = '$more/about';
 }
 
 /// The process-wide router. Kept alive: the shell watches it on every frame
@@ -170,8 +197,34 @@ List<RouteBase> get _routes {
             GoRoute(
               path: AppRoutes.more,
               builder: (BuildContext _, GoRouterState _) {
-                return const _RoutePage(name: 'more');
+                return const SettingsScreen(showAppBar: false);
               },
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'operator',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const OperatorProfileScreen();
+                  },
+                ),
+                GoRoute(
+                  path: 'capture',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const CaptureSettingsScreen();
+                  },
+                ),
+                GoRoute(
+                  path: 'storage',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const StorageSettingsScreen();
+                  },
+                ),
+                GoRoute(
+                  path: 'about',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const AboutScreen();
+                  },
+                ),
+              ],
             ),
             GoRoute(
               path: AppRoutes.templates,

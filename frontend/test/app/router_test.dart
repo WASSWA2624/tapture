@@ -22,6 +22,14 @@ void main() {
     expect(AppRoutes.more, '/more');
     expect(AppRoutes.templates, '/templates');
     expect(AppRoutes.queue, '/queue');
+    expect(AppRoutes.settingsOperator, '/more/operator');
+    expect(AppRoutes.settingsCapture, '/more/capture');
+    expect(AppRoutes.settingsAi, '/more/ai');
+    expect(AppRoutes.settingsLanguage, '/more/language');
+    expect(AppRoutes.settingsStorage, '/more/storage');
+    expect(AppRoutes.settingsFiles, '/more/files');
+    expect(AppRoutes.settingsSecurity, '/more/security');
+    expect(AppRoutes.settingsAbout, '/more/about');
   });
 
   test('no screen concatenates a path string', () {
@@ -77,6 +85,10 @@ void main() {
 
     await _go(tester, router, AppRoutes.queue);
     expect(find.byKey(const ValueKey<String>('route-queue')), findsOneWidget);
+
+    await _go(tester, router, AppRoutes.more);
+    expect(find.text(Copy.operatorProfileTitle), findsOneWidget);
+    expect(find.text(Copy.settingsAboutTitle), findsOneWidget);
 
     router.go(WidgetGalleryScreen.route);
     await tester.pump();

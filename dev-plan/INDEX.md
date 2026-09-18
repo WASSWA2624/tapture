@@ -116,7 +116,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 
 - [x] [077 — Operator profile](07-account-and-settings/077-operator-profile.md)
 - [x] [078 — Settings store](07-account-and-settings/078-settings-store.md)
-- [ ] [079 — Settings shell and its section screens](07-account-and-settings/079-settings-shell.md)
+- [x] [079 — Settings shell and its section screens](07-account-and-settings/079-settings-shell.md)
 - [ ] [080 — App lock: PIN and biometric unlock](07-account-and-settings/080-app-lock-pin.md)
 - [ ] [081 — Manual offline mode switch](07-account-and-settings/081-offline-switch.md)
 

@@ -385,4 +385,282 @@ abstract final class Copy {
   /// Opens restored records. The destination is the recycle bin once 168
   /// exists.
   static const String openRecycleBin = 'Open recycle bin';
+
+  /// Settings root title.
+  static const String settingsTitle = 'Settings';
+
+  /// Operator tile supporting line.
+  static const String settingsOperatorSubtitle =
+      'Name, initials and contact on this device.';
+
+  /// Capture tile supporting line.
+  static const String settingsCaptureSubtitle =
+      'Camera, dates, GPS and how new files are named.';
+
+  /// AI section title. The screen arrives in a later phase.
+  static const String settingsAiTitle = 'AI';
+
+  /// AI tile supporting line.
+  static const String settingsAiSubtitle = 'When and how proposals run.';
+
+  /// Language section title. The screen arrives in a later phase.
+  static const String settingsLanguageTitle = 'Language';
+
+  /// Language tile supporting line.
+  static const String settingsLanguageSubtitle = 'App and voice.';
+
+  /// Storage section title.
+  static const String settingsStorageTitle = 'Storage';
+
+  /// Storage tile supporting line.
+  static const String settingsStorageSubtitle =
+      'Space used, cache and how long files stay.';
+
+  /// Specification "Data" section. Copy rejects the word "data".
+  static const String settingsFilesTitle = 'Files';
+
+  /// Files tile supporting line.
+  static const String settingsFilesSubtitle =
+      'Import, export and the recycle bin.';
+
+  /// Security section title. The screen arrives in a later phase.
+  static const String settingsSecurityTitle = 'Security';
+
+  /// Security tile supporting line.
+  static const String settingsSecuritySubtitle =
+      'App lock and export encryption.';
+
+  /// About section title.
+  static const String settingsAboutTitle = 'About';
+
+  /// About tile supporting line.
+  static const String settingsAboutSubtitle = 'Version, licences and the plan.';
+
+  /// Camera default row.
+  static const String settingsCamera = 'Camera';
+
+  /// Effect of the camera default.
+  static const String settingsCameraEffect =
+      'Used at the start of the next session.';
+
+  /// Label for the photo camera default.
+  static const String settingsCameraPhoto = 'Photo';
+
+  /// Auto-filled dates row.
+  static const String settingsAutoFillDates = 'Fill dates automatically';
+
+  /// Effect of auto-filled dates.
+  static const String settingsAutoFillDatesEffect =
+      'New captures get today without asking.';
+
+  /// GPS row.
+  static const String settingsGps = 'GPS';
+
+  /// Why GPS stays off until a person turns it on (FE-SEC-07).
+  static const String settingsGpsWhyOff =
+      'Off until you turn it on, so a location is never stored by accident.';
+
+  /// Photo quality row.
+  static const String settingsPhotoQuality = 'Photo quality';
+
+  /// Effect of photo quality.
+  static const String settingsPhotoQualityEffect =
+      'Higher quality makes larger files.';
+
+  /// Standard JPEG quality label.
+  static const String settingsQualityStandard = 'Standard';
+
+  /// Smaller JPEG quality label.
+  static const String settingsQualitySmaller = 'Smaller files';
+
+  /// Folder strategy row.
+  static const String settingsFolderStrategy = 'Photo folders';
+
+  /// Folder strategy applies only to files not yet written.
+  static const String settingsFolderStrategyNewFilesOnly =
+      'Applies to new files only. Existing files stay put.';
+
+  /// Folder strategy: group by context.
+  static const String settingsFolderByContext = 'By context';
+
+  /// Folder strategy: group by template.
+  static const String settingsFolderByTemplate = 'By template';
+
+  /// Folder strategy: group by capture date.
+  static const String settingsFolderByDate = 'By date';
+
+  /// Folder strategy: no extra folders.
+  static const String settingsFolderFlat = 'One folder';
+
+  /// Naming pattern row.
+  static const String settingsNamingPattern = 'File names';
+
+  /// Effect of the naming pattern.
+  static const String settingsNamingPatternEffect =
+      'How a new photo file is named.';
+
+  /// Camera row, including the current value and its effect.
+  static String settingsCameraSubtitle(String label) {
+    return '$label. $settingsCameraEffect';
+  }
+
+  /// Photo-quality row, including the current value and its effect.
+  static String settingsPhotoQualitySubtitle(String label) {
+    return '$label. $settingsPhotoQualityEffect';
+  }
+
+  /// Naming-pattern row, including the current value and its effect.
+  static String settingsNamingSubtitle(String pattern) {
+    return '$pattern. $settingsNamingPatternEffect';
+  }
+
+  /// Folder strategy row, including the new-files-only statement.
+  static String settingsFolderStrategySubtitle(String strategy) {
+    return '$strategy. $settingsFolderStrategyNewFilesOnly';
+  }
+
+  /// Projects group on the storage screen.
+  static const String settingsProjectsHeader = 'Projects';
+
+  /// Free-space group on the storage screen.
+  static const String settingsHeadroomHeader = 'Free space';
+
+  /// Retention group on the storage screen.
+  static const String settingsRetentionHeader = 'Retention';
+
+  /// Headroom is ample.
+  static const String settingsHeadroomAmple = 'Plenty of space';
+
+  /// Headroom is low.
+  static const String settingsHeadroomLow = 'Space is getting low';
+
+  /// Headroom is critical.
+  static const String settingsHeadroomCritical =
+      'Not enough space for a new photo';
+
+  /// Clear-cache row.
+  static const String settingsClearCache = 'Clear cache';
+
+  /// Effect of clearing the cache.
+  static const String settingsClearCacheEffect =
+      'Removes derived copies only. Originals stay.';
+
+  /// Cache row with the current size.
+  static String settingsCacheSize(String size) {
+    return '$settingsCache · $size. $settingsClearCacheEffect';
+  }
+
+  /// Retention row with the current window.
+  static String settingsRetentionSubtitle(int days) {
+    return '${settingsRetentionDays(days)}. $settingsRetentionEffect';
+  }
+
+  /// Confirm title for clearing the cache.
+  static const String settingsClearCacheTitle = 'Clear the cache?';
+
+  /// Confirm body for clearing the cache.
+  static const String settingsClearCacheMessage =
+      'Thumbnails and upload copies will be removed. Original photos stay.';
+
+  /// Retention row.
+  static const String settingsRetention = 'Keep deleted files';
+
+  /// Effect of the retention window.
+  static const String settingsRetentionEffect =
+      'How long a deleted file can be restored.';
+
+  /// Retention window in days.
+  static String settingsRetentionDays(int n) {
+    return Intl.plural(n, zero: '0 days', one: '1 day', other: '$n days');
+  }
+
+  /// Documents breakdown label.
+  static const String settingsDocuments = 'Documents';
+
+  /// Audio breakdown label.
+  static const String settingsAudio = 'Audio';
+
+  /// Exports breakdown label.
+  static const String settingsExports = 'Exports';
+
+  /// Cache usage row title.
+  static const String settingsCache = 'Cache';
+
+  /// Empty storage headline.
+  static const String settingsStorageEmptyHeadline = 'No project folders yet';
+
+  /// Empty storage next step.
+  static const String settingsStorageEmptyMessage =
+      'Space used appears here once a project has files.';
+
+  /// A file size shown on the storage screen.
+  static String fileSize(int bytes) {
+    const int k = 1024;
+    if (bytes < k) {
+      return '$bytes B';
+    }
+    if (bytes < k * k) {
+      return '${(bytes / k).round()} KB';
+    }
+    return '${(bytes / (k * k)).round()} MB';
+  }
+
+  /// Per-project breakdown on one line.
+  static String settingsProjectUse({
+    required String photos,
+    required String documents,
+    required String audio,
+    required String exports,
+  }) {
+    return 'Photos $photos · $settingsDocuments $documents · '
+        '$settingsAudio $audio · $settingsExports $exports';
+  }
+
+  /// Version row.
+  static const String settingsVersion = 'Version';
+
+  /// Build-number row.
+  static const String settingsBuild = 'Build';
+
+  /// Licences row.
+  static const String settingsLicences = 'Licences';
+
+  /// Effect of the licences row.
+  static const String settingsLicencesEffect =
+      'Open-source licences used in this app.';
+
+  /// Plan link row.
+  static const String settingsPlan = 'The plan';
+
+  /// Specification link row.
+  static const String settingsSpecification = 'The specification';
+
+  /// Public plan URL shown on About.
+  static const String settingsPlanUrl =
+      'https://github.com/WASSWA2624/tapture/tree/main/dev-plan';
+
+  /// Public specification URL shown on About.
+  static const String settingsSpecificationUrl =
+      'https://github.com/WASSWA2624/tapture';
+
+  /// Empty settings headline.
+  static const String settingsEmptyHeadline = 'No settings yet';
+
+  /// Empty settings next step.
+  static const String settingsEmptyMessage =
+      'Settings for this device will appear here.';
+
+  /// Empty capture-settings headline.
+  static const String settingsCaptureEmptyHeadline = 'No capture defaults yet';
+
+  /// Empty capture-settings next step.
+  static const String settingsCaptureEmptyMessage =
+      'Camera, dates and GPS will appear here.';
+
+  /// Empty about headline.
+  static const String settingsAboutEmptyHeadline = 'No version yet';
+
+  /// Empty about next step.
+  static const String settingsAboutEmptyMessage =
+      'The version and licences will appear here.';
 }

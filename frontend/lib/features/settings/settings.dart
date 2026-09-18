@@ -5,4 +5,10 @@ export 'data/settings_store.dart';
 export 'domain/operator_profile.dart';
 export 'domain/setting_key.dart';
 export 'domain/setting_keys.dart';
+export 'presentation/about_screen.dart';
 export 'presentation/operator_profile_screen.dart';
+export 'presentation/settings_screen.dart';
+
+// Capture and storage import this barrel for SettingsStore so they never
+// import data/ (FE-STR-04). Those screens are exported from
+// presentation/presentation.dart to keep that import from cycling.

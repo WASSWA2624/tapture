@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**78 of 281 tasks complete (27.8%)** · last updated 2026-09-18
+**79 of 281 tasks complete (28.1%)** · last updated 2026-09-18
 
 `███████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -14,7 +14,7 @@
 | 04 — Local database | 16 | 16 | `██████████████` 100% |
 | 05 — File storage | 7 | 7 | `██████████████` 100% |
 | 06 — Application shell | 5 | 5 | `██████████████` 100% |
-| 07 — Account and settings | 2 | 5 | `██████░░░░░░░░` 40% |
+| 07 — Account and settings | 3 | 5 | `████████░░░░░░` 60% |
 | 08 — Projects | 0 | 6 | `░░░░░░░░░░░░░░` 0% |
 | 09 — Templates | 0 | 17 | `░░░░░░░░░░░░░░` 0% |
 | 10 — Reference data | 0 | 8 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **78** | **281** | `████░░░░░░░░░░` 27.8% |
+| **Total** | **79** | **281** | `████░░░░░░░░░░` 28.1% |
 
 ## Completed
 
@@ -114,6 +114,7 @@
 | 076 — Global error and crash recovery screen | 2026-09-17 | `GlobalErrorPage` is the `ErrorBoundary` fallback around `MaterialApp.router`. Restart remounts the failed subtree under the existing `ProviderScope`. Export writes the redacted log to a shareable file. Recycle bin is offered; nothing on the screen deletes or resets work. Guarded by a throwing-subtree widget test for the three actions, unsaved-state restart, and a clean export. |
 | 077 — Operator profile | 2026-09-18 | `OperatorProfile` is the local identity on the single `device_profile` row. Schema v13 adds nullable `accountId` so enrolment can fill it later. `OperatorProfileScreen` is an `AppForm` of name, initials and optional contact — no credential. Initials default from the name. Guarded by validation/save/unsaved-guard widget tests and an in-memory v12→v13 migration that reads `accountId` as null. |
 | 078 — Settings store | 2026-09-18 | `SettingKey` / `SettingKeys` declare every app-wide preference beside its default. `SettingsStore` persists a versioned JSON map on the device-profile row, migrates a v0 map once, and emits only after a committed write. The same suite runs against `SettingsStore.open` and `SettingsStore.fake`. Guarded by defaults, round-trip, change-event, failed-write and migration unit tests. |
+| 079 — Settings shell and its section screens | 2026-09-18 | `/more` lists the eight specification sections as tiles. Capture, storage and About are routed now; AI, Language, Files and Security keep their tile until those phases. Capture rows read and write `SettingsStore`. Storage shows per-project use, headroom and a cache clear that leaves originals. About shows version, build, licences and the plan/spec links. Guarded by loading/empty/failure widget tests on all four screens plus a cache-clear test. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -261,6 +262,13 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 078 | Dart record getters are not const-evaluable, so `AppConstants.images.quality` cannot initialize a `static const` key. | Open — those keys are `static final` so the defaults still come from `AppConstants` |
 | 078 | The contract names no constructor; FE-TEST-03 requires a fake. | Open — extra `SettingsStore.open` and `SettingsStore.fake` |
 | 078 | DoD names no test paths; `check_tests` mirrors `lib/`. | Open — suites live under `test/features/settings/domain` and `data` |
+| 079 | Copy rejects the whole word `data`; the specification names a Data section. | Open — the tile is labelled Files (`Copy.settingsFilesTitle`) and the path is `/more/files` |
+| 079 | `settings_screen.dart` cannot import `router.dart` (the router imports the settings barrel). | Open — section paths are private consts that must match `AppRoutes` |
+| 079 | `package_info_plus` and `url_launcher` are not allowlisted (FE-FLOW-06). | Open — About uses `deviceDescriptor` plus build `1`; link opening is an injectable no-op until a later task approves a launcher |
+| 079 | FE-STATE-05 forbids presentation from seeing a file handle; this screen is the Files list owner of the walk. | Open — `dart:io` listing lives in the storage notifier, not `build` |
+| 079 | FE-STR-04 forbids presentation → data; capture/storage need `SettingsStore`. | Open — those screens import the feature barrel and are not re-exported from it, so the import is not a cycle |
+| 079 | Riverpod 3 retries a failed provider for ~38s and keeps `AsyncLoading` while retrying. | Open — these local screens set `retry: (_, __) => null` so a failed read shows immediately |
+| 079 | DoD names no test paths; `check_tests` mirrors `lib/`. | Open — suites live under `test/features/settings/presentation` |
 | 049 | Empty Drift managers leave an unused `_db` field that this analyzer reads as an error. | Closed by 050 — `BaseDao` is hand-written; `generate_manager: false` stays because an empty Drift manager still leaves unused `_db` |
 | 050 | The contract types `runInTransaction` on `AppDatabase`; tests need a table `AppDatabase` does not have yet. | Open — the parameter is `GeneratedDatabase`, which `AppDatabase` already is, so a probe database can share the helper |
 | 050 | `BaseDao` cannot stamp writes without a clock, device id, id service and table. | Open — extra constructor arguments; table tasks pass them through |
@@ -388,11 +396,11 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 07 — Account and settings
 
-*2 of 5 complete.*
+*3 of 5 complete.*
 
 - [x] [077 — Operator profile](dev-plan/07-account-and-settings/077-operator-profile.md)
 - [x] [078 — Settings store](dev-plan/07-account-and-settings/078-settings-store.md)
-- [ ] [079 — Settings shell and its section screens](dev-plan/07-account-and-settings/079-settings-shell.md)
+- [x] [079 — Settings shell and its section screens](dev-plan/07-account-and-settings/079-settings-shell.md)
 - [ ] [080 — App lock: PIN and biometric unlock](dev-plan/07-account-and-settings/080-app-lock-pin.md)
 - [ ] [081 — Manual offline mode switch](dev-plan/07-account-and-settings/081-offline-switch.md)
 

@@ -37,10 +37,10 @@ phase owns: capture defaults, storage usage and About. Adding a setting later is
 
 ## Definition of done
 
-- [ ] Adding a setting later means adding one tile, not restructuring a screen.
-- [ ] Changing the folder strategy affects only new files, and the screen states that.
-- [ ] A user can see space used per project and free it without a file manager.
-- [ ] Tests: widget tests for all four screens covering loading, empty and failure through `AsyncValueView`, plus a
+- [x] Adding a setting later means adding one tile, not restructuring a screen.
+- [x] Changing the folder strategy affects only new files, and the screen states that.
+- [x] A user can see space used per project and free it without a file manager.
+- [x] Tests: widget tests for all four screens covering loading, empty and failure through `AsyncValueView`, plus a
   storage test asserting a cache clear deletes no original file and updates the displayed totals.
 
 ## Out of scope
