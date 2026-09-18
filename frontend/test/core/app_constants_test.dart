@@ -26,6 +26,10 @@ void main() {
       AppConstants.feedback.snack.inMilliseconds,
       inInclusiveRange(2000, 8000),
     );
+    expect(
+      AppConstants.userFeedback.cameraReady.inMilliseconds,
+      inInclusiveRange(500, 5000),
+    );
   });
 
   test('list, image and cache numbers sit in a sane range', () {

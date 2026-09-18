@@ -173,9 +173,10 @@ abstract final class AppConstants {
 
   /// The operator's in-app feedback: where it is kept, how an entry is
   /// numbered, how long it may be, how images are sized and laid out (the
-  /// gallery's target tile, the preview cap, the desktop side panel), and
-  /// where the floating button first rests (as a fraction of the free width
-  /// and height, so a rotation keeps it on screen).
+  /// gallery's target tile, the preview cap, the desktop side panel), how
+  /// long a webcam may take to produce a frame, and where the floating
+  /// button first rests (as a fraction of the free width and height, so a
+  /// rotation keeps it on screen).
   static const ({
     String storeName,
     String idPrefix,
@@ -190,6 +191,7 @@ abstract final class AppConstants {
     double previewWidth,
     double panelWidth,
     Duration objectUrlLifetime,
+    Duration cameraReady,
     double buttonStartX,
     double buttonStartY,
   })
@@ -207,6 +209,7 @@ abstract final class AppConstants {
     previewWidth: 960,
     panelWidth: 420,
     objectUrlLifetime: Duration(seconds: 60),
+    cameraReady: Duration(seconds: 2),
     buttonStartX: 1,
     buttonStartY: 0.78,
   );

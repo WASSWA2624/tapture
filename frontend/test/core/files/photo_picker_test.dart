@@ -1,5 +1,6 @@
-import 'dart:typed_data';
+import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -41,5 +42,54 @@ void main() {
 
   test('a device without a camera says so', () {
     expect(const PhotoPicker.fake(canTakePhoto: false).canTakePhoto, isFalse);
+  });
+
+  test('a picker that can only browse reports canTakePhoto false', () {
+    expect(
+      PhotoPicker.cameraSessionAvailable(
+        pluginSupportsCamera: true,
+        cameraWouldBrowse: true,
+      ),
+      isFalse,
+    );
+    expect(
+      PhotoPicker.cameraSessionAvailable(
+        pluginSupportsCamera: true,
+        cameraWouldBrowse: false,
+      ),
+      isTrue,
+    );
+    expect(
+      PhotoPicker.cameraSessionAvailable(
+        pluginSupportsCamera: false,
+        cameraWouldBrowse: false,
+      ),
+      isFalse,
+    );
+  });
+
+  test('a refused camera maps onto catalogue copy', () {
+    expect(
+      photoPickerFailure(
+        PlatformException(code: 'camera_access_denied'),
+      ).message,
+      Copy.photoNoAccess,
+    );
+    expect(
+      photoPickerFailure(Exception('NotFoundError')).message,
+      Copy.photoNoCamera,
+    );
+  });
+
+  test('the web picker is wired through a conditional import', () {
+    final String source = File(
+      'lib/core/files/photo_picker.dart',
+    ).readAsStringSync();
+    expect(
+      source.contains("if (dart.library.js_interop) 'photo_picker_web.dart'"),
+      isTrue,
+    );
+    expect(File('lib/core/files/photo_picker_web.dart').existsSync(), isTrue);
+    expect(File('lib/core/files/photo_picker_io.dart').existsSync(), isTrue);
   });
 }

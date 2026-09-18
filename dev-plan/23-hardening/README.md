@@ -2,7 +2,7 @@
 
 Making the finished app fast, legible, reachable and unbreakable in the field.
 
-Tasks 236–289 (17). Each file is a standalone implementation prompt.
+Tasks 236–290 (18). Each file is a standalone implementation prompt.
 
 - [ ] [236 — Layout, accessibility and text-scale audit](236-responsive-audit.md)
 - [ ] [237 — Landscape and foldables](237-orientation-support.md)
@@ -21,3 +21,4 @@ Tasks 236–289 (17). Each file is a standalone implementation prompt.
 - [x] [287 — Dock feedback panel beside app](287-dock-feedback-panel-beside-app.md)
 - [x] [288 — Rename More nav to Settings](288-rename-more-nav-to-settings.md)
 - [x] [289 — Fix feedback search remount](289-fix-feedback-search-remount.md)
+- [x] [290 — Fix feedback camera browse](290-fix-feedback-camera-browse.md)

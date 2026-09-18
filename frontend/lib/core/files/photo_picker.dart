@@ -4,12 +4,19 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
-/// Photos from the device camera or library. The picker plugin is reached
-/// only here (FE-STR-11); tests use [PhotoPicker.fake].
+import 'photo_picker_stub.dart'
+    if (dart.library.io) 'photo_picker_io.dart'
+    if (dart.library.js_interop) 'photo_picker_web.dart'
+    as platform;
+
+/// Photos from the device camera or library. The picker plugin and the
+/// browser camera are reached only here (FE-STR-11); tests use
+/// [PhotoPicker.fake].
 abstract interface class PhotoPicker {
-  /// The platform picker: camera and library on Android, iOS and the web,
-  /// the library alone on desktop.
-  factory PhotoPicker() => _PluginPhotoPicker(ImagePicker());
+  /// The platform picker: a camera session where the OS or browser can open
+  /// one, and the library everywhere. Camera never falls through to a file
+  /// browser.
+  factory PhotoPicker() => platform.platformPhotoPicker();
 
   /// A stand-in that hands back [photos] on every pick, or [failure].
   const factory PhotoPicker.fake({
@@ -17,6 +24,17 @@ abstract interface class PhotoPicker {
     Failure? failure,
     bool canTakePhoto,
   }) = _FakePhotoPicker;
+
+  /// Whether the camera control should show.
+  ///
+  /// A plugin may claim camera support while the platform would only open a
+  /// file browser; that is not a camera session.
+  static bool cameraSessionAvailable({
+    required bool pluginSupportsCamera,
+    required bool cameraWouldBrowse,
+  }) {
+    return pluginSupportsCamera && !cameraWouldBrowse;
+  }
 
   /// Whether this device has a camera the picker can open.
   bool get canTakePhoto;
@@ -32,68 +50,42 @@ abstract interface class PhotoPicker {
   Future<Result<List<Uint8List>>> take({required int longEdge});
 }
 
-final class _PluginPhotoPicker implements PhotoPicker {
-  _PluginPhotoPicker(this._picker);
-
-  final ImagePicker _picker;
-
-  @override
-  bool get canTakePhoto => _picker.supportsImageSource(ImageSource.camera);
-
-  @override
-  Future<Result<List<Uint8List>>> choose({
-    required int limit,
-    required int longEdge,
-  }) {
-    final double edge = longEdge.toDouble();
-    return _read(
-      () => _picker.pickMultiImage(
-        maxWidth: edge,
-        maxHeight: edge,
-        limit: limit,
-        requestFullMetadata: false,
-      ),
-    );
-  }
-
-  @override
-  Future<Result<List<Uint8List>>> take({required int longEdge}) {
-    final double edge = longEdge.toDouble();
-    return _read(() async {
-      final XFile? photo = await _picker.pickImage(
-        source: ImageSource.camera,
-        maxWidth: edge,
-        maxHeight: edge,
-        requestFullMetadata: false,
-      );
-      return <XFile>[?photo];
-    });
-  }
-
-  Future<Result<List<Uint8List>>> _read(
-    Future<List<XFile>> Function() pick,
-  ) async {
-    try {
-      final List<XFile> files = await pick();
-      return Success<List<Uint8List>>(<Uint8List>[
-        for (final XFile file in files) await file.readAsBytes(),
-      ]);
-    } on PlatformException catch (error) {
-      return FailureResult<List<Uint8List>>(_failureFor(error.code));
-    } on Object {
-      return const FailureResult<List<Uint8List>>(
-        ProviderFailure(message: Copy.photoPickFailed),
-      );
-    }
+/// Reads [pick] into bytes, mapping plugin errors to catalogue copy.
+Future<Result<List<Uint8List>>> readPickedPhotos(
+  Future<List<XFile>> Function() pick,
+) async {
+  try {
+    final List<XFile> files = await pick();
+    return Success<List<Uint8List>>(<Uint8List>[
+      for (final XFile file in files) await file.readAsBytes(),
+    ]);
+  } on Object catch (error) {
+    return FailureResult<List<Uint8List>>(photoPickerFailure(error));
   }
 }
 
-/// Maps the plugin's error codes onto catalogue copy.
-Failure _failureFor(String code) {
-  if (code.contains('access_denied')) {
+/// Maps a picker or camera error onto catalogue copy.
+Failure photoPickerFailure(Object error) {
+  if (error is PlatformException) {
+    final String code = error.code;
+    if (code.contains('access_denied')) {
+      return const PermissionFailure(message: Copy.photoNoAccess);
+    }
+    if (code == 'no_available_camera') {
+      return const ProviderFailure(message: Copy.photoNoCamera);
+    }
+    return const ProviderFailure(message: Copy.photoPickFailed);
+  }
+  final String text = error.toString().toLowerCase();
+  if (text.contains('notallowed') ||
+      text.contains('permissiondenied') ||
+      text.contains('securityerror')) {
     return const PermissionFailure(message: Copy.photoNoAccess);
   }
-  if (code == 'no_available_camera') {
+  if (text.contains('notfound') ||
+      text.contains('devicesnotfound') ||
+      text.contains('overconstrained') ||
+      text.contains('no_available_camera')) {
     return const ProviderFailure(message: Copy.photoNoCamera);
   }
   return const ProviderFailure(message: Copy.photoPickFailed);
