@@ -163,12 +163,20 @@ abstract final class AppConstants {
     contactKey: 'operatorContact',
   );
 
-  /// Optional app-lock PIN shape and the persisted attempt backoff.
-  static const ({int pinMin, int pinMax, int saltBytes, List<Duration> backoff})
+  /// Optional app-lock PIN shape, the persisted attempt backoff, and how
+  /// often the unlock screen counts that backoff down.
+  static const ({
+    int pinMin,
+    int pinMax,
+    int saltBytes,
+    List<Duration> backoff,
+    Duration countdownTick,
+  })
   lock = (
     pinMin: 4,
     pinMax: 8,
     saltBytes: 16,
+    countdownTick: Duration(seconds: 1),
     backoff: <Duration>[
       Duration(seconds: 1),
       Duration(seconds: 2),

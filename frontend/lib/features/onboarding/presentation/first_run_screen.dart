@@ -40,7 +40,7 @@ class _FirstRunScreenState extends ConsumerState<FirstRunScreen> {
   Widget build(BuildContext context) {
     final FirstRunSnapshot run = ref.watch(firstRunProvider);
     final Widget field = AppTextField(
-      label: Copy.firstRunName,
+      label: Copy.firstRunQuestion,
       controller: _name,
       textInputAction: TextInputAction.done,
       onSubmitted: (String value) {
@@ -84,17 +84,10 @@ class _FirstRunScreenState extends ConsumerState<FirstRunScreen> {
         );
       },
     );
-    const Widget welcome = Column(
-      children: <Widget>[
-        SizedBox(height: Space.x8),
-        AppBrandLockup(),
-        SizedBox(height: Space.x6),
-      ],
-    );
     return ResponsiveBuilder(
       compact: (BuildContext _) {
         return AppPage(
-          title: Copy.firstRunTitle,
+          title: Copy.appName,
           subtitle: Copy.firstRunSubtitle,
           leading: AppBrandLockup(
             showName: false,
@@ -103,7 +96,7 @@ class _FirstRunScreenState extends ConsumerState<FirstRunScreen> {
           body: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[welcome, field],
+            children: <Widget>[field],
           ),
           footer: actions,
         );
@@ -122,14 +115,13 @@ class _FirstRunScreenState extends ConsumerState<FirstRunScreen> {
             ),
           ),
           child: AppPage(
-            title: Copy.firstRunTitle,
+            title: Copy.appName,
             subtitle: Copy.firstRunSubtitle,
             leading: const AppBrandLockup(showName: false),
             body: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                welcome,
                 field,
                 const SizedBox(height: Space.x6),
                 actions,

@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/app/app.dart';
+import 'package:tapture/app/nav_shell.dart';
+import 'package:tapture/app/widgets/status_line.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/security/secure_storage.dart';
+import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/features/onboarding/presentation/first_run_screen.dart';
 import 'package:tapture/features/settings/data/pin_lock.dart';
 import 'package:tapture/features/settings/domain/app_lock.dart';
 import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
@@ -60,6 +65,51 @@ void main() {
     expect(find.textContaining('wipe'), findsNothing);
   });
 
+  testWidgets('after a wrong PIN the right PIN still opens the app', (
+    WidgetTester tester,
+  ) async {
+    final _StepClock clock = _StepClock(DateTime.utc(2026, 9, 18, 8));
+    final Map<SecretKey, String> backing = <SecretKey, String>{};
+    await PinLock.fake(backing: backing, clock: clock).setPin('1234');
+    final PinLock lock = PinLock.fake(backing: backing, clock: clock);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          firstRunCompletedOverride(),
+          networkOnlineOverride(),
+          appLockOverride(lock),
+        ],
+        child: const TaptureApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(AppLockScreen), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), '9999');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pumpAndSettle();
+    final Duration backoff = AppConstants.lock.backoff.first;
+    expect(find.text(Copy.appLockWrongPin), findsOneWidget);
+    expect(find.text(Copy.appLockWait(backoff)), findsOneWidget);
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller!.text,
+      '',
+    );
+    expect(find.byType(AppLockScreen), findsOneWidget);
+
+    // Let the backoff run out on both clocks; the wait line clears itself.
+    clock.now = clock.now.add(backoff);
+    await tester.pump(backoff);
+    expect(find.text(Copy.appLockWait(backoff)), findsNothing);
+
+    await tester.enterText(find.byType(TextField), '1234');
+    await tester.tap(find.text(Copy.appLockUnlock));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AppLockScreen), findsNothing);
+    expect(find.byType(NavShell), findsOneWidget);
+  });
+
   testWidgets('mismatched confirm PINs are not stored', (
     WidgetTester tester,
   ) async {
@@ -74,6 +124,22 @@ void main() {
     expect(find.text(Copy.appLockPinMismatch), findsWidgets);
     expect(lock.isEnabled, isFalse);
   });
+}
+
+/// A clock the test moves by hand, so a backoff can run out.
+final class _StepClock implements Clock {
+  _StepClock(this.now);
+
+  DateTime now;
+
+  @override
+  DateTime nowUtc() => now.toUtc();
+
+  @override
+  DateTime today() => DateTime.utc(now.year, now.month, now.day);
+
+  @override
+  Duration get offset => Duration.zero;
 }
 
 Future<void> _tapAction(WidgetTester tester, Finder finder) async {

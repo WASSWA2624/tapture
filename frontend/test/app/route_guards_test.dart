@@ -148,6 +148,30 @@ void main() {
     expect(diverted.queryParameters[AppRoutes.fromQuery], AppRoutes.projects);
   });
 
+  testWidgets('an armed lock opens before an unfinished first run', (
+    WidgetTester tester,
+  ) async {
+    // The web never stores first run, but it does keep the PIN, so a reload
+    // meets both gates at once.
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          firstRunOverride(<String, String>{}),
+          appLockSessionOverride(enabled: true, unlocked: false),
+          networkOnlineOverride(),
+        ],
+        child: const TaptureApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final ProviderContainer container = ProviderScope.containerOf(
+      tester.element(find.byType(TaptureApp)),
+    );
+    expect(find.byType(AppLockScreen), findsOneWidget);
+    expect(container.read(routerProvider).state.uri.path, AppRoutes.lock);
+  });
+
   test('pause locks an armed session so resume prompts again', () async {
     TestWidgetsFlutterBinding.ensureInitialized();
     final LifecycleObserver observer = LifecycleObserver.fake();

@@ -78,59 +78,76 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
       canPop: false,
       child: AppPage(
         title: Copy.appLockUnlockTitle,
-        leading: const Icon(Icons.lock_outline),
+        showAppBar: false,
         body: _unlockBody(view),
-        footer: AppPrimaryAction(
-          label: Copy.appLockUnlock,
-          busy: view.busy,
-          onPressed: view.remaining > Duration.zero
-              ? null
-              : () => _unlock(view),
-        ),
       ),
     );
   }
 
+  /// Deliberately bare: one field, one action, one status line.
   Widget _unlockBody(_LockView view) {
+    final Color ink = context.colors.onSurface;
+    final bool waiting = view.remaining > Duration.zero;
+    final String? status = view.message;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        const SizedBox(height: Space.x12),
+        Icon(Icons.lock_outline, size: Space.x10, color: ink),
+        const SizedBox(height: Space.x3),
+        Text(
+          Copy.appLockUnlockTitle,
+          textAlign: TextAlign.center,
+          style: AppText.title.copyWith(color: ink),
+        ),
+        const SizedBox(height: Space.x6),
         AppTextField(
           label: Copy.appLockPin,
           controller: _pin,
+          autofocus: true,
           obscureText: true,
           keyboardType: TextInputType.number,
           textInputAction: TextInputAction.done,
-          maxLength: AppConstants.lock.pinMax,
           inputFormatters: <TextInputFormatter>[
             FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(AppConstants.lock.pinMax),
           ],
           errorText: view.pinError,
-          onSubmitted: (String _) => _unlock(view),
+          onSubmitted: (String _) {
+            if (!waiting) {
+              unawaited(_unlock());
+            }
+          },
         ),
-        if (view.message != null) ...<Widget>[
-          const SizedBox(height: Space.x3),
+        if (status != null) ...<Widget>[
+          const SizedBox(height: Space.x2),
           Text(
-            view.message!,
-            style: AppText.body.copyWith(color: context.colors.onSurface),
+            status,
+            textAlign: TextAlign.center,
+            style: AppText.caption.copyWith(color: ink),
           ),
         ],
-        if (view.biometrics) ...<Widget>[
-          const SizedBox(height: Space.x4),
+        const SizedBox(height: Space.x4),
+        AppPrimaryAction(
+          label: Copy.appLockUnlock,
+          busy: view.busy,
+          onPressed: waiting ? null : () => unawaited(_unlock()),
+        ),
+        if (view.biometrics)
           AppButton(
             label: Copy.appLockBiometrics,
-            variant: AppButtonVariant.secondary,
+            variant: AppButtonVariant.text,
             onPressed: view.busy
                 ? null
                 : () {
                     ref.read(_appLockViewProvider.notifier).unlockBiometrics();
                   },
           ),
-        ],
-        const SizedBox(height: Space.x6),
+        const SizedBox(height: Space.x8),
         Text(
           Copy.appLockRecovery,
-          style: AppText.body.copyWith(color: context.colors.onSurface),
+          textAlign: TextAlign.center,
+          style: AppText.caption.copyWith(color: ink),
         ),
       ],
     );
@@ -234,11 +251,17 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
     );
   }
 
-  Future<void> _unlock(_LockView view) async {
-    if (view.remaining > Duration.zero || view.busy) {
+  Future<void> _unlock() async {
+    // Read live: a view captured at build time can hold an expired backoff.
+    if (ref.read(_appLockViewProvider).busy) {
       return;
     }
-    await ref.read(_appLockViewProvider.notifier).unlockPin(_pin.text);
+    final LockAttempt attempt = await ref
+        .read(_appLockViewProvider.notifier)
+        .unlockPin(_pin.text);
+    if (attempt == LockAttempt.wrong && mounted) {
+      _pin.clear();
+    }
   }
 
   void _goIntended() {
@@ -350,8 +373,11 @@ typedef _LockView = ({
 });
 
 class _AppLockForm extends Notifier<_LockView> {
+  Timer? _backoffTick;
+
   @override
   _LockView build() {
+    ref.onDispose(() => _backoffTick?.cancel());
     final AppLock lock = ref.watch(appLockProvider);
     unawaited(_loadBiometrics(lock));
     return (
@@ -442,6 +468,7 @@ class _AppLockForm extends Notifier<_LockView> {
     final LockAttempt attempt = await lock.unlockWithPin(current);
     if (attempt != LockAttempt.unlocked) {
       state = _fromAttempt(lock, attempt, currentError: Copy.appLockWrongPin);
+      _followBackoff(lock);
       return;
     }
     final Result<void> result = await lock.setPin(pin);
@@ -514,9 +541,10 @@ class _AppLockForm extends Notifier<_LockView> {
       remaining: lock.remainingBackoff,
       busy: false,
     );
+    _followBackoff(lock);
   }
 
-  Future<bool> unlockPin(String pin) async {
+  Future<LockAttempt> unlockPin(String pin) async {
     final AppLock lock = ref.read(appLockProvider);
     if (lock.remainingBackoff > Duration.zero) {
       state = (
@@ -529,7 +557,8 @@ class _AppLockForm extends Notifier<_LockView> {
         remaining: lock.remainingBackoff,
         busy: false,
       );
-      return false;
+      _followBackoff(lock);
+      return LockAttempt.lockedOut;
     }
     state = _busy(lock);
     final LockAttempt attempt = await lock.unlockWithPin(pin);
@@ -545,10 +574,11 @@ class _AppLockForm extends Notifier<_LockView> {
         remaining: Duration.zero,
         busy: false,
       );
-      return true;
+      return attempt;
     }
     state = _fromAttempt(lock, attempt);
-    return false;
+    _followBackoff(lock);
+    return attempt;
   }
 
   Future<void> unlockBiometrics() async {
@@ -601,6 +631,38 @@ class _AppLockForm extends Notifier<_LockView> {
     );
   }
 
+  /// Re-reads a running backoff on each whole second, so the wait line
+  /// counts down and the unlock action returns the moment it ends.
+  void _followBackoff(AppLock lock) {
+    _backoffTick?.cancel();
+    final Duration remaining = lock.remainingBackoff;
+    if (remaining <= Duration.zero) {
+      return;
+    }
+    // Wake on each whole tick of the remaining time, so the count moves in
+    // step with the clock and the last wake lands on the end.
+    final Duration tick = AppConstants.lock.countdownTick;
+    final Duration partial =
+        remaining - tick * (remaining.inMicroseconds ~/ tick.inMicroseconds);
+    _backoffTick = Timer(partial > Duration.zero ? partial : tick, () {
+      if (!ref.mounted) {
+        return;
+      }
+      final Duration left = lock.remainingBackoff;
+      state = (
+        enabled: state.enabled,
+        biometrics: state.biometrics,
+        pinError: state.pinError,
+        confirmError: state.confirmError,
+        currentError: state.currentError,
+        message: left > Duration.zero ? Copy.appLockWait(left) : null,
+        remaining: left,
+        busy: state.busy,
+      );
+      _followBackoff(lock);
+    });
+  }
+
   _LockView _busy(AppLock lock) {
     return (
       enabled: lock.isEnabled,
@@ -619,11 +681,13 @@ class _AppLockForm extends Notifier<_LockView> {
     LockAttempt attempt, {
     String? currentError,
   }) {
+    final Duration remaining = lock.remainingBackoff;
+    // A wrong PIN is already stated on its field, so the line under it
+    // carries the wait instead of repeating that.
     final String? message = switch (attempt) {
-      LockAttempt.lockedOut => Copy.appLockWait(lock.remainingBackoff),
-      LockAttempt.wrong => Copy.appLockWrongPin,
-      LockAttempt.unavailable => Copy.appLockWrongPin,
       LockAttempt.unlocked => null,
+      _ when remaining > Duration.zero => Copy.appLockWait(remaining),
+      _ => Copy.appLockWrongPin,
     };
     return (
       enabled: lock.isEnabled,
@@ -632,7 +696,7 @@ class _AppLockForm extends Notifier<_LockView> {
       confirmError: null,
       currentError: currentError,
       message: message,
-      remaining: lock.remainingBackoff,
+      remaining: remaining,
       busy: false,
     );
   }

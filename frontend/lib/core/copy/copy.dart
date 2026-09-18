@@ -296,8 +296,8 @@ abstract final class Copy {
   /// Unprocessed-queue destination the status line opens.
   static const String navQueue = 'Unprocessed';
 
-  /// First-run screen title; the only question asked.
-  static const String firstRunTitle = 'Your name';
+  /// The one question first run asks; the name field's label.
+  static const String firstRunQuestion = 'Your name';
 
   /// Why the name is asked, under the title.
   static const String firstRunSubtitle =
@@ -735,7 +735,9 @@ abstract final class Copy {
 
   /// Remaining backoff after a failed unlock.
   static String appLockWait(Duration remaining) {
-    final int seconds = remaining.inSeconds < 1 ? 1 : remaining.inSeconds;
+    // Rounded up, so the count never reads lower than the real wait.
+    final int whole = (remaining.inMilliseconds + 999) ~/ 1000;
+    final int seconds = whole < 1 ? 1 : whole;
     return Intl.plural(
       seconds,
       one: 'Wait 1 second before trying again.',

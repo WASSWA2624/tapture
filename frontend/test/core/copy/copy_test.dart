@@ -177,7 +177,7 @@ List<String> get _values {
     Copy.navMore,
     Copy.navTemplates,
     Copy.navQueue,
-    Copy.firstRunTitle,
+    Copy.firstRunQuestion,
     Copy.firstRunSubtitle,
     Copy.firstRunName,
     Copy.firstRunStartProject,

@@ -33,6 +33,7 @@ class AppTextField extends StatelessWidget {
     this.onSubmitted,
     this.onTap,
     this.obscureText = false,
+    this.autofocus = false,
   });
 
   /// Visible label; also the semantic name of the control (FE-A11Y-02).
@@ -95,6 +96,10 @@ class AppTextField extends StatelessWidget {
   /// shown on screen (FE-SEC-01).
   final bool obscureText;
 
+  /// Takes focus when first shown, so a single-field screen can be typed
+  /// into at once.
+  final bool autofocus;
+
   @override
   Widget build(BuildContext context) {
     final int lines = maxLines ?? 1;
@@ -119,6 +124,7 @@ class AppTextField extends StatelessWidget {
             onSubmitted: onSubmitted,
             onTap: onTap,
             obscureText: obscureText,
+            autofocus: autofocus,
             enableSuggestions: !obscureText,
             autocorrect: !obscureText,
             style: AppText.body.copyWith(color: context.colors.onSurface),

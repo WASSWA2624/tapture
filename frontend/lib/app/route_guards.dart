@@ -36,6 +36,11 @@ String? _firstRun(GoRouterState state, Ref ref) {
   if (kDebugMode && path == WidgetGalleryScreen.route) {
     return null;
   }
+  // An armed lock opens first. The web keeps a PIN across a reload but not
+  // the first-run flag, and sending /lock back to first run would loop.
+  if (path == AppRoutes.lock) {
+    return null;
+  }
   final bool completed = ref.read(firstRunProvider).completed;
   if (path == AppRoutes.firstRun) {
     return completed ? _captureTab : null;

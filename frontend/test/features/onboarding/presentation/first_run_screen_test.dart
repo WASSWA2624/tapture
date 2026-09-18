@@ -74,7 +74,7 @@ void main() {
       find.byKey(const ValueKey<String>('route-projects')),
       findsOneWidget,
     );
-    expect(find.text(Copy.firstRunTitle), findsNothing);
+    expect(find.text(Copy.firstRunQuestion), findsNothing);
   });
 }
 
