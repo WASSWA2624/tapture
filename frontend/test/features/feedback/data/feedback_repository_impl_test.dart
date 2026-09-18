@@ -41,6 +41,46 @@ void main() {
     expect(second.reference, 'FBK0000002');
   });
 
+  test('remove deletes the screenshot bytes', () async {
+    final Map<String, Uint8List> backing = <String, Uint8List>{};
+    final FeedbackRepositoryImpl repo = FeedbackRepositoryImpl.memory(
+      clock: FixedClock(DateTime.utc(2026, 9, 18, 7, 2)),
+      backing: backing,
+    );
+    final FeedbackEntry saved = _ok(
+      await repo.add(
+        category: FeedbackCategory.general,
+        message: 'One',
+        context: aFeedbackEntry().context,
+        screenshot: aFeedbackPng,
+      ),
+    );
+    expect(backing.containsKey('shots/${saved.id}.png'), isTrue);
+
+    _ok(await repo.remove(<String>{saved.id}));
+    expect(backing.containsKey('shots/${saved.id}.png'), isFalse);
+    expect(_ok(await repo.screenshot(saved.id)), isNull);
+  });
+
+  test('remove deletes an orphan screenshot for a deleted entry', () async {
+    final Map<String, Uint8List> backing = <String, Uint8List>{};
+    final FeedbackRepositoryImpl repo = FeedbackRepositoryImpl.memory(
+      clock: FixedClock(DateTime.utc(2026, 9, 18, 7, 2)),
+      backing: backing,
+    );
+    final FeedbackEntry saved = _ok(
+      await repo.add(
+        category: FeedbackCategory.general,
+        message: 'No picture',
+        context: aFeedbackEntry().context,
+      ),
+    );
+    backing['shots/${saved.id}.png'] = aFeedbackPng;
+
+    _ok(await repo.remove(<String>{saved.id}));
+    expect(backing.containsKey('shots/${saved.id}.png'), isFalse);
+  });
+
   test('restore puts a deleted entry and its screenshot back', () async {
     final FeedbackRepositoryImpl repo = FeedbackRepositoryImpl.memory(
       clock: FixedClock(DateTime.utc(2026, 9, 18, 7, 2)),

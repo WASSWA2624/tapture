@@ -39,10 +39,16 @@ void main() {
     expect((await repo.watch().first).single.reference, 'FBK0000001');
   });
 
-  testWidgets('confirm deletes the ticked entries', (
+  testWidgets('confirm deletes the ticked entries and their screenshots', (
     WidgetTester tester,
   ) async {
-    final FeedbackRepositoryImpl repo = await _pump(tester, seed: true);
+    final FeedbackRepositoryImpl repo = await _pump(
+      tester,
+      seed: true,
+      withScreenshot: true,
+    );
+    final String id = (await repo.watch().first).single.id;
+    expect(_ok(await repo.screenshot(id)), aFeedbackPng);
     await _reveal(tester, find.text('FBK0000001'));
     await tester.tap(find.text('FBK0000001'));
     await tester.pumpAndSettle();
@@ -56,6 +62,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(await repo.watch().first, isEmpty);
+    expect(_ok(await repo.screenshot(id)), isNull);
     expect(find.text(Copy.feedbackDeleted(1)), findsOneWidget);
   });
 }
@@ -63,6 +70,7 @@ void main() {
 Future<FeedbackRepositoryImpl> _pump(
   WidgetTester tester, {
   bool seed = false,
+  bool withScreenshot = false,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = const Size(400, 800);
@@ -80,6 +88,7 @@ Future<FeedbackRepositoryImpl> _pump(
         category: FeedbackCategory.general,
         message: 'The list is slow',
         context: aFeedbackEntry().context,
+        screenshot: withScreenshot ? aFeedbackPng : null,
       ),
     );
   }

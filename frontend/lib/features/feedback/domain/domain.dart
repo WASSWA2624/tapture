@@ -1,7 +1,8 @@
-/// The feedback feature's domain layer: models, the repository and the
-/// workbook layout.
+/// The feedback feature's domain layer: models, the repository, the
+/// workbook layout and the download archive.
 library;
 
+export 'feedback_archive.dart';
 export 'feedback_category.dart';
 export 'feedback_context.dart';
 export 'feedback_device_type.dart';

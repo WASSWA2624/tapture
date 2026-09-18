@@ -5,16 +5,17 @@ import 'package:tapture/core/concurrency/concurrency.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/core/export/export.dart';
 import 'package:tapture/core/time/clock.dart';
 
+import '../domain/feedback_archive.dart';
 import '../domain/feedback_entry.dart';
 import '../domain/feedback_filter.dart';
 import '../domain/feedback_workbook.dart';
 import 'download_feedback_view.dart';
 import 'feedback_providers.dart';
 
-/// Filters and downloads matching feedback as a workbook.
+/// Filters and downloads matching feedback as a zip of the workbook and
+/// its screenshots.
 final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
   /// Creates the controller.
   DownloadFeedbackController();
@@ -54,7 +55,7 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
     );
   }
 
-  /// Encodes the matching entries and hands the file to the operator.
+  /// Encodes the matching entries as a zip and hands the file to the operator.
   Future<Result<String?>> download(List<FeedbackEntry> matching) async {
     if (matching.isEmpty || state.filter.isRangeBackwards) {
       return const FailureResult<String?>(
@@ -74,9 +75,6 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
     _cancel = cancel;
     final Map<String, Uint8List> shots = <String, Uint8List>{};
     for (final FeedbackEntry entry in matching) {
-      if (!entry.hasScreenshot) {
-        continue;
-      }
       final Result<Uint8List?> read = await ref
           .read(feedbackRepositoryProvider)
           .screenshot(entry.id);
@@ -85,7 +83,7 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
           _idle(failure.message);
           return FailureResult<String?>(failure);
         case Success<Uint8List?>(:final Uint8List? value):
-          if (value != null) {
+          if (value != null && value.isNotEmpty) {
             shots[entry.id] = value;
           }
       }
@@ -100,9 +98,10 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
       timeZone: clock.nowUtc().toLocal().timeZoneName,
       generatedBy: ref.read(feedbackDeviceIdProvider),
     );
+    final FeedbackArchive pack = FeedbackArchive(workbook: workbook);
     final Result<Uint8List> encoded = await runIsolate(
-      FeedbackWorkbook.encode,
-      workbook,
+      FeedbackArchive.encode,
+      pack,
       cancel: cancel,
     );
     final Uint8List bytes;
@@ -114,14 +113,14 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
           _idle(null);
           return FailureResult<String?>(failure);
         }
-        bytes = FeedbackWorkbook.encode(workbook);
+        bytes = FeedbackArchive.encode(pack);
     }
     final Result<String?> saved = await ref
         .read(feedbackDownloadsProvider)
         .save(
-          fileName: workbook.fileName,
+          fileName: pack.fileName,
           bytes: bytes,
-          mimeType: XlsxEncoder.mimeType,
+          mimeType: FeedbackArchive.mimeType,
         );
     switch (saved) {
       case Success<String?>():

@@ -22,7 +22,8 @@ import 'feedback_entry_tile.dart';
 import 'feedback_filter_panel.dart';
 import 'feedback_providers.dart';
 
-/// Filters stored feedback and downloads a workbook of what matches.
+/// Filters stored feedback and downloads a zip of the workbook and matching
+/// screenshots.
 class DownloadFeedbackScreen extends ConsumerWidget {
   /// Creates the full-screen flow.
   const DownloadFeedbackScreen({super.key, this.showAppBar = true});

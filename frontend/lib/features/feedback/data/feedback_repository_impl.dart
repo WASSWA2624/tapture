@@ -176,11 +176,9 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
       return FailureResult<List<RemovedFeedback>>(indexed.failure);
     }
     for (final RemovedFeedback item in removed) {
-      if (item.entry.hasScreenshot) {
-        final Result<void> gone = await _store.remove(_shotKey(item.entry.id));
-        if (gone is FailureResult<void>) {
-          return FailureResult<List<RemovedFeedback>>(gone.failure);
-        }
+      final Result<void> gone = await _store.remove(_shotKey(item.entry.id));
+      if (gone is FailureResult<void>) {
+        return FailureResult<List<RemovedFeedback>>(gone.failure);
       }
     }
     _entries = next;

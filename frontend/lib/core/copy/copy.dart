@@ -740,7 +740,7 @@ abstract final class Copy {
   /// Opens the form to write feedback.
   static const String feedbackGive = 'Give us feedback';
 
-  /// Opens the filter to download feedback as a spreadsheet.
+  /// Opens the filter to download feedback as a spreadsheet and screenshots.
   static const String feedbackDownload = 'Download feedback';
 
   /// Opens the filter to delete feedback.
@@ -891,7 +891,7 @@ abstract final class Copy {
   /// The browser took the download.
   static const String feedbackDownloadStarted = 'Download started.';
 
-  /// The workbook was written to [location] on this device.
+  /// The archive was written to [location] on this device.
   static String feedbackDownloadedTo(String location) => 'Saved to $location';
 
   /// Nothing has been written yet.
