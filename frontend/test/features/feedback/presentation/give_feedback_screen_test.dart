@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:ui' show AppExitResponse;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -340,6 +341,59 @@ void main() {
     expect(harness.guard.isHeld, isFalse);
   });
 
+  testWidgets('an exit request with a draft asks before discarding', (
+    WidgetTester tester,
+  ) async {
+    final _Harness harness = await _pump(tester);
+    await tester.enterText(_message, 'Still writing');
+    await tester.pump();
+
+    final Future<AppExitResponse> cancelled = harness.observer
+        .didRequestAppExit();
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.feedbackDiscardDraftMessage), findsOneWidget);
+    await tester.tap(find.text(Copy.cancel));
+    await tester.pumpAndSettle();
+    expect(await cancelled, AppExitResponse.cancel);
+    expect(find.text('Still writing'), findsOneWidget);
+    expect(harness.draft, isNotNull);
+
+    final Future<AppExitResponse> confirmed = harness.observer
+        .didRequestAppExit();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.discard));
+    await tester.pumpAndSettle();
+    expect(await confirmed, AppExitResponse.exit);
+    expect(harness.draft, isNull);
+  });
+
+  testWidgets('an exit request asks while the draft is folded into the bar', (
+    WidgetTester tester,
+  ) async {
+    final _Harness harness = await _pump(tester);
+    await tester.enterText(_message, 'Still writing');
+    await tester.tap(find.byTooltip(Copy.close));
+    await tester.pumpAndSettle();
+    expect(find.byType(FeedbackDraftBar), findsOneWidget);
+
+    final Future<AppExitResponse> pending = harness.observer
+        .didRequestAppExit();
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.feedbackDiscardDraftMessage), findsOneWidget);
+    await tester.tap(find.text(Copy.cancel));
+    await tester.pumpAndSettle();
+    expect(await pending, AppExitResponse.cancel);
+    expect(find.text('Still writing'), findsOneWidget);
+  });
+
+  testWidgets('an exit request with no draft exits without a dialog', (
+    WidgetTester tester,
+  ) async {
+    final _Harness harness = await _pump(tester);
+    expect(await harness.observer.didRequestAppExit(), AppExitResponse.exit);
+    expect(find.text(Copy.feedbackDiscardDraftMessage), findsNothing);
+  });
+
   testWidgets('discard asks first, then drops the draft', (
     WidgetTester tester,
   ) async {
@@ -509,6 +563,8 @@ final class _Harness {
   FeedbackDraft? get draft => container.read(feedbackDraftProvider);
 
   LeaveGuard get guard => container.read(leaveGuardProvider);
+
+  LifecycleObserver get observer => container.read(lifecycleObserverProvider);
 }
 
 Future<Uint8List> _addThisScreen(WidgetTester tester, _Harness harness) async {

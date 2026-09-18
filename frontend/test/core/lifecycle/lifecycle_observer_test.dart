@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show AppExitResponse;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -53,5 +54,26 @@ void main() {
     await observer.handle(AppLifecycleState.resumed);
     await observer.handle(AppLifecycleState.paused);
     expect(flushes, 2);
+  });
+
+  test('exit with no checks proceeds', () async {
+    expect(
+      await LifecycleObserver.fake().didRequestAppExit(),
+      AppExitResponse.exit,
+    );
+  });
+
+  test('a false check cancels exit', () async {
+    final LifecycleObserver observer = LifecycleObserver.fake()
+      ..addExitCheck(() async => false);
+    expect(await observer.didRequestAppExit(), AppExitResponse.cancel);
+  });
+
+  test('a removed check no longer runs', () async {
+    Future<bool> deny() async => false;
+    final LifecycleObserver observer = LifecycleObserver.fake()
+      ..addExitCheck(deny)
+      ..removeExitCheck(deny);
+    expect(await observer.didRequestAppExit(), AppExitResponse.exit);
   });
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show AppExitResponse;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,8 +31,20 @@ class LifecycleObserver with WidgetsBindingObserver {
 
   Future<void> _inFlight = Future<void>.value();
 
+  final List<Future<bool> Function()> _exitChecks = <Future<bool> Function()>[];
+
   /// Lifecycle events as the binding reports them.
   Stream<AppLifecycleState> get states => _states.stream;
+
+  /// Registers [check]; a false result cancels the window close.
+  void addExitCheck(Future<bool> Function() check) {
+    _exitChecks.add(check);
+  }
+
+  /// Drops [check] so it no longer runs on a window close.
+  void removeExitCheck(Future<bool> Function() check) {
+    _exitChecks.remove(check);
+  }
 
   /// Applies [state] as the binding would, awaiting a pause flush.
   Future<void> handle(AppLifecycleState state) async {
@@ -54,6 +67,18 @@ class LifecycleObserver with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     _inFlight = handle(state);
+  }
+
+  /// Cancels the close if any registered check returns false.
+  @override
+  Future<AppExitResponse> didRequestAppExit() async {
+    for (final Future<bool> Function() check
+        in List<Future<bool> Function()>.of(_exitChecks)) {
+      if (!await check()) {
+        return AppExitResponse.cancel;
+      }
+    }
+    return AppExitResponse.exit;
   }
 
   /// Releases the event stream after any in-flight flush. The binding still

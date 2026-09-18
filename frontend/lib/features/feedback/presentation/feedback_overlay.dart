@@ -12,6 +12,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/lifecycle/lifecycle.dart';
 import 'package:tapture/core/widgets/app_floating_button.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
+import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/responsive/form_factor.dart';
@@ -53,6 +54,8 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
   final GlobalKey _workspaceKey = GlobalKey();
   late final LeaveGuard _leaveGuard;
   late final ProviderSubscription<bool> _leave;
+  late final LifecycleObserver _lifecycle;
+  late final Future<bool> Function() _exitCheck;
 
   @override
   void initState() {
@@ -69,13 +72,37 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
       },
       fireImmediately: true,
     );
+    _lifecycle = ref.read(lifecycleObserverProvider);
+    _exitCheck = _confirmDesktopExit;
+    _lifecycle.addExitCheck(_exitCheck);
   }
 
   @override
   void dispose() {
+    _lifecycle.removeExitCheck(_exitCheck);
     _leave.close();
     _leaveGuard.release(this);
     super.dispose();
+  }
+
+  Future<bool> _confirmDesktopExit() async {
+    if (!(ref.read(feedbackDraftProvider)?.hasWork ?? false)) {
+      return true;
+    }
+    if (!mounted) {
+      return false;
+    }
+    final bool confirmed = await showAppConfirm(
+      context,
+      title: Copy.feedbackDiscardDraft,
+      message: Copy.feedbackDiscardDraftMessage,
+      confirmLabel: Copy.discard,
+      destructive: true,
+    );
+    if (confirmed) {
+      ref.read(feedbackDraftProvider.notifier).clear();
+    }
+    return confirmed;
   }
 
   @override
