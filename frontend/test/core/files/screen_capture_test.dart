@@ -8,41 +8,85 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/screen_capture.dart';
 
 void main() {
-  final Uint8List frame = Uint8List.fromList(<int>[1, 2, 3]);
+  final Uint8List first = Uint8List.fromList(<int>[1, 2, 3]);
+  final Uint8List second = Uint8List.fromList(<int>[4, 5]);
+  final Uint8List third = Uint8List.fromList(<int>[6]);
 
-  test('the fake hands back one frame', () async {
+  test('the fake hands out successive frames from one session', () async {
     final ScreenCapture capture = ScreenCapture.fake(
       canCapture: true,
-      frame: frame,
+      frames: <Uint8List>[first, second, third],
     );
-    final Result<Uint8List> still = await capture.capture(longEdge: 100);
-    expect((still as Success<Uint8List>).value, frame);
+    expect((await capture.start() as Success<bool>).value, isTrue);
+    expect(capture.isSharing, isTrue);
+    expect(
+      (await capture.still(longEdge: 100) as Success<Uint8List>).value,
+      first,
+    );
+    expect(
+      (await capture.still(longEdge: 100) as Success<Uint8List>).value,
+      second,
+    );
+    expect(
+      (await capture.still(longEdge: 100) as Success<Uint8List>).value,
+      third,
+    );
+    capture.stop();
+    expect(capture.isSharing, isFalse);
   });
 
-  test('an empty frame is a cancel', () async {
+  test('cancel returns false and is not sharing', () async {
     const ScreenCapture capture = ScreenCapture.fake(canCapture: true);
-    final Result<Uint8List> still = await capture.capture(longEdge: 100);
-    expect((still as Success<Uint8List>).value, isEmpty);
+    expect((await capture.start() as Success<bool>).value, isFalse);
+    expect(capture.isSharing, isFalse);
   });
 
-  test('a refusal comes back as a failure with catalogue copy', () async {
+  test('a refusal maps onto catalogue copy', () async {
     const ScreenCapture capture = ScreenCapture.fake(
       canCapture: true,
       failure: PermissionFailure(message: Copy.displayNoAccess),
     );
-    final Result<Uint8List> still = await capture.capture(longEdge: 100);
     expect(
-      (still as FailureResult<Uint8List>).failure.message,
+      (await capture.start() as FailureResult<bool>).failure.message,
       Copy.displayNoAccess,
     );
+    expect(capture.isSharing, isFalse);
   });
 
-  test('a device that cannot share a display says so', () {
-    expect(const ScreenCapture.fake().canCapture, isFalse);
+  test('stop ends the session and fires ended', () async {
+    final ScreenCapture capture = ScreenCapture.fake(
+      canCapture: true,
+      frames: <Uint8List>[first],
+    );
+    expect((await capture.start() as Success<bool>).value, isTrue);
+    final Future<void> ended = capture.ended.first;
+    capture.stop();
+    await ended;
+    expect(capture.isSharing, isFalse);
+    expect(capture.stops, 1);
+    capture.stop();
+    expect(capture.stops, 1);
   });
 
-  test('native capture is hidden', () {
-    expect(ScreenCapture().canCapture, isFalse);
+  test('a mid-session end stops sharing and fires ended', () async {
+    final ScreenCapture capture = ScreenCapture.fake(
+      canCapture: true,
+      frames: <Uint8List>[first],
+    );
+    expect((await capture.start() as Success<bool>).value, isTrue);
+    final Future<void> ended = capture.ended.first;
+    capture.end();
+    await ended;
+    expect(capture.isSharing, isFalse);
+    expect(capture.stops, 0);
+  });
+
+  test('native is hidden and start returns false', () async {
+    final ScreenCapture capture = ScreenCapture();
+    expect(capture.canCapture, isFalse);
+    expect((await capture.start() as Success<bool>).value, isFalse);
+    expect(capture.isSharing, isFalse);
+    capture.stop();
   });
 
   test('a refused picker maps onto catalogue copy', () {
@@ -72,6 +116,9 @@ void main() {
     ).readAsStringSync();
     expect(web.contains('getDisplayMedia'), isTrue);
     expect(web.contains('audio: false'), isTrue);
+    expect(web.contains('no-focus-change'), isTrue);
+    expect(web.contains('CaptureController'), isTrue);
+    expect(web.contains("addEventListener('ended'"), isTrue);
     expect(web.contains('stream?.stop()'), isTrue);
     expect(
       File('lib/main.dart').readAsStringSync().contains(

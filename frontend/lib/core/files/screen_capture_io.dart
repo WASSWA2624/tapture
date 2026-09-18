@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:tapture/core/errors/result.dart';
@@ -15,7 +16,21 @@ final class _NoScreenCapture implements ScreenCapture {
   bool get canCapture => false;
 
   @override
-  Future<Result<Uint8List>> capture({required int longEdge}) async {
+  bool get isSharing => false;
+
+  @override
+  Stream<void> get ended => const Stream<void>.empty();
+
+  @override
+  Future<Result<bool>> start() async {
+    return const Success<bool>(false);
+  }
+
+  @override
+  Future<Result<Uint8List>> still({required int longEdge}) async {
     return Success<Uint8List>(Uint8List(0));
   }
+
+  @override
+  void stop() {}
 }
