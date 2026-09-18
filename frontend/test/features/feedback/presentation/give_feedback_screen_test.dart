@@ -10,6 +10,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/core/widgets/feedback/app_panel_dialog.dart';
 import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/features/feedback/feedback.dart';
@@ -153,7 +154,12 @@ void main() {
     await tester.tap(tiles.first);
     await tester.pumpAndSettle();
     expect(find.bySemanticsLabel(Copy.feedbackShotPreview), findsOneWidget);
-    await tester.tap(find.byTooltip(Copy.close));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AppPanelDialog),
+        matching: find.byTooltip(Copy.close),
+      ),
+    );
     await tester.pumpAndSettle();
 
     await tester.tap(find.byTooltip(Copy.feedbackRemoveShot(Copy.photo)).first);
@@ -184,16 +190,16 @@ void main() {
     expect(harness.draft!.shots, isEmpty);
   });
 
-  testWidgets('back folds the form into the bar and keeps everything', (
+  testWidgets('close folds the form into the bar and keeps everything', (
     WidgetTester tester,
   ) async {
     final _Harness harness = await _pump(tester, screenshot: aFeedbackPng);
     await tester.tap(find.text(Copy.feedbackCategoryError));
     await tester.enterText(_message, 'Still writing');
-    await tester.tap(find.byTooltip(Copy.feedbackContinueLater));
+    await tester.tap(find.byTooltip(Copy.close));
     await tester.pumpAndSettle();
     expect(find.byType(GiveFeedbackScreen), findsNothing);
-    expect(find.text(Copy.discardChangesTitle), findsNothing);
+    expect(find.text(Copy.feedbackDiscardDraftMessage), findsNothing);
     expect(find.byType(FeedbackDraftBar), findsOneWidget);
     expect(find.text('Still writing'), findsOneWidget);
     // The app under the bar stays usable.
@@ -218,7 +224,7 @@ void main() {
   ) async {
     final _Harness harness = await _pump(tester);
     for (int round = 0; round < 3; round++) {
-      await tester.tap(find.byTooltip(Copy.feedbackContinueLater));
+      await tester.tap(find.byTooltip(Copy.close));
       await tester.pumpAndSettle();
       expect(harness.container.exists(giveFeedbackControllerProvider), isFalse);
       harness.container.read(feedbackDraftProvider.notifier).expand();
@@ -261,6 +267,40 @@ void main() {
     await tester.pumpAndSettle();
     expect(harness.draft, isNull);
     expect(find.byType(GiveFeedbackScreen), findsNothing);
+  });
+
+  testWidgets('the bar close asks first, then drops the draft', (
+    WidgetTester tester,
+  ) async {
+    final _Harness harness = await _pump(tester);
+    await tester.enterText(_message, 'Still writing');
+    await tester.tap(find.byTooltip(Copy.close));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.descendant(
+        of: find.byType(FeedbackDraftBar),
+        matching: find.byTooltip(Copy.close),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.feedbackDiscardDraftMessage), findsOneWidget);
+    await tester.tap(find.text(Copy.cancel));
+    await tester.pumpAndSettle();
+    expect(find.byType(FeedbackDraftBar), findsOneWidget);
+    expect(find.text('Still writing'), findsOneWidget);
+    expect(harness.draft, isNotNull);
+
+    await tester.tap(
+      find.descendant(
+        of: find.byType(FeedbackDraftBar),
+        matching: find.byTooltip(Copy.close),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.discard));
+    await tester.pumpAndSettle();
+    expect(harness.draft, isNull);
+    expect(find.byType(FeedbackDraftBar), findsNothing);
   });
 
   test('rebuilding the form state while it is open is safe', () {

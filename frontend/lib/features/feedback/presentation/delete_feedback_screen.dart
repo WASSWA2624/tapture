@@ -6,6 +6,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
@@ -42,6 +43,7 @@ class DeleteFeedbackScreen extends ConsumerWidget {
       onRetry: () => ref.invalidate(feedbackEntriesProvider),
       isEmpty: (List<FeedbackEntry> all) => all.isEmpty,
       empty: () => _frame(
+        context,
         const AppEmptyState(
           icon: Icons.feedback_outlined,
           headline: Copy.feedbackEmptyHeadline,
@@ -92,17 +94,24 @@ class DeleteFeedbackScreen extends ConsumerWidget {
               ? null
               : () => unawaited(_delete(context, controller, selected.length)),
         );
-        return _frame(list, footer: action);
+        return _frame(context, list, footer: action);
       },
     );
   }
 
-  Widget _frame(Widget body, {Widget? footer}) {
+  Widget _frame(BuildContext context, Widget body, {Widget? footer}) {
     return AppPage(
       title: Copy.feedbackDelete,
       compactBar: true,
       inset: false,
       footer: footer,
+      leading: AppIconButton(
+        icon: Icons.close,
+        semanticLabel: Copy.close,
+        tooltip: Copy.close,
+        outlined: false,
+        onPressed: () => Navigator.of(context).maybePop(),
+      ),
       body: body,
     );
   }

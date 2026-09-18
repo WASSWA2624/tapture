@@ -26,9 +26,9 @@ import 'give_feedback_view.dart';
 
 /// Writes the feedback draft as a compact form with Save pinned below it.
 ///
-/// It is the overlay's workspace, not a route: back and "Continue later"
-/// fold it into the compact bar with everything kept, so the operator can
-/// move through the app and come back.
+/// It is the overlay's workspace, not a route: Close folds it into the
+/// compact bar with everything kept, so the operator can move through the
+/// app and come back.
 class GiveFeedbackScreen extends ConsumerStatefulWidget {
   /// Creates the form. [onAddScreen] adds a screenshot of the screen under
   /// the form; null hides that control.
@@ -87,7 +87,6 @@ class _GiveFeedbackState extends ConsumerState<GiveFeedbackScreen> {
       ),
     );
     return PopScope<Object?>(
-      // Back folds the form away; it never loses the draft.
       canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? _) {
         if (!didPop) {
@@ -99,9 +98,9 @@ class _GiveFeedbackState extends ConsumerState<GiveFeedbackScreen> {
         compactBar: true,
         scrollable: false,
         leading: AppIconButton(
-          icon: Icons.arrow_back,
-          semanticLabel: Copy.feedbackContinueLater,
-          tooltip: Copy.feedbackContinueLater,
+          icon: Icons.close,
+          semanticLabel: Copy.close,
+          tooltip: Copy.close,
           outlined: false,
           onPressed: _draft.collapse,
         ),

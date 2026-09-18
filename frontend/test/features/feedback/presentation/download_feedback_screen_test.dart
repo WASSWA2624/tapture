@@ -119,6 +119,15 @@ void main() {
     expect(find.text('FBK0000001'), findsOneWidget);
   });
 
+  testWidgets('close pops the route', (WidgetTester tester) async {
+    await _pump(tester, seed: true, asRoute: true);
+    expect(find.byType(DownloadFeedbackScreen), findsOneWidget);
+    await tester.tap(find.byTooltip(Copy.close));
+    await tester.pumpAndSettle();
+    expect(find.byType(DownloadFeedbackScreen), findsNothing);
+    expect(find.text('Open'), findsOneWidget);
+  });
+
   testWidgets('closing the screen forgets its filters', (
     WidgetTester tester,
   ) async {
@@ -139,6 +148,7 @@ void main() {
 Future<ProviderContainer> _pump(
   WidgetTester tester, {
   bool seed = false,
+  bool asRoute = false,
   FeedbackCategory category = FeedbackCategory.general,
 }) async {
   tester.view.devicePixelRatio = 1;
@@ -176,11 +186,34 @@ Future<ProviderContainer> _pump(
       container: container,
       child: MaterialApp(
         theme: buildTheme(brightness: Brightness.light),
-        home: const DownloadFeedbackScreen(),
+        home: asRoute
+            ? Builder(
+                builder: (BuildContext context) {
+                  return Scaffold(
+                    body: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext _) {
+                              return const DownloadFeedbackScreen();
+                            },
+                          ),
+                        );
+                      },
+                      child: const Text('Open'),
+                    ),
+                  );
+                },
+              )
+            : const DownloadFeedbackScreen(),
       ),
     ),
   );
   await tester.pumpAndSettle();
+  if (asRoute) {
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+  }
   return container;
 }
 

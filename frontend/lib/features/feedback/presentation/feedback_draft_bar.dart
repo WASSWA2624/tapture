@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
@@ -5,6 +7,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 
@@ -116,11 +119,31 @@ class _FeedbackDraftBarState extends ConsumerState<FeedbackDraftBar> {
                   outlined: false,
                   onPressed: _draft.expand,
                 ),
+                AppIconButton(
+                  icon: Icons.close,
+                  semanticLabel: Copy.close,
+                  tooltip: Copy.close,
+                  outlined: false,
+                  onPressed: () => unawaited(_discard()),
+                ),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _discard() async {
+    final bool confirmed = await showAppConfirm(
+      context,
+      title: Copy.feedbackDiscardDraft,
+      message: Copy.feedbackDiscardDraftMessage,
+      confirmLabel: Copy.discard,
+      destructive: true,
+    );
+    if (confirmed) {
+      _draft.clear();
+    }
   }
 }

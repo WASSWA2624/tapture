@@ -89,6 +89,15 @@ void main() {
     expect(find.text(Copy.feedbackDeleteCount(1)), findsOneWidget);
   });
 
+  testWidgets('close pops the route', (WidgetTester tester) async {
+    await _pump(tester, seed: true, asRoute: true);
+    expect(find.byType(DeleteFeedbackScreen), findsOneWidget);
+    await tester.tap(find.byTooltip(Copy.close));
+    await tester.pumpAndSettle();
+    expect(find.byType(DeleteFeedbackScreen), findsNothing);
+    expect(find.text('Open'), findsOneWidget);
+  });
+
   test('undo still restores after the screen has closed', () async {
     final FeedbackRepositoryImpl repo = FeedbackRepositoryImpl.memory(
       clock: FixedClock(DateTime.utc(2026, 9, 18, 7, 2)),
@@ -129,6 +138,7 @@ Future<FeedbackRepositoryImpl> _pump(
   WidgetTester tester, {
   bool seed = false,
   bool withScreenshot = false,
+  bool asRoute = false,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = const Size(400, 800);
@@ -159,11 +169,34 @@ Future<FeedbackRepositoryImpl> _pump(
       ],
       child: MaterialApp(
         theme: buildTheme(brightness: Brightness.light),
-        home: const DeleteFeedbackScreen(),
+        home: asRoute
+            ? Builder(
+                builder: (BuildContext context) {
+                  return Scaffold(
+                    body: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext _) {
+                              return const DeleteFeedbackScreen();
+                            },
+                          ),
+                        );
+                      },
+                      child: const Text('Open'),
+                    ),
+                  );
+                },
+              )
+            : const DeleteFeedbackScreen(),
       ),
     ),
   );
   await tester.pumpAndSettle();
+  if (asRoute) {
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+  }
   return repo;
 }
 
