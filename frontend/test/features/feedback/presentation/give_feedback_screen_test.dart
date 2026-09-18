@@ -5,9 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/app/theme/outdoor_theme.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/feedback/app_panel_dialog.dart';
@@ -21,6 +23,8 @@ import 'package:tapture/features/feedback/presentation/feedback_overlay.dart';
 import 'package:tapture/features/feedback/presentation/feedback_providers.dart';
 import 'package:tapture/features/feedback/presentation/give_feedback_controller.dart';
 import 'package:tapture/features/feedback/presentation/give_feedback_screen.dart';
+import 'package:tapture/features/settings/domain/operator_profile.dart';
+import 'package:tapture/features/settings/presentation/operator_profile_screen.dart';
 
 import '../../../support/a11y_matchers.dart';
 import '../../../support/factories.dart';
@@ -314,6 +318,57 @@ void main() {
     container.invalidate(giveFeedbackControllerProvider);
     expect(container.read(giveFeedbackControllerProvider).saveError, isNull);
   });
+
+  testWidgets(
+    'Add this screen captures the app, not the form, until opted in',
+    (WidgetTester tester) async {
+      final _Harness harness = await _pump(tester, size: const Size(400, 1200));
+      expect(harness.draft!.includeUi, isFalse);
+      expect(_includeButton(tester).isSelected, isFalse);
+      final Uint8List appOnly = await _addThisScreen(tester, harness);
+      expect(_pngSize(appOnly).width, 400);
+
+      await tester.tap(find.byTooltip(Copy.feedbackIncludeUi));
+      await tester.pumpAndSettle();
+      expect(harness.draft!.includeUi, isTrue);
+      expect(_includeButton(tester).isSelected, isTrue);
+      final Uint8List withUi = await _addThisScreen(tester, harness);
+      expect(withUi, isNot(appOnly));
+      expect(harness.draft!.shots, hasLength(2));
+    },
+  );
+
+  testWidgets('opting in on a wide window captures the docked app and panel', (
+    WidgetTester tester,
+  ) async {
+    final _Harness harness = await _pump(tester, size: const Size(1400, 900));
+    final Uint8List appOnly = await _addThisScreen(tester, harness);
+    expect(
+      _pngSize(appOnly).width,
+      1400 - AppConstants.userFeedback.panelWidth,
+    );
+
+    await tester.tap(find.byTooltip(Copy.feedbackIncludeUi));
+    await tester.pumpAndSettle();
+    final Uint8List withUi = await _addThisScreen(tester, harness);
+    expect(_pngSize(withUi).width, 1400);
+    expect(_pngSize(withUi).width, greaterThan(_pngSize(appOnly).width));
+  });
+
+  for (final ({String name, ThemeData theme}) mode in _feedbackThemes) {
+    testWidgets('include-UI is labelled and 48dp in ${mode.name}', (
+      WidgetTester tester,
+    ) async {
+      await _pump(tester, theme: mode.theme);
+      final Finder include = find.byTooltip(Copy.feedbackIncludeUi);
+      expect(include, findsOneWidget);
+      expect(include, meetsTapTarget());
+      expect(include, hasSemanticLabel(Copy.feedbackIncludeUi));
+      expect(find.byTooltip(Copy.feedbackAddScreen), findsOneWidget);
+      expect(find.byTooltip(Copy.feedbackAddScreen), meetsTapTarget());
+      await expectNoA11yIssues(tester);
+    });
+  }
 }
 
 const List<String> _types = <String>[
@@ -337,6 +392,46 @@ final class _Harness {
   FeedbackDraft? get draft => container.read(feedbackDraftProvider);
 }
 
+Future<Uint8List> _addThisScreen(WidgetTester tester, _Harness harness) async {
+  final int before = harness.draft!.shots.length;
+  final Finder add = find.byTooltip(Copy.feedbackAddScreen);
+  await tester.ensureVisible(add);
+  await tester.pumpAndSettle();
+  await tester.tap(add);
+  for (int i = 0; i < 50 && harness.draft!.shots.length == before; i++) {
+    await tester.runAsync(() {
+      return Future<void>.delayed(const Duration(milliseconds: 20));
+    });
+    await tester.pump();
+  }
+  expect(harness.draft!.shots, hasLength(before + 1));
+  final Uint8List bytes = harness.draft!.shots.last.bytes;
+  expect(bytes, isNotEmpty);
+  return bytes;
+}
+
+IconButton _includeButton(WidgetTester tester) {
+  return tester.widget<IconButton>(
+    find.ancestor(
+      of: find.byTooltip(Copy.feedbackIncludeUi),
+      matching: find.byType(IconButton),
+    ),
+  );
+}
+
+Size _pngSize(Uint8List png) {
+  final ByteData header = ByteData.sublistView(png, 16, 24);
+  return Size(header.getUint32(0).toDouble(), header.getUint32(4).toDouble());
+}
+
+List<({String name, ThemeData theme})> get _feedbackThemes {
+  return <({String name, ThemeData theme})>[
+    (name: 'light', theme: buildTheme(brightness: Brightness.light)),
+    (name: 'dark', theme: buildTheme(brightness: Brightness.dark)),
+    (name: 'outdoor', theme: buildOutdoorTheme(Brightness.light)),
+  ];
+}
+
 /// The real overlay over a stand-in app, with a draft already open, as the
 /// Feedback menu leaves it.
 Future<_Harness> _pump(
@@ -344,6 +439,7 @@ Future<_Harness> _pump(
   Uint8List? screenshot,
   Size size = const Size(400, 1200),
   PhotoPicker photos = const PhotoPicker.fake(),
+  ThemeData? theme,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = size;
@@ -361,6 +457,11 @@ Future<_Harness> _pump(
       feedbackClockProvider.overrideWith((Ref _) => clock),
       feedbackRepositoryProvider.overrideWith((Ref _) => repo),
       feedbackPhotosProvider.overrideWith((Ref _) => photos),
+      operatorProfileOverride(
+        load: () async => const OperatorProfile(name: 'Ada', initials: 'A'),
+        save: (OperatorProfile profile) async =>
+            Success<OperatorProfile>(profile),
+      ),
     ],
   );
   addTearDown(container.dispose);
@@ -371,7 +472,7 @@ Future<_Harness> _pump(
     UncontrolledProviderScope(
       container: container,
       child: MaterialApp(
-        theme: buildTheme(brightness: Brightness.light),
+        theme: theme ?? buildTheme(brightness: Brightness.light),
         home: const FeedbackOverlay(
           origin: FeedbackOrigin.unknown,
           child: Scaffold(

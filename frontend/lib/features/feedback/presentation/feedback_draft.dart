@@ -16,6 +16,7 @@ final class FeedbackDraft {
     this.attachShots = true,
     this.open = false,
     this.expanded = false,
+    this.includeUi = false,
   });
 
   /// The moment Feedback was first tapped for this draft.
@@ -42,6 +43,9 @@ final class FeedbackDraft {
   /// Whether the full form is showing, rather than the compact bar.
   final bool expanded;
 
+  /// Whether Add this screen captures the visible feedback chrome.
+  final bool includeUi;
+
   /// A copy with the given parts replaced.
   FeedbackDraft copyWith({
     List<FeedbackShot>? shots,
@@ -51,6 +55,7 @@ final class FeedbackDraft {
     bool? attachShots,
     bool? open,
     bool? expanded,
+    bool? includeUi,
   }) {
     return FeedbackDraft(
       context: context,
@@ -61,6 +66,7 @@ final class FeedbackDraft {
       attachShots: attachShots ?? this.attachShots,
       open: open ?? this.open,
       expanded: expanded ?? this.expanded,
+      includeUi: includeUi ?? this.includeUi,
     );
   }
 }

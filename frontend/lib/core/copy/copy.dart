@@ -868,6 +868,9 @@ abstract final class Copy {
   /// Adds a screenshot of the screen currently under the overlay.
   static const String feedbackAddScreen = 'Add this screen';
 
+  /// Opt-in so Add this screen includes the Give us feedback chrome.
+  static const String feedbackIncludeUi = 'Include the feedback UI';
+
   /// Opens the device camera for a photo to attach.
   static const String feedbackTakePhoto = 'Take a photo';
 

@@ -49,6 +49,7 @@ class FeedbackOverlay extends ConsumerStatefulWidget {
 
 class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
   final GlobalKey _boundaryKey = GlobalKey();
+  final GlobalKey _workspaceKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -70,19 +71,25 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
     return Stack(
       children: <Widget>[
         if (docked)
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Expanded(child: app),
-              SizedBox(
-                width: AppConstants.userFeedback.panelWidth,
-                child: _dockedPanel(context, form),
-              ),
-            ],
+          RepaintBoundary(
+            key: _workspaceKey,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Expanded(child: app),
+                SizedBox(
+                  width: AppConstants.userFeedback.panelWidth,
+                  child: _dockedPanel(context, form),
+                ),
+              ],
+            ),
           )
         else
           app,
-        if (expanded && !docked) Positioned.fill(child: form),
+        if (expanded && !docked)
+          Positioned.fill(
+            child: RepaintBoundary(key: _workspaceKey, child: form),
+          ),
         if (fold.open && !expanded)
           PositionedDirectional(
             start: 0,
@@ -173,8 +180,9 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
   /// Captures this screen into the draft. Returns why an open draft could
   /// not take it, or null.
   Future<String?> _captureDraft() async {
+    final FeedbackDraft? open = ref.read(feedbackDraftProvider);
     OperatorProfile? operator = ref.read(currentOperatorProvider);
-    if (operator == null) {
+    if (operator == null && (open == null || !open.open)) {
       try {
         await ref.read(operatorProfileProvider.future);
         operator = ref.read(currentOperatorProvider);
@@ -218,7 +226,20 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
   }
 
   Future<Uint8List?> _screenshot() async {
-    final BuildContext? boxContext = _boundaryKey.currentContext;
+    final FeedbackDraft? draft = ref.read(feedbackDraftProvider);
+    final bool includeWorkspace =
+        (draft?.includeUi ?? false) && (draft?.expanded ?? false);
+    if (includeWorkspace) {
+      final Uint8List? workspace = await _capture(_workspaceKey);
+      if (workspace != null) {
+        return workspace;
+      }
+    }
+    return _capture(_boundaryKey);
+  }
+
+  Future<Uint8List?> _capture(GlobalKey key) async {
+    final BuildContext? boxContext = key.currentContext;
     if (boxContext == null) {
       return null;
     }
@@ -242,7 +263,8 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
       return null;
     }
     try {
-      final ui.Image image = await object.toImage(pixelRatio: ratio);
+      // The operator asked for this shot; rasterize the frame they see.
+      final ui.Image image = object.toImageSync(pixelRatio: ratio);
       try {
         final ByteData? bytes = await image.toByteData(
           format: ui.ImageByteFormat.png,

@@ -42,6 +42,9 @@ class FeedbackShots extends ConsumerWidget {
         (FeedbackDraft? d) => d?.attachShots ?? false,
       ),
     );
+    final bool includeUi = ref.watch(
+      feedbackDraftProvider.select((FeedbackDraft? d) => d?.includeUi ?? false),
+    );
     final bool canTakePhoto = ref.watch(feedbackPhotosProvider).canTakePhoto;
     final GiveFeedbackController form = ref.read(
       giveFeedbackControllerProvider.notifier,
@@ -69,7 +72,19 @@ class FeedbackShots extends ConsumerWidget {
                       onChanged: form.setAttachShots,
                     ),
             ),
-            if (onAddScreen != null)
+            if (onAddScreen != null) ...<Widget>[
+              AppIconButton(
+                icon: Icons.web_asset_outlined,
+                semanticLabel: Copy.feedbackIncludeUi,
+                tooltip: Copy.feedbackIncludeUi,
+                selected: includeUi,
+                outlined: false,
+                onPressed: () {
+                  ref
+                      .read(feedbackDraftProvider.notifier)
+                      .setIncludeUi(!includeUi);
+                },
+              ),
               AppIconButton(
                 icon: Icons.screenshot_monitor_outlined,
                 semanticLabel: Copy.feedbackAddScreen,
@@ -77,6 +92,7 @@ class FeedbackShots extends ConsumerWidget {
                 outlined: false,
                 onPressed: onAddScreen,
               ),
+            ],
             if (canTakePhoto)
               AppIconButton(
                 icon: Icons.photo_camera_outlined,

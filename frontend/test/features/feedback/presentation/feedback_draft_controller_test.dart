@@ -134,6 +134,17 @@ void main() {
     harness.draft.clear();
     expect(harness.container.read(feedbackDraftProvider), isNull);
   });
+
+  test('includeUi stays off until the operator opts in', () {
+    final _Harness harness = _harness();
+    harness.draft.capture(context: aFeedbackEntry().context);
+    expect(harness.read().includeUi, isFalse);
+    harness.draft
+      ..setIncludeUi(true)
+      ..expand();
+    expect(harness.read().includeUi, isTrue);
+    expect(harness.read().expanded, isTrue);
+  });
 }
 
 final class _Harness {

@@ -62,6 +62,11 @@ final class FeedbackDraftController extends Notifier<FeedbackDraft?> {
     _update((FeedbackDraft d) => d.copyWith(attachShots: attach));
   }
 
+  /// Whether Add this screen includes the visible feedback chrome.
+  void setIncludeUi(bool include) {
+    _update((FeedbackDraft d) => d.copyWith(includeUi: include));
+  }
+
   /// Adds an image while there is room, and turns attach on. Returns why
   /// it could not, or null.
   String? addShot(Uint8List bytes, {required String label}) {

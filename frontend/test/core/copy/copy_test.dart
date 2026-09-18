@@ -342,6 +342,7 @@ List<String> get _values {
     Copy.feedbackAttachScreenshot,
     Copy.feedbackContinue,
     Copy.feedbackAddScreen,
+    Copy.feedbackIncludeUi,
     Copy.feedbackTakePhoto,
     Copy.feedbackChoosePhoto,
     Copy.feedbackRemoveShot('Projects'),
