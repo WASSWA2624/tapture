@@ -16,6 +16,7 @@ class AppIconButton extends StatelessWidget {
     required this.tooltip,
     this.onPressed,
     this.selected,
+    this.outlined = true,
   });
 
   /// The icon to draw. Colour and the default size come from the theme.
@@ -35,16 +36,21 @@ class AppIconButton extends StatelessWidget {
   /// (FE-A11Y-05). Pair it with a [tooltip] that names the next press.
   final bool? selected;
 
+  /// When false, the control has no outline so it can sit inside a field.
+  final bool outlined;
+
   @override
   Widget build(BuildContext context) {
     final AppColors colors = context.colors;
     final bool on = selected ?? false;
-    final BorderSide outline = BorderSide(
-      color: on ? colors.primary : colors.outline,
-      width: Theme.of(context).dividerTheme.thickness ?? Space.x0 / 2,
-      strokeAlign: BorderSide.strokeAlignInside,
-    );
-    return IconButton(
+    final BorderSide outline = outlined
+        ? BorderSide(
+            color: on ? colors.primary : colors.outline,
+            width: Theme.of(context).dividerTheme.thickness ?? Space.x0 / 2,
+            strokeAlign: BorderSide.strokeAlignInside,
+          )
+        : BorderSide.none;
+    final Widget button = IconButton(
       onPressed: onPressed,
       tooltip: tooltip,
       isSelected: selected,
@@ -70,6 +76,21 @@ class AppIconButton extends StatelessWidget {
       ),
       iconSize: Space.x6,
       icon: Icon(icon, size: Space.x6, semanticLabel: semanticLabel),
+    );
+    if (outlined) {
+      return button;
+    }
+    // The catalogue IconButtonTheme draws a control outline. A field suffix
+    // must not inherit it, so the theme side is cleared here as well as on
+    // the button (FE-THEME-07).
+    return IconButtonTheme(
+      data: IconButtonThemeData(
+        style: (IconButtonTheme.of(context).style ?? const ButtonStyle())
+            .copyWith(
+              side: const WidgetStatePropertyAll<BorderSide>(BorderSide.none),
+            ),
+      ),
+      child: button,
     );
   }
 }

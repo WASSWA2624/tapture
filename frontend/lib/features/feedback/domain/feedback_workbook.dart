@@ -64,15 +64,18 @@ final class FeedbackWorkbook {
   XlsxBook toBook() {
     final List<FeedbackEntry> pictured = <FeedbackEntry>[
       for (final FeedbackEntry entry in entries)
-        if (_picture(entry) != null) entry,
+        if (_pictures(entry).isNotEmpty) entry,
     ];
+    final int pictureCount = <int>[
+      for (final FeedbackEntry entry in pictured) _pictures(entry).length,
+    ].fold(0, (int sum, int n) => sum + n);
     return XlsxBook(
       createdUtc: generatedAtUtc,
       subject: _subject,
       sheets: <XlsxSheet>[
         _feedbackSheet(pictured),
         if (pictured.isNotEmpty) _screenshotSheet(pictured),
-        _detailsSheet(pictured.length),
+        _detailsSheet(pictureCount),
       ],
     );
   }
@@ -111,11 +114,22 @@ final class FeedbackWorkbook {
   }
 
   XlsxSheet _screenshotSheet(List<FeedbackEntry> pictured) {
+    final List<({FeedbackEntry entry, Uint8List png, String id})> rows =
+        <({FeedbackEntry entry, Uint8List png, String id})>[
+          for (final FeedbackEntry entry in pictured)
+            for (final (int index, Uint8List png) in _pictures(entry).indexed)
+              (
+                entry: entry,
+                png: png,
+                id: index == 0
+                    ? entry.reference
+                    : '${entry.reference}-${index + 1}',
+              ),
+        ];
     final List<XlsxImage> images = <XlsxImage>[];
     final Map<int, double> heights = <int, double>{};
-    for (int index = 0; index < pictured.length; index++) {
-      final FeedbackEntry entry = pictured[index];
-      final Uint8List png = _picture(entry)!;
+    for (int index = 0; index < rows.length; index++) {
+      final Uint8List png = rows[index].png;
       final ({int width, int height}) size = XlsxImage.fitWithin(
         png,
         AppConstants.userFeedback.workbookImageEdge,
@@ -141,11 +155,12 @@ final class FeedbackWorkbook {
         const XlsxColumn(_screenshotHeader, width: _imageWidth),
       ],
       rows: <List<XlsxCell>>[
-        for (final FeedbackEntry entry in pictured)
+        for (final ({FeedbackEntry entry, Uint8List png, String id}) row
+            in rows)
           <XlsxCell>[
-            XlsxCell.text(entry.reference),
-            XlsxCell.dateTime(_wall(entry.submittedAtUtc)),
-            XlsxCell.textOrEmpty(entry.context.screen),
+            XlsxCell.text(row.id),
+            XlsxCell.dateTime(_wall(row.entry.submittedAtUtc)),
+            XlsxCell.textOrEmpty(row.entry.context.screen),
           ],
       ],
       images: images,
@@ -197,12 +212,25 @@ final class FeedbackWorkbook {
     );
   }
 
-  Uint8List? _picture(FeedbackEntry entry) {
-    final Uint8List? png = entry.hasScreenshot ? screenshots[entry.id] : null;
-    if (png == null || XlsxImage.pngSize(png) == null) {
-      return null;
+  List<Uint8List> _pictures(FeedbackEntry entry) {
+    if (!entry.hasScreenshot) {
+      return const <Uint8List>[];
     }
-    return png;
+    final List<Uint8List> found = <Uint8List>[];
+    final Uint8List? first = screenshots[entry.id];
+    if (first != null && XlsxImage.pngSize(first) != null) {
+      found.add(first);
+    }
+    for (int index = 2; ; index++) {
+      final Uint8List? next = screenshots['${entry.id}#$index'];
+      if (next == null) {
+        break;
+      }
+      if (XlsxImage.pngSize(next) != null) {
+        found.add(next);
+      }
+    }
+    return found;
   }
 
   String get _localHeader => 'Submitted At ($timeZone)';

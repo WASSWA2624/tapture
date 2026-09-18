@@ -17,7 +17,8 @@ final class FeedbackEntry {
     required this.hasScreenshot,
     required this.context,
     this.otherCategory,
-  });
+    int? screenshotCount,
+  }) : screenshotCount = screenshotCount ?? (hasScreenshot ? 1 : 0);
 
   /// Reads a stored entry. Returns null when [json] is not an entry, so one
   /// damaged row cannot hide the rest.
@@ -39,6 +40,15 @@ final class FeedbackEntry {
     }
     final Object? other = map[_otherCategory];
     final Object? message = map[_message];
+    final bool pictured = map[_hasScreenshot] == true;
+    final Object? count = map[_screenshotCount];
+    final int shots = count is int
+        ? count
+        : count is num
+        ? count.round()
+        : pictured
+        ? 1
+        : 0;
     return FeedbackEntry(
       id: id,
       number: number,
@@ -46,7 +56,8 @@ final class FeedbackEntry {
       category: FeedbackCategory.fromWire(map[_category]),
       otherCategory: other is String && other.trim().isNotEmpty ? other : null,
       message: message is String ? message : '',
-      hasScreenshot: map[_hasScreenshot] == true,
+      hasScreenshot: pictured || shots > 0,
+      screenshotCount: shots < 0 ? 0 : shots,
       context: FeedbackContext.fromJson(Map<String, Object?>.from(context)),
     );
   }
@@ -72,6 +83,9 @@ final class FeedbackEntry {
 
   /// Whether a screenshot is stored with the entry.
   final bool hasScreenshot;
+
+  /// How many screenshots or photos are stored with the entry.
+  final int screenshotCount;
 
   /// The moment the entry was written in.
   final FeedbackContext context;
@@ -105,6 +119,7 @@ final class FeedbackEntry {
       _otherCategory: otherCategory,
       _message: message,
       _hasScreenshot: hasScreenshot,
+      _screenshotCount: screenshotCount,
       _context: context.toJson(),
     };
   }
@@ -117,4 +132,5 @@ const String _category = 'category';
 const String _otherCategory = 'other_category';
 const String _message = 'message';
 const String _hasScreenshot = 'has_screenshot';
+const String _screenshotCount = 'screenshot_count';
 const String _context = 'context';

@@ -80,17 +80,26 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
     _cancel = cancel;
     final Map<String, Uint8List> shots = <String, Uint8List>{};
     for (final FeedbackEntry entry in matching) {
-      final Result<Uint8List?> read = await repository.screenshot(entry.id);
+      final Result<List<Uint8List>> read = await repository.screenshots(
+        entry.id,
+      );
       if (!ref.mounted) {
         return const FailureResult<String?>(CancelledFailure());
       }
       switch (read) {
-        case FailureResult<Uint8List?>(:final Failure failure):
+        case FailureResult<List<Uint8List>>(:final Failure failure):
           _idle(failure.message);
           return FailureResult<String?>(failure);
-        case Success<Uint8List?>(:final Uint8List? value):
-          if (value != null && value.isNotEmpty) {
-            shots[entry.id] = value;
+        case Success<List<Uint8List>>(:final List<Uint8List> value):
+          for (int index = 0; index < value.length; index++) {
+            final Uint8List png = value[index];
+            if (png.isEmpty) {
+              continue;
+            }
+            final String key = index == 0
+                ? entry.id
+                : '${entry.id}#${index + 1}';
+            shots[key] = png;
           }
       }
     }

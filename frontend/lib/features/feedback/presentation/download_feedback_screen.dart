@@ -71,6 +71,7 @@ class DownloadFeedbackScreen extends ConsumerWidget {
             ),
             AppSectionHeader(
               title: Copy.feedbackMatching(matching.length, all.length),
+              dense: true,
               action: view.filter.isEmpty
                   ? null
                   : AppButton(
@@ -109,6 +110,7 @@ class DownloadFeedbackScreen extends ConsumerWidget {
         final Widget action = AppPrimaryAction(
           label: Copy.feedbackDownloadCount(matching.length),
           busy: view.busy,
+          compact: true,
           onPressed: canDownload
               ? () => unawaited(_download(context, controller, matching))
               : null,
@@ -121,6 +123,7 @@ class DownloadFeedbackScreen extends ConsumerWidget {
   Widget _frame(Widget body, {Widget? footer}) {
     return AppPage(
       title: Copy.feedbackDownload,
+      compactBar: true,
       inset: false,
       footer: footer,
       body: body,

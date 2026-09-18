@@ -74,6 +74,7 @@ class DeleteFeedbackScreen extends ConsumerWidget {
               title:
                   '${Copy.feedbackMatching(matching.length, all.length)} · '
                   '${Copy.feedbackSelected(selected.length)}',
+              dense: true,
               action: Wrap(
                 children: <Widget>[
                   if (!view.filter.isEmpty)
@@ -126,6 +127,7 @@ class DeleteFeedbackScreen extends ConsumerWidget {
         final Widget action = AppPrimaryAction(
           label: Copy.feedbackDeleteCount(selected.length),
           busy: view.busy,
+          compact: true,
           onPressed: selected.isEmpty
               ? null
               : () => unawaited(_delete(context, controller, selected.length)),
@@ -138,6 +140,7 @@ class DeleteFeedbackScreen extends ConsumerWidget {
   Widget _frame(Widget body, {Widget? footer}) {
     return AppPage(
       title: Copy.feedbackDelete,
+      compactBar: true,
       inset: false,
       footer: footer,
       body: body,

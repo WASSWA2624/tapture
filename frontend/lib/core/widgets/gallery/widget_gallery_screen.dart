@@ -37,6 +37,7 @@ import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_panel_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
+import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
 import 'package:tapture/core/widgets/fields/app_date_field.dart';
 import 'package:tapture/core/widgets/fields/app_multi_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_number_field.dart';
@@ -413,6 +414,7 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
             semanticLabel: Copy.dictationListening,
             tooltip: Copy.dictationListening,
             selected: true,
+            outlined: false,
             onPressed: _noop,
           ),
         ],
@@ -552,6 +554,13 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),
+      AppCheckboxGroup<String>(
+        label: 'Tags',
+        options: _tags,
+        value: const <String>{'water'},
+        onChanged: (_) {},
+      ),
+      const SizedBox(height: Space.x4),
       AppMultiChoiceField<String>(
         label: 'Tags',
         options: _tags,
@@ -574,6 +583,13 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         onChanged: (_) {},
       ),
       AppSwitchTile.checkbox(title: 'GPS', value: true, onChanged: (_) {}),
+      AppSwitchTile.checkbox(
+        title: 'GPS',
+        value: true,
+        dense: true,
+        controlFirst: true,
+        onChanged: (_) {},
+      ),
       const SizedBox(height: Space.x2),
       AppSwitchTile(
         title: 'GPS',

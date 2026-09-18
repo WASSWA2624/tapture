@@ -36,11 +36,21 @@ final class FeedbackArchive {
     zip.addFile(ArchiveFile.noCompress(workbook.fileName, xlsx.length, xlsx));
     for (final FeedbackEntry entry in workbook.entries) {
       final Uint8List? png = workbook.screenshots[entry.id];
-      if (png == null || png.isEmpty) {
-        continue;
+      if (png != null && png.isNotEmpty) {
+        final String name = '$_shotsFolder/${entry.reference}.png';
+        zip.addFile(ArchiveFile.noCompress(name, png.length, png));
       }
-      final String name = '$_shotsFolder/${entry.reference}.png';
-      zip.addFile(ArchiveFile.noCompress(name, png.length, png));
+      for (int index = 2; ; index++) {
+        final Uint8List? extra = workbook.screenshots['${entry.id}#$index'];
+        if (extra == null) {
+          break;
+        }
+        if (extra.isEmpty) {
+          continue;
+        }
+        final String name = '$_shotsFolder/${entry.reference}-$index.png';
+        zip.addFile(ArchiveFile.noCompress(name, extra.length, extra));
+      }
     }
     final List<int>? bytes = ZipEncoder().encode(
       zip,

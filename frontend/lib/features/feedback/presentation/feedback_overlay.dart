@@ -5,11 +5,13 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_floating_button.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
+import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/responsive/form_factor.dart';
 import 'package:tapture/core/widgets/responsive/viewport_metrics.dart';
 import 'package:tapture/features/settings/settings.dart';
@@ -19,14 +21,16 @@ import 'delete_feedback_screen.dart';
 import 'download_feedback_screen.dart';
 import 'feedback_context_capture.dart';
 import 'feedback_draft.dart';
+import 'feedback_draft_bar.dart';
 import 'feedback_draft_controller.dart';
 import 'feedback_providers.dart';
 import 'give_feedback_screen.dart';
 import 'open_feedback_flow.dart';
 
 /// Hosts the draggable Feedback control over [child] and opens the three
-/// flows from its menu. The shell supplies [origin]; this widget never
-/// reads the router.
+/// flows from its menu. Give us feedback is a persistent overlay so the
+/// operator can keep writing while moving through the app. The shell
+/// supplies [origin]; this widget never reads the router.
 class FeedbackOverlay extends ConsumerStatefulWidget {
   /// Creates the overlay.
   const FeedbackOverlay({super.key, required this.child, required this.origin});
@@ -46,40 +50,78 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
 
   @override
   Widget build(BuildContext context) {
+    final FeedbackDraft? draft = ref.watch(feedbackDraftProvider);
+    final bool expanded = draft != null && draft.open && draft.expanded;
+    final bool collapsed = draft != null && draft.open && !draft.expanded;
     return Stack(
       children: <Widget>[
         RepaintBoundary(key: _boundaryKey, child: widget.child),
-        AppFloatingButton(
-          key: const ValueKey<String>('feedback-button'),
-          icon: Icons.feedback_outlined,
-          label: Copy.feedback,
-          hint: Copy.feedbackButtonHint,
-          expandOnHover: context.formFactor == FormFactor.desktop,
-          startX: AppConstants.userFeedback.buttonStartX,
-          startY: AppConstants.userFeedback.buttonStartY,
-          onPressed: (Rect anchor) {
-            unawaited(_openMenu(anchor));
-          },
-        ),
+        if (expanded)
+          const Positioned.fill(child: GiveFeedbackScreen(embedded: true)),
+        if (collapsed)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: EdgeInsets.only(
+                bottom: context.sizeClass == SizeClass.compact
+                    ? Theme.of(context).navigationBarTheme.height ??
+                          Sizes.minTapTarget + Space.x4
+                    : 0,
+              ),
+              child: const FeedbackDraftBar(),
+            ),
+          ),
+        if (!expanded)
+          AppFloatingButton(
+            key: const ValueKey<String>('feedback-button'),
+            icon: Icons.feedback_outlined,
+            label: Copy.feedback,
+            hint: Copy.feedbackButtonHint,
+            expandOnHover: context.formFactor == FormFactor.desktop,
+            startX: AppConstants.userFeedback.buttonStartX,
+            startY: AppConstants.userFeedback.buttonStartY,
+            onPressed: (Rect anchor) {
+              unawaited(_openMenu(anchor));
+            },
+          ),
       ],
     );
   }
 
   Future<void> _openMenu(Rect anchor) async {
-    await _captureDraft();
+    final bool alreadyOpen = ref.read(feedbackDraftProvider)?.open ?? false;
+    if (!alreadyOpen) {
+      await _captureDraft();
+    }
     if (!mounted) {
       return;
     }
+    final bool open = ref.read(feedbackDraftProvider)?.open ?? false;
     await showAppOverflowActions(
       context,
       anchor: anchor,
       items: <AppOverflowAction>[
-        AppOverflowAction(
-          key: const ValueKey<String>('feedback-give'),
-          icon: Icons.rate_review_outlined,
-          label: Copy.feedbackGive,
-          onTap: () => unawaited(_openGive()),
-        ),
+        if (open)
+          AppOverflowAction(
+            key: const ValueKey<String>('feedback-continue'),
+            icon: Icons.rate_review_outlined,
+            label: Copy.feedbackContinue,
+            onTap: () => ref.read(feedbackDraftProvider.notifier).expand(),
+          )
+        else
+          AppOverflowAction(
+            key: const ValueKey<String>('feedback-give'),
+            icon: Icons.rate_review_outlined,
+            label: Copy.feedbackGive,
+            onTap: () => ref.read(feedbackDraftProvider.notifier).openGive(),
+          ),
+        if (open)
+          AppOverflowAction(
+            key: const ValueKey<String>('feedback-add-screen'),
+            icon: Icons.add_a_photo_outlined,
+            label: Copy.feedbackAddScreen,
+            onTap: () => unawaited(_addThisScreen()),
+          ),
         AppOverflowAction(
           key: const ValueKey<String>('feedback-download'),
           icon: Icons.download_outlined,
@@ -131,6 +173,19 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
         );
   }
 
+  Future<void> _addThisScreen() async {
+    await _captureDraft();
+    if (!mounted) {
+      return;
+    }
+    final String screen = widget.origin.screen;
+    showAppSnack(
+      context,
+      Copy.feedbackShotAdded(screen),
+      tone: SnackTone.success,
+    );
+  }
+
   Future<Uint8List?> _screenshot() async {
     final BuildContext? boxContext = _boundaryKey.currentContext;
     if (boxContext == null) {
@@ -167,23 +222,6 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
       }
     } on Object {
       return null;
-    }
-  }
-
-  // Each screen's controller is autoDispose: it is built fresh on open and
-  // released on close, so reopening never reuses a disposed form.
-  Future<void> _openGive() async {
-    final bool? saved = await openFeedbackFlow<bool>(
-      context,
-      page: const GiveFeedbackScreen(),
-    );
-    if (!mounted) {
-      return;
-    }
-    // Release the screenshot; the next Feedback tap captures a new one.
-    ref.read(feedbackDraftProvider.notifier).clear();
-    if (saved == true) {
-      showAppSnack(context, Copy.feedbackSaved, tone: SnackTone.success);
     }
   }
 

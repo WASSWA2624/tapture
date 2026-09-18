@@ -5,6 +5,7 @@ import 'package:tapture/core/files/download_service.dart';
 import 'package:tapture/core/time/clock.dart';
 
 import '../feedback.dart';
+import 'feedback_photo_source.dart';
 
 /// Clock the feature stamps and names files with. Tests replace it with a
 /// [FixedClock].
@@ -44,6 +45,12 @@ final Provider<FeedbackRepository> feedbackRepositoryProvider =
 final Provider<DownloadService> feedbackDownloadsProvider =
     Provider<DownloadService>((Ref _) {
       return DownloadService.fake();
+    });
+
+/// Camera and library photos for a draft. Tests replace this with a fake.
+final Provider<FeedbackPhotoSource> feedbackPhotoSourceProvider =
+    Provider<FeedbackPhotoSource>((Ref _) {
+      return FeedbackPhotoSource.fake();
     });
 
 /// Every stored entry, oldest first. Kept alive with the repository.

@@ -99,12 +99,10 @@ void main() {
     await tester.tap(mic);
     await tester.pump();
     expect(speech.listens.single.languageTag, 'sw');
-    expect(find.text(Copy.dictationStarting), findsOneWidget);
+    expect(find.byTooltip(Copy.stopDictating('Notes')), findsOneWidget);
 
     speech.open();
     await tester.pump();
-    expect(find.text(Copy.dictationListening), findsOneWidget);
-    expect(find.byTooltip(Copy.stopDictating('Notes')), findsOneWidget);
     expect(
       tester.widget<IconButton>(find.byType(IconButton)).isSelected,
       isTrue,
@@ -112,13 +110,13 @@ void main() {
 
     speech.hear('also it');
     await tester.pump();
-    expect(find.text('also it'), findsOneWidget);
+    expect(controller.text, contains('also it'));
 
     await speech.finish('also it crashes');
     await tester.pump();
     expect(controller.text, 'It is slow. Also it crashes.');
     expect(controller.selection.baseOffset, controller.text.length);
-    expect(changes, <String>['It is slow. Also it crashes.']);
+    expect(changes.last, 'It is slow. Also it crashes.');
     expect(find.text(Copy.dictationListening), findsNothing);
     expect(find.byTooltip(Copy.dictateInto('Notes')), findsOneWidget);
   });

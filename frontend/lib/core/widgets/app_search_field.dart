@@ -72,8 +72,8 @@ class _AppSearchFieldState extends State<AppSearchField> {
         strokeAlign: BorderSide.strokeAlignInside,
       ),
     };
-    final OutlineInputBorder pill = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(Radii.pill),
+    final OutlineInputBorder box = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(Radii.sm),
       borderSide: side,
     );
     return Theme(
@@ -82,13 +82,13 @@ class _AppSearchFieldState extends State<AppSearchField> {
           filled: true,
           fillColor: colors.surfaceVariant,
           floatingLabelBehavior: FloatingLabelBehavior.never,
-          border: pill,
-          enabledBorder: pill,
-          focusedBorder: pill,
-          errorBorder: pill.copyWith(
+          border: box,
+          enabledBorder: box,
+          focusedBorder: box,
+          errorBorder: box.copyWith(
             borderSide: side.copyWith(color: colors.danger),
           ),
-          focusedErrorBorder: pill.copyWith(
+          focusedErrorBorder: box.copyWith(
             borderSide: side.copyWith(color: colors.danger),
           ),
         ),

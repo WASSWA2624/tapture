@@ -17,6 +17,7 @@ class AppPrimaryAction extends StatelessWidget {
     this.caption,
     this.onPressed,
     this.busy = false,
+    this.compact = false,
   });
 
   /// The action verb. The largest line on the control.
@@ -30,6 +31,9 @@ class AppPrimaryAction extends StatelessWidget {
 
   /// When true, an inline spinner is shown and taps are swallowed.
   final bool busy;
+
+  /// When true, the control is one 48dp row with less padding.
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +54,10 @@ class AppPrimaryAction extends StatelessWidget {
           child: FilledButton(
             onPressed: visualPress,
             style: FilledButton.styleFrom(
-              minimumSize: const Size(double.infinity, Sizes.controlHeight),
+              minimumSize: Size(
+                double.infinity,
+                compact ? Sizes.minTapTarget : Sizes.controlHeight,
+              ),
               padding: const EdgeInsets.symmetric(
                 horizontal: Space.x2,
                 vertical: Space.x0,

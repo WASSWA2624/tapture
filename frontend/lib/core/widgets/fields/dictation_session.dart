@@ -14,13 +14,21 @@ import 'dictation_phase.dart';
 /// leaves the screen never keeps the microphone open.
 final class DictationSession extends ChangeNotifier {
   /// Creates a session. Nothing listens until [start].
-  DictationSession({required this.onSpoken, required this.onFailure});
+  DictationSession({
+    required this.onSpoken,
+    required this.onFailure,
+    this.onPartial,
+  });
 
   /// Receives the final words of a listen, exactly as recognised.
   final ValueChanged<String> onSpoken;
 
   /// Receives why a listen ended without words.
   final ValueChanged<Failure> onFailure;
+
+  /// Receives words heard so far, before they are final. The field shows
+  /// these in the input itself.
+  final ValueChanged<String>? onPartial;
 
   DictationPhase _phase = DictationPhase.idle;
   String _heard = '';
@@ -101,6 +109,7 @@ final class DictationSession extends ChangeNotifier {
       return;
     }
     _heard = result.text;
+    onPartial?.call(result.text);
     _set(
       _phase == DictationPhase.finishing
           ? DictationPhase.finishing

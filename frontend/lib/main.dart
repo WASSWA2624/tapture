@@ -17,6 +17,7 @@ import 'core/logging/logger.dart';
 import 'core/security/secure_storage.dart';
 import 'core/time/clock.dart';
 import 'features/feedback/feedback.dart';
+import 'features/feedback/presentation/feedback_photo_source.dart';
 import 'features/feedback/presentation/feedback_providers.dart';
 import 'features/settings/presentation/offline_switch.dart';
 import 'features/settings/settings.dart';
@@ -66,6 +67,9 @@ Future<void> _run() async {
         return FeedbackRepositoryImpl.platform(clock: clock, ids: ids);
       }),
       feedbackDownloadsProvider.overrideWith((Ref _) => DownloadService()),
+      feedbackPhotoSourceProvider.overrideWith(
+        (Ref _) => FeedbackPhotoSource(),
+      ),
       sttServiceProvider.overrideWith((Ref ref) {
         final SttService speech = SttService();
         ref.onDispose(() => unawaited(speech.cancel()));

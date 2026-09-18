@@ -26,6 +26,7 @@ class AppForm extends StatefulWidget {
     this.guardUnsaved = false,
     this.errors = const <String>[],
     this.dirty = false,
+    this.compact = false,
   });
 
   /// Controls in visual order. Traversal follows this list (FE-A11Y-06).
@@ -47,6 +48,9 @@ class AppForm extends StatefulWidget {
   /// Marks the form dirty for non-text edits (choice, date). Text fields
   /// also mark dirty on the first edit.
   final bool dirty;
+
+  /// When true, field gaps and the submit bar use the compact spacing.
+  final bool compact;
 
   @override
   State<AppForm> createState() => _AppFormState();
@@ -179,11 +183,11 @@ class _AppFormState extends State<AppForm> {
                         child: SingleChildScrollView(
                           keyboardDismissBehavior:
                               ScrollViewKeyboardDismissBehavior.onDrag,
-                          padding: const EdgeInsets.fromLTRB(
+                          padding: EdgeInsets.fromLTRB(
                             Space.x4,
+                            widget.compact ? Space.x2 : Space.x4,
                             Space.x4,
-                            Space.x4,
-                            Space.x2,
+                            widget.compact ? Space.x1 : Space.x2,
                           ),
                           child: ContentConstraint(
                             child: Column(
@@ -225,7 +229,7 @@ class _AppFormState extends State<AppForm> {
     ];
     for (int i = 0; i < widget.fields.length; i++) {
       if (i > 0) {
-        children.add(const SizedBox(height: Space.x3));
+        children.add(SizedBox(height: widget.compact ? Space.x2 : Space.x3));
       }
       children.add(
         FocusTraversalOrder(
@@ -243,6 +247,7 @@ class _AppFormState extends State<AppForm> {
       child: AppPrimaryAction(
         label: widget.submitLabel,
         busy: _busy,
+        compact: widget.compact,
         onPressed: _submit,
       ),
     );
@@ -256,11 +261,11 @@ class _AppFormState extends State<AppForm> {
     return DecoratedBox(
       decoration: BoxDecoration(border: Border(top: side)),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(
+        padding: EdgeInsets.fromLTRB(
           Space.x4,
-          Space.x3,
+          widget.compact ? Space.x1 : Space.x3,
           Space.x4,
-          Space.x4,
+          widget.compact ? Space.x2 : Space.x4,
         ),
         child: ContentConstraint(child: action),
       ),

@@ -5,11 +5,11 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
-import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
-import 'package:tapture/core/widgets/fields/app_choice_field.dart';
+import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
 import 'package:tapture/core/widgets/fields/app_date_field.dart';
 import 'package:tapture/core/widgets/fields/app_multi_choice_field.dart';
+import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 
@@ -21,9 +21,9 @@ import '../domain/feedback_screenshot_filter.dart';
 import '../domain/feedback_submitter.dart';
 import 'feedback_labels.dart';
 
-/// Shared facets for download and delete. Search and type are always in
-/// view; range, screen, platform, device, submitter and screenshot fold
-/// behind More filters (FE-SIMP-06).
+/// Shared facets for download and delete. Search and type stay in view;
+/// range, screen, platform, device, submitter and screenshot fold behind
+/// More filters (FE-SIMP-06).
 class FeedbackFilterPanel extends StatelessWidget {
   /// Creates the panel. [onChanged] receives a new filter; [filter] is not
   /// mutated.
@@ -76,21 +76,46 @@ class FeedbackFilterPanel extends StatelessWidget {
             },
           ),
           const SizedBox(height: Space.x2),
-          _TypeRow(filter: filter, entries: entries, onChanged: onChanged),
+          AppCheckboxGroup<FeedbackCategory>(
+            label: Copy.feedbackTypes,
+            value: filter.categories,
+            options: <Choice<FeedbackCategory>>[
+              for (final FeedbackCategory category
+                  in FeedbackCategory.filterable(
+                    entries.map((FeedbackEntry entry) => entry.category),
+                  ))
+                Choice<FeedbackCategory>(
+                  category,
+                  FeedbackLabels.category(category),
+                ),
+            ],
+            onChanged: (Set<FeedbackCategory> value) {
+              onChanged(filter.copyWith(categories: value));
+            },
+          ),
           Align(
             alignment: AlignmentDirectional.centerStart,
-            child: AppButton(
-              key: const ValueKey<String>('feedback-more-filters'),
+            child: Semantics(
+              button: true,
+              expanded: expanded,
               label: expanded
                   ? Copy.feedbackFewerFilters
                   : Copy.feedbackMoreFilters(folded),
-              icon: expanded ? Icons.expand_less : Icons.expand_more,
-              variant: AppButtonVariant.text,
-              onPressed: onToggleExpanded,
+              child: ExcludeSemantics(
+                child: AppButton(
+                  key: const ValueKey<String>('feedback-more-filters'),
+                  label: expanded
+                      ? Copy.feedbackFewerFilters
+                      : Copy.feedbackMoreFilters(folded),
+                  icon: expanded ? Icons.expand_less : Icons.expand_more,
+                  variant: AppButtonVariant.text,
+                  onPressed: onToggleExpanded,
+                ),
+              ),
             ),
           ),
           if (expanded) ...<Widget>[
-            const SizedBox(height: Space.x2),
+            const SizedBox(height: Space.x1),
             ..._folded(context),
           ],
         ],
@@ -138,6 +163,22 @@ class FeedbackFilterPanel extends StatelessWidget {
           Copy.feedbackRangeBackwards,
           style: AppText.body.copyWith(color: context.colors.onSurface),
         ),
+      AppRadioGroup<FeedbackScreenshotFilter>(
+        label: Copy.feedbackScreenshot,
+        direction: Axis.horizontal,
+        value: filter.screenshot,
+        options: <Choice<FeedbackScreenshotFilter>>[
+          for (final FeedbackScreenshotFilter option
+              in FeedbackScreenshotFilter.values)
+            Choice<FeedbackScreenshotFilter>(
+              option,
+              FeedbackLabels.screenshot(option),
+            ),
+        ],
+        onChanged: (FeedbackScreenshotFilter value) {
+          onChanged(filter.copyWith(screenshot: value));
+        },
+      ),
       AppMultiChoiceField<String>(
         label: Copy.feedbackScreens,
         value: filter.screens,
@@ -160,7 +201,7 @@ class FeedbackFilterPanel extends StatelessWidget {
           onChanged(filter.copyWith(platforms: value));
         },
       ),
-      AppMultiChoiceField<FeedbackDeviceType>(
+      AppCheckboxGroup<FeedbackDeviceType>(
         label: Copy.feedbackDeviceTypes,
         value: filter.deviceTypes,
         options: <Choice<FeedbackDeviceType>>[
@@ -171,7 +212,7 @@ class FeedbackFilterPanel extends StatelessWidget {
           onChanged(filter.copyWith(deviceTypes: value));
         },
       ),
-      AppMultiChoiceField<FeedbackSubmitter>(
+      AppCheckboxGroup<FeedbackSubmitter>(
         label: Copy.feedbackSubmittedBy,
         value: filter.submitters,
         options: <Choice<FeedbackSubmitter>>[
@@ -185,81 +226,14 @@ class FeedbackFilterPanel extends StatelessWidget {
           onChanged(filter.copyWith(submitters: value));
         },
       ),
-      AppChoiceField<FeedbackScreenshotFilter>(
-        label: Copy.feedbackScreenshot,
-        value: filter.screenshot,
-        options: <Choice<FeedbackScreenshotFilter>>[
-          for (final FeedbackScreenshotFilter option
-              in FeedbackScreenshotFilter.values)
-            Choice<FeedbackScreenshotFilter>(
-              option,
-              FeedbackLabels.screenshot(option),
-            ),
-        ],
-        onChanged: (FeedbackScreenshotFilter? value) {
-          if (value != null) {
-            onChanged(filter.copyWith(screenshot: value));
-          }
-        },
-      ),
     ];
     return <Widget>[
       for (int i = 0; i < facets.length; i++) ...<Widget>[
-        if (i > 0) const SizedBox(height: Space.x3),
+        if (i > 0) const SizedBox(height: Space.x2),
         facets[i],
       ],
     ];
   }
-}
-
-/// The feedback types as one row of toggles. None ticked lets every type
-/// through, like the other facets.
-class _TypeRow extends StatelessWidget {
-  const _TypeRow({
-    required this.filter,
-    required this.entries,
-    required this.onChanged,
-  });
-
-  final FeedbackFilter filter;
-  final List<FeedbackEntry> entries;
-  final ValueChanged<FeedbackFilter> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final List<FeedbackCategory> offered = FeedbackCategory.filterable(
-      entries.map((FeedbackEntry entry) => entry.category),
-    );
-    return Semantics(
-      container: true,
-      label: Copy.feedbackTypes,
-      child: AppChipRow(
-        chips: <AppChip>[
-          for (final FeedbackCategory category in offered)
-            AppChip(
-              label: FeedbackLabels.category(category),
-              selected: filter.categories.contains(category),
-              onTap: () => onChanged(
-                filter.copyWith(
-                  categories: _toggled(filter.categories, category),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-Set<FeedbackCategory> _toggled(
-  Set<FeedbackCategory> current,
-  FeedbackCategory category,
-) {
-  final Set<FeedbackCategory> next = Set<FeedbackCategory>.of(current);
-  if (!next.add(category)) {
-    next.remove(category);
-  }
-  return next;
 }
 
 /// How many folded facets narrow the list, for the More filters label.

@@ -85,6 +85,31 @@ void main() {
       isNull,
     );
   });
+
+  testWidgets('an outlined-off icon button has no side', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      const AppIconButton(
+        icon: Icons.mic,
+        semanticLabel: 'Speak',
+        tooltip: 'Speak',
+        outlined: false,
+        onPressed: _ignorePress,
+      ),
+    );
+    final IconButton button = tester.widget<IconButton>(
+      find.byType(IconButton),
+    );
+    expect(button.style?.side?.resolve(<WidgetState>{}), BorderSide.none);
+    expect(
+      IconButtonTheme.of(
+        tester.element(find.byType(IconButton)),
+      ).style?.side?.resolve(<WidgetState>{}),
+      BorderSide.none,
+    );
+  });
 }
 
 Future<void> _pump(WidgetTester tester, Widget child) async {

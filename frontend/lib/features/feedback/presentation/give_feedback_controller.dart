@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -8,22 +10,24 @@ import '../domain/feedback_entry.dart';
 import 'feedback_draft.dart';
 import 'feedback_draft_controller.dart';
 import 'feedback_providers.dart';
+import 'feedback_shot.dart';
 import 'give_feedback_view.dart';
 
 /// Saves a new feedback entry from the form.
 ///
 /// The screen owns the text it edits; this holds only the choices and the
-/// verdicts, so a rebuild has nothing to re-create and nothing to leak.
+/// verdicts. The draft keeps those choices while the operator moves around.
 final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
   /// Creates the controller.
   GiveFeedbackController();
 
   @override
   GiveFeedbackView build() {
-    final bool hasShot = ref.read(feedbackDraftProvider)?.screenshot != null;
+    final FeedbackDraft? draft = ref.read(feedbackDraftProvider);
+    final bool hasShot = draft?.shots.isNotEmpty ?? false;
     return (
-      category: FeedbackCategory.general,
-      attachScreenshot: hasShot,
+      category: draft?.category ?? FeedbackCategory.general,
+      attachScreenshot: draft?.attachShots ?? hasShot,
       messageError: null,
       otherError: null,
       saveError: null,
@@ -32,6 +36,7 @@ final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
 
   /// Picks the kind of feedback.
   void chooseCategory(FeedbackCategory category) {
+    ref.read(feedbackDraftProvider.notifier).setCategory(category);
     state = (
       category: category,
       attachScreenshot: state.attachScreenshot,
@@ -41,8 +46,9 @@ final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
     );
   }
 
-  /// Whether the captured screenshot is stored with the entry.
+  /// Whether the attached images are stored with the entry.
   void setAttachScreenshot(bool attach) {
+    ref.read(feedbackDraftProvider.notifier).setAttachShots(attach);
     state = (
       category: state.category,
       attachScreenshot: attach,
@@ -93,6 +99,10 @@ final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
       return const FailureResult<FeedbackEntry>(missing);
     }
     final FeedbackCategory category = state.category;
+    final List<Uint8List> shots = <Uint8List>[
+      if (state.attachScreenshot)
+        for (final FeedbackShot shot in draft.shots) shot.bytes,
+    ];
     final Result<FeedbackEntry> result = await ref
         .read(feedbackRepositoryProvider)
         .add(
@@ -100,10 +110,11 @@ final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
           message: text,
           context: draft.context,
           otherCategory: category == FeedbackCategory.other ? named : null,
-          screenshot: state.attachScreenshot ? draft.screenshot : null,
+          screenshot: shots.isEmpty ? null : shots.first,
+          screenshots: shots.length > 1
+              ? shots.sublist(1)
+              : const <Uint8List>[],
         );
-    // The entry is durable either way; a closed screen has no state to set.
-    // The overlay drops the draft once the form has closed.
     if (ref.mounted && result is FailureResult<FeedbackEntry>) {
       _failed(result.failure);
     }

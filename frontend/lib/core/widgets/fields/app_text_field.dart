@@ -15,7 +15,6 @@ import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'dictation_phase.dart';
 import 'dictation_scope.dart';
 import 'dictation_session.dart';
-import 'dictation_status.dart';
 
 part 'app_text_field_dictation.dart';
 
@@ -132,14 +131,30 @@ class AppTextField extends StatefulWidget {
 
 class _AppTextFieldState extends State<AppTextField> {
   bool _revealed = false;
+  int? _spokenFrom;
+  int? _spokenTo;
+  bool _applyingSpoken = false;
   late final DictationSession _dictation = DictationSession(
-    onSpoken: (String spoken) => _insertSpoken(spoken),
+    onSpoken: (String spoken) => _insertSpoken(spoken, isFinal: true),
+    onPartial: (String spoken) => _insertSpoken(spoken, isFinal: false),
     onFailure: (Failure failure) => _explain(failure),
   );
 
   @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_onUserEdit);
+  }
+
+  @override
   void didUpdateWidget(AppTextField oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller.removeListener(_onUserEdit);
+      widget.controller.addListener(_onUserEdit);
+      _spokenFrom = null;
+      _spokenTo = null;
+    }
     if (_dictation.isActive &&
         (oldWidget.controller != widget.controller || !_offersDictation)) {
       unawaited(_dictation.cancel());
@@ -148,9 +163,18 @@ class _AppTextFieldState extends State<AppTextField> {
 
   @override
   void dispose() {
+    widget.controller.removeListener(_onUserEdit);
     // Cancels a listen still running, so leaving never keeps the microphone.
     _dictation.dispose();
     super.dispose();
+  }
+
+  void _onUserEdit() {
+    if (_applyingSpoken) {
+      return;
+    }
+    _spokenFrom = null;
+    _spokenTo = null;
   }
 
   @override
@@ -187,13 +211,7 @@ class _AppTextFieldState extends State<AppTextField> {
             decoration: InputDecoration(
               labelText: field.label,
               hintText: field.hint,
-              helperText: _dictation.isActive ? null : field.helper,
-              helper: _dictation.isActive
-                  ? DictationStatus(
-                      phase: _dictation.phase,
-                      heard: _dictation.heard,
-                    )
-                  : null,
+              helperText: field.helper,
               errorText: field.errorText,
               alignLabelWithHint: lines > 1,
               prefixIcon: field.prefix,
@@ -253,6 +271,7 @@ class _AppTextFieldState extends State<AppTextField> {
             icon: Icons.clear,
             semanticLabel: Copy.clearField(field.label),
             tooltip: Copy.clearField(field.label),
+            outlined: false,
             onPressed: () {
               field.controller.clear();
               field.onChanged?.call('');
@@ -265,7 +284,8 @@ class _AppTextFieldState extends State<AppTextField> {
             icon: on ? Icons.mic : Icons.mic_none,
             semanticLabel: mic,
             tooltip: mic,
-            selected: on,
+            selected: on ? true : null,
+            outlined: false,
             onPressed: () => _toggleDictation(),
           ),
         // Last, so the show / hide control is always the far end of the field.

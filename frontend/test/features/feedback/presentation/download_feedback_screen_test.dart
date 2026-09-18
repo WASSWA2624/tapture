@@ -55,7 +55,7 @@ void main() {
     expect(find.text(Copy.feedbackScreens), findsNothing);
   });
 
-  testWidgets('a type chip narrows the list and Clear filters widens it', (
+  testWidgets('a type checkbox narrows the list and Clear filters widens it', (
     WidgetTester tester,
   ) async {
     await _pump(tester, seed: true);

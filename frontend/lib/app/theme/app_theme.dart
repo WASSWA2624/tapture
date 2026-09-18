@@ -385,7 +385,7 @@ BorderSide _outline(AppColors colors, bool outdoor) {
 
 OutlineInputBorder _fieldBorder(BorderSide side) {
   return OutlineInputBorder(
-    borderRadius: BorderRadius.circular(Radii.md),
+    borderRadius: BorderRadius.circular(Radii.sm),
     borderSide: side,
   );
 }

@@ -131,6 +131,28 @@ void _denseCases() {
     await tester.pump();
     expect(value, isFalse);
   });
+
+  testWidgets('a leading checkbox sits before its label', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      SingleChildScrollView(
+        child: AppSwitchTile.checkbox(
+          title: 'Attach screenshot',
+          value: true,
+          dense: true,
+          controlFirst: true,
+          onChanged: (_) {},
+        ),
+      ),
+    );
+    expect(
+      tester.getTopLeft(find.byType(Checkbox)).dx,
+      lessThan(tester.getTopLeft(find.text('Attach screenshot')).dx),
+    );
+    expect(tester.getSize(find.byType(AppSwitchTile)).height, 48);
+  });
 }
 
 Future<void> _pump(WidgetTester tester, Widget child) async {

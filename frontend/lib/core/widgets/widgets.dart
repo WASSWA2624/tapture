@@ -27,6 +27,7 @@ export 'fields/app_choice_field.dart';
 export 'fields/app_date_field.dart';
 export 'fields/app_multi_choice_field.dart';
 export 'fields/app_number_field.dart';
+export 'fields/app_checkbox_group.dart';
 export 'fields/app_radio_group.dart';
 export 'fields/app_switch_tile.dart';
 export 'fields/app_text_field.dart';

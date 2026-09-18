@@ -26,10 +26,15 @@ abstract interface class FeedbackRepository {
     required FeedbackContext context,
     String? otherCategory,
     Uint8List? screenshot,
+    List<Uint8List> screenshots = const <Uint8List>[],
   });
 
-  /// The PNG stored with entry [id], or null when it has none.
+  /// The PNG stored with entry [id], or null when it has none. The first
+  /// attached image when several were saved.
   Future<Result<Uint8List?>> screenshot(String id);
+
+  /// Every PNG stored with entry [id], in the order they were attached.
+  Future<Result<List<Uint8List>>> screenshots(String id);
 
   /// Deletes the entries in [ids] and their screenshots, and returns what was
   /// deleted so [restore] can undo it. Unknown ids are ignored.

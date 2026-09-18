@@ -16,6 +16,7 @@ class AppSwitchTile extends StatelessWidget {
     this.enabled = true,
     this.divided = true,
     this.dense = false,
+    this.controlFirst = false,
   }) : _useCheckbox = false;
 
   /// Creates the same layout with a checkbox instead of a switch.
@@ -28,6 +29,7 @@ class AppSwitchTile extends StatelessWidget {
     this.enabled = true,
     this.divided = true,
     this.dense = false,
+    this.controlFirst = false,
   }) : _useCheckbox = true;
 
   /// Visible title; also the semantic name of the control (FE-A11Y-02).
@@ -53,6 +55,9 @@ class AppSwitchTile extends StatelessWidget {
   /// inset, for a switch that sits inside a form rather than a list of
   /// settings. [description] is then announced but not drawn.
   final bool dense;
+
+  /// When true, the switch or checkbox sits before the label.
+  final bool controlFirst;
 
   final bool _useCheckbox;
 
@@ -101,6 +106,10 @@ class AppSwitchTile extends StatelessWidget {
                         ),
                   child: Row(
                     children: <Widget>[
+                      if (controlFirst) ...<Widget>[
+                        _control(enabled),
+                        const SizedBox(width: Space.x2),
+                      ],
                       Expanded(
                         // The tile's Semantics already carries both lines;
                         // left in, a reader would announce them twice.
@@ -127,20 +136,10 @@ class AppSwitchTile extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: Space.x3),
-                      IgnorePointer(
-                        child: ExcludeSemantics(
-                          child: _useCheckbox
-                              ? Checkbox(
-                                  value: value,
-                                  onChanged: enabled ? (_) {} : null,
-                                )
-                              : Switch(
-                                  value: value,
-                                  onChanged: enabled ? (_) {} : null,
-                                ),
-                        ),
-                      ),
+                      if (!controlFirst) ...<Widget>[
+                        const SizedBox(width: Space.x3),
+                        _control(enabled),
+                      ],
                     ],
                   ),
                 ),
@@ -148,6 +147,26 @@ class AppSwitchTile extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _control(bool enabled) {
+    return IgnorePointer(
+      child: ExcludeSemantics(
+        child: _useCheckbox
+            ? Checkbox(
+                value: value,
+                onChanged: enabled ? (_) {} : null,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                visualDensity: dense
+                    ? const VisualDensity(
+                        horizontal: VisualDensity.minimumDensity,
+                        vertical: VisualDensity.minimumDensity,
+                      )
+                    : VisualDensity.compact,
+              )
+            : Switch(value: value, onChanged: enabled ? (_) {} : null),
       ),
     );
   }

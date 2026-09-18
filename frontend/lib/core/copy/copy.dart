@@ -845,6 +845,54 @@ abstract final class Copy {
   /// Attaches the screenshot taken when Feedback was tapped.
   static const String feedbackAttachScreenshot = 'Attach screenshot';
 
+  /// Continues a feedback draft started on another screen.
+  static const String feedbackContinue = 'Continue feedback';
+
+  /// Adds a screenshot of the screen currently under the overlay.
+  static const String feedbackAddScreen = 'Add this screen';
+
+  /// Opens the device camera for a photo to attach.
+  static const String feedbackTakePhoto = 'Take a photo';
+
+  /// Opens the device library for a photo to attach.
+  static const String feedbackChoosePhoto = 'Choose a photo';
+
+  /// Removes one attached photo or screenshot.
+  static String feedbackRemoveShot(String label) => 'Remove $label';
+
+  /// Semantic name of a larger attached-photo preview.
+  static const String feedbackShotPreview = 'Photo preview';
+
+  /// Discards the in-progress feedback draft.
+  static const String feedbackDiscardDraft = 'Discard draft';
+
+  /// Confirms discarding the in-progress feedback draft.
+  static const String feedbackDiscardDraftMessage =
+      'This feedback and its photos will be cleared.';
+
+  /// Collapses the feedback form so the rest of the app stays usable.
+  static const String feedbackContinueLater = 'Continue later';
+
+  /// Compact bar while a draft is kept across screens.
+  static const String feedbackDraftBarHint =
+      'Opens the feedback you started. Keep typing or speaking here.';
+
+  /// Announced when a screenshot of [screen] was added to the draft.
+  static String feedbackShotAdded(String screen) {
+    return 'Added a screenshot of $screen';
+  }
+
+  /// No photo was returned from the camera or library.
+  static const String feedbackNoPhoto = 'No photo was chosen.';
+
+  /// A chosen photo could not be read.
+  static const String feedbackPhotoFailed =
+      'That photo could not be added. Try another, or attach a screenshot.';
+
+  /// The draft already holds as many photos as it will take.
+  static const String feedbackShotsFull =
+      'Remove a photo before adding another.';
+
   /// What the screenshot shows, named for the screen it was taken on.
   static String feedbackScreenshotOf(String screen) {
     return 'Screenshot of $screen, as it was when you tapped Feedback';

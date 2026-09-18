@@ -111,7 +111,7 @@ void main() {
     expect(tester.getRect(find.text(Copy.feedbackSave)), save);
   });
 
-  testWidgets('the attach switch sits directly above the screenshot', (
+  testWidgets('the attach checkbox sits directly above the screenshot', (
     WidgetTester tester,
   ) async {
     await _pump(tester, screenshot: aFeedbackPng);
@@ -120,13 +120,13 @@ void main() {
     );
     final Finder attach = find.byType(AppSwitchTile);
     expect(find.text(Copy.feedbackAttachScreenshot), findsOneWidget);
+    expect(find.byType(Checkbox), findsWidgets);
     expect(preview, findsOneWidget);
     expect(
       tester.getRect(attach).bottom,
       lessThanOrEqualTo(tester.getRect(preview).top),
     );
     expect(tester.getSize(attach).height, lessThan(60));
-    // The screen it shows is announced, not printed.
     expect(find.text(Copy.feedbackScreenshotOf('Projects')), findsNothing);
 
     await tester.tap(attach);
@@ -168,6 +168,22 @@ void main() {
       'Fourth time works',
     );
     expect(find.byType(GiveFeedbackScreen), findsNothing);
+  });
+
+  testWidgets('leaving the form keeps the draft for the next opening', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, launcher: true);
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).first, 'Still writing');
+    await tester.pump();
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.discardChangesTitle), findsNothing);
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    expect(find.text('Still writing'), findsOneWidget);
   });
 
   test('rebuilding the form state while it is open is safe', () {

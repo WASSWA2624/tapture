@@ -28,30 +28,51 @@ extension _FieldDictation on _AppTextFieldState {
     );
   }
 
-  void _insertSpoken(String spoken) {
+  void _insertSpoken(String spoken, {required bool isFinal}) {
     if (!mounted) {
       return;
     }
     final AppTextField field = widget;
     final TextEditingValue value = field.controller.value;
-    final TextSelection selection = value.selection;
+    int from;
+    int to;
+    if (_spokenFrom != null && _spokenTo != null) {
+      from = _spokenFrom!.clamp(0, value.text.length);
+      to = _spokenTo!.clamp(from, value.text.length);
+    } else {
+      final TextSelection selection = value.selection;
+      from = selection.isValid ? selection.start : value.text.length;
+      to = selection.isValid ? selection.end : from;
+      if (from > to) {
+        final int swap = from;
+        from = to;
+        to = swap;
+      }
+      _spokenFrom = from;
+    }
     final ({String text, int caret}) next = SpokenText.insert(
       text: value.text,
       spoken: spoken,
-      start: selection.isValid ? selection.start : null,
-      end: selection.isValid ? selection.end : null,
-      sentences: (field.maxLines ?? 1) > 1,
+      start: from,
+      end: to,
+      sentences: isFinal && (field.maxLines ?? 1) > 1,
       maxLength: field.maxLength,
       languageTag: DictationScope.maybeOf(context)?.languageTag ?? 'en',
     );
-    if (next.text == value.text) {
-      return;
-    }
+    _applyingSpoken = true;
     field.controller.value = TextEditingValue(
       text: next.text,
       selection: TextSelection.collapsed(offset: next.caret),
     );
-    field.onChanged?.call(next.text);
+    _applyingSpoken = false;
+    _spokenTo = next.caret;
+    if (isFinal) {
+      _spokenFrom = null;
+      _spokenTo = null;
+    }
+    if (next.text != value.text) {
+      field.onChanged?.call(next.text);
+    }
   }
 
   void _explain(Failure failure) {

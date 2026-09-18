@@ -26,6 +26,7 @@ class AppPage extends StatelessWidget {
     this.inset = true,
     this.leading,
     this.scrollable = true,
+    this.compactBar = false,
   });
 
   /// App bar title.
@@ -67,6 +68,10 @@ class AppPage extends StatelessWidget {
   /// [AppForm] keeps its submit bar in reach this way (FE-SIMP-01).
   final bool scrollable;
 
+  /// When true, the app bar is one 48dp row with no extra padding, for
+  /// overlay-style screens that should not spend height on chrome.
+  final bool compactBar;
+
   @override
   Widget build(BuildContext context) {
     final EdgeInsets padding = _paddingFor(context, inset: inset);
@@ -97,7 +102,12 @@ class AppPage extends StatelessWidget {
               leadingWidth: leading == null
                   ? null
                   : Sizes.minTapTarget + Space.x2,
-              titleSpacing: leading == null ? Space.x3 : Space.x2,
+              toolbarHeight: compactBar
+                  ? Sizes.minTapTarget
+                  : Sizes.minTapTarget + Space.x2,
+              titleSpacing: leading == null
+                  ? (compactBar ? Space.x2 : Space.x3)
+                  : Space.x2,
               title: Text(title),
               actions: barActions,
             )
@@ -116,7 +126,7 @@ class AppPage extends StatelessWidget {
                 padding: _paddingFor(
                   context,
                   inset: true,
-                ).copyWith(top: Space.x2),
+                ).copyWith(top: compactBar ? Space.x1 : Space.x2),
                 child: ContentConstraint(child: footer),
               ),
             ),

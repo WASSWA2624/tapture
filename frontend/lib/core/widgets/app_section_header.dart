@@ -8,13 +8,22 @@ import 'package:tapture/app/theme/typography.dart';
 class AppSectionHeader extends StatelessWidget {
   /// Creates a section heading. [action] is an optional trailing control
   /// that must already meet 48dp and carry a label (FE-A11Y-01, FE-A11Y-02).
-  const AppSectionHeader({super.key, required this.title, this.action});
+  const AppSectionHeader({
+    super.key,
+    required this.title,
+    this.action,
+    this.dense = false,
+  });
 
   /// Visible heading; also the semantic name of the section.
   final String title;
 
   /// Optional trailing action (filter, "see all", overflow).
   final Widget? action;
+
+  /// When true, vertical padding shrinks so the heading sits closer to the
+  /// list it names.
+  final bool dense;
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +35,9 @@ class AppSectionHeader extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(
+          padding: EdgeInsets.fromLTRB(
             Space.x4,
-            Space.x4,
+            dense ? Space.x2 : Space.x4,
             Space.x4,
             Space.x1,
           ),
