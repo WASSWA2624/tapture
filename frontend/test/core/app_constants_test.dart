@@ -85,9 +85,23 @@ void main() {
     );
     expect(AppConstants.operator.initialsKey, isNotEmpty);
     expect(AppConstants.operator.contactKey, isNotEmpty);
+    expect(AppConstants.operator.emailKey, isNotEmpty);
+    expect(AppConstants.operator.phoneKey, isNotEmpty);
     expect(
       AppConstants.operator.initialsKey,
       isNot(AppConstants.operator.contactKey),
+    );
+    expect(
+      AppConstants.operator.emailKey,
+      isNot(AppConstants.operator.contactKey),
+    );
+    expect(
+      AppConstants.operator.phoneKey,
+      isNot(AppConstants.operator.contactKey),
+    );
+    expect(
+      AppConstants.operator.emailKey,
+      isNot(AppConstants.operator.phoneKey),
     );
     expect(AppConstants.lock.pinMin, 4);
     expect(AppConstants.lock.pinMax, 8);

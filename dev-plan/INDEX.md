@@ -1,6 +1,6 @@
 # Tapture — task index
 
-293 implementation prompts across 25 phases. Work top to bottom.
+294 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task.
 
@@ -374,6 +374,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [291 — Mark required optional fields](23-hardening/291-mark-required-optional-fields.md)
 - [x] [292 — Add email phone fields](23-hardening/292-add-email-phone-fields.md)
 - [x] [293 — Add feedback close control](23-hardening/293-add-feedback-close-control.md)
+- [ ] [294 — Split operator contact fields](23-hardening/294-split-operator-contact-fields.md)
 
 ## 24 — The minimal backend
 

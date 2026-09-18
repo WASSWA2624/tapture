@@ -32,7 +32,7 @@ abstract final class FeedbackContextCapture {
     final String? initials = operator != null && operator.hasInitials
         ? operator.initials.trim()
         : null;
-    final String? contact = operator?.contact?.trim();
+    final String? contact = operator?.contact;
     return FeedbackContext(
       capturedAtUtc: clock.nowUtc(),
       submitter: FeedbackSubmitter.resolve(name: name, accountId: account),

@@ -11,6 +11,8 @@ import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/fields/app_email_field.dart';
+import 'package:tapture/core/widgets/fields/app_phone_field.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 
@@ -21,8 +23,8 @@ import '../domain/operator_profile.dart';
 
 /// The settings form for the local operator identity.
 ///
-/// Name, initials and optional contact only. No password, PIN, token or
-/// other credential is collected or stored here.
+/// Name, initials, optional email and optional phone only. No password,
+/// PIN, token or other credential is collected or stored here.
 class OperatorProfileScreen extends ConsumerStatefulWidget {
   /// Creates the operator profile screen.
   const OperatorProfileScreen({super.key});
@@ -35,7 +37,8 @@ class OperatorProfileScreen extends ConsumerStatefulWidget {
 class _OperatorProfileScreenState extends ConsumerState<OperatorProfileScreen> {
   final TextEditingController _name = TextEditingController();
   final TextEditingController _initials = TextEditingController();
-  final TextEditingController _contact = TextEditingController();
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _phone = TextEditingController();
   int _applied = -1;
   bool _initialsOverridden = false;
 
@@ -43,7 +46,8 @@ class _OperatorProfileScreenState extends ConsumerState<OperatorProfileScreen> {
   void dispose() {
     _name.dispose();
     _initials.dispose();
-    _contact.dispose();
+    _email.dispose();
+    _phone.dispose();
     super.dispose();
   }
 
@@ -53,7 +57,8 @@ class _OperatorProfileScreenState extends ConsumerState<OperatorProfileScreen> {
     }
     _name.text = view.profile.name;
     _initials.text = view.profile.initials;
-    _contact.text = view.profile.contact ?? '';
+    _email.text = view.profile.email ?? '';
+    _phone.text = view.profile.phone ?? '';
     _initialsOverridden =
         view.profile.initials.isNotEmpty &&
         view.profile.initials !=
@@ -105,9 +110,16 @@ class _OperatorProfileScreenState extends ConsumerState<OperatorProfileScreen> {
                   _initialsOverridden = true;
                 },
               ),
-              AppTextField(
-                label: Copy.operatorContact,
-                controller: _contact,
+              AppEmailField(
+                label: Copy.operatorEmail,
+                controller: _email,
+                requiredness: FieldRequiredness.optional,
+                textInputAction: TextInputAction.next,
+                errorText: view.emailError,
+              ),
+              AppPhoneField(
+                label: Copy.operatorPhone,
+                controller: _phone,
                 requiredness: FieldRequiredness.optional,
                 textInputAction: TextInputAction.done,
               ),
@@ -119,7 +131,8 @@ class _OperatorProfileScreenState extends ConsumerState<OperatorProfileScreen> {
                   .save(
                     name: _name.text,
                     initials: _initials.text,
-                    contact: _contact.text,
+                    email: _email.text,
+                    phone: _phone.text,
                   );
             },
           );
@@ -163,6 +176,7 @@ typedef _OperatorProfileView = ({
   OperatorProfile profile,
   String? nameError,
   String? initialsError,
+  String? emailError,
   String? saveError,
   int generation,
 });
@@ -189,6 +203,7 @@ class _OperatorProfile extends AsyncNotifier<_OperatorProfileView> {
       profile: profile,
       nameError: null,
       initialsError: null,
+      emailError: null,
       saveError: null,
       generation: 0,
     );
@@ -198,21 +213,27 @@ class _OperatorProfile extends AsyncNotifier<_OperatorProfileView> {
   Future<void> save({
     required String name,
     required String initials,
-    String? contact,
+    String? email,
+    String? phone,
   }) async {
     final String trimmedName = name.trim();
     final String trimmedInitials = initials.trim();
-    final String? trimmedContact = contact?.trim();
+    final String trimmedEmail = email?.trim() ?? '';
+    final String trimmedPhone = phone?.trim() ?? '';
+    final String? storedEmail = trimmedEmail.isEmpty ? null : trimmedEmail;
+    final String? storedPhone = trimmedPhone.isEmpty ? null : trimmedPhone;
     final _OperatorProfileView current =
         state.value ??
         (
           profile: OperatorProfile(
             name: trimmedName,
             initials: trimmedInitials,
-            contact: trimmedContact,
+            email: storedEmail,
+            phone: storedPhone,
           ),
           nameError: null,
           initialsError: null,
+          emailError: null,
           saveError: null,
           generation: 0,
         );
@@ -220,11 +241,15 @@ class _OperatorProfile extends AsyncNotifier<_OperatorProfileView> {
     final String? initialsError = !_validInitials(trimmedInitials)
         ? Copy.initialsLength
         : null;
-    if (nameError != null || initialsError != null) {
+    final String? emailError = storedEmail != null && !storedEmail.contains('@')
+        ? Copy.emailNeedsAt
+        : null;
+    if (nameError != null || initialsError != null || emailError != null) {
       state = AsyncData<_OperatorProfileView>((
         profile: current.profile,
         nameError: nameError,
         initialsError: initialsError,
+        emailError: emailError,
         saveError: null,
         generation: current.generation,
       ));
@@ -233,9 +258,8 @@ class _OperatorProfile extends AsyncNotifier<_OperatorProfileView> {
     final OperatorProfile next = OperatorProfile(
       name: trimmedName,
       initials: trimmedInitials,
-      contact: trimmedContact == null || trimmedContact.isEmpty
-          ? null
-          : trimmedContact,
+      email: storedEmail,
+      phone: storedPhone,
       accountId: current.profile.accountId,
     );
     final Result<OperatorProfile> result = await _persist(next);
@@ -245,6 +269,7 @@ class _OperatorProfile extends AsyncNotifier<_OperatorProfileView> {
           profile: value,
           nameError: null,
           initialsError: null,
+          emailError: null,
           saveError: null,
           generation: current.generation + 1,
         ));
@@ -253,6 +278,7 @@ class _OperatorProfile extends AsyncNotifier<_OperatorProfileView> {
           profile: next,
           nameError: null,
           initialsError: null,
+          emailError: null,
           saveError: failure.message,
           generation: current.generation,
         ));

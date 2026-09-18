@@ -8,16 +8,21 @@ import 'package:tapture/core/constants/app_constants.dart';
 /// pre-backend install, so signing in later adopts this profile rather
 /// than replacing it.
 final class OperatorProfile {
-  /// Creates a profile. [name] and [initials] are required; [contact] and
-  /// [accountId] stay optional until the operator or enrolment fills them.
+  /// Creates a profile. [name] and [initials] are required; [email],
+  /// [phone] and [accountId] stay optional until the operator or
+  /// enrolment fills them.
   const OperatorProfile({
     required this.name,
     required this.initials,
-    this.contact,
+    this.email,
+    this.phone,
     this.accountId,
   });
 
   /// Reconstructs a profile from the device-profile row.
+  ///
+  /// When both email and phone are empty, a leftover contact key
+  /// migrates: a value containing `@` becomes email, otherwise phone.
   factory OperatorProfile.fromStored({
     required String name,
     required String preferences,
@@ -29,14 +34,25 @@ final class OperatorProfile {
         rawInitials is String && rawInitials.trim().isNotEmpty
         ? rawInitials.trim()
         : initialsFrom(name);
-    final Object? rawContact = stored[AppConstants.operator.contactKey];
-    final String? contact = rawContact is String && rawContact.trim().isNotEmpty
-        ? rawContact.trim()
-        : null;
+    String? email = _optionalText(stored[AppConstants.operator.emailKey]);
+    String? phone = _optionalText(stored[AppConstants.operator.phoneKey]);
+    if (email == null && phone == null) {
+      final String? legacy = _optionalText(
+        stored[AppConstants.operator.contactKey],
+      );
+      if (legacy != null) {
+        if (legacy.contains('@')) {
+          email = legacy;
+        } else {
+          phone = legacy;
+        }
+      }
+    }
     return OperatorProfile(
       name: name,
       initials: initials,
-      contact: contact,
+      email: email,
+      phone: phone,
       accountId: accountId,
     );
   }
@@ -47,11 +63,27 @@ final class OperatorProfile {
   /// One to three characters, defaulted from [name] and overridable.
   final String initials;
 
-  /// Optional email or phone. Never a secret.
-  final String? contact;
+  /// Optional email. Never a secret.
+  final String? email;
+
+  /// Optional phone. Never a secret.
+  final String? phone;
 
   /// Filled by enrolment (498); null on every pre-backend install.
   final String? accountId;
+
+  /// Email if set, otherwise phone. Feedback still has one contact column.
+  String? get contact {
+    final String? mail = email?.trim();
+    if (mail != null && mail.isNotEmpty) {
+      return mail;
+    }
+    final String? tel = phone?.trim();
+    if (tel != null && tel.isNotEmpty) {
+      return tel;
+    }
+    return null;
+  }
 
   /// First letter of each word in [name], upper-cased, at most
   /// [AppConstants.operator.initialsMax] characters.
@@ -82,16 +114,14 @@ final class OperatorProfile {
         length <= AppConstants.operator.initialsMax;
   }
 
-  /// Writes initials and contact into [existing] without dropping other keys.
+  /// Writes initials, email and phone into [existing] without dropping
+  /// other keys, and stops writing the legacy contact key.
   String mergePreferences(String existing) {
     final Map<String, Object?> stored = _decodePreferences(existing);
     stored[AppConstants.operator.initialsKey] = initials.trim();
-    final String? value = contact?.trim();
-    if (value == null || value.isEmpty) {
-      stored.remove(AppConstants.operator.contactKey);
-    } else {
-      stored[AppConstants.operator.contactKey] = value;
-    }
+    _writeOptional(stored, AppConstants.operator.emailKey, email);
+    _writeOptional(stored, AppConstants.operator.phoneKey, phone);
+    stored.remove(AppConstants.operator.contactKey);
     return jsonEncode(stored);
   }
 
@@ -99,21 +129,24 @@ final class OperatorProfile {
   OperatorProfile copyWith({
     String? name,
     String? initials,
-    String? contact,
+    String? email,
+    String? phone,
     String? accountId,
-    bool clearContact = false,
+    bool clearEmail = false,
+    bool clearPhone = false,
     bool clearAccountId = false,
   }) {
     return OperatorProfile(
       name: name ?? this.name,
       initials: initials ?? this.initials,
-      contact: clearContact ? null : (contact ?? this.contact),
+      email: clearEmail ? null : (email ?? this.email),
+      phone: clearPhone ? null : (phone ?? this.phone),
       accountId: clearAccountId ? null : (accountId ?? this.accountId),
     );
   }
 
   @override
-  int get hashCode => Object.hash(name, initials, contact, accountId);
+  int get hashCode => Object.hash(name, initials, email, phone, accountId);
 
   @override
   bool operator ==(Object other) {
@@ -121,8 +154,25 @@ final class OperatorProfile {
         (other is OperatorProfile &&
             other.name == name &&
             other.initials == initials &&
-            other.contact == contact &&
+            other.email == email &&
+            other.phone == phone &&
             other.accountId == accountId);
+  }
+}
+
+String? _optionalText(Object? raw) {
+  if (raw is String && raw.trim().isNotEmpty) {
+    return raw.trim();
+  }
+  return null;
+}
+
+void _writeOptional(Map<String, Object?> stored, String key, String? value) {
+  final String? trimmed = value?.trim();
+  if (trimmed == null || trimmed.isEmpty) {
+    stored.remove(key);
+  } else {
+    stored[key] = trimmed;
   }
 }
 

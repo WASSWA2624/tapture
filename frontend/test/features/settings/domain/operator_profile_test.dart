@@ -29,7 +29,7 @@ void main() {
     expect(tooLong.hasInitials, isFalse);
   });
 
-  test('fromStored reads initials and contact and leaves accountId null', () {
+  test('fromStored migrates a leftover contact with @ to email', () {
     final OperatorProfile profile = OperatorProfile.fromStored(
       name: 'Ada',
       preferences:
@@ -39,8 +39,35 @@ void main() {
     );
     expect(profile.name, 'Ada');
     expect(profile.initials, 'AL');
+    expect(profile.email, 'ada@x');
+    expect(profile.phone, isNull);
     expect(profile.contact, 'ada@x');
     expect(profile.accountId, isNull);
+  });
+
+  test('fromStored migrates a leftover contact without @ to phone', () {
+    final OperatorProfile profile = OperatorProfile.fromStored(
+      name: 'Ada',
+      preferences:
+          '{"${AppConstants.operator.initialsKey}":"AL",'
+          '"${AppConstants.operator.contactKey}":"+256700"}',
+    );
+    expect(profile.email, isNull);
+    expect(profile.phone, '+256700');
+    expect(profile.contact, '+256700');
+  });
+
+  test('fromStored prefers the new keys over a leftover contact', () {
+    final OperatorProfile profile = OperatorProfile.fromStored(
+      name: 'Ada',
+      preferences:
+          '{"${AppConstants.operator.emailKey}":"new@x",'
+          '"${AppConstants.operator.phoneKey}":"0711",'
+          '"${AppConstants.operator.contactKey}":"old@x"}',
+    );
+    expect(profile.email, 'new@x');
+    expect(profile.phone, '0711');
+    expect(profile.contact, 'new@x');
   });
 
   test('fromStored defaults initials from the name when they are missing', () {
@@ -49,19 +76,54 @@ void main() {
       preferences: '{}',
     );
     expect(profile.initials, 'AL');
+    expect(profile.email, isNull);
+    expect(profile.phone, isNull);
     expect(profile.contact, isNull);
   });
 
-  test('mergePreferences keeps unknown keys and writes initials', () {
+  test('mergePreferences writes email and phone and drops the old key', () {
     const OperatorProfile profile = OperatorProfile(
       name: 'Ada',
       initials: 'A',
-      contact: 'ada@x',
+      email: 'ada@x',
+      phone: '0711',
     );
-    expect(jsonDecode(profile.mergePreferences('{"theme":"dark"}')), {
-      'theme': 'dark',
-      AppConstants.operator.initialsKey: 'A',
-      AppConstants.operator.contactKey: 'ada@x',
-    });
+    expect(
+      jsonDecode(
+        profile.mergePreferences(
+          '{"theme":"dark","${AppConstants.operator.contactKey}":"old@x"}',
+        ),
+      ),
+      {
+        'theme': 'dark',
+        AppConstants.operator.initialsKey: 'A',
+        AppConstants.operator.emailKey: 'ada@x',
+        AppConstants.operator.phoneKey: '0711',
+      },
+    );
   });
+
+  test(
+    'a migrated email save keeps unknown keys and stops writing contact',
+    () {
+      final OperatorProfile profile = OperatorProfile.fromStored(
+        name: 'Ada',
+        preferences:
+            '{"theme":"dark","${AppConstants.operator.contactKey}":"ada@x"}',
+      );
+      expect(profile.email, 'ada@x');
+      expect(
+        jsonDecode(
+          profile.mergePreferences(
+            '{"theme":"dark","${AppConstants.operator.contactKey}":"ada@x"}',
+          ),
+        ),
+        {
+          'theme': 'dark',
+          AppConstants.operator.initialsKey: 'A',
+          AppConstants.operator.emailKey: 'ada@x',
+        },
+      );
+    },
+  );
 }

@@ -135,7 +135,7 @@ INSERT INTO device_profile (
         db,
         deviceId: 'device-a',
         operatorName: 'Bea',
-        preferences: '{"operatorInitials":"B","operatorContact":"bea@x"}',
+        preferences: '{"operatorInitials":"B","operatorEmail":"bea@x"}',
         clock: FixedClock(t1),
       );
 

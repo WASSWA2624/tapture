@@ -5,6 +5,8 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
+import 'package:tapture/core/widgets/fields/app_email_field.dart';
+import 'package:tapture/core/widgets/fields/app_phone_field.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/forms/focus_actions.dart';
 import 'package:tapture/core/widgets/forms/keep_focused_visible.dart';
@@ -41,8 +43,8 @@ class AppForm extends StatefulWidget {
   /// When true, leaving a dirty form prompts before popping.
   final bool guardUnsaved;
 
-  /// Invalid-field lines shown at the top. [AppTextField.errorText] values
-  /// on [fields] are listed as well.
+  /// Invalid-field lines shown at the top. Text, email and phone
+  /// [errorText] values on [fields] are listed as well.
   final List<String> errors;
 
   /// Marks the form dirty for non-text edits (choice, date). Text fields
@@ -68,11 +70,10 @@ class _AppFormState extends State<AppForm> {
   List<String> get _summary {
     final List<String> lines = <String>[...widget.errors];
     for (final Widget field in widget.fields) {
-      if (field is AppTextField) {
-        final String? error = field.errorText;
-        if (error != null && error.isNotEmpty) {
-          lines.add(Copy.fieldError(field.label, error));
-        }
+      final _FormField? editable = _formField(field);
+      final String? error = editable?.errorText;
+      if (editable != null && error != null && error.isNotEmpty) {
+        lines.add(Copy.fieldError(editable.label, error));
       }
     }
     final Set<String> seen = <String>{};
@@ -105,9 +106,10 @@ class _AppFormState extends State<AppForm> {
   void _listen() {
     _unlisten();
     for (final Widget field in widget.fields) {
-      if (field is AppTextField) {
-        field.controller.addListener(_onEdit);
-        _listened.add(field.controller);
+      final _FormField? editable = _formField(field);
+      if (editable != null) {
+        editable.controller.addListener(_onEdit);
+        _listened.add(editable.controller);
       }
     }
   }
@@ -331,4 +333,35 @@ class _ErrorSummary extends StatelessWidget {
       ),
     );
   }
+}
+
+typedef _FormField = ({
+  TextEditingController controller,
+  String label,
+  String? errorText,
+});
+
+_FormField? _formField(Widget field) {
+  if (field is AppTextField) {
+    return (
+      controller: field.controller,
+      label: field.label,
+      errorText: field.errorText,
+    );
+  }
+  if (field is AppEmailField) {
+    return (
+      controller: field.controller,
+      label: field.label,
+      errorText: field.errorText,
+    );
+  }
+  if (field is AppPhoneField) {
+    return (
+      controller: field.controller,
+      label: field.label,
+      errorText: field.errorText,
+    );
+  }
+  return null;
 }

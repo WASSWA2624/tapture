@@ -158,17 +158,23 @@ abstract final class AppConstants {
   static const ({int chunkBytes}) hashing = (chunkBytes: 64 * 1024);
 
   /// Local operator identity: initials length and preference-map keys.
+  /// [contactKey] is read for one-time migration; new writes use
+  /// [emailKey] and [phoneKey].
   static const ({
     int initialsMin,
     int initialsMax,
     String initialsKey,
     String contactKey,
+    String emailKey,
+    String phoneKey,
   })
   operator = (
     initialsMin: 1,
     initialsMax: 3,
     initialsKey: 'operatorInitials',
     contactKey: 'operatorContact',
+    emailKey: 'operatorEmail',
+    phoneKey: 'operatorPhone',
   );
 
   /// The operator's in-app feedback: where it is kept, how an entry is

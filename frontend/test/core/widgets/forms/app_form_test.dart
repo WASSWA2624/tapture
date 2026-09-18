@@ -4,6 +4,8 @@ import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/fields/app_email_field.dart';
+import 'package:tapture/core/widgets/fields/app_phone_field.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/forms/focus_actions.dart';
@@ -69,6 +71,78 @@ void main() {
 
     await tester.pageBack();
     await tester.pumpAndSettle();
+    await tester.tap(find.text('Discard'));
+    await tester.pumpAndSettle();
+    expect(find.text('Edit'), findsNothing);
+  });
+
+  testWidgets('editing an email or phone field marks the form dirty', (
+    WidgetTester tester,
+  ) async {
+    final TextEditingController email = TextEditingController();
+    final TextEditingController phone = TextEditingController();
+    addTearDown(email.dispose);
+    addTearDown(phone.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildTheme(brightness: Brightness.light),
+        home: Builder(
+          builder: (BuildContext context) {
+            return Scaffold(
+              body: Center(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) {
+                          return AppPage(
+                            title: 'Edit',
+                            body: AppForm(
+                              fields: <Widget>[
+                                AppEmailField(
+                                  label: 'Email',
+                                  controller: email,
+                                ),
+                                AppPhoneField(
+                                  label: 'Phone',
+                                  controller: phone,
+                                ),
+                              ],
+                              submitLabel: 'Save',
+                              onSubmit: () async {},
+                              guardUnsaved: true,
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  child: const Text('Open'),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).first, 'ada@x');
+    await tester.pump();
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Discard changes?'), findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField).at(1), '0711');
+    await tester.pump();
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Discard changes?'), findsOneWidget);
     await tester.tap(find.text('Discard'));
     await tester.pumpAndSettle();
     expect(find.text('Edit'), findsNothing);

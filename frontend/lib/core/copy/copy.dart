@@ -363,11 +363,20 @@ abstract final class Copy {
   /// Initials field on the operator profile.
   static const String operatorInitials = 'Initials';
 
-  /// Optional contact field on the operator profile.
+  /// Combined contact label when email and phone are shown as one value.
   static const String operatorContact = 'Contact';
+
+  /// Optional email field on the operator profile.
+  static const String operatorEmail = 'Email';
+
+  /// Optional phone field on the operator profile.
+  static const String operatorPhone = 'Phone';
 
   /// Name failed the non-empty rule.
   static const String nameRequired = 'Enter a name';
+
+  /// A typed email is missing the @ that marks it as an address.
+  static const String emailNeedsAt = 'Include an @ in the email';
 
   /// Initials failed the one-to-three-character rule.
   static const String initialsLength = 'Use one to three characters';

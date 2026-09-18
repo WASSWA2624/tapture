@@ -56,6 +56,8 @@ final Set<String> _reservedKeys = <String>{
   _settingsKey,
   AppConstants.operator.initialsKey,
   AppConstants.operator.contactKey,
+  AppConstants.operator.emailKey,
+  AppConstants.operator.phoneKey,
 };
 
 T _readValue<T>(Map<String, Object?> values, SettingKey<T> key) {
