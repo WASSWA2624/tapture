@@ -461,6 +461,18 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       const SizedBox(height: Space.x4),
       AppTextField(
         label: 'Name',
+        controller: _empty,
+        requiredness: FieldRequiredness.required,
+      ),
+      const SizedBox(height: Space.x4),
+      AppTextField(
+        label: 'Name',
+        controller: _filled,
+        requiredness: FieldRequiredness.optional,
+      ),
+      const SizedBox(height: Space.x4),
+      AppTextField(
+        label: 'Name',
         controller: _error,
         errorText: Copy.outOfRange,
       ),

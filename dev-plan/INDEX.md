@@ -1,6 +1,6 @@
 # Tapture — task index
 
-290 implementation prompts across 25 phases. Work top to bottom.
+291 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task.
 
@@ -371,6 +371,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [288 — Rename More nav to Settings](23-hardening/288-rename-more-nav-to-settings.md)
 - [x] [289 — Fix feedback search remount](23-hardening/289-fix-feedback-search-remount.md)
 - [x] [290 — Fix feedback camera browse](23-hardening/290-fix-feedback-camera-browse.md)
+- [x] [291 — Mark required optional fields](23-hardening/291-mark-required-optional-fields.md)
 
 ## 24 — The minimal backend
 

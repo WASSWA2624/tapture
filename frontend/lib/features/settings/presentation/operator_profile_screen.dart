@@ -84,6 +84,7 @@ class _OperatorProfileScreenState extends ConsumerState<OperatorProfileScreen> {
               AppTextField(
                 label: Copy.operatorName,
                 controller: _name,
+                requiredness: FieldRequiredness.required,
                 textInputAction: TextInputAction.next,
                 errorText: view.nameError,
                 onChanged: (String value) {
@@ -95,6 +96,7 @@ class _OperatorProfileScreenState extends ConsumerState<OperatorProfileScreen> {
               AppTextField(
                 label: Copy.operatorInitials,
                 controller: _initials,
+                requiredness: FieldRequiredness.required,
                 dictation: false,
                 textInputAction: TextInputAction.next,
                 maxLength: AppConstants.operator.initialsMax,
@@ -106,6 +108,7 @@ class _OperatorProfileScreenState extends ConsumerState<OperatorProfileScreen> {
               AppTextField(
                 label: Copy.operatorContact,
                 controller: _contact,
+                requiredness: FieldRequiredness.optional,
                 textInputAction: TextInputAction.done,
               ),
             ],

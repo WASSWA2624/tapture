@@ -112,6 +112,12 @@ abstract final class Copy {
   /// One invalid field in a validation summary. [label] is template content.
   static String fieldError(String label, String error) => '$label: $error';
 
+  /// Caption on a field that must be filled before Save.
+  static const String fieldRequired = 'Required';
+
+  /// Caption on a field that may be left empty.
+  static const String fieldOptional = 'Optional';
+
   /// Announced summary of invalid fields.
   static String validationAnnouncement(String heading, List<String> errors) {
     return '$heading. ${errors.join('. ')}';

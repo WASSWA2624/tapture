@@ -1,7 +1,10 @@
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 
@@ -147,6 +150,77 @@ void main() {
     expect(find.byType(AppTextField), meetsTapTarget());
     await expectNoA11yIssues(tester);
   });
+
+  testWidgets('a required field shows catalogue copy beside the label', (
+    WidgetTester tester,
+  ) async {
+    final TextEditingController controller = TextEditingController();
+    addTearDown(controller.dispose);
+    await _pump(
+      tester,
+      AppTextField(
+        label: 'Name',
+        controller: controller,
+        requiredness: FieldRequiredness.required,
+      ),
+    );
+
+    expect(find.text(Copy.fieldRequired), findsOneWidget);
+    expect(find.text('Name'), findsWidgets);
+    expect(find.byType(AppTextField), hasSemanticLabel('Name'));
+    expect(_isRequired(tester, find.byType(TextField)), isTrue);
+  });
+
+  testWidgets('an optional field shows catalogue copy beside the label', (
+    WidgetTester tester,
+  ) async {
+    final TextEditingController controller = TextEditingController();
+    addTearDown(controller.dispose);
+    await _pump(
+      tester,
+      AppTextField(
+        label: 'Contact',
+        controller: controller,
+        requiredness: FieldRequiredness.optional,
+      ),
+    );
+
+    expect(find.text(Copy.fieldOptional), findsOneWidget);
+    expect(find.byType(AppTextField), hasSemanticLabel('Contact'));
+    expect(_isRequired(tester, find.byType(TextField)), isFalse);
+  });
+
+  testWidgets('an unmarked field keeps today\'s label', (
+    WidgetTester tester,
+  ) async {
+    final TextEditingController controller = TextEditingController();
+    addTearDown(controller.dispose);
+    await _pump(tester, AppTextField(label: 'Name', controller: controller));
+
+    expect(find.text(Copy.fieldRequired), findsNothing);
+    expect(find.text(Copy.fieldOptional), findsNothing);
+    expect(find.byType(AppTextField), hasSemanticLabel('Name'));
+  });
+
+  testWidgets('requiredness stays a line of its own when a helper is set', (
+    WidgetTester tester,
+  ) async {
+    final TextEditingController controller = TextEditingController();
+    addTearDown(controller.dispose);
+    await _pump(
+      tester,
+      AppTextField(
+        label: 'Name',
+        controller: controller,
+        helper: Copy.autoFilled,
+        requiredness: FieldRequiredness.required,
+      ),
+    );
+
+    expect(find.text(Copy.fieldRequired), findsOneWidget);
+    expect(find.text(Copy.autoFilled), findsOneWidget);
+    expect(find.text('Name ${Copy.fieldRequired}'), findsNothing);
+  });
 }
 
 Future<void> _pump(WidgetTester tester, Widget child) async {
@@ -164,4 +238,9 @@ Future<void> _pump(WidgetTester tester, Widget child) async {
       ),
     ),
   );
+}
+
+bool _isRequired(WidgetTester tester, Finder finder) {
+  return tester.getSemantics(finder).flagsCollection.isRequired ==
+      Tristate.isTrue;
 }

@@ -3,13 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/app/theme/outdoor_theme.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/settings/domain/operator_profile.dart';
 import 'package:tapture/features/settings/presentation/operator_profile_screen.dart';
+
+import '../../../support/a11y_matchers.dart';
 
 void main() {
   testWidgets('an empty name and empty initials fail validation', (
@@ -168,6 +172,33 @@ void main() {
     expect(find.byType(AppErrorState), findsNothing);
     expect(find.text(Copy.operatorName), findsOneWidget);
   });
+
+  for (final ({String name, ThemeData theme}) mode in _operatorThemes) {
+    testWidgets('name and initials read as required and contact as optional '
+        'before save in ${mode.name}', (WidgetTester tester) async {
+      final _Store store = _Store(
+        const OperatorProfile(name: 'Ada', initials: 'A'),
+      );
+      await _pump(tester, store, theme: mode.theme);
+
+      expect(find.text(Copy.fieldRequired), findsNWidgets(2));
+      expect(find.text(Copy.fieldOptional), findsOneWidget);
+      expect(find.text(Copy.nameRequired), findsNothing);
+      expect(
+        find.byType(AppTextField).at(0),
+        hasSemanticLabel(Copy.operatorName),
+      );
+      expect(
+        find.byType(AppTextField).at(1),
+        hasSemanticLabel(Copy.operatorInitials),
+      );
+      expect(
+        find.byType(AppTextField).at(2),
+        hasSemanticLabel(Copy.operatorContact),
+      );
+      await expectNoA11yIssues(tester);
+    });
+  }
 }
 
 final class _Store {
@@ -191,15 +222,27 @@ List<Override> _overrides(_Store store) {
   ];
 }
 
-Future<void> _pump(WidgetTester tester, _Store store) async {
+Future<void> _pump(
+  WidgetTester tester,
+  _Store store, {
+  ThemeData? theme,
+}) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: _overrides(store),
       child: MaterialApp(
-        theme: buildTheme(brightness: Brightness.light),
+        theme: theme ?? buildTheme(brightness: Brightness.light),
         home: const OperatorProfileScreen(),
       ),
     ),
   );
   await tester.pumpAndSettle();
+}
+
+List<({String name, ThemeData theme})> get _operatorThemes {
+  return <({String name, ThemeData theme})>[
+    (name: 'light', theme: buildTheme(brightness: Brightness.light)),
+    (name: 'dark', theme: buildTheme(brightness: Brightness.dark)),
+    (name: 'outdoor', theme: buildOutdoorTheme(Brightness.light)),
+  ];
 }

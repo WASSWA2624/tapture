@@ -106,6 +106,8 @@ List<String> get _values {
     Copy.fixFields(1),
     Copy.fixFields(2),
     Copy.fieldError('Name', 'Required'),
+    Copy.fieldRequired,
+    Copy.fieldOptional,
     Copy.validationAnnouncement('Fix these fields', <String>['Name: Required']),
     Copy.missingPhoto,
     Copy.missingPhotoNamed('Front'),

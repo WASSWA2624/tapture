@@ -31,7 +31,7 @@ List<({String name, ThemeData theme})> get _modes {
 
 Future<void> _pumpGallery(WidgetTester tester, ThemeData theme) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(400, 820);
+  tester.view.physicalSize = const Size(400, 1100);
   addTearDown(() {
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();
@@ -59,6 +59,8 @@ class _GalleryBodyState extends State<_GalleryBody> {
   final TextEditingController _filled = TextEditingController(
     text: 'Ada Lovelace',
   );
+  final TextEditingController _required = TextEditingController();
+  final TextEditingController _optional = TextEditingController(text: 'bea@x');
   final TextEditingController _error = TextEditingController();
   final TextEditingController _disabled = TextEditingController(text: 'Locked');
   final TextEditingController _multi = TextEditingController(
@@ -69,6 +71,8 @@ class _GalleryBodyState extends State<_GalleryBody> {
   void dispose() {
     _empty.dispose();
     _filled.dispose();
+    _required.dispose();
+    _optional.dispose();
     _error.dispose();
     _disabled.dispose();
     _multi.dispose();
@@ -82,6 +86,18 @@ class _GalleryBodyState extends State<_GalleryBody> {
         AppTextField(label: 'Empty', controller: _empty, hint: 'Type a name'),
         const SizedBox(height: Space.x4),
         AppTextField(label: 'Filled', controller: _filled, clearable: true),
+        const SizedBox(height: Space.x4),
+        AppTextField(
+          label: 'Name',
+          controller: _required,
+          requiredness: FieldRequiredness.required,
+        ),
+        const SizedBox(height: Space.x4),
+        AppTextField(
+          label: 'Name',
+          controller: _optional,
+          requiredness: FieldRequiredness.optional,
+        ),
         const SizedBox(height: Space.x4),
         AppTextField(label: 'Error', controller: _error, errorText: 'Required'),
         const SizedBox(height: Space.x4),

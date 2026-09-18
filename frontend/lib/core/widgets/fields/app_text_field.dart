@@ -51,6 +51,7 @@ class AppTextField extends StatefulWidget {
     this.obscureText = false,
     this.autofocus = false,
     this.dictation = true,
+    this.requiredness = FieldRequiredness.unmarked,
   });
 
   /// Visible label; also the semantic name of the control (FE-A11Y-02).
@@ -125,6 +126,10 @@ class AppTextField extends StatefulWidget {
   /// values nobody speaks, such as initials.
   final bool dictation;
 
+  /// Whether the field is required, optional, or unmarked. Unmarked is the
+  /// default so existing screens keep today's labels.
+  final FieldRequiredness requiredness;
+
   @override
   State<AppTextField> createState() => _AppTextFieldState();
 }
@@ -191,7 +196,10 @@ class _AppTextFieldState extends State<AppTextField> {
     return ListenableBuilder(
       listenable: Listenable.merge(<Listenable>[field.controller, _dictation]),
       builder: (BuildContext context, Widget? _) {
-        return ConstrainedBox(
+        final Color onSurface = context.colors.onSurface;
+        final ({String? text, Widget? widget, TextStyle? style}) support =
+            _supportingCopy(field, onSurface);
+        Widget child = ConstrainedBox(
           constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
           child: TextField(
             controller: field.controller,
@@ -214,11 +222,16 @@ class _AppTextFieldState extends State<AppTextField> {
             // not hand it to the keyboard's suggestions.
             enableSuggestions: !field.obscureText,
             autocorrect: !field.obscureText,
-            style: AppText.body.copyWith(color: context.colors.onSurface),
+            style: AppText.body.copyWith(color: onSurface),
             decoration: InputDecoration(
               labelText: field.label,
               hintText: field.hint,
-              helperText: field.helper,
+              helperText: support.text,
+              helper: support.widget,
+              helperStyle: support.style,
+              helperMaxLines: support.text == null && support.widget == null
+                  ? null
+                  : 3,
               errorText: field.errorText,
               alignLabelWithHint: lines > 1,
               prefixIcon: field.prefix,
@@ -239,13 +252,18 @@ class _AppTextFieldState extends State<AppTextField> {
                         field.controller.text.length,
                         field.maxLength!,
                       ),
-                      style: AppText.caption.copyWith(
-                        color: context.colors.onSurface,
-                      ),
+                      style: AppText.caption.copyWith(color: onSurface),
                     ),
             ),
           ),
         );
+        if (field.requiredness != FieldRequiredness.unmarked) {
+          child = Semantics(
+            isRequired: field.requiredness == FieldRequiredness.required,
+            child: child,
+          );
+        }
+        return child;
       },
     );
   }
@@ -318,4 +336,49 @@ String _counterLabel(BuildContext context, int current, int max) {
 
 String _localeName(BuildContext context) {
   return Localizations.localeOf(context).toString();
+}
+
+/// Requiredness copy as its own caption, never concatenated into the label
+/// (FE-L10N-03). A helper already on the field stays a second line.
+({String? text, Widget? widget, TextStyle? style}) _supportingCopy(
+  AppTextField field,
+  Color onSurface,
+) {
+  final String? mark = switch (field.requiredness) {
+    FieldRequiredness.unmarked => null,
+    FieldRequiredness.required => Copy.fieldRequired,
+    FieldRequiredness.optional => Copy.fieldOptional,
+  };
+  final String? helper = field.helper;
+  final TextStyle caption = AppText.caption.copyWith(color: onSurface);
+  if (mark != null && helper != null) {
+    return (
+      text: null,
+      widget: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(mark, style: caption),
+          Text(helper, style: caption),
+        ],
+      ),
+      style: caption,
+    );
+  }
+  return (
+    text: mark ?? helper,
+    widget: null,
+    style: mark == null ? null : caption,
+  );
+}
+
+/// Whether an [AppTextField] is required, optional, or left unmarked.
+enum FieldRequiredness {
+  /// No requiredness caption. Existing screens stay as they are.
+  unmarked,
+
+  /// The field must be filled before Save.
+  required,
+
+  /// The field may be left empty.
+  optional,
 }
