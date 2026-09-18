@@ -18,9 +18,10 @@ import 'feedback_providers.dart';
 import 'feedback_shot.dart';
 import 'give_feedback_controller.dart';
 
-/// The draft's images: one compact row to attach them and add more, then
-/// the gallery. A single image fills the width at its own aspect ratio;
-/// several share balanced square tiles. A tap opens a larger preview.
+/// The draft's images: attach and include-UI checkboxes, a row of capture
+/// controls, then the gallery. A single image fills the width at its own
+/// aspect ratio; several share balanced square tiles. A tap opens a larger
+/// preview.
 class FeedbackShots extends ConsumerWidget {
   /// Creates the section. [onAddScreen] captures the screen under the
   /// form; null hides that control.
@@ -54,38 +55,33 @@ class FeedbackShots extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        shots.isEmpty
+            ? Text(
+                Copy.feedbackNoScreenshot,
+                style: AppText.caption.copyWith(
+                  color: context.colors.onSurface,
+                ),
+              )
+            : AppSwitchTile.checkbox(
+                title: Copy.feedbackAttachImages(shots.length),
+                value: attach,
+                dense: true,
+                controlFirst: true,
+                divided: false,
+                onChanged: form.setAttachShots,
+              ),
+        if (onAddScreen != null)
+          AppSwitchTile.checkbox(
+            title: Copy.feedbackIncludeUi,
+            value: includeUi,
+            dense: true,
+            controlFirst: true,
+            divided: false,
+            onChanged: ref.read(feedbackDraftProvider.notifier).setIncludeUi,
+          ),
         Row(
           children: <Widget>[
-            Expanded(
-              child: shots.isEmpty
-                  ? Text(
-                      Copy.feedbackNoScreenshot,
-                      style: AppText.caption.copyWith(
-                        color: context.colors.onSurface,
-                      ),
-                    )
-                  : AppSwitchTile.checkbox(
-                      title: Copy.feedbackAttachImages(shots.length),
-                      value: attach,
-                      dense: true,
-                      controlFirst: true,
-                      divided: false,
-                      onChanged: form.setAttachShots,
-                    ),
-            ),
-            if (onAddScreen != null) ...<Widget>[
-              AppIconButton(
-                icon: Icons.web_asset_outlined,
-                semanticLabel: Copy.feedbackIncludeUi,
-                tooltip: Copy.feedbackIncludeUi,
-                selected: includeUi,
-                outlined: false,
-                onPressed: () {
-                  ref
-                      .read(feedbackDraftProvider.notifier)
-                      .setIncludeUi(!includeUi);
-                },
-              ),
+            if (onAddScreen != null)
               AppIconButton(
                 icon: Icons.screenshot_monitor_outlined,
                 semanticLabel: Copy.feedbackAddScreen,
@@ -93,7 +89,6 @@ class FeedbackShots extends ConsumerWidget {
                 outlined: false,
                 onPressed: onAddScreen,
               ),
-            ],
             if (canCapture)
               AppIconButton(
                 icon: Icons.desktop_windows_outlined,

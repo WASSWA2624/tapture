@@ -875,16 +875,16 @@ abstract final class Copy {
   static const String feedbackContinue = 'Continue feedback';
 
   /// Adds a screenshot of the screen currently under the overlay.
-  static const String feedbackAddScreen = 'Add this screen';
+  static const String feedbackAddScreen = 'Screenshot current screen';
 
-  /// Opt-in so Add this screen includes the Give us feedback chrome.
+  /// Opt-in so Screenshot current screen includes the Give us feedback chrome.
   static const String feedbackIncludeUi = 'Include the feedback UI';
 
   /// Opens the browser display picker for another window or OS surface.
-  static const String feedbackAddWindow = 'Add another window';
+  static const String feedbackAddWindow = 'Screenshot external window';
 
   /// Label of a still taken from another window.
-  static const String feedbackOtherWindow = 'Other window';
+  static const String feedbackOtherWindow = 'External window';
 
   /// Opens the device camera for a photo to attach.
   static const String feedbackTakePhoto = 'Take a photo';

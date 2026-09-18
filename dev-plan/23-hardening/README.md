@@ -2,7 +2,7 @@
 
 Making the finished app fast, legible, reachable and unbreakable in the field.
 
-Tasks 236–298 (26). Each file is a standalone implementation prompt.
+Tasks 236–299 (27). Each file is a standalone implementation prompt.
 
 - [ ] [236 — Layout, accessibility and text-scale audit](236-responsive-audit.md)
 - [ ] [237 — Landscape and foldables](237-orientation-support.md)
@@ -30,3 +30,4 @@ Tasks 236–298 (26). Each file is a standalone implementation prompt.
 - [x] [296 — Add other window screenshot](296-add-other-window-screenshot.md)
 - [x] [297 — Warn before closing the tab with a draft](297-warn-before-closing-tab-with-draft.md)
 - [x] [298 — Confirm desktop exit with a draft](298-confirm-desktop-exit-with-draft.md)
+- [x] [299 — Align the feedback shot controls](299-align-feedback-shot-controls.md)

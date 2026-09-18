@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/outdoor_theme.dart';
+import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -24,6 +25,7 @@ import 'package:tapture/features/feedback/presentation/feedback_draft_bar.dart';
 import 'package:tapture/features/feedback/presentation/feedback_draft_controller.dart';
 import 'package:tapture/features/feedback/presentation/feedback_overlay.dart';
 import 'package:tapture/features/feedback/presentation/feedback_providers.dart';
+import 'package:tapture/features/feedback/presentation/feedback_shots.dart';
 import 'package:tapture/features/feedback/presentation/give_feedback_controller.dart';
 import 'package:tapture/features/feedback/presentation/give_feedback_screen.dart';
 import 'package:tapture/features/settings/domain/operator_profile.dart';
@@ -120,13 +122,18 @@ void main() {
     WidgetTester tester,
   ) async {
     await _pump(tester, screenshot: aFeedbackPng);
-    final Finder attach = find.byType(AppSwitchTile);
+    final Finder attach = find.widgetWithText(
+      AppSwitchTile,
+      Copy.feedbackAttachImages(1),
+    );
     final Finder label = find.text(Copy.feedbackAttachImages(1));
     final Finder preview = find.bySemanticsLabel(
       Copy.feedbackScreenshotPreview,
     );
     expect(
-      tester.getRect(find.byType(Checkbox)).right,
+      tester
+          .getRect(find.descendant(of: attach, matching: find.byType(Checkbox)))
+          .right,
       lessThan(tester.getRect(label).left),
     );
     expect(tester.getSize(attach).height, lessThanOrEqualTo(48));
@@ -456,18 +463,18 @@ void main() {
   });
 
   testWidgets(
-    'Add this screen captures the app, not the form, until opted in',
+    'Screenshot current screen captures the app, not the form, until opted in',
     (WidgetTester tester) async {
       final _Harness harness = await _pump(tester, size: const Size(400, 1200));
       expect(harness.draft!.includeUi, isFalse);
-      expect(_includeButton(tester).isSelected, isFalse);
+      expect(_includeTile(tester).value, isFalse);
       final Uint8List appOnly = await _addThisScreen(tester, harness);
       expect(_pngSize(appOnly).width, 400);
 
-      await tester.tap(find.byTooltip(Copy.feedbackIncludeUi));
+      await tester.tap(find.text(Copy.feedbackIncludeUi));
       await tester.pumpAndSettle();
       expect(harness.draft!.includeUi, isTrue);
-      expect(_includeButton(tester).isSelected, isTrue);
+      expect(_includeTile(tester).value, isTrue);
       final Uint8List withUi = await _addThisScreen(tester, harness);
       expect(withUi, isNot(appOnly));
       expect(harness.draft!.shots, hasLength(2));
@@ -484,7 +491,7 @@ void main() {
       1400 - AppConstants.userFeedback.panelWidth,
     );
 
-    await tester.tap(find.byTooltip(Copy.feedbackIncludeUi));
+    await tester.tap(find.text(Copy.feedbackIncludeUi));
     await tester.pumpAndSettle();
     final Uint8List withUi = await _addThisScreen(tester, harness);
     expect(_pngSize(withUi).width, 1400);
@@ -496,7 +503,10 @@ void main() {
       WidgetTester tester,
     ) async {
       await _pump(tester, theme: mode.theme);
-      final Finder include = find.byTooltip(Copy.feedbackIncludeUi);
+      final Finder include = find.widgetWithText(
+        AppSwitchTile,
+        Copy.feedbackIncludeUi,
+      );
       expect(include, findsOneWidget);
       expect(include, meetsTapTarget());
       expect(include, hasSemanticLabel(Copy.feedbackIncludeUi));
@@ -540,6 +550,74 @@ void main() {
       await expectNoA11yIssues(tester);
     });
   }
+
+  testWidgets('at 360 dp each checkbox label sits on one line', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, size: const Size(360, 800), screenshot: aFeedbackPng);
+    final double line = (TextPainter(
+      text: const TextSpan(text: 'Ag', style: AppText.label),
+      textDirection: TextDirection.ltr,
+    )..layout()).height;
+    expect(
+      tester.getSize(find.text(Copy.feedbackAttachImages(1))).height,
+      line,
+    );
+    expect(
+      tester.getRect(find.text(Copy.feedbackAttachImages(1))).right,
+      lessThanOrEqualTo(360),
+    );
+    expect(
+      tester.getRect(find.text(Copy.feedbackIncludeUi)).right,
+      lessThanOrEqualTo(360),
+    );
+  });
+
+  testWidgets(
+    'at 360 dp and 200 percent text the shots section does not overflow',
+    (WidgetTester tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await _pump(
+        tester,
+        size: const Size(360, 800),
+        screenshot: aFeedbackPng,
+        screenCapture: ScreenCapture.fake(
+          canCapture: true,
+          frame: aFeedbackPng,
+        ),
+      );
+      expect(tester.takeException(), isNull);
+      expect(find.byType(FeedbackShots), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'on a wide window the docked panel shows both checkboxes and the capture row',
+    (WidgetTester tester) async {
+      await _pump(
+        tester,
+        size: const Size(1400, 900),
+        screenshot: aFeedbackPng,
+        screenCapture: const ScreenCapture.fake(canCapture: true),
+      );
+      final Finder attach = find.text(Copy.feedbackAttachImages(1));
+      final Finder include = find.text(Copy.feedbackIncludeUi);
+      final Finder capture = find.byTooltip(Copy.feedbackAddScreen);
+      expect(attach, findsOneWidget);
+      expect(include, findsOneWidget);
+      expect(capture, findsOneWidget);
+      expect(find.byTooltip(Copy.feedbackAddWindow), findsOneWidget);
+      expect(
+        tester.getRect(attach).bottom,
+        lessThanOrEqualTo(tester.getRect(include).top),
+      );
+      expect(
+        tester.getRect(include).bottom,
+        lessThanOrEqualTo(tester.getRect(capture).top),
+      );
+    },
+  );
 }
 
 const List<String> _types = <String>[
@@ -585,12 +663,9 @@ Future<Uint8List> _addThisScreen(WidgetTester tester, _Harness harness) async {
   return bytes;
 }
 
-IconButton _includeButton(WidgetTester tester) {
-  return tester.widget<IconButton>(
-    find.ancestor(
-      of: find.byTooltip(Copy.feedbackIncludeUi),
-      matching: find.byType(IconButton),
-    ),
+AppSwitchTile _includeTile(WidgetTester tester) {
+  return tester.widget<AppSwitchTile>(
+    find.widgetWithText(AppSwitchTile, Copy.feedbackIncludeUi),
   );
 }
 
