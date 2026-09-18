@@ -79,9 +79,8 @@ class FeedbackFilterPanel extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: AppSearchField(
-                  // A cleared filter starts a fresh field.
-                  key: ValueKey<bool>(filter.isEmpty),
                   hint: Copy.feedbackSearch,
+                  text: filter.search,
                   onChanged: (String value) {
                     onChanged(filter.copyWith(search: value));
                   },

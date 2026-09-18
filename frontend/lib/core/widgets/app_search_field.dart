@@ -19,6 +19,7 @@ class AppSearchField extends StatefulWidget {
     super.key,
     required this.hint,
     required this.onChanged,
+    this.text,
     this.onSubmitted,
     Duration? debounce,
     this.resultCount,
@@ -30,6 +31,12 @@ class AppSearchField extends StatefulWidget {
 
   /// Called once after [debounce] of quiet typing, with the current text.
   final ValueChanged<String> onChanged;
+
+  /// The parent's applied query. When this becomes empty the field clears,
+  /// so Clear filters cannot leave stale text. Omitted, the field is only
+  /// cleared from inside. Typing is not overwritten while this is still
+  /// empty or still matches the last emit.
+  final String? text;
 
   /// Called when the IME submits. Pending debounce is flushed first.
   final VoidCallback? onSubmitted;
@@ -48,9 +55,28 @@ class AppSearchField extends StatefulWidget {
 }
 
 class _AppSearchFieldState extends State<AppSearchField> {
-  final TextEditingController _controller = TextEditingController();
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.text,
+  );
   Timer? _timer;
-  String _sent = '';
+  late String _sent = widget.text ?? '';
+
+  @override
+  void didUpdateWidget(AppSearchField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final String? text = widget.text;
+    final String? previous = oldWidget.text;
+    if (text != null &&
+        text.isEmpty &&
+        previous != null &&
+        previous.isNotEmpty) {
+      _timer?.cancel();
+      if (_controller.text.isNotEmpty) {
+        _controller.clear();
+      }
+      _sent = '';
+    }
+  }
 
   @override
   void dispose() {

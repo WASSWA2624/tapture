@@ -1,6 +1,6 @@
 # Tapture — task index
 
-288 implementation prompts across 25 phases. Work top to bottom.
+289 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task.
 
@@ -369,6 +369,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [ ] [286 — Fix storage settings on web](23-hardening/286-fix-storage-settings-on-web.md)
 - [x] [287 — Dock feedback panel beside app](23-hardening/287-dock-feedback-panel-beside-app.md)
 - [x] [288 — Rename More nav to Settings](23-hardening/288-rename-more-nav-to-settings.md)
+- [x] [289 — Fix feedback search remount](23-hardening/289-fix-feedback-search-remount.md)
 
 ## 24 — The minimal backend
 

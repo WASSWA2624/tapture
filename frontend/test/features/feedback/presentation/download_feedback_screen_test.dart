@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -53,6 +54,29 @@ void main() {
     await tester.tap(find.byTooltip(Copy.feedbackFewerFilters));
     await tester.pumpAndSettle();
     expect(find.text(Copy.feedbackScreens), findsNothing);
+  });
+
+  testWidgets('search keeps the query after debounce and Clear empties it', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, seed: true);
+    await tester.enterText(find.byType(TextField), 'crash');
+    await tester.pump(AppConstants.interaction.debounce);
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller?.text,
+      'crash',
+    );
+    expect(find.text('FBK0000001'), findsNothing);
+    expect(find.text(Copy.feedbackMatching(0, 1)), findsOneWidget);
+
+    await tester.tap(find.text(Copy.feedbackClearFilters));
+    await tester.pump();
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller?.text,
+      isEmpty,
+    );
+    expect(find.text('FBK0000001'), findsOneWidget);
+    expect(find.text(Copy.feedbackClearFilters), findsNothing);
   });
 
   testWidgets('a type checkbox narrows the list and Clear filters widens it', (
