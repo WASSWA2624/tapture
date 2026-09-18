@@ -7,8 +7,9 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/app_card.dart';
 import 'package:tapture/core/widgets/app_page.dart';
-import 'package:tapture/core/widgets/fields/app_choice_field.dart';
+import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
@@ -44,11 +45,7 @@ class GiveFeedbackScreen extends ConsumerWidget {
         ref.watch(feedbackDraftProvider)?.context.screen ?? '';
     final Widget form = AppForm(
       fields: <Widget>[
-        Text(
-          Copy.feedbackStaysOnDevice,
-          style: AppText.body.copyWith(color: context.colors.onSurface),
-        ),
-        AppChoiceField<FeedbackCategory>(
+        AppRadioGroup<FeedbackCategory>(
           label: Copy.feedbackType,
           value: view.category,
           options: <Choice<FeedbackCategory>>[
@@ -58,11 +55,7 @@ class GiveFeedbackScreen extends ConsumerWidget {
                 FeedbackLabels.category(category),
               ),
           ],
-          onChanged: (FeedbackCategory? value) {
-            if (value != null) {
-              controller.chooseCategory(value);
-            }
-          },
+          onChanged: controller.chooseCategory,
         ),
         if (view.category == FeedbackCategory.other)
           AppTextField(
@@ -74,36 +67,20 @@ class GiveFeedbackScreen extends ConsumerWidget {
         AppTextField(
           label: Copy.feedbackMessage,
           controller: controller.message,
-          hint: Copy.feedbackMessageHint,
-          maxLines: 6,
+          helper: Copy.feedbackMessageHint,
+          minLines: 4,
+          maxLines: 8,
           maxLength: AppConstants.userFeedback.maxMessageLength,
           errorText: view.messageError,
           keyboardType: TextInputType.multiline,
           textInputAction: TextInputAction.newline,
         ),
-        if (screenshot != null) ...<Widget>[
-          AppSwitchTile(
-            title: Copy.feedbackAttachScreenshot,
-            description: Copy.feedbackScreenshotOf(screen),
-            value: view.attachScreenshot,
-            onChanged: controller.setAttachScreenshot,
-          ),
-          if (view.attachScreenshot)
-            Semantics(
-              label: Copy.feedbackScreenshotPreview,
-              image: true,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: AppConstants.images.previewEdge.toDouble(),
-                ),
-                child: Image.memory(screenshot, fit: BoxFit.contain),
-              ),
-            ),
-        ] else
-          Text(
-            Copy.feedbackNoScreenshot,
-            style: AppText.body.copyWith(color: context.colors.onSurface),
-          ),
+        _ScreenshotAttach(
+          bytes: screenshot,
+          screen: screen,
+          attach: view.attachScreenshot,
+          onChanged: controller.setAttachScreenshot,
+        ),
       ],
       errors: <String>[if (view.saveError != null) view.saveError!],
       submitLabel: Copy.feedbackSave,
@@ -119,5 +96,59 @@ class GiveFeedbackScreen extends ConsumerWidget {
       return form;
     }
     return AppPage(title: Copy.feedbackGive, body: form);
+  }
+}
+
+class _ScreenshotAttach extends StatelessWidget {
+  const _ScreenshotAttach({
+    required this.bytes,
+    required this.screen,
+    required this.attach,
+    required this.onChanged,
+  });
+
+  final Uint8List? bytes;
+  final String screen;
+  final bool attach;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final Uint8List? bytes = this.bytes;
+    if (bytes == null) {
+      return Text(
+        Copy.feedbackNoScreenshot,
+        style: AppText.caption.copyWith(color: context.colors.onSurface),
+      );
+    }
+    return AppCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          if (attach)
+            ColoredBox(
+              color: context.colors.surfaceVariant,
+              child: Semantics(
+                label: Copy.feedbackScreenshotPreview,
+                image: true,
+                child: Image.memory(
+                  bytes,
+                  width: double.infinity,
+                  height: AppConstants.images.previewEdge.toDouble(),
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          AppSwitchTile(
+            title: Copy.feedbackAttachScreenshot,
+            description: Copy.feedbackScreenshotOf(screen),
+            value: attach,
+            divided: false,
+            onChanged: onChanged,
+          ),
+        ],
+      ),
+    );
   }
 }

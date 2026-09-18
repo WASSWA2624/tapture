@@ -14,6 +14,7 @@ class AppSwitchTile extends StatelessWidget {
     required this.onChanged,
     this.description,
     this.enabled = true,
+    this.divided = true,
   }) : _useCheckbox = false;
 
   /// Creates the same layout with a checkbox instead of a switch.
@@ -24,6 +25,7 @@ class AppSwitchTile extends StatelessWidget {
     required this.onChanged,
     this.description,
     this.enabled = true,
+    this.divided = true,
   }) : _useCheckbox = true;
 
   /// Visible title; also the semantic name of the control (FE-A11Y-02).
@@ -40,6 +42,10 @@ class AppSwitchTile extends StatelessWidget {
 
   /// When false, taps are ignored and the control looks disabled.
   final bool enabled;
+
+  /// When true, a hairline rule sits under the tile. Cards that already
+  /// outline the control pass false.
+  final bool divided;
 
   final bool _useCheckbox;
 
@@ -58,9 +64,14 @@ class AppSwitchTile extends StatelessWidget {
           color: colors.surface,
           child: DecoratedBox(
             decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: colors.outline, width: Space.x0 / 2),
-              ),
+              border: divided
+                  ? Border(
+                      bottom: BorderSide(
+                        color: colors.outline,
+                        width: Space.x0 / 2,
+                      ),
+                    )
+                  : null,
             ),
             child: InkWell(
               onTap: enabled ? _toggle : null,

@@ -174,6 +174,12 @@ class _AppFormState extends State<AppForm> {
                         child: SingleChildScrollView(
                           keyboardDismissBehavior:
                               ScrollViewKeyboardDismissBehavior.onDrag,
+                          padding: const EdgeInsets.fromLTRB(
+                            Space.x4,
+                            Space.x4,
+                            Space.x4,
+                            Space.x2,
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: _fieldSlate(),
@@ -182,7 +188,7 @@ class _AppFormState extends State<AppForm> {
                       ),
                     ),
                   ),
-                  _submitBar(widget.fields.length),
+                  _submitBar(widget.fields.length, inset: true),
                 ],
               );
             }
@@ -224,13 +230,32 @@ class _AppFormState extends State<AppForm> {
     return children;
   }
 
-  Widget _submitBar(int fieldCount) {
-    return FocusTraversalOrder(
+  Widget _submitBar(int fieldCount, {bool inset = false}) {
+    final Widget action = FocusTraversalOrder(
       order: NumericFocusOrder(fieldCount.toDouble()),
       child: AppPrimaryAction(
         label: widget.submitLabel,
         busy: _busy,
         onPressed: _submit,
+      ),
+    );
+    if (!inset) {
+      return action;
+    }
+    final BorderSide side = BorderSide(
+      color: context.colors.outline,
+      width: Theme.of(context).dividerTheme.thickness ?? Space.x0 / 2,
+    );
+    return DecoratedBox(
+      decoration: BoxDecoration(border: Border(top: side)),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          Space.x4,
+          Space.x3,
+          Space.x4,
+          Space.x4,
+        ),
+        child: action,
       ),
     );
   }

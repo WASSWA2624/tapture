@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// One option in [AppChoiceField] or [AppMultiChoiceField].
+/// One option in [AppChoiceField], [AppMultiChoiceField] or [AppRadioGroup].
 ///
 /// [label] is template content (FE-L10N-07): shown as given, never
 /// translated, matched or normalised against UI copy.

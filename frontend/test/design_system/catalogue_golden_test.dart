@@ -37,6 +37,7 @@ import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_date_field.dart';
 import 'package:tapture/core/widgets/fields/app_multi_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_number_field.dart';
+import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
@@ -273,6 +274,13 @@ Widget _sample(String name, TextEditingController field) {
       );
     case 'app_primary_action':
       return const AppPrimaryAction(label: Copy.save, onPressed: _noop);
+    case 'app_radio_group':
+      return const AppRadioGroup<String>(
+        label: 'Grade',
+        options: _grades,
+        value: 'a',
+        onChanged: _ignoreText,
+      );
     case 'app_progress_steps':
       return const AppProgressSteps(
         steps: <ProgressStep>[

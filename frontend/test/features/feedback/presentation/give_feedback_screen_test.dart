@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/time/clock.dart';
-import 'package:tapture/core/widgets/fields/app_choice_field.dart';
+import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/feedback/feedback.dart';
 import 'package:tapture/features/feedback/presentation/feedback_draft.dart';
@@ -22,15 +22,19 @@ void main() {
     WidgetTester tester,
   ) async {
     final _Harness harness = await _pump(tester);
+    await tester.ensureVisible(find.text(Copy.feedbackSave));
     await tester.tap(find.text(Copy.feedbackSave));
     await tester.pumpAndSettle();
     expect(find.text(Copy.feedbackMessageRequired), findsWidgets);
+    expect(find.text(Copy.feedbackStaysOnDevice), findsNothing);
+    expect(find.byType(AppRadioGroup<FeedbackCategory>), findsOneWidget);
     expect(await harness.repo.watch().first, isEmpty);
   });
 
   testWidgets('saving writes the entry', (WidgetTester tester) async {
     final _Harness harness = await _pump(tester);
     await tester.enterText(find.byType(TextField), 'The list is slow');
+    await tester.ensureVisible(find.text(Copy.feedbackSave));
     await tester.tap(find.text(Copy.feedbackSave));
     await tester.pumpAndSettle();
     final List<FeedbackEntry> rows = await harness.repo.watch().first;
@@ -42,11 +46,11 @@ void main() {
     WidgetTester tester,
   ) async {
     await _pump(tester);
-    await tester.tap(find.byType(AppChoiceField<FeedbackCategory>));
-    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text(Copy.feedbackCategoryOther));
     await tester.tap(find.text(Copy.feedbackCategoryOther));
-    await tester.pumpAndSettle();
+    await tester.pump();
     await tester.enterText(find.byType(TextField).last, 'Still slow');
+    await tester.ensureVisible(find.text(Copy.feedbackSave));
     await tester.tap(find.text(Copy.feedbackSave));
     await tester.pumpAndSettle();
     expect(find.text(Copy.feedbackOtherRequired), findsWidgets);
@@ -58,6 +62,10 @@ void main() {
     await _pump(tester, screenshot: aFeedbackPng);
     expect(find.text(Copy.feedbackAttachScreenshot), findsOneWidget);
     expect(find.text(Copy.feedbackScreenshotOf('Projects')), findsOneWidget);
+    expect(
+      find.bySemanticsLabel(Copy.feedbackScreenshotPreview),
+      findsOneWidget,
+    );
   });
 
   testWidgets('no screenshot is stated when none was captured', (
@@ -77,7 +85,7 @@ final class _Harness {
 
 Future<_Harness> _pump(WidgetTester tester, {Uint8List? screenshot}) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(400, 800);
+  tester.view.physicalSize = const Size(400, 1200);
   addTearDown(() {
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();

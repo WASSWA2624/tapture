@@ -40,6 +40,7 @@ import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_date_field.dart';
 import 'package:tapture/core/widgets/fields/app_multi_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_number_field.dart';
+import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
@@ -506,6 +507,19 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         label: 'Fuel',
         options: _tags,
         value: 'water',
+        onChanged: (_) {},
+      ),
+      const SizedBox(height: Space.x4),
+      AppRadioGroup<String>(
+        label: 'Grade',
+        options: _grades,
+        value: 'a',
+        onChanged: (_) {},
+      ),
+      const SizedBox(height: Space.x4),
+      AppRadioGroup<String>(
+        label: 'Grade',
+        options: _grades,
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),

@@ -100,6 +100,25 @@ void main() {
     expect(find.byTooltip('Show Name'), findsNothing);
   });
 
+  testWidgets('minLines is forwarded on a multiline field', (
+    WidgetTester tester,
+  ) async {
+    final TextEditingController controller = TextEditingController();
+    addTearDown(controller.dispose);
+    await _pump(
+      tester,
+      AppTextField(
+        label: 'Notes',
+        controller: controller,
+        minLines: 3,
+        maxLines: 8,
+      ),
+    );
+    final TextField field = tester.widget<TextField>(find.byType(TextField));
+    expect(field.minLines, 3);
+    expect(field.maxLines, 8);
+  });
+
   testWidgets('a multi-line field stays usable at 200 percent text scale', (
     WidgetTester tester,
   ) async {

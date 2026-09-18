@@ -20,6 +20,7 @@ class AppTextField extends StatefulWidget {
     this.helper,
     this.errorText,
     this.maxLines = 1,
+    this.minLines,
     this.maxLength,
     this.prefix,
     this.trailing,
@@ -54,6 +55,9 @@ class AppTextField extends StatefulWidget {
 
   /// Line count. `1` is a single line; larger values grow with the text.
   final int? maxLines;
+
+  /// Starting height of a multiline field. Ignored when [maxLines] is `1`.
+  final int? minLines;
 
   /// When set, a locale-formatted character counter is shown.
   final int? maxLength;
@@ -122,7 +126,7 @@ class _AppTextFieldState extends State<AppTextField> {
             enabled: field.enabled,
             readOnly: field.readOnly,
             maxLines: lines,
-            minLines: lines > 1 ? lines : null,
+            minLines: field.minLines ?? (lines > 1 ? lines : null),
             maxLength: field.maxLength,
             keyboardType:
                 field.keyboardType ??

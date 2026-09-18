@@ -183,6 +183,34 @@ void main() {
     },
   );
 
+  testWidgets('a bounded form insets the submit bar', (
+    WidgetTester tester,
+  ) async {
+    final TextEditingController name = TextEditingController();
+    addTearDown(name.dispose);
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(400, 800);
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildTheme(brightness: Brightness.light),
+        home: Scaffold(
+          body: AppForm(
+            fields: <Widget>[AppTextField(label: 'Name', controller: name)],
+            submitLabel: 'Save',
+            onSubmit: () async {},
+          ),
+        ),
+      ),
+    );
+    final Rect submit = tester.getRect(find.byType(AppPrimaryAction));
+    expect(submit.left, Space.x4);
+    expect(submit.right, 400 - Space.x4);
+  });
+
   testWidgets('stays usable at 200 percent text scale', (
     WidgetTester tester,
   ) async {
