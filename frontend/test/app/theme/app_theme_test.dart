@@ -69,6 +69,32 @@ void main() {
       isTrue,
     );
   });
+
+  test(
+    'hint and resting labels use muted ink; floating and typed stay onSurface',
+    () {
+      for (final ThemeData theme in <ThemeData>[
+        buildTheme(brightness: Brightness.light),
+        buildTheme(brightness: Brightness.dark),
+        buildOutdoorTheme(Brightness.light),
+      ]) {
+        final AppColors colors = theme.extension<AppColors>()!;
+        expect(
+          theme.inputDecorationTheme.hintStyle?.color,
+          colors.onSurfaceMuted,
+        );
+        expect(
+          theme.inputDecorationTheme.labelStyle?.color,
+          colors.onSurfaceMuted,
+        );
+        expect(
+          theme.inputDecorationTheme.floatingLabelStyle?.color,
+          colors.onSurface,
+        );
+        expect(theme.textTheme.bodyLarge?.color, colors.onSurface);
+      }
+    },
+  );
 }
 
 Size? _minimumSize(ButtonStyle? style) {

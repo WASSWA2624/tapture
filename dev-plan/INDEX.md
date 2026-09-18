@@ -1,6 +1,6 @@
 # Tapture — task index
 
-299 implementation prompts across 25 phases. Work top to bottom.
+300 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task.
 
@@ -380,6 +380,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [297 — Warn before closing the tab with a draft](23-hardening/297-warn-before-closing-tab-with-draft.md)
 - [x] [298 — Confirm desktop exit with a draft](23-hardening/298-confirm-desktop-exit-with-draft.md)
 - [x] [299 — Align the feedback shot controls](23-hardening/299-align-feedback-shot-controls.md)
+- [ ] [300 — Soften input placeholder text](23-hardening/300-soften-input-placeholder-text.md)
 
 ## 24 — The minimal backend
 

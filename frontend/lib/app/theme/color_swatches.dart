@@ -17,6 +17,7 @@ class ColorSwatches extends StatelessWidget {
       ('surfaceVariant', colors.surfaceVariant),
       ('background', colors.background),
       ('onSurface', colors.onSurface),
+      ('onSurfaceMuted', colors.onSurfaceMuted),
       ('outline', colors.outline),
       ('primary', colors.primary),
       ('onPrimary', colors.onPrimary),

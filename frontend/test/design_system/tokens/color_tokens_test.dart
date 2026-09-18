@@ -27,6 +27,18 @@ void main() {
     }
   });
 
+  test('muted text meets 4.5:1 on every surface in every mode', () {
+    for (final AppColors colors in tokenModes) {
+      for (final Color ground in _surfaces(colors)) {
+        expect(
+          _contrast(colors.onSurfaceMuted, ground),
+          greaterThanOrEqualTo(4.5),
+          reason: '${tokenModeName(colors)} onSurfaceMuted on $ground',
+        );
+      }
+    }
+  });
+
   test('onPrimary meets 4.5:1 on primary in every mode', () {
     for (final AppColors colors in tokenModes) {
       expect(
@@ -129,6 +141,7 @@ Map<String, Color> _roles(AppColors colors) {
     'surfaceVariant': colors.surfaceVariant,
     'background': colors.background,
     'onSurface': colors.onSurface,
+    'onSurfaceMuted': colors.onSurfaceMuted,
     'outline': colors.outline,
     'primary': colors.primary,
     'onPrimary': colors.onPrimary,

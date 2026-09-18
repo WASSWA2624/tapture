@@ -19,6 +19,7 @@ final class AppColors extends ThemeExtension<AppColors> {
     required this.surfaceVariant,
     required this.background,
     required this.onSurface,
+    required this.onSurfaceMuted,
     required this.outline,
     required this.primary,
     required this.onPrimary,
@@ -48,6 +49,9 @@ final class AppColors extends ThemeExtension<AppColors> {
   /// contrast (FE-THEME-10) still needs one, so it lives here rather than as
   /// a one-off in a screen (FE-THEME-11).
   final Color onSurface;
+
+  /// Placeholder ink: quieter than [onSurface], still 4.5:1 on every surface.
+  final Color onSurfaceMuted;
 
   /// Dividers and control bounds. Never the only state signal
   /// (FE-THEME-05).
@@ -89,6 +93,7 @@ final class AppColors extends ThemeExtension<AppColors> {
     surfaceVariant: _chromeLight,
     background: _pageLight,
     onSurface: _inkLight,
+    onSurfaceMuted: _outlineLight,
     outline: _outlineLight,
     primary: _headerLight,
     onPrimary: _white,
@@ -108,6 +113,7 @@ final class AppColors extends ThemeExtension<AppColors> {
     surfaceVariant: _wellDark,
     background: _pageDark,
     onSurface: _inkDark,
+    onSurfaceMuted: _outlineDark,
     outline: _outlineDark,
     primary: _accentDark,
     onPrimary: _pageDark,
@@ -130,6 +136,7 @@ final class AppColors extends ThemeExtension<AppColors> {
     surfaceVariant: _white,
     background: _white,
     onSurface: _black,
+    onSurfaceMuted: _inkMutedOutdoor,
     outline: _black,
     primary: _headerLight,
     onPrimary: _white,
@@ -149,6 +156,7 @@ final class AppColors extends ThemeExtension<AppColors> {
     Color? surfaceVariant,
     Color? background,
     Color? onSurface,
+    Color? onSurfaceMuted,
     Color? outline,
     Color? primary,
     Color? onPrimary,
@@ -166,6 +174,7 @@ final class AppColors extends ThemeExtension<AppColors> {
       surfaceVariant: surfaceVariant ?? this.surfaceVariant,
       background: background ?? this.background,
       onSurface: onSurface ?? this.onSurface,
+      onSurfaceMuted: onSurfaceMuted ?? this.onSurfaceMuted,
       outline: outline ?? this.outline,
       primary: primary ?? this.primary,
       onPrimary: onPrimary ?? this.onPrimary,
@@ -190,6 +199,7 @@ final class AppColors extends ThemeExtension<AppColors> {
       surfaceVariant: Color.lerp(surfaceVariant, other.surfaceVariant, t)!,
       background: Color.lerp(background, other.background, t)!,
       onSurface: Color.lerp(onSurface, other.onSurface, t)!,
+      onSurfaceMuted: Color.lerp(onSurfaceMuted, other.onSurfaceMuted, t)!,
       outline: Color.lerp(outline, other.outline, t)!,
       primary: Color.lerp(primary, other.primary, t)!,
       onPrimary: Color.lerp(onPrimary, other.onPrimary, t)!,
@@ -270,3 +280,6 @@ const Color _dangerOutdoor = Color(0xFF7A271A);
 const Color _warningOutdoor = Color(0xFF7A2E0E);
 const Color _successOutdoor = Color(0xFF054F31);
 const Color _infoOutdoor = Color(0xFF0B4A6F);
+
+/// Placeholder ink on outdoor white; quieter than black, still 4.5:1.
+const Color _inkMutedOutdoor = Color(0xFF3B4A54);
