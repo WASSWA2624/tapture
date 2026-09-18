@@ -45,6 +45,7 @@ class AppTextField extends StatefulWidget {
     this.keyboardType,
     this.textInputAction,
     this.inputFormatters,
+    this.autofillHints,
     this.onChanged,
     this.onSubmitted,
     this.onTap,
@@ -103,6 +104,10 @@ class AppTextField extends StatefulWidget {
   /// Rejects characters as they are typed. Number fields pass a numeric
   /// formatter.
   final List<TextInputFormatter>? inputFormatters;
+
+  /// Autofill hints. Email and phone pass theirs; omitted, the platform
+  /// does not offer a saved value.
+  final Iterable<String>? autofillHints;
 
   /// Called on every accepted edit.
   final ValueChanged<String>? onChanged;
@@ -213,6 +218,7 @@ class _AppTextFieldState extends State<AppTextField> {
                 (lines > 1 ? TextInputType.multiline : TextInputType.text),
             textInputAction: field.textInputAction,
             inputFormatters: field.inputFormatters,
+            autofillHints: field.autofillHints,
             onChanged: field.onChanged,
             onSubmitted: field.onSubmitted,
             onTap: field.onTap,

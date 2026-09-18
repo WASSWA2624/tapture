@@ -36,8 +36,10 @@ import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_date_field.dart';
+import 'package:tapture/core/widgets/fields/app_email_field.dart';
 import 'package:tapture/core/widgets/fields/app_multi_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_number_field.dart';
+import 'package:tapture/core/widgets/fields/app_phone_field.dart';
 import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
@@ -197,6 +199,8 @@ Widget _sample(String name, TextEditingController field) {
         message: Copy.notDetected,
         onConfirm: _noop,
       );
+    case 'app_email_field':
+      return AppEmailField(label: 'Email', controller: field);
     case 'app_empty_state':
       return const AppEmptyState(
         icon: Icons.inbox_outlined,
@@ -275,6 +279,8 @@ Widget _sample(String name, TextEditingController field) {
         ],
         body: Text(Copy.save),
       );
+    case 'app_phone_field':
+      return AppPhoneField(label: 'Phone', controller: field);
     case 'app_photo_thumb':
       return AppPhotoThumb(
         photo: const PhotoAsset(sha256: 'abc', photoType: PhotoType.front),

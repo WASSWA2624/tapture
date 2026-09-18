@@ -39,8 +39,10 @@ import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_date_field.dart';
+import 'package:tapture/core/widgets/fields/app_email_field.dart';
 import 'package:tapture/core/widgets/fields/app_multi_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_number_field.dart';
+import 'package:tapture/core/widgets/fields/app_phone_field.dart';
 import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
@@ -489,6 +491,30 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       AppNumberField(label: 'Count', min: 0, max: 10, onChanged: (_) {}),
       const SizedBox(height: Space.x4),
       AppNumberField(label: 'Count', enabled: false, onChanged: (_) {}),
+      const SizedBox(height: Space.x4),
+      AppEmailField(label: 'Email', controller: _empty),
+      const SizedBox(height: Space.x4),
+      AppEmailField(label: 'Email', controller: _filled),
+      const SizedBox(height: Space.x4),
+      AppEmailField(
+        label: 'Email',
+        controller: _error,
+        errorText: Copy.outOfRange,
+      ),
+      const SizedBox(height: Space.x4),
+      AppEmailField(label: 'Email', controller: _empty, enabled: false),
+      const SizedBox(height: Space.x4),
+      AppPhoneField(label: 'Phone', controller: _empty),
+      const SizedBox(height: Space.x4),
+      AppPhoneField(label: 'Phone', controller: _filled),
+      const SizedBox(height: Space.x4),
+      AppPhoneField(
+        label: 'Phone',
+        controller: _error,
+        errorText: Copy.outOfRange,
+      ),
+      const SizedBox(height: Space.x4),
+      AppPhoneField(label: 'Phone', controller: _empty, enabled: false),
       const SizedBox(height: Space.x4),
       AppDateField(
         label: 'When',
