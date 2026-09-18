@@ -10,7 +10,7 @@ It is the largest control, it sits in the lower third, and it is reachable with 
 important actions, the screen has not been designed yet.
 
 ## FE-SIMP-02 — Four navigation destinations
-Projects, Capture, Records, More. A fifth destination requires deleting one.
+Projects, Capture, Records, Settings. A fifth destination requires deleting one.
 
 ## FE-SIMP-03 — Three taps to a record
 Capture, shutter, save. Anything that adds a tap to that path needs a written justification.

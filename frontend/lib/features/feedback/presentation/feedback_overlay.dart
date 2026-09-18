@@ -66,32 +66,23 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
     final Widget form = GiveFeedbackScreen(
       onAddScreen: () => unawaited(_addThisScreen()),
     );
+    final Widget app = RepaintBoundary(key: _boundaryKey, child: widget.child);
     return Stack(
       children: <Widget>[
-        RepaintBoundary(key: _boundaryKey, child: widget.child),
         if (docked)
-          PositionedDirectional(
-            top: 0,
-            bottom: 0,
-            end: 0,
-            width: AppConstants.userFeedback.panelWidth,
-            child: DecoratedBox(
-              position: DecorationPosition.foreground,
-              decoration: BoxDecoration(
-                border: BorderDirectional(
-                  start: BorderSide(
-                    color: context.colors.outline,
-                    width:
-                        Theme.of(context).dividerTheme.thickness ??
-                        Space.x0 / 2,
-                  ),
-                ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(child: app),
+              SizedBox(
+                width: AppConstants.userFeedback.panelWidth,
+                child: _dockedPanel(context, form),
               ),
-              child: form,
-            ),
+            ],
           )
-        else if (expanded)
-          Positioned.fill(child: form),
+        else
+          app,
+        if (expanded && !docked) Positioned.fill(child: form),
         if (fold.open && !expanded)
           PositionedDirectional(
             start: 0,
@@ -119,6 +110,21 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
             },
           ),
       ],
+    );
+  }
+
+  Widget _dockedPanel(BuildContext context, Widget form) {
+    return DecoratedBox(
+      position: DecorationPosition.foreground,
+      decoration: BoxDecoration(
+        border: BorderDirectional(
+          start: BorderSide(
+            color: context.colors.outline,
+            width: Theme.of(context).dividerTheme.thickness ?? Space.x0 / 2,
+          ),
+        ),
+      ),
+      child: form,
     );
   }
 

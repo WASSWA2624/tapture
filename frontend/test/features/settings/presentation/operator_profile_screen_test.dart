@@ -7,6 +7,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/settings/domain/operator_profile.dart';
 import 'package:tapture/features/settings/presentation/operator_profile_screen.dart';
 
@@ -133,6 +134,39 @@ void main() {
           .where((TextField field) => field.obscureText),
       isEmpty,
     );
+  });
+
+  testWidgets('a failed load offers try again', (WidgetTester tester) async {
+    var attempts = 0;
+    await tester.pumpWidget(
+      ProviderScope(
+        retry: (int _, Object _) => null,
+        overrides: <Override>[
+          operatorProfileOverride(
+            load: () async {
+              attempts += 1;
+              if (attempts == 1) {
+                throw Exception('Operator profile could not be read.');
+              }
+              return const OperatorProfile(name: 'Ada', initials: 'A');
+            },
+            save: (OperatorProfile profile) async =>
+                Success<OperatorProfile>(profile),
+          ),
+        ],
+        child: MaterialApp(
+          theme: buildTheme(brightness: Brightness.light),
+          home: const OperatorProfileScreen(),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(find.byType(AppErrorState), findsOneWidget);
+    await tester.tap(find.text(Copy.tryAgain));
+    await tester.pumpAndSettle();
+    expect(find.byType(AppErrorState), findsNothing);
+    expect(find.text(Copy.operatorName), findsOneWidget);
   });
 }
 

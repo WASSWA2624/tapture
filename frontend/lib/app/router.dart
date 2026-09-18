@@ -52,7 +52,7 @@ abstract final class AppRoutes {
   /// The records list.
   static const String records = '/records';
 
-  /// Settings and the rest of the four-destination shell.
+  /// Settings tab of the four-destination shell.
   static const String more = '/more';
 
   /// Pinned-template destination the status line opens. Task 092 owns the
@@ -63,10 +63,10 @@ abstract final class AppRoutes {
   /// screen.
   static const String queue = '/queue';
 
-  /// Operator profile under More.
+  /// Operator profile under Settings.
   static const String settingsOperator = '$more/operator';
 
-  /// Capture defaults under More.
+  /// Capture defaults under Settings.
   static const String settingsCapture = '$more/capture';
 
   /// AI section. The screen arrives in a later phase.
@@ -75,16 +75,16 @@ abstract final class AppRoutes {
   /// Language section. The screen arrives in a later phase.
   static const String settingsLanguage = '$more/language';
 
-  /// Storage usage under More.
+  /// Storage usage under Settings.
   static const String settingsStorage = '$more/storage';
 
   /// Files section (specification "Data"). The screen arrives later.
   static const String settingsFiles = '$more/files';
 
-  /// App lock under More.
+  /// App lock under Settings.
   static const String settingsSecurity = '$more/security';
 
-  /// About under More.
+  /// About under Settings.
   static const String settingsAbout = '$more/about';
 }
 

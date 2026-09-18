@@ -39,8 +39,7 @@ class StorageSettingsScreen extends ConsumerWidget {
       title: Copy.settingsStorageTitle,
       body: AsyncValueView<_StorageView>(
         value: value,
-        isEmpty: (_StorageView view) =>
-            view.projects.isEmpty && view.cacheBytes == 0,
+        isEmpty: (_StorageView view) => !view.showUsage,
         onRetry: () => ref.invalidate(storageSettingsProvider),
         empty: () {
           return const AppEmptyState(
@@ -135,6 +134,7 @@ Override storageSettingsOverride({
               headroom: headroom ?? HeadroomState.ample,
               cacheBytes: cacheBytes ?? 0,
               retentionDays: SettingKeys.retentionDays.defaultValue,
+              showUsage: true,
             ),
     ),
   );
@@ -162,6 +162,7 @@ typedef _StorageView = ({
   HeadroomState headroom,
   int cacheBytes,
   int retentionDays,
+  bool showUsage,
 });
 
 class _StorageSettings extends AsyncNotifier<_StorageView> {
@@ -211,6 +212,7 @@ class _StorageSettings extends AsyncNotifier<_StorageView> {
         headroom: HeadroomState.ample,
         cacheBytes: 0,
         retentionDays: SettingKeys.retentionDays.defaultValue,
+        showUsage: false,
       ));
     }
     final _StorageView? snapshot = _snapshot;
@@ -254,6 +256,7 @@ class _StorageSettings extends AsyncNotifier<_StorageView> {
         headroom: current.headroom,
         cacheBytes: nextCache < 0 ? 0 : nextCache,
         retentionDays: current.retentionDays,
+        showUsage: current.showUsage,
       ));
       return;
     }
@@ -272,25 +275,41 @@ class _StorageSettings extends AsyncNotifier<_StorageView> {
   }
 
   Future<_StorageView> _load() async {
-    final StorageRoot root = await _root();
     final SettingsStore store = await _settings();
-    final Result<HeadroomState> headroom = await (await _guard()).check();
-    final HeadroomState state = switch (headroom) {
-      Success<HeadroomState>(:final HeadroomState value) => value,
-      FailureResult<HeadroomState>() => HeadroomState.ample,
-    };
-    final Result<Directory> resolved = await root.resolve();
-    switch (resolved) {
-      case FailureResult<Directory>(:final failure):
-        throw _asError(failure);
-      case Success<Directory>(:final Directory value):
-        return (
-          projects: _projectUse(value),
-          headroom: state,
-          cacheBytes: _sum(Directory('${value.path}/.cache')),
-          retentionDays: store.read(SettingKeys.retentionDays),
-        );
+    final int retentionDays = store.read(SettingKeys.retentionDays);
+    try {
+      final StorageRoot root = await _root();
+      final Result<HeadroomState> headroom = await (await _guard()).check();
+      final HeadroomState state = switch (headroom) {
+        Success<HeadroomState>(:final HeadroomState value) => value,
+        FailureResult<HeadroomState>() => HeadroomState.ample,
+      };
+      final Result<Directory> resolved = await root.resolve();
+      switch (resolved) {
+        case FailureResult<Directory>():
+          return _usageOnly(retentionDays);
+        case Success<Directory>(:final Directory value):
+          return (
+            projects: _projectUse(value),
+            headroom: state,
+            cacheBytes: _sum(Directory('${value.path}/.cache')),
+            retentionDays: retentionDays,
+            showUsage: true,
+          );
+      }
+    } on Object {
+      return _usageOnly(retentionDays);
     }
+  }
+
+  _StorageView _usageOnly(int retentionDays) {
+    return (
+      projects: const <_ProjectUse>[],
+      headroom: HeadroomState.ample,
+      cacheBytes: 0,
+      retentionDays: retentionDays,
+      showUsage: true,
+    );
   }
 
   Future<StorageRoot> _root() async {

@@ -71,6 +71,7 @@ class _OperatorProfileScreenState extends ConsumerState<OperatorProfileScreen> {
       subtitle: Copy.operatorNameUse,
       body: AsyncValueView<_OperatorProfileView>(
         value: value,
+        onRetry: () => ref.invalidate(operatorProfileProvider),
         data: (_OperatorProfileView view) {
           _bind(view);
           return AppForm(
@@ -143,6 +144,7 @@ final AsyncNotifierProvider<_OperatorProfile, _OperatorProfileView>
 operatorProfileProvider =
     AsyncNotifierProvider<_OperatorProfile, _OperatorProfileView>(
       _OperatorProfile.new,
+      retry: (int _, Object _) => null,
     );
 
 /// The loaded operator, or null while the profile is still opening.

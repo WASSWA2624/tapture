@@ -47,6 +47,19 @@ void main() {
       await second.close();
     },
   );
+
+  test('the web opener is wired through a conditional import', () {
+    final String source = File(
+      'lib/core/db/app_database.dart',
+    ).readAsStringSync();
+    expect(
+      source.contains("if (dart.library.js_interop) 'app_database_web.dart'"),
+      isTrue,
+    );
+    expect(File('lib/core/db/app_database_web.dart').existsSync(), isTrue);
+    expect(File('web/sqlite3.wasm').existsSync(), isTrue);
+    expect(File('web/drift_worker.js').existsSync(), isTrue);
+  });
 }
 
 Future<int> _pragma(AppDatabase db, String name) async {

@@ -336,7 +336,7 @@ abstract final class Copy {
   static const String navRecords = 'Records';
 
   /// Shell destination: settings and the rest.
-  static const String navMore = 'More';
+  static const String navMore = 'Settings';
 
   /// Pinned-template destination the status line opens.
   static const String navTemplates = 'Templates';

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/files/photo_picker.dart';
@@ -239,9 +240,11 @@ void main() {
   ) async {
     await _pump(tester, size: const Size(1400, 900));
     final Rect form = tester.getRect(find.byType(GiveFeedbackScreen));
-    expect(form.width, lessThan(700));
+    expect(form.width, AppConstants.userFeedback.panelWidth);
     expect(form.right, 1400);
-    expect(tester.getRect(find.text('App screen')).right, lessThan(form.left));
+    final Rect app = tester.getRect(find.text('App screen'));
+    expect(app.right, lessThanOrEqualTo(form.left));
+    expect(app.left, greaterThan(700));
     await tester.tap(find.text('App screen'));
   });
 
@@ -331,7 +334,12 @@ Future<_Harness> _pump(
         theme: buildTheme(brightness: Brightness.light),
         home: const FeedbackOverlay(
           origin: FeedbackOrigin.unknown,
-          child: Scaffold(body: Center(child: Text('App screen'))),
+          child: Scaffold(
+            body: Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: Text('App screen'),
+            ),
+          ),
         ),
       ),
     ),

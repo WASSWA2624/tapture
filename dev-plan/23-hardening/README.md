@@ -2,7 +2,7 @@
 
 Making the finished app fast, legible, reachable and unbreakable in the field.
 
-Tasks 236–284 (12). Each file is a standalone implementation prompt.
+Tasks 236–288 (16). Each file is a standalone implementation prompt.
 
 - [ ] [236 — Layout, accessibility and text-scale audit](236-responsive-audit.md)
 - [ ] [237 — Landscape and foldables](237-orientation-support.md)
@@ -16,3 +16,7 @@ Tasks 236–284 (12). Each file is a standalone implementation prompt.
 - [x] [282 — In-app feedback: floating button, capture, download and delete](282-in-app-feedback.md)
 - [x] [283 — Feedback screens: compact layout, dictation and reopen safety](283-feedback-dictation-and-layout.md)
 - [x] [284 — Feedback archive: ship the prompts generator](284-feedback-prompts-generator.md)
+- [ ] [285 — Enable AppDatabase on web](285-enable-app-database-on-web.md)
+- [ ] [286 — Fix storage settings on web](286-fix-storage-settings-on-web.md)
+- [x] [287 — Dock feedback panel beside app](287-dock-feedback-panel-beside-app.md)
+- [x] [288 — Rename More nav to Settings](288-rename-more-nav-to-settings.md)

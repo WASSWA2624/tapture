@@ -44,6 +44,26 @@ void main() {
     expect(find.byType(AppErrorState), findsOneWidget);
   });
 
+  testWidgets('an unwritable root still shows retention', (
+    WidgetTester tester,
+  ) async {
+    final Directory temp = Directory('build/286-storage')
+      ..createSync(recursive: true);
+    addTearDown(() {
+      if (temp.existsSync()) {
+        temp.deleteSync(recursive: true);
+      }
+    });
+    await _pump(
+      tester,
+      store: SettingsStore.fake(),
+      storageRoot: StorageRoot.fake(documentsDirectory: temp, writable: false),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(AppErrorState), findsNothing);
+    expect(find.text(Copy.settingsRetention), findsOneWidget);
+  });
+
   testWidgets(
     'clearing the cache deletes no original file and updates totals',
     (WidgetTester tester) async {

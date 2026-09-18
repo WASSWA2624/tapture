@@ -16,7 +16,7 @@ import 'offline_switch.dart';
 
 /// The settings root: one tile per section, in a fixed order.
 class SettingsScreen extends ConsumerWidget {
-  /// Creates the settings root. [showAppBar] is false under the More tab.
+  /// Creates the settings root. [showAppBar] is false under the Settings tab.
   const SettingsScreen({super.key, this.showAppBar = true});
 
   /// When false, the shell already shows chrome.
