@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Tapture uses the camera when you take a photo to attach to feedback.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Tapture opens your photos when you choose one to attach to feedback.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Tapture listens when you tap the microphone in a text field.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>

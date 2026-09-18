@@ -11,13 +11,13 @@ import 'core/db/app_database.dart';
 import 'core/device/device_identity.dart';
 import 'core/device/platform_facts.dart';
 import 'core/files/download_service.dart';
+import 'core/files/photo_picker.dart';
 import 'core/ids/uuid_service.dart';
 import 'core/lifecycle/lifecycle_observer.dart';
 import 'core/logging/logger.dart';
 import 'core/security/secure_storage.dart';
 import 'core/time/clock.dart';
 import 'features/feedback/feedback.dart';
-import 'features/feedback/presentation/feedback_photo_source.dart';
 import 'features/feedback/presentation/feedback_providers.dart';
 import 'features/settings/presentation/offline_switch.dart';
 import 'features/settings/settings.dart';
@@ -67,9 +67,7 @@ Future<void> _run() async {
         return FeedbackRepositoryImpl.platform(clock: clock, ids: ids);
       }),
       feedbackDownloadsProvider.overrideWith((Ref _) => DownloadService()),
-      feedbackPhotoSourceProvider.overrideWith(
-        (Ref _) => FeedbackPhotoSource(),
-      ),
+      feedbackPhotosProvider.overrideWith((Ref _) => PhotoPicker()),
       sttServiceProvider.overrideWith((Ref ref) {
         final SttService speech = SttService();
         ref.onDispose(() => unawaited(speech.cancel()));

@@ -1,9 +1,6 @@
-import '../domain/feedback_category.dart';
-
-/// Ephemeral state of the give-feedback form.
+/// The verdicts on the give-feedback form. What was written and chosen
+/// lives on the draft, so it survives the form closing.
 typedef GiveFeedbackView = ({
-  FeedbackCategory category,
-  bool attachScreenshot,
   String? messageError,
   String? otherError,
   String? saveError,

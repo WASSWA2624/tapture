@@ -2,10 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/device/device.dart';
 import 'package:tapture/core/device/platform_facts.dart';
 import 'package:tapture/core/files/download_service.dart';
+import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/time/clock.dart';
 
 import '../feedback.dart';
-import 'feedback_photo_source.dart';
 
 /// Clock the feature stamps and names files with. Tests replace it with a
 /// [FixedClock].
@@ -47,11 +47,13 @@ final Provider<DownloadService> feedbackDownloadsProvider =
       return DownloadService.fake();
     });
 
-/// Camera and library photos for a draft. Tests replace this with a fake.
-final Provider<FeedbackPhotoSource> feedbackPhotoSourceProvider =
-    Provider<FeedbackPhotoSource>((Ref _) {
-      return FeedbackPhotoSource.fake();
-    });
+/// Camera and library photos for a draft. Tests keep the fake; [main]
+/// swaps in the platform picker.
+final Provider<PhotoPicker> feedbackPhotosProvider = Provider<PhotoPicker>((
+  Ref _,
+) {
+  return const PhotoPicker.fake();
+});
 
 /// Every stored entry, oldest first. Kept alive with the repository.
 final StreamProvider<List<FeedbackEntry>> feedbackEntriesProvider =

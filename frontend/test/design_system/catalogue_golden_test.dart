@@ -42,8 +42,6 @@ import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
-import 'package:tapture/core/widgets/fields/dictation_phase.dart';
-import 'package:tapture/core/widgets/fields/dictation_status.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/forms/keep_focused_visible.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
@@ -327,11 +325,6 @@ Widget _sample(String name, TextEditingController field) {
       return const ColorSwatches();
     case 'content_constraint':
       return const ContentConstraint(child: Text(Copy.galleryLayout));
-    case 'dictation_status':
-      return const DictationStatus(
-        phase: DictationPhase.listening,
-        heard: 'The pump leaks at night',
-      );
     case 'error_boundary':
       return const ErrorBoundary(child: Text(Copy.save));
     case 'gallery_index':

@@ -102,13 +102,8 @@ void main() {
     final IconButton button = tester.widget<IconButton>(
       find.byType(IconButton),
     );
+    // The widget's side wins over the theme's outline.
     expect(button.style?.side?.resolve(<WidgetState>{}), BorderSide.none);
-    expect(
-      IconButtonTheme.of(
-        tester.element(find.byType(IconButton)),
-      ).style?.side?.resolve(<WidgetState>{}),
-      BorderSide.none,
-    );
   });
 }
 

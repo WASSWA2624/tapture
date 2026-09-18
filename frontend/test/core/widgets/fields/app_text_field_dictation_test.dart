@@ -117,8 +117,35 @@ void main() {
     expect(controller.text, 'It is slow. Also it crashes.');
     expect(controller.selection.baseOffset, controller.text.length);
     expect(changes.last, 'It is slow. Also it crashes.');
-    expect(find.text(Copy.dictationListening), findsNothing);
     expect(find.byTooltip(Copy.dictateInto('Notes')), findsOneWidget);
+  });
+
+  testWidgets('typing mid-listen keeps both, without repeating words', (
+    WidgetTester tester,
+  ) async {
+    final FakeSttService speech = FakeSttService();
+    final TextEditingController controller = _controller();
+    await _pump(
+      tester,
+      AppTextField(label: 'Notes', controller: controller, maxLines: 4),
+      speech: speech,
+    );
+    await tester.tap(mic);
+    await tester.pump();
+    speech.hear('the pump');
+    await tester.pump();
+    expect(controller.text, 'the pump');
+
+    // The operator types; the recogniser keeps sending the whole utterance.
+    controller.value = const TextEditingValue(
+      text: 'the pump (east)',
+      selection: TextSelection.collapsed(offset: 15),
+    );
+    speech.hear('the pump leaks');
+    await tester.pump();
+    await speech.finish('the pump leaks badly');
+    await tester.pump();
+    expect(controller.text, 'the pump (east) leaks badly.');
   });
 
   testWidgets('a single-line field takes the words as a phrase', (

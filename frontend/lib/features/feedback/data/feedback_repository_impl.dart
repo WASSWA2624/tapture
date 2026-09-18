@@ -77,7 +77,6 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
     required String message,
     required FeedbackContext context,
     String? otherCategory,
-    Uint8List? screenshot,
     List<Uint8List> screenshots = const <Uint8List>[],
   }) async {
     await _load();
@@ -102,22 +101,12 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
     }
     final String id = _ids.newId();
     final List<Uint8List> shots = <Uint8List>[
-      if (screenshot != null && screenshot.isNotEmpty) screenshot,
-      for (final Uint8List extra in screenshots)
-        if (extra.isNotEmpty) extra,
+      for (final Uint8List shot in screenshots)
+        if (shot.isNotEmpty) shot,
     ];
-    final bool hasScreenshot = shots.isNotEmpty;
-    for (int index = 0; index < shots.length; index++) {
-      final Result<void> written = await _store.write(
-        _shotKey(id, index),
-        shots[index],
-      );
-      if (written is FailureResult<void>) {
-        for (int undo = 0; undo < index; undo++) {
-          await _store.remove(_shotKey(id, undo));
-        }
-        return FailureResult<FeedbackEntry>(written.failure);
-      }
+    final Result<void> written = await _writeShots(id, shots);
+    if (written is FailureResult<void>) {
+      return FailureResult<FeedbackEntry>(written.failure);
     }
     final FeedbackEntry entry = FeedbackEntry(
       id: id,
@@ -126,7 +115,7 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
       category: category,
       otherCategory: category == FeedbackCategory.other ? other : null,
       message: trimmed,
-      hasScreenshot: hasScreenshot,
+      hasScreenshot: shots.isNotEmpty,
       screenshotCount: shots.length,
       context: context,
     );
@@ -137,11 +126,7 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
       nextNumber: nextNumber,
     );
     if (indexed is FailureResult<void>) {
-      if (hasScreenshot) {
-        for (int index = 0; index < shots.length; index++) {
-          await _store.remove(_shotKey(id, index));
-        }
-      }
+      await _removeShots(id, shots.length);
       return FailureResult<FeedbackEntry>(indexed.failure);
     }
     _entries = next;
@@ -151,47 +136,14 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
   }
 
   @override
-  Future<Result<Uint8List?>> screenshot(String id) async {
-    await _load();
-    return _store.read(_shotKey(id, 0));
-  }
-
-  @override
   Future<Result<List<Uint8List>>> screenshots(String id) async {
     await _load();
-    FeedbackEntry? entry;
-    for (final FeedbackEntry row in _entries) {
-      if (row.id == id) {
-        entry = row;
-        break;
+    for (final FeedbackEntry entry in _entries) {
+      if (entry.id == id) {
+        return _readShots(entry);
       }
     }
-    final int count =
-        entry?.screenshotCount ?? (entry?.hasScreenshot == true ? 1 : 0);
-    if (count <= 0) {
-      final Result<Uint8List?> first = await _store.read(_shotKey(id, 0));
-      return switch (first) {
-        FailureResult<Uint8List?>(:final Failure failure) =>
-          FailureResult<List<Uint8List>>(failure),
-        Success<Uint8List?>(:final Uint8List? value)
-            when value != null && value.isNotEmpty =>
-          Success<List<Uint8List>>(<Uint8List>[value]),
-        Success<Uint8List?>() => const Success<List<Uint8List>>(<Uint8List>[]),
-      };
-    }
-    final List<Uint8List> shots = <Uint8List>[];
-    for (int index = 0; index < count; index++) {
-      final Result<Uint8List?> read = await _store.read(_shotKey(id, index));
-      switch (read) {
-        case FailureResult<Uint8List?>(:final Failure failure):
-          return FailureResult<List<Uint8List>>(failure);
-        case Success<Uint8List?>(:final Uint8List? value):
-          if (value != null && value.isNotEmpty) {
-            shots.add(value);
-          }
-      }
-    }
-    return Success<List<Uint8List>>(shots);
+    return const Success<List<Uint8List>>(<Uint8List>[]);
   }
 
   @override
@@ -205,30 +157,12 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
       if (!ids.contains(entry.id)) {
         continue;
       }
-      Uint8List? png;
-      final List<Uint8List> extra = <Uint8List>[];
-      final int count = entry.screenshotCount > 0 ? entry.screenshotCount : 1;
-      for (int index = 0; index < count; index++) {
-        final Result<Uint8List?> read = await _store.read(
-          _shotKey(entry.id, index),
-        );
-        switch (read) {
-          case FailureResult<Uint8List?>(:final Failure failure):
-            return FailureResult<List<RemovedFeedback>>(failure);
-          case Success<Uint8List?>(:final Uint8List? value):
-            if (value == null || value.isEmpty) {
-              continue;
-            }
-            if (png == null) {
-              png = value;
-            } else {
-              extra.add(value);
-            }
-        }
+      switch (await _readShots(entry)) {
+        case FailureResult<List<Uint8List>>(:final Failure failure):
+          return FailureResult<List<RemovedFeedback>>(failure);
+        case Success<List<Uint8List>>(:final List<Uint8List> value):
+          removed.add(RemovedFeedback(entry: entry, shots: value));
       }
-      removed.add(
-        RemovedFeedback(entry: entry, screenshot: png, extraShots: extra),
-      );
     }
     final List<FeedbackEntry> next = <FeedbackEntry>[
       for (final FeedbackEntry entry in _entries)
@@ -242,16 +176,14 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
       return FailureResult<List<RemovedFeedback>>(indexed.failure);
     }
     for (final RemovedFeedback item in removed) {
-      final int count = item.entry.screenshotCount > 0
-          ? item.entry.screenshotCount
-          : 1;
-      for (int index = 0; index < count; index++) {
-        final Result<void> gone = await _store.remove(
-          _shotKey(item.entry.id, index),
-        );
-        if (gone is FailureResult<void>) {
-          return FailureResult<List<RemovedFeedback>>(gone.failure);
-        }
+      // The first slot always goes, so a file orphaned by a failed save
+      // does not outlive its entry.
+      final Result<void> gone = await _removeShots(
+        item.entry.id,
+        item.entry.screenshotCount < 1 ? 1 : item.entry.screenshotCount,
+      );
+      if (gone is FailureResult<void>) {
+        return FailureResult<List<RemovedFeedback>>(gone.failure);
       }
     }
     _entries = next;
@@ -269,19 +201,9 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
       for (final FeedbackEntry entry in _entries) entry.id: entry,
     };
     for (final RemovedFeedback item in removed) {
-      final List<Uint8List> shots = <Uint8List>[
-        if (item.screenshot != null && item.screenshot!.isNotEmpty)
-          item.screenshot!,
-        ...item.extraShots.where((Uint8List bytes) => bytes.isNotEmpty),
-      ];
-      for (int index = 0; index < shots.length; index++) {
-        final Result<void> written = await _store.write(
-          _shotKey(item.entry.id, index),
-          shots[index],
-        );
-        if (written is FailureResult<void>) {
-          return written;
-        }
+      final Result<void> written = await _writeShots(item.entry.id, item.shots);
+      if (written is FailureResult<void>) {
+        return written;
       }
       byId[item.entry.id] = item.entry;
     }
@@ -397,6 +319,48 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
   }
 
   List<FeedbackEntry> _snapshot() => List<FeedbackEntry>.unmodifiable(_entries);
+
+  /// Every image stored with [entry], in attach order.
+  Future<Result<List<Uint8List>>> _readShots(FeedbackEntry entry) async {
+    final List<Uint8List> shots = <Uint8List>[];
+    for (int index = 0; index < entry.screenshotCount; index++) {
+      switch (await _store.read(_shotKey(entry.id, index))) {
+        case FailureResult<Uint8List?>(:final Failure failure):
+          return FailureResult<List<Uint8List>>(failure);
+        case Success<Uint8List?>(:final Uint8List? value):
+          if (value != null && value.isNotEmpty) {
+            shots.add(value);
+          }
+      }
+    }
+    return Success<List<Uint8List>>(shots);
+  }
+
+  /// Writes [shots] for entry [id]; a failed write removes what it wrote.
+  Future<Result<void>> _writeShots(String id, List<Uint8List> shots) async {
+    for (int index = 0; index < shots.length; index++) {
+      final Result<void> written = await _store.write(
+        _shotKey(id, index),
+        shots[index],
+      );
+      if (written is FailureResult<void>) {
+        await _removeShots(id, index);
+        return written;
+      }
+    }
+    return const Success<void>(null);
+  }
+
+  /// Removes the first [count] images of entry [id].
+  Future<Result<void>> _removeShots(String id, int count) async {
+    for (int index = 0; index < count; index++) {
+      final Result<void> gone = await _store.remove(_shotKey(id, index));
+      if (gone is FailureResult<void>) {
+        return gone;
+      }
+    }
+    return const Success<void>(null);
+  }
 }
 
 String _shotKey(String id, [int index = 0]) {

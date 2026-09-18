@@ -76,6 +76,14 @@ void main() {
       expect(next.text, 'It is slow when I scroll.');
     });
 
+    test('carrying on a sentence keeps the first word lower case', () {
+      final ({String text, int caret}) next = SpokenText.insert(
+        text: 'It is slow when',
+        spoken: 'the list loads',
+      );
+      expect(next.text, 'It is slow when the list loads.');
+    });
+
     test('in the middle of text it is spaced and not closed', () {
       final ({String text, int caret}) next = SpokenText.insert(
         text: 'The list is slow.',

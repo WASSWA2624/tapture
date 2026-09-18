@@ -1,56 +1,21 @@
-import 'dart:typed_data';
-
 import '../domain/feedback_category.dart';
 import '../domain/feedback_context.dart';
 import 'feedback_shot.dart';
 
-/// The in-progress feedback: text, type and attachments, kept while the
-/// operator moves through the app until they save or discard it.
+/// The in-progress feedback: text, type and images, kept while the operator
+/// moves through the app until they save or discard it. The one source of
+/// truth for the form, the compact bar and the overlay (FE-STATE-06).
 final class FeedbackDraft {
-  /// Creates the draft. [screenshot] seeds [shots] when [shots] is empty.
-  factory FeedbackDraft({
-    required FeedbackContext context,
-    Uint8List? screenshot,
-    List<FeedbackShot> shots = const <FeedbackShot>[],
-    String message = '',
-    String other = '',
-    FeedbackCategory category = FeedbackCategory.general,
-    bool attachShots = true,
-    bool open = false,
-    bool expanded = false,
-  }) {
-    final List<FeedbackShot> attached = shots.isNotEmpty
-        ? shots
-        : screenshot == null || screenshot.isEmpty
-        ? const <FeedbackShot>[]
-        : <FeedbackShot>[
-            FeedbackShot(
-              id: 'capture',
-              bytes: screenshot,
-              label: context.screen,
-            ),
-          ];
-    return FeedbackDraft._(
-      context: context,
-      shots: attached,
-      message: message,
-      other: other,
-      category: category,
-      attachShots: attached.isEmpty ? false : attachShots,
-      open: open,
-      expanded: expanded,
-    );
-  }
-
-  const FeedbackDraft._({
+  /// Creates the draft.
+  const FeedbackDraft({
     required this.context,
-    required this.shots,
-    required this.message,
-    required this.other,
-    required this.category,
-    required this.attachShots,
-    required this.open,
-    required this.expanded,
+    this.shots = const <FeedbackShot>[],
+    this.message = '',
+    this.other = '',
+    this.category = FeedbackCategory.general,
+    this.attachShots = true,
+    this.open = false,
+    this.expanded = false,
   });
 
   /// The moment Feedback was first tapped for this draft.
@@ -77,12 +42,8 @@ final class FeedbackDraft {
   /// Whether the full form is showing, rather than the compact bar.
   final bool expanded;
 
-  /// The first attached image, when there is one.
-  Uint8List? get screenshot => shots.isEmpty ? null : shots.first.bytes;
-
   /// A copy with the given parts replaced.
   FeedbackDraft copyWith({
-    FeedbackContext? context,
     List<FeedbackShot>? shots,
     String? message,
     String? other,
@@ -91,8 +52,8 @@ final class FeedbackDraft {
     bool? open,
     bool? expanded,
   }) {
-    return FeedbackDraft._(
-      context: context ?? this.context,
+    return FeedbackDraft(
+      context: context,
       shots: shots ?? this.shots,
       message: message ?? this.message,
       other: other ?? this.other,

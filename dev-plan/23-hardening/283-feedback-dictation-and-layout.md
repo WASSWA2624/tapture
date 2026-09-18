@@ -20,6 +20,21 @@ Every free-text `AppTextField` gains a microphone at its end. Speech is reached 
 capitals) before it lands at the caret, and a field stops its session when it is disposed. The
 offline switch keeps dictation on the device or refuses it (FE-SEC-04).
 
+### Second pass: a persistent feedback workspace
+
+Give us feedback is a draft that outlives the form. The form is the overlay's workspace, never a route:
+a side panel beside a usable app on expanded windows, the whole screen elsewhere, and a one-line bar
+(type or speak) while the operator moves around. Back and "Continue later" fold it; Discard asks first.
+Screenshots of any screen ("Add this screen"), camera photos and library photos attach up to eight
+images: one fills the width at its own aspect ratio, several share a balanced grid, each opens a larger
+preview and has a remove control. Photos come through `core/files/photo_picker.dart`
+(`image_picker`) and are capped to the feedback long edge without distortion. Dictated words appear
+in the field as they are heard; typing mid-listen keeps both. Inputs share the buttons' radius and
+in-field controls carry no outline. Save, the headers and the attach checkbox (control first) are
+compact. Download and delete share one browser: search with a filter toggle that counts hidden
+facets, type checkboxes, the rest paired side by side where there is room, and select-all as a
+checkbox.
+
 ## Files
 
 - `frontend/lib/core/ai/stt_service.dart` (new, 131 contract), `frontend/lib/core/normalise/spoken_text.dart` (new)
@@ -28,7 +43,9 @@ offline switch keeps dictation on the device or refuses it (FE-SEC-04).
 - `frontend/lib/core/widgets/app_icon_button.dart`, `app_page.dart`, `forms/app_form.dart`
 - `frontend/lib/app/app.dart`, `frontend/lib/app/widgets/global_error_page.dart`, `frontend/lib/main.dart`
 - `frontend/lib/features/feedback/` (presentation, `FeedbackCategory.offered`)
-- `frontend/pubspec.yaml`, `frontend/tool/allowlist.yaml` (`speech_to_text`), platform microphone and speech usage strings
+- `frontend/lib/core/files/photo_picker.dart` (new), `frontend/lib/core/widgets/fields/choice_layout.dart` (new)
+- `frontend/lib/features/feedback/presentation/` (`feedback_draft*`, `feedback_overlay`, `feedback_shots`, `feedback_browser`, `feedback_filter_panel`)
+- `frontend/pubspec.yaml`, `frontend/tool/allowlist.yaml` (`speech_to_text`, `image_picker`), platform microphone, camera, photo and speech usage strings
 
 ## Constraints
 
@@ -46,6 +63,10 @@ offline switch keeps dictation on the device or refuses it (FE-SEC-04).
 - [x] The recovery screen shows Restart, Export log and Recycle bin in one row.
 - [x] Free-text fields dictate through `SttService`; the listening state is visible and announced; a disposed field
       cancels its own session; the offline switch keeps recognition on the device.
+- [x] The draft survives folding, navigation and reopening; the form docks as a side panel on expanded windows.
+- [x] Camera and library photos attach on every platform that has them; images keep their aspect ratio.
+- [x] Tests: the overlay form (fold, reopen, dock, photos, preview, remove, save), the draft controller,
+      `PhotoPicker`, `FeedbackShotFit`, `evenChoiceWidth`, typing mid-dictation, and multi-image storage.
 - [x] Tests: `SpokenText` unit tests, `DictationSession` with a fake recogniser (partial, final, stop, error,
       dispose), `AppTextField` dictation, the new radio, switch, icon-button and page modes, feedback screen and
       reopen tests, and the recovery row.

@@ -4,6 +4,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 
 import 'choice.dart';
+import 'choice_layout.dart';
 
 /// Multiple selection as a labelled checkbox wrap. Use this when every
 /// option should stay on screen; [AppMultiChoiceField] is the sheet.
@@ -60,9 +61,11 @@ class AppCheckboxGroup<T> extends StatelessWidget {
           ],
           LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-              final double? cell = _cellWidth(context, constraints.maxWidth);
+              final double? cell = evenChoiceWidth(context, <String>[
+                for (final Choice<T> option in options) option.label,
+              ], constraints.maxWidth);
               return Wrap(
-                spacing: Space.x1,
+                spacing: choiceGap,
                 runSpacing: Space.x0,
                 children: <Widget>[
                   for (final Choice<T> option in options)
@@ -93,45 +96,6 @@ class AppCheckboxGroup<T> extends StatelessWidget {
       next.remove(option);
     }
     onChanged(next);
-  }
-
-  /// Null when every option fits on one line at its own width; otherwise
-  /// the width of one of the even columns they fall into.
-  double? _cellWidth(BuildContext context, double maxWidth) {
-    if (!maxWidth.isFinite || options.isEmpty) {
-      return null;
-    }
-    final TextScaler scaler = MediaQuery.textScalerOf(context);
-    final TextDirection textDirection = Directionality.of(context);
-    final TextStyle style = DefaultTextStyle.of(
-      context,
-    ).style.merge(AppText.label);
-    double total = Space.x1 * (options.length - 1);
-    double widest = 0;
-    for (final Choice<T> option in options) {
-      final TextPainter painter = TextPainter(
-        text: TextSpan(text: option.label, style: style),
-        textDirection: textDirection,
-        textScaler: scaler,
-        maxLines: 1,
-      )..layout();
-      final double width = _compactChrome + painter.width.ceilToDouble();
-      painter.dispose();
-      total += width;
-      if (width > widest) {
-        widest = width;
-      }
-    }
-    if (total <= maxWidth) {
-      return null;
-    }
-    final int fit = ((maxWidth + Space.x1) / (widest + Space.x1)).floor().clamp(
-      1,
-      options.length,
-    );
-    final int rows = (options.length / fit).ceil();
-    final int columns = (options.length / rows).ceil();
-    return ((maxWidth - Space.x1 * (columns - 1)) / columns).floorToDouble();
   }
 }
 
@@ -174,7 +138,7 @@ class _CheckboxOption<T> extends StatelessWidget {
                         value: selected,
                         onChanged: enabled ? (_) {} : null,
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        visualDensity: _compactDensity,
+                        visualDensity: compactChoiceDensity,
                       ),
                     ),
                   ),
@@ -195,12 +159,3 @@ class _CheckboxOption<T> extends StatelessWidget {
     );
   }
 }
-
-const VisualDensity _compactDensity = VisualDensity(
-  horizontal: VisualDensity.minimumDensity,
-  vertical: VisualDensity.minimumDensity,
-);
-
-/// Width around a compact option's label: the 24dp box, the gap to the
-/// label and the space before the next option.
-const double _compactChrome = Sizes.minTapTarget / 2 + Space.x1 + Space.x2;

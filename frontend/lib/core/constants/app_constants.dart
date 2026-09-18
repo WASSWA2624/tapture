@@ -172,9 +172,10 @@ abstract final class AppConstants {
   );
 
   /// The operator's in-app feedback: where it is kept, how an entry is
-  /// numbered, how long it may be, how screenshots are sized, and where the
-  /// floating button first rests (as a fraction of the free width and
-  /// height, so a rotation keeps it on screen).
+  /// numbered, how long it may be, how images are sized and laid out (the
+  /// gallery's target tile, the preview cap, the desktop side panel), and
+  /// where the floating button first rests (as a fraction of the free width
+  /// and height, so a rotation keeps it on screen).
   static const ({
     String storeName,
     String idPrefix,
@@ -185,6 +186,9 @@ abstract final class AppConstants {
     int workbookImageEdge,
     int listPageSize,
     int maxShots,
+    double galleryTile,
+    double previewWidth,
+    double panelWidth,
     Duration objectUrlLifetime,
     double buttonStartX,
     double buttonStartY,
@@ -199,6 +203,9 @@ abstract final class AppConstants {
     workbookImageEdge: 480,
     listPageSize: listPageSize,
     maxShots: 8,
+    galleryTile: 160,
+    previewWidth: 960,
+    panelWidth: 420,
     objectUrlLifetime: Duration(seconds: 60),
     buttonStartX: 1,
     buttonStartY: 0.78,

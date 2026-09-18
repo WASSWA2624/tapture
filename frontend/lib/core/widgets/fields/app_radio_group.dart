@@ -4,6 +4,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 
 import 'choice.dart';
+import 'choice_layout.dart';
 
 /// Single selection as a labelled radio list. Use this when every option
 /// should stay on screen; [AppChoiceField] is the segmented control or
@@ -124,9 +125,11 @@ class AppRadioGroup<T> extends StatelessWidget {
             onChanged: _handleChanged,
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
-                final double? cell = _cellWidth(context, constraints.maxWidth);
+                final double? cell = evenChoiceWidth(context, <String>[
+                  for (final Choice<T> option in options) option.label,
+                ], constraints.maxWidth);
                 return Wrap(
-                  spacing: Space.x1,
+                  spacing: choiceGap,
                   children: <Widget>[
                     for (final Choice<T> option in options)
                       SizedBox(
@@ -147,48 +150,6 @@ class AppRadioGroup<T> extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  /// Null when every option fits on one line at its own width; otherwise
-  /// the width of one of the even columns they fall into.
-  double? _cellWidth(BuildContext context, double maxWidth) {
-    if (!maxWidth.isFinite || options.isEmpty) {
-      return null;
-    }
-    final TextScaler scaler = MediaQuery.textScalerOf(context);
-    final TextDirection textDirection = Directionality.of(context);
-    // Measured in the style the label is drawn in, family included, so the
-    // decision matches the layout it predicts.
-    final TextStyle style = DefaultTextStyle.of(
-      context,
-    ).style.merge(AppText.label);
-    double total = Space.x1 * (options.length - 1);
-    double widest = 0;
-    for (final Choice<T> option in options) {
-      final TextPainter painter = TextPainter(
-        text: TextSpan(text: option.label, style: style),
-        textDirection: textDirection,
-        textScaler: scaler,
-        maxLines: 1,
-      )..layout();
-      final double width = _compactChrome + painter.width.ceilToDouble();
-      painter.dispose();
-      total += width;
-      if (width > widest) {
-        widest = width;
-      }
-    }
-    if (total <= maxWidth) {
-      return null;
-    }
-    final int fit = ((maxWidth + Space.x1) / (widest + Space.x1)).floor().clamp(
-      1,
-      options.length,
-    );
-    final int rows = (options.length / fit).ceil();
-    final int columns = (options.length / rows).ceil();
-    // Floored so rounding can never push the last column onto a new line.
-    return ((maxWidth - Space.x1 * (columns - 1)) / columns).floorToDouble();
   }
 
   void _handleChanged(T? next) {
@@ -249,7 +210,7 @@ class _RadioOption<T> extends StatelessWidget {
                         enabled: enabled,
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         visualDensity: compact
-                            ? _compactDensity
+                            ? compactChoiceDensity
                             : VisualDensity.compact,
                       ),
                     ),
@@ -273,17 +234,6 @@ class _RadioOption<T> extends StatelessWidget {
     );
   }
 }
-
-/// The tightest radio: its 20dp ring in a 24dp box. The row it sits in
-/// still keeps the 48dp target (FE-A11Y-01).
-const VisualDensity _compactDensity = VisualDensity(
-  horizontal: VisualDensity.minimumDensity,
-  vertical: VisualDensity.minimumDensity,
-);
-
-/// Width around a compact option's label: the 24dp radio box, the gap to
-/// the label and the space before the next option.
-const double _compactChrome = Sizes.minTapTarget / 2 + Space.x1 + Space.x2;
 
 BorderSide _outline(BuildContext context) {
   final double width = Theme.of(context).dividerTheme.thickness ?? Space.x0 / 2;

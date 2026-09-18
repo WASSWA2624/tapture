@@ -15,28 +15,7 @@ abstract final class SpokenText {
     bool sentences = true,
     String languageTag = 'en',
   }) {
-    String text = raw.replaceAll(_whitespace, ' ').trim();
-    if (text.isEmpty) {
-      return '';
-    }
-    text = text
-        .replaceAllMapped(_spaceBeforeMark, (Match m) => m[1]!)
-        .replaceAllMapped(_repeatedMark, (Match m) => m[1]!)
-        .replaceAllMapped(_markBeforeLetter, (Match m) => '${m[1]} ${m[2]}');
-    if (_isEnglish(languageTag)) {
-      text = text.replaceAllMapped(_loneI, (Match m) => 'I${m[1] ?? ''}');
-    }
-    if (!sentences) {
-      return text;
-    }
-    text = text.replaceAllMapped(
-      _sentenceStart,
-      (Match m) => '${m[1]}${m[2]!.toUpperCase()}',
-    );
-    if (!_closingMarks.contains(text[text.length - 1])) {
-      text = '$text.';
-    }
-    return _capitalise(text);
+    return _tidy(raw, sentences, languageTag, opensSentence: sentences);
   }
 
   /// Where [spoken] lands in [text] at [start]..[end], and the caret after it.
@@ -60,15 +39,16 @@ abstract final class SpokenText {
     final String before = text.substring(0, from < to ? from : to);
     final String after = text.substring(from < to ? to : from);
     final bool atEnd = after.trim().isEmpty;
-    String run = tidy(
+    final bool opensSentence = before.trim().isEmpty || _endsSentence(before);
+    String run = _tidy(
       spoken,
-      sentences: sentences && atEnd,
-      languageTag: languageTag,
+      sentences && atEnd,
+      languageTag,
+      opensSentence: sentences && opensSentence,
     );
     if (run.isEmpty) {
       return (text: text, caret: before.length);
     }
-    final bool opensSentence = before.trim().isEmpty || _endsSentence(before);
     if (sentences && opensSentence) {
       run = _capitalise(run);
     } else if (sentences && !atEnd) {
@@ -91,6 +71,37 @@ abstract final class SpokenText {
     final String head = '$before$lead$run';
     return (text: '$head$trail$after', caret: head.length);
   }
+}
+
+/// [tidy], capitalising the first word only when it [opensSentence].
+String _tidy(
+  String raw,
+  bool sentences,
+  String languageTag, {
+  required bool opensSentence,
+}) {
+  String text = raw.replaceAll(_whitespace, ' ').trim();
+  if (text.isEmpty) {
+    return '';
+  }
+  text = text
+      .replaceAllMapped(_spaceBeforeMark, (Match m) => m[1]!)
+      .replaceAllMapped(_repeatedMark, (Match m) => m[1]!)
+      .replaceAllMapped(_markBeforeLetter, (Match m) => '${m[1]} ${m[2]}');
+  if (_isEnglish(languageTag)) {
+    text = text.replaceAllMapped(_loneI, (Match m) => 'I${m[1] ?? ''}');
+  }
+  if (!sentences) {
+    return text;
+  }
+  text = text.replaceAllMapped(
+    _sentenceStart,
+    (Match m) => '${m[1]}${m[2]!.toUpperCase()}',
+  );
+  if (!_closingMarks.contains(text[text.length - 1])) {
+    text = '$text.';
+  }
+  return opensSentence ? _capitalise(text) : text;
 }
 
 /// Any run of whitespace, including new lines a recogniser emits.

@@ -21,6 +21,13 @@ extension _FieldDictation on _AppTextFieldState {
     if (scope == null) {
       return;
     }
+    if (!_dictation.isActive) {
+      // A new listen places its words at the caret, not over the last one's.
+      _spokenFrom = null;
+      _spokenTo = null;
+      _lastSpoken = '';
+      _keptWords = 0;
+    }
     _dictation.toggle(
       scope.service,
       languageTag: scope.languageTag,
@@ -28,8 +35,21 @@ extension _FieldDictation on _AppTextFieldState {
     );
   }
 
+  /// Puts [spoken] in the field: replacing the words this listen already
+  /// put there, or at the caret. Results arrive whole each time, so words
+  /// the operator kept by typing mid-listen are skipped.
   void _insertSpoken(String spoken, {required bool isFinal}) {
     if (!mounted) {
+      return;
+    }
+    _lastSpoken = spoken;
+    final String words = _keptWords == 0
+        ? spoken
+        : spoken.trim().split(_spaces).skip(_keptWords).join(' ');
+    if (isFinal) {
+      _keptWords = 0;
+    }
+    if (words.trim().isEmpty && _spokenFrom == null) {
       return;
     }
     final AppTextField field = widget;
@@ -52,7 +72,7 @@ extension _FieldDictation on _AppTextFieldState {
     }
     final ({String text, int caret}) next = SpokenText.insert(
       text: value.text,
-      spoken: spoken,
+      spoken: words,
       start: from,
       end: to,
       sentences: isFinal && (field.maxLines ?? 1) > 1,
@@ -81,6 +101,13 @@ extension _FieldDictation on _AppTextFieldState {
     }
     showAppSnack(context, failure.message, tone: SnackTone.warning);
   }
+}
+
+final RegExp _spaces = RegExp(r'\s+');
+
+int _wordCount(String text) {
+  final String trimmed = text.trim();
+  return trimmed.isEmpty ? 0 : trimmed.split(_spaces).length;
 }
 
 /// Free text a person would say: not numbers, dates, e-mail, links or phone

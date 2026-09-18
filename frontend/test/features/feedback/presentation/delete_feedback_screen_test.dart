@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -49,7 +51,7 @@ void main() {
       withScreenshot: true,
     );
     final String id = (await repo.watch().first).single.id;
-    expect(_ok(await repo.screenshot(id)), aFeedbackPng);
+    expect(_ok(await repo.screenshots(id)), <Uint8List>[aFeedbackPng]);
     await _reveal(tester, find.text('FBK0000001'));
     await tester.tap(find.text('FBK0000001'));
     await tester.pumpAndSettle();
@@ -63,15 +65,26 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(await repo.watch().first, isEmpty);
-    expect(_ok(await repo.screenshot(id)), isNull);
+    expect(_ok(await repo.screenshots(id)), isEmpty);
     expect(find.text(Copy.feedbackDeleted(1)), findsOneWidget);
   });
 
-  testWidgets('select all sits on the results line and ticks every match', (
+  testWidgets('select all is a checkbox that ticks every match', (
     WidgetTester tester,
   ) async {
     await _pump(tester, seed: true);
-    await tester.tap(find.text(Copy.selectAll));
+    final Finder selectAll = find.byKey(
+      const ValueKey<String>('feedback-select-all'),
+    );
+    expect(
+      tester
+          .widget<Checkbox>(
+            find.descendant(of: selectAll, matching: find.byType(Checkbox)),
+          )
+          .value,
+      isFalse,
+    );
+    await tester.tap(selectAll);
     await tester.pumpAndSettle();
     expect(find.text(Copy.feedbackDeleteCount(1)), findsOneWidget);
   });
@@ -133,7 +146,7 @@ Future<FeedbackRepositoryImpl> _pump(
         category: FeedbackCategory.general,
         message: 'The list is slow',
         context: aFeedbackEntry().context,
-        screenshot: withScreenshot ? aFeedbackPng : null,
+        screenshots: <Uint8List>[if (withScreenshot) aFeedbackPng],
       ),
     );
   }

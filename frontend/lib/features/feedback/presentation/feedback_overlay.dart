@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
@@ -27,10 +28,11 @@ import 'feedback_providers.dart';
 import 'give_feedback_screen.dart';
 import 'open_feedback_flow.dart';
 
-/// Hosts the draggable Feedback control over [child] and opens the three
-/// flows from its menu. Give us feedback is a persistent overlay so the
-/// operator can keep writing while moving through the app. The shell
-/// supplies [origin]; this widget never reads the router.
+/// Hosts the draggable Feedback control over [child] and opens the flows
+/// from its menu. Give us feedback is a persistent workspace: a side panel
+/// beside the app on wide windows, the whole screen on narrower ones, and
+/// a compact bar while the operator moves around. The shell supplies
+/// [origin]; this widget never reads the router.
 class FeedbackOverlay extends ConsumerStatefulWidget {
   /// Creates the overlay.
   const FeedbackOverlay({super.key, required this.child, required this.origin});
@@ -50,26 +52,58 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
 
   @override
   Widget build(BuildContext context) {
-    final FeedbackDraft? draft = ref.watch(feedbackDraftProvider);
-    final bool expanded = draft != null && draft.open && draft.expanded;
-    final bool collapsed = draft != null && draft.open && !draft.expanded;
+    // Only the fold state is watched: typing into the draft must not
+    // rebuild the shell underneath.
+    final ({bool open, bool expanded}) fold = ref.watch(
+      feedbackDraftProvider.select(
+        (FeedbackDraft? d) =>
+            (open: d?.open ?? false, expanded: d?.expanded ?? false),
+      ),
+    );
+    final bool expanded = fold.open && fold.expanded;
+    final bool compact = context.sizeClass == SizeClass.compact;
+    final bool docked = expanded && context.sizeClass == SizeClass.expanded;
+    final Widget form = GiveFeedbackScreen(
+      onAddScreen: () => unawaited(_addThisScreen()),
+    );
     return Stack(
       children: <Widget>[
         RepaintBoundary(key: _boundaryKey, child: widget.child),
-        if (expanded)
-          const Positioned.fill(child: GiveFeedbackScreen(embedded: true)),
-        if (collapsed)
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: EdgeInsets.only(
-                bottom: context.sizeClass == SizeClass.compact
-                    ? Theme.of(context).navigationBarTheme.height ??
-                          Sizes.minTapTarget + Space.x4
-                    : 0,
+        if (docked)
+          PositionedDirectional(
+            top: 0,
+            bottom: 0,
+            end: 0,
+            width: AppConstants.userFeedback.panelWidth,
+            child: DecoratedBox(
+              position: DecorationPosition.foreground,
+              decoration: BoxDecoration(
+                border: BorderDirectional(
+                  start: BorderSide(
+                    color: context.colors.outline,
+                    width:
+                        Theme.of(context).dividerTheme.thickness ??
+                        Space.x0 / 2,
+                  ),
+                ),
               ),
-              child: const FeedbackDraftBar(),
+              child: form,
             ),
+          )
+        else if (expanded)
+          Positioned.fill(child: form),
+        if (fold.open && !expanded)
+          PositionedDirectional(
+            start: 0,
+            end: 0,
+            // Above the phone's navigation bar, which already spans the
+            // gesture inset; elsewhere the bar takes the inset itself.
+            bottom: compact
+                ? (Theme.of(context).navigationBarTheme.height ??
+                          Sizes.minTapTarget) +
+                      MediaQuery.viewPaddingOf(context).bottom
+                : 0,
+            child: FeedbackDraftBar(bottomInset: !compact),
           ),
         if (!expanded)
           AppFloatingButton(
@@ -113,7 +147,7 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
             key: const ValueKey<String>('feedback-give'),
             icon: Icons.rate_review_outlined,
             label: Copy.feedbackGive,
-            onTap: () => ref.read(feedbackDraftProvider.notifier).openGive(),
+            onTap: () => ref.read(feedbackDraftProvider.notifier).expand(),
           ),
         if (open)
           AppOverflowAction(
@@ -138,7 +172,9 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
     );
   }
 
-  Future<void> _captureDraft() async {
+  /// Captures this screen into the draft. Returns why an open draft could
+  /// not take it, or null.
+  Future<String?> _captureDraft() async {
     OperatorProfile? operator = ref.read(currentOperatorProvider);
     if (operator == null) {
       try {
@@ -149,40 +185,37 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
       }
     }
     if (!mounted) {
-      return;
+      return null;
     }
     final Uint8List? screenshot = await _screenshot();
     if (!mounted) {
-      return;
+      return null;
     }
-    ref
+    return ref
         .read(feedbackDraftProvider.notifier)
         .capture(
-          FeedbackDraft(
-            context: FeedbackContextCapture.from(
-              context: context,
-              origin: widget.origin,
-              clock: ref.read(feedbackClockProvider),
-              facts: ref.read(feedbackPlatformFactsProvider),
-              device: ref.read(feedbackDeviceProvider),
-              operator: operator,
-              deviceId: ref.read(feedbackDeviceIdProvider),
-            ),
-            screenshot: screenshot,
+          context: FeedbackContextCapture.from(
+            context: context,
+            origin: widget.origin,
+            clock: ref.read(feedbackClockProvider),
+            facts: ref.read(feedbackPlatformFactsProvider),
+            device: ref.read(feedbackDeviceProvider),
+            operator: operator,
+            deviceId: ref.read(feedbackDeviceIdProvider),
           ),
+          screenshot: screenshot,
         );
   }
 
   Future<void> _addThisScreen() async {
-    await _captureDraft();
+    final String? problem = await _captureDraft();
     if (!mounted) {
       return;
     }
-    final String screen = widget.origin.screen;
     showAppSnack(
       context,
-      Copy.feedbackShotAdded(screen),
-      tone: SnackTone.success,
+      problem ?? Copy.feedbackShotAdded(widget.origin.screen),
+      tone: problem == null ? SnackTone.success : SnackTone.warning,
     );
   }
 

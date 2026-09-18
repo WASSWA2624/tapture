@@ -134,6 +134,8 @@ class _AppTextFieldState extends State<AppTextField> {
   int? _spokenFrom;
   int? _spokenTo;
   bool _applyingSpoken = false;
+  String _lastSpoken = '';
+  int _keptWords = 0;
   late final DictationSession _dictation = DictationSession(
     onSpoken: (String spoken) => _insertSpoken(spoken, isFinal: true),
     onPartial: (String spoken) => _insertSpoken(spoken, isFinal: false),
@@ -169,9 +171,14 @@ class _AppTextFieldState extends State<AppTextField> {
     super.dispose();
   }
 
+  /// Typing or moving the caret mid-listen keeps the words already in the
+  /// field; later results only add what comes after them.
   void _onUserEdit() {
     if (_applyingSpoken) {
       return;
+    }
+    if (_spokenFrom != null) {
+      _keptWords = _wordCount(_lastSpoken);
     }
     _spokenFrom = null;
     _spokenTo = null;
@@ -296,6 +303,7 @@ class _AppTextFieldState extends State<AppTextField> {
                 : Icons.visibility_outlined,
             semanticLabel: reveal,
             tooltip: reveal,
+            outlined: false,
             onPressed: () => setState(() => _revealed = !_revealed),
           ),
       ],

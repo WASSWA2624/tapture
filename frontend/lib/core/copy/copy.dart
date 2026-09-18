@@ -29,20 +29,22 @@ abstract final class Copy {
   /// Hides a revealed field again, named for its label.
   static String hideField(String label) => 'Hide $label';
 
+  /// The camera or photo library was refused.
+  static const String photoNoAccess =
+      'Allow the camera or photos to attach one. Everything else still works.';
+
+  /// The device has no camera the app can open.
+  static const String photoNoCamera = 'No camera is available on this device.';
+
+  /// The picker failed for a reason it did not name.
+  static const String photoPickFailed =
+      'That photo could not be added. Try another.';
+
   /// Starts dictation into a field, named for its label.
   static String dictateInto(String label) => 'Speak into $label';
 
   /// Stops dictation into a field, named for its label.
   static String stopDictating(String label) => 'Stop speaking into $label';
-
-  /// Under a field while the microphone opens.
-  static const String dictationStarting = 'Opening the microphone…';
-
-  /// Under a field while nothing has been heard yet.
-  static const String dictationListening = 'Listening…';
-
-  /// Under a field after a stop, while the last words arrive.
-  static const String dictationFinishing = 'Adding what you said…';
 
   /// The platform has no recogniser this app can reach.
   static const String dictationUnavailable =
@@ -854,8 +856,22 @@ abstract final class Copy {
   /// Opens the device camera for a photo to attach.
   static const String feedbackTakePhoto = 'Take a photo';
 
-  /// Opens the device library for a photo to attach.
-  static const String feedbackChoosePhoto = 'Choose a photo';
+  /// Opens the device library for photos to attach.
+  static const String feedbackChoosePhoto = 'Choose photos';
+
+  /// The attach checkbox, counting the images it covers.
+  static String feedbackAttachImages(int n) {
+    return Intl.plural(
+      n,
+      one: 'Attach 1 image',
+      other: 'Attach $n images',
+    );
+  }
+
+  /// How many images a kept draft holds, for the compact bar.
+  static String feedbackImageCount(int n) {
+    return Intl.plural(n, one: '1 image', other: '$n images');
+  }
 
   /// Removes one attached photo or screenshot.
   static String feedbackRemoveShot(String label) => 'Remove $label';
@@ -882,25 +898,17 @@ abstract final class Copy {
     return 'Added a screenshot of $screen';
   }
 
-  /// No photo was returned from the camera or library.
-  static const String feedbackNoPhoto = 'No photo was chosen.';
-
-  /// A chosen photo could not be read.
-  static const String feedbackPhotoFailed =
-      'That photo could not be added. Try another, or attach a screenshot.';
-
   /// The draft already holds as many photos as it will take.
   static const String feedbackShotsFull =
       'Remove a photo before adding another.';
 
   /// What the screenshot shows, named for the screen it was taken on.
   static String feedbackScreenshotOf(String screen) {
-    return 'Screenshot of $screen, as it was when you tapped Feedback';
+    return 'Screenshot of $screen';
   }
 
-  /// No screenshot could be taken, so there is nothing to attach.
-  static const String feedbackNoScreenshot =
-      'No screenshot could be taken of that screen.';
+  /// The draft holds no screenshot or photo yet.
+  static const String feedbackNoScreenshot = 'No images yet';
 
   /// Semantic name of the screenshot preview.
   static const String feedbackScreenshotPreview = 'Screenshot preview';

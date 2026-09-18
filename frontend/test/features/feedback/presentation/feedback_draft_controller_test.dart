@@ -7,7 +7,6 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/features/feedback/domain/feedback_category.dart';
 import 'package:tapture/features/feedback/presentation/feedback_draft.dart';
 import 'package:tapture/features/feedback/presentation/feedback_draft_controller.dart';
-import 'package:tapture/features/feedback/presentation/feedback_shot.dart';
 
 import '../../../support/factories.dart';
 
@@ -15,29 +14,25 @@ void main() {
   test('a first capture is held closed until Give us feedback starts', () {
     final _Harness harness = _harness();
     harness.draft.capture(
-      FeedbackDraft(context: aFeedbackEntry().context, screenshot: _bytes(1)),
+      context: aFeedbackEntry().context,
+      screenshot: _bytes(1),
     );
     final FeedbackDraft held = harness.read();
     expect(held.open, isFalse);
     expect(held.expanded, isFalse);
-    expect(held.shots, hasLength(1));
-    expect(held.shots.single.id, 'capture');
     expect(held.shots.single.bytes, _bytes(1));
+    expect(held.shots.single.label, Copy.feedbackScreenshotOf('Projects'));
   });
 
   test('a later capture replaces the held one until the form is open', () {
     final _Harness harness = _harness();
-    harness.draft.capture(
-      FeedbackDraft(context: aFeedbackEntry().context, screenshot: _bytes(1)),
-    );
-    harness.draft.capture(
-      FeedbackDraft(
+    harness.draft
+      ..capture(context: aFeedbackEntry().context, screenshot: _bytes(1))
+      ..capture(
         context: aFeedbackEntry(screen: 'Capture').context,
         screenshot: _bytes(2),
-      ),
-    );
+      );
     final FeedbackDraft held = harness.read();
-    expect(held.shots, hasLength(1));
     expect(held.shots.single.bytes, _bytes(2));
     expect(held.context.screen, 'Capture');
     expect(held.open, isFalse);
@@ -45,48 +40,43 @@ void main() {
 
   test('an open draft keeps its text and gains an added screen', () {
     final _Harness harness = _harness();
-    harness.draft.capture(
-      FeedbackDraft(context: aFeedbackEntry().context, screenshot: _bytes(1)),
-    );
-    harness.draft.openGive();
-    harness.draft.setText(message: 'Still writing');
-    harness.draft.setCategory(FeedbackCategory.error);
-    harness.draft.capture(
-      FeedbackDraft(
-        context: aFeedbackEntry(screen: 'Capture').context,
-        screenshot: _bytes(2),
-      ),
+    harness.draft
+      ..capture(context: aFeedbackEntry().context, screenshot: _bytes(1))
+      ..expand()
+      ..setText(message: 'Still writing')
+      ..setCategory(FeedbackCategory.error);
+    final String? problem = harness.draft.capture(
+      context: aFeedbackEntry(screen: 'Capture').context,
+      screenshot: _bytes(2),
     );
     final FeedbackDraft open = harness.read();
+    expect(problem, isNull);
     expect(open.open, isTrue);
     expect(open.expanded, isTrue);
     expect(open.message, 'Still writing');
     expect(open.category, FeedbackCategory.error);
     expect(open.context.screen, 'Projects');
-    expect(open.shots, hasLength(2));
-    expect(open.shots.first.id, 'capture');
-    expect(open.shots.last.id, 'shot-1');
-    expect(open.shots.last.bytes, _bytes(2));
+    expect(open.shots.map((s) => s.bytes), <Uint8List>[_bytes(1), _bytes(2)]);
+    expect(open.shots.last.label, Copy.feedbackScreenshotOf('Capture'));
+    expect(open.shots.first.id, isNot(open.shots.last.id));
   });
 
   test('an empty recapture does not add a shot to an open draft', () {
     final _Harness harness = _harness();
-    harness.draft.capture(
-      FeedbackDraft(context: aFeedbackEntry().context, screenshot: _bytes(1)),
-    );
-    harness.draft.openGive();
-    harness.draft.capture(FeedbackDraft(context: aFeedbackEntry().context));
+    harness.draft
+      ..capture(context: aFeedbackEntry().context, screenshot: _bytes(1))
+      ..expand()
+      ..capture(context: aFeedbackEntry().context);
     expect(harness.read().shots, hasLength(1));
   });
 
   test('collapse keeps the draft so the operator can keep writing', () {
     final _Harness harness = _harness();
-    harness.draft.capture(
-      FeedbackDraft(context: aFeedbackEntry().context, screenshot: _bytes(1)),
-    );
-    harness.draft.openGive();
-    harness.draft.setText(message: 'Halfway');
-    harness.draft.collapse();
+    harness.draft
+      ..capture(context: aFeedbackEntry().context)
+      ..expand()
+      ..setText(message: 'Halfway')
+      ..collapse();
     expect(harness.read().open, isTrue);
     expect(harness.read().expanded, isFalse);
     expect(harness.read().message, 'Halfway');
@@ -94,40 +84,55 @@ void main() {
     expect(harness.read().expanded, isTrue);
   });
 
-  test('addShot turns attach on and refuses a ninth image', () {
+  test('addShot turns attach on and refuses one past the limit', () {
     final _Harness harness = _harness();
-    harness.draft.capture(FeedbackDraft(context: aFeedbackEntry().context));
-    expect(harness.read().attachShots, isFalse);
+    harness.draft
+      ..capture(context: aFeedbackEntry().context)
+      ..setAttachShots(false);
+    for (int i = 0; i < AppConstants.userFeedback.maxShots; i++) {
+      expect(harness.draft.addShot(_bytes(i), label: Copy.photo), isNull);
+    }
+    expect(harness.read().attachShots, isTrue);
     expect(
-      harness.draft.addShot(
-        FeedbackShot(id: 'photo', bytes: _bytes(3), label: 'Photo'),
+      harness.draft.addShot(_bytes(99), label: Copy.photo),
+      Copy.feedbackShotsFull,
+    );
+    expect(
+      harness.draft.capture(
+        context: aFeedbackEntry().context,
+        screenshot: _bytes(100),
       ),
       isNull,
+      reason: 'a closed draft is replaced, not added to',
     );
-    expect(harness.read().attachShots, isTrue);
-    for (
-      int index = 0;
-      index < AppConstants.userFeedback.maxShots - 1;
-      index++
-    ) {
-      expect(
-        harness.draft.addShot(
-          FeedbackShot(
-            id: 'extra-$index',
-            bytes: _bytes(index + 4),
-            label: 'Extra',
-          ),
-        ),
-        isNull,
-      );
+  });
+
+  test('a full open draft says why a screen was not added', () {
+    final _Harness harness = _harness();
+    harness.draft
+      ..capture(context: aFeedbackEntry().context)
+      ..expand();
+    for (int i = 0; i < AppConstants.userFeedback.maxShots; i++) {
+      harness.draft.addShot(_bytes(i), label: Copy.photo);
     }
     expect(
-      harness.draft.addShot(
-        FeedbackShot(id: 'full', bytes: _bytes(99), label: 'Full'),
+      harness.draft.capture(
+        context: aFeedbackEntry().context,
+        screenshot: _bytes(99),
       ),
       Copy.feedbackShotsFull,
     );
-    expect(harness.read().shots, hasLength(AppConstants.userFeedback.maxShots));
+  });
+
+  test('removeShot drops only that image; clear drops the draft', () {
+    final _Harness harness = _harness();
+    harness.draft
+      ..capture(context: aFeedbackEntry().context, screenshot: _bytes(1))
+      ..addShot(_bytes(2), label: Copy.photo);
+    harness.draft.removeShot(harness.read().shots.first.id);
+    expect(harness.read().shots.single.bytes, _bytes(2));
+    harness.draft.clear();
+    expect(harness.container.read(feedbackDraftProvider), isNull);
   });
 }
 

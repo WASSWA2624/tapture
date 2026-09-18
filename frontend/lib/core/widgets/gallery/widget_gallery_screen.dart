@@ -36,8 +36,8 @@ import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_panel_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
-import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
+import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_date_field.dart';
 import 'package:tapture/core/widgets/fields/app_multi_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_number_field.dart';
@@ -45,8 +45,6 @@ import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
-import 'package:tapture/core/widgets/fields/dictation_phase.dart';
-import 'package:tapture/core/widgets/fields/dictation_status.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/forms/keep_focused_visible.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
@@ -411,8 +409,8 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
           SizedBox(width: Space.x2),
           AppIconButton(
             icon: Icons.mic,
-            semanticLabel: Copy.dictationListening,
-            tooltip: Copy.dictationListening,
+            semanticLabel: Copy.galleryFields,
+            tooltip: Copy.galleryFields,
             selected: true,
             outlined: false,
             onPressed: _noop,
@@ -474,13 +472,6 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         controller: _multiline,
         maxLines: 4,
         maxLength: 80,
-      ),
-      const SizedBox(height: Space.x2),
-      const DictationStatus(phase: DictationPhase.starting),
-      const SizedBox(height: Space.x2),
-      const DictationStatus(
-        phase: DictationPhase.listening,
-        heard: 'The pump leaks at night',
       ),
       const SizedBox(height: Space.x4),
       AppNumberField(label: 'Count', min: 0, max: 10, onChanged: (_) {}),

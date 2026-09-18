@@ -8,14 +8,20 @@ import '../../../support/fakes/fake_stt_service.dart';
 void main() {
   late FakeSttService speech;
   late List<String> spoken;
+  late List<String> partials;
   late List<Failure> failures;
   late DictationSession session;
 
   setUp(() {
     speech = FakeSttService();
     spoken = <String>[];
+    partials = <String>[];
     failures = <Failure>[];
-    session = DictationSession(onSpoken: spoken.add, onFailure: failures.add);
+    session = DictationSession(
+      onSpoken: spoken.add,
+      onPartial: partials.add,
+      onFailure: failures.add,
+    );
   });
 
   tearDown(() => session.dispose());
@@ -31,7 +37,23 @@ void main() {
     expect(session.phase, DictationPhase.listening);
     speech.hear('the pump');
     await settle();
-    expect(session.heard, 'the pump');
+    // The empty "microphone open" result is not words.
+    expect(partials, <String>['the pump']);
+  });
+
+  test('words arriving do not notify listeners once listening', () async {
+    int notified = 0;
+    session
+      ..addListener(() => notified++)
+      ..start(speech, languageTag: 'en');
+    speech.open();
+    await settle();
+    final int opened = notified;
+    speech
+      ..hear('one')
+      ..hear('one two');
+    await settle();
+    expect(notified, opened);
   });
 
   test('the final words are handed over and the session goes idle', () async {
@@ -41,7 +63,6 @@ void main() {
     await settle();
     expect(spoken, <String>['it leaks at night']);
     expect(session.phase, DictationPhase.idle);
-    expect(session.heard, isEmpty);
   });
 
   test('a second tap while listening stops and waits for the words', () async {

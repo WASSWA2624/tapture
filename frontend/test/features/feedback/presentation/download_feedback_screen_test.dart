@@ -32,7 +32,7 @@ void main() {
     expect(find.text(Copy.feedbackMatching(1, 1)), findsOneWidget);
     expect(find.text(Copy.feedbackDownloadCount(1)), findsOneWidget);
     expect(find.text(Copy.feedbackSearch), findsWidgets);
-    expect(find.text(Copy.feedbackMoreFilters(0)), findsOneWidget);
+    expect(find.byTooltip(Copy.feedbackMoreFilters(0)), findsOneWidget);
   });
 
   testWidgets('search and the type row lead; the rest folds away', (
@@ -44,13 +44,13 @@ void main() {
     expect(find.text(Copy.feedbackScreens), findsNothing);
     expect(find.text(Copy.feedbackFrom), findsNothing);
 
-    await tester.tap(find.text(Copy.feedbackMoreFilters(0)));
+    await tester.tap(find.byTooltip(Copy.feedbackMoreFilters(0)));
     await tester.pumpAndSettle();
     expect(find.text(Copy.feedbackScreens), findsOneWidget);
     expect(find.text(Copy.feedbackFrom), findsOneWidget);
-    expect(find.text(Copy.feedbackFewerFilters), findsOneWidget);
+    expect(find.byTooltip(Copy.feedbackFewerFilters), findsOneWidget);
 
-    await tester.tap(find.text(Copy.feedbackFewerFilters));
+    await tester.tap(find.byTooltip(Copy.feedbackFewerFilters));
     await tester.pumpAndSettle();
     expect(find.text(Copy.feedbackScreens), findsNothing);
   });
@@ -69,6 +69,21 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('FBK0000001'), findsOneWidget);
     expect(find.text(Copy.feedbackClearFilters), findsNothing);
+  });
+
+  testWidgets('the filter toggle counts folded facets in use', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, seed: true);
+    await tester.tap(find.byTooltip(Copy.feedbackMoreFilters(0)));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.feedbackScreenshotWith));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip(Copy.feedbackFewerFilters));
+    await tester.pumpAndSettle();
+    expect(find.byTooltip(Copy.feedbackMoreFilters(1)), findsOneWidget);
+    expect(find.text('1'), findsOneWidget);
+    expect(find.text('FBK0000001'), findsNothing);
   });
 
   testWidgets('an entry saved as Improvement can still be found', (

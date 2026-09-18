@@ -22,12 +22,12 @@ void main() {
         category: FeedbackCategory.general,
         message: 'One',
         context: aFeedbackEntry().context,
-        screenshot: aFeedbackPng,
+        screenshots: <Uint8List>[aFeedbackPng],
       ),
     );
     expect(first.hasScreenshot, isTrue);
     expect(first.number, 1);
-    expect(_ok(await repo.screenshot(first.id)), aFeedbackPng);
+    expect(_ok(await repo.screenshots(first.id)), <Uint8List>[aFeedbackPng]);
 
     _ok(await repo.remove(<String>{first.id}));
     final FeedbackEntry second = _ok(
@@ -52,14 +52,14 @@ void main() {
         category: FeedbackCategory.general,
         message: 'One',
         context: aFeedbackEntry().context,
-        screenshot: aFeedbackPng,
+        screenshots: <Uint8List>[aFeedbackPng],
       ),
     );
     expect(backing.containsKey('shots/${saved.id}.png'), isTrue);
 
     _ok(await repo.remove(<String>{saved.id}));
     expect(backing.containsKey('shots/${saved.id}.png'), isFalse);
-    expect(_ok(await repo.screenshot(saved.id)), isNull);
+    expect(_ok(await repo.screenshots(saved.id)), isEmpty);
   });
 
   test('remove deletes an orphan screenshot for a deleted entry', () async {
@@ -90,7 +90,7 @@ void main() {
         category: FeedbackCategory.general,
         message: 'Keep me',
         context: aFeedbackEntry().context,
-        screenshot: aFeedbackPng,
+        screenshots: <Uint8List>[aFeedbackPng],
       ),
     );
     final List<RemovedFeedback> removed = _ok(
@@ -101,7 +101,42 @@ void main() {
     _ok(await repo.restore(removed));
     final List<FeedbackEntry> rows = await repo.watch().first;
     expect(rows.single.message, 'Keep me');
-    expect(_ok(await repo.screenshot(saved.id)), aFeedbackPng);
+    expect(_ok(await repo.screenshots(saved.id)), <Uint8List>[aFeedbackPng]);
+  });
+
+  test('several images are kept in order and removed together', () async {
+    final Map<String, Uint8List> backing = <String, Uint8List>{};
+    final FeedbackRepositoryImpl repo = FeedbackRepositoryImpl.memory(
+      clock: FixedClock(DateTime.utc(2026, 9, 18, 7, 2)),
+      backing: backing,
+    );
+    final List<Uint8List> shots = <Uint8List>[
+      Uint8List.fromList(<int>[1]),
+      Uint8List.fromList(<int>[2]),
+      Uint8List.fromList(<int>[3]),
+    ];
+    final FeedbackEntry saved = _ok(
+      await repo.add(
+        category: FeedbackCategory.error,
+        message: 'Three views',
+        context: aFeedbackEntry().context,
+        screenshots: shots,
+      ),
+    );
+    expect(saved.screenshotCount, 3);
+    expect(_ok(await repo.screenshots(saved.id)), shots);
+
+    final List<RemovedFeedback> removed = _ok(
+      await repo.remove(<String>{saved.id}),
+    );
+    expect(removed.single.shots, shots);
+    expect(
+      backing.keys.where((String key) => key.startsWith('shots/')),
+      isEmpty,
+    );
+
+    _ok(await repo.restore(removed));
+    expect(_ok(await repo.screenshots(saved.id)), shots);
   });
 
   test(
