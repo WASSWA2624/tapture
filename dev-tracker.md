@@ -247,8 +247,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 072 | Project screens do not exist yet; the guard still has to read an open project id. | Open — extra `openProjectIdProvider` / `OpenProjectId` until 083's `CurrentProject` becomes the source |
 | 072 | `route_guards.dart` needs `AppRoutes.projects` without a cycle. | Open — the two named files are one library (`part of`), same shape as `WrittenFile` |
 | 073 | Capture is a destination before `CurrentProject` exists. | Open — `/capture` is the unscoped branch root so the tab works; `/projects/:id/capture` stays project-scoped in the same branch |
-| 074 | Projects and shipped templates do not exist yet. | Open — "Start a project" persists `startProject=true` and opens `/capture`; 082/091 insert the row |
+| 074 | Projects and shipped templates do not exist yet. | Closed — the first-run screen that offered "Start a project" was removed (row below) |
 | 074 | The operator name is not yet `device_profile.operatorName`. | Closed by 077 — the profile row is the source of truth; first-run still stores a name and 077 adopts it onto the row when the profile is empty |
+| 074 | Product decision (2026-09-18): no first-run screen. | Closed — the screen, `/first-run`, the `_firstRun` guard, the `TextStore.firstRun` flag and its copy are gone; the app opens on Projects and the operator name is set under More → Operator |
 | 075 | Project, context, template and unprocessed watches do not exist yet. | Open — stub providers return empty labels and 0; 083/115/141/159 replace them |
 | 075 | `NetworkState.offline` does not distinguish override from radio. | Closed by 081 — `offlineByChoiceProvider` re-reads `SettingKeys.offlineByChoice`; the status line still labels choice separately from the radio |
 | 075 | Template and queue screens have no routes yet. | Open — `AppRoutes.templates` / `queue` with placeholder pages in the More branch |

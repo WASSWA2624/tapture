@@ -6,7 +6,6 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/files/files.dart';
-import 'package:tapture/features/onboarding/presentation/first_run_screen.dart';
 
 void main() {
   test('AppThemeMode round-trips through the fake store', () async {
@@ -47,7 +46,6 @@ void main() {
           themeModeProvider.overrideWith(
             () => ThemeModeController.withStore(TextStore.memory(backing)),
           ),
-          firstRunCompletedOverride(),
           networkOnlineOverride(),
         ],
         child: const TaptureApp(),

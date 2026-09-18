@@ -14,17 +14,6 @@ abstract interface class TextStore {
   /// preference key.
   factory TextStore.file({String? path}) = _FileTextStore;
 
-  /// The first-run completion flag. [backing] is the in-memory fake; omitted,
-  /// a separate file from the theme preference is used.
-  factory TextStore.firstRun([Map<String, String>? backing]) {
-    if (backing != null) {
-      return _MemoryTextStore.keyed(backing, AppConstants.preferences.firstRun);
-    }
-    return _FileTextStore(
-      path: io.preferencePath(AppConstants.preferences.firstRun),
-    );
-  }
-
   /// The stored contents, or null when nothing has been written.
   String? read();
 

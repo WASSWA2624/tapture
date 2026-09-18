@@ -9,12 +9,10 @@ import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
-import 'package:tapture/features/onboarding/presentation/first_run_screen.dart';
 
 void main() {
   test('AppRoutes helpers are the declared paths', () {
     expect(AppRoutes.projects, '/projects');
-    expect(AppRoutes.firstRun, '/first-run');
     expect(AppRoutes.lock, '/lock');
     expect(AppRoutes.project('ab'), '/projects/ab');
     expect(AppRoutes.capture('ab'), '/projects/ab/capture');
@@ -127,7 +125,7 @@ void main() {
 Future<GoRouter> _pump(WidgetTester tester, {String? projectId}) async {
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [firstRunCompletedOverride(), networkOnlineOverride()],
+      overrides: [networkOnlineOverride()],
       child: const TaptureApp(),
     ),
   );

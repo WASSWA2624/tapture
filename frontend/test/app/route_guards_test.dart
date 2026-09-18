@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:tapture/app/app.dart';
 import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/lifecycle/lifecycle_observer.dart';
-import 'package:tapture/features/onboarding/presentation/first_run_screen.dart';
 import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
 
 void main() {
@@ -15,7 +14,7 @@ void main() {
     (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [firstRunCompletedOverride(), networkOnlineOverride()],
+          overrides: [networkOnlineOverride()],
           child: const TaptureApp(),
         ),
       );
@@ -51,9 +50,7 @@ void main() {
 
   test('guards divert a project-scoped location without a widget', () {
     TestWidgetsFlutterBinding.ensureInitialized();
-    final ProviderContainer container = ProviderContainer(
-      overrides: [firstRunCompletedOverride()],
-    );
+    final ProviderContainer container = ProviderContainer();
     addTearDown(container.dispose);
     final GoRouter router = container.read(routerProvider);
     final GoRouterState state = GoRouterState(
@@ -84,9 +81,7 @@ void main() {
 
   test('guards resume once a project is open, without a widget', () {
     TestWidgetsFlutterBinding.ensureInitialized();
-    final ProviderContainer container = ProviderContainer(
-      overrides: [firstRunCompletedOverride()],
-    );
+    final ProviderContainer container = ProviderContainer();
     addTearDown(container.dispose);
     container.read(openProjectIdProvider.notifier).open('p1');
     final GoRouter router = container.read(routerProvider);
@@ -120,7 +115,6 @@ void main() {
     TestWidgetsFlutterBinding.ensureInitialized();
     final ProviderContainer container = ProviderContainer(
       overrides: <Override>[
-        firstRunCompletedOverride(),
         appLockSessionOverride(enabled: true, unlocked: false),
       ],
     );
@@ -146,30 +140,6 @@ void main() {
     final Uri diverted = Uri.parse(to!);
     expect(diverted.path, AppRoutes.lock);
     expect(diverted.queryParameters[AppRoutes.fromQuery], AppRoutes.projects);
-  });
-
-  testWidgets('an armed lock opens before an unfinished first run', (
-    WidgetTester tester,
-  ) async {
-    // The web never stores first run, but it does keep the PIN, so a reload
-    // meets both gates at once.
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: <Override>[
-          firstRunOverride(<String, String>{}),
-          appLockSessionOverride(enabled: true, unlocked: false),
-          networkOnlineOverride(),
-        ],
-        child: const TaptureApp(),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    final ProviderContainer container = ProviderScope.containerOf(
-      tester.element(find.byType(TaptureApp)),
-    );
-    expect(find.byType(AppLockScreen), findsOneWidget);
-    expect(container.read(routerProvider).state.uri.path, AppRoutes.lock);
   });
 
   test('pause locks an armed session so resume prompts again', () async {

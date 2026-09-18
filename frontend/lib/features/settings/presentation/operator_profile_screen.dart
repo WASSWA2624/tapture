@@ -13,7 +13,6 @@ import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
-import 'package:tapture/features/onboarding/onboarding.dart';
 
 import '../domain/operator_profile.dart';
 
@@ -69,7 +68,7 @@ class _OperatorProfileScreenState extends ConsumerState<OperatorProfileScreen> {
     );
     return AppPage(
       title: Copy.operatorProfileTitle,
-      subtitle: Copy.firstRunSubtitle,
+      subtitle: Copy.operatorNameUse,
       body: AsyncValueView<_OperatorProfileView>(
         value: value,
         data: (_OperatorProfileView view) {
@@ -82,7 +81,7 @@ class _OperatorProfileScreenState extends ConsumerState<OperatorProfileScreen> {
                 : <String>[view.saveError!],
             fields: <Widget>[
               AppTextField(
-                label: Copy.firstRunName,
+                label: Copy.operatorName,
                 controller: _name,
                 textInputAction: TextInputAction.next,
                 errorText: view.nameError,
@@ -170,20 +169,7 @@ class _OperatorProfile extends AsyncNotifier<_OperatorProfileView> {
 
   @override
   Future<_OperatorProfileView> build() async {
-    final OperatorProfile loaded = await _read();
-    final String seed = ref.read(firstRunProvider).name;
-    OperatorProfile profile = loaded;
-    if (profile.name.isEmpty && seed.isNotEmpty) {
-      profile = OperatorProfile(
-        name: seed,
-        initials: OperatorProfile.initialsFrom(seed),
-        contact: profile.contact,
-        accountId: profile.accountId,
-      );
-      if (_store == null) {
-        await _persist(profile);
-      }
-    }
+    final OperatorProfile profile = await _read();
     return (
       profile: profile,
       nameError: null,

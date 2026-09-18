@@ -10,10 +10,10 @@ typedef RouteGuards = List<RouteGuard>;
 /// widget, and guards must stay unit-testable without one (FE-STATE-04).
 typedef RouteGuard = String? Function(GoRouterState state, Ref ref);
 
-/// Ordered redirect chain. Later tasks append a gate — first run, app lock —
+/// Ordered redirect chain. Later tasks append a gate — sign-in, app lock —
 /// as one entry rather than a second redirect.
 List<RouteGuard> appGuards() {
-  return <RouteGuard>[_firstRun, _appLock, _projectScope, _resumeIntended];
+  return <RouteGuard>[_appLock, _projectScope, _resumeIntended];
 }
 
 /// Open project id the project-scope guard reads. Task 083's `CurrentProject`
@@ -29,26 +29,6 @@ final class OpenProjectId extends Notifier<String?> {
 
   /// Records the open project, or clears it when [id] is null.
   void open(String? id) => state = id;
-}
-
-String? _firstRun(GoRouterState state, Ref ref) {
-  final String path = state.uri.path;
-  if (kDebugMode && path == WidgetGalleryScreen.route) {
-    return null;
-  }
-  // An armed lock opens first. The web keeps a PIN across a reload but not
-  // the first-run flag, and sending /lock back to first run would loop.
-  if (path == AppRoutes.lock) {
-    return null;
-  }
-  final bool completed = ref.read(firstRunProvider).completed;
-  if (path == AppRoutes.firstRun) {
-    return completed ? _captureTab : null;
-  }
-  if (completed) {
-    return null;
-  }
-  return AppRoutes.firstRun;
 }
 
 String? _appLock(GoRouterState state, Ref ref) {

@@ -8,7 +8,6 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/features/onboarding/presentation/first_run_screen.dart';
 
 void main() {
   testWidgets('compact width uses a bottom bar', (WidgetTester tester) async {
@@ -130,7 +129,7 @@ Future<GoRouter> _pump(
   _bindWidth(tester, width);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [firstRunCompletedOverride(), networkOnlineOverride()],
+      overrides: [networkOnlineOverride()],
       child: const TaptureApp(),
     ),
   );

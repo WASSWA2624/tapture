@@ -8,7 +8,6 @@ import 'package:tapture/app/app.dart';
 import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/network/network.dart';
-import 'package:tapture/features/onboarding/presentation/first_run_screen.dart';
 import 'package:tapture/features/settings/presentation/offline_switch.dart';
 
 void main() {
@@ -129,7 +128,6 @@ Future<ProviderContainer> _pump(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        firstRunCompletedOverride(),
         _connectivityOverride(radio),
         offlineByChoiceOverride(byChoice),
         if (projectLabel != null)

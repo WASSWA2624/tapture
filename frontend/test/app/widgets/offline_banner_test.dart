@@ -8,7 +8,6 @@ import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/network/network.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
-import 'package:tapture/features/onboarding/presentation/first_run_screen.dart';
 import 'package:tapture/features/settings/data/settings_store.dart';
 import 'package:tapture/features/settings/presentation/offline_switch.dart';
 
@@ -24,7 +23,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            firstRunCompletedOverride(),
             connectivityServiceProvider.overrideWith((Ref ref) {
               final ConnectivityService service = ConnectivityService.fake(
                 source: radio.stream,
@@ -94,7 +92,6 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          firstRunCompletedOverride(),
           offlineStoreOverride(SettingsStore.fake()),
           connectivityServiceProvider.overrideWith((Ref ref) {
             final StreamController<bool> choice = StreamController<bool>(

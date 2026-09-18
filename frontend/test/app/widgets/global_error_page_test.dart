@@ -14,7 +14,6 @@ import 'package:tapture/core/logging/logger.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/error_boundary.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
-import 'package:tapture/features/onboarding/presentation/first_run_screen.dart';
 
 void main() {
   testWidgets(
@@ -140,10 +139,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       ProviderScope(
-        overrides: <Override>[
-          firstRunCompletedOverride(),
-          networkOnlineOverride(),
-        ],
+        overrides: <Override>[networkOnlineOverride()],
         child: const TaptureApp(),
       ),
     );

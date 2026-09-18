@@ -1,4 +1,3 @@
-/// The onboarding feature: the first run, before there is anything to show.
+/// The onboarding feature. Empty since the first-run screen was dropped;
+/// sign-in (task 267) lands here.
 library;
-
-export 'presentation/first_run_screen.dart';

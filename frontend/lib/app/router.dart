@@ -15,7 +15,6 @@ import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
-import 'package:tapture/features/onboarding/onboarding.dart';
 import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
 import 'package:tapture/features/settings/presentation/capture_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/settings_screen.dart';
@@ -37,9 +36,6 @@ abstract final class AppRoutes {
 
   /// Query key for the location a diverted deep link should resume at.
   static const String fromQuery = 'from';
-
-  /// The first-run gate. Task 267 can insert sign-in in front of this path.
-  static const String firstRun = '/first-run';
 
   /// App-lock unlock gate. Covers launch, resume and deep links.
   static const String lock = '/lock';
@@ -100,12 +96,6 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
   ref.listen<String?>(openProjectIdProvider, (String? previous, String? next) {
     refresh.value++;
   });
-  ref.listen<FirstRunSnapshot>(firstRunProvider, (
-    FirstRunSnapshot? previous,
-    FirstRunSnapshot next,
-  ) {
-    refresh.value++;
-  });
   ref.listen<AppLockSession>(appLockSessionProvider, (
     AppLockSession? previous,
     AppLockSession next,
@@ -136,12 +126,6 @@ List<RouteBase> get _routes {
     GoRoute(
       path: '/',
       redirect: (BuildContext _, GoRouterState _) => AppRoutes.projects,
-    ),
-    GoRoute(
-      path: AppRoutes.firstRun,
-      builder: (BuildContext _, GoRouterState _) {
-        return const FirstRunScreen();
-      },
     ),
     GoRoute(
       path: AppRoutes.lock,
@@ -319,7 +303,7 @@ class _RoutePage extends StatelessWidget {
           if (settings) ...<Widget>[
             const AppListTile(
               title: Copy.appName,
-              subtitle: Copy.firstRunSubtitle,
+              subtitle: Copy.operatorNameUse,
               leading: AppBrandLockup(showName: false),
             ),
             const AppSectionHeader(title: Copy.navMore),

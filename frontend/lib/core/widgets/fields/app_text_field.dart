@@ -9,7 +9,7 @@ import 'package:tapture/core/widgets/app_icon_button.dart';
 
 /// The catalogue text input later fields and screens compose instead of a
 /// raw [TextFormField].
-class AppTextField extends StatelessWidget {
+class AppTextField extends StatefulWidget {
   /// Creates a labelled text field. [errorText] is rendered, not decided,
   /// here — validation lives with the caller.
   const AppTextField({
@@ -93,7 +93,8 @@ class AppTextField extends StatelessWidget {
   final VoidCallback? onTap;
 
   /// Hides typed characters. PIN fields pass this so the secret is not
-  /// shown on screen (FE-SEC-01).
+  /// shown on screen (FE-SEC-01). The field then ends in a show / hide
+  /// control, and starts hidden whenever it first appears.
   final bool obscureText;
 
   /// Takes focus when first shown, so a single-field screen can be typed
@@ -101,56 +102,66 @@ class AppTextField extends StatelessWidget {
   final bool autofocus;
 
   @override
+  State<AppTextField> createState() => _AppTextFieldState();
+}
+
+class _AppTextFieldState extends State<AppTextField> {
+  bool _revealed = false;
+
+  @override
   Widget build(BuildContext context) {
-    final int lines = maxLines ?? 1;
+    final AppTextField field = widget;
+    final int lines = field.maxLines ?? 1;
     return ListenableBuilder(
-      listenable: controller,
+      listenable: field.controller,
       builder: (BuildContext context, Widget? _) {
         return ConstrainedBox(
           constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
           child: TextField(
-            controller: controller,
-            enabled: enabled,
-            readOnly: readOnly,
+            controller: field.controller,
+            enabled: field.enabled,
+            readOnly: field.readOnly,
             maxLines: lines,
             minLines: lines > 1 ? lines : null,
-            maxLength: maxLength,
+            maxLength: field.maxLength,
             keyboardType:
-                keyboardType ??
+                field.keyboardType ??
                 (lines > 1 ? TextInputType.multiline : TextInputType.text),
-            textInputAction: textInputAction,
-            inputFormatters: inputFormatters,
-            onChanged: onChanged,
-            onSubmitted: onSubmitted,
-            onTap: onTap,
-            obscureText: obscureText,
-            autofocus: autofocus,
-            enableSuggestions: !obscureText,
-            autocorrect: !obscureText,
+            textInputAction: field.textInputAction,
+            inputFormatters: field.inputFormatters,
+            onChanged: field.onChanged,
+            onSubmitted: field.onSubmitted,
+            onTap: field.onTap,
+            obscureText: field.obscureText && !_revealed,
+            autofocus: field.autofocus,
+            // Keyed to the field, not the toggle: revealing a secret must
+            // not hand it to the keyboard's suggestions.
+            enableSuggestions: !field.obscureText,
+            autocorrect: !field.obscureText,
             style: AppText.body.copyWith(color: context.colors.onSurface),
             decoration: InputDecoration(
-              labelText: label,
-              hintText: hint,
-              helperText: helper,
-              errorText: errorText,
+              labelText: field.label,
+              hintText: field.hint,
+              helperText: field.helper,
+              errorText: field.errorText,
               alignLabelWithHint: lines > 1,
-              prefixIcon: prefix,
+              prefixIcon: field.prefix,
               prefixIconConstraints: const BoxConstraints(
                 minWidth: Sizes.minTapTarget,
                 minHeight: Sizes.minTapTarget,
               ),
-              suffixIcon: _suffix(context),
+              suffixIcon: _suffix(field),
               suffixIconConstraints: const BoxConstraints(
                 minWidth: Sizes.minTapTarget,
                 minHeight: Sizes.minTapTarget,
               ),
-              counter: maxLength == null
+              counter: field.maxLength == null
                   ? null
                   : Text(
                       _counterLabel(
                         context,
-                        controller.text.length,
-                        maxLength!,
+                        field.controller.text.length,
+                        field.maxLength!,
                       ),
                       style: AppText.caption.copyWith(
                         color: context.colors.onSurface,
@@ -163,26 +174,42 @@ class AppTextField extends StatelessWidget {
     );
   }
 
-  Widget? _suffix(BuildContext context) {
+  Widget? _suffix(AppTextField field) {
     final bool showClear =
-        clearable && enabled && !readOnly && controller.text.isNotEmpty;
-    if (!showClear && trailing == null) {
+        field.clearable &&
+        field.enabled &&
+        !field.readOnly &&
+        field.controller.text.isNotEmpty;
+    if (!showClear && field.trailing == null && !field.obscureText) {
       return null;
     }
+    final String reveal = _revealed
+        ? Copy.hideField(field.label)
+        : Copy.showField(field.label);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         if (showClear)
           AppIconButton(
             icon: Icons.clear,
-            semanticLabel: Copy.clearField(label),
-            tooltip: Copy.clearField(label),
+            semanticLabel: Copy.clearField(field.label),
+            tooltip: Copy.clearField(field.label),
             onPressed: () {
-              controller.clear();
-              onChanged?.call('');
+              field.controller.clear();
+              field.onChanged?.call('');
             },
           ),
-        ?trailing,
+        ?field.trailing,
+        // Last, so the show / hide control is always the far end of the field.
+        if (field.obscureText)
+          AppIconButton(
+            icon: _revealed
+                ? Icons.visibility_off_outlined
+                : Icons.visibility_outlined,
+            semanticLabel: reveal,
+            tooltip: reveal,
+            onPressed: () => setState(() => _revealed = !_revealed),
+          ),
       ],
     );
   }

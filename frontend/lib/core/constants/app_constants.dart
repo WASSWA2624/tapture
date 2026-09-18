@@ -63,9 +63,8 @@ abstract final class AppConstants {
   );
 
   /// Names written into the on-disk preference store. Values never live here.
-  static const ({String themeMode, String firstRun}) preferences = (
+  static const ({String themeMode}) preferences = (
     themeMode: 'tapture.theme.mode',
-    firstRun: 'tapture.first-run',
   );
 
   /// Names written into platform secure storage. Values never live here.

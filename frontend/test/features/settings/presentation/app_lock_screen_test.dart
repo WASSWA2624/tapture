@@ -11,7 +11,6 @@ import 'package:tapture/core/security/secure_storage.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
-import 'package:tapture/features/onboarding/presentation/first_run_screen.dart';
 import 'package:tapture/features/settings/data/pin_lock.dart';
 import 'package:tapture/features/settings/domain/app_lock.dart';
 import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
@@ -74,11 +73,7 @@ void main() {
     final PinLock lock = PinLock.fake(backing: backing, clock: clock);
     await tester.pumpWidget(
       ProviderScope(
-        overrides: <Override>[
-          firstRunCompletedOverride(),
-          networkOnlineOverride(),
-          appLockOverride(lock),
-        ],
+        overrides: <Override>[networkOnlineOverride(), appLockOverride(lock)],
         child: const TaptureApp(),
       ),
     );

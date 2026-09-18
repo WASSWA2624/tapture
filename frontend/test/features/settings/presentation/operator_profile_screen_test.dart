@@ -3,12 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
-import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
-import 'package:tapture/features/onboarding/onboarding.dart';
 import 'package:tapture/features/settings/domain/operator_profile.dart';
 import 'package:tapture/features/settings/presentation/operator_profile_screen.dart';
 
@@ -155,9 +153,6 @@ final class _Store {
 
 List<Override> _overrides(_Store store) {
   return <Override>[
-    firstRunOverride(<String, String>{
-      AppConstants.preferences.firstRun: 'completed=1&name=&startProject=0',
-    }),
     operatorProfileOverride(load: store.load, save: store.save),
   ];
 }

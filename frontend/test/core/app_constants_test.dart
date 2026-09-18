@@ -140,7 +140,6 @@ void main() {
       AppConstants.secrets.cloudRefresh,
       AppConstants.secrets.databaseEncryption,
       AppConstants.preferences.themeMode,
-      AppConstants.preferences.firstRun,
     ];
 
     expect(keys.every((String key) => key.isNotEmpty), isTrue);

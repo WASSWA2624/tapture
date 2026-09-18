@@ -23,6 +23,12 @@ abstract final class Copy {
   /// Clears the named field.
   static String clearField(String label) => 'Clear $label';
 
+  /// Reveals a hidden field such as a PIN, named for its label.
+  static String showField(String label) => 'Show $label';
+
+  /// Hides a revealed field again, named for its label.
+  static String hideField(String label) => 'Hide $label';
+
   /// A value filled in rather than typed.
   static const String autoFilled = 'Auto-filled';
 
@@ -296,24 +302,12 @@ abstract final class Copy {
   /// Unprocessed-queue destination the status line opens.
   static const String navQueue = 'Unprocessed';
 
-  /// The one question first run asks; the name field's label.
-  static const String firstRunQuestion = 'Your name';
-
-  /// Why the name is asked, under the title.
-  static const String firstRunSubtitle =
+  /// Why the operator name is asked.
+  static const String operatorNameUse =
       'Used on every record you capture from this device.';
 
   /// Label of the operator name field.
-  static const String firstRunName = 'Name';
-
-  /// Primary action: create a project from a shipped template.
-  static const String firstRunStartProject = 'Start a project';
-
-  /// Caption on the primary action naming the shipped template path.
-  static const String firstRunStartCaption = 'Uses a shipped template';
-
-  /// Secondary action: keep the name and go to capture without a project.
-  static const String firstRunSkip = 'Skip';
+  static const String operatorName = 'Name';
 
   /// Settings screen for the local operator identity.
   static const String operatorProfileTitle = 'Operator';

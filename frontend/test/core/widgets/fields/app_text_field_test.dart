@@ -51,6 +51,55 @@ void main() {
     );
   });
 
+  testWidgets('a hidden field ends in a control that shows and hides it', (
+    WidgetTester tester,
+  ) async {
+    final TextEditingController controller = TextEditingController(
+      text: '1234',
+    );
+    addTearDown(controller.dispose);
+    await _pump(
+      tester,
+      AppTextField(
+        label: 'PIN',
+        controller: controller,
+        obscureText: true,
+        clearable: true,
+      ),
+    );
+    bool hidden() =>
+        tester.widget<TextField>(find.byType(TextField)).obscureText;
+
+    expect(hidden(), isTrue);
+    expect(
+      tester.getRect(find.byTooltip('Show PIN')).right,
+      greaterThan(tester.getRect(find.byTooltip('Clear PIN')).right),
+    );
+
+    await tester.tap(find.byTooltip('Show PIN'));
+    await tester.pump();
+    expect(hidden(), isFalse);
+    expect(controller.text, '1234');
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).enableSuggestions,
+      isFalse,
+    );
+
+    await tester.tap(find.byTooltip('Hide PIN'));
+    await tester.pump();
+    expect(hidden(), isTrue);
+  });
+
+  testWidgets('a plain field has no show / hide control', (
+    WidgetTester tester,
+  ) async {
+    final TextEditingController controller = TextEditingController();
+    addTearDown(controller.dispose);
+    await _pump(tester, AppTextField(label: 'Name', controller: controller));
+
+    expect(find.byTooltip('Show Name'), findsNothing);
+  });
+
   testWidgets('a multi-line field stays usable at 200 percent text scale', (
     WidgetTester tester,
   ) async {
