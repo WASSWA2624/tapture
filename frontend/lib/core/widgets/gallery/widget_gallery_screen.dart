@@ -18,6 +18,7 @@ import 'package:tapture/core/widgets/app_brand_lockup.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_card.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
+import 'package:tapture/core/widgets/app_floating_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
@@ -33,6 +34,7 @@ import 'package:tapture/core/widgets/error_boundary.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
+import 'package:tapture/core/widgets/feedback/app_panel_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_date_field.dart';
@@ -412,6 +414,20 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         ],
       ),
       const SizedBox(height: Space.x3),
+      const SizedBox(
+        height: Sizes.minTapTarget * 3,
+        child: Stack(
+          children: <Widget>[
+            AppFloatingButton(
+              icon: Icons.feedback_outlined,
+              label: Copy.feedback,
+              hint: Copy.feedbackButtonHint,
+              onPressed: _ignoreAnchor,
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(height: Space.x3),
       const AppPrimaryAction(label: Copy.save),
       const SizedBox(height: Space.x3),
       const AppPrimaryAction(label: Copy.save, busy: true, onPressed: _noop),
@@ -725,6 +741,14 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       ),
       const SizedBox(height: Space.x4),
       const SizedBox(
+        height: Space.x12 * 8,
+        child: AppPanelDialog(
+          title: Copy.feedbackGive,
+          child: Text(Copy.galleryFeedback, style: AppText.body),
+        ),
+      ),
+      const SizedBox(height: Space.x4),
+      const SizedBox(
         height: Space.x12 * 5,
         child: AppBottomSheet(
           title: 'Grade',
@@ -735,4 +759,6 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
   }
 
   static void _noop() {}
+
+  static void _ignoreAnchor(Rect _) {}
 }

@@ -94,7 +94,10 @@ void main() {
       ]),
     );
     expect(part(archive, 'xl/workbook.xml'), contains('name="Screenshots"'));
-    expect(part(archive, 'docProps/core.xml'), contains('2026-09-18T07:02:31Z'));
+    expect(
+      part(archive, 'docProps/core.xml'),
+      contains('2026-09-18T07:02:31Z'),
+    );
   });
 
   test('the header is bold, frozen and filterable', () {

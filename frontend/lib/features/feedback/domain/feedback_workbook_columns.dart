@@ -50,7 +50,11 @@ List<_Column> _columns({required String localHeader}) {
       XlsxColumn(localHeader, width: _dateWidth),
       (FeedbackEntry _, _Row row) => XlsxCell.dateTime(row.local),
     ),
-    _text('Submitted At (UTC)', 26, (FeedbackEntry e) => _iso(e.submittedAtUtc)),
+    _text(
+      'Submitted At (UTC)',
+      26,
+      (FeedbackEntry e) => _iso(e.submittedAtUtc),
+    ),
     _text('Category', 18, (FeedbackEntry e) => e.categoryLabel),
     _text('Feedback', 60, (FeedbackEntry e) => e.message, wrap: true),
     _text(
@@ -105,7 +109,12 @@ List<_Column> _columns({required String localHeader}) {
       26,
       (FeedbackEntry e) => _iso(e.context.capturedAtUtc),
     ),
-    _text('User Agent', 40, (FeedbackEntry e) => e.context.userAgent, wrap: true),
+    _text(
+      'User Agent',
+      40,
+      (FeedbackEntry e) => e.context.userAgent,
+      wrap: true,
+    ),
     _text(
       'IP Address',
       18,

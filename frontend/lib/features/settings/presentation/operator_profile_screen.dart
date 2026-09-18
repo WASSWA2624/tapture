@@ -144,6 +144,15 @@ operatorProfileProvider =
       _OperatorProfile.new,
     );
 
+/// The loaded operator, or null while the profile is still opening.
+final Provider<OperatorProfile?> currentOperatorProvider =
+    Provider<OperatorProfile?>((Ref ref) {
+      final AsyncValue<_OperatorProfileView> value = ref.watch(
+        operatorProfileProvider,
+      );
+      return value.hasValue ? value.requireValue.profile : null;
+    });
+
 typedef _OperatorProfileView = ({
   OperatorProfile profile,
   String? nameError,

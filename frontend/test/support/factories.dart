@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:drift/drift.dart' show Value;
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/photos.dart';
@@ -9,6 +11,11 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/capture/domain/photo_repository.dart';
+import 'package:tapture/features/feedback/domain/feedback_category.dart';
+import 'package:tapture/features/feedback/domain/feedback_context.dart';
+import 'package:tapture/features/feedback/domain/feedback_device_type.dart';
+import 'package:tapture/features/feedback/domain/feedback_entry.dart';
+import 'package:tapture/features/feedback/domain/feedback_submitter.dart';
 import 'package:tapture/features/projects/domain/project_repository.dart';
 import 'package:tapture/features/records/domain/record_repository.dart';
 import 'package:tapture/features/templates/domain/template_repository.dart';
@@ -65,6 +72,137 @@ PhotoFactory aPhoto({String? projectId, String? recordId}) {
     sha256: 'seed-sha',
   );
 }
+
+/// A feedback entry with sensible defaults.
+FeedbackEntry aFeedbackEntry({
+  String id = 'fb-1',
+  int number = 1,
+  DateTime? submittedAtUtc,
+  FeedbackCategory category = FeedbackCategory.general,
+  String? otherCategory,
+  String message = 'The list is slow',
+  bool hasScreenshot = false,
+  String screen = 'Projects',
+  String platform = 'windows',
+  FeedbackDeviceType deviceType = FeedbackDeviceType.desktop,
+  FeedbackSubmitter submitter = FeedbackSubmitter.localOperator,
+}) {
+  return FeedbackEntry(
+    id: id,
+    number: number,
+    submittedAtUtc: submittedAtUtc ?? DateTime.utc(2026, 9, 18, 7, 2),
+    category: category,
+    otherCategory: otherCategory,
+    message: message,
+    hasScreenshot: hasScreenshot,
+    context: FeedbackContext(
+      capturedAtUtc: DateTime.utc(2026, 9, 18, 7, 1),
+      submitter: submitter,
+      operatorName: 'Ada',
+      operatorInitials: 'A',
+      operatorContact: 'ada@x',
+      accountId: null,
+      screen: screen,
+      route: '/projects',
+      routeName: 'projects',
+      pageUrl: null,
+      projectId: 'p1',
+      platform: platform,
+      deviceType: deviceType,
+      appVersion: '1.0.0',
+      environment: 'development',
+      locale: 'en',
+      timeZone: 'EAT',
+      utcOffsetMinutes: 180,
+      viewportWidth: 1280,
+      viewportHeight: 720,
+      devicePixelRatio: 1.5,
+      displayWidth: 1920,
+      displayHeight: 1080,
+      orientation: 'landscape',
+      breakpoint: 'expanded',
+      theme: 'light',
+      textScale: 1,
+      connectivity: 'online',
+      userAgent: 'test-agent',
+      addresses: const <String>['192.0.2.10'],
+      deviceId: 'device-1',
+      deviceModel: 'test-model',
+      osVersion: 'test-os',
+    ),
+  );
+}
+
+/// A 1-by-1 PNG, valid for both storage and [Image.memory].
+final Uint8List aFeedbackPng = Uint8List.fromList(<int>[
+  0x89,
+  0x50,
+  0x4E,
+  0x47,
+  0x0D,
+  0x0A,
+  0x1A,
+  0x0A,
+  0x00,
+  0x00,
+  0x00,
+  0x0D,
+  0x49,
+  0x48,
+  0x44,
+  0x52,
+  0x00,
+  0x00,
+  0x00,
+  0x01,
+  0x00,
+  0x00,
+  0x00,
+  0x01,
+  0x08,
+  0x06,
+  0x00,
+  0x00,
+  0x00,
+  0x1F,
+  0x15,
+  0xC4,
+  0x89,
+  0x00,
+  0x00,
+  0x00,
+  0x0A,
+  0x49,
+  0x44,
+  0x41,
+  0x54,
+  0x78,
+  0x9C,
+  0x63,
+  0x00,
+  0x01,
+  0x00,
+  0x00,
+  0x05,
+  0x00,
+  0x01,
+  0x0D,
+  0x0A,
+  0x2D,
+  0xB4,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x49,
+  0x45,
+  0x4E,
+  0x44,
+  0xAE,
+  0x42,
+  0x60,
+  0x82,
+]);
 
 /// An in-memory database holding one project, one template, [records] rows and
 /// one photo per record.

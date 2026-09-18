@@ -8,11 +8,15 @@ import 'app/app.dart';
 import 'app/provider_observer.dart' hide ProviderObserver;
 import 'core/db/app_database.dart';
 import 'core/device/device_identity.dart';
+import 'core/device/platform_facts.dart';
+import 'core/files/download_service.dart';
 import 'core/ids/uuid_service.dart';
 import 'core/lifecycle/lifecycle_observer.dart';
 import 'core/logging/logger.dart';
 import 'core/security/secure_storage.dart';
 import 'core/time/clock.dart';
+import 'features/feedback/feedback.dart';
+import 'features/feedback/presentation/feedback_providers.dart';
 import 'features/settings/presentation/offline_switch.dart';
 import 'features/settings/settings.dart';
 
@@ -41,18 +45,34 @@ Future<void> _run() async {
     biometrics: BiometricLock(),
   );
   final SettingsStore offlineStore = await _openOfflineStore();
+  const SystemClock clock = SystemClock();
+  final List<Override> overrides = <Override>[
+    appLockProvider.overrideWith((Ref ref) => lock),
+    offlineStoreProvider.overrideWith((Ref _) => offlineStore),
+    lifecycleObserverProvider.overrideWith((Ref ref) => _lifecycleObserver!),
+  ];
+  if (!_runningUnderTest) {
+    final UuidV7Service ids = UuidV7Service(clock);
+    final String id = await deviceId(clock: clock, ids: ids);
+    final PlatformFacts facts = await platformFacts(clock: clock);
+    final DeviceDescriptor device = await deviceDescriptor();
+    overrides.addAll(<Override>[
+      feedbackClockProvider.overrideWith((Ref _) => clock),
+      feedbackDeviceIdProvider.overrideWith((Ref _) => id),
+      feedbackPlatformFactsProvider.overrideWith((Ref _) => facts),
+      feedbackDeviceProvider.overrideWith((Ref _) => device),
+      feedbackRepositoryProvider.overrideWith((Ref _) {
+        return FeedbackRepositoryImpl.platform(clock: clock, ids: ids);
+      }),
+      feedbackDownloadsProvider.overrideWith((Ref _) => DownloadService()),
+    ]);
+  }
   runApp(
     ProviderScope(
       observers: Env.isDev
           ? <ProviderObserver>[AppProviderObserver(logger)]
           : const <ProviderObserver>[],
-      overrides: <Override>[
-        appLockProvider.overrideWith((Ref ref) => lock),
-        offlineStoreProvider.overrideWith((Ref _) => offlineStore),
-        lifecycleObserverProvider.overrideWith(
-          (Ref ref) => _lifecycleObserver!,
-        ),
-      ],
+      overrides: overrides,
       child: const TaptureApp(),
     ),
   );

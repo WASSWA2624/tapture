@@ -14,6 +14,8 @@ void main() {
       'serial': 'B-2',
     });
     expect(aPhoto(projectId: 'p-9').projectId, 'p-9');
+    expect(aFeedbackEntry(message: 'Slow').message, 'Slow');
+    expect(aFeedbackPng, isNotEmpty);
   });
 
   test('seededDatabase yields a graph the record DAO can read', () async {

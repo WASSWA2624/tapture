@@ -76,7 +76,7 @@ final class _FolderBlobStore implements BlobStore {
       if (target.existsSync()) {
         // App-owned blobs only; evidence never reaches this store, so this
         // is not the purge job's delete (FE-SEC-08).
-        await File(target.path).delete();
+        await target.delete();
       }
       return const Success<void>(null);
     } on Object {

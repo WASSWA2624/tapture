@@ -765,6 +765,24 @@ abstract final class Copy {
   /// Feedback type: the operator names it.
   static const String feedbackCategoryOther = 'Other';
 
+  /// Who wrote an entry: enrolled with the organisation.
+  static const String feedbackSubmitterSignedIn = 'Signed-in user';
+
+  /// Who wrote an entry: a named local operator.
+  static const String feedbackSubmitterLocal = 'Local operator';
+
+  /// Who wrote an entry: no name was set.
+  static const String feedbackSubmitterAnonymous = 'Anonymous';
+
+  /// Device kind: a touch phone.
+  static const String feedbackDeviceMobile = 'Mobile';
+
+  /// Device kind: a touch tablet.
+  static const String feedbackDeviceTablet = 'Tablet';
+
+  /// Device kind: a desktop, natively or in a desktop browser.
+  static const String feedbackDeviceDesktop = 'Desktop';
+
   /// Label of the feedback type choice.
   static const String feedbackType = 'Type of feedback';
 
