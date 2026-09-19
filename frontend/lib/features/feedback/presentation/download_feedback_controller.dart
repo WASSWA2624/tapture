@@ -70,8 +70,18 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
     return ref.read(feedbackDownloadsProvider).openFolder();
   }
 
+  /// Whether [download] can offer the system save picker.
+  bool get canChooseLocation =>
+      ref.read(feedbackDownloadsProvider).canChooseLocation;
+
   /// Encodes the matching entries as a zip and hands the file to the operator.
-  Future<Result<String?>> download(List<FeedbackEntry> matching) async {
+  /// [chooseLocation] writes through the system picker instead of the default
+  /// folder. Dismissing the picker returns [CancelledFailure] and leaves
+  /// this idle with no error.
+  Future<Result<String?>> download(
+    List<FeedbackEntry> matching, {
+    bool chooseLocation = false,
+  }) async {
     if (matching.isEmpty || state.filter.isRangeBackwards) {
       return const FailureResult<String?>(
         ValidationFailure(
@@ -150,16 +160,26 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
         }
         bytes = FeedbackArchive.encode(pack);
     }
-    final Result<String?> saved = await downloads.save(
-      fileName: pack.fileName,
-      bytes: bytes,
-      mimeType: FeedbackArchive.mimeType,
-    );
+    final Result<String?> saved = chooseLocation
+        ? await downloads.saveAs(
+            fileName: pack.fileName,
+            bytes: bytes,
+            mimeType: FeedbackArchive.mimeType,
+          )
+        : await downloads.save(
+            fileName: pack.fileName,
+            bytes: bytes,
+            mimeType: FeedbackArchive.mimeType,
+          );
     switch (saved) {
       case Success<String?>():
         _idle(null);
       case FailureResult<String?>(:final Failure failure):
-        _idle(failure.message);
+        if (failure is CancelledFailure) {
+          _idle(null);
+        } else {
+          _idle(failure.message);
+        }
     }
     return saved;
   }

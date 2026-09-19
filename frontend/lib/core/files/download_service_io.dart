@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
 import 'download_service.dart';
@@ -94,6 +95,18 @@ final class _FolderDownloads implements DownloadService {
   final bool canOpenFolder;
 
   @override
+  bool get canChooseLocation => false;
+
+  @override
+  Future<Result<String?>> saveAs({
+    required String fileName,
+    required Uint8List bytes,
+    required String mimeType,
+  }) async {
+    return FailureResult<String?>(downloadFailure(fileName));
+  }
+
+  @override
   Future<Result<void>> openFolder() async {
     if (!canOpenFolder) {
       return FailureResult<void>(
@@ -148,6 +161,38 @@ final class _ChannelDownloads implements DownloadService {
 
   @override
   bool get canOpenFolder => true;
+
+  @override
+  bool get canChooseLocation => true;
+
+  @override
+  Future<Result<String?>> saveAs({
+    required String fileName,
+    required Uint8List bytes,
+    required String mimeType,
+  }) async {
+    try {
+      final Object? name = await _channel.invokeMethod<Object>(
+        'saveAs',
+        <String, Object>{
+          'fileName': fileName,
+          'mimeType': mimeType,
+          'bytes': bytes,
+        },
+      );
+      if (name is String && name.isNotEmpty) {
+        return Success<String?>(name);
+      }
+      return FailureResult<String?>(downloadFailure(fileName));
+    } on PlatformException catch (error) {
+      if (error.code == 'cancelled') {
+        return const FailureResult<String?>(CancelledFailure());
+      }
+      return FailureResult<String?>(downloadFailure(fileName));
+    } on Object {
+      return FailureResult<String?>(downloadFailure(fileName));
+    }
+  }
 
   @override
   Future<Result<void>> openFolder() async {

@@ -80,7 +80,23 @@ class DownloadFeedbackScreen extends ConsumerWidget {
               ? () => unawaited(_download(context, controller, matching))
               : null,
         );
-        return _frame(context, controller, list, action: action);
+        return _frame(
+          context,
+          controller,
+          list,
+          action: action,
+          busy: view.busy,
+          onSaveToFolder: canDownload
+              ? () => unawaited(
+                  _download(
+                    context,
+                    controller,
+                    matching,
+                    chooseLocation: true,
+                  ),
+                )
+              : null,
+        );
       },
     );
   }
@@ -90,12 +106,20 @@ class DownloadFeedbackScreen extends ConsumerWidget {
     DownloadFeedbackController controller,
     Widget body, {
     Widget? action,
+    bool busy = false,
+    VoidCallback? onSaveToFolder,
   }) {
     return AppPage(
       title: Copy.feedbackDownload,
       compactBar: true,
       inset: false,
-      footer: _footer(context, controller, action),
+      footer: _footer(
+        context,
+        controller,
+        action,
+        busy: busy,
+        onSaveToFolder: onSaveToFolder,
+      ),
       leading: AppIconButton(
         icon: Icons.close,
         semanticLabel: Copy.close,
@@ -110,11 +134,14 @@ class DownloadFeedbackScreen extends ConsumerWidget {
   Widget? _footer(
     BuildContext context,
     DownloadFeedbackController controller,
-    Widget? action,
-  ) {
+    Widget? action, {
+    required bool busy,
+    VoidCallback? onSaveToFolder,
+  }) {
     final String? destination = controller.destination;
     final bool canOpen = controller.canOpenFolder;
-    if (destination == null && !canOpen && action == null) {
+    final bool canChoose = controller.canChooseLocation;
+    if (destination == null && !canOpen && !canChoose && action == null) {
       return null;
     }
     return Column(
@@ -127,14 +154,30 @@ class DownloadFeedbackScreen extends ConsumerWidget {
             style: AppText.caption,
             textAlign: TextAlign.center,
           ),
-        if (canOpen)
-          AppButton(
-            label: Copy.feedbackOpenFolder,
-            variant: AppButtonVariant.text,
-            onPressed: () => unawaited(_openFolder(context, controller)),
+        if (canOpen || canChoose)
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: Space.x2,
+            runSpacing: Space.x0,
+            children: <Widget>[
+              if (canOpen)
+                AppButton(
+                  label: Copy.feedbackOpenFolder,
+                  variant: AppButtonVariant.text,
+                  onPressed: () => unawaited(_openFolder(context, controller)),
+                ),
+              if (canChoose)
+                AppButton(
+                  label: Copy.feedbackSaveToFolder,
+                  variant: AppButtonVariant.text,
+                  busy: busy,
+                  onPressed: onSaveToFolder,
+                ),
+            ],
           ),
         if (action != null) ...<Widget>[
-          if (destination != null || canOpen) const SizedBox(height: Space.x2),
+          if (destination != null || canOpen || canChoose)
+            const SizedBox(height: Space.x2),
           action,
         ],
       ],
@@ -161,9 +204,13 @@ Future<void> _openFolder(
 Future<void> _download(
   BuildContext context,
   DownloadFeedbackController controller,
-  List<FeedbackEntry> matching,
-) async {
-  final Result<String?> result = await controller.download(matching);
+  List<FeedbackEntry> matching, {
+  bool chooseLocation = false,
+}) async {
+  final Result<String?> result = await controller.download(
+    matching,
+    chooseLocation: chooseLocation,
+  );
   if (!context.mounted) {
     return;
   }

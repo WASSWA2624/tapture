@@ -1085,6 +1085,9 @@ abstract final class Copy {
   /// Opens the system Downloads view or the Tapture folder.
   static const String feedbackOpenFolder = 'Open folder';
 
+  /// Opens the system picker so the archive can be saved anywhere.
+  static const String feedbackSaveToFolder = 'Save to a folder';
+
   /// Warning when [place] could not be opened.
   static String feedbackOpenFolderFailed(String place) =>
       'The folder could not be opened. Look in $place.';

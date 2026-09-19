@@ -198,6 +198,80 @@ void main() {
     );
   });
 
+  test('saveAs returns the name the handler replies with', () async {
+    final Directory folder = _tempFolder();
+    const MethodChannel channel = MethodChannel('com.tapture.app/files');
+    _onChannel(channel, (MethodCall call) async {
+      expect(call.method, 'saveAs');
+      final Object? args = call.arguments;
+      expect(args, isA<Map<Object?, Object?>>());
+      return 'TAPTURE-18092026-1002.zip';
+    });
+
+    final DownloadService downloads = androidDownloads(
+      channel: channel,
+      fallback: folderDownloads(() async => folder),
+    );
+    final String? name = _ok(
+      await downloads.saveAs(
+        fileName: 'note.zip',
+        bytes: Uint8List.fromList(<int>[1, 2]),
+        mimeType: 'application/zip',
+      ),
+    );
+
+    expect(name, 'TAPTURE-18092026-1002.zip');
+    expect(downloads.canChooseLocation, isTrue);
+    expect(Directory('${folder.path}/Tapture').existsSync(), isFalse);
+  });
+
+  test('a cancelled saveAs reply is CancelledFailure', () async {
+    final Directory folder = _tempFolder();
+    const MethodChannel channel = MethodChannel('com.tapture.app/files');
+    _onChannel(channel, (MethodCall call) async {
+      expect(call.method, 'saveAs');
+      throw PlatformException(code: 'cancelled');
+    });
+
+    final DownloadService downloads = androidDownloads(
+      channel: channel,
+      fallback: folderDownloads(() async => folder),
+    );
+    final Result<String?> result = await downloads.saveAs(
+      fileName: 'note.zip',
+      bytes: Uint8List.fromList(<int>[3]),
+      mimeType: 'application/zip',
+    );
+    final Failure? failure = result.fold((Failure value) => value, (_) => null);
+
+    expect(failure, isA<CancelledFailure>());
+    expect(Directory('${folder.path}/Tapture').existsSync(), isFalse);
+  });
+
+  test('a saveAs error is downloadFailure', () async {
+    final Directory folder = _tempFolder();
+    const MethodChannel channel = MethodChannel('com.tapture.app/files');
+    _onChannel(channel, (MethodCall call) async {
+      expect(call.method, 'saveAs');
+      throw PlatformException(code: 'write_failed');
+    });
+
+    final DownloadService downloads = androidDownloads(
+      channel: channel,
+      fallback: folderDownloads(() async => folder),
+    );
+    final Result<String?> result = await downloads.saveAs(
+      fileName: 'note.zip',
+      bytes: Uint8List.fromList(<int>[4]),
+      mimeType: 'application/zip',
+    );
+    final Failure? failure = result.fold((Failure value) => value, (_) => null);
+
+    expect(failure, isA<StorageFailure>());
+    expect(failure?.message, downloadFailure('note.zip').message);
+    expect(Directory('${folder.path}/Tapture').existsSync(), isFalse);
+  });
+
   test('a write failure returns downloadFailure', () async {
     final Directory folder = _tempFolder();
     File('${folder.path}/Tapture').writeAsStringSync('blocked');

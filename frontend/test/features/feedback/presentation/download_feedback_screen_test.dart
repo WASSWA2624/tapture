@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -219,6 +221,53 @@ void main() {
     expect(find.byType(AppButton), hasSemanticLabel(Copy.feedbackOpenFolder));
   });
 
+  testWidgets('Save to a folder is hidden when the platform cannot choose', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, seed: true);
+    expect(find.text(Copy.feedbackSaveToFolder), findsNothing);
+  });
+
+  testWidgets('Save to a folder shows when the platform can choose', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      seed: true,
+      downloads: DownloadService.fake(canChooseLocation: true),
+    );
+    expect(find.text(Copy.feedbackSaveToFolder), findsOneWidget);
+    expect(
+      find.widgetWithText(AppButton, Copy.feedbackSaveToFolder),
+      meetsTapTarget(),
+    );
+    expect(
+      find.widgetWithText(AppButton, Copy.feedbackSaveToFolder),
+      hasSemanticLabel(Copy.feedbackSaveToFolder),
+    );
+  });
+
+  testWidgets('Save to a folder calls saveAs', (WidgetTester tester) async {
+    int saved = 0;
+    await _pump(
+      tester,
+      seed: true,
+      asRoute: true,
+      downloads: DownloadService.fake(
+        canChooseLocation: true,
+        onSaveAs: (String _, Uint8List _, String _) => saved++,
+      ),
+    );
+    await tester.runAsync(() async {
+      await tester.tap(find.text(Copy.feedbackSaveToFolder));
+      for (int i = 0; i < 80 && saved == 0; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 25));
+        await tester.pump();
+      }
+    });
+    expect(saved, 1);
+  });
+
   testWidgets('Open folder is hidden when the platform cannot open it', (
     WidgetTester tester,
   ) async {
@@ -306,6 +355,7 @@ void main() {
             downloads: DownloadService.fake(
               destination: Copy.downloadsTaptureFolder,
               canOpenFolder: true,
+              canChooseLocation: true,
             ),
           );
           expect(tester.takeException(), isNull);
@@ -314,6 +364,7 @@ void main() {
             findsOneWidget,
           );
           expect(find.text(Copy.feedbackOpenFolder), findsOneWidget);
+          expect(find.text(Copy.feedbackSaveToFolder), findsOneWidget);
         },
       );
     }

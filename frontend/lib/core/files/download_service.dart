@@ -21,6 +21,8 @@ abstract interface class DownloadService {
   /// tests never touch a folder or a browser (FE-TEST-03). [fail] makes every
   /// save return a storage failure. [destination], [canOpenFolder] and
   /// [onOpenFolder] stand in for the location line and Open folder.
+  /// [canChooseLocation], [onSaveAs] and [saveAsCancel] stand in for Save
+  /// to a folder.
   factory DownloadService.fake({
     void Function(String fileName, Uint8List bytes, String mimeType)? onSave,
     bool fail = false,
@@ -28,6 +30,9 @@ abstract interface class DownloadService {
     bool canOpenFolder = false,
     bool openFolderFail = false,
     void Function()? onOpenFolder,
+    bool canChooseLocation = false,
+    bool saveAsCancel = false,
+    void Function(String fileName, Uint8List bytes, String mimeType)? onSaveAs,
   }) {
     return _FakeDownloadService(
       onSave: onSave,
@@ -36,6 +41,9 @@ abstract interface class DownloadService {
       canOpenFolder: canOpenFolder,
       openFolderFail: openFolderFail,
       onOpenFolder: onOpenFolder,
+      canChooseLocation: canChooseLocation,
+      saveAsCancel: saveAsCancel,
+      onSaveAs: onSaveAs,
     );
   }
 
@@ -48,6 +56,18 @@ abstract interface class DownloadService {
 
   /// Opens the downloads folder, or the system Downloads view on Android.
   Future<Result<void>> openFolder();
+
+  /// Whether [saveAs] can offer the system save picker.
+  bool get canChooseLocation;
+
+  /// Saves [bytes] through the system picker as [fileName]. Succeeds with
+  /// the display name the picker kept, or [CancelledFailure] when the
+  /// picker is dismissed.
+  Future<Result<String?>> saveAs({
+    required String fileName,
+    required Uint8List bytes,
+    required String mimeType,
+  });
 
   /// Saves [bytes] as [fileName]. Succeeds with where the file went, which
   /// is null when the browser decides. On Android 10+ that is
@@ -68,6 +88,9 @@ final class _FakeDownloadService implements DownloadService {
     required this.canOpenFolder,
     required this._openFolderFail,
     required this._onOpenFolder,
+    required this.canChooseLocation,
+    required this._saveAsCancel,
+    required this._onSaveAs,
   });
 
   final void Function(String fileName, Uint8List bytes, String mimeType)?
@@ -75,12 +98,18 @@ final class _FakeDownloadService implements DownloadService {
   final bool _fail;
   final bool _openFolderFail;
   final void Function()? _onOpenFolder;
+  final bool _saveAsCancel;
+  final void Function(String fileName, Uint8List bytes, String mimeType)?
+  _onSaveAs;
 
   @override
   final String? destination;
 
   @override
   final bool canOpenFolder;
+
+  @override
+  final bool canChooseLocation;
 
   @override
   Future<Result<void>> openFolder() async {
@@ -91,6 +120,22 @@ final class _FakeDownloadService implements DownloadService {
       );
     }
     return const Success<void>(null);
+  }
+
+  @override
+  Future<Result<String?>> saveAs({
+    required String fileName,
+    required Uint8List bytes,
+    required String mimeType,
+  }) async {
+    _onSaveAs?.call(fileName, bytes, mimeType);
+    if (_saveAsCancel) {
+      return const FailureResult<String?>(CancelledFailure());
+    }
+    if (_fail || !canChooseLocation) {
+      return FailureResult<String?>(downloadFailure(fileName));
+    }
+    return Success<String?>(fileName);
   }
 
   @override

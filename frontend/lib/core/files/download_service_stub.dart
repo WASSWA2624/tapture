@@ -18,6 +18,18 @@ final class _NoDownloads implements DownloadService {
   bool get canOpenFolder => false;
 
   @override
+  bool get canChooseLocation => false;
+
+  @override
+  Future<Result<String?>> saveAs({
+    required String fileName,
+    required Uint8List bytes,
+    required String mimeType,
+  }) async {
+    return FailureResult<String?>(downloadFailure(fileName));
+  }
+
+  @override
   Future<Result<void>> openFolder() async {
     return FailureResult<void>(openFolderFailure(Copy.downloadsTaptureFolder));
   }

@@ -73,6 +73,7 @@ void main() {
       'Downloads go to Downloads › Tapture',
     );
     expect(Copy.feedbackOpenFolder, 'Open folder');
+    expect(Copy.feedbackSaveToFolder, 'Save to a folder');
     expect(
       Copy.feedbackOpenFolderFailed(Copy.downloadsTaptureFolder),
       'The folder could not be opened. Look in Downloads › Tapture.',
@@ -455,6 +456,7 @@ List<String> get _values {
     Copy.downloadsTaptureFolder,
     Copy.feedbackDownloadsGoTo(Copy.downloadsTaptureFolder),
     Copy.feedbackOpenFolder,
+    Copy.feedbackSaveToFolder,
     Copy.feedbackOpenFolderFailed(Copy.downloadsTaptureFolder),
     Copy.feedbackEmptyHeadline,
     Copy.feedbackEmptyMessage,
