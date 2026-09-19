@@ -270,7 +270,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(harness.draft!.shots, hasLength(1));
       await tester.enterText(_message, 'Typed while sharing');
-      await tester.tap(find.byTooltip(Copy.close));
+      await tester.tap(find.byTooltip(Copy.feedbackContinueLater));
       await tester.pumpAndSettle();
       expect(find.byType(FeedbackDraftBar), findsOneWidget);
       final Finder barWindow = find.descendant(
@@ -327,7 +327,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(find.byType(FeedbackShots), findsOneWidget);
-      await tester.tap(find.byTooltip(Copy.close));
+      await tester.tap(find.byTooltip(Copy.feedbackContinueLater));
       await tester.pumpAndSettle();
       expect(find.byType(FeedbackDraftBar), findsOneWidget);
       expect(tester.takeException(), isNull);
@@ -339,7 +339,7 @@ void main() {
     (WidgetTester tester) async {
       final _Harness harness = await _pump(tester);
       expect(harness.draft!.shots, isEmpty);
-      await tester.tap(find.byTooltip(Copy.close));
+      await tester.tap(find.byTooltip(Copy.feedbackContinueLater));
       await tester.pumpAndSettle();
       final Finder add = find.descendant(
         of: find.byType(FeedbackDraftBar),
@@ -384,7 +384,7 @@ void main() {
     WidgetTester tester,
   ) async {
     await _pump(tester, size: const Size(360, 800), screenshot: aFeedbackPng);
-    await tester.tap(find.byTooltip(Copy.close));
+    await tester.tap(find.byTooltip(Copy.feedbackContinueLater));
     await tester.pumpAndSettle();
     expect(
       find.descendant(
@@ -416,7 +416,11 @@ void main() {
     final _Harness harness = await _pump(tester, screenshot: aFeedbackPng);
     await tester.tap(find.text(Copy.feedbackCategoryError));
     await tester.enterText(_message, 'Still writing');
-    await tester.tap(find.byTooltip(Copy.close));
+    final Finder collapse = find.byTooltip(Copy.feedbackContinueLater);
+    expect(collapse, findsOneWidget);
+    expect(collapse, hasSemanticLabel(Copy.feedbackContinueLater));
+    expect(find.byIcon(Icons.close_fullscreen), findsOneWidget);
+    await tester.tap(collapse);
     await tester.pumpAndSettle();
     expect(find.byType(GiveFeedbackScreen), findsNothing);
     expect(find.text(Copy.feedbackDiscardDraftTitle), findsNothing);
@@ -525,7 +529,7 @@ void main() {
   ) async {
     final _Harness harness = await _pump(tester);
     for (int round = 0; round < 3; round++) {
-      await tester.tap(find.byTooltip(Copy.close));
+      await tester.tap(find.byTooltip(Copy.feedbackContinueLater));
       await tester.pumpAndSettle();
       expect(harness.container.exists(giveFeedbackControllerProvider), isFalse);
       harness.container.read(feedbackDraftProvider.notifier).expand();
@@ -623,7 +627,7 @@ void main() {
   ) async {
     final _Harness harness = await _pump(tester);
     await tester.enterText(_message, 'Still writing');
-    await tester.tap(find.byTooltip(Copy.close));
+    await tester.tap(find.byTooltip(Copy.feedbackContinueLater));
     await tester.pumpAndSettle();
     expect(find.byType(FeedbackDraftBar), findsOneWidget);
 
@@ -667,14 +671,15 @@ void main() {
   ) async {
     final _Harness harness = await _pump(tester);
     await tester.enterText(_message, 'Still writing');
-    await tester.tap(find.byTooltip(Copy.close));
+    await tester.tap(find.byTooltip(Copy.feedbackContinueLater));
     await tester.pumpAndSettle();
-    await tester.tap(
-      find.descendant(
-        of: find.byType(FeedbackDraftBar),
-        matching: find.byTooltip(Copy.close),
-      ),
+    final Finder discard = find.descendant(
+      of: find.byType(FeedbackDraftBar),
+      matching: find.byTooltip(Copy.feedbackDiscardDraft),
     );
+    expect(discard, findsOneWidget);
+    expect(discard, hasSemanticLabel(Copy.feedbackDiscardDraft));
+    await tester.tap(discard);
     await tester.pumpAndSettle();
     expect(find.text(Copy.feedbackDiscardDraftTitle), findsOneWidget);
     expect(find.text(Copy.feedbackDiscardDraftMessage(0)), findsOneWidget);
@@ -687,7 +692,7 @@ void main() {
     await tester.tap(
       find.descendant(
         of: find.byType(FeedbackDraftBar),
-        matching: find.byTooltip(Copy.close),
+        matching: find.byTooltip(Copy.feedbackDiscardDraft),
       ),
     );
     await tester.pumpAndSettle();
@@ -885,7 +890,7 @@ final Finder _barMessage = find.descendant(
 );
 
 Future<void> _foldBar(WidgetTester tester) async {
-  await tester.tap(find.byTooltip(Copy.close));
+  await tester.tap(find.byTooltip(Copy.feedbackContinueLater));
   await tester.pumpAndSettle();
   expect(find.byType(FeedbackDraftBar), findsOneWidget);
 }

@@ -150,8 +150,8 @@ class _FeedbackDraftBarState extends ConsumerState<FeedbackDraftBar> {
                 ),
                 AppIconButton(
                   icon: Icons.close,
-                  semanticLabel: Copy.close,
-                  tooltip: Copy.close,
+                  semanticLabel: Copy.feedbackDiscardDraft,
+                  tooltip: Copy.feedbackDiscardDraft,
                   outlined: false,
                   onPressed: () => unawaited(_discard()),
                 ),

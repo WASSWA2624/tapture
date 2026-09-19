@@ -1,6 +1,6 @@
 # Tapture — task index
 
-315 implementation prompts across 25 phases. Work top to bottom.
+316 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task.
 
@@ -396,6 +396,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [311 — Add the Appearance settings screen](23-hardening/311-add-appearance-settings-screen.md)
 - [x] [312 — Show the feedback download location](23-hardening/312-show-feedback-download-location.md)
 - [x] [313 — Add a Save to a folder option](23-hardening/313-add-save-to-folder-option.md)
+- [x] [316 — Show a collapse icon on the feedback form](23-hardening/316-show-collapse-icon-on-feedback-form.md)
 
 ## 24 — The minimal backend
 

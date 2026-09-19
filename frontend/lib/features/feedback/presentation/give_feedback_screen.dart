@@ -98,9 +98,9 @@ class _GiveFeedbackState extends ConsumerState<GiveFeedbackScreen> {
         compactBar: true,
         scrollable: false,
         leading: AppIconButton(
-          icon: Icons.close,
-          semanticLabel: Copy.close,
-          tooltip: Copy.close,
+          icon: Icons.close_fullscreen,
+          semanticLabel: Copy.feedbackContinueLater,
+          tooltip: Copy.feedbackContinueLater,
           outlined: false,
           onPressed: _draft.collapse,
         ),

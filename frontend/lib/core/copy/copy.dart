@@ -1164,7 +1164,7 @@ abstract final class Copy {
   /// How to capture another Tapture screen when other windows cannot be
   /// shared.
   static const String feedbackShotTipScreens =
-      'Another screen: tap Close, open it, then tap Screenshot '
+      'Another screen: tap Continue later, open it, then tap Screenshot '
       'current screen in the bar.';
 
   /// How to attach a system screenshot of another app.
