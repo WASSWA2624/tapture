@@ -363,6 +363,87 @@ void main() {
     expect(harness.draft!.shots, hasLength(1));
   });
 
+  testWidgets('the folded bar sits above an open keyboard on a phone', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, size: const Size(393, 886));
+    await _foldBar(tester);
+    _openKeyboard(tester, bottom: 300);
+    await tester.pump();
+    _expectBarAboveKeyboard(tester, inset: 300);
+  });
+
+  testWidgets(
+    'the folded bar sits above an open keyboard at medium and expanded widths',
+    (WidgetTester tester) async {
+      await _pump(tester, size: const Size(700, 886));
+      await _foldBar(tester);
+      _openKeyboard(tester, bottom: 300);
+      await tester.pump();
+      _expectBarAboveKeyboard(tester, inset: 300);
+
+      tester.view.physicalSize = const Size(1280, 886);
+      await tester.pump();
+      expect(find.byType(FeedbackDraftBar), findsOneWidget);
+      _expectBarAboveKeyboard(tester, inset: 300);
+    },
+  );
+
+  testWidgets('the folded bar stays visible above the keyboard in landscape', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, size: const Size(886, 393));
+    await _foldBar(tester);
+    _openKeyboard(tester, bottom: 200);
+    await tester.pump();
+    _expectBarAboveKeyboard(tester, inset: 200);
+  });
+
+  testWidgets('a taller bar at 200 percent text stays above the keyboard', (
+    WidgetTester tester,
+  ) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await _pump(tester, size: const Size(393, 886));
+    await _foldBar(tester);
+    _openKeyboard(tester, bottom: 300);
+    await tester.pump();
+    _expectBarAboveKeyboard(tester, inset: 300);
+  });
+
+  testWidgets('closing the keyboard returns the bar above the navigation bar', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, size: const Size(393, 886));
+    await _foldBar(tester);
+    final Rect resting = tester.getRect(find.byType(FeedbackDraftBar));
+    _openKeyboard(tester, bottom: 300);
+    await tester.pump();
+    expect(
+      tester.getRect(find.byType(FeedbackDraftBar)).bottom,
+      lessThan(resting.bottom),
+    );
+    _closeKeyboard(tester);
+    await tester.pump();
+    expect(tester.getRect(find.byType(FeedbackDraftBar)), resting);
+  });
+
+  testWidgets('typed text survives opening and closing the keyboard', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, size: const Size(393, 886));
+    await _foldBar(tester);
+    await tester.enterText(_barMessage, 'Kept through the keyboard');
+    await tester.pump();
+    _openKeyboard(tester, bottom: 300);
+    await tester.pump();
+    expect(find.text('Kept through the keyboard'), findsOneWidget);
+    _closeKeyboard(tester);
+    await tester.pump();
+    expect(find.text('Kept through the keyboard'), findsOneWidget);
+    expect(_barMessage.hitTestable(), findsOneWidget);
+  });
+
   testWidgets('the form folds and reopens any number of times', (
     WidgetTester tester,
   ) async {
@@ -718,6 +799,34 @@ final Finder _message = find.descendant(
   matching: find.byType(TextField),
 );
 
+final Finder _barMessage = find.descendant(
+  of: find.byType(FeedbackDraftBar),
+  matching: find.byType(TextField),
+);
+
+Future<void> _foldBar(WidgetTester tester) async {
+  await tester.tap(find.byTooltip(Copy.close));
+  await tester.pumpAndSettle();
+  expect(find.byType(FeedbackDraftBar), findsOneWidget);
+}
+
+void _openKeyboard(WidgetTester tester, {required double bottom}) {
+  tester.view.viewInsets = FakeViewPadding(bottom: bottom);
+}
+
+void _closeKeyboard(WidgetTester tester) {
+  tester.view.resetViewInsets();
+}
+
+void _expectBarAboveKeyboard(WidgetTester tester, {required double inset}) {
+  final Size size = tester.view.physicalSize / tester.view.devicePixelRatio;
+  final Rect bar = tester.getRect(find.byType(FeedbackDraftBar));
+  expect(bar.bottom, lessThanOrEqualTo(size.height - inset));
+  expect(bar.top, greaterThanOrEqualTo(0));
+  expect(_barMessage.hitTestable(), findsOneWidget);
+  expect(tester.takeException(), isNull);
+}
+
 final class _Harness {
   const _Harness(this.repo, this.container);
 
@@ -783,6 +892,7 @@ Future<_Harness> _pump(
   addTearDown(() {
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();
+    tester.view.resetViewInsets();
   });
   final FixedClock clock = FixedClock(DateTime.utc(2026, 9, 18, 7, 2));
   final FeedbackRepositoryImpl repo = FeedbackRepositoryImpl.memory(

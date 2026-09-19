@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -116,7 +117,6 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
       ),
     );
     final bool expanded = fold.open && fold.expanded;
-    final bool compact = context.sizeClass == SizeClass.compact;
     final bool docked = expanded && context.sizeClass == SizeClass.expanded;
     final Widget form = GiveFeedbackScreen(
       onAddScreen: () => unawaited(_addThisScreen()),
@@ -144,19 +144,7 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
           Positioned.fill(
             child: RepaintBoundary(key: _workspaceKey, child: form),
           ),
-        if (fold.open && !expanded)
-          PositionedDirectional(
-            start: 0,
-            end: 0,
-            // Above the phone's navigation bar, which already spans the
-            // gesture inset; elsewhere the bar takes the inset itself.
-            bottom: compact
-                ? (Theme.of(context).navigationBarTheme.height ??
-                          Sizes.minTapTarget) +
-                      MediaQuery.viewPaddingOf(context).bottom
-                : 0,
-            child: FeedbackDraftBar(bottomInset: !compact),
-          ),
+        if (fold.open && !expanded) const _FoldedFeedbackBar(),
         if (!expanded)
           AppFloatingButton(
             key: const ValueKey<String>('feedback-button'),
@@ -338,5 +326,26 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
 
   Future<void> _openDelete() async {
     await openFeedbackFlow<void>(context, page: const DeleteFeedbackScreen());
+  }
+}
+
+/// Positions the folded bar above the larger of its resting offset and the
+/// keyboard, so only this widget rebuilds when the inset changes.
+class _FoldedFeedbackBar extends StatelessWidget {
+  const _FoldedFeedbackBar();
+
+  @override
+  Widget build(BuildContext context) {
+    final bool compact = context.sizeClass == SizeClass.compact;
+    final double resting = compact
+        ? (Theme.of(context).navigationBarTheme.height ?? Sizes.minTapTarget) +
+              MediaQuery.viewPaddingOf(context).bottom
+        : 0;
+    return PositionedDirectional(
+      start: 0,
+      end: 0,
+      bottom: math.max(resting, MediaQuery.viewInsetsOf(context).bottom),
+      child: FeedbackDraftBar(bottomInset: !compact),
+    );
   }
 }
