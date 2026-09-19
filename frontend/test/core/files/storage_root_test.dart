@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/storage_root.dart';
-import 'package:tapture/core/permissions/permissions.dart';
 
 void main() {
   test(
@@ -72,31 +71,17 @@ void main() {
     );
   });
 
-  test(
-    'a storage denial is a typed failure and leaves the app usable',
-    () async {
-      final Directory documents = _tempDocs();
-      final StorageRoot storage = StorageRoot.fake(
-        documentsDirectory: documents,
-        permissions: PermissionsService.fake(
-          states: const <AppPermission, PermissionState>{
-            AppPermission.storage: PermissionState.denied,
-          },
-        ),
-      );
+  test('resolving the root never asks for a permission', () async {
+    final Directory documents = _tempDocs();
+    final StorageRoot storage = StorageRoot.fake(documentsDirectory: documents);
 
-      final Result<Directory> denied = await storage.resolve();
-      final Failure? failure = denied.fold(
-        (Failure value) => value,
-        (_) => null,
-      );
+    final Directory root = _ok(await storage.resolve());
 
-      expect(failure, isA<PermissionFailure>());
-      expect(failure?.recoveryAction, isNotEmpty);
-      expect(Directory('${documents.path}/Tapture').existsSync(), isFalse);
-      expect(storageRootProvider, isA<Provider<StorageRoot>>());
-    },
-  );
+    expect(_slash(root.path), _slash('${documents.path}/Tapture'));
+    expect(root.existsSync(), isTrue);
+    expect(Directory('${root.path}/.cache').existsSync(), isTrue);
+    expect(storageRootProvider, isA<Provider<StorageRoot>>());
+  });
 }
 
 Directory _tempDocs() {

@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/core/permissions/permissions.dart';
 
 /// Visible folder name under the documents directory.
 const String _rootName = 'Tapture';
@@ -22,26 +21,14 @@ const String _probeName = '.write-probe';
 /// through [storageRootProvider] and never compose a root of their own
 /// (FE-STR-11, FE-CODE-09).
 abstract interface class StorageRoot {
-  /// Asks [PermissionsService] for storage, then creates `Tapture/` and
-  /// `Tapture/.cache` under the documents directory.
+  /// Creates `Tapture/` and `Tapture/.cache` under the documents directory.
   ///
-  /// [documentsDirectory] is the test seam so a suite can resolve into a
-  /// temporary folder without opening the plugin. Omitted, the documents
-  /// directory comes from the platform.
-  factory StorageRoot({
-    PermissionsService? permissions,
-    Future<Directory> Function()? documentsDirectory,
-  }) {
+  /// App-specific folders need no runtime permission. [documentsDirectory]
+  /// is the test seam so a suite can resolve into a temporary folder without
+  /// opening the plugin. Omitted, the documents directory comes from the
+  /// platform.
+  factory StorageRoot({Future<Directory> Function()? documentsDirectory}) {
     return _StorageRoot(
-      permissions:
-          permissions ??
-          (documentsDirectory == null
-              ? PermissionsService()
-              : PermissionsService.fake(
-                  states: const <AppPermission, PermissionState>{
-                    AppPermission.storage: PermissionState.granted,
-                  },
-                )),
       documentsDirectory: documentsDirectory ?? _platformDocumentsDirectory,
     );
   }
@@ -54,16 +41,8 @@ abstract interface class StorageRoot {
   factory StorageRoot.fake({
     required Directory documentsDirectory,
     bool writable = true,
-    PermissionsService? permissions,
   }) {
     return _StorageRoot(
-      permissions:
-          permissions ??
-          PermissionsService.fake(
-            states: const <AppPermission, PermissionState>{
-              AppPermission.storage: PermissionState.granted,
-            },
-          ),
       documentsDirectory: () async => documentsDirectory,
       writable: writable,
     );
@@ -72,7 +51,7 @@ abstract interface class StorageRoot {
   /// The visible `Tapture/` folder. Creates it and `.cache` if they are
   /// absent, memoises a successful result for the process, and returns a
   /// [StorageFailure] naming the path when the location is missing or not
-  /// writable.
+  /// writable. Does not ask for a runtime permission.
   Future<Result<Directory>> resolve();
 
   /// `Tapture/.cache`, the only home for derived artefacts. Disposable: a
@@ -103,13 +82,8 @@ Future<Directory> _platformDocumentsDirectory() async {
 }
 
 final class _StorageRoot implements StorageRoot {
-  _StorageRoot({
-    required this._permissions,
-    required this._documentsDirectory,
-    this._writable = true,
-  });
+  _StorageRoot({required this._documentsDirectory, this._writable = true});
 
-  final PermissionsService _permissions;
   final Future<Directory> Function() _documentsDirectory;
   final bool _writable;
 
@@ -147,12 +121,6 @@ final class _StorageRoot implements StorageRoot {
   Future<Result<Directory>> _open() async {
     String path = _rootName;
     try {
-      final Failure? denial = (await _permissions.request(
-        AppPermission.storage,
-      )).fold((Failure failure) => failure, (_) => null);
-      if (denial != null) {
-        return FailureResult<Directory>(denial);
-      }
       final Directory documents = await _documentsDirectory();
       path = '${documents.path}/$_rootName';
       if (!_writable) {

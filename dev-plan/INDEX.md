@@ -1,6 +1,6 @@
 # Tapture — task index
 
-303 implementation prompts across 25 phases. Work top to bottom.
+304 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task.
 
@@ -384,6 +384,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [ ] [301 — Number feedback rows with their message](23-hardening/301-number-feedback-rows-with-message.md)
 - [ ] [302 — Add a window share session to screen capture](23-hardening/302-add-window-share-session-api.md)
 - [x] [303 — Add repeat external window screenshots](23-hardening/303-add-repeat-external-window-screenshots.md)
+- [x] [304 — Fix the storage root on Android](23-hardening/304-fix-storage-root-on-android.md)
 
 ## 24 — The minimal backend
 

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/cache_cleanup.dart';
 import 'package:tapture/core/files/storage_guard.dart';
@@ -42,6 +43,55 @@ void main() {
     await tester.pump();
     await tester.pump();
     expect(find.byType(AppErrorState), findsOneWidget);
+  });
+
+  testWidgets('with a resolvable root, Storage shows the real cache size', (
+    WidgetTester tester,
+  ) async {
+    final Directory temp = Directory.systemTemp.createTempSync('tapture-304-');
+    addTearDown(() {
+      if (temp.existsSync()) {
+        temp.deleteSync(recursive: true);
+      }
+    });
+    const int cacheBytes = 48;
+    final StorageRoot storageRoot = StorageRoot.fake(documentsDirectory: temp);
+    await tester.runAsync(() async {
+      final Result<Directory> resolved = await storageRoot.resolve();
+      final Directory root = resolved.fold((Failure failure) {
+        fail('${failure.message} ${failure.recoveryAction}');
+      }, (Directory directory) => directory);
+      File(
+        '${root.path}/.cache/seed.bin',
+      ).writeAsBytesSync(List<int>.filled(cacheBytes, 7));
+      File('${root.path}/projects/alpha/photos/shot.jpg')
+        ..parent.createSync(recursive: true)
+        ..writeAsBytesSync(List<int>.filled(24, 1));
+    });
+
+    await _pump(
+      tester,
+      store: SettingsStore.fake(),
+      storageRoot: storageRoot,
+      storageGuard: StorageGuard.fake(
+        storageRoot: storageRoot,
+        freeBytes: () => 1 << 30,
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.byType(AppErrorState), findsNothing);
+    expect(find.byType(AppSkeleton), findsNothing);
+    expect(
+      find.textContaining(Copy.settingsCacheSize(Copy.fileSize(cacheBytes))),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(Copy.settingsCacheSize(Copy.fileSize(0))),
+      findsNothing,
+    );
+    expect(find.text('alpha'), findsOneWidget);
   });
 
   testWidgets('an unwritable root still shows retention', (
