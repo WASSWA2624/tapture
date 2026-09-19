@@ -63,12 +63,50 @@ void main() {
     expect(find.text(Copy.settingsAboutTitle), findsOneWidget);
   });
 
-  testWidgets('Capture is the dominant destination at 400, 800 and 1200dp', (
+  testWidgets(
+    'Capture stays larger but not accented when Projects is selected',
+    (WidgetTester tester) async {
+      for (final double width in <double>[400, 800, 1200]) {
+        await _pump(tester, width: width);
+        _expectCaptureSize(tester);
+        final Icon capture = _navIcon(tester, 1);
+        final Icon projects = _navIcon(tester, 0);
+        expect(capture.icon, Icons.photo_camera_outlined);
+        expect(projects.icon, Icons.folder);
+        expect(capture.color, _unselectedInk(tester));
+        expect(projects.color, _accent(tester));
+        expect(<Color>{
+          tester.element(find.byType(NavShell)).colors.primary,
+          AppColors.dark.primary,
+        }, isNot(contains(capture.color)));
+      }
+    },
+  );
+
+  testWidgets('Capture uses the accent and filled camera when it is selected', (
     WidgetTester tester,
   ) async {
     for (final double width in <double>[400, 800, 1200]) {
-      await _pump(tester, width: width);
-      _expectCaptureDominant(tester);
+      final GoRouter router = await _pump(tester, width: width);
+      router.go('/capture');
+      await tester.pumpAndSettle();
+      _expectCaptureSize(tester);
+      final Icon capture = _navIcon(tester, 1);
+      expect(capture.icon, Icons.photo_camera);
+      expect(capture.color, _accent(tester));
+    }
+  });
+
+  testWidgets('Projects shows a folder, filled only when it is selected', (
+    WidgetTester tester,
+  ) async {
+    for (final double width in <double>[400, 800, 1200]) {
+      final GoRouter router = await _pump(tester, width: width);
+      await tester.pumpAndSettle();
+      expect(_navIcon(tester, 0).icon, Icons.folder);
+      router.go('/capture');
+      await tester.pumpAndSettle();
+      expect(_navIcon(tester, 0).icon, Icons.folder_outlined);
     }
   });
 
@@ -163,6 +201,7 @@ Future<GoRouter> _pump(
   _bindWidth(tester, width);
   await tester.pumpWidget(
     ProviderScope(
+      key: UniqueKey(),
       overrides: [networkOnlineOverride()],
       child: const TaptureApp(),
     ),
@@ -205,25 +244,46 @@ Finder _shellLabel(WidgetTester tester, String label) {
   );
 }
 
-void _expectCaptureDominant(WidgetTester tester) {
+void _expectCaptureSize(WidgetTester tester) {
   expect(find.byKey(const ValueKey<String>('nav-icon-0')), findsOneWidget);
   expect(find.byKey(const ValueKey<String>('nav-icon-1')), findsOneWidget);
   expect(find.byKey(const ValueKey<String>('nav-icon-2')), findsOneWidget);
   expect(find.byKey(const ValueKey<String>('nav-icon-3')), findsOneWidget);
 
-  final Icon capture = tester.widget<Icon>(
-    find.byKey(const ValueKey<String>('nav-icon-1')),
-  );
-  final Icon projects = tester.widget<Icon>(
-    find.byKey(const ValueKey<String>('nav-icon-0')),
-  );
+  final Icon capture = _navIcon(tester, 1);
+  final Icon projects = _navIcon(tester, 0);
   expect(capture.size, Space.x8);
   expect(projects.size, Space.x6);
   expect(capture.size! > projects.size!, isTrue);
+}
 
+Icon _navIcon(WidgetTester tester, int index) {
+  return tester.widget<Icon>(find.byKey(ValueKey<String>('nav-icon-$index')));
+}
+
+Color _accent(WidgetTester tester) {
   final BuildContext context = tester.element(find.byType(NavShell));
-  expect(<Color>{
-    context.colors.primary,
-    AppColors.dark.primary,
-  }, contains(capture.color));
+  return _railInverted(tester)
+      ? AppColors.dark.primary
+      : context.colors.primary;
+}
+
+Color _unselectedInk(WidgetTester tester) {
+  final BuildContext context = tester.element(find.byType(NavShell));
+  return _railInverted(tester)
+      ? context.colors.surface
+      : context.colors.onSurface;
+}
+
+bool _railInverted(WidgetTester tester) {
+  if (find.byKey(const ValueKey<String>('nav-rail')).evaluate().isEmpty) {
+    return false;
+  }
+  final BuildContext context = tester.element(find.byType(NavShell));
+  final AppColors colors = context.colors;
+  final bool outdoor =
+      colors.surface == AppColors.outdoor.surface &&
+      colors.onSurface == AppColors.outdoor.onSurface &&
+      colors.outline == AppColors.outdoor.outline;
+  return Theme.of(context).brightness == Brightness.light && !outdoor;
 }

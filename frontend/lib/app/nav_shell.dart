@@ -262,9 +262,7 @@ class _NavIcon extends StatelessWidget {
       icon,
       key: ValueKey<String>('nav-icon-$index'),
       size: destination.dominant ? Space.x8 : Space.x6,
-      color: destination.dominant || selected
-          ? accent
-          : (inverted ? colors.surface : colors.onSurface),
+      color: selected ? accent : (inverted ? colors.surface : colors.onSurface),
     );
   }
 }
@@ -296,8 +294,8 @@ bool _darkDesktopRail(BuildContext context) {
 
 const List<_Destination> _destinations = <_Destination>[
   _Destination(
-    icon: Icons.chat_bubble_outline,
-    selectedIcon: Icons.chat_bubble,
+    icon: Icons.folder_outlined,
+    selectedIcon: Icons.folder,
     label: Copy.navProjects,
     hasList: true,
   ),
@@ -308,8 +306,8 @@ const List<_Destination> _destinations = <_Destination>[
     dominant: true,
   ),
   _Destination(
-    icon: Icons.forum_outlined,
-    selectedIcon: Icons.forum,
+    icon: Icons.list_alt_outlined,
+    selectedIcon: Icons.list_alt,
     label: Copy.navRecords,
     hasList: true,
   ),

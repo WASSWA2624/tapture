@@ -42,6 +42,13 @@ void main() {
     expect(find.text('Asset'), findsOneWidget);
     expect(find.text(Copy.networkOnline), findsOneWidget);
     expect(find.text(Copy.unprocessedCount(3)), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey<String>('status-project')),
+        matching: find.byIcon(Icons.folder_outlined),
+      ),
+      findsOneWidget,
+    );
     expect(find.byIcon(Icons.article_outlined), findsOneWidget);
     expect(find.byIcon(Icons.wifi), findsOneWidget);
     expect(find.byIcon(Icons.pending_outlined), findsOneWidget);

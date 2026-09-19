@@ -70,7 +70,7 @@ class StatusLine extends ConsumerWidget {
                   items: <AppOverflowAction>[
                     AppOverflowAction(
                       key: const ValueKey<String>('status-project'),
-                      icon: Icons.work_outline,
+                      icon: Icons.folder_outlined,
                       label: _whereLabel(projectId, projectLabel, contextLabel),
                       onTap: () {
                         context.go(_projectLocation(projectId));

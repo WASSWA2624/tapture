@@ -484,9 +484,9 @@ String _titleFor(String name) {
 
 IconData _iconFor(String name) {
   return switch (name) {
-    'projects' || 'project' => Icons.chat_bubble_outline,
+    'projects' || 'project' => Icons.folder_outlined,
     'capture' => Icons.photo_camera_outlined,
-    'records' || 'record' => Icons.forum_outlined,
+    'records' || 'record' => Icons.list_alt_outlined,
     'more' => Icons.settings_outlined,
     'templates' => Icons.article_outlined,
     'queue' => Icons.pending_outlined,

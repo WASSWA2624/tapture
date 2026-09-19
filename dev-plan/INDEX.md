@@ -1,6 +1,6 @@
 # Tapture — task index
 
-316 implementation prompts across 25 phases. Work top to bottom.
+317 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task.
 
@@ -109,6 +109,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [074 — First-run flow](06-app-shell/074-first-run.md)
 - [x] [075 — Global status line and overflow menu](06-app-shell/075-status-line.md)
 - [x] [076 — Global error and crash recovery screen](06-app-shell/076-global-error-page.md)
+- [x] [317 — Fix navigation icons and the Capture tab state](06-app-shell/317-fix-navigation-icons-and-capture-state.md)
 
 ## 07 — Account and settings
 

@@ -31,9 +31,9 @@ Destinations, in order, with `Copy` labels:
 
 | Index | Label | Outline / filled icon | Dominant | List pane |
 | ---: | :--- | :--- | :---: | :---: |
-| 0 | `Copy.navProjects` | `chat_bubble_outline` / `chat_bubble` | | yes |
-| 1 | `Copy.navCapture` | `photo_camera_outlined` / `photo_camera` | yes (48+ dp, primary tone) | |
-| 2 | `Copy.navRecords` | `forum_outlined` / `forum` | | yes |
+| 0 | `Copy.navProjects` | `folder_outlined` / `folder` | | yes |
+| 1 | `Copy.navCapture` | `photo_camera_outlined` / `photo_camera` | yes (48+ dp, size only) | |
+| 2 | `Copy.navRecords` | `list_alt_outlined` / `list_alt` | | yes |
 | 3 | `Copy.navMore` | `settings_outlined` / `settings` | | |
 
 Keys: `nav-bar`, `nav-rail`, `nav-pane`, `nav-body-slot`, `nav-icon-$index`.
@@ -47,8 +47,9 @@ Keys: `nav-bar`, `nav-rail`, `nav-pane`, `nav-body-slot`, `nav-icon-$index`.
 4. Medium: same header, `NavigationRail` with `NavigationRailLabelType.all`, no pane.
 5. Expanded: rail plus a `Sizes.listPane` column (title, `AppSearchField`, `AppEmptyState`) only when
    `_destinations[index].hasList` is true. Capture and More drop the pane.
-6. Invert the desktop rail only when brightness is light **and** the palette is not outdoor. Selected / dominant
-   glyphs use `AppColors.dark.primary` on that rail, otherwise `context.colors.primary`.
+6. Invert the desktop rail only when brightness is light **and** the palette is not outdoor. Selected
+   glyphs use `AppColors.dark.primary` on that rail, otherwise `context.colors.primary`. Capture stays
+   larger (`Space.x8`) but uses unselected ink unless it is the selected destination.
 
 ## Constraints
 
