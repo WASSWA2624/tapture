@@ -12,6 +12,8 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
@@ -51,10 +53,11 @@ void main() {
 
     expect(find.byType(AppEmptyState), findsOneWidget);
     expect(find.text(Copy.projectsEmptyHeadline), findsOneWidget);
-    expect(find.text(Copy.projectsCreate), findsOneWidget);
+    expect(find.text(Copy.projectsCreate), findsNWidgets(2));
+    expect(find.byType(AppPrimaryAction), findsOneWidget);
     expect(find.text(Copy.projectsImport), findsOneWidget);
 
-    await tester.tap(find.text(Copy.projectsCreate));
+    await tester.tap(find.byType(AppPrimaryAction));
     await tester.pumpAndSettle();
     expect(find.text('create'), findsOneWidget);
   });
@@ -139,6 +142,47 @@ void main() {
     );
     expect(watch.elapsedMilliseconds, lessThan(2000));
   });
+
+  testWidgets('Create a project shows with zero, one and many projects', (
+    WidgetTester tester,
+  ) async {
+    for (final int count in <int>[0, 1, 3]) {
+      final FakeProjectRepository repo = FakeProjectRepository();
+      addTearDown(repo.dispose);
+      for (int index = 0; index < count; index++) {
+        _ok(
+          await repo.create(
+            aProject(id: 'project-$index', name: 'Project $index'),
+          ),
+        );
+      }
+      await _pump(tester, repo: repo);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AppPrimaryAction), findsOneWidget);
+      expect(find.text(Copy.projectsCreate), findsWidgets);
+
+      await tester.tap(find.byType(AppPrimaryAction));
+      await tester.pumpAndSettle();
+      expect(find.text('create'), findsOneWidget);
+    }
+  });
+
+  testWidgets('Project details opens the edit form', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    await _pump(tester, repo: repo);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(AppOverflowMenu));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.projectEditTitle));
+    await tester.pumpAndSettle();
+    expect(find.text('edit'), findsOneWidget);
+  });
 }
 
 Future<void> _pump(
@@ -166,6 +210,14 @@ Future<void> _pump(
             builder: (BuildContext _, GoRouterState _) {
               return const SizedBox.shrink();
             },
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'edit',
+                builder: (BuildContext _, GoRouterState _) {
+                  return const Text('edit');
+                },
+              ),
+            ],
           ),
         ],
       ),

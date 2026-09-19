@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +7,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_card.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
@@ -13,6 +16,9 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
 import 'current_project.dart';
+import 'project_archive_action.dart';
+import 'project_delete_action.dart';
+import 'project_duplicate_action.dart';
 
 /// Open-project home: what to do next, with one primary capture action.
 class ProjectHomeScreen extends ConsumerWidget {
@@ -114,20 +120,26 @@ final Provider<AsyncValue<ProjectHomeView?>> projectHomeProvider =
       );
     });
 
-class _HomeBody extends StatelessWidget {
+class _HomeBody extends ConsumerWidget {
   const _HomeBody({required this.view});
 
   final ProjectHomeView view;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final ProjectHomeCounts counts = view.counts;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: Space.x4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(view.project.name, style: AppText.title),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(child: Text(view.project.name, style: AppText.title)),
+              AppOverflowMenu(items: _menu(context, ref)),
+            ],
+          ),
           const SizedBox(height: Space.x1),
           Text(view.context, style: AppText.caption),
           const SizedBox(height: Space.x4),
@@ -175,6 +187,51 @@ class _HomeBody extends StatelessWidget {
       ),
     );
   }
+
+  List<AppOverflowAction> _menu(BuildContext context, WidgetRef ref) {
+    final Project project = view.project;
+    return <AppOverflowAction>[
+      AppOverflowAction(
+        label: Copy.projectAllProjects,
+        icon: Icons.folder_open_outlined,
+        onTap: () => context.go(_projectsRoot),
+      ),
+      AppOverflowAction(
+        label: Copy.projectNew,
+        onTap: () => context.go(_createLocation),
+      ),
+      AppOverflowAction(
+        label: Copy.projectsDuplicate,
+        onTap: () => ProjectDuplicateAction.open(
+          context,
+          sourceId: project.id,
+          sourceName: project.name,
+        ),
+      ),
+      AppOverflowAction(
+        label: Copy.projectEditTitle,
+        icon: Icons.edit_outlined,
+        onTap: () => context.go(_edit(project.id)),
+      ),
+      AppOverflowAction(
+        label: Copy.projectSettingsTitle,
+        icon: Icons.tune,
+        onTap: () => context.go(_settings(project.id)),
+      ),
+      AppOverflowAction(
+        label: project.status == ProjectStatus.archived
+            ? Copy.projectUnarchive
+            : Copy.projectArchive,
+        icon: Icons.inventory_2_outlined,
+        onTap: () => unawaited(_archiveThenList(context, ref, project)),
+      ),
+      AppOverflowAction(
+        label: Copy.projectDelete,
+        icon: Icons.delete_outline,
+        onTap: () => unawaited(_deleteThenList(context, ref, project)),
+      ),
+    ];
+  }
 }
 
 class _CountCard extends StatelessWidget {
@@ -214,9 +271,44 @@ class _CountCard extends StatelessWidget {
   }
 }
 
+Future<void> _archiveThenList(
+  BuildContext context,
+  WidgetRef ref,
+  Project project,
+) async {
+  await ProjectArchiveAction.apply(ref, project);
+  if (context.mounted) {
+    context.go(_projectsRoot);
+  }
+}
+
+Future<void> _deleteThenList(
+  BuildContext context,
+  WidgetRef ref,
+  Project project,
+) async {
+  await ProjectDeleteAction.confirm(context, ref, project);
+  if (!context.mounted) {
+    return;
+  }
+  if (ref.read(currentProjectProvider) != project.id) {
+    context.go(_projectsRoot);
+  }
+}
+
 /// Must match [AppRoutes.capture]. This file cannot import `router.dart`.
 String _capture(String id) {
   return '$_projectsRoot/${Uri.encodeComponent(id)}/$_captureSegment';
+}
+
+/// Must match [AppRoutes.projectEdit].
+String _edit(String id) {
+  return '$_projectsRoot/${Uri.encodeComponent(id)}/$_editSegment';
+}
+
+/// Must match [AppRoutes.projectSettings].
+String _settings(String id) {
+  return '$_projectsRoot/${Uri.encodeComponent(id)}/$_settingsSegment';
 }
 
 String _filtered(String root, String filter) {
@@ -231,7 +323,11 @@ const String _projectsRoot = '/projects';
 const String _recordsRoot = '/records';
 const String _queueRoot = '/queue';
 const String _exportsRoot = '/exports';
+const String _newSegment = 'new';
+const String _editSegment = 'edit';
+const String _settingsSegment = 'settings';
 const String _captureSegment = 'capture';
+const String _createLocation = '$_projectsRoot/$_newSegment';
 const String _filterQuery = 'filter';
 const String _reviewFilter = 'needsReview';
 const String _processFilter = 'queued';

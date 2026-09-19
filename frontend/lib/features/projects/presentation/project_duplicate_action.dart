@@ -23,18 +23,26 @@ class ProjectDuplicateAction extends StatelessWidget {
     return AppButton(
       label: Copy.projectsDuplicate,
       variant: AppButtonVariant.secondary,
-      onPressed: () => context.go(_location()),
+      onPressed: () =>
+          open(context, sourceId: sourceId, sourceName: sourceName),
     );
   }
 
-  String _location() {
-    return Uri(
-      path: '$_projectsRoot/$_newSegment',
-      queryParameters: <String, String>{
-        _sourceQuery: sourceId,
-        _nameQuery: Copy.projectCopyName(sourceName),
-      },
-    ).toString();
+  /// Opens the create form prefilled from [sourceId] named [sourceName].
+  static void open(
+    BuildContext context, {
+    required String sourceId,
+    required String sourceName,
+  }) {
+    context.go(
+      Uri(
+        path: '$_projectsRoot/$_newSegment',
+        queryParameters: <String, String>{
+          _sourceQuery: sourceId,
+          _nameQuery: Copy.projectCopyName(sourceName),
+        },
+      ).toString(),
+    );
   }
 }
 

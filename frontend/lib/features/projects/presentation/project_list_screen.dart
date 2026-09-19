@@ -8,6 +8,7 @@ import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
@@ -41,6 +42,12 @@ class ProjectListScreen extends ConsumerWidget {
       showAppBar: false,
       inset: false,
       scrollable: false,
+      footer: value.hasValue
+          ? AppPrimaryAction(
+              label: Copy.projectsCreate,
+              onPressed: () => context.go(_createLocation),
+            )
+          : null,
       body: Column(
         children: <Widget>[
           AppSwitchTile(
@@ -71,6 +78,12 @@ class ProjectListScreen extends ConsumerWidget {
                           ),
                           trailing: AppOverflowMenu(
                             items: <AppOverflowAction>[
+                              AppOverflowAction(
+                                label: Copy.projectEditTitle,
+                                icon: Icons.edit_outlined,
+                                onTap: () =>
+                                    _openDetails(context, ref, row.project.id),
+                              ),
                               AppOverflowAction(
                                 label:
                                     row.project.status == ProjectStatus.archived
@@ -141,6 +154,11 @@ void _openRow(BuildContext context, WidgetRef ref, String id) {
   context.go(_projectHome(id));
 }
 
+void _openDetails(BuildContext context, WidgetRef ref, String id) {
+  ref.read(currentProjectProvider.notifier).open(id);
+  context.go(_projectEdit(id));
+}
+
 void _resumeLastProject(BuildContext context, WidgetRef ref) {
   if (!context.mounted) {
     return;
@@ -166,9 +184,15 @@ String _projectHome(String id) {
   return '$_projectsRoot/${Uri.encodeComponent(id)}';
 }
 
-/// Must match [AppRoutes.projects], [AppRoutes.projectCreate] and
-/// [AppRoutes.fromQuery].
+/// Must match [AppRoutes.projectEdit].
+String _projectEdit(String id) {
+  return '$_projectsRoot/${Uri.encodeComponent(id)}/$_editSegment';
+}
+
+/// Must match [AppRoutes.projects], [AppRoutes.projectCreate],
+/// [AppRoutes.projectEdit] and [AppRoutes.fromQuery].
 const String _projectsRoot = '/projects';
 const String _newSegment = 'new';
+const String _editSegment = 'edit';
 const String _createLocation = '$_projectsRoot/$_newSegment';
 const String _fromQuery = 'from';

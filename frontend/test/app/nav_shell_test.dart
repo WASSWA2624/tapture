@@ -126,6 +126,33 @@ void main() {
       expect(find.text('half typed'), findsOneWidget);
     },
   );
+
+  testWidgets(
+    'tapping Projects on a project home shows the list at 400, 800 and 1200dp',
+    (WidgetTester tester) async {
+      for (final double width in <double>[400, 800, 1200]) {
+        final GoRouter router = await _pump(
+          tester,
+          width: width,
+          projectId: 'p1',
+        );
+        router.go(AppRoutes.project('p1'));
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey<String>('route-project')),
+          findsOneWidget,
+        );
+
+        await tester.tap(_shellLabel(tester, Copy.navProjects));
+        await tester.pumpAndSettle();
+        expect(router.state.uri.path, AppRoutes.projects);
+        expect(
+          find.byKey(const ValueKey<String>('route-projects')),
+          findsOneWidget,
+        );
+      }
+    },
+  );
 }
 
 Future<GoRouter> _pump(

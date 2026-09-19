@@ -360,6 +360,12 @@ abstract final class Copy {
   /// Duplicate action that opens the create form from an existing project.
   static const String projectsDuplicate = 'Duplicate';
 
+  /// Overflow command that returns to the project list from a project home.
+  static const String projectAllProjects = 'All projects';
+
+  /// Overflow command that opens the create form from a project home.
+  static const String projectNew = 'New project';
+
   /// Hides a finished project from the active list.
   static const String projectArchive = 'Archive';
 

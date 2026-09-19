@@ -218,6 +218,8 @@ List<String> get _values {
     Copy.projectsCreate,
     Copy.projectsImport,
     Copy.projectsDuplicate,
+    Copy.projectAllProjects,
+    Copy.projectNew,
     Copy.projectArchive,
     Copy.projectUnarchive,
     Copy.projectDelete,

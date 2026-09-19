@@ -10,6 +10,7 @@ import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
@@ -20,6 +21,7 @@ import 'package:tapture/features/projects/presentation/project_home_screen.dart'
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/settings/settings.dart';
 
+import '../../../support/a11y_matchers.dart';
 import '../../../support/factories.dart';
 import '../fakes/fake_project_repository.dart';
 
@@ -173,6 +175,73 @@ void main() {
       path: AppRoutes.capture('project-1'),
     );
   });
+
+  testWidgets('each home menu item reaches its route', (
+    WidgetTester tester,
+  ) async {
+    Future<void> expectOpens({
+      required String label,
+      required String path,
+      Map<String, String> query = const <String, String>{},
+    }) async {
+      final GoRouter router = await _pumpPopulated(tester);
+      await _chooseOverflow(tester, label);
+      expect(router.state.uri.path, path);
+      for (final MapEntry<String, String> entry in query.entries) {
+        expect(router.state.uri.queryParameters[entry.key], entry.value);
+      }
+    }
+
+    await expectOpens(label: Copy.projectAllProjects, path: AppRoutes.projects);
+    await expectOpens(label: Copy.projectNew, path: AppRoutes.projectCreate);
+    await expectOpens(
+      label: Copy.projectsDuplicate,
+      path: AppRoutes.projectCreate,
+      query: <String, String>{
+        AppRoutes.sourceQuery: 'project-1',
+        AppRoutes.nameQuery: Copy.projectCopyName('Alpha'),
+      },
+    );
+    await expectOpens(
+      label: Copy.projectEditTitle,
+      path: AppRoutes.projectEdit('project-1'),
+    );
+    await expectOpens(
+      label: Copy.projectSettingsTitle,
+      path: AppRoutes.projectSettings('project-1'),
+    );
+  });
+
+  testWidgets('archive from the home menu lands on the list', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter router = await _pumpPopulated(tester);
+    await _chooseOverflow(tester, Copy.projectArchive);
+    expect(router.state.uri.path, AppRoutes.projects);
+  });
+
+  testWidgets('delete from the home menu lands on the list', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter router = await _pumpPopulated(tester);
+    await tester.tap(find.byType(AppOverflowMenu));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.projectDelete));
+    await tester.pump();
+    await tester.enterText(find.byType(TextField), 'Alpha');
+    await tester.pump();
+    await tester.tap(find.text(Copy.projectDelete).last);
+    await tester.pumpAndSettle();
+    expect(router.state.uri.path, AppRoutes.projects);
+  });
+
+  testWidgets('the home menu is labelled and meets 48dp', (
+    WidgetTester tester,
+  ) async {
+    await _pumpPopulated(tester);
+    expect(find.byType(AppOverflowMenu), meetsTapTarget());
+    expect(find.byType(AppOverflowMenu), hasSemanticLabel(Copy.overflowMenu));
+  });
 }
 
 Future<GoRouter> _pump(
@@ -192,6 +261,12 @@ Future<GoRouter> _pump(
         },
         routes: <RouteBase>[
           GoRoute(
+            path: 'new',
+            builder: (BuildContext _, GoRouterState _) {
+              return const Text('create');
+            },
+          ),
+          GoRoute(
             path: ':projectId',
             builder: (BuildContext _, GoRouterState _) {
               return const ProjectHomeScreen();
@@ -201,6 +276,18 @@ Future<GoRouter> _pump(
                 path: 'capture',
                 builder: (BuildContext _, GoRouterState _) {
                   return const Text('capture');
+                },
+              ),
+              GoRoute(
+                path: 'edit',
+                builder: (BuildContext _, GoRouterState _) {
+                  return const Text('edit');
+                },
+              ),
+              GoRoute(
+                path: 'settings',
+                builder: (BuildContext _, GoRouterState _) {
+                  return const Text('settings');
                 },
               ),
             ],
@@ -253,6 +340,35 @@ Future<GoRouter> _pump(
     ),
   );
   return router;
+}
+
+Future<GoRouter> _pumpPopulated(WidgetTester tester) async {
+  final FakeProjectRepository repo = FakeProjectRepository();
+  addTearDown(repo.dispose);
+  _ok(await repo.create(aProject(name: 'Alpha')));
+  repo.seedHomeCounts(
+    'project-1',
+    review: 2,
+    process: 3,
+    toExport: 1,
+    toShare: 4,
+  );
+  final GoRouter router = await _pump(
+    tester,
+    repo: repo,
+    openProjectId: 'project-1',
+    contextLabel: 'Ward 1',
+  );
+  await tester.pump();
+  await tester.pump();
+  return router;
+}
+
+Future<void> _chooseOverflow(WidgetTester tester, String label) async {
+  await tester.tap(find.byType(AppOverflowMenu));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(label));
+  await tester.pumpAndSettle();
 }
 
 T _ok<T>(Result<T> result) {

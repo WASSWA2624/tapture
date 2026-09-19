@@ -119,7 +119,9 @@ class _Bar extends StatelessWidget {
       child: NavigationBar(
         key: const ValueKey<String>('nav-bar'),
         selectedIndex: shell.currentIndex,
-        onDestinationSelected: shell.goBranch,
+        onDestinationSelected: (int index) {
+          shell.goBranch(index, initialLocation: index == shell.currentIndex);
+        },
         destinations: <NavigationDestination>[
           for (int index = 0; index < _destinations.length; index++)
             NavigationDestination(
@@ -154,7 +156,9 @@ class _Rail extends StatelessWidget {
           ? AppColors.dark.surfaceVariant
           : colors.surfaceVariant,
       selectedIndex: shell.currentIndex,
-      onDestinationSelected: shell.goBranch,
+      onDestinationSelected: (int index) {
+        shell.goBranch(index, initialLocation: index == shell.currentIndex);
+      },
       labelType: NavigationRailLabelType.all,
       selectedLabelTextStyle: AppText.caption.copyWith(color: selected),
       unselectedLabelTextStyle: AppText.caption.copyWith(color: railInk),
