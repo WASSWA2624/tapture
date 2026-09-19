@@ -68,6 +68,34 @@ void main() {
           _sideWidth(light.outlinedButtonTheme.style),
       isTrue,
     );
+    expect(
+      _padding(light.filledButtonTheme.style),
+      _padding(outdoor.filledButtonTheme.style),
+    );
+    expect(
+      _padding(light.outlinedButtonTheme.style),
+      _padding(outdoor.outlinedButtonTheme.style),
+    );
+    expect(
+      _padding(light.textButtonTheme.style),
+      _padding(outdoor.textButtonTheme.style),
+    );
+  });
+
+  test('labelled buttons use Space.x4 between the label and each side', () {
+    const EdgeInsetsGeometry expected = EdgeInsets.symmetric(
+      horizontal: Space.x4,
+      vertical: Space.x0,
+    );
+    for (final ThemeData theme in <ThemeData>[
+      buildTheme(brightness: Brightness.light),
+      buildTheme(brightness: Brightness.dark),
+      buildOutdoorTheme(Brightness.light),
+    ]) {
+      expect(_padding(theme.filledButtonTheme.style), expected);
+      expect(_padding(theme.outlinedButtonTheme.style), expected);
+      expect(_padding(theme.textButtonTheme.style), expected);
+    }
   });
 
   test(
@@ -114,4 +142,8 @@ double _styleRadius(ButtonStyle? style) {
 
 double _sideWidth(ButtonStyle? style) {
   return style?.side?.resolve(<WidgetState>{})?.width ?? 0;
+}
+
+EdgeInsetsGeometry? _padding(ButtonStyle? style) {
+  return style?.padding?.resolve(const <WidgetState>{});
 }

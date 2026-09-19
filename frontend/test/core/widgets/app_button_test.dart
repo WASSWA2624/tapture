@@ -88,6 +88,37 @@ void main() {
     await tester.pump();
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'a long label wraps at 360 dp and 200 percent text without overflow',
+    (WidgetTester tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(360, 800);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildTheme(brightness: Brightness.light),
+          home: const Scaffold(
+            body: Center(
+              child: AppButton(
+                label: 'Create a project with extra words for length',
+                onPressed: _ignorePress,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      final Size size = tester.getSize(find.byType(AppButton));
+      expect(size.width, lessThanOrEqualTo(360));
+    },
+  );
 }
 
 Future<void> _pump(WidgetTester tester, Widget home) async {

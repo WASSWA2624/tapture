@@ -1,6 +1,6 @@
 # Tapture — task index
 
-317 implementation prompts across 25 phases. Work top to bottom.
+318 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task.
 
@@ -66,6 +66,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [ ] [046 — User-facing copy helper](03-design-system/046-copy-helper.md)
 - [ ] [047 — Widget gallery screen](03-design-system/047-widget-gallery.md)
 - [ ] [048 — Golden test baselines for the catalogue](03-design-system/048-golden-baselines.md)
+- [x] [318 — Widen button horizontal padding](03-design-system/318-widen-button-horizontal-padding.md)
 
 ## 04 — Local database
 

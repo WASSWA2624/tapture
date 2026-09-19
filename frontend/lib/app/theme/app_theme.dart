@@ -30,7 +30,7 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
       Size(Sizes.minTapTarget, Sizes.minTapTarget),
     ),
     padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(
-      EdgeInsets.symmetric(horizontal: Space.x1, vertical: Space.x0),
+      EdgeInsets.symmetric(horizontal: Space.x4, vertical: Space.x0),
     ),
     shape: WidgetStatePropertyAll<OutlinedBorder>(controlShape),
     elevation: WidgetStatePropertyAll<double>(0),
