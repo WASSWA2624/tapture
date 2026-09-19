@@ -16,21 +16,6 @@ List<RouteGuard> appGuards() {
   return <RouteGuard>[_appLock, _projectScope, _resumeIntended];
 }
 
-/// Open project id the project-scope guard reads. Task 083's `CurrentProject`
-/// becomes the source; until then this is none.
-final NotifierProvider<OpenProjectId, String?> openProjectIdProvider =
-    NotifierProvider<OpenProjectId, String?>(OpenProjectId.new);
-
-/// Holds the open project id for the project-scope guard.
-final class OpenProjectId extends Notifier<String?> {
-  /// Starts with no project selected.
-  @override
-  String? build() => null;
-
-  /// Records the open project, or clears it when [id] is null.
-  void open(String? id) => state = id;
-}
-
 String? _appLock(GoRouterState state, Ref ref) {
   final String path = state.uri.path;
   if (path == AppRoutes.lock) {

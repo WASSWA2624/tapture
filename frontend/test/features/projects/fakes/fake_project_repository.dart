@@ -8,7 +8,24 @@ import 'package:tapture/features/projects/domain/project_repository.dart';
 /// database (FE-STATE-10).
 final class FakeProjectRepository implements ProjectRepository {
   final Map<String, Project> _rows = <String, Project>{};
+  final Map<String, _ListCounts> _counts = <String, _ListCounts>{};
   final StreamController<void> _changes = StreamController<void>.broadcast();
+
+  /// Seeds the counts [watchList] returns for [id]. Tests that care
+  /// about the landing row call this instead of opening a database.
+  void seedCounts(
+    String id, {
+    int recordCount = 0,
+    int unprocessedCount = 0,
+    DateTime? lastWorkedAt,
+  }) {
+    _counts[id] = (
+      recordCount: recordCount,
+      unprocessedCount: unprocessedCount,
+      lastWorkedAt: lastWorkedAt,
+    );
+    _emit();
+  }
 
   /// Releases the watch stream. Tests call this from `tearDown`.
   void dispose() {
@@ -18,6 +35,31 @@ final class FakeProjectRepository implements ProjectRepository {
   @override
   Stream<List<Project>> watchAll({bool includeArchived = false}) {
     return _watch(() => _visible(includeArchived));
+  }
+
+  @override
+  Stream<List<ProjectListRow>> watchList() {
+    return _watch(_listSnapshot);
+  }
+
+  List<ProjectListRow> _listSnapshot() {
+    final List<ProjectListRow> rows = <ProjectListRow>[
+      for (final Project project in _visible(false))
+        (
+          project: project,
+          recordCount: _counts[project.id]?.recordCount ?? 0,
+          unprocessedCount: _counts[project.id]?.unprocessedCount ?? 0,
+          lastWorkedAt: _counts[project.id]?.lastWorkedAt ?? project.updatedAt,
+        ),
+    ];
+    rows.sort((ProjectListRow a, ProjectListRow b) {
+      final int byWork = b.lastWorkedAt.compareTo(a.lastWorkedAt);
+      if (byWork != 0) {
+        return byWork;
+      }
+      return b.project.updatedAt.compareTo(a.project.updatedAt);
+    });
+    return rows;
   }
 
   @override
@@ -125,3 +167,9 @@ const StorageFailure _missing = StorageFailure(
   message: 'That row is no longer on this device.',
   recoveryAction: 'Refresh the list and try again.',
 );
+
+typedef _ListCounts = ({
+  int recordCount,
+  int unprocessedCount,
+  DateTime? lastWorkedAt,
+});

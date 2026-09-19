@@ -102,6 +102,48 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   }
 
   @override
+  Stream<List<ProjectListRow>> watchList() {
+    final sqlite.$ProjectsTable projects = _db.projects;
+    final sqlite.$RecordsTable records = _db.records;
+    final Expression<int> recordCount = records.id.count();
+    final Expression<int> unprocessedCount = records.id.count(
+      filter: records.status.isNotIn(_closedRecordStatuses),
+    );
+    final Expression<DateTime> lastRecordAt = records.updatedAt.max();
+    final JoinedSelectStatement<HasResultSet, dynamic> query = _db
+        .select(projects)
+        .join(<Join<HasResultSet, Object?>>[
+          leftOuterJoin(
+            records,
+            records.projectId.equalsExp(projects.id),
+            useColumns: false,
+          ),
+        ]);
+    query
+      ..where(projects.status.equalsValue(projects_db.ProjectStatus.active))
+      ..addColumns(<Expression<Object>>[
+        recordCount,
+        unprocessedCount,
+        lastRecordAt,
+      ])
+      ..groupBy(<Expression<Object>>[projects.id]);
+    return query.watch().map((List<TypedResult> rows) {
+      final List<ProjectListRow> list = <ProjectListRow>[
+        for (final TypedResult row in rows)
+          _listRow(
+            row: row,
+            projects: projects,
+            recordCount: recordCount,
+            unprocessedCount: unprocessedCount,
+            lastRecordAt: lastRecordAt,
+          ),
+      ];
+      list.sort(_byLastWorked);
+      return list;
+    });
+  }
+
+  @override
   Future<Result<void>> setStatus(String id, ProjectStatus status) async {
     final sqlite.Project? existing = await _byId(id);
     if (existing == null) {
@@ -134,19 +176,81 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   }
 }
 
-/// The project store. Tests replace this so screens never open a file.
+/// The project store. Defaults to an empty in-memory stand-in so
+/// suites never open Drift (FE-TEST-03). [main] replaces this with
+/// [ProjectRepositoryImpl] against the on-disk database.
 final Provider<ProjectRepository> projectRepositoryProvider =
-    Provider<ProjectRepository>((Ref ref) {
-      final sqlite.AppDatabase db = sqlite.AppDatabase.memory();
-      ref.onDispose(db.close);
-      const Clock clock = SystemClock();
-      return ProjectRepositoryImpl(
-        db: db,
-        clock: clock,
-        deviceId: 'local',
-        ids: UuidV7Service(clock),
-      );
+    Provider<ProjectRepository>((Ref _) {
+      return _EmptyProjectRepository();
     });
+
+/// Empty watch streams and failing writes. Production never keeps this;
+/// tests that need rows inject [FakeProjectRepository] or an in-memory
+/// [ProjectRepositoryImpl].
+final class _EmptyProjectRepository implements ProjectRepository {
+  @override
+  Stream<List<Project>> watchAll({bool includeArchived = false}) {
+    return Stream<List<Project>>.value(const <Project>[]);
+  }
+
+  @override
+  Stream<List<ProjectListRow>> watchList() {
+    return Stream<List<ProjectListRow>>.value(const <ProjectListRow>[]);
+  }
+
+  @override
+  Future<Result<Project>> create(Project project) async {
+    return const FailureResult<Project>(_missing);
+  }
+
+  @override
+  Future<Result<void>> update(Project project) async {
+    return const FailureResult<void>(_missing);
+  }
+
+  @override
+  Future<Result<void>> setStatus(String id, ProjectStatus status) async {
+    return const FailureResult<void>(_missing);
+  }
+}
+
+ProjectListRow _listRow({
+  required TypedResult row,
+  required sqlite.$ProjectsTable projects,
+  required Expression<int> recordCount,
+  required Expression<int> unprocessedCount,
+  required Expression<DateTime> lastRecordAt,
+}) {
+  final Project project = ProjectMapper.fromRow(row.readTable(projects));
+  final DateTime? fromRecords = row.read<DateTime>(lastRecordAt);
+  return (
+    project: project,
+    recordCount: row.read<int>(recordCount) ?? 0,
+    unprocessedCount: row.read<int>(unprocessedCount) ?? 0,
+    lastWorkedAt: _later(project.updatedAt, fromRecords),
+  );
+}
+
+DateTime _later(DateTime project, DateTime? records) {
+  if (records == null || !records.isAfter(project)) {
+    return project;
+  }
+  return records;
+}
+
+int _byLastWorked(ProjectListRow a, ProjectListRow b) {
+  final int byWork = b.lastWorkedAt.compareTo(a.lastWorkedAt);
+  if (byWork != 0) {
+    return byWork;
+  }
+  return b.project.updatedAt.compareTo(a.project.updatedAt);
+}
+
+const List<String> _closedRecordStatuses = <String>[
+  'approved',
+  'archived',
+  'deleted',
+];
 
 ValidationFailure? _validateName(String name) {
   if (name.trim().isEmpty) {

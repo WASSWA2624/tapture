@@ -33,16 +33,21 @@ typedef TemplateFactory = TemplateDef;
 typedef PhotoFactory = PhotoAsset;
 
 /// A project with sensible defaults. Override [name] when the test cares.
-ProjectFactory aProject({String? name}) {
+ProjectFactory aProject({
+  String? id,
+  String? name,
+  ProjectStatus? status,
+  DateTime? updatedAt,
+}) {
   final DateTime at = DateTime.utc(2026, 9, 17, 8);
   return Project(
-    id: 'project-1',
+    id: id ?? 'project-1',
     name: name ?? 'Test project',
-    status: ProjectStatus.active,
+    status: status ?? ProjectStatus.active,
     folderName: 'test-project',
     settings: const ProjectSettings(),
     createdAt: at,
-    updatedAt: at,
+    updatedAt: updatedAt ?? at,
   );
 }
 

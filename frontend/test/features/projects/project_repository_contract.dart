@@ -16,6 +16,16 @@ void runProjectRepositoryContract(ProjectRepository Function() repository) {
     expect(rows.single.folderName, 'test-project');
   });
 
+  test('create is visible on watchList with zero counts', () async {
+    final ProjectRepository repo = repository();
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    final List<ProjectListRow> rows = await repo.watchList().first;
+    expect(rows.single.project.name, 'Alpha');
+    expect(rows.single.recordCount, 0);
+    expect(rows.single.unprocessedCount, 0);
+    expect(rows.single.lastWorkedAt, rows.single.project.updatedAt);
+  });
+
   test('watchAll hides archived rows unless includeArchived is set', () async {
     final ProjectRepository repo = repository();
     _ok(await repo.create(aProject()));

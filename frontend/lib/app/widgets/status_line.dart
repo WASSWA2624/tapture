@@ -11,6 +11,7 @@ import 'package:tapture/core/network/network.dart';
 import 'package:tapture/core/widgets/app_brand_lockup.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
+import 'package:tapture/features/projects/presentation/current_project.dart';
 import 'package:tapture/features/settings/presentation/offline_switch.dart';
 
 import '../router.dart';
@@ -135,10 +136,13 @@ final StreamProvider<NetworkState> networkStateProvider =
       return ref.watch(connectivityServiceProvider).watch();
     });
 
-/// Project name on the line. Task 083 replaces the label.
+/// Project name on the line. Derived from [currentProjectDetailsProvider].
 final Provider<String> statusProjectLabelProvider = Provider<String>((Ref ref) {
   final String? id = ref.watch(openProjectIdProvider);
-  return id ?? Copy.statusNoProject;
+  if (id == null) {
+    return Copy.statusNoProject;
+  }
+  return ref.watch(currentProjectDetailsProvider)?.name ?? id;
 });
 
 /// Pinned context label. Task 115 replaces this stub.

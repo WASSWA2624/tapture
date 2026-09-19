@@ -15,12 +15,17 @@ import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
+import 'package:tapture/features/projects/presentation/current_project.dart';
+import 'package:tapture/features/projects/presentation/project_list_screen.dart';
 import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
 import 'package:tapture/features/settings/presentation/appearance_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/capture_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/settings_screen.dart';
 import 'package:tapture/features/settings/presentation/storage_settings_screen.dart';
 import 'package:tapture/features/settings/settings.dart';
+
+export 'package:tapture/features/projects/presentation/current_project.dart'
+    show CurrentProject, currentProjectProvider, openProjectIdProvider;
 
 part 'route_guards.dart';
 
@@ -148,7 +153,7 @@ List<RouteBase> get _routes {
             GoRoute(
               path: AppRoutes.projects,
               builder: (BuildContext _, GoRouterState _) {
-                return const _RoutePage(name: 'projects');
+                return const ProjectListScreen();
               },
               routes: <RouteBase>[
                 GoRoute(

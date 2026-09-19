@@ -21,6 +21,8 @@ import 'core/security/secure_storage.dart';
 import 'core/time/clock.dart';
 import 'features/feedback/feedback.dart';
 import 'features/feedback/presentation/feedback_providers.dart';
+import 'features/projects/data/project_repository_impl.dart';
+import 'features/projects/presentation/current_project.dart';
 import 'features/settings/presentation/offline_switch.dart';
 import 'features/settings/settings.dart';
 
@@ -53,6 +55,7 @@ Future<void> _run() async {
   final List<Override> overrides = <Override>[
     appLockProvider.overrideWith((Ref ref) => lock),
     offlineStoreProvider.overrideWith((Ref _) => offlineStore),
+    projectSettingsStoreProvider.overrideWith((Ref _) => offlineStore),
     themeModeProvider.overrideWith(
       () => ThemeModeController.withStore(SettingsTextStore(offlineStore)),
     ),
@@ -64,6 +67,7 @@ Future<void> _run() async {
     final String id = await deviceId(clock: clock, ids: ids);
     final PlatformFacts facts = await platformFacts(clock: clock);
     final DeviceDescriptor device = await deviceDescriptor();
+    final AppDatabase db = AppDatabase.open();
     overrides.addAll(<Override>[
       feedbackClockProvider.overrideWith((Ref _) => clock),
       feedbackDeviceIdProvider.overrideWith((Ref _) => id),
@@ -79,6 +83,14 @@ Future<void> _run() async {
         final SttService speech = SttService();
         ref.onDispose(() => unawaited(speech.cancel()));
         return speech;
+      }),
+      projectRepositoryProvider.overrideWith((Ref _) {
+        return ProjectRepositoryImpl(
+          db: db,
+          clock: clock,
+          deviceId: id,
+          ids: ids,
+        );
       }),
     ]);
   }

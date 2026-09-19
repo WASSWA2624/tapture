@@ -344,6 +344,50 @@ abstract final class Copy {
   /// Shell destination: the project list.
   static const String navProjects = 'Projects';
 
+  /// Headline when the project list has nothing to show.
+  static const String projectsEmptyHeadline = 'No projects yet';
+
+  /// Body when the project list has nothing to show.
+  static const String projectsEmptyMessage =
+      'Create a project or import a bundle to start capturing.';
+
+  /// Primary empty-state action on the project list.
+  static const String projectsCreate = 'Create a project';
+
+  /// Secondary empty-state action on the project list.
+  static const String projectsImport = 'Import a bundle';
+
+  /// When the project was last worked, as a date.
+  static String projectLastWorked(DateTime at) {
+    final DateTime day = at.toUtc();
+    return 'Last worked ${day.day} ${_months[day.month - 1]} ${day.year}';
+  }
+
+  static const List<String> _months = <String>[
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  /// Counts and last-worked time on one project list row.
+  static String projectListSubtitle({
+    required int records,
+    required int unprocessed,
+    required String lastWorked,
+  }) {
+    return '${recordsCount(records)} · ${unprocessedCount(unprocessed)} · '
+        '$lastWorked';
+  }
+
   /// Shell destination: capture. Visually dominant in the four-destination bar.
   static const String navCapture = 'Capture';
 

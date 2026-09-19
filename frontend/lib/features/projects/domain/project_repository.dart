@@ -22,4 +22,18 @@ abstract interface class ProjectRepository {
 
   /// Moves [id] to [status] without rewriting other fields.
   Future<Result<void>> setStatus(String id, ProjectStatus status);
+
+  /// Active projects with record counts and last-worked time. One watch,
+  /// not a query per row.
+  Stream<List<ProjectListRow>> watchList();
 }
+
+/// One landing-list row: the project plus the counts and last-worked
+/// instant the watch query returns. Named as a row so it is not an
+/// `*Item` (FE-CODE-03).
+typedef ProjectListRow = ({
+  Project project,
+  int recordCount,
+  int unprocessedCount,
+  DateTime lastWorkedAt,
+});

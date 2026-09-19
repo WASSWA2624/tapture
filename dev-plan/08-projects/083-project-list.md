@@ -45,10 +45,10 @@ final currentProjectDetailsProvider = Provider<Project?>(...);
 
 ## Definition of done
 
-- [ ] Opening the app lands here with counts rendered in under two seconds on the reference device.
-- [ ] Reopening the app returns to the last opened project without asking; a deleted last project clears cleanly.
-- [ ] Loading, empty, populated and failure all render through `AsyncValueView`.
-- [ ] Tests: widget tests of all four states; a unit test of `CurrentProject` restoring a persisted id, clearing an
+- [x] Opening the app lands here with counts rendered in under two seconds on the reference device.
+- [x] Reopening the app returns to the last opened project without asking; a deleted last project clears cleanly.
+- [x] Loading, empty, populated and failure all render through `AsyncValueView`.
+- [x] Tests: widget tests of all four states; a unit test of `CurrentProject` restoring a persisted id, clearing an
   unresolvable one, and resuming a carried destination; a measured test of the landing budget.
 
 ## Out of scope

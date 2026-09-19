@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**82 of 281 tasks complete (29.2%)** · last updated 2026-09-19
+**83 of 281 tasks complete (29.5%)** · last updated 2026-09-19
 
 `████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -15,7 +15,7 @@
 | 05 — File storage | 7 | 7 | `██████████████` 100% |
 | 06 — Application shell | 5 | 5 | `██████████████` 100% |
 | 07 — Account and settings | 5 | 5 | `██████████████` 100% |
-| 08 — Projects | 1 | 6 | `██░░░░░░░░░░░░` 17% |
+| 08 — Projects | 2 | 6 | `████░░░░░░░░░░` 33% |
 | 09 — Templates | 0 | 17 | `░░░░░░░░░░░░░░` 0% |
 | 10 — Reference data | 0 | 8 | `░░░░░░░░░░░░░░` 0% |
 | 11 — Context | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **82** | **281** | `████░░░░░░░░░░` 29.2% |
+| **Total** | **83** | **281** | `████░░░░░░░░░░` 29.5% |
 
 ## Completed
 
@@ -118,6 +118,7 @@
 | 080 — App lock: PIN and biometric unlock | 2026-09-18 | Optional PIN lock on launch and resume. Salted hash and escalating backoff live in `SecureStorage`; the PIN never reaches the database, preferences or logs. Biometric path is an interface plus fake (`local_auth` is a later allowlist task); failure stays on the PIN. One guard covers every route including deep links. Recovery copy states nobody can reset the PIN and offers no wipe. Guarded by hashing, restart-backoff, biometric-fallback and set/change/remove widget tests. |
 | 081 — Manual offline mode switch | 2026-09-18 | One settings switch writes `SettingKeys.offlineByChoice`. `ConnectivityService` folds that flag and reports offline; features still read `NetworkState` only. `OutboundQueue` holds work while offline and drains on release, retrying nothing while the switch is on. The status line labels offline-by-choice separately from the radio. Guarded by a recording-boundary widget test and a writer-only assertion. |
 | 082 — Project domain model and repository | 2026-09-19 | Immutable `Project` / `ProjectStatus` / `ProjectSettings`, Drift mapper, `ProjectRepositoryImpl`, barrel `projectRepositoryProvider`, and the in-memory fake later screens test against. Organisation/dates map onto `client`/`startedAt`/`completedAt`; description lives in settings JSON. Unknown or missing settings load as defaults. Guarded by a row→domain→row mapper test and the same create/watch/status suite on the in-memory database and the fake. |
+| 083 — Project list and the current project | 2026-09-19 | Landing `ProjectListScreen` with record/unprocessed counts and last-worked time from one `watchList` query. `CurrentProject` persists `SettingKeys.openProjectId`, restores on launch, clears an unresolvable id, and is the source `openProjectIdProvider` aliases. Empty state offers Create and Import; diverted deep links resume after a row is opened. Guarded by four AsyncValueView widget tests, a CurrentProject restore/clear/resume unit test, and a measured <2s landing budget. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -245,13 +246,13 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 071 | FE-STR-10 wants a split above ~300 lines; the task names one file. | Open — sniff, ceilings and the ZIP walk stay in `file_validation.dart` |
 | 072 | The contract types guards with `WidgetRef`; that type is sealed. | Open — `RouteGuard` takes `Ref` so a `ProviderContainer` can exercise a guard without a widget |
 | 072 | `go_router` 18 pulls `material_ui` that needs `@awaitNotRequired`. | Open — pinned `^17.5.0`, which still has route `metadata` and runs on Dart 3.12.2 |
-| 072 | Project screens do not exist yet; the guard still has to read an open project id. | Open — extra `openProjectIdProvider` / `OpenProjectId` until 083's `CurrentProject` becomes the source |
+| 072 | Project screens do not exist yet; the guard still has to read an open project id. | Closed by 083 — `CurrentProject` is the source; `openProjectIdProvider` is an alias so existing readers keep one name |
 | 072 | `route_guards.dart` needs `AppRoutes.projects` without a cycle. | Open — the two named files are one library (`part of`), same shape as `WrittenFile` |
 | 073 | Capture is a destination before `CurrentProject` exists. | Open — `/capture` is the unscoped branch root so the tab works; `/projects/:id/capture` stays project-scoped in the same branch |
 | 074 | Projects and shipped templates do not exist yet. | Closed — the first-run screen that offered "Start a project" was removed (row below) |
 | 074 | The operator name is not yet `device_profile.operatorName`. | Closed by 077 — the profile row is the source of truth; first-run still stores a name and 077 adopts it onto the row when the profile is empty |
 | 074 | Product decision (2026-09-18): no first-run screen. | Closed — the screen, `/first-run`, the `_firstRun` guard, the `TextStore.firstRun` flag and its copy are gone; the app opens on Projects and the operator name is set under More → Operator |
-| 075 | Project, context, template and unprocessed watches do not exist yet. | Open — stub providers return empty labels and 0; 083/115/141/159 replace them |
+| 075 | Project, context, template and unprocessed watches do not exist yet. | Open — project label reads `currentProjectDetailsProvider` (083); context/template/unprocessed stay stubs for 115/141/159 |
 | 075 | `NetworkState.offline` does not distinguish override from radio. | Closed by 081 — `offlineByChoiceProvider` re-reads `SettingKeys.offlineByChoice`; the status line still labels choice separately from the radio |
 | 075 | Template and queue screens have no routes yet. | Open — `AppRoutes.templates` / `queue` with placeholder pages in the More branch |
 | 076 | `ErrorBoundary`'s 021 contract has no fallback slot. | Open — extra optional `fallback` so this page can be the last-resort screen |
@@ -410,10 +411,10 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 08 — Projects
 
-*1 of 6 complete.*
+*2 of 6 complete.*
 
 - [x] [082 — Project domain model and repository](dev-plan/08-projects/082-project-model.md)
-- [ ] [083 — Project list and the current project](dev-plan/08-projects/083-project-list.md)
+- [x] [083 — Project list and the current project](dev-plan/08-projects/083-project-list.md)
 - [ ] [084 — Create and duplicate a project](dev-plan/08-projects/084-project-create.md)
 - [ ] [085 — Project home screen](dev-plan/08-projects/085-project-home.md)
 - [ ] [086 — Project details and per-project settings](dev-plan/08-projects/086-project-edit.md)
