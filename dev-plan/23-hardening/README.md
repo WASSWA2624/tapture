@@ -2,7 +2,7 @@
 
 Making the finished app fast, legible, reachable and unbreakable in the field.
 
-Tasks 236–304 (32). Each file is a standalone implementation prompt.
+Tasks 236–305 (33). Each file is a standalone implementation prompt.
 
 - [ ] [236 — Layout, accessibility and text-scale audit](236-responsive-audit.md)
 - [ ] [237 — Landscape and foldables](237-orientation-support.md)
@@ -36,3 +36,4 @@ Tasks 236–304 (32). Each file is a standalone implementation prompt.
 - [ ] [302 — Add a window share session to screen capture](302-add-window-share-session-api.md)
 - [x] [303 — Add repeat external window screenshots](303-add-repeat-external-window-screenshots.md)
 - [x] [304 — Fix the storage root on Android](304-fix-storage-root-on-android.md)
+- [x] [305 — Save downloads to a public Tapture folder](305-save-downloads-to-public-tapture-folder.md)

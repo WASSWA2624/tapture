@@ -8,9 +8,10 @@ import 'download_service_stub.dart'
     if (dart.library.js_interop) 'download_service_web.dart'
     as platform;
 
-/// Hands a finished file to the person: a browser download on the web, the
-/// Downloads folder on a device. The only way a feature saves a file for
-/// someone to open elsewhere (FE-STR-11).
+/// Hands a finished file to the person: a browser download on the web,
+/// shared `Download/Tapture` on Android 10+, `Downloads/Tapture` on
+/// desktop, and the documents folder on iOS. The only way a feature saves
+/// a file for someone to open elsewhere (FE-STR-11).
 abstract interface class DownloadService {
   /// The service for this platform.
   factory DownloadService() => platform.platformDownloads();
@@ -26,7 +27,9 @@ abstract interface class DownloadService {
   }
 
   /// Saves [bytes] as [fileName]. Succeeds with where the file went, which
-  /// is null when the browser decides.
+  /// is null when the browser decides. On Android 10+ that is
+  /// `Download/Tapture/<name>`; on desktop, the path under
+  /// `Downloads/Tapture/`.
   Future<Result<String?>> save({
     required String fileName,
     required Uint8List bytes,
