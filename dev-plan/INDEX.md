@@ -1,6 +1,6 @@
 # Tapture — task index
 
-306 implementation prompts across 25 phases. Work top to bottom.
+307 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task.
 
@@ -387,6 +387,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [304 — Fix the storage root on Android](23-hardening/304-fix-storage-root-on-android.md)
 - [x] [305 — Save downloads to a public Tapture folder](23-hardening/305-save-downloads-to-public-tapture-folder.md)
 - [x] [306 — Keep the feedback bar above the keyboard](23-hardening/306-keep-feedback-bar-above-keyboard.md)
+- [x] [307 — Move the storage root to public Documents](23-hardening/307-move-storage-root-to-public-documents.md)
 
 ## 24 — The minimal backend
 

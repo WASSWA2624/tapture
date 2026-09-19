@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -14,6 +15,9 @@ const String _cacheName = '.cache';
 /// Created and removed to prove the root accepts a write.
 const String _probeName = '.write-probe';
 
+/// Native channel that reports the shared Documents folder on Android 11+.
+const MethodChannel _filesChannel = MethodChannel('com.tapture.app/files');
+
 /// Resolves, creates and hands out the visible `Tapture/` root under the
 /// device's documents directory.
 ///
@@ -23,13 +27,22 @@ const String _probeName = '.write-probe';
 abstract interface class StorageRoot {
   /// Creates `Tapture/` and `Tapture/.cache` under the documents directory.
   ///
-  /// App-specific folders need no runtime permission. [documentsDirectory]
-  /// is the test seam so a suite can resolve into a temporary folder without
-  /// opening the plugin. Omitted, the documents directory comes from the
-  /// platform.
-  factory StorageRoot({Future<Directory> Function()? documentsDirectory}) {
+  /// On Android 11+ the preferred home is shared `Documents/Tapture`, so a
+  /// file manager can open it and it survives uninstall. App-specific
+  /// folders need no runtime permission and are the fallback. [documentsDirectory]
+  /// and [publicDocuments] are test seams so a suite can choose the branch
+  /// without opening the plugin.
+  factory StorageRoot({
+    Future<Directory> Function()? documentsDirectory,
+    Future<Directory?> Function()? publicDocuments,
+  }) {
     return _StorageRoot(
       documentsDirectory: documentsDirectory ?? _platformDocumentsDirectory,
+      publicDocuments:
+          publicDocuments ??
+          (documentsDirectory == null
+              ? _platformPublicDocuments
+              : () async => null),
     );
   }
 
@@ -37,13 +50,19 @@ abstract interface class StorageRoot {
   /// the real documents folder (FE-STR-11, FE-TEST-03).
   ///
   /// When [writable] is false, [resolve] returns a [StorageFailure] naming
-  /// the path, without creating the tree.
+  /// the path, without creating the tree. [publicDocuments] is the shared
+  /// folder a suite offers first, or omitted so only [documentsDirectory]
+  /// is tried.
   factory StorageRoot.fake({
     required Directory documentsDirectory,
+    Directory? publicDocuments,
     bool writable = true,
   }) {
     return _StorageRoot(
       documentsDirectory: () async => documentsDirectory,
+      publicDocuments: publicDocuments == null
+          ? () async => null
+          : () async => publicDocuments,
       writable: writable,
     );
   }
@@ -65,10 +84,30 @@ final Provider<StorageRoot> storageRootProvider = Provider<StorageRoot>((_) {
   return StorageRoot();
 });
 
-/// The user-visible documents directory. On Android this is the app-specific
-/// external Documents folder so the tree is reachable over a cable; elsewhere
-/// it is the platform documents directory. No `.nomedia` file is written, so
-/// the media scanner is not told to skip the tree.
+/// Shared public Documents on Android 11+. Direct file paths let Files open
+/// `Documents/Tapture` and keep the tree after uninstall. Below API 30, or
+/// when the channel is missing, this is absent and the app folder is used.
+Future<Directory?> _platformPublicDocuments() async {
+  if (!Platform.isAndroid) {
+    return null;
+  }
+  try {
+    final Object? path = await _filesChannel.invokeMethod<Object>(
+      'publicDocumentsPath',
+    );
+    if (path is String && path.isNotEmpty) {
+      return Directory(path);
+    }
+  } on Object {
+    // Unsupported API, missing plugin, or any refuse: use the app folder.
+  }
+  return null;
+}
+
+/// The app-specific documents directory. Used when shared Documents is
+/// unavailable or its write probe fails, and on every platform other than
+/// Android. No `.nomedia` file is written, so the media scanner is not told
+/// to skip the tree.
 Future<Directory> _platformDocumentsDirectory() async {
   if (Platform.isAndroid) {
     final List<Directory>? external = await getExternalStorageDirectories(
@@ -82,9 +121,14 @@ Future<Directory> _platformDocumentsDirectory() async {
 }
 
 final class _StorageRoot implements StorageRoot {
-  _StorageRoot({required this._documentsDirectory, this._writable = true});
+  _StorageRoot({
+    required this._documentsDirectory,
+    required this._publicDocuments,
+    this._writable = true,
+  });
 
   final Future<Directory> Function() _documentsDirectory;
+  final Future<Directory?> Function() _publicDocuments;
   final bool _writable;
 
   Directory? _root;
@@ -119,10 +163,27 @@ final class _StorageRoot implements StorageRoot {
   }
 
   Future<Result<Directory>> _open() async {
-    String path = _rootName;
+    final Directory? shared = await _resolvePublic();
+    if (shared != null) {
+      final Result<Directory> opened = await _tryOpen(shared);
+      if (opened is Success<Directory>) {
+        return opened;
+      }
+    }
+    return _tryOpen(await _documentsDirectory());
+  }
+
+  Future<Directory?> _resolvePublic() async {
     try {
-      final Directory documents = await _documentsDirectory();
-      path = '${documents.path}/$_rootName';
+      return await _publicDocuments();
+    } on Object {
+      return null;
+    }
+  }
+
+  Future<Result<Directory>> _tryOpen(Directory documents) async {
+    final String path = '${documents.path}/$_rootName';
+    try {
       if (!_writable) {
         return FailureResult<Directory>(_unwritable(path));
       }

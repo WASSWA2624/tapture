@@ -3,6 +3,7 @@ package com.tapture.app
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.os.Build
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
@@ -20,17 +21,28 @@ class MainActivity : FlutterActivity() {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
-                if (call.method != "saveToDownloads") {
-                    result.notImplemented()
-                    return@setMethodCallHandler
+                when (call.method) {
+                    "saveToDownloads" -> saveToDownloads(
+                        call.argument("fileName"),
+                        call.argument("mimeType"),
+                        call.argument("bytes"),
+                        result,
+                    )
+                    "publicDocumentsPath" -> publicDocumentsPath(result)
+                    else -> result.notImplemented()
                 }
-                saveToDownloads(
-                    call.argument("fileName"),
-                    call.argument("mimeType"),
-                    call.argument("bytes"),
-                    result,
-                )
             }
+    }
+
+    private fun publicDocumentsPath(result: MethodChannel.Result) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            result.error("unsupported", "Shared documents need Android 11 or later.", null)
+            return
+        }
+        result.success(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+                .absolutePath,
+        )
     }
 
     private fun saveToDownloads(

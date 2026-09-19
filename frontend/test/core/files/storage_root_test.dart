@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -81,6 +82,80 @@ void main() {
     expect(root.existsSync(), isTrue);
     expect(Directory('${root.path}/.cache').existsSync(), isTrue);
     expect(storageRootProvider, isA<Provider<StorageRoot>>());
+  });
+
+  test('the public folder is used when it is writable', () async {
+    final Directory shared = _tempDocs();
+    final Directory app = _tempDocs();
+    final StorageRoot storage = StorageRoot(
+      documentsDirectory: () async => app,
+      publicDocuments: () async => shared,
+    );
+
+    final Directory root = _ok(await storage.resolve());
+    final Directory again = _ok(await storage.resolve());
+
+    expect(identical(root, again), isTrue);
+    expect(_slash(root.path), _slash('${shared.path}/Tapture'));
+    expect(root.existsSync(), isTrue);
+    expect(Directory('${root.path}/.cache').existsSync(), isTrue);
+    expect(Directory('${app.path}/Tapture').existsSync(), isFalse);
+    expect(_hasNomedia(root), isFalse);
+  });
+
+  test('an unsupported public folder falls back to the app folder', () async {
+    final Directory app = _tempDocs();
+    final StorageRoot storage = StorageRoot(
+      documentsDirectory: () async => app,
+      publicDocuments: () async {
+        throw PlatformException(code: 'unsupported');
+      },
+    );
+
+    final Directory root = _ok(await storage.resolve());
+
+    expect(_slash(root.path), _slash('${app.path}/Tapture'));
+    expect(root.existsSync(), isTrue);
+  });
+
+  test('an unwritable public folder falls back to the app folder', () async {
+    final Directory shared = _tempDocs();
+    final Directory app = _tempDocs();
+    File('${shared.path}/Tapture').writeAsStringSync('blocked');
+    final StorageRoot storage = StorageRoot(
+      documentsDirectory: () async => app,
+      publicDocuments: () async => shared,
+    );
+
+    final Directory root = _ok(await storage.resolve());
+
+    expect(_slash(root.path), _slash('${app.path}/Tapture'));
+    expect(root.existsSync(), isTrue);
+    expect(File('${shared.path}/Tapture').existsSync(), isTrue);
+    expect(File('${shared.path}/Tapture').readAsStringSync(), 'blocked');
+  });
+
+  test('both locations unwritable is a StorageFailure', () async {
+    final Directory shared = _tempDocs();
+    final Directory app = _tempDocs();
+    File('${shared.path}/Tapture').writeAsStringSync('blocked');
+    File('${app.path}/Tapture').writeAsStringSync('blocked');
+    final StorageRoot storage = StorageRoot(
+      documentsDirectory: () async => app,
+      publicDocuments: () async => shared,
+    );
+
+    final Result<Directory> refused = await storage.resolve();
+    final Failure? failure = refused.fold(
+      (Failure value) => value,
+      (_) => null,
+    );
+
+    expect(failure, isA<StorageFailure>());
+    expect(failure?.message, contains(app.path));
+    expect(failure?.recoveryAction, isNotEmpty);
+    expect(File('${app.path}/Tapture').readAsStringSync(), 'blocked');
+    expect(File('${shared.path}/Tapture').readAsStringSync(), 'blocked');
   });
 }
 

@@ -2,7 +2,7 @@
 
 Making the finished app fast, legible, reachable and unbreakable in the field.
 
-Tasks 236–306 (34). Each file is a standalone implementation prompt.
+Tasks 236–307 (35). Each file is a standalone implementation prompt.
 
 - [ ] [236 — Layout, accessibility and text-scale audit](236-responsive-audit.md)
 - [ ] [237 — Landscape and foldables](237-orientation-support.md)
@@ -38,3 +38,4 @@ Tasks 236–306 (34). Each file is a standalone implementation prompt.
 - [x] [304 — Fix the storage root on Android](304-fix-storage-root-on-android.md)
 - [x] [305 — Save downloads to a public Tapture folder](305-save-downloads-to-public-tapture-folder.md)
 - [x] [306 — Keep the feedback bar above the keyboard](306-keep-feedback-bar-above-keyboard.md)
+- [x] [307 — Move the storage root to public Documents](307-move-storage-root-to-public-documents.md)
