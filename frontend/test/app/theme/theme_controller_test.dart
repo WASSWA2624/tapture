@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/app.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
+import 'package:tapture/app/theme/settings_text_store.dart';
 import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/files/files.dart';
+import 'package:tapture/features/settings/settings.dart';
 
 void main() {
   test('AppThemeMode round-trips through the fake store', () async {
@@ -31,6 +33,67 @@ void main() {
     });
     addTearDown(container.dispose);
 
+    expect(container.read(themeModeProvider), AppThemeMode.system);
+  });
+
+  test('a written mode round-trips through SettingsTextStore', () async {
+    final SettingsStore settings = SettingsStore.fake();
+    final ProviderContainer first = _settingsContainer(settings);
+    addTearDown(first.dispose);
+
+    expect(first.read(themeModeProvider), AppThemeMode.system);
+    await first.read(themeModeProvider.notifier).setMode(AppThemeMode.outdoor);
+    expect(settings.read(SettingKeys.themeMode), AppThemeMode.outdoor.name);
+
+    final ProviderContainer restarted = _settingsContainer(settings);
+    addTearDown(restarted.dispose);
+    expect(restarted.read(themeModeProvider), AppThemeMode.outdoor);
+  });
+
+  test('an unset settings key uses the legacy value until setMode', () async {
+    final SettingsStore settings = SettingsStore.fake();
+    final TextStore legacy = TextStore.memory();
+    await legacy.write(AppThemeMode.dark.name);
+    final ProviderContainer first = _settingsContainer(
+      settings,
+      legacy: legacy,
+    );
+    addTearDown(first.dispose);
+    expect(first.read(themeModeProvider), AppThemeMode.dark);
+
+    await first.read(themeModeProvider.notifier).setMode(AppThemeMode.light);
+    expect(legacy.read(), AppThemeMode.dark.name);
+
+    final ProviderContainer restarted = _settingsContainer(
+      settings,
+      legacy: legacy,
+    );
+    addTearDown(restarted.dispose);
+    expect(restarted.read(themeModeProvider), AppThemeMode.light);
+  });
+
+  test('a stored settings value wins over a different legacy value', () async {
+    final SettingsStore settings = SettingsStore.fake(
+      stored: <String, Object?>{
+        SettingKeys.themeMode.name: AppThemeMode.light.name,
+      },
+    );
+    final TextStore legacy = TextStore.memory();
+    await legacy.write(AppThemeMode.dark.name);
+    final ProviderContainer container = _settingsContainer(
+      settings,
+      legacy: legacy,
+    );
+    addTearDown(container.dispose);
+    expect(container.read(themeModeProvider), AppThemeMode.light);
+  });
+
+  test('an unknown settings name falls back to system', () {
+    final SettingsStore settings = SettingsStore.fake(
+      stored: <String, Object?>{SettingKeys.themeMode.name: 'not-a-mode'},
+    );
+    final ProviderContainer container = _settingsContainer(settings);
+    addTearDown(container.dispose);
     expect(container.read(themeModeProvider), AppThemeMode.system);
   });
 
@@ -66,6 +129,21 @@ ProviderContainer _container(Map<String, String> backing) {
     overrides: [
       themeModeProvider.overrideWith(
         () => ThemeModeController.withStore(TextStore.memory(backing)),
+      ),
+    ],
+  );
+}
+
+ProviderContainer _settingsContainer(
+  SettingsStore settings, {
+  TextStore? legacy,
+}) {
+  return ProviderContainer(
+    overrides: [
+      themeModeProvider.overrideWith(
+        () => ThemeModeController.withStore(
+          SettingsTextStore(settings, legacy: legacy ?? TextStore.memory()),
+        ),
       ),
     ],
   );

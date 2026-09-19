@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 
 import 'app/app.dart';
 import 'app/provider_observer.dart' hide ProviderObserver;
+import 'app/theme/settings_text_store.dart';
 import 'core/ai/stt_service.dart';
 import 'core/db/app_database.dart';
 import 'core/device/device_identity.dart';
@@ -52,6 +53,9 @@ Future<void> _run() async {
   final List<Override> overrides = <Override>[
     appLockProvider.overrideWith((Ref ref) => lock),
     offlineStoreProvider.overrideWith((Ref _) => offlineStore),
+    themeModeProvider.overrideWith(
+      () => ThemeModeController.withStore(SettingsTextStore(offlineStore)),
+    ),
     lifecycleObserverProvider.overrideWith((Ref ref) => _lifecycleObserver!),
     leaveGuardProvider.overrideWith((Ref _) => LeaveGuard()),
   ];

@@ -132,6 +132,12 @@ abstract final class SettingKeys {
     'en',
   );
 
+  /// Chosen appearance. Survives a restart and a cache clear.
+  static const SettingKey<String> themeMode = SettingKey<String>(
+    'appearance.themeMode',
+    'system',
+  );
+
   /// Wire names of every declared key, so a raw string cannot sneak in.
   static List<String> get names => <String>[
     gpsEnabled.name,
@@ -155,5 +161,6 @@ abstract final class SettingKeys {
     confidenceMedium.name,
     appLanguage.name,
     voiceLanguage.name,
+    themeMode.name,
   ];
 }
