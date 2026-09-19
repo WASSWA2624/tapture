@@ -3,6 +3,7 @@ library;
 
 export 'about_screen.dart';
 export 'app_lock_screen.dart';
+export 'appearance_settings_screen.dart';
 export 'capture_settings_screen.dart';
 export 'offline_switch.dart';
 export 'operator_profile_screen.dart';

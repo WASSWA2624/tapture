@@ -16,6 +16,7 @@ import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
+import 'package:tapture/features/settings/presentation/appearance_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/capture_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/settings_screen.dart';
 import 'package:tapture/features/settings/presentation/storage_settings_screen.dart';
@@ -74,6 +75,9 @@ abstract final class AppRoutes {
 
   /// Language section. The screen arrives in a later phase.
   static const String settingsLanguage = '$more/language';
+
+  /// Appearance under Settings: system, light, dark or outdoor.
+  static const String settingsAppearance = '$more/appearance';
 
   /// Storage usage under Settings.
   static const String settingsStorage = '$more/storage';
@@ -211,6 +215,12 @@ List<RouteBase> get _routes {
                   path: 'capture',
                   builder: (BuildContext _, GoRouterState _) {
                     return const CaptureSettingsScreen();
+                  },
+                ),
+                GoRoute(
+                  path: 'appearance',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const AppearanceSettingsScreen();
                   },
                 ),
                 GoRoute(

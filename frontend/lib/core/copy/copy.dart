@@ -476,6 +476,25 @@ abstract final class Copy {
   /// Language tile supporting line.
   static const String settingsLanguageSubtitle = 'App and voice.';
 
+  /// Appearance section title.
+  static const String settingsAppearanceTitle = 'Appearance';
+
+  /// Appearance tile supporting line.
+  static const String settingsAppearanceSubtitle =
+      'System, light, dark or outdoor.';
+
+  /// Follow the device light or dark setting.
+  static const String themeModeSystem = 'System';
+
+  /// Always the light palette.
+  static const String themeModeLight = 'Light';
+
+  /// Always the dark palette.
+  static const String themeModeDark = 'Dark';
+
+  /// High-contrast outdoor palettes; still follows the device.
+  static const String themeModeOutdoor = 'Outdoor';
+
   /// Storage section title.
   static const String settingsStorageTitle = 'Storage';
 

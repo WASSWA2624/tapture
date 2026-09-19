@@ -9,6 +9,7 @@ import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
+import 'package:tapture/features/settings/presentation/appearance_settings_screen.dart';
 
 void main() {
   test('AppRoutes helpers are the declared paths', () {
@@ -25,6 +26,7 @@ void main() {
     expect(AppRoutes.settingsCapture, '/more/capture');
     expect(AppRoutes.settingsAi, '/more/ai');
     expect(AppRoutes.settingsLanguage, '/more/language');
+    expect(AppRoutes.settingsAppearance, '/more/appearance');
     expect(AppRoutes.settingsStorage, '/more/storage');
     expect(AppRoutes.settingsFiles, '/more/files');
     expect(AppRoutes.settingsSecurity, '/more/security');
@@ -88,6 +90,9 @@ void main() {
     await _go(tester, router, AppRoutes.more);
     expect(find.text(Copy.operatorProfileTitle), findsOneWidget);
     expect(find.text(Copy.settingsAboutTitle), findsOneWidget);
+
+    await _go(tester, router, AppRoutes.settingsAppearance);
+    expect(find.byType(AppearanceSettingsScreen), findsOneWidget);
 
     router.go(WidgetGalleryScreen.route);
     await tester.pump();

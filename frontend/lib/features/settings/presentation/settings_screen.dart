@@ -92,7 +92,7 @@ Override settingsScreenOverride({
   });
 }
 
-/// The eight specification sections, in order. Later screens add a route
+/// The specification sections, in order. Later screens add a route
 /// here rather than reshaping the list.
 /// Local catalogue. Riverpod's default backoff would keep a failed
 /// load in [AsyncLoading] for tens of seconds (FE-STATE-11).
@@ -115,6 +115,7 @@ Object _asError(Object error) {
 /// `router.dart` — the router imports the settings barrel.
 const String _operatorRoute = '/more/operator';
 const String _captureRoute = '/more/capture';
+const String _appearanceRoute = '/more/appearance';
 const String _storageRoute = '/more/storage';
 const String _securityRoute = '/more/security';
 const String _aboutRoute = '/more/about';
@@ -135,6 +136,11 @@ const List<_Section> _defaultSections = <_Section>[
     title: Copy.settingsLanguageTitle,
     subtitle: Copy.settingsLanguageSubtitle,
     route: null,
+  ),
+  (
+    title: Copy.settingsAppearanceTitle,
+    subtitle: Copy.settingsAppearanceSubtitle,
+    route: _appearanceRoute,
   ),
   (
     title: Copy.settingsStorageTitle,

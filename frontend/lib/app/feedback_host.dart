@@ -69,6 +69,9 @@ String _screenName(String path) {
   if (path == AppRoutes.settingsCapture) {
     return Copy.settingsCamera;
   }
+  if (path == AppRoutes.settingsAppearance) {
+    return Copy.settingsAppearanceTitle;
+  }
   if (path == AppRoutes.settingsStorage) {
     return Copy.settingsStorageTitle;
   }
@@ -108,6 +111,9 @@ String _routeName(String path) {
   }
   if (path == AppRoutes.settingsCapture) {
     return 'settingsCapture';
+  }
+  if (path == AppRoutes.settingsAppearance) {
+    return 'settingsAppearance';
   }
   if (path == AppRoutes.settingsStorage) {
     return 'settingsStorage';
