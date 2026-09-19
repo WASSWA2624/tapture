@@ -81,6 +81,34 @@ void runProjectRepositoryContract(ProjectRepository Function() repository) {
     expect((await next).single.name, 'Beta');
   });
 
+  test('watchList hides archived rows unless includeArchived is set', () async {
+    final ProjectRepository repo = repository();
+    _ok(await repo.create(aProject()));
+    _ok(await repo.setStatus('project-1', ProjectStatus.archived));
+    expect(await repo.watchList().first, isEmpty);
+    expect(await repo.watchList(includeArchived: true).first, hasLength(1));
+    expect(
+      (await repo.watchList(includeArchived: true).first)
+          .single
+          .project
+          .includedInDefaultExports,
+      isFalse,
+    );
+  });
+
+  test(
+    'delete hides the project and is a StorageFailure when missing',
+    () async {
+      final ProjectRepository repo = repository();
+      expect(_failure(await repo.delete('missing')), isA<StorageFailure>());
+      _ok(await repo.create(aProject(name: 'Alpha')));
+      _ok(await repo.delete('project-1'));
+      expect(await repo.watchAll().first, isEmpty);
+      expect(await repo.watchAll(includeArchived: true).first, isEmpty);
+      expect(await repo.watchList().first, isEmpty);
+    },
+  );
+
   test('a rename leaves folderName unchanged', () async {
     final ProjectRepository repo = repository();
     _ok(await repo.create(aProject(name: 'Alpha')));

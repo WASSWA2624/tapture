@@ -21,4 +21,20 @@ void main() {
     expect(renamed.status, ProjectStatus.archived);
     expect(renamed.createdAt, original.createdAt);
   });
+
+  test('only an active project is included in default exports', () {
+    expect(aProject().includedInDefaultExports, isTrue);
+    expect(
+      aProject()
+          .copyWith(status: ProjectStatus.archived)
+          .includedInDefaultExports,
+      isFalse,
+    );
+    expect(
+      aProject()
+          .copyWith(status: ProjectStatus.deleted)
+          .includedInDefaultExports,
+      isFalse,
+    );
+  });
 }

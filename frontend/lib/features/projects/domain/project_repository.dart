@@ -33,9 +33,16 @@ abstract interface class ProjectRepository {
   /// Moves [id] to [status] without rewriting other fields.
   Future<Result<void>> setStatus(String id, ProjectStatus status);
 
+  /// Soft-deletes [id] and its owned rows, writes one tombstone per
+  /// entity, then moves the project folder into the recycle area.
+  Future<Result<void>> delete(String id);
+
+  /// How many records and files a delete of [id] would hide.
+  Future<Result<ProjectOwnedCounts>> ownedCounts(String id);
+
   /// Active projects with record counts and last-worked time. One watch,
-  /// not a query per row.
-  Stream<List<ProjectListRow>> watchList();
+  /// not a query per row. Archived rows appear only when requested.
+  Stream<List<ProjectListRow>> watchList({bool includeArchived = false});
 
   /// Pending Review, Process, Export and Share counts for [projectId].
   /// Derived from live watches, never stored (FE-STATE-06).
@@ -68,3 +75,7 @@ const ProjectHomeCounts emptyProjectHomeCounts = (
   toExport: 0,
   toShare: 0,
 );
+
+/// Records and files a project delete would hide. Named as counts so
+/// it is not an `*Item` (FE-CODE-03).
+typedef ProjectOwnedCounts = ({int records, int files});

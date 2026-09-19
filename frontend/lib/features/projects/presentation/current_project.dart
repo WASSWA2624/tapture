@@ -5,6 +5,7 @@ import 'package:tapture/features/settings/settings.dart';
 
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
+import 'project_list_filter.dart';
 
 /// The single open-project id. Persists the choice, restores it on the
 /// next launch, and is the source every project-scoped route reads
@@ -113,12 +114,15 @@ final NotifierProvider<CurrentProject, String?> openProjectIdProvider =
     currentProjectProvider;
 
 /// Active projects with counts for the landing list. Kept alive: the
-/// status line and the list both watch it (FE-STATE-09).
+/// status line and the list both watch it (FE-STATE-09). Archived rows
+/// appear only when [projectListShowArchivedProvider] is on.
 final StreamProvider<List<ProjectListRow>> projectListProvider =
-    StreamProvider<List<ProjectListRow>>(
-      (Ref ref) => ref.watch(projectRepositoryProvider).watchList(),
-      retry: (int _, Object _) => null,
-    );
+    StreamProvider<List<ProjectListRow>>((Ref ref) {
+      final bool includeArchived = ref.watch(projectListShowArchivedProvider);
+      return ref
+          .watch(projectRepositoryProvider)
+          .watchList(includeArchived: includeArchived);
+    }, retry: (int _, Object _) => null);
 
 /// The open [Project], or null when none is open or the list has not
 /// resolved it yet. Derived from [currentProjectProvider] and

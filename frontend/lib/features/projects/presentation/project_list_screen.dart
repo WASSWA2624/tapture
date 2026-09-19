@@ -1,24 +1,32 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/project_repository.dart';
 import 'current_project.dart';
+import 'project_archive_action.dart';
+import 'project_delete_action.dart';
+import 'project_list_filter.dart';
 
 /// Landing list: every active project as one row with counts and
-/// last-worked time.
+/// last-worked time. Archived rows sit behind [Copy.projectShowArchived].
 class ProjectListScreen extends ConsumerWidget {
   /// Creates the landing list.
   const ProjectListScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final bool showArchived = ref.watch(projectListShowArchivedProvider);
     final AsyncValue<List<ProjectListRow>> value = ref.watch(
       projectListProvider,
     );
@@ -32,28 +40,69 @@ class ProjectListScreen extends ConsumerWidget {
       title: Copy.navProjects,
       showAppBar: false,
       inset: false,
-      body: AsyncValueView<List<ProjectListRow>>(
-        value: value,
-        isEmpty: (List<ProjectListRow> rows) => rows.isEmpty,
-        empty: () => _empty(context),
-        onRetry: () => ref.invalidate(projectListProvider),
-        data: (List<ProjectListRow> rows) {
-          return Column(
-            children: <Widget>[
-              for (final ProjectListRow row in rows)
-                AppListTile(
-                  title: row.project.name,
-                  subtitle: Copy.projectListSubtitle(
-                    records: row.recordCount,
-                    unprocessed: row.unprocessedCount,
-                    lastWorked: Copy.projectLastWorked(row.lastWorkedAt),
+      scrollable: false,
+      body: Column(
+        children: <Widget>[
+          AppSwitchTile(
+            title: Copy.projectShowArchived,
+            value: showArchived,
+            dense: true,
+            onChanged: ref.read(projectListShowArchivedProvider.notifier).set,
+          ),
+          Expanded(
+            child: AsyncValueView<List<ProjectListRow>>(
+              value: value,
+              isEmpty: (List<ProjectListRow> rows) => rows.isEmpty,
+              empty: () => _empty(context),
+              onRetry: () => ref.invalidate(projectListProvider),
+              data: (List<ProjectListRow> rows) {
+                return SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      for (final ProjectListRow row in rows)
+                        AppListTile(
+                          title: row.project.name,
+                          subtitle: Copy.projectListSubtitle(
+                            records: row.recordCount,
+                            unprocessed: row.unprocessedCount,
+                            lastWorked: Copy.projectLastWorked(
+                              row.lastWorkedAt,
+                            ),
+                          ),
+                          trailing: AppOverflowMenu(
+                            items: <AppOverflowAction>[
+                              AppOverflowAction(
+                                label:
+                                    row.project.status == ProjectStatus.archived
+                                    ? Copy.projectUnarchive
+                                    : Copy.projectArchive,
+                                icon: Icons.inventory_2_outlined,
+                                onTap: () => unawaited(
+                                  ProjectArchiveAction.apply(ref, row.project),
+                                ),
+                              ),
+                              AppOverflowAction(
+                                label: Copy.projectDelete,
+                                icon: Icons.delete_outline,
+                                onTap: () => unawaited(
+                                  ProjectDeleteAction.confirm(
+                                    context,
+                                    ref,
+                                    row.project,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          onTap: () => _openRow(context, ref, row.project.id),
+                        ),
+                    ],
                   ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _openRow(context, ref, row.project.id),
-                ),
-            ],
-          );
-        },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

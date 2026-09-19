@@ -129,7 +129,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [084 — Create and duplicate a project](08-projects/084-project-create.md)
 - [x] [085 — Project home screen](08-projects/085-project-home.md)
 - [x] [086 — Project details and per-project settings](08-projects/086-project-edit.md)
-- [ ] [087 — Archive, unarchive and delete a project](08-projects/087-project-archive.md)
+- [x] [087 — Archive, unarchive and delete a project](08-projects/087-project-archive.md)
 
 ## 09 — Templates
 

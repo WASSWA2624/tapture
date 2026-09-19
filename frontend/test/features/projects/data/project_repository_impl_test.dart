@@ -39,6 +39,12 @@ void main() {
       clock: clock,
       deviceId: 'device-test',
       ids: UuidV7Service.sequence(clock),
+      recycleTree:
+          ({
+            required String id,
+            required String name,
+            required String folderName,
+          }) async => const Success<void>(null),
     );
   });
 
@@ -485,6 +491,103 @@ void main() {
     },
   );
 
+  test('delete writes tombstones and leaves the file in recycle', () async {
+    final Directory documents = Directory.systemTemp.createTempSync(
+      'tapture-project-delete-',
+    );
+    addTearDown(() {
+      if (documents.existsSync()) {
+        documents.deleteSync(recursive: true);
+      }
+    });
+    final ProjectFolders folders = ProjectFolders(
+      storageRoot: StorageRoot.fake(documentsDirectory: documents),
+    );
+    final ProjectRepositoryImpl deleting = _repo(db, folders: folders);
+    _ok(await deleting.create(aProject(name: 'Alpha')));
+    final Directory tree = _okDir(
+      await folders.create(_driftProject(aProject(name: 'Alpha'))),
+    );
+    final File keep = File('${tree.path}/photos/keep.txt')
+      ..writeAsStringSync('kept');
+    _ok(
+      await upsertRecord(
+        db,
+        row: RecordsCompanion(
+          id: const Value<String>('record-1'),
+          projectId: const Value<String>('project-1'),
+          templateId: const Value<String>('template-1'),
+          status: const Value<String>('captured'),
+          processingMode: const Value<String>('manual'),
+          contextJson: const Value<String>('{}'),
+          identityHash: const Value<String>('hash-1'),
+          source: const Value<String>('capture'),
+          capturedAt: Value<DateTime>(t0),
+          capturedBy: const Value<String>('Ada'),
+        ),
+        clock: clock,
+        deviceId: 'device-test',
+        ids: UuidV7Service.sequence(clock),
+      ),
+    );
+    _ok(
+      await upsertPhoto(
+        db,
+        row: PhotosCompanion(
+          id: const Value<String>('photo-1'),
+          projectId: const Value<String>('project-1'),
+          captureSessionId: const Value<String>('session-1'),
+          originalFilename: const Value<String>('keep.txt'),
+          storedFilename: const Value<String>('keep.txt'),
+          relativePath: const Value<String>('photos/keep.txt'),
+          photoType: const Value<String>('front'),
+          sortOrder: const Value<int>(0),
+          width: const Value<int>(1),
+          height: const Value<int>(1),
+          fileSize: const Value<int>(4),
+          mimeType: const Value<String>('text/plain'),
+          sha256: const Value<String>('keep-sha'),
+          capturedAt: Value<DateTime>(t0),
+        ),
+        clock: clock,
+        deviceId: 'device-test',
+        ids: UuidV7Service.sequence(clock),
+      ),
+    );
+
+    _ok(await deleting.delete('project-1'));
+
+    expect(keep.existsSync(), isFalse);
+    final File recycled = File(
+      '${documents.path}/Tapture/.recycle/test-project/photos/keep.txt',
+    );
+    expect(recycled.existsSync(), isTrue);
+    expect(recycled.readAsStringSync(), 'kept');
+    expect(await deleting.watchAll().first, isEmpty);
+
+    final List<Tombstone> marks = await db.select(db.tombstones).get();
+    expect(
+      marks.map((Tombstone row) => '${row.entityType}:${row.entityId}'),
+      containsAll(<String>[
+        'projects:project-1',
+        'records:record-1',
+        'photos:photo-1',
+      ]),
+    );
+    expect(
+      marks.where((Tombstone row) => row.entityId == 'project-1'),
+      hasLength(1),
+    );
+    expect(
+      marks.where((Tombstone row) => row.entityId == 'record-1'),
+      hasLength(1),
+    );
+    expect(
+      marks.where((Tombstone row) => row.entityId == 'photo-1'),
+      hasLength(1),
+    );
+  });
+
   test('presentation under projects imports no core/db', () {
     final Directory presentation = Directory(
       'lib/features/projects/presentation',
@@ -575,6 +678,26 @@ ProjectRepositoryImpl _repo(AppDatabase db, {required ProjectFolders folders}) {
               ),
             ),
           );
+        },
+    recycleTree:
+        ({
+          required String id,
+          required String name,
+          required String folderName,
+        }) async {
+          return (await folders.recycle(
+            _driftProject(
+              Project(
+                id: id,
+                name: name,
+                status: ProjectStatus.active,
+                folderName: folderName,
+                settings: const ProjectSettings(),
+                createdAt: DateTime.utc(2026, 9, 17, 8),
+                updatedAt: DateTime.utc(2026, 9, 17, 8),
+              ),
+            ),
+          )).map((Directory _) {});
         },
   );
 }

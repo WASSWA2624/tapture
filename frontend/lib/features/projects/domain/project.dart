@@ -55,6 +55,9 @@ final class Project {
   /// When the row last changed.
   final DateTime updatedAt;
 
+  /// Active projects appear on the landing list and in default exports.
+  bool get includedInDefaultExports => status == ProjectStatus.active;
+
   /// Returns a copy with the provided fields replaced. [folderName] and
   /// [id] stay put.
   Project copyWith({

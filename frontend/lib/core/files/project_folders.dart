@@ -27,6 +27,10 @@ abstract interface class ProjectFolders {
   /// Removes the project folder after a failed create so no partial tree
   /// remains. Missing folders succeed.
   Future<Result<void>> discard(Project project);
+
+  /// Moves the project folder into the recycle area. Missing folders
+  /// succeed. Never unlinks a file.
+  Future<Result<Directory>> recycle(Project project);
 }
 
 final class _ProjectFolders implements ProjectFolders {
@@ -72,6 +76,54 @@ final class _ProjectFolders implements ProjectFolders {
         StorageFailure(
           message: 'The project folder could not be removed from this device.',
           recoveryAction: 'Delete the leftover folder, then try again.',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Result<Directory>> recycle(Project project) async {
+    try {
+      final Result<Directory> root = await _storageRoot.resolve();
+      switch (root) {
+        case FailureResult<Directory>(:final Failure failure):
+          return FailureResult<Directory>(failure);
+        case Success<Directory>(:final Directory value):
+          final String folderName = project.folderName.trim();
+          if (folderName.isEmpty) {
+            return Success<Directory>(Directory('${value.path}/$_recycle'));
+          }
+          _assertSafeFolderName(folderName);
+          final Directory source = Directory(
+            '${value.path}/$_projects/$folderName',
+          );
+          final Directory dest = Directory(
+            '${value.path}/$_recycle/$folderName',
+          );
+          if (!source.existsSync()) {
+            return Success<Directory>(dest);
+          }
+          if (dest.existsSync()) {
+            return const FailureResult<Directory>(
+              StorageFailure(
+                message:
+                    'That project is already in the recycle area on this device.',
+                recoveryAction:
+                    'Restore it from the recycle area, then try again.',
+              ),
+            );
+          }
+          await dest.parent.create(recursive: true);
+          await source.rename(dest.path);
+          return Success<Directory>(dest);
+      }
+    } on Failure catch (failure) {
+      return FailureResult<Directory>(failure);
+    } on Object {
+      return const FailureResult<Directory>(
+        StorageFailure(
+          message: 'The project folder could not be moved to the recycle area.',
+          recoveryAction: 'Free space or allow storage access, then try again.',
         ),
       );
     }
@@ -156,6 +208,8 @@ StorageFailure _missing(String path) {
 final RegExp _drive = RegExp(r'^[A-Za-z]:');
 
 const String _projects = 'projects';
+
+const String _recycle = '.recycle';
 
 const List<String> _tree = <String>[
   'photos',

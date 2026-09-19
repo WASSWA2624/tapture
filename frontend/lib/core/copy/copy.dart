@@ -360,6 +360,42 @@ abstract final class Copy {
   /// Duplicate action that opens the create form from an existing project.
   static const String projectsDuplicate = 'Duplicate';
 
+  /// Hides a finished project from the active list.
+  static const String projectArchive = 'Archive';
+
+  /// Restores an archived project to the active list.
+  static const String projectUnarchive = 'Unarchive';
+
+  /// Soft-deletes a project after typed confirmation.
+  static const String projectDelete = 'Delete project';
+
+  /// Title of the delete confirmation, naming the project.
+  static String projectDeleteTitle(String name) => 'Delete $name?';
+
+  /// Body of the delete confirmation, naming counts and retention.
+  static String projectDeleteMessage({
+    required int records,
+    required int files,
+    required int days,
+  }) {
+    return 'This hides ${recordsCount(records)} and ${filesCount(files)}. '
+        'You can restore them for $days days. Nothing is removed yet.';
+  }
+
+  /// How many files a delete would hide.
+  static String filesCount(int n) {
+    return Intl.plural(n, zero: 'no files', one: '1 file', other: '$n files');
+  }
+
+  /// Typed-name field on the delete confirmation.
+  static const String projectDeleteTypeName = 'Type the project name';
+
+  /// Alternative on the delete confirmation: export before deleting.
+  static const String projectExportFirst = 'Export first';
+
+  /// Filter that reveals archived projects on the landing list.
+  static const String projectShowArchived = 'Show archived';
+
   /// Title of the create-project form.
   static const String projectCreateTitle = 'New project';
 

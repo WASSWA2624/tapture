@@ -33,11 +33,11 @@ the user taps.
 
 ## Definition of done
 
-- [ ] Archiving is reversible and loses nothing; an archived project is absent from the active list and from default
+- [x] Archiving is reversible and loses nothing; an archived project is absent from the active list and from default
   exports.
-- [ ] A mistaken delete is recoverable for the whole retention period, with its files still on disk in the recycle area.
-- [ ] Deleting writes exactly one tombstone per deleted entity, inside the delete transaction.
-- [ ] Tests: widget tests of both actions covering the typed-name confirmation, the cancel path and the archived filter;
+- [x] A mistaken delete is recoverable for the whole retention period, with its files still on disk in the recycle area.
+- [x] Deleting writes exactly one tombstone per deleted entity, inside the delete transaction.
+- [x] Tests: widget tests of both actions covering the typed-name confirmation, the cancel path and the archived filter;
   a test asserting delete writes the tombstones and that no file disappears immediately.
 
 ## Out of scope

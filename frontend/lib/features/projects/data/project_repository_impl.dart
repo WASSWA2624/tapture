@@ -6,6 +6,7 @@ import 'package:tapture/core/db/tables/reference.dart';
 import 'package:tapture/core/db/tables/template_fields.dart';
 import 'package:tapture/core/db/tables/template_rows.dart';
 import 'package:tapture/core/db/tables/templates.dart';
+import 'package:tapture/core/db/tables/tombstones.dart';
 import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -42,8 +43,15 @@ final class ProjectRepositoryImpl implements ProjectRepository {
       required String folderName,
     })?
     discardTree,
+    Future<Result<void>> Function({
+      required String id,
+      required String name,
+      required String folderName,
+    })?
+    recycleTree,
   }) : _createTree = createTree ?? project_tree.writeProjectTree,
-       _discardTree = discardTree ?? project_tree.discardProjectTree;
+       _discardTree = discardTree ?? project_tree.discardProjectTree,
+       _recycleTree = recycleTree ?? project_tree.recycleProjectTree;
 
   final sqlite.AppDatabase _db;
   final Clock _clock;
@@ -51,6 +59,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   final IdService _ids;
   final _ProjectTreeWrite _createTree;
   final _ProjectTreeWrite _discardTree;
+  final _ProjectTreeWrite _recycleTree;
 
   @override
   Stream<List<Project>> watchAll({bool includeArchived = false}) {
@@ -203,7 +212,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   }
 
   @override
-  Stream<List<ProjectListRow>> watchList() {
+  Stream<List<ProjectListRow>> watchList({bool includeArchived = false}) {
     final sqlite.$ProjectsTable projects = _db.projects;
     final sqlite.$RecordsTable records = _db.records;
     final Expression<int> recordCount = records.id.count();
@@ -221,7 +230,13 @@ final class ProjectRepositoryImpl implements ProjectRepository {
           ),
         ]);
     query
-      ..where(projects.status.equalsValue(projects_db.ProjectStatus.active))
+      ..where(
+        includeArchived
+            ? projects.status
+                  .equalsValue(projects_db.ProjectStatus.deleted)
+                  .not()
+            : projects.status.equalsValue(projects_db.ProjectStatus.active),
+      )
       ..addColumns(<Expression<Object>>[
         recordCount,
         unprocessedCount,
@@ -269,6 +284,70 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   }
 
   @override
+  Future<Result<ProjectOwnedCounts>> ownedCounts(String id) async {
+    if (await _byId(id) == null) {
+      return const FailureResult<ProjectOwnedCounts>(_missing);
+    }
+    final int records =
+        (await (_db.select(_db.records)..where(
+                  (sqlite.$RecordsTable tbl) => tbl.projectId.equals(id),
+                ))
+                .get())
+            .length;
+    final int photos =
+        (await (_db.select(
+                  _db.photos,
+                )..where((sqlite.$PhotosTable tbl) => tbl.projectId.equals(id)))
+                .get())
+            .length;
+    final int attachments =
+        (await (_db.select(_db.attachments)..where(
+                  (sqlite.$AttachmentsTable tbl) => tbl.projectId.equals(id),
+                ))
+                .get())
+            .length;
+    return Success<ProjectOwnedCounts>((
+      records: records,
+      files: photos + attachments,
+    ));
+  }
+
+  @override
+  Future<Result<void>> delete(String id) async {
+    final sqlite.Project? existing = await _byId(id);
+    if (existing == null) {
+      return const FailureResult<void>(_missing);
+    }
+    final Project current = ProjectMapper.fromRow(existing);
+    final Result<void> marked = await runInTransaction(_db, () async {
+      await _tombstoneOwned(id);
+      final Result<Project> written = await _write(
+        current.copyWith(status: ProjectStatus.deleted),
+      );
+      switch (written) {
+        case FailureResult<Project>(:final Failure failure):
+          throw StorageFailure(
+            message: failure.message,
+            recoveryAction: failure.recoveryAction ?? 'Try again.',
+          );
+        case Success<Project>():
+          return;
+      }
+    });
+    switch (marked) {
+      case FailureResult<void>(:final Failure failure):
+        return FailureResult<void>(failure);
+      case Success<void>():
+        break;
+    }
+    return _recycleTree(
+      id: current.id,
+      name: current.name,
+      folderName: current.folderName,
+    );
+  }
+
+  @override
   Future<Result<void>> setStatus(String id, ProjectStatus status) async {
     final sqlite.Project? existing = await _byId(id);
     if (existing == null) {
@@ -278,6 +357,164 @@ final class ProjectRepositoryImpl implements ProjectRepository {
       ProjectMapper.fromRow(existing).copyWith(status: status),
     );
     return written.map((Project _) {});
+  }
+
+  Future<void> _tombstoneOwned(String projectId) async {
+    final List<sqlite.RecordRow> records =
+        await (_db.select(_db.records)..where(
+              (sqlite.$RecordsTable tbl) => tbl.projectId.equals(projectId),
+            ))
+            .get();
+    final List<sqlite.Photo> photos =
+        await (_db.select(_db.photos)..where(
+              (sqlite.$PhotosTable tbl) => tbl.projectId.equals(projectId),
+            ))
+            .get();
+    final List<sqlite.Attachment> attachments =
+        await (_db.select(_db.attachments)..where(
+              (sqlite.$AttachmentsTable tbl) => tbl.projectId.equals(projectId),
+            ))
+            .get();
+    final List<sqlite.Template> templates =
+        await (_db.select(_db.templates)..where(
+              (sqlite.$TemplatesTable tbl) => tbl.projectId.equals(projectId),
+            ))
+            .get();
+    final List<sqlite.ContextData> contexts =
+        await (_db.select(_db.context)..where(
+              (sqlite.$ContextTable tbl) => tbl.projectId.equals(projectId),
+            ))
+            .get();
+    final List<sqlite.ContextStateRow> states =
+        await (_db.select(_db.contextState)..where(
+              (sqlite.$ContextStateTable tbl) =>
+                  tbl.projectId.equals(projectId),
+            ))
+            .get();
+    final List<sqlite.ContextPreset> presets =
+        await (_db.select(_db.contextPresets)..where(
+              (sqlite.$ContextPresetsTable tbl) =>
+                  tbl.projectId.equals(projectId),
+            ))
+            .get();
+    final List<sqlite.ReferenceDatasetRow> datasets =
+        await (_db.select(_db.reference)..where(
+              (sqlite.$ReferenceTable tbl) => tbl.projectId.equals(projectId),
+            ))
+            .get();
+    final List<sqlite.ExportRow> exports =
+        await (_db.select(_db.exports)..where(
+              (sqlite.$ExportsTable tbl) => tbl.projectId.equals(projectId),
+            ))
+            .get();
+    final List<sqlite.DuplicatePair> duplicates =
+        await (_db.select(_db.duplicates)..where(
+              (sqlite.$DuplicatesTable tbl) => tbl.projectId.equals(projectId),
+            ))
+            .get();
+    final List<sqlite.Variance> variances =
+        await (_db.select(_db.variances)..where(
+              (sqlite.$VariancesTable tbl) => tbl.projectId.equals(projectId),
+            ))
+            .get();
+
+    for (final sqlite.RecordRow record in records) {
+      await _mark(_db.records, record.id);
+      final List<sqlite.RecordField> fields =
+          await (_db.select(_db.recordFields)..where(
+                (sqlite.$RecordFieldsTable tbl) =>
+                    tbl.recordId.equals(record.id),
+              ))
+              .get();
+      for (final sqlite.RecordField field in fields) {
+        await _mark(_db.recordFields, field.id);
+      }
+      final List<sqlite.Caption> captions =
+          await (_db.select(_db.captions)..where(
+                (sqlite.$CaptionsTable tbl) => tbl.ownerId.equals(record.id),
+              ))
+              .get();
+      for (final sqlite.Caption caption in captions) {
+        await _mark(_db.captions, caption.id);
+      }
+    }
+    for (final sqlite.Photo photo in photos) {
+      await _mark(_db.photos, photo.id);
+      final List<sqlite.Caption> captions =
+          await (_db.select(_db.captions)..where(
+                (sqlite.$CaptionsTable tbl) => tbl.ownerId.equals(photo.id),
+              ))
+              .get();
+      for (final sqlite.Caption caption in captions) {
+        await _mark(_db.captions, caption.id);
+      }
+    }
+    for (final sqlite.Attachment attachment in attachments) {
+      await _mark(_db.attachments, attachment.id);
+    }
+    for (final sqlite.Template header in templates) {
+      await _mark(_db.templates, header.id);
+      final List<sqlite.TemplateField> fields =
+          await (_db.select(_db.templateFields)..where(
+                (sqlite.$TemplateFieldsTable tbl) =>
+                    tbl.templateId.equals(header.id),
+              ))
+              .get();
+      for (final sqlite.TemplateField field in fields) {
+        await _mark(_db.templateFields, field.id);
+      }
+      final List<sqlite.TemplateRow> rows =
+          await (_db.select(_db.templateRows)..where(
+                (sqlite.$TemplateRowsTable tbl) =>
+                    tbl.templateId.equals(header.id),
+              ))
+              .get();
+      for (final sqlite.TemplateRow row in rows) {
+        await _mark(_db.templateRows, row.id);
+      }
+    }
+    for (final sqlite.ContextData row in contexts) {
+      await _mark(_db.context, row.id);
+    }
+    for (final sqlite.ContextStateRow row in states) {
+      await _mark(_db.contextState, row.id);
+    }
+    for (final sqlite.ContextPreset row in presets) {
+      await _mark(_db.contextPresets, row.id);
+    }
+    for (final sqlite.ReferenceDatasetRow dataset in datasets) {
+      await _mark(_db.reference, dataset.id);
+      final List<sqlite.ReferenceLookupRow> rows =
+          await (_db.select(_db.referenceRows)..where(
+                (sqlite.$ReferenceRowsTable tbl) =>
+                    tbl.datasetId.equals(dataset.id),
+              ))
+              .get();
+      for (final sqlite.ReferenceLookupRow row in rows) {
+        await _mark(_db.referenceRows, row.id);
+      }
+    }
+    for (final sqlite.ExportRow row in exports) {
+      await _mark(_db.exports, row.id);
+    }
+    for (final sqlite.DuplicatePair row in duplicates) {
+      await _mark(_db.duplicates, row.id);
+    }
+    for (final sqlite.Variance row in variances) {
+      await _mark(_db.variances, row.id);
+    }
+    await _mark(_db.projects, projectId);
+  }
+
+  Future<void> _mark(TableInfo<dynamic, dynamic> table, String entityId) {
+    return writeTombstone(
+      _db,
+      entityType: table.actualTableName,
+      entityId: entityId,
+      reason: _deleteReason,
+      clock: _clock,
+      deviceId: _deviceId,
+    );
   }
 
   Future<Result<Project>> _write(Project project) async {
@@ -528,7 +765,7 @@ final class _EmptyProjectRepository implements ProjectRepository {
   }
 
   @override
-  Stream<List<ProjectListRow>> watchList() {
+  Stream<List<ProjectListRow>> watchList({bool includeArchived = false}) {
     return Stream<List<ProjectListRow>>.value(const <ProjectListRow>[]);
   }
 
@@ -560,6 +797,16 @@ final class _EmptyProjectRepository implements ProjectRepository {
   @override
   Future<Result<void>> setStatus(String id, ProjectStatus status) async {
     return const FailureResult<void>(_missing);
+  }
+
+  @override
+  Future<Result<void>> delete(String id) async {
+    return const FailureResult<void>(_missing);
+  }
+
+  @override
+  Future<Result<ProjectOwnedCounts>> ownedCounts(String id) async {
+    return const FailureResult<ProjectOwnedCounts>(_missing);
   }
 }
 
@@ -610,6 +857,8 @@ const List<String> _closedRecordStatuses = <String>[
   'archived',
   'deleted',
 ];
+
+const String _deleteReason = 'Project deleted';
 
 typedef _ProjectTreeWrite =
     Future<Result<void>> Function({

@@ -29,6 +29,18 @@ Future<Result<void>> discardProjectTree({
   ).discard(_row(id: id, name: name, folderName: folderName));
 }
 
+/// Moves a project folder into the recycle area. Missing folders succeed.
+Future<Result<void>> recycleProjectTree({
+  required String id,
+  required String name,
+  required String folderName,
+}) async {
+  final Result<Directory> moved = await ProjectFolders(
+    storageRoot: StorageRoot(),
+  ).recycle(_row(id: id, name: name, folderName: folderName));
+  return moved.map((Directory _) {});
+}
+
 Project _row({
   required String id,
   required String name,

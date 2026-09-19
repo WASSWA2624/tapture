@@ -19,6 +19,16 @@ final class FakeProjectRepository implements ProjectRepository {
   /// When set, [update] returns this failure instead of writing.
   Failure? updateFailure;
 
+  /// Tombstones [delete] wrote. Widget tests read this instead of
+  /// opening a database.
+  final List<({String entityType, String entityId})> tombstones =
+      <({String entityType, String entityId})>[];
+
+  /// Folder names [delete] moved into the recycle area.
+  final List<String> recycled = <String>[];
+
+  final Map<String, int> _files = <String, int>{};
+
   /// How many rows are stored. Widget tests read this instead of
   /// awaiting [watchAll].
   int get count => _rows.length;
@@ -40,6 +50,11 @@ final class FakeProjectRepository implements ProjectRepository {
       lastWorkedAt: lastWorkedAt,
     );
     _emit();
+  }
+
+  /// Seeds the file count [ownedCounts] returns for [id].
+  void seedFiles(String id, {int files = 0}) {
+    _files[id] = files;
   }
 
   /// Seeds the pending counts [watchHome] returns for [id].
@@ -70,8 +85,8 @@ final class FakeProjectRepository implements ProjectRepository {
   }
 
   @override
-  Stream<List<ProjectListRow>> watchList() {
-    return _watch(_listSnapshot);
+  Stream<List<ProjectListRow>> watchList({bool includeArchived = false}) {
+    return _watch(() => _listSnapshot(includeArchived));
   }
 
   @override
@@ -79,9 +94,9 @@ final class FakeProjectRepository implements ProjectRepository {
     return _watch(() => _home[projectId] ?? emptyProjectHomeCounts);
   }
 
-  List<ProjectListRow> _listSnapshot() {
+  List<ProjectListRow> _listSnapshot(bool includeArchived) {
     final List<ProjectListRow> rows = <ProjectListRow>[
-      for (final Project project in _visible(false))
+      for (final Project project in _visible(includeArchived))
         (
           project: project,
           recordCount: _counts[project.id]?.recordCount ?? 0,
@@ -189,6 +204,30 @@ final class FakeProjectRepository implements ProjectRepository {
       startsOn: project.startsOn,
       endsOn: project.endsOn,
     );
+    _emit();
+    return const Success<void>(null);
+  }
+
+  @override
+  Future<Result<ProjectOwnedCounts>> ownedCounts(String id) async {
+    if (!_rows.containsKey(id)) {
+      return const FailureResult<ProjectOwnedCounts>(_missing);
+    }
+    return Success<ProjectOwnedCounts>((
+      records: _counts[id]?.recordCount ?? 0,
+      files: _files[id] ?? 0,
+    ));
+  }
+
+  @override
+  Future<Result<void>> delete(String id) async {
+    final Project? current = _rows[id];
+    if (current == null) {
+      return const FailureResult<void>(_missing);
+    }
+    tombstones.add((entityType: 'projects', entityId: id));
+    recycled.add(current.folderName);
+    _rows[id] = current.copyWith(status: ProjectStatus.deleted);
     _emit();
     return const Success<void>(null);
   }

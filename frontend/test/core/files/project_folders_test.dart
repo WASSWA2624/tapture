@@ -85,6 +85,24 @@ void main() {
     expect(created.existsSync(), isFalse);
     _okVoid(await folders.discard(project));
   });
+
+  test('recycle moves the folder and leaves the file on disk', () async {
+    final ProjectFolders folders = _folders();
+    final Project project = _project(
+      id: 'id-dddddd',
+      name: 'Done',
+      folderName: 'done__dddddd',
+    );
+    final Directory created = _ok(await folders.create(project));
+    File('${created.path}/photos/keep.txt').writeAsStringSync('kept');
+    final Directory recycled = _ok(await folders.recycle(project));
+
+    expect(created.existsSync(), isFalse);
+    expect(recycled.existsSync(), isTrue);
+    expect(_slash(recycled.path), contains('/.recycle/'));
+    expect(File('${recycled.path}/photos/keep.txt').readAsStringSync(), 'kept');
+    _ok(await folders.recycle(project));
+  });
 }
 
 ProjectFolders _folders() {
