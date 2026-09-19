@@ -6,11 +6,18 @@ import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/fields/dictation_scope.dart';
 import 'package:tapture/features/projects/presentation/current_project.dart';
 import 'package:tapture/features/projects/presentation/project_create_screen.dart';
 import 'package:tapture/features/projects/projects.dart';
 
+import '../../../support/a11y_matchers.dart';
+import '../../../support/fakes/fake_stt_service.dart';
 import '../fakes/fake_project_repository.dart';
+
+final Finder _mic = find.byKey(
+  const ValueKey<String>('app-text-field-dictate'),
+);
 
 void main() {
   testWidgets('an empty name fails validation and writes nothing', (
@@ -97,6 +104,76 @@ void main() {
       Copy.projectCopyName('Alpha'),
     );
   });
+
+  testWidgets(
+    'Name, Description and Organisation offer a labelled microphone',
+    (WidgetTester tester) async {
+      final FakeProjectRepository repo = FakeProjectRepository();
+      addTearDown(repo.dispose);
+      await _pump(tester, repo: repo, speech: FakeSttService());
+
+      expect(_mic, findsNWidgets(3));
+      expect(
+        find.byTooltip(Copy.dictateInto(Copy.projectName)),
+        findsOneWidget,
+      );
+      expect(
+        find.byTooltip(Copy.dictateInto(Copy.projectDescription)),
+        findsOneWidget,
+      );
+      expect(
+        find.byTooltip(Copy.dictateInto(Copy.projectOrganisation)),
+        findsOneWidget,
+      );
+      expect(_mic, meetsTapTarget());
+    },
+  );
+
+  testWidgets('dictating into Name inserts the words and does not submit', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    final FakeSttService speech = FakeSttService();
+    await _pump(tester, repo: repo, speech: speech);
+
+    await tester.tap(find.byTooltip(Copy.dictateInto(Copy.projectName)));
+    await tester.pump();
+    await speech.finish('Alpha');
+    await tester.pump();
+
+    expect(
+      tester.widget<TextField>(find.byType(TextField).first).controller?.text,
+      'Alpha',
+    );
+    expect(repo.count, 0);
+    expect(
+      ProviderScope.containerOf(
+        tester.element(find.byType(ProjectCreateScreen)),
+      ).read(currentProjectProvider),
+      isNull,
+    );
+  });
+
+  testWidgets('New project fits at 360 dp and 200 percent text', (
+    WidgetTester tester,
+  ) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 800);
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    await _pump(tester, repo: repo, speech: FakeSttService());
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(_mic, findsNWidgets(3));
+  });
 }
 
 Future<void> _pump(
@@ -104,17 +181,21 @@ Future<void> _pump(
   required FakeProjectRepository repo,
   String? sourceId,
   String? initialName,
+  FakeSttService? speech,
 }) async {
+  final Widget app = MaterialApp(
+    theme: buildTheme(brightness: Brightness.light),
+    home: ProjectCreateScreen(sourceId: sourceId, initialName: initialName),
+  );
   await tester.pumpWidget(
     ProviderScope(
       retry: (int _, Object _) => null,
       overrides: <Override>[
         projectRepositoryProvider.overrideWith((Ref _) => repo),
       ],
-      child: MaterialApp(
-        theme: buildTheme(brightness: Brightness.light),
-        home: ProjectCreateScreen(sourceId: sourceId, initialName: initialName),
-      ),
+      child: speech == null
+          ? app
+          : DictationScope(service: speech, languageTag: 'sw', child: app),
     ),
   );
   await tester.pump();

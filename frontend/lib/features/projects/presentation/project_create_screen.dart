@@ -69,7 +69,6 @@ class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen> {
             requiredness: FieldRequiredness.required,
             textInputAction: TextInputAction.next,
             errorText: view.nameError,
-            dictation: false,
           ),
           AppTextField(
             label: Copy.projectDescription,
@@ -77,14 +76,12 @@ class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen> {
             requiredness: FieldRequiredness.optional,
             textInputAction: TextInputAction.next,
             maxLines: 3,
-            dictation: false,
           ),
           AppTextField(
             label: Copy.projectOrganisation,
             controller: _organisation,
             requiredness: FieldRequiredness.optional,
             textInputAction: TextInputAction.done,
-            dictation: false,
           ),
         ],
         submitLabel: duplicating ? Copy.projectsDuplicate : Copy.projectsCreate,
