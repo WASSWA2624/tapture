@@ -1,11 +1,12 @@
 import 'dart:io';
 
-import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/path_sanitizer.dart';
 import 'package:tapture/core/files/storage_root.dart';
+
+export 'package:tapture/core/files/path_sanitizer.dart' show folderNameFor;
 
 /// Creates and resolves the per-project folder tree under the storage root.
 abstract interface class ProjectFolders {
@@ -22,6 +23,10 @@ abstract interface class ProjectFolders {
   /// The stored [Project.folderName] under the storage root. A rename of
   /// [Project.name] does not move this directory.
   Future<Result<Directory>> resolve(Project project);
+
+  /// Removes the project folder after a failed create so no partial tree
+  /// remains. Missing folders succeed.
+  Future<Result<void>> discard(Project project);
 }
 
 final class _ProjectFolders implements ProjectFolders {
@@ -37,6 +42,39 @@ final class _ProjectFolders implements ProjectFolders {
   @override
   Future<Result<Directory>> resolve(Project project) async {
     return _open(project, createTree: false);
+  }
+
+  @override
+  Future<Result<void>> discard(Project project) async {
+    try {
+      final Result<Directory> root = await _storageRoot.resolve();
+      switch (root) {
+        case FailureResult<Directory>(:final Failure failure):
+          return FailureResult<void>(failure);
+        case Success<Directory>(:final Directory value):
+          final String folderName = project.folderName.trim();
+          if (folderName.isEmpty) {
+            return const Success<void>(null);
+          }
+          _assertSafeFolderName(folderName);
+          final Directory projectDir = Directory(
+            '${value.path}/$_projects/$folderName',
+          );
+          if (projectDir.existsSync()) {
+            await projectDir.delete(recursive: true);
+          }
+          return const Success<void>(null);
+      }
+    } on Failure catch (failure) {
+      return FailureResult<void>(failure);
+    } on Object {
+      return const FailureResult<void>(
+        StorageFailure(
+          message: 'The project folder could not be removed from this device.',
+          recoveryAction: 'Delete the leftover folder, then try again.',
+        ),
+      );
+    }
   }
 
   Future<Result<Directory>> _open(
@@ -90,8 +128,7 @@ final class _ProjectFolders implements ProjectFolders {
   }
 
   String _derivedFolderName(Project project) {
-    final String base = sanitiseSegment(project.name);
-    return '${base}__${_idSuffix(project.id)}';
+    return folderNameFor(name: project.name, id: project.id);
   }
 }
 
@@ -109,15 +146,6 @@ void _assertSafeFolderName(String folderName) {
   }
 }
 
-String _idSuffix(String id) {
-  final String hex = id.replaceAll(_notAlnum, '');
-  final int length = AppConstants.folders.idSuffixLength;
-  if (hex.length <= length) {
-    return hex.padLeft(length, '0').toLowerCase();
-  }
-  return hex.substring(hex.length - length).toLowerCase();
-}
-
 StorageFailure _missing(String path) {
   return StorageFailure(
     message: 'Tapture could not find $path.',
@@ -126,7 +154,6 @@ StorageFailure _missing(String path) {
 }
 
 final RegExp _drive = RegExp(r'^[A-Za-z]:');
-final RegExp _notAlnum = RegExp(r'[^A-Za-z0-9]');
 
 const String _projects = 'projects';
 

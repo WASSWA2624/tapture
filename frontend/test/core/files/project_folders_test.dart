@@ -71,6 +71,20 @@ void main() {
       );
     },
   );
+
+  test('discard removes a partial tree and succeeds when missing', () async {
+    final ProjectFolders folders = _folders();
+    final Project project = _project(
+      id: 'id-cccccc',
+      name: 'Partial',
+      folderName: 'partial__cccccc',
+    );
+    final Directory created = _ok(await folders.create(project));
+    expect(created.existsSync(), isTrue);
+    _okVoid(await folders.discard(project));
+    expect(created.existsSync(), isFalse);
+    _okVoid(await folders.discard(project));
+  });
 }
 
 ProjectFolders _folders() {
@@ -110,6 +124,12 @@ Directory _ok(Result<Directory> result) {
   return result.fold((Failure failure) {
     fail('${failure.message} ${failure.recoveryAction}');
   }, (Directory directory) => directory);
+}
+
+void _okVoid(Result<void> result) {
+  result.fold((Failure failure) {
+    fail('${failure.message} ${failure.recoveryAction}');
+  }, (void _) {});
 }
 
 String _slash(String path) => path.replaceAll(r'\', '/');

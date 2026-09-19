@@ -5,6 +5,11 @@ import 'package:tapture/core/errors/failure.dart';
 /// [AppConstants.folders.maxSegmentLength].
 const int kMaxPathSegment = 80;
 
+/// Short id tail appended to a project folder name. Kept as a literal so
+/// [folderNameFor] stays io-free; [path_sanitizer_test] asserts it matches
+/// [AppConstants.folders.idSuffixLength].
+const int kIdSuffixLength = 6;
+
 /// Turns arbitrary user text into one safe path segment.
 ///
 /// The type this file is named for (FE-STR-06). The contract name is
@@ -51,6 +56,16 @@ String sanitiseSegment(String input, {int maxLength = kMaxPathSegment}) {
   return PathSanitizer.sanitiseSegment(input, maxLength: maxLength);
 }
 
+/// Stored folder name: sanitised [name] plus a short [id] suffix. A later
+/// rename of the display name must not recompute this.
+String folderNameFor({required String name, required String id}) {
+  final String hex = id.replaceAll(_notAlnum, '');
+  final String suffix = hex.length <= kIdSuffixLength
+      ? hex.padLeft(kIdSuffixLength, '0').toLowerCase()
+      : hex.substring(hex.length - kIdSuffixLength).toLowerCase();
+  return '${sanitiseSegment(name)}__$suffix';
+}
+
 bool _isHostile(String input) {
   final String trimmed = input.trim();
   if (trimmed.isEmpty) {
@@ -88,6 +103,7 @@ String _stripAccents(String input) {
   return buffer.toString().replaceAll(_combining, '');
 }
 
+final RegExp _notAlnum = RegExp(r'[^A-Za-z0-9]');
 final RegExp _separator = RegExp(r'[\s/\\]+');
 final RegExp _reservedChar = RegExp(r'[^A-Za-z0-9-]');
 final RegExp _repeatHyphen = RegExp(r'-{2,}');

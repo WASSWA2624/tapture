@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**83 of 281 tasks complete (29.5%)** · last updated 2026-09-19
+**84 of 281 tasks complete (29.9%)** · last updated 2026-09-19
 
 `████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -15,7 +15,7 @@
 | 05 — File storage | 7 | 7 | `██████████████` 100% |
 | 06 — Application shell | 5 | 5 | `██████████████` 100% |
 | 07 — Account and settings | 5 | 5 | `██████████████` 100% |
-| 08 — Projects | 2 | 6 | `████░░░░░░░░░░` 33% |
+| 08 — Projects | 3 | 6 | `███████░░░░░░░` 50% |
 | 09 — Templates | 0 | 17 | `░░░░░░░░░░░░░░` 0% |
 | 10 — Reference data | 0 | 8 | `░░░░░░░░░░░░░░` 0% |
 | 11 — Context | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **83** | **281** | `████░░░░░░░░░░` 29.5% |
+| **Total** | **84** | **281** | `████░░░░░░░░░░` 29.9% |
 
 ## Completed
 
@@ -119,6 +119,7 @@
 | 081 — Manual offline mode switch | 2026-09-18 | One settings switch writes `SettingKeys.offlineByChoice`. `ConnectivityService` folds that flag and reports offline; features still read `NetworkState` only. `OutboundQueue` holds work while offline and drains on release, retrying nothing while the switch is on. The status line labels offline-by-choice separately from the radio. Guarded by a recording-boundary widget test and a writer-only assertion. |
 | 082 — Project domain model and repository | 2026-09-19 | Immutable `Project` / `ProjectStatus` / `ProjectSettings`, Drift mapper, `ProjectRepositoryImpl`, barrel `projectRepositoryProvider`, and the in-memory fake later screens test against. Organisation/dates map onto `client`/`startedAt`/`completedAt`; description lives in settings JSON. Unknown or missing settings load as defaults. Guarded by a row→domain→row mapper test and the same create/watch/status suite on the in-memory database and the fake. |
 | 083 — Project list and the current project | 2026-09-19 | Landing `ProjectListScreen` with record/unprocessed counts and last-worked time from one `watchList` query. `CurrentProject` persists `SettingKeys.openProjectId`, restores on launch, clears an unresolvable id, and is the source `openProjectIdProvider` aliases. Empty state offers Create and Import; diverted deep links resume after a row is opened. Guarded by four AsyncValueView widget tests, a CurrentProject restore/clear/resume unit test, and a measured <2s landing budget. |
+| 084 — Create and duplicate a project | 2026-09-19 | One `createReady` transaction writes the project row, folder tree (via `ProjectFolders`) and a default Site context — or copies templates, context definitions, project-scoped reference and settings under a new id and folder, never records or photos. A failed folder write discards the partial tree and rolls the row back. `ProjectCreateScreen` plus `ProjectDuplicateAction` share that path; success opens `CurrentProject`. Guarded by rollback, duplication, validation and failure tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -219,8 +220,8 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 065 | Task 018 bans `File.delete` outside the purge job. The writability probe must create and remove a marker. | Open — the probe awaits `marker.delete()` on a `File` variable, which the checker does not match (`File(...).delete` / `deleteSync`); leftover probes are ignored |
 | 065 | Storage permission is photos (026) and is not required for the app-specific documents tree on current Android. | Open — resolve still requests storage because this task goes through the permissions service; a denial is `PermissionFailure` and the app stays usable |
 | 066 | `kMaxPathSegment` must be a compile-time const for the default argument; `AppConstants.folders.maxSegmentLength` is a record field and is not. | Open — literal `80`, asserted equal to the constant in tests |
-| 066 | Contract `Project` in core cannot be the feature domain type (FE-STR-04). | Open — Drift `Project` from 052; 084 maps the domain model onto it |
-| 066 | Step 3 stores `folderName` on the row; this task's files have no DAO. | Open — `create` derives `<sanitised>__<id>` when stored `folderName` is empty; 084 persists the name |
+| 066 | Contract `Project` in core cannot be the feature domain type (FE-STR-04). | Closed by 084 — `createReady` maps the domain model onto Drift `Project` for `ProjectFolders` |
+| 066 | Step 3 stores `folderName` on the row; this task's files have no DAO. | Closed by 084 — `folderNameFor` persists `<sanitised>__<id>` on the new row |
 | 066 | Step 1 appends a numeric suffix on collision; `sanitiseSegment` is a pure function with no taken-set. | Open — project uniqueness is the id suffix; photo-file rename is 196 |
 | 066 | `project_folders.dart` uses `dart:io` `Directory` as the contract names. Exporting it from `files.dart` would pull `dart:io` into the web shell. | Open — callers import `project_folders.dart` directly, same as 065 |
 | 067 | Task 018 bans `File.delete` outside the purge job. Interrupted writes and `.part` sweeps must remove partial files. | Open — same seam as 065: `await part.delete()` on a `File` variable, which the checker does not match |
@@ -411,11 +412,11 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 08 — Projects
 
-*2 of 6 complete.*
+*3 of 6 complete.*
 
 - [x] [082 — Project domain model and repository](dev-plan/08-projects/082-project-model.md)
 - [x] [083 — Project list and the current project](dev-plan/08-projects/083-project-list.md)
-- [ ] [084 — Create and duplicate a project](dev-plan/08-projects/084-project-create.md)
+- [x] [084 — Create and duplicate a project](dev-plan/08-projects/084-project-create.md)
 - [ ] [085 — Project home screen](dev-plan/08-projects/085-project-home.md)
 - [ ] [086 — Project details and per-project settings](dev-plan/08-projects/086-project-edit.md)
 - [ ] [087 — Archive, unarchive and delete a project](dev-plan/08-projects/087-project-archive.md)

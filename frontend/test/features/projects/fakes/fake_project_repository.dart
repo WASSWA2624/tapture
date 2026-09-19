@@ -10,6 +10,14 @@ final class FakeProjectRepository implements ProjectRepository {
   final Map<String, Project> _rows = <String, Project>{};
   final Map<String, _ListCounts> _counts = <String, _ListCounts>{};
   final StreamController<void> _changes = StreamController<void>.broadcast();
+  int _created = 0;
+
+  /// When set, [createReady] returns this failure instead of writing.
+  Failure? createFailure;
+
+  /// How many rows are stored. Widget tests read this instead of
+  /// awaiting [watchAll].
+  int get count => _rows.length;
 
   /// Seeds the counts [watchList] returns for [id]. Tests that care
   /// about the landing row call this instead of opening a database.
@@ -85,6 +93,47 @@ final class FakeProjectRepository implements ProjectRepository {
   }
 
   @override
+  Future<Result<Project>> createReady({
+    required String name,
+    String? description,
+    String? organisation,
+    String? sourceId,
+  }) async {
+    final Failure? forced = createFailure;
+    if (forced != null) {
+      return FailureResult<Project>(forced);
+    }
+    final ValidationFailure? invalid = _validateName(name);
+    if (invalid != null) {
+      return FailureResult<Project>(invalid);
+    }
+    ProjectSettings settings = const ProjectSettings();
+    if (sourceId != null && sourceId.isNotEmpty) {
+      final Project? source = _rows[sourceId];
+      if (source == null) {
+        return const FailureResult<Project>(_missing);
+      }
+      settings = source.settings;
+    }
+    _created += 1;
+    final DateTime at = DateTime.utc(2026, 9, 17, 8);
+    final Project project = Project(
+      id: 'created-$_created',
+      name: name.trim(),
+      status: ProjectStatus.active,
+      folderName: 'created-$_created',
+      settings: settings,
+      createdAt: at,
+      updatedAt: at,
+      description: _optionalText(description),
+      organisation: _optionalText(organisation),
+    );
+    _rows[project.id] = project;
+    _emit();
+    return Success<Project>(project);
+  }
+
+  @override
   Future<Result<void>> update(Project project) async {
     final ValidationFailure? invalid = _validateName(project.name);
     if (invalid != null) {
@@ -151,6 +200,13 @@ final class FakeProjectRepository implements ProjectRepository {
       listener.onCancel = sub.cancel;
     });
   }
+}
+
+String? _optionalText(String? raw) {
+  if (raw == null || raw.trim().isEmpty) {
+    return null;
+  }
+  return raw.trim();
 }
 
 ValidationFailure? _validateName(String name) {

@@ -54,7 +54,9 @@ void main() {
 
     test('a 300-character name is capped at kMaxPathSegment', () {
       expect(kMaxPathSegment, AppConstants.folders.maxSegmentLength);
+      expect(kIdSuffixLength, AppConstants.folders.idSuffixLength);
       expect(sanitiseSegment('a' * 300), 'a' * kMaxPathSegment);
+      expect(folderNameFor(name: 'Alpha', id: 'id-aaaaaa'), 'Alpha__aaaaaa');
     });
 
     test('a custom cap is honoured', () {

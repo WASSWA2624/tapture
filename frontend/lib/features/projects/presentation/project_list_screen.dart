@@ -35,7 +35,7 @@ class ProjectListScreen extends ConsumerWidget {
       body: AsyncValueView<List<ProjectListRow>>(
         value: value,
         isEmpty: (List<ProjectListRow> rows) => rows.isEmpty,
-        empty: _empty,
+        empty: () => _empty(context),
         onRetry: () => ref.invalidate(projectListProvider),
         data: (List<ProjectListRow> rows) {
           return Column(
@@ -58,8 +58,8 @@ class ProjectListScreen extends ConsumerWidget {
     );
   }
 
-  Widget _empty() {
-    return const Column(
+  Widget _empty(BuildContext context) {
+    return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         AppEmptyState(
@@ -67,9 +67,9 @@ class ProjectListScreen extends ConsumerWidget {
           headline: Copy.projectsEmptyHeadline,
           message: Copy.projectsEmptyMessage,
           actionLabel: Copy.projectsCreate,
-          onAction: _noop,
+          onAction: () => context.go(_createLocation),
         ),
-        AppButton(
+        const AppButton(
           label: Copy.projectsImport,
           variant: AppButtonVariant.secondary,
           onPressed: _noop,
@@ -117,6 +117,9 @@ String _projectHome(String id) {
   return '$_projectsRoot/${Uri.encodeComponent(id)}';
 }
 
-/// Must match [AppRoutes.projects] and [AppRoutes.fromQuery].
+/// Must match [AppRoutes.projects], [AppRoutes.projectCreate] and
+/// [AppRoutes.fromQuery].
 const String _projectsRoot = '/projects';
+const String _newSegment = 'new';
+const String _createLocation = '$_projectsRoot/$_newSegment';
 const String _fromQuery = 'from';

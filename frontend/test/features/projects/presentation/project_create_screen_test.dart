@@ -1,0 +1,121 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/features/projects/presentation/current_project.dart';
+import 'package:tapture/features/projects/presentation/project_create_screen.dart';
+import 'package:tapture/features/projects/projects.dart';
+
+import '../fakes/fake_project_repository.dart';
+
+void main() {
+  testWidgets('an empty name fails validation and writes nothing', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    await _pump(tester, repo: repo);
+
+    await tester.tap(find.byType(AppPrimaryAction));
+    await tester.pump();
+
+    expect(find.text(Copy.nameRequired), findsWidgets);
+    expect(repo.count, 0);
+  });
+
+  testWidgets('a failed create shows the failure on the form', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository()
+      ..createFailure = const StorageFailure(
+        message: 'The project folder could not be created on this device.',
+        recoveryAction: 'Free space or allow storage access, then try again.',
+      );
+    addTearDown(repo.dispose);
+    await _pump(tester, repo: repo);
+
+    await tester.enterText(find.byType(TextField).first, 'Alpha');
+    await tester.pump();
+    await tester.tap(find.byType(AppPrimaryAction));
+    await tester.pump();
+
+    expect(
+      find.text('The project folder could not be created on this device.'),
+      findsOneWidget,
+    );
+    expect(repo.count, 0);
+    expect(
+      ProviderScope.containerOf(
+        tester.element(find.byType(ProjectCreateScreen)),
+      ).read(currentProjectProvider),
+      isNull,
+    );
+  });
+
+  testWidgets('a successful create opens the new project', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    await _pump(tester, repo: repo);
+
+    await tester.enterText(find.byType(TextField).first, 'Alpha');
+    await tester.enterText(find.byType(TextField).at(1), 'A site note');
+    await tester.enterText(find.byType(TextField).at(2), 'City works');
+    await tester.pump();
+    await tester.tap(find.byType(AppPrimaryAction));
+    await tester.pump();
+
+    expect(repo.count, 1);
+    expect(
+      ProviderScope.containerOf(
+        tester.element(find.byType(ProjectCreateScreen)),
+      ).read(currentProjectProvider),
+      'created-1',
+    );
+  });
+
+  testWidgets('duplicate prefills the suggested name', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    await _pump(
+      tester,
+      repo: repo,
+      sourceId: 'source-1',
+      initialName: Copy.projectCopyName('Alpha'),
+    );
+
+    expect(find.text(Copy.projectDuplicateTitle), findsOneWidget);
+    expect(
+      tester.widget<TextField>(find.byType(TextField).first).controller?.text,
+      Copy.projectCopyName('Alpha'),
+    );
+  });
+}
+
+Future<void> _pump(
+  WidgetTester tester, {
+  required FakeProjectRepository repo,
+  String? sourceId,
+  String? initialName,
+}) async {
+  await tester.pumpWidget(
+    ProviderScope(
+      retry: (int _, Object _) => null,
+      overrides: <Override>[
+        projectRepositoryProvider.overrideWith((Ref _) => repo),
+      ],
+      child: MaterialApp(
+        theme: buildTheme(brightness: Brightness.light),
+        home: ProjectCreateScreen(sourceId: sourceId, initialName: initialName),
+      ),
+    ),
+  );
+  await tester.pump();
+}

@@ -217,6 +217,13 @@ List<String> get _values {
     Copy.projectsEmptyMessage,
     Copy.projectsCreate,
     Copy.projectsImport,
+    Copy.projectsDuplicate,
+    Copy.projectCreateTitle,
+    Copy.projectDuplicateTitle,
+    Copy.projectName,
+    Copy.projectDescription,
+    Copy.projectOrganisation,
+    Copy.projectCopyName('Alpha'),
     Copy.projectLastWorked(DateTime.utc(2026, 9, 17)),
     Copy.projectListSubtitle(
       records: 2,

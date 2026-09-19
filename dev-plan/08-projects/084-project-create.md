@@ -32,11 +32,11 @@ definitions, reference data and settings — carrying no records.
 
 ## Definition of done
 
-- [ ] A project exists and is ready for capture after one screen.
-- [ ] A failed folder creation leaves no project row and no partial folder tree.
-- [ ] A duplicate has zero records and identical structure — same template, context and reference counts, new id, new
+- [x] A project exists and is ready for capture after one screen.
+- [x] A failed folder creation leaves no project row and no partial folder tree.
+- [x] A duplicate has zero records and identical structure — same template, context and reference counts, new id, new
   folder.
-- [ ] Tests: a rollback test with a failing folder-service fake; a duplication test asserting a record count of zero and
+- [x] Tests: a rollback test with a failing folder-service fake; a duplication test asserting a record count of zero and
   equal structure counts; widget tests of the form's validation and failure states.
 
 ## Out of scope

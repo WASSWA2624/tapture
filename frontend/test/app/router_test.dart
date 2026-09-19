@@ -16,6 +16,11 @@ void main() {
     expect(AppRoutes.projects, '/projects');
     expect(AppRoutes.lock, '/lock');
     expect(AppRoutes.project('ab'), '/projects/ab');
+    expect(AppRoutes.projectCreate, '/projects/new');
+    expect(
+      AppRoutes.projectCreateFrom(sourceId: 'p1', name: 'Alpha (copy)'),
+      contains('source=p1'),
+    );
     expect(AppRoutes.capture('ab'), '/projects/ab/capture');
     expect(AppRoutes.record('cd'), '/records/cd');
     expect(AppRoutes.records, '/records');
@@ -60,6 +65,14 @@ void main() {
     await _go(tester, router, AppRoutes.projects);
     expect(
       find.byKey(const ValueKey<String>('route-projects')),
+      findsOneWidget,
+    );
+
+    router.go(AppRoutes.projectCreate);
+    await tester.pump();
+    await tester.pump();
+    expect(
+      find.byKey(const ValueKey<String>('route-project-create')),
       findsOneWidget,
     );
 

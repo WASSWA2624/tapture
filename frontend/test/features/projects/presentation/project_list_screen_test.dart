@@ -53,6 +53,10 @@ void main() {
     expect(find.text(Copy.projectsEmptyHeadline), findsOneWidget);
     expect(find.text(Copy.projectsCreate), findsOneWidget);
     expect(find.text(Copy.projectsImport), findsOneWidget);
+
+    await tester.tap(find.text(Copy.projectsCreate));
+    await tester.pumpAndSettle();
+    expect(find.text('create'), findsOneWidget);
   });
 
   testWidgets('a populated list renders counts and last-worked time', (
@@ -151,6 +155,12 @@ Future<void> _pump(
           return const ProjectListScreen();
         },
         routes: <RouteBase>[
+          GoRoute(
+            path: 'new',
+            builder: (BuildContext _, GoRouterState _) {
+              return const Text('create');
+            },
+          ),
           GoRoute(
             path: ':projectId',
             builder: (BuildContext _, GoRouterState _) {

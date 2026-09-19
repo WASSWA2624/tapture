@@ -16,6 +16,7 @@ import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/projects/presentation/current_project.dart';
+import 'package:tapture/features/projects/presentation/project_create_screen.dart';
 import 'package:tapture/features/projects/presentation/project_list_screen.dart';
 import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
 import 'package:tapture/features/settings/presentation/appearance_settings_screen.dart';
@@ -48,6 +49,27 @@ abstract final class AppRoutes {
 
   /// One project's home.
   static String project(String id) => '$projects/${Uri.encodeComponent(id)}';
+
+  /// Create or duplicate a project. Listed before [project] so `new` is
+  /// not captured as an id.
+  static const String projectCreate = '$projects/new';
+
+  /// Query key for the project whose structure is being copied.
+  static const String sourceQuery = 'source';
+
+  /// Query key for the editable suggested name on the create form.
+  static const String nameQuery = 'name';
+
+  /// Create form, optionally prefilled from [sourceId] and [name].
+  static String projectCreateFrom({String? sourceId, String? name}) {
+    return Uri(
+      path: projectCreate,
+      queryParameters: <String, String>{
+        if (sourceId != null && sourceId.isNotEmpty) sourceQuery: sourceId,
+        if (name != null && name.isNotEmpty) nameQuery: name,
+      },
+    ).toString();
+  }
 
   /// Capture for [projectId].
   static String capture(String projectId) => '${project(projectId)}/capture';
@@ -156,6 +178,17 @@ List<RouteBase> get _routes {
                 return const ProjectListScreen();
               },
               routes: <RouteBase>[
+                GoRoute(
+                  path: 'new',
+                  builder: (BuildContext _, GoRouterState state) {
+                    return ProjectCreateScreen(
+                      sourceId:
+                          state.uri.queryParameters[AppRoutes.sourceQuery],
+                      initialName:
+                          state.uri.queryParameters[AppRoutes.nameQuery],
+                    );
+                  },
+                ),
                 GoRoute(
                   path: ':projectId',
                   metadata: _projectScoped,

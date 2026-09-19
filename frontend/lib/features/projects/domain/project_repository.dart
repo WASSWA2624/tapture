@@ -17,6 +17,16 @@ abstract interface class ProjectRepository {
   /// Inserts [project] and returns the stored row.
   Future<Result<Project>> create(Project project);
 
+  /// Writes a ready-to-capture project: the row, folder tree and default
+  /// context, or a structural copy of [sourceId]. Row and folders succeed
+  /// or fail together.
+  Future<Result<Project>> createReady({
+    required String name,
+    String? description,
+    String? organisation,
+    String? sourceId,
+  });
+
   /// Replaces the stored row that shares [Project.id].
   Future<Result<void>> update(Project project);
 

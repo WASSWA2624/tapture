@@ -357,6 +357,27 @@ abstract final class Copy {
   /// Secondary empty-state action on the project list.
   static const String projectsImport = 'Import a bundle';
 
+  /// Duplicate action that opens the create form from an existing project.
+  static const String projectsDuplicate = 'Duplicate';
+
+  /// Title of the create-project form.
+  static const String projectCreateTitle = 'New project';
+
+  /// Title of the create form when it is copying another project.
+  static const String projectDuplicateTitle = 'Duplicate project';
+
+  /// Required name field on the create form.
+  static const String projectName = 'Name';
+
+  /// Optional longer note on the create form.
+  static const String projectDescription = 'Description';
+
+  /// Optional organisation field on the create form.
+  static const String projectOrganisation = 'Organisation';
+
+  /// Suggested name for a duplicated project, editable before commit.
+  static String projectCopyName(String name) => '$name (copy)';
+
   /// When the project was last worked, as a date.
   static String projectLastWorked(DateTime at) {
     final DateTime day = at.toUtc();
