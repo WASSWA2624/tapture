@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
@@ -121,27 +120,15 @@ class ProjectListScreen extends ConsumerWidget {
   }
 
   Widget _empty(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        AppEmptyState(
-          icon: Icons.folder_open_outlined,
-          headline: Copy.projectsEmptyHeadline,
-          message: Copy.projectsEmptyMessage,
-          actionLabel: Copy.projectsCreate,
-          onAction: () => context.go(_createLocation),
-        ),
-        const AppButton(
-          label: Copy.projectsImport,
-          variant: AppButtonVariant.secondary,
-          onPressed: _noop,
-        ),
-      ],
+    return AppEmptyState(
+      icon: Icons.folder_open_outlined,
+      headline: Copy.projectsEmptyHeadline,
+      message: Copy.projectsEmptyMessage,
+      actionLabel: Copy.projectsCreate,
+      onAction: () => context.go(_createLocation),
     );
   }
 }
-
-void _noop() {}
 
 void _openRow(BuildContext context, WidgetRef ref, String id) {
   ref.read(currentProjectProvider.notifier).open(id);

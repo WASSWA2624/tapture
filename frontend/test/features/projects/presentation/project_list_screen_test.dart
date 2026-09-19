@@ -53,9 +53,10 @@ void main() {
 
     expect(find.byType(AppEmptyState), findsOneWidget);
     expect(find.text(Copy.projectsEmptyHeadline), findsOneWidget);
+    expect(find.text(Copy.projectsEmptyMessage), findsOneWidget);
     expect(find.text(Copy.projectsCreate), findsNWidgets(2));
     expect(find.byType(AppPrimaryAction), findsOneWidget);
-    expect(find.text(Copy.projectsImport), findsOneWidget);
+    expect(find.text(Copy.projectsImport), findsNothing);
 
     await tester.tap(find.byType(AppPrimaryAction));
     await tester.pumpAndSettle();

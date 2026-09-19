@@ -6,7 +6,8 @@
 
 One place to bring anything in — bundle, spreadsheet, reference dataset or template. The entry detects the file kind and
 routes to the right flow, and for spreadsheets it asks the one question that changes everything downstream: are these
-rows records to hold, or the register to verify against?
+rows records to hold, or the register to verify against? The Projects empty state shows `Copy.projectsImport` again
+once import works.
 
 ## Files
 

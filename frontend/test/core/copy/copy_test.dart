@@ -59,6 +59,11 @@ void main() {
     expect(Copy.notDetected, isNotEmpty);
   });
 
+  test('project list empty copy names create and reserves import', () {
+    expect(Copy.projectsEmptyMessage, 'Create a project to start capturing.');
+    expect(Copy.projectsImport, 'Import a project');
+  });
+
   test('feedbackEntryTitle joins the number, id and message', () {
     expect(
       Copy.feedbackEntryTitle('1', 'FBK0000001', 'The list is slow'),

@@ -349,13 +349,14 @@ abstract final class Copy {
 
   /// Body when the project list has nothing to show.
   static const String projectsEmptyMessage =
-      'Create a project or import a bundle to start capturing.';
+      'Create a project to start capturing.';
 
   /// Primary empty-state action on the project list.
   static const String projectsCreate = 'Create a project';
 
-  /// Secondary empty-state action on the project list.
-  static const String projectsImport = 'Import a bundle';
+  /// Secondary empty-state action on the project list. Reserved for task 222
+  /// once bundle import ships; the Projects empty state does not show it yet.
+  static const String projectsImport = 'Import a project';
 
   /// Duplicate action that opens the create form from an existing project.
   static const String projectsDuplicate = 'Duplicate';

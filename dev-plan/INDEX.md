@@ -1,6 +1,6 @@
 # Tapture — task index
 
-314 implementation prompts across 25 phases. Work top to bottom.
+315 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task.
 
@@ -131,6 +131,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [086 — Project details and per-project settings](08-projects/086-project-edit.md)
 - [x] [087 — Archive, unarchive and delete a project](08-projects/087-project-archive.md)
 - [x] [314 — Add project management actions](08-projects/314-add-project-management-actions.md)
+- [x] [315 — Hide the unbuilt project import button](08-projects/315-hide-unbuilt-project-import-button.md)
 
 ## 09 — Templates
 

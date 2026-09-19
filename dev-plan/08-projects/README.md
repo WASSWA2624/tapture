@@ -2,7 +2,7 @@
 
 Create, open and manage the container that owns everything else.
 
-Tasks 082–314 (7). Each file is a standalone implementation prompt.
+Tasks 082–315 (8). Each file is a standalone implementation prompt.
 
 - [x] [082 — Project domain model and repository](082-project-model.md)
 - [x] [083 — Project list and the current project](083-project-list.md)
@@ -11,3 +11,4 @@ Tasks 082–314 (7). Each file is a standalone implementation prompt.
 - [x] [086 — Project details and per-project settings](086-project-edit.md)
 - [x] [087 — Archive, unarchive and delete a project](087-project-archive.md)
 - [x] [314 — Add project management actions](314-add-project-management-actions.md)
+- [x] [315 — Hide the unbuilt project import button](315-hide-unbuilt-project-import-button.md)
