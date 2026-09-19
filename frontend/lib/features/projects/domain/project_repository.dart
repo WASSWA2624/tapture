@@ -36,6 +36,10 @@ abstract interface class ProjectRepository {
   /// Active projects with record counts and last-worked time. One watch,
   /// not a query per row.
   Stream<List<ProjectListRow>> watchList();
+
+  /// Pending Review, Process, Export and Share counts for [projectId].
+  /// Derived from live watches, never stored (FE-STATE-06).
+  Stream<ProjectHomeCounts> watchHome(String projectId);
 }
 
 /// One landing-list row: the project plus the counts and last-worked
@@ -47,3 +51,20 @@ typedef ProjectListRow = ({
   int unprocessedCount,
   DateTime lastWorkedAt,
 });
+
+/// Pending work on the open-project home. Named as counts so it is not
+/// an `*Item` (FE-CODE-03).
+typedef ProjectHomeCounts = ({
+  int review,
+  int process,
+  int toExport,
+  int toShare,
+});
+
+/// Empty home counts. Shared by the empty stand-in and tests.
+const ProjectHomeCounts emptyProjectHomeCounts = (
+  review: 0,
+  process: 0,
+  toExport: 0,
+  toShare: 0,
+);

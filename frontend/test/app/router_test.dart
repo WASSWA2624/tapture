@@ -27,6 +27,19 @@ void main() {
     expect(AppRoutes.more, '/more');
     expect(AppRoutes.templates, '/templates');
     expect(AppRoutes.queue, '/queue');
+    expect(AppRoutes.exports, '/exports');
+    expect(
+      AppRoutes.recordsFiltered(AppRoutes.reviewFilter),
+      '/records?filter=needsReview',
+    );
+    expect(
+      AppRoutes.queueFiltered(AppRoutes.processFilter),
+      '/queue?filter=queued',
+    );
+    expect(
+      AppRoutes.exportsFiltered(AppRoutes.shareFilter),
+      '/exports?filter=share',
+    );
     expect(AppRoutes.settingsOperator, '/more/operator');
     expect(AppRoutes.settingsCapture, '/more/capture');
     expect(AppRoutes.settingsAi, '/more/ai');
@@ -99,6 +112,9 @@ void main() {
 
     await _go(tester, router, AppRoutes.queue);
     expect(find.byKey(const ValueKey<String>('route-queue')), findsOneWidget);
+
+    await _go(tester, router, AppRoutes.exports);
+    expect(find.byKey(const ValueKey<String>('route-exports')), findsOneWidget);
 
     await _go(tester, router, AppRoutes.more);
     expect(find.text(Copy.operatorProfileTitle), findsOneWidget);

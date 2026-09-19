@@ -245,6 +245,30 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   }
 
   @override
+  Stream<ProjectHomeCounts> watchHome(String projectId) {
+    return _db
+        .customSelect(
+          'SELECT '
+          '(SELECT COUNT(*) FROM records WHERE project_id = ? AND '
+          "status = 'needsReview') AS review, "
+          '(SELECT COUNT(*) FROM records WHERE project_id = ? AND '
+          "status IN ('queued', 'processing')) AS process, "
+          '(SELECT COUNT(*) FROM records WHERE project_id = ? AND '
+          "status = 'approved') AS to_export, "
+          '(SELECT COUNT(*) FROM exports WHERE project_id = ?) AS to_share',
+          variables: <Variable<String>>[
+            Variable<String>(projectId),
+            Variable<String>(projectId),
+            Variable<String>(projectId),
+            Variable<String>(projectId),
+          ],
+          readsFrom: <TableInfo<dynamic, dynamic>>{_db.records, _db.exports},
+        )
+        .watch()
+        .map(_homeCounts);
+  }
+
+  @override
   Future<Result<void>> setStatus(String id, ProjectStatus status) async {
     final sqlite.Project? existing = await _byId(id);
     if (existing == null) {
@@ -509,6 +533,11 @@ final class _EmptyProjectRepository implements ProjectRepository {
   }
 
   @override
+  Stream<ProjectHomeCounts> watchHome(String projectId) {
+    return Stream<ProjectHomeCounts>.value(emptyProjectHomeCounts);
+  }
+
+  @override
   Future<Result<Project>> create(Project project) async {
     return const FailureResult<Project>(_missing);
   }
@@ -548,6 +577,16 @@ ProjectListRow _listRow({
     recordCount: row.read<int>(recordCount) ?? 0,
     unprocessedCount: row.read<int>(unprocessedCount) ?? 0,
     lastWorkedAt: _later(project.updatedAt, fromRecords),
+  );
+}
+
+ProjectHomeCounts _homeCounts(List<QueryRow> rows) {
+  final QueryRow row = rows.single;
+  return (
+    review: row.read<int>('review'),
+    process: row.read<int>('process'),
+    toExport: row.read<int>('to_export'),
+    toShare: row.read<int>('to_share'),
   );
 }
 

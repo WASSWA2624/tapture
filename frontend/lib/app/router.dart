@@ -17,6 +17,7 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/projects/presentation/current_project.dart';
 import 'package:tapture/features/projects/presentation/project_create_screen.dart';
+import 'package:tapture/features/projects/presentation/project_home_screen.dart';
 import 'package:tapture/features/projects/presentation/project_list_screen.dart';
 import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
 import 'package:tapture/features/settings/presentation/appearance_settings_screen.dart';
@@ -90,6 +91,48 @@ abstract final class AppRoutes {
   /// Unprocessed-queue destination the status line opens. Task 159 owns the
   /// screen.
   static const String queue = '/queue';
+
+  /// Export history. Task 207 owns the screen.
+  static const String exports = '/exports';
+
+  /// Query key for a filtered list opened from a home count.
+  static const String filterQuery = 'filter';
+
+  /// Review list filter: records that need a person.
+  static const String reviewFilter = 'needsReview';
+
+  /// Process list filter: records waiting to be processed.
+  static const String processFilter = 'queued';
+
+  /// Export list filter: approved records ready to write out.
+  static const String exportFilter = 'approved';
+
+  /// Share list filter: finished export files.
+  static const String shareFilter = 'share';
+
+  /// Records already filtered to [filter].
+  static String recordsFiltered(String filter) {
+    return Uri(
+      path: records,
+      queryParameters: <String, String>{filterQuery: filter},
+    ).toString();
+  }
+
+  /// Queue already filtered to [filter].
+  static String queueFiltered(String filter) {
+    return Uri(
+      path: queue,
+      queryParameters: <String, String>{filterQuery: filter},
+    ).toString();
+  }
+
+  /// Export history already filtered to [filter].
+  static String exportsFiltered(String filter) {
+    return Uri(
+      path: exports,
+      queryParameters: <String, String>{filterQuery: filter},
+    ).toString();
+  }
 
   /// Operator profile under Settings.
   static const String settingsOperator = '$more/operator';
@@ -193,7 +236,7 @@ List<RouteBase> get _routes {
                   path: ':projectId',
                   metadata: _projectScoped,
                   builder: (BuildContext _, GoRouterState _) {
-                    return const _RoutePage(name: 'project');
+                    return const ProjectHomeScreen();
                   },
                 ),
               ],
@@ -291,6 +334,12 @@ List<RouteBase> get _routes {
               path: AppRoutes.queue,
               builder: (BuildContext _, GoRouterState _) {
                 return const _RoutePage(name: 'queue');
+              },
+            ),
+            GoRoute(
+              path: AppRoutes.exports,
+              builder: (BuildContext _, GoRouterState _) {
+                return const _RoutePage(name: 'exports');
               },
             ),
           ],
@@ -403,6 +452,7 @@ String _titleFor(String name) {
     'more' => Copy.navMore,
     'templates' => Copy.navTemplates,
     'queue' => Copy.navQueue,
+    'exports' => Copy.navExports,
     _ => Copy.emptyHeadline,
   };
 }
@@ -415,6 +465,7 @@ IconData _iconFor(String name) {
     'more' => Icons.settings_outlined,
     'templates' => Icons.article_outlined,
     'queue' => Icons.pending_outlined,
+    'exports' => Icons.ios_share_outlined,
     _ => Icons.inbox_outlined,
   };
 }
@@ -425,7 +476,8 @@ bool _isListRoute(String name) {
       name == 'records' ||
       name == 'record' ||
       name == 'templates' ||
-      name == 'queue';
+      name == 'queue' ||
+      name == 'exports';
 }
 
 const String _projectScopedKey = 'projectScoped';

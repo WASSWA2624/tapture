@@ -9,6 +9,7 @@ import 'package:tapture/features/projects/domain/project_repository.dart';
 final class FakeProjectRepository implements ProjectRepository {
   final Map<String, Project> _rows = <String, Project>{};
   final Map<String, _ListCounts> _counts = <String, _ListCounts>{};
+  final Map<String, ProjectHomeCounts> _home = <String, ProjectHomeCounts>{};
   final StreamController<void> _changes = StreamController<void>.broadcast();
   int _created = 0;
 
@@ -35,6 +36,23 @@ final class FakeProjectRepository implements ProjectRepository {
     _emit();
   }
 
+  /// Seeds the pending counts [watchHome] returns for [id].
+  void seedHomeCounts(
+    String id, {
+    int review = 0,
+    int process = 0,
+    int toExport = 0,
+    int toShare = 0,
+  }) {
+    _home[id] = (
+      review: review,
+      process: process,
+      toExport: toExport,
+      toShare: toShare,
+    );
+    _emit();
+  }
+
   /// Releases the watch stream. Tests call this from `tearDown`.
   void dispose() {
     _changes.close();
@@ -48,6 +66,11 @@ final class FakeProjectRepository implements ProjectRepository {
   @override
   Stream<List<ProjectListRow>> watchList() {
     return _watch(_listSnapshot);
+  }
+
+  @override
+  Stream<ProjectHomeCounts> watchHome(String projectId) {
+    return _watch(() => _home[projectId] ?? emptyProjectHomeCounts);
   }
 
   List<ProjectListRow> _listSnapshot() {
@@ -191,8 +214,8 @@ final class FakeProjectRepository implements ProjectRepository {
     }
   }
 
-  Stream<List<T>> _watch<T>(List<T> Function() snapshot) {
-    return Stream<List<T>>.multi((MultiStreamController<List<T>> listener) {
+  Stream<T> _watch<T>(T Function() snapshot) {
+    return Stream<T>.multi((MultiStreamController<T> listener) {
       listener.add(snapshot());
       final StreamSubscription<void> sub = _changes.stream.listen((_) {
         listener.add(snapshot());

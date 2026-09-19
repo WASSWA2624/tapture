@@ -84,19 +84,18 @@ void main() {
         findsOneWidget,
       );
 
-      await tester.enterText(
-        find.byKey(const ValueKey<String>('field-project')),
-        'half typed',
-      );
-      expect(find.text('half typed'), findsOneWidget);
-
-      await tester.tap(_shellLabel(tester, Copy.navRecords));
+      router.go(AppRoutes.records);
       await tester.pumpAndSettle();
-      expect(router.state.uri.path, '/records');
       expect(
         find.byKey(const ValueKey<String>('route-records')),
         findsOneWidget,
       );
+
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('field-records')),
+        'half typed',
+      );
+      expect(find.text('half typed'), findsOneWidget);
 
       await tester.tap(_shellLabel(tester, Copy.navProjects));
       await tester.pumpAndSettle();
@@ -105,17 +104,25 @@ void main() {
         find.byKey(const ValueKey<String>('route-project')),
         findsOneWidget,
       );
+
+      await tester.tap(_shellLabel(tester, Copy.navRecords));
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, '/records');
+      expect(
+        find.byKey(const ValueKey<String>('route-records')),
+        findsOneWidget,
+      );
       expect(find.text('half typed'), findsOneWidget);
 
       await _setWidth(tester, 800);
       expect(find.byKey(const ValueKey<String>('nav-rail')), findsOneWidget);
-      expect(router.state.uri.path, AppRoutes.project('p1'));
+      expect(router.state.uri.path, '/records');
       expect(find.text('half typed'), findsOneWidget);
 
       await _setWidth(tester, 1200);
       expect(find.byKey(const ValueKey<String>('nav-rail')), findsOneWidget);
       expect(find.byKey(const ValueKey<String>('nav-pane')), findsOneWidget);
-      expect(router.state.uri.path, AppRoutes.project('p1'));
+      expect(router.state.uri.path, '/records');
       expect(find.text('half typed'), findsOneWidget);
     },
   );

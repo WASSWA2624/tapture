@@ -5,6 +5,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/db/app_database.dart' hide Project;
 import 'package:tapture/core/db/app_database.dart' as sqlite show Project;
+import 'package:tapture/core/db/tables/exports.dart';
 import 'package:tapture/core/db/tables/photos.dart';
 import 'package:tapture/core/db/tables/projects.dart' as projects_db;
 import 'package:tapture/core/db/tables/records.dart';
@@ -92,6 +93,80 @@ void main() {
     expect(row.recordCount, 2);
     expect(row.unprocessedCount, 1);
     expect(row.lastWorkedAt.toUtc(), t0.add(const Duration(hours: 2)));
+  });
+
+  test('watchHome derives pending counts from records and exports', () async {
+    final IdService ids = UuidV7Service.sequence(clock);
+    _ok(await repo.create(aProject()));
+    _ok(await repo.create(aProject(id: 'other', name: 'Other')));
+    Future<void> addRecord(String status, String hash) async {
+      _ok(
+        await upsertRecord(
+          db,
+          row: RecordsCompanion(
+            projectId: const Value<String>('project-1'),
+            templateId: const Value<String>('template-1'),
+            status: Value<String>(status),
+            processingMode: const Value<String>('manual'),
+            contextJson: const Value<String>('{}'),
+            identityHash: Value<String>(hash),
+            source: const Value<String>('capture'),
+            capturedAt: Value<DateTime>(t0),
+            capturedBy: const Value<String>('Ada'),
+          ),
+          clock: clock,
+          deviceId: 'device-test',
+          ids: ids,
+        ),
+      );
+    }
+
+    await addRecord('needsReview', 'hash-review');
+    await addRecord('queued', 'hash-queued');
+    await addRecord('processing', 'hash-processing');
+    await addRecord('approved', 'hash-approved');
+    await addRecord('captured', 'hash-captured');
+    _ok(
+      await upsertRecord(
+        db,
+        row: RecordsCompanion(
+          projectId: const Value<String>('other'),
+          templateId: const Value<String>('template-1'),
+          status: const Value<String>('needsReview'),
+          processingMode: const Value<String>('manual'),
+          contextJson: const Value<String>('{}'),
+          identityHash: const Value<String>('hash-other'),
+          source: const Value<String>('capture'),
+          capturedAt: Value<DateTime>(t0),
+          capturedBy: const Value<String>('Ada'),
+        ),
+        clock: clock,
+        deviceId: 'device-test',
+        ids: ids,
+      ),
+    );
+    _ok(
+      await completeExport(
+        db,
+        produce: () async => ExportsCompanion(
+          projectId: const Value<String>('project-1'),
+          formats: Value<String>(jsonEncode(<String>['xlsx'])),
+          filters: Value<String>(jsonEncode(<String, String>{})),
+          recordCount: const Value<int>(1),
+          filePath: const Value<String>('exports/v1.xlsx'),
+          fileHash: const Value<String>('hash-file'),
+          createdBy: const Value<String>('Ada'),
+        ),
+        clock: clock,
+        deviceId: 'device-test',
+        ids: ids,
+      ),
+    );
+    final ProjectHomeCounts counts = (await repo.watchHome('project-1').first);
+    expect(counts.review, 1);
+    expect(counts.process, 2);
+    expect(counts.toExport, 1);
+    expect(counts.toShare, 1);
   });
 
   test('createReady writes the row, folder tree and default context', () async {

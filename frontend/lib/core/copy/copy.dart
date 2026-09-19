@@ -409,6 +409,68 @@ abstract final class Copy {
         '$lastWorked';
   }
 
+  /// Primary action on the open-project home.
+  static const String continueCapturing = 'Continue capturing';
+
+  /// Review card on the project home.
+  static const String homeReview = 'Review';
+
+  /// Process card on the project home.
+  static const String homeProcess = 'Process';
+
+  /// Export card on the project home.
+  static const String homeExport = 'Export';
+
+  /// Share card on the project home.
+  static const String homeShare = 'Share';
+
+  /// Headline when the project home has no open project.
+  static const String homeEmptyHeadline = 'No project open';
+
+  /// Body when the project home has no open project.
+  static const String homeEmptyMessage =
+      'Open a project to see what to do next.';
+
+  /// How many records are waiting for review.
+  static String homeReviewPending(int n) {
+    return Intl.plural(
+      n,
+      zero: '0 to review',
+      one: '1 to review',
+      other: '$n to review',
+    );
+  }
+
+  /// How many records are waiting to be processed.
+  static String homeProcessPending(int n) {
+    return Intl.plural(
+      n,
+      zero: '0 to process',
+      one: '1 to process',
+      other: '$n to process',
+    );
+  }
+
+  /// How many records are waiting to be exported.
+  static String homeExportPending(int n) {
+    return Intl.plural(
+      n,
+      zero: '0 to export',
+      one: '1 to export',
+      other: '$n to export',
+    );
+  }
+
+  /// How many finished files are waiting to be shared.
+  static String homeSharePending(int n) {
+    return Intl.plural(
+      n,
+      zero: '0 to share',
+      one: '1 to share',
+      other: '$n to share',
+    );
+  }
+
   /// Shell destination: capture. Visually dominant in the four-destination bar.
   static const String navCapture = 'Capture';
 
@@ -423,6 +485,9 @@ abstract final class Copy {
 
   /// Unprocessed-queue destination the status line opens.
   static const String navQueue = 'Unprocessed';
+
+  /// Export-history destination the project home opens.
+  static const String navExports = 'Exports';
 
   /// Why the operator name is asked.
   static const String operatorNameUse =

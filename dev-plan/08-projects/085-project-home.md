@@ -27,8 +27,8 @@ pending count. Every number is a link to the list it counts.
 
 ## Definition of done
 
-- [ ] Every number on the screen is tappable and lands on the matching list, already filtered.
-- [ ] One primary action, in the lower third, usable one-handed.
-- [ ] Loading, empty, populated and failure all render through `AsyncValueView`.
-- [ ] Tests: widget tests of all four states, plus a navigation test asserting each count reaches its route with the
+- [x] Every number on the screen is tappable and lands on the matching list, already filtered.
+- [x] One primary action, in the lower third, usable one-handed.
+- [x] Loading, empty, populated and failure all render through `AsyncValueView`.
+- [x] Tests: widget tests of all four states, plus a navigation test asserting each count reaches its route with the
   right filter.
