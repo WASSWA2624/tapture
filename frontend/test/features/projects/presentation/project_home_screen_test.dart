@@ -81,10 +81,7 @@ void main() {
 
     expect(find.text('Alpha'), findsWidgets);
     expect(find.text('Ward 1'), findsOneWidget);
-    expect(find.text(Copy.homeReviewPending(2)), findsOneWidget);
-    expect(find.text(Copy.homeProcessPending(3)), findsOneWidget);
-    expect(find.text(Copy.homeExportPending(1)), findsOneWidget);
-    expect(find.text(Copy.homeSharePending(4)), findsOneWidget);
+    _expectCountCards(tester);
     expect(find.byType(AppPrimaryAction), findsOneWidget);
     expect(find.text(Copy.continueCapturing), findsOneWidget);
     expect(find.text(Copy.unprocessedCount(0)), findsNothing);
@@ -242,6 +239,72 @@ void main() {
     expect(find.byType(AppOverflowMenu), meetsTapTarget());
     expect(find.byType(AppOverflowMenu), hasSemanticLabel(Copy.overflowMenu));
   });
+
+  testWidgets('count cards form a 2×2 grid at 393 dp', (
+    WidgetTester tester,
+  ) async {
+    _setSurface(tester, const Size(393, 886));
+    await _pumpPopulated(tester);
+    _expectCountCards(tester);
+    expect(_cardTop(tester, 'home-review'), _cardTop(tester, 'home-process'));
+    expect(_cardTop(tester, 'home-export'), _cardTop(tester, 'home-share'));
+    expect(
+      _cardTop(tester, 'home-export'),
+      greaterThan(_cardTop(tester, 'home-review')),
+    );
+    expect(_cardLeft(tester, 'home-review'), _cardLeft(tester, 'home-export'));
+    expect(
+      _cardLeft(tester, 'home-process'),
+      greaterThan(_cardLeft(tester, 'home-review')),
+    );
+  });
+
+  testWidgets('count cards sit in one row at 800 dp and 1200 dp', (
+    WidgetTester tester,
+  ) async {
+    for (final Size size in <Size>[
+      const Size(800, 1200),
+      const Size(1200, 800),
+    ]) {
+      _setSurface(tester, size);
+      await _pumpPopulated(tester);
+      _expectCountCards(tester);
+      expect(_cardTop(tester, 'home-review'), _cardTop(tester, 'home-process'));
+      expect(_cardTop(tester, 'home-review'), _cardTop(tester, 'home-export'));
+      expect(_cardTop(tester, 'home-review'), _cardTop(tester, 'home-share'));
+      expect(
+        _cardLeft(tester, 'home-process'),
+        greaterThan(_cardLeft(tester, 'home-review')),
+      );
+      expect(
+        _cardLeft(tester, 'home-export'),
+        greaterThan(_cardLeft(tester, 'home-process')),
+      );
+      expect(
+        _cardLeft(tester, 'home-share'),
+        greaterThan(_cardLeft(tester, 'home-export')),
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
+    }
+  });
+
+  testWidgets(
+    'count cards do not overflow in landscape or at 200 percent text',
+    (WidgetTester tester) async {
+      _setSurface(tester, const Size(800, 400));
+      await _pumpPopulated(tester);
+      expect(tester.takeException(), isNull);
+      _expectCountCards(tester);
+      await tester.pumpWidget(const SizedBox.shrink());
+
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      _setSurface(tester, const Size(360, 800));
+      await _pumpPopulated(tester);
+      expect(tester.takeException(), isNull);
+      _expectCountCards(tester);
+    },
+  );
 }
 
 Future<GoRouter> _pump(
@@ -369,6 +432,54 @@ Future<void> _chooseOverflow(WidgetTester tester, String label) async {
   await tester.pumpAndSettle();
   await tester.tap(find.text(label));
   await tester.pumpAndSettle();
+}
+
+void _setSurface(WidgetTester tester, Size size) {
+  tester.view.devicePixelRatio = 1;
+  tester.view.physicalSize = size;
+  addTearDown(() {
+    tester.view.resetPhysicalSize();
+    tester.view.resetDevicePixelRatio();
+  });
+}
+
+void _expectCountCards(WidgetTester tester) {
+  expect(find.text(Copy.homeReview), findsOneWidget);
+  expect(find.text(Copy.homeProcess), findsOneWidget);
+  expect(find.text(Copy.homeExport), findsOneWidget);
+  expect(find.text(Copy.homeShare), findsOneWidget);
+  expect(find.text('2'), findsOneWidget);
+  expect(find.text('3'), findsOneWidget);
+  expect(find.text('1'), findsOneWidget);
+  expect(find.text('4'), findsOneWidget);
+  expect(find.text(Copy.homeReviewPending(2)), findsNothing);
+  expect(find.text(Copy.homeProcessPending(3)), findsNothing);
+  expect(find.text(Copy.homeExportPending(1)), findsNothing);
+  expect(find.text(Copy.homeSharePending(4)), findsNothing);
+  expect(
+    find.byKey(const ValueKey<String>('home-review')),
+    hasSemanticLabel(Copy.homeReviewPending(2)),
+  );
+  expect(
+    find.byKey(const ValueKey<String>('home-process')),
+    hasSemanticLabel(Copy.homeProcessPending(3)),
+  );
+  expect(
+    find.byKey(const ValueKey<String>('home-export')),
+    hasSemanticLabel(Copy.homeExportPending(1)),
+  );
+  expect(
+    find.byKey(const ValueKey<String>('home-share')),
+    hasSemanticLabel(Copy.homeSharePending(4)),
+  );
+}
+
+double _cardTop(WidgetTester tester, String key) {
+  return tester.getTopLeft(find.byKey(ValueKey<String>(key))).dy;
+}
+
+double _cardLeft(WidgetTester tester, String key) {
+  return tester.getTopLeft(find.byKey(ValueKey<String>(key))).dx;
 }
 
 T _ok<T>(Result<T> result) {

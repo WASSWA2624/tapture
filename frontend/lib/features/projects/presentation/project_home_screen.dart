@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
@@ -11,6 +12,7 @@ import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/project_repository.dart';
@@ -143,49 +145,58 @@ class _HomeBody extends ConsumerWidget {
           const SizedBox(height: Space.x1),
           Text(view.context, style: AppText.caption),
           const SizedBox(height: Space.x4),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                child: _CountCard(
-                  cardKey: const ValueKey<String>('home-review'),
-                  label: Copy.homeReview,
-                  countLabel: Copy.homeReviewPending(counts.review),
-                  onTap: () => context.go(_reviewList),
-                ),
-              ),
-              const SizedBox(width: Space.x2),
-              Expanded(
-                child: _CountCard(
-                  cardKey: const ValueKey<String>('home-process'),
-                  label: Copy.homeProcess,
-                  countLabel: Copy.homeProcessPending(counts.process),
-                  onTap: () => context.go(_processList),
-                ),
-              ),
-              const SizedBox(width: Space.x2),
-              Expanded(
-                child: _CountCard(
-                  cardKey: const ValueKey<String>('home-export'),
-                  label: Copy.homeExport,
-                  countLabel: Copy.homeExportPending(counts.toExport),
-                  onTap: () => context.go(_exportList),
-                ),
-              ),
-              const SizedBox(width: Space.x2),
-              Expanded(
-                child: _CountCard(
-                  cardKey: const ValueKey<String>('home-share'),
-                  label: Copy.homeShare,
-                  countLabel: Copy.homeSharePending(counts.toShare),
-                  onTap: () => context.go(_shareList),
-                ),
-              ),
-            ],
-          ),
+          ..._countRows(context, counts),
         ],
       ),
     );
+  }
+
+  List<Widget> _countRows(BuildContext context, ProjectHomeCounts counts) {
+    final List<Widget> cards = <Widget>[
+      _CountCard(
+        cardKey: const ValueKey<String>('home-review'),
+        label: Copy.homeReview,
+        count: counts.review,
+        semanticLabel: Copy.homeReviewPending(counts.review),
+        onTap: () => context.go(_reviewList),
+      ),
+      _CountCard(
+        cardKey: const ValueKey<String>('home-process'),
+        label: Copy.homeProcess,
+        count: counts.process,
+        semanticLabel: Copy.homeProcessPending(counts.process),
+        onTap: () => context.go(_processList),
+      ),
+      _CountCard(
+        cardKey: const ValueKey<String>('home-export'),
+        label: Copy.homeExport,
+        count: counts.toExport,
+        semanticLabel: Copy.homeExportPending(counts.toExport),
+        onTap: () => context.go(_exportList),
+      ),
+      _CountCard(
+        cardKey: const ValueKey<String>('home-share'),
+        label: Copy.homeShare,
+        count: counts.toShare,
+        semanticLabel: Copy.homeSharePending(counts.toShare),
+        onTap: () => context.go(_shareList),
+      ),
+    ];
+    final int columns = context.sizeClass == SizeClass.compact ? 2 : 4;
+    return <Widget>[
+      for (int row = 0; row < cards.length; row += columns) ...<Widget>[
+        if (row > 0) const SizedBox(height: Space.x2),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            for (int column = 0; column < columns; column++) ...<Widget>[
+              if (column > 0) const SizedBox(width: Space.x2),
+              Expanded(child: cards[row + column]),
+            ],
+          ],
+        ),
+      ],
+    ];
   }
 
   List<AppOverflowAction> _menu(BuildContext context, WidgetRef ref) {
@@ -238,34 +249,48 @@ class _CountCard extends StatelessWidget {
   const _CountCard({
     required this.cardKey,
     required this.label,
-    required this.countLabel,
+    required this.count,
+    required this.semanticLabel,
     required this.onTap,
   });
 
   final Key cardKey;
   final String label;
-  final String countLabel;
+  final int count;
+  final String semanticLabel;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final String number = NumberFormat.decimalPattern(
+      Localizations.localeOf(context).toString(),
+    ).format(count);
     return AppCard(
       key: cardKey,
       elevationLevel: 0,
       padding: const EdgeInsets.all(Space.x2),
       onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(label, style: AppText.caption),
-          const SizedBox(height: Space.x1),
-          Text(
-            countLabel,
-            style: AppText.bodyStrong,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+      child: Semantics(
+        label: semanticLabel,
+        excludeSemantics: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              label,
+              style: AppText.caption,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: Space.x1),
+            Text(
+              number,
+              style: AppText.title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
     );
   }
