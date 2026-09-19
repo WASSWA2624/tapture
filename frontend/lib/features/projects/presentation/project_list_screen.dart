@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
@@ -49,11 +50,15 @@ class ProjectListScreen extends ConsumerWidget {
           : null,
       body: Column(
         children: <Widget>[
-          AppSwitchTile(
-            title: Copy.projectShowArchived,
-            value: showArchived,
-            dense: true,
-            onChanged: ref.read(projectListShowArchivedProvider.notifier).set,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Space.x4),
+            child: AppSwitchTile.checkbox(
+              title: Copy.projectShowArchived,
+              value: showArchived,
+              dense: true,
+              controlFirst: true,
+              onChanged: ref.read(projectListShowArchivedProvider.notifier).set,
+            ),
           ),
           Expanded(
             child: AsyncValueView<List<ProjectListRow>>(

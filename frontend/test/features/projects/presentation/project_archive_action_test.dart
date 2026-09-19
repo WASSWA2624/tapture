@@ -9,7 +9,6 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
-import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/features/projects/presentation/project_archive_action.dart';
 import 'package:tapture/features/projects/presentation/project_list_screen.dart';
 import 'package:tapture/features/projects/projects.dart';
@@ -64,7 +63,7 @@ void main() {
     expect(find.byType(AppListTile), findsNothing);
     expect(find.text('Alpha'), findsNothing);
 
-    await tester.tap(find.byType(AppSwitchTile));
+    await tester.tap(find.byType(Checkbox));
     await tester.pump();
     await tester.pump();
 

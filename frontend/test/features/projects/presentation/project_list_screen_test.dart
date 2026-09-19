@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/router.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -14,6 +15,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
@@ -22,6 +24,7 @@ import 'package:tapture/features/projects/presentation/current_project.dart';
 import 'package:tapture/features/projects/presentation/project_list_screen.dart';
 import 'package:tapture/features/projects/projects.dart';
 
+import '../../../support/a11y_matchers.dart';
 import '../../../support/factories.dart';
 import '../fakes/fake_project_repository.dart';
 
@@ -183,6 +186,66 @@ void main() {
     await tester.tap(find.text(Copy.projectEditTitle));
     await tester.pumpAndSettle();
     expect(find.text('edit'), findsOneWidget);
+  });
+
+  testWidgets(
+    'Show archived is a checkbox that reveals and hides archived rows',
+    (WidgetTester tester) async {
+      final FakeProjectRepository repo = FakeProjectRepository();
+      addTearDown(repo.dispose);
+      _ok(await repo.create(aProject(name: 'Alpha')));
+      _ok(await repo.setStatus('project-1', ProjectStatus.archived));
+      await _pump(tester, repo: repo);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(Switch), findsNothing);
+      expect(find.byType(Checkbox), findsOneWidget);
+      expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, isFalse);
+      expect(find.byType(AppSwitchTile), meetsTapTarget());
+      expect(
+        find.byType(AppSwitchTile),
+        hasSemanticLabel(Copy.projectShowArchived),
+      );
+      expect(tester.getTopLeft(find.byType(AppSwitchTile)).dx, Space.x4);
+      expect(find.text('Alpha'), findsNothing);
+
+      await tester.tap(find.byType(Checkbox));
+      await tester.pump();
+      await tester.pump();
+      expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, isTrue);
+      expect(find.text('Alpha'), findsOneWidget);
+
+      await tester.tap(find.byType(Checkbox));
+      await tester.pump();
+      await tester.pump();
+      expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, isFalse);
+      expect(find.text('Alpha'), findsNothing);
+    },
+  );
+
+  testWidgets('Show archived fits at 360 dp and 200 percent text', (
+    WidgetTester tester,
+  ) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 800);
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    await _pump(tester, repo: repo);
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.byType(Checkbox), findsOneWidget);
+    expect(
+      find.byType(AppSwitchTile),
+      hasSemanticLabel(Copy.projectShowArchived),
+    );
   });
 }
 
