@@ -20,8 +20,11 @@ void main() {
     expect(field.keyboardType, TextInputType.phone);
     expect(field.autofillHints, <String>[AutofillHints.telephoneNumber]);
     expect(find.byType(AppPhoneField), meetsTapTarget());
-    expect(find.byType(AppPhoneField), hasSemanticLabel('Phone'));
-    expect(find.text(Copy.fieldOptional), findsOneWidget);
+    expect(
+      find.byType(AppPhoneField),
+      hasSemanticLabel(Copy.fieldLabelOptional('Phone')),
+    );
+    expect(find.text(Copy.fieldLabelOptional('Phone')), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), '+256 70a-00');
     await tester.pump();

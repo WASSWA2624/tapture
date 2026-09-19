@@ -121,11 +121,23 @@ abstract final class Copy {
   /// One invalid field in a validation summary. [label] is template content.
   static String fieldError(String label, String error) => '$label: $error';
 
-  /// Caption on a field that must be filled before Save.
-  static const String fieldRequired = 'Required';
+  /// Label of a field that must be filled before Save.
+  static String fieldLabelRequired(String label) {
+    return Intl.message(
+      '$label (required)',
+      name: 'fieldLabelRequired',
+      args: <Object>[label],
+    );
+  }
 
-  /// Caption on a field that may be left empty.
-  static const String fieldOptional = 'Optional';
+  /// Label of a field that may be left empty.
+  static String fieldLabelOptional(String label) {
+    return Intl.message(
+      '$label (optional)',
+      name: 'fieldLabelOptional',
+      args: <Object>[label],
+    );
+  }
 
   /// Announced summary of invalid fields.
   static String validationAnnouncement(String heading, List<String> errors) {

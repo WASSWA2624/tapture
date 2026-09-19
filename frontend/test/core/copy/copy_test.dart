@@ -51,6 +51,11 @@ const List<String> _bannedWords = <String>[
 ];
 
 void main() {
+  test('field labels carry requiredness in a placeholder message', () {
+    expect(Copy.fieldLabelRequired('Name'), 'Name (required)');
+    expect(Copy.fieldLabelOptional('Description'), 'Description (optional)');
+  });
+
   test('recordsCount reads correctly at zero, one and many', () {
     expect(Copy.recordsCount(0), 'No records');
     expect(Copy.recordsCount(1), '1 record');
@@ -152,8 +157,8 @@ List<String> get _values {
     Copy.fixFields(1),
     Copy.fixFields(2),
     Copy.fieldError('Name', 'Required'),
-    Copy.fieldRequired,
-    Copy.fieldOptional,
+    Copy.fieldLabelRequired('Name'),
+    Copy.fieldLabelOptional('Description'),
     Copy.validationAnnouncement('Fix these fields', <String>['Name: Required']),
     Copy.missingPhoto,
     Copy.missingPhotoNamed('Front'),

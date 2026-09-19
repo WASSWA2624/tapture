@@ -20,8 +20,11 @@ void main() {
     expect(field.keyboardType, TextInputType.emailAddress);
     expect(field.autofillHints, <String>[AutofillHints.email]);
     expect(find.byType(AppEmailField), meetsTapTarget());
-    expect(find.byType(AppEmailField), hasSemanticLabel('Email'));
-    expect(find.text(Copy.fieldOptional), findsOneWidget);
+    expect(
+      find.byType(AppEmailField),
+      hasSemanticLabel(Copy.fieldLabelOptional('Email')),
+    );
+    expect(find.text(Copy.fieldLabelOptional('Email')), findsOneWidget);
     await expectNoA11yIssues(tester);
   });
 

@@ -215,7 +215,10 @@ void main() {
     await tester.tap(find.text(Copy.tryAgain));
     await tester.pumpAndSettle();
     expect(find.byType(AppErrorState), findsNothing);
-    expect(find.text(Copy.operatorName), findsOneWidget);
+    expect(
+      find.text(Copy.fieldLabelRequired(Copy.operatorName)),
+      findsOneWidget,
+    );
   });
 
   testWidgets(
@@ -234,10 +237,16 @@ void main() {
       ]) {
         tester.view.physicalSize = size;
         await _pump(tester, store, textScale: 2);
-        expect(find.text(Copy.operatorEmail), findsOneWidget);
-        expect(find.text(Copy.operatorPhone), findsOneWidget);
+        expect(
+          find.text(Copy.fieldLabelOptional(Copy.operatorEmail)),
+          findsOneWidget,
+        );
+        expect(
+          find.text(Copy.fieldLabelOptional(Copy.operatorPhone)),
+          findsOneWidget,
+        );
         expect(find.text(Copy.operatorContact), findsNothing);
-        expect(find.text(Copy.fieldOptional), findsNWidgets(2));
+        expect(find.text('Optional'), findsNothing);
         await expectNoA11yIssues(tester);
       }
     },
@@ -251,20 +260,42 @@ void main() {
       );
       await _pump(tester, store, theme: mode.theme);
 
-      expect(find.text(Copy.fieldRequired), findsNWidgets(2));
-      expect(find.text(Copy.fieldOptional), findsNWidgets(2));
+      expect(
+        find.text(Copy.fieldLabelRequired(Copy.operatorName)),
+        findsOneWidget,
+      );
+      expect(
+        find.text(Copy.fieldLabelRequired(Copy.operatorInitials)),
+        findsOneWidget,
+      );
+      expect(
+        find.text(Copy.fieldLabelOptional(Copy.operatorEmail)),
+        findsOneWidget,
+      );
+      expect(
+        find.text(Copy.fieldLabelOptional(Copy.operatorPhone)),
+        findsOneWidget,
+      );
       expect(find.text(Copy.nameRequired), findsNothing);
       expect(find.text(Copy.operatorContact), findsNothing);
+      expect(find.text('Required'), findsNothing);
+      expect(find.text('Optional'), findsNothing);
       expect(
         find.byType(AppTextField).at(0),
-        hasSemanticLabel(Copy.operatorName),
+        hasSemanticLabel(Copy.fieldLabelRequired(Copy.operatorName)),
       );
       expect(
         find.byType(AppTextField).at(1),
-        hasSemanticLabel(Copy.operatorInitials),
+        hasSemanticLabel(Copy.fieldLabelRequired(Copy.operatorInitials)),
       );
-      expect(find.byType(AppEmailField), hasSemanticLabel(Copy.operatorEmail));
-      expect(find.byType(AppPhoneField), hasSemanticLabel(Copy.operatorPhone));
+      expect(
+        find.byType(AppEmailField),
+        hasSemanticLabel(Copy.fieldLabelOptional(Copy.operatorEmail)),
+      );
+      expect(
+        find.byType(AppPhoneField),
+        hasSemanticLabel(Copy.fieldLabelOptional(Copy.operatorPhone)),
+      );
       await expectNoA11yIssues(tester);
     });
   }

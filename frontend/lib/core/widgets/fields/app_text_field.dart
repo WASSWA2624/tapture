@@ -203,7 +203,7 @@ class _AppTextFieldState extends State<AppTextField> {
       builder: (BuildContext context, Widget? _) {
         final Color onSurface = context.colors.onSurface;
         final ({String? text, Widget? widget, TextStyle? style}) support =
-            _supportingCopy(field, onSurface);
+            _supportingCopy(field);
         Widget child = ConstrainedBox(
           constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
           child: TextField(
@@ -230,7 +230,7 @@ class _AppTextFieldState extends State<AppTextField> {
             autocorrect: !field.obscureText,
             style: AppText.body.copyWith(color: onSurface),
             decoration: InputDecoration(
-              labelText: field.label,
+              labelText: _labelText(field),
               hintText: field.hint,
               helperText: support.text,
               helper: support.widget,
@@ -344,37 +344,19 @@ String _localeName(BuildContext context) {
   return Localizations.localeOf(context).toString();
 }
 
-/// Requiredness copy as its own caption, never concatenated into the label
-/// (FE-L10N-03). A helper already on the field stays a second line.
+String _labelText(AppTextField field) {
+  return switch (field.requiredness) {
+    FieldRequiredness.unmarked => field.label,
+    FieldRequiredness.required => Copy.fieldLabelRequired(field.label),
+    FieldRequiredness.optional => Copy.fieldLabelOptional(field.label),
+  };
+}
+
+/// Helper copy only. Requiredness lives in the label (FE-L10N-03).
 ({String? text, Widget? widget, TextStyle? style}) _supportingCopy(
   AppTextField field,
-  Color onSurface,
 ) {
-  final String? mark = switch (field.requiredness) {
-    FieldRequiredness.unmarked => null,
-    FieldRequiredness.required => Copy.fieldRequired,
-    FieldRequiredness.optional => Copy.fieldOptional,
-  };
-  final String? helper = field.helper;
-  final TextStyle caption = AppText.caption.copyWith(color: onSurface);
-  if (mark != null && helper != null) {
-    return (
-      text: null,
-      widget: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(mark, style: caption),
-          Text(helper, style: caption),
-        ],
-      ),
-      style: caption,
-    );
-  }
-  return (
-    text: mark ?? helper,
-    widget: null,
-    style: mark == null ? null : caption,
-  );
+  return (text: field.helper, widget: null, style: null);
 }
 
 /// Whether an [AppTextField] is required, optional, or left unmarked.

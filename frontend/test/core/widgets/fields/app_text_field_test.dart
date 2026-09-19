@@ -151,7 +151,7 @@ void main() {
     await expectNoA11yIssues(tester);
   });
 
-  testWidgets('a required field shows catalogue copy beside the label', (
+  testWidgets('a required field puts the mark in the label empty and focused', (
     WidgetTester tester,
   ) async {
     final TextEditingController controller = TextEditingController();
@@ -165,30 +165,45 @@ void main() {
       ),
     );
 
-    expect(find.text(Copy.fieldRequired), findsOneWidget);
-    expect(find.text('Name'), findsWidgets);
-    expect(find.byType(AppTextField), hasSemanticLabel('Name'));
-    expect(_isRequired(tester, find.byType(TextField)), isTrue);
-  });
-
-  testWidgets('an optional field shows catalogue copy beside the label', (
-    WidgetTester tester,
-  ) async {
-    final TextEditingController controller = TextEditingController();
-    addTearDown(controller.dispose);
-    await _pump(
-      tester,
-      AppTextField(
-        label: 'Contact',
-        controller: controller,
-        requiredness: FieldRequiredness.optional,
-      ),
+    expect(find.text(Copy.fieldLabelRequired('Name')), findsOneWidget);
+    expect(find.text('Required'), findsNothing);
+    expect(
+      find.byType(AppTextField),
+      hasSemanticLabel(Copy.fieldLabelRequired('Name')),
     );
+    expect(_isRequired(tester, find.byType(TextField)), isTrue);
 
-    expect(find.text(Copy.fieldOptional), findsOneWidget);
-    expect(find.byType(AppTextField), hasSemanticLabel('Contact'));
-    expect(_isRequired(tester, find.byType(TextField)), isFalse);
+    await tester.tap(find.byType(TextField));
+    await tester.pump();
+    expect(find.text(Copy.fieldLabelRequired('Name')), findsOneWidget);
+    expect(find.text('Required'), findsNothing);
   });
+
+  testWidgets(
+    'an optional field with a helper keeps the helper under the box',
+    (WidgetTester tester) async {
+      final TextEditingController controller = TextEditingController();
+      addTearDown(controller.dispose);
+      await _pump(
+        tester,
+        AppTextField(
+          label: 'Description',
+          controller: controller,
+          helper: Copy.autoFilled,
+          requiredness: FieldRequiredness.optional,
+        ),
+      );
+
+      expect(find.text(Copy.fieldLabelOptional('Description')), findsOneWidget);
+      expect(find.text(Copy.autoFilled), findsOneWidget);
+      expect(find.text('Optional'), findsNothing);
+      expect(
+        find.byType(AppTextField),
+        hasSemanticLabel(Copy.fieldLabelOptional('Description')),
+      );
+      expect(_isRequired(tester, find.byType(TextField)), isFalse);
+    },
+  );
 
   testWidgets('an unmarked field keeps today\'s label', (
     WidgetTester tester,
@@ -197,29 +212,43 @@ void main() {
     addTearDown(controller.dispose);
     await _pump(tester, AppTextField(label: 'Name', controller: controller));
 
-    expect(find.text(Copy.fieldRequired), findsNothing);
-    expect(find.text(Copy.fieldOptional), findsNothing);
+    expect(find.text('Name'), findsWidgets);
+    expect(find.text(Copy.fieldLabelRequired('Name')), findsNothing);
+    expect(find.text(Copy.fieldLabelOptional('Name')), findsNothing);
     expect(find.byType(AppTextField), hasSemanticLabel('Name'));
   });
 
-  testWidgets('requiredness stays a line of its own when a helper is set', (
+  testWidgets('a long marked label fits at 360 dp and 200 percent text', (
     WidgetTester tester,
   ) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 800);
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
     final TextEditingController controller = TextEditingController();
     addTearDown(controller.dispose);
-    await _pump(
-      tester,
-      AppTextField(
-        label: 'Name',
-        controller: controller,
-        helper: Copy.autoFilled,
-        requiredness: FieldRequiredness.required,
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildTheme(brightness: Brightness.light),
+        home: Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.all(Space.x4),
+            child: AppTextField(
+              label: 'Organisation',
+              controller: controller,
+              requiredness: FieldRequiredness.optional,
+            ),
+          ),
+        ),
       ),
     );
 
-    expect(find.text(Copy.fieldRequired), findsOneWidget);
-    expect(find.text(Copy.autoFilled), findsOneWidget);
-    expect(find.text('Name ${Copy.fieldRequired}'), findsNothing);
+    expect(tester.takeException(), isNull);
+    expect(find.text(Copy.fieldLabelOptional('Organisation')), findsOneWidget);
   });
 }
 

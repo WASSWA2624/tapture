@@ -470,6 +470,7 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       AppTextField(
         label: 'Name',
         controller: _filled,
+        helper: Copy.autoFilled,
         requiredness: FieldRequiredness.optional,
       ),
       const SizedBox(height: Space.x4),

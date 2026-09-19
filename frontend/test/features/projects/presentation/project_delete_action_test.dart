@@ -30,7 +30,10 @@ void main() {
     await tester.tap(find.text(Copy.projectDelete));
     await tester.pump();
 
-    expect(find.text(Copy.projectDeleteTypeName), findsOneWidget);
+    expect(
+      find.text(Copy.fieldLabelRequired(Copy.projectDeleteTypeName)),
+      findsOneWidget,
+    );
     await tester.enterText(find.byType(TextField), 'Wrong');
     await tester.pump();
     await tester.tap(find.text(Copy.projectDelete).last);
