@@ -3,12 +3,14 @@
 **Feedback:** FBK0000008 · **Type:** Suggestion · **Priority:** P6 · **Effort:** M · **Depends on:** 002, 009
 
 ## Goal
+
 On Android, Download feedback offers **Save to a folder**. It opens the system save picker with the
 archive's name filled in, so the operator can put it anywhere the picker reaches: internal storage, an
 SD card or a cloud provider's folder. Plain Download still saves to `Download/Tapture` (002). The footer
 fits at every width and theme, and at 200 percent text.
 
 ## Evidence
+
 - FBK0000008: the reporter suggests choosing where the feedback archive is saved when exporting it. No
   image. Android, mobile, compact, portrait, system dark, app 1.0.0.
 - Today the folder is fixed. `DownloadService.save` (`frontend/lib/core/files/download_service.dart:28-34`)
@@ -18,6 +20,7 @@ fits at every width and theme, and at 200 percent text.
   009 adds the location line and Open folder.
 
 ## Scope
+
 - Change:
   - `download_service.dart`: add `bool get canChooseLocation` and
     `Future<Result<String?>> saveAs({required String fileName, required Uint8List bytes, required String mimeType})`.
@@ -38,6 +41,7 @@ fits at every width and theme, and at 200 percent text.
   Storage settings. Remember no chosen folder.
 
 ## Rules
+
 - FE-STR-11: the picker is reached only through `DownloadService` in `core/files/`.
 - FE-SIMP-01: Download stays the one primary action, and Save to a folder is a text button.
 - FE-SIMP-12: no stored preference; each save asks.
@@ -49,6 +53,7 @@ fits at every width and theme, and at 200 percent text.
 - FE-TEST-03: a fake service and a test channel handler.
 
 ## Steps
+
 1. Record the work in the plan with
    `cd frontend && dart run tool/new_task.dart 23-hardening add-save-to-folder-option "Add a Save to a folder option"`
    (FE-FLOW-08).
@@ -64,18 +69,21 @@ fits at every width and theme, and at 200 percent text.
    - `frontend/test/core/copy/copy_test.dart` for the new key.
 
 ## Human review
+
 ⛔ Stop before step 2 and ask:
+
 - Which platforms get it? (a) Android only, through the system picker, with no new dependency; (b) also
   desktop, through `file_selector` (FE-FLOW-06: its own task and an allowlist entry); or (c) also web,
   through `showSaveFilePicker` where the browser supports it. Recommend (a), because the report came from
   Android. Open (b) or (c) as separate tasks if wanted.
-Proceed only with an explicit answer. If the answer is "proceed", do (a).
+  Proceed only with an explicit answer. If the answer is "proceed", do (a).
 
 ## Acceptance criteria
+
 - [ ] Android: Save to a folder opens the system picker with `TAPTURE-DDMMYYYY-HHMM.zip` filled in, and
-      the zip is written where the operator chose.
+  the zip is written where the operator chose.
 - [ ] After a save, the snackbar names the file. Backing out of the picker saves nothing, shows no error
-      and keeps the screen open.
+  and keeps the screen open.
 - [ ] Plain Download still saves to `Download/Tapture`.
 - [ ] Web, iOS and desktop show no Save to a folder (under the default answer).
 - [ ] No permission and no dependency are added.
@@ -83,6 +91,7 @@ Proceed only with an explicit answer. If the answer is "proceed", do (a).
 - [ ] FBK0000008 is resolved.
 
 ## Verification
+
 - `cd frontend && dart run tool/verify.dart --fast` is green, then the full `dart run tool/verify.dart`.
 - On an Android phone: Download feedback → Save to a folder → choose Documents; then find the zip there
   in the Files app.
