@@ -16,9 +16,15 @@ final class FakeProjectRepository implements ProjectRepository {
   /// When set, [createReady] returns this failure instead of writing.
   Failure? createFailure;
 
+  /// When set, [update] returns this failure instead of writing.
+  Failure? updateFailure;
+
   /// How many rows are stored. Widget tests read this instead of
   /// awaiting [watchAll].
   int get count => _rows.length;
+
+  /// Stored rows. Widget tests read this instead of awaiting [watchAll].
+  List<Project> get stored => List<Project>.unmodifiable(_rows.values);
 
   /// Seeds the counts [watchList] returns for [id]. Tests that care
   /// about the landing row call this instead of opening a database.
@@ -158,6 +164,10 @@ final class FakeProjectRepository implements ProjectRepository {
 
   @override
   Future<Result<void>> update(Project project) async {
+    final Failure? forced = updateFailure;
+    if (forced != null) {
+      return FailureResult<void>(forced);
+    }
     final ValidationFailure? invalid = _validateName(project.name);
     if (invalid != null) {
       return FailureResult<void>(invalid);

@@ -17,8 +17,10 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/projects/presentation/current_project.dart';
 import 'package:tapture/features/projects/presentation/project_create_screen.dart';
+import 'package:tapture/features/projects/presentation/project_edit_screen.dart';
 import 'package:tapture/features/projects/presentation/project_home_screen.dart';
 import 'package:tapture/features/projects/presentation/project_list_screen.dart';
+import 'package:tapture/features/projects/presentation/project_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
 import 'package:tapture/features/settings/presentation/appearance_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/capture_settings_screen.dart';
@@ -74,6 +76,13 @@ abstract final class AppRoutes {
 
   /// Capture for [projectId].
   static String capture(String projectId) => '${project(projectId)}/capture';
+
+  /// Details form for [projectId].
+  static String projectEdit(String projectId) => '${project(projectId)}/edit';
+
+  /// Per-project settings for [projectId].
+  static String projectSettings(String projectId) =>
+      '${project(projectId)}/settings';
 
   /// One record, opened directly from a deep link.
   static String record(String id) => '/records/${Uri.encodeComponent(id)}';
@@ -238,6 +247,22 @@ List<RouteBase> get _routes {
                   builder: (BuildContext _, GoRouterState _) {
                     return const ProjectHomeScreen();
                   },
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'edit',
+                      metadata: _projectScoped,
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const ProjectEditScreen();
+                      },
+                    ),
+                    GoRoute(
+                      path: 'settings',
+                      metadata: _projectScoped,
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const ProjectSettingsScreen();
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

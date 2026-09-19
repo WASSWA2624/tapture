@@ -3,17 +3,27 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/features/projects/domain/project_settings.dart';
 
 void main() {
+  const ProjectSettingsDefaults appOn = (
+    aiEnabled: true,
+    doNotSendImages: false,
+    gpsEnabled: true,
+    folderStrategy: 'byTemplate',
+    confidenceHigh: 0.9,
+    confidenceMedium: 0.4,
+    refineColumns: false,
+  );
+
   test('built-in defaults match AppConstants', () {
     expect(
-      ProjectSettings.defaults.folderStrategy,
+      builtInProjectSettingsDefaults.folderStrategy,
       AppConstants.folders.defaultStrategy,
     );
     expect(
-      ProjectSettings.defaults.confidenceHigh,
+      builtInProjectSettingsDefaults.confidenceHigh,
       AppConstants.confidence.high,
     );
     expect(
-      ProjectSettings.defaults.confidenceMedium,
+      builtInProjectSettingsDefaults.confidenceMedium,
       AppConstants.confidence.medium,
     );
   });
@@ -32,7 +42,7 @@ void main() {
     );
   });
 
-  test('known keys override defaults and a wrong type is defaulted', () {
+  test('known keys override defaults and a wrong type is unset', () {
     final ProjectSettings settings = ProjectSettings.decode(
       '{"aiEnabled": false, "folderStrategy": "flat",'
       ' "photoFolderStrategy": "byTemplate",'
@@ -42,14 +52,14 @@ void main() {
     expect(settings.aiEnabled, isFalse);
     expect(settings.folderStrategy, 'flat');
     expect(settings.confidenceHigh, 1);
-    expect(settings.confidenceMedium, AppConstants.confidence.medium);
+    expect(settings.confidenceMedium, isNull);
     expect(settings.refineColumns, isFalse);
   });
 
-  test('an unknown folder strategy becomes the default', () {
+  test('an unknown folder strategy is unset', () {
     expect(
       ProjectSettings.decode('{"folderStrategy": "../etc"}').folderStrategy,
-      AppConstants.folders.defaultStrategy,
+      isNull,
     );
   });
 
@@ -59,5 +69,34 @@ void main() {
       folderStrategy: 'byCaptureDate',
     );
     expect(ProjectSettings.decode(settings.encode()), settings);
+  });
+
+  test('an override wins and clearing it falls back to the app default', () {
+    const ProjectSettings overridden = ProjectSettings(
+      aiEnabled: false,
+      doNotSendImages: true,
+      gpsEnabled: false,
+    );
+    final ProjectSettingsResolved resolved = overridden.resolve(appOn);
+    expect(resolved.aiEnabled, isFalse);
+    expect(resolved.doNotSendImages, isTrue);
+    expect(resolved.gpsEnabled, isFalse);
+    expect(resolved.folderStrategy, appOn.folderStrategy);
+    expect(overridden.allowsProviderCalls(appOn), isFalse);
+    expect(overridden.allowsImageEgress(appOn), isFalse);
+
+    final ProjectSettings cleared = overridden.copyWith(
+      clearAiEnabled: true,
+      clearDoNotSendImages: true,
+      clearGpsEnabled: true,
+    );
+    expect(cleared.aiEnabled, isNull);
+    expect(cleared.doNotSendImages, isNull);
+    expect(cleared.gpsEnabled, isNull);
+    expect(cleared.resolve(appOn).aiEnabled, isTrue);
+    expect(cleared.resolve(appOn).doNotSendImages, isFalse);
+    expect(cleared.resolve(appOn).gpsEnabled, isTrue);
+    expect(cleared.allowsProviderCalls(appOn), isTrue);
+    expect(cleared.allowsImageEgress(appOn), isTrue);
   });
 }

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/projects.dart' as projects_db;
 import 'package:tapture/features/projects/data/project_mapper.dart';
@@ -85,10 +84,7 @@ void main() {
     );
     expect(ProjectMapper.fromRow(_row(client: '')).organisation, isNull);
     expect(ProjectMapper.fromRow(_row()).description, isNull);
-    expect(
-      ProjectMapper.fromRow(_row()).settings.folderStrategy,
-      AppConstants.folders.defaultStrategy,
-    );
+    expect(ProjectMapper.fromRow(_row()).settings.folderStrategy, isNull);
   });
 }
 

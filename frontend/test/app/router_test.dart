@@ -22,6 +22,8 @@ void main() {
       contains('source=p1'),
     );
     expect(AppRoutes.capture('ab'), '/projects/ab/capture');
+    expect(AppRoutes.projectEdit('ab'), '/projects/ab/edit');
+    expect(AppRoutes.projectSettings('ab'), '/projects/ab/settings');
     expect(AppRoutes.record('cd'), '/records/cd');
     expect(AppRoutes.records, '/records');
     expect(AppRoutes.more, '/more');
@@ -97,6 +99,26 @@ void main() {
 
     await _go(tester, router, AppRoutes.project('p1'));
     expect(find.byKey(const ValueKey<String>('route-project')), findsOneWidget);
+
+    router.go(AppRoutes.projectEdit('p1'));
+    await tester.pump();
+    await tester.pump();
+    expect(
+      find.byKey(const ValueKey<String>('route-project-edit')),
+      findsOneWidget,
+    );
+
+    router.go(AppRoutes.projectSettings('p1'));
+    await tester.pump();
+    await tester.pump();
+    expect(
+      find.byKey(const ValueKey<String>('route-project-settings')),
+      findsOneWidget,
+    );
+
+    router.go(AppRoutes.project('p1'));
+    await tester.pump();
+    await tester.pump();
 
     await _go(tester, router, AppRoutes.capture('p1'));
     expect(find.byKey(const ValueKey<String>('route-capture')), findsOneWidget);

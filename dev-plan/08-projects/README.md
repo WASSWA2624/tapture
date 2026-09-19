@@ -8,5 +8,5 @@ Tasks 082–087 (6). Each file is a standalone implementation prompt.
 - [x] [083 — Project list and the current project](083-project-list.md)
 - [x] [084 — Create and duplicate a project](084-project-create.md)
 - [x] [085 — Project home screen](085-project-home.md)
-- [ ] [086 — Project details and per-project settings](086-project-edit.md)
+- [x] [086 — Project details and per-project settings](086-project-edit.md)
 - [ ] [087 — Archive, unarchive and delete a project](087-project-archive.md)

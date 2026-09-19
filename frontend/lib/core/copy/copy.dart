@@ -375,6 +375,76 @@ abstract final class Copy {
   /// Optional organisation field on the create form.
   static const String projectOrganisation = 'Organisation';
 
+  /// Title of the project details form.
+  static const String projectEditTitle = 'Project details';
+
+  /// Title of the per-project settings form.
+  static const String projectSettingsTitle = 'Project settings';
+
+  /// When fieldwork started.
+  static const String projectStartsOn = 'Starts';
+
+  /// When fieldwork finished.
+  static const String projectEndsOn = 'Ends';
+
+  /// Open or archived status on the details form.
+  static const String projectStatus = 'Status';
+
+  /// Status choice: the project is open.
+  static const String projectStatusActive = 'Active';
+
+  /// Status choice: the project is archived.
+  static const String projectStatusArchived = 'Archived';
+
+  /// AI override on the project settings form.
+  static const String projectAiEnabled = 'AI';
+
+  /// What turning AI off does.
+  static const String projectAiEnabledEffect =
+      'Turn off to keep this project fully manual.';
+
+  /// Image-egress override on the project settings form.
+  static const String projectDoNotSendImages = 'Do not send images';
+
+  /// What turning image egress off does.
+  static const String projectDoNotSendImagesEffect =
+      'Providers never see photo bytes from this project.';
+
+  /// Refined-columns override on the project settings form.
+  static const String projectRefineColumns = 'Refined columns';
+
+  /// High-confidence threshold on the project settings form.
+  static const String projectConfidenceHigh = 'High confidence';
+
+  /// Medium-confidence threshold on the project settings form.
+  static const String projectConfidenceMedium = 'Medium confidence';
+
+  /// Inherit the app-level value for this switch.
+  static const String projectUseAppDefault = 'Use app default';
+
+  /// Affirmative override on a three-way choice.
+  static const String projectOn = 'On';
+
+  /// Negative override on a three-way choice.
+  static const String projectOff = 'Off';
+
+  /// Names the app-level value a row is changing.
+  static String projectAppDefault(String value) => 'App default: $value';
+
+  /// Headline when the details form has no open project.
+  static const String projectEditEmptyHeadline = 'No project open';
+
+  /// Body when the details form has no open project.
+  static const String projectEditEmptyMessage =
+      'Open a project to edit its details.';
+
+  /// Headline when the settings form has no open project.
+  static const String projectSettingsEmptyHeadline = 'No project open';
+
+  /// Body when the settings form has no open project.
+  static const String projectSettingsEmptyMessage =
+      'Open a project to change its settings.';
+
   /// Suggested name for a duplicated project, editable before commit.
   static String projectCopyName(String name) => '$name (copy)';
 

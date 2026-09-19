@@ -31,8 +31,8 @@ and refined columns. A rename changes the display name only.
 
 ## Definition of done
 
-- [ ] Existing file paths keep working after a rename, and no file is moved or copied.
-- [ ] A project can be made fully manual and offline with two switches.
-- [ ] An override wins over the app default, and clearing it falls back to that default.
-- [ ] Tests: widget tests of both screens across populated, dirty and failure states; a unit test asserting a rename
+- [x] Existing file paths keep working after a rename, and no file is moved or copied.
+- [x] A project can be made fully manual and offline with two switches.
+- [x] An override wins over the app default, and clearing it falls back to that default.
+- [x] Tests: widget tests of both screens across populated, dirty and failure states; a unit test asserting a rename
   leaves `folderName` unchanged; a unit test of override-then-fallback resolution.

@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**85 of 281 tasks complete (30.2%)** · last updated 2026-09-19
+**86 of 281 tasks complete (30.6%)** · last updated 2026-09-19
 
 `████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -15,7 +15,7 @@
 | 05 — File storage | 7 | 7 | `██████████████` 100% |
 | 06 — Application shell | 5 | 5 | `██████████████` 100% |
 | 07 — Account and settings | 5 | 5 | `██████████████` 100% |
-| 08 — Projects | 4 | 6 | `█████████░░░░░` 67% |
+| 08 — Projects | 5 | 6 | `████████████░░` 83% |
 | 09 — Templates | 0 | 17 | `░░░░░░░░░░░░░░` 0% |
 | 10 — Reference data | 0 | 8 | `░░░░░░░░░░░░░░` 0% |
 | 11 — Context | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **85** | **281** | `████░░░░░░░░░░` 30.2% |
+| **Total** | **86** | **281** | `████░░░░░░░░░░` 30.6% |
 
 ## Completed
 
@@ -121,6 +121,7 @@
 | 083 — Project list and the current project | 2026-09-19 | Landing `ProjectListScreen` with record/unprocessed counts and last-worked time from one `watchList` query. `CurrentProject` persists `SettingKeys.openProjectId`, restores on launch, clears an unresolvable id, and is the source `openProjectIdProvider` aliases. Empty state offers Create and Import; diverted deep links resume after a row is opened. Guarded by four AsyncValueView widget tests, a CurrentProject restore/clear/resume unit test, and a measured <2s landing budget. |
 | 084 — Create and duplicate a project | 2026-09-19 | One `createReady` transaction writes the project row, folder tree (via `ProjectFolders`) and a default Site context — or copies templates, context definitions, project-scoped reference and settings under a new id and folder, never records or photos. A failed folder write discards the partial tree and rolls the row back. `ProjectCreateScreen` plus `ProjectDuplicateAction` share that path; success opens `CurrentProject`. Guarded by rollback, duplication, validation and failure tests. |
 | 085 — Project home screen | 2026-09-19 | Open-project home reads `currentProjectDetailsProvider` (no route id), shows pinned context, derived Review/Process/Export/Share counts as tappable `AppCard`s, and one footer `Continue capturing` in the lower third. Counts come from `watchHome` and route through `AppRoutes` filtered lists. Guarded by four AsyncValueView widget tests plus a navigation test for each count filter. |
+| 086 — Project details and per-project settings | 2026-09-19 | Two `AppForm` screens over the same row: details write name, description, organisation, dates and status without touching `folderName`; settings persist nullable overrides on the project row and resolve unset fields to the app store. AI off and do-not-send-images on refuse provider calls and image egress. Guarded by populated/dirty/failure widget tests, a rename-leaves-folderName unit test, and override-then-fallback resolution. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -413,13 +414,13 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 08 — Projects
 
-*4 of 6 complete.*
+*5 of 6 complete.*
 
 - [x] [082 — Project domain model and repository](dev-plan/08-projects/082-project-model.md)
 - [x] [083 — Project list and the current project](dev-plan/08-projects/083-project-list.md)
 - [x] [084 — Create and duplicate a project](dev-plan/08-projects/084-project-create.md)
 - [x] [085 — Project home screen](dev-plan/08-projects/085-project-home.md)
-- [ ] [086 — Project details and per-project settings](dev-plan/08-projects/086-project-edit.md)
+- [x] [086 — Project details and per-project settings](dev-plan/08-projects/086-project-edit.md)
 - [ ] [087 — Archive, unarchive and delete a project](dev-plan/08-projects/087-project-archive.md)
 
 ### 09 — Templates
