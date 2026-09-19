@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' show min;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,8 +21,8 @@ import 'feedback_window_share_controller.dart';
 import 'give_feedback_controller.dart';
 
 /// The draft's images: attach and include-UI checkboxes, a row of capture
-/// controls, then the gallery. A single image fills the width at its own
-/// aspect ratio; several share balanced square tiles. A tap opens a larger
+/// controls, then the gallery. One image is a start-aligned square
+/// thumbnail; several share balanced square tiles. A tap opens a larger
 /// preview.
 class FeedbackShots extends ConsumerWidget {
   /// Creates the section. [onAddScreen] captures the screen under the
@@ -200,10 +201,19 @@ class _ShotGallery extends StatelessWidget {
         final double width = constraints.maxWidth;
         final double ratio = MediaQuery.devicePixelRatioOf(context);
         if (shots.length == 1) {
-          return _ShotTile(
-            shot: shots.single,
-            decodeWidth: (width * ratio).round(),
-            onRemove: onRemove,
+          final double side = min(AppConstants.userFeedback.galleryTile, width);
+          return Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: SizedBox(
+              width: side,
+              height: side,
+              child: _ShotTile(
+                shot: shots.single,
+                decodeWidth: (side * ratio).round(),
+                onRemove: onRemove,
+                square: true,
+              ),
+            ),
           );
         }
         // Balanced rows: five images at up to four across are 3 and 2.

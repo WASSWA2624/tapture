@@ -181,6 +181,86 @@ void main() {
     expect(harness.draft!.shots, hasLength(2));
   });
 
+  testWidgets('one image is a square thumbnail at 393 dp', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, size: const Size(393, 886), screenshot: aFeedbackPng);
+    _expectSquareThumbnail(tester);
+  });
+
+  testWidgets('one image is a square thumbnail in the 420 dp docked panel', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, size: const Size(1400, 900), screenshot: aFeedbackPng);
+    expect(
+      tester.getSize(find.byType(GiveFeedbackScreen)).width,
+      AppConstants.userFeedback.panelWidth,
+    );
+    _expectSquareThumbnail(tester);
+  });
+
+  testWidgets('tapping the thumbnail opens the preview at full width', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, size: const Size(393, 886), screenshot: aFeedbackPng);
+    final Finder tile = find.bySemanticsLabel(Copy.feedbackScreenshotPreview);
+    final double thumb = tester.getSize(tile).width;
+    await tester.tap(tile);
+    await tester.pumpAndSettle();
+    final Finder preview = find.bySemanticsLabel(Copy.feedbackShotPreview);
+    expect(preview, findsOneWidget);
+    expect(tester.getSize(preview).width, greaterThan(thumb));
+    // AppPanelDialog's box is the Dialog (window-wide); the image fills the
+    // inset panel. Allow 1 dp for rounding.
+    final Finder panel = find
+        .descendant(
+          of: find.byType(AppPanelDialog),
+          matching: find.byType(ConstrainedBox),
+        )
+        .first;
+    expect(
+      tester.getSize(preview).width,
+      closeTo(tester.getSize(panel).width, 1),
+    );
+  });
+
+  testWidgets('three images keep balanced square tiles', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      photos: PhotoPicker.fake(
+        photos: <Uint8List>[aFeedbackPng, aFeedbackPng, aFeedbackPng],
+      ),
+    );
+    await tester.tap(find.byTooltip(Copy.feedbackChoosePhoto));
+    await tester.pumpAndSettle();
+    final Finder tiles = find.bySemanticsLabel(Copy.feedbackScreenshotPreview);
+    expect(tiles, findsNWidgets(3));
+    final Size first = tester.getSize(tiles.at(0));
+    final Size last = tester.getSize(tiles.at(2));
+    expect(first.width, first.height);
+    expect(first.width, last.width);
+    expect(
+      tester.getTopLeft(tiles.at(0)).dy,
+      tester.getTopLeft(tiles.at(1)).dy,
+    );
+    expect(
+      tester.getTopLeft(tiles.at(2)).dy,
+      greaterThan(tester.getTopLeft(tiles.at(0)).dy),
+    );
+  });
+
+  testWidgets('one image does not overflow at 200 percent text', (
+    WidgetTester tester,
+  ) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await _pump(tester, size: const Size(393, 886), screenshot: aFeedbackPng);
+    expect(tester.takeException(), isNull);
+    _expectSquareThumbnail(tester);
+  });
+
   testWidgets('the camera control shows only where there is a camera', (
     WidgetTester tester,
   ) async {
@@ -941,6 +1021,19 @@ Future<Uint8List> _addThisScreen(WidgetTester tester, _Harness harness) async {
   final Uint8List bytes = harness.draft!.shots.last.bytes;
   expect(bytes, isNotEmpty);
   return bytes;
+}
+
+void _expectSquareThumbnail(WidgetTester tester) {
+  final Finder tile = find.bySemanticsLabel(Copy.feedbackScreenshotPreview);
+  expect(tile, findsOneWidget);
+  final Size size = tester.getSize(tile);
+  expect(size.width, size.height);
+  expect(size.width, lessThanOrEqualTo(AppConstants.userFeedback.galleryTile));
+  expect(
+    size.width,
+    lessThan(tester.getSize(find.byType(FeedbackShots)).width),
+  );
+  expect(tile, meetsTapTarget());
 }
 
 AppSwitchTile _includeTile(WidgetTester tester) {
