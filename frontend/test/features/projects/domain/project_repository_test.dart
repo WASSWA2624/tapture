@@ -1,10 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tapture/core/errors/failure.dart';
-import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/features/projects/domain/project_repository.dart';
 
-import '../../../support/factories.dart';
-import '../../../support/fakes/fake_project_repository.dart';
+import '../fakes/fake_project_repository.dart';
+import '../project_repository_contract.dart';
 
 void main() {
   late FakeProjectRepository repo;
@@ -17,59 +14,5 @@ void main() {
     repo.dispose();
   });
 
-  test('create is visible on watchAll and never opens a database', () async {
-    _ok(await repo.create(aProject(name: 'Alpha')));
-    final List<Project> rows = await repo.watchAll().first;
-    expect(rows.single.name, 'Alpha');
-  });
-
-  test('watchAll hides archived rows unless includeArchived is set', () async {
-    _ok(await repo.create(aProject()));
-    _ok(await repo.setStatus('project-1', ProjectStatus.archived));
-    expect(await repo.watchAll().first, isEmpty);
-    expect(await repo.watchAll(includeArchived: true).first, hasLength(1));
-  });
-
-  test(
-    'an empty name is a ValidationFailure, not a thrown Exception',
-    () async {
-      final Result<Project> created = await repo.create(aProject(name: ''));
-      expect(_failure(created), isA<ValidationFailure>());
-      expect(_failure(created).message, isNotEmpty);
-      expect(_failure(created).recoveryAction, isNotEmpty);
-    },
-  );
-
-  test('update and setStatus on a missing id are StorageFailure', () async {
-    final Result<void> updated = await repo.update(aProject());
-    expect(_failure(updated), isA<StorageFailure>());
-    final Result<void> status = await repo.setStatus(
-      'missing',
-      ProjectStatus.archived,
-    );
-    expect(_failure(status), isA<StorageFailure>());
-    expect(_failure(status).recoveryAction, isNotEmpty);
-  });
-
-  test('watchAll emits after create', () async {
-    final Future<List<Project>> next = repo.watchAll().skip(1).first;
-    _ok(await repo.create(aProject(name: 'Beta')));
-    expect((await next).single.name, 'Beta');
-  });
-}
-
-T _ok<T>(Result<T> result) {
-  return switch (result) {
-    Success<T>(:final T value) => value,
-    FailureResult<T>(:final Failure failure) => throw TestFailure(
-      failure.message,
-    ),
-  };
-}
-
-Failure _failure<T>(Result<T> result) {
-  return switch (result) {
-    FailureResult<T>(:final Failure failure) => failure,
-    Success<T>() => throw TestFailure('expected a failure'),
-  };
+  runProjectRepositoryContract(() => repo);
 }

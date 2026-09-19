@@ -124,7 +124,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 
 *Create, open and manage the container that owns everything else.*
 
-- [ ] [082 — Project domain model and repository](08-projects/082-project-model.md)
+- [x] [082 — Project domain model and repository](08-projects/082-project-model.md)
 - [ ] [083 — Project list and the current project](08-projects/083-project-list.md)
 - [ ] [084 — Create and duplicate a project](08-projects/084-project-create.md)
 - [ ] [085 — Project home screen](08-projects/085-project-home.md)

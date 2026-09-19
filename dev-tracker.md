@@ -1,8 +1,8 @@
 # Tapture — development tracker
 
-**81 of 281 tasks complete (28.8%)** · last updated 2026-09-18
+**82 of 281 tasks complete (29.2%)** · last updated 2026-09-19
 
-`███████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
+`████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
 ## Phase progress
 
@@ -15,7 +15,7 @@
 | 05 — File storage | 7 | 7 | `██████████████` 100% |
 | 06 — Application shell | 5 | 5 | `██████████████` 100% |
 | 07 — Account and settings | 5 | 5 | `██████████████` 100% |
-| 08 — Projects | 0 | 6 | `░░░░░░░░░░░░░░` 0% |
+| 08 — Projects | 1 | 6 | `██░░░░░░░░░░░░` 17% |
 | 09 — Templates | 0 | 17 | `░░░░░░░░░░░░░░` 0% |
 | 10 — Reference data | 0 | 8 | `░░░░░░░░░░░░░░` 0% |
 | 11 — Context | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **81** | **281** | `████░░░░░░░░░░` 28.8% |
+| **Total** | **82** | **281** | `████░░░░░░░░░░` 29.2% |
 
 ## Completed
 
@@ -117,6 +117,7 @@
 | 079 — Settings shell and its section screens | 2026-09-18 | `/more` lists the eight specification sections as tiles. Capture, storage and About are routed now; AI, Language, Files and Security keep their tile until those phases. Capture rows read and write `SettingsStore`. Storage shows per-project use, headroom and a cache clear that leaves originals. About shows version, build, licences and the plan/spec links. Guarded by loading/empty/failure widget tests on all four screens plus a cache-clear test. |
 | 080 — App lock: PIN and biometric unlock | 2026-09-18 | Optional PIN lock on launch and resume. Salted hash and escalating backoff live in `SecureStorage`; the PIN never reaches the database, preferences or logs. Biometric path is an interface plus fake (`local_auth` is a later allowlist task); failure stays on the PIN. One guard covers every route including deep links. Recovery copy states nobody can reset the PIN and offers no wipe. Guarded by hashing, restart-backoff, biometric-fallback and set/change/remove widget tests. |
 | 081 — Manual offline mode switch | 2026-09-18 | One settings switch writes `SettingKeys.offlineByChoice`. `ConnectivityService` folds that flag and reports offline; features still read `NetworkState` only. `OutboundQueue` holds work while offline and drains on release, retrying nothing while the switch is on. The status line labels offline-by-choice separately from the radio. Guarded by a recording-boundary widget test and a writer-only assertion. |
+| 082 — Project domain model and repository | 2026-09-19 | Immutable `Project` / `ProjectStatus` / `ProjectSettings`, Drift mapper, `ProjectRepositoryImpl`, barrel `projectRepositoryProvider`, and the in-memory fake later screens test against. Organisation/dates map onto `client`/`startedAt`/`completedAt`; description lives in settings JSON. Unknown or missing settings load as defaults. Guarded by a row→domain→row mapper test and the same create/watch/status suite on the in-memory database and the fake. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -282,7 +283,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 051 | ProbeDatabase from 050 has no tombstones table. | Open — `recordTombstone` is a no-op unless `db` is `AppDatabase` |
 | 052 | The constraint says five tables; the steps name four (projects plus three context tables). | Open — implemented the four named tables; a later pass can add pins if 113 needs a fifth |
 | 052 | FE-STR-06 allows one public class per file; context definitions, state and presets are three classes. | Open — `ContextState` and `ContextPresets` live in part files of `context.dart`, the two files the task named |
-| 052 | Task 082 models organisation/description/`startsOn`; this task stores `client`/`startedAt`. | Open — columns follow 052; 082 maps onto them |
+| 052 | Task 082 models organisation/description/`startsOn`; this task stores `client`/`startedAt`. | Closed by 082 — organisation maps to `client`, dates to `startedAt`/`completedAt`, description lives in the settings JSON |
 | 053 | Dart cannot name a companion field `required`. | Open — SQL column is `required`; the getter is `isRequired`. 088's three-value `Requiredness` is still later |
 | 053 | The task has no Contract. | Open — extra `upsertTemplate` / `upsertTemplateField` / `listTemplateFields` / `upsertTemplateRow` / `lookupTemplateRow` so the named tests have a write path |
 | 049 | `*.g.dart` is gitignored (002) and FE-CODE-13 wants generated output committed. | Open — `app_database.g.dart` is force-added; the ignore rule or this constraint has to give |
@@ -409,9 +410,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 08 — Projects
 
-*0 of 6 complete.*
+*1 of 6 complete.*
 
-- [ ] [082 — Project domain model and repository](dev-plan/08-projects/082-project-model.md)
+- [x] [082 — Project domain model and repository](dev-plan/08-projects/082-project-model.md)
 - [ ] [083 — Project list and the current project](dev-plan/08-projects/083-project-list.md)
 - [ ] [084 — Create and duplicate a project](dev-plan/08-projects/084-project-create.md)
 - [ ] [085 — Project home screen](dev-plan/08-projects/085-project-home.md)

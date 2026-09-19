@@ -34,11 +34,15 @@ typedef PhotoFactory = PhotoAsset;
 
 /// A project with sensible defaults. Override [name] when the test cares.
 ProjectFactory aProject({String? name}) {
-  return (
+  final DateTime at = DateTime.utc(2026, 9, 17, 8);
+  return Project(
     id: 'project-1',
     name: name ?? 'Test project',
     status: ProjectStatus.active,
     folderName: 'test-project',
+    settings: const ProjectSettings(),
+    createdAt: at,
+    updatedAt: at,
   );
 }
 

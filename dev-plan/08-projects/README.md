@@ -4,7 +4,7 @@ Create, open and manage the container that owns everything else.
 
 Tasks 082–087 (6). Each file is a standalone implementation prompt.
 
-- [ ] [082 — Project domain model and repository](082-project-model.md)
+- [x] [082 — Project domain model and repository](082-project-model.md)
 - [ ] [083 — Project list and the current project](083-project-list.md)
 - [ ] [084 — Create and duplicate a project](084-project-create.md)
 - [ ] [085 — Project home screen](085-project-home.md)

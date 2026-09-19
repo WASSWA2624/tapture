@@ -62,7 +62,7 @@ abstract interface class ProjectRepository {
 
 ## Definition of done
 
-- [ ] Presentation compiles with no `core/db` import anywhere under `features/projects/presentation/`.
-- [ ] Unknown or missing settings JSON loads as defaults instead of throwing.
-- [ ] Tests: a round-trip mapper test row → `Project` → row; repository tests against an in-memory database for create,
+- [x] Presentation compiles with no `core/db` import anywhere under `features/projects/presentation/`.
+- [x] Unknown or missing settings JSON loads as defaults instead of throwing.
+- [x] Tests: a round-trip mapper test row → `Project` → row; repository tests against an in-memory database for create,
   watch and status change; the same suite run against the fake.
