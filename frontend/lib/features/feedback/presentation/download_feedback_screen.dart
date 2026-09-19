@@ -2,9 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
@@ -43,6 +47,7 @@ class DownloadFeedbackScreen extends ConsumerWidget {
       isEmpty: (List<FeedbackEntry> all) => all.isEmpty,
       empty: () => _frame(
         context,
+        controller,
         const AppEmptyState(
           icon: Icons.feedback_outlined,
           headline: Copy.feedbackEmptyHeadline,
@@ -75,17 +80,22 @@ class DownloadFeedbackScreen extends ConsumerWidget {
               ? () => unawaited(_download(context, controller, matching))
               : null,
         );
-        return _frame(context, list, footer: action);
+        return _frame(context, controller, list, action: action);
       },
     );
   }
 
-  Widget _frame(BuildContext context, Widget body, {Widget? footer}) {
+  Widget _frame(
+    BuildContext context,
+    DownloadFeedbackController controller,
+    Widget body, {
+    Widget? action,
+  }) {
     return AppPage(
       title: Copy.feedbackDownload,
       compactBar: true,
       inset: false,
-      footer: footer,
+      footer: _footer(context, controller, action),
       leading: AppIconButton(
         icon: Icons.close,
         semanticLabel: Copy.close,
@@ -95,6 +105,56 @@ class DownloadFeedbackScreen extends ConsumerWidget {
       ),
       body: body,
     );
+  }
+
+  Widget? _footer(
+    BuildContext context,
+    DownloadFeedbackController controller,
+    Widget? action,
+  ) {
+    final String? destination = controller.destination;
+    final bool canOpen = controller.canOpenFolder;
+    if (destination == null && !canOpen && action == null) {
+      return null;
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (destination != null)
+          Text(
+            Copy.feedbackDownloadsGoTo(destination),
+            style: AppText.caption,
+            textAlign: TextAlign.center,
+          ),
+        if (canOpen)
+          AppButton(
+            label: Copy.feedbackOpenFolder,
+            variant: AppButtonVariant.text,
+            onPressed: () => unawaited(_openFolder(context, controller)),
+          ),
+        if (action != null) ...<Widget>[
+          if (destination != null || canOpen) const SizedBox(height: Space.x2),
+          action,
+        ],
+      ],
+    );
+  }
+}
+
+Future<void> _openFolder(
+  BuildContext context,
+  DownloadFeedbackController controller,
+) async {
+  final Result<void> result = await controller.openFolder();
+  if (!context.mounted) {
+    return;
+  }
+  switch (result) {
+    case Success<void>():
+      break;
+    case FailureResult<void>(:final Failure failure):
+      showAppSnack(context, failure.message, tone: SnackTone.warning);
   }
 }
 

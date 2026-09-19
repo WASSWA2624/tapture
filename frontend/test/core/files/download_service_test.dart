@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/download_service.dart';
@@ -111,6 +112,92 @@ void main() {
     },
   );
 
+  test(
+    'desktop openFolder runs the platform command with the folder argument',
+    () async {
+      final Directory folder = _tempFolder();
+      String? executable;
+      List<String>? arguments;
+      final DownloadService downloads = folderDownloads(
+        () async => folder,
+        open: (String command, List<String> args) async {
+          executable = command;
+          arguments = args;
+        },
+      );
+
+      _okVoid(await downloads.openFolder());
+
+      expect(executable, _desktopOpenCommand);
+      expect(arguments!.map(_slash).toList(), <String>[
+        _slash('${folder.path}/Tapture'),
+      ]);
+      expect(Directory('${folder.path}/Tapture').existsSync(), isTrue);
+    },
+  );
+
+  test('a failing desktop runner returns openFolderFailure', () async {
+    final Directory folder = _tempFolder();
+    final DownloadService downloads = folderDownloads(
+      () async => folder,
+      open: (String _, List<String> _) async {
+        throw const FileSystemException('blocked');
+      },
+    );
+
+    final Result<void> result = await downloads.openFolder();
+    final Failure? failure = result.fold((Failure value) => value, (_) => null);
+
+    expect(failure, isA<StorageFailure>());
+    expect(
+      failure?.message,
+      openFolderFailure(Copy.downloadsTaptureFolder).message,
+    );
+    expect(failure?.recoveryAction, isNotEmpty);
+  });
+
+  test('Android openFolder invokes openDownloads', () async {
+    final Directory folder = _tempFolder();
+    const MethodChannel channel = MethodChannel('com.tapture.app/files');
+    String? method;
+    _onChannel(channel, (MethodCall call) async {
+      method = call.method;
+      return null;
+    });
+
+    final DownloadService downloads = androidDownloads(
+      channel: channel,
+      fallback: folderDownloads(() async => folder),
+    );
+    _okVoid(await downloads.openFolder());
+
+    expect(method, 'openDownloads');
+    expect(downloads.destination, Copy.downloadsTaptureFolder);
+    expect(downloads.canOpenFolder, isTrue);
+  });
+
+  test('a failing Android channel returns openFolderFailure', () async {
+    final Directory folder = _tempFolder();
+    const MethodChannel channel = MethodChannel('com.tapture.app/files');
+    _onChannel(channel, (MethodCall call) async {
+      expect(call.method, 'openDownloads');
+      throw PlatformException(code: 'open_failed');
+    });
+
+    final DownloadService downloads = androidDownloads(
+      channel: channel,
+      fallback: folderDownloads(() async => folder),
+    );
+    final Result<void> result = await downloads.openFolder();
+    final Failure? failure = result.fold((Failure value) => value, (_) => null);
+
+    expect(failure, isA<StorageFailure>());
+    expect(
+      failure?.message,
+      openFolderFailure(Copy.downloadsTaptureFolder).message,
+    );
+  });
+
   test('a write failure returns downloadFailure', () async {
     final Directory folder = _tempFolder();
     File('${folder.path}/Tapture').writeAsStringSync('blocked');
@@ -158,6 +245,22 @@ String? _ok(Result<String?> result) {
   return result.fold((Failure failure) {
     fail('${failure.message} ${failure.recoveryAction}');
   }, (String? location) => location);
+}
+
+void _okVoid(Result<void> result) {
+  result.fold((Failure failure) {
+    fail('${failure.message} ${failure.recoveryAction}');
+  }, (_) {});
+}
+
+String get _desktopOpenCommand {
+  if (Platform.isWindows) {
+    return 'explorer';
+  }
+  if (Platform.isMacOS) {
+    return 'open';
+  }
+  return 'xdg-open';
 }
 
 String _slash(String? path) => (path ?? '').replaceAll(r'\', '/');

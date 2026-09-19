@@ -8,13 +8,16 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/download_service.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/feedback/feedback.dart';
 import 'package:tapture/features/feedback/presentation/download_feedback_controller.dart';
 import 'package:tapture/features/feedback/presentation/download_feedback_screen.dart';
 import 'package:tapture/features/feedback/presentation/feedback_providers.dart';
 
+import '../../../support/a11y_matchers.dart';
 import '../../../support/factories.dart';
 
 void main() {
@@ -197,6 +200,125 @@ void main() {
     expect(find.text('Open'), findsOneWidget);
   });
 
+  testWidgets('the caption names the destination before a download', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      downloads: DownloadService.fake(
+        destination: Copy.downloadsTaptureFolder,
+        canOpenFolder: true,
+      ),
+    );
+    expect(
+      find.text(Copy.feedbackDownloadsGoTo(Copy.downloadsTaptureFolder)),
+      findsOneWidget,
+    );
+    expect(find.text(Copy.feedbackOpenFolder), findsOneWidget);
+    expect(find.byType(AppButton), meetsTapTarget());
+    expect(find.byType(AppButton), hasSemanticLabel(Copy.feedbackOpenFolder));
+  });
+
+  testWidgets('Open folder is hidden when the platform cannot open it', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      downloads: DownloadService.fake(destination: Copy.downloadsTaptureFolder),
+    );
+    expect(
+      find.text(Copy.feedbackDownloadsGoTo(Copy.downloadsTaptureFolder)),
+      findsOneWidget,
+    );
+    expect(find.text(Copy.feedbackOpenFolder), findsNothing);
+  });
+
+  testWidgets('a null destination hides the caption and Open folder', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, seed: true);
+    expect(
+      find.text(Copy.feedbackDownloadsGoTo(Copy.downloadsTaptureFolder)),
+      findsNothing,
+    );
+    expect(find.text(Copy.feedbackOpenFolder), findsNothing);
+  });
+
+  testWidgets('Open folder calls the service', (WidgetTester tester) async {
+    int opened = 0;
+    await _pump(
+      tester,
+      downloads: DownloadService.fake(
+        destination: Copy.downloadsTaptureFolder,
+        canOpenFolder: true,
+        onOpenFolder: () => opened++,
+      ),
+    );
+    await tester.tap(find.text(Copy.feedbackOpenFolder));
+    await tester.pump();
+    expect(opened, 1);
+  });
+
+  testWidgets('a failed open shows a warning that names the folder', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      downloads: DownloadService.fake(
+        destination: Copy.downloadsTaptureFolder,
+        canOpenFolder: true,
+        openFolderFail: true,
+      ),
+    );
+    await tester.tap(find.text(Copy.feedbackOpenFolder));
+    await tester.pumpAndSettle();
+    expect(
+      find.text(Copy.feedbackOpenFolderFailed(Copy.downloadsTaptureFolder)),
+      findsOneWidget,
+    );
+    expect(find.byType(DownloadFeedbackScreen), findsOneWidget);
+  });
+
+  for (final ({String name, ThemeData theme}) appearance
+      in <({String name, ThemeData theme})>[
+        (name: 'light', theme: buildTheme(brightness: Brightness.light)),
+        (name: 'dark', theme: buildTheme(brightness: Brightness.dark)),
+        (
+          name: 'outdoor',
+          theme: buildTheme(brightness: Brightness.light, outdoor: true),
+        ),
+      ]) {
+    for (final ({Size size, String name}) viewport
+        in <({Size size, String name})>[
+          (size: const Size(360, 800), name: '360 portrait'),
+          (size: const Size(800, 360), name: '360 landscape'),
+        ]) {
+      testWidgets(
+        'does not clip in ${appearance.name} at ${viewport.name} and 200 percent text',
+        (WidgetTester tester) async {
+          tester.platformDispatcher.textScaleFactorTestValue = 2;
+          addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+          await _pump(
+            tester,
+            seed: true,
+            size: viewport.size,
+            theme: appearance.theme,
+            downloads: DownloadService.fake(
+              destination: Copy.downloadsTaptureFolder,
+              canOpenFolder: true,
+            ),
+          );
+          expect(tester.takeException(), isNull);
+          expect(
+            find.text(Copy.feedbackDownloadsGoTo(Copy.downloadsTaptureFolder)),
+            findsOneWidget,
+          );
+          expect(find.text(Copy.feedbackOpenFolder), findsOneWidget);
+        },
+      );
+    }
+  }
+
   testWidgets('closing the screen forgets its filters', (
     WidgetTester tester,
   ) async {
@@ -235,6 +357,8 @@ Future<ProviderContainer> _pump(
   FeedbackCategory category = FeedbackCategory.general,
   List<({FeedbackCategory category, String message})>? entries,
   Size size = const Size(400, 800),
+  ThemeData? theme,
+  DownloadService? downloads,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = size;
@@ -272,6 +396,8 @@ Future<ProviderContainer> _pump(
     overrides: <Override>[
       feedbackClockProvider.overrideWith((Ref _) => clock),
       feedbackRepositoryProvider.overrideWith((Ref _) => repo),
+      if (downloads != null)
+        feedbackDownloadsProvider.overrideWith((Ref _) => downloads),
     ],
   );
   addTearDown(container.dispose);
@@ -279,7 +405,7 @@ Future<ProviderContainer> _pump(
     UncontrolledProviderScope(
       container: container,
       child: MaterialApp(
-        theme: buildTheme(brightness: Brightness.light),
+        theme: theme ?? buildTheme(brightness: Brightness.light),
         home: asRoute
             ? Builder(
                 builder: (BuildContext context) {

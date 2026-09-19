@@ -2,7 +2,7 @@
 
 Making the finished app fast, legible, reachable and unbreakable in the field.
 
-Tasks 236–311 (39). Each file is a standalone implementation prompt.
+Tasks 236–312 (40). Each file is a standalone implementation prompt.
 
 - [ ] [236 — Layout, accessibility and text-scale audit](236-responsive-audit.md)
 - [ ] [237 — Landscape and foldables](237-orientation-support.md)
@@ -43,3 +43,4 @@ Tasks 236–311 (39). Each file is a standalone implementation prompt.
 - [x] [309 — Add screenshot help for other screens](309-add-screenshot-help-for-other-screens.md)
 - [x] [310 — Persist the theme mode in the settings store](310-persist-theme-mode-in-settings-store.md)
 - [x] [311 — Add the Appearance settings screen](311-add-appearance-settings-screen.md)
+- [x] [312 — Show the feedback download location](312-show-feedback-download-location.md)

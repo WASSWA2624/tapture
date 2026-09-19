@@ -3,6 +3,7 @@ import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
 
 import 'download_service.dart';
@@ -12,6 +13,17 @@ DownloadService platformDownloads() => const _BrowserDownloads();
 
 final class _BrowserDownloads implements DownloadService {
   const _BrowserDownloads();
+
+  @override
+  String? get destination => null;
+
+  @override
+  bool get canOpenFolder => false;
+
+  @override
+  Future<Result<void>> openFolder() async {
+    return FailureResult<void>(openFolderFailure(Copy.downloadsTaptureFolder));
+  }
 
   @override
   Future<Result<String?>> save({

@@ -1,7 +1,9 @@
 package com.tapture.app
 
 import android.annotation.SuppressLint
+import android.app.DownloadManager
 import android.content.ContentValues
+import android.content.Intent
 import android.os.Build
 import android.os.Environment
 import android.os.Handler
@@ -28,10 +30,24 @@ class MainActivity : FlutterActivity() {
                         call.argument("bytes"),
                         result,
                     )
+                    "openDownloads" -> openDownloads(result)
                     "publicDocumentsPath" -> publicDocumentsPath(result)
                     else -> result.notImplemented()
                 }
             }
+    }
+
+    private fun openDownloads(result: MethodChannel.Result) {
+        try {
+            startActivity(
+                Intent(DownloadManager.ACTION_VIEW_DOWNLOADS).addFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK,
+                ),
+            )
+            result.success(null)
+        } catch (_: Exception) {
+            result.error("open_failed", "Could not open Downloads.", null)
+        }
     }
 
     private fun publicDocumentsPath(result: MethodChannel.Result) {

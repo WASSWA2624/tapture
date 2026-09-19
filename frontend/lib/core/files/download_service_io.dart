@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
 
 import 'download_service.dart';
@@ -44,8 +45,18 @@ DownloadService androidDownloads({
 DownloadService folderDownloads(
   Future<Directory> Function() folder, {
   bool taptureSubfolder = true,
+  bool? canOpenFolder,
+  String? destination,
+  Future<void> Function(String executable, List<String> arguments)? open,
 }) {
-  return _FolderDownloads(folder, taptureSubfolder: taptureSubfolder);
+  return _FolderDownloads(
+    folder,
+    taptureSubfolder: taptureSubfolder,
+    canOpenFolder: canOpenFolder ?? taptureSubfolder,
+    destination:
+        destination ?? (taptureSubfolder ? Copy.downloadsTaptureFolder : null),
+    open: open,
+  );
 }
 
 Future<Directory> _downloadsFolder() async {
@@ -64,10 +75,42 @@ Future<Directory> _downloadsFolder() async {
 /// name is never overwritten: the new one is numbered the way a browser
 /// numbers a repeated download.
 final class _FolderDownloads implements DownloadService {
-  _FolderDownloads(this._folder, {required this._taptureSubfolder});
+  _FolderDownloads(
+    this._folder, {
+    required this._taptureSubfolder,
+    required this.canOpenFolder,
+    required this.destination,
+    required this._open,
+  });
 
   final Future<Directory> Function() _folder;
   final bool _taptureSubfolder;
+  final Future<void> Function(String executable, List<String> arguments)? _open;
+
+  @override
+  final String? destination;
+
+  @override
+  final bool canOpenFolder;
+
+  @override
+  Future<Result<void>> openFolder() async {
+    if (!canOpenFolder) {
+      return FailureResult<void>(
+        openFolderFailure(destination ?? Copy.downloadsTaptureFolder),
+      );
+    }
+    try {
+      final Directory folder = await _targetFolder();
+      await folder.create(recursive: true);
+      await (_open ?? _runOpen)(_openExecutable, <String>[folder.path]);
+      return const Success<void>(null);
+    } on Object {
+      return FailureResult<void>(
+        openFolderFailure(destination ?? Copy.downloadsTaptureFolder),
+      );
+    }
+  }
 
   @override
   Future<Result<String?>> save({
@@ -76,10 +119,7 @@ final class _FolderDownloads implements DownloadService {
     required String mimeType,
   }) async {
     try {
-      final Directory base = await _folder();
-      final Directory folder = _taptureSubfolder
-          ? Directory('${base.path}/$_taptureFolder')
-          : base;
+      final Directory folder = await _targetFolder();
       await folder.create(recursive: true);
       final File target = _freeName(folder, fileName);
       final File part = File('${target.path}$_partSuffix');
@@ -90,6 +130,11 @@ final class _FolderDownloads implements DownloadService {
       return FailureResult<String?>(downloadFailure(fileName));
     }
   }
+
+  Future<Directory> _targetFolder() async {
+    final Directory base = await _folder();
+    return _taptureSubfolder ? Directory('${base.path}/$_taptureFolder') : base;
+  }
 }
 
 final class _ChannelDownloads implements DownloadService {
@@ -97,6 +142,24 @@ final class _ChannelDownloads implements DownloadService {
 
   final MethodChannel _channel;
   final DownloadService _fallback;
+
+  @override
+  String? get destination => Copy.downloadsTaptureFolder;
+
+  @override
+  bool get canOpenFolder => true;
+
+  @override
+  Future<Result<void>> openFolder() async {
+    try {
+      await _channel.invokeMethod<void>('openDownloads');
+      return const Success<void>(null);
+    } on Object {
+      return FailureResult<void>(
+        openFolderFailure(Copy.downloadsTaptureFolder),
+      );
+    }
+  }
 
   @override
   Future<Result<String?>> save({
@@ -138,3 +201,24 @@ File _freeName(Directory folder, String fileName) {
 
 /// Suffix of an in-flight write. Never the name the file is saved as.
 const String _partSuffix = '.part';
+
+String get _openExecutable {
+  if (Platform.isWindows) {
+    return 'explorer';
+  }
+  if (Platform.isMacOS) {
+    return 'open';
+  }
+  return 'xdg-open';
+}
+
+Future<void> _runOpen(String executable, List<String> arguments) async {
+  final ProcessResult result = await Process.run(executable, arguments);
+  // explorer.exe returns 1 even when it opened the folder.
+  if (executable == 'explorer') {
+    return;
+  }
+  if (result.exitCode != 0) {
+    throw ProcessException(executable, arguments);
+  }
+}

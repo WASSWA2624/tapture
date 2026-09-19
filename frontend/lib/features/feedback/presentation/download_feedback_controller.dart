@@ -59,6 +59,17 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
     _set(visible: state.visible + AppConstants.userFeedback.listPageSize);
   }
 
+  /// Short label for where archives land, or null where the browser decides.
+  String? get destination => ref.read(feedbackDownloadsProvider).destination;
+
+  /// Whether [openFolder] can take the operator to that place.
+  bool get canOpenFolder => ref.read(feedbackDownloadsProvider).canOpenFolder;
+
+  /// Opens the downloads folder, or the system Downloads view on Android.
+  Future<Result<void>> openFolder() {
+    return ref.read(feedbackDownloadsProvider).openFolder();
+  }
+
   /// Encodes the matching entries as a zip and hands the file to the operator.
   Future<Result<String?>> download(List<FeedbackEntry> matching) async {
     if (matching.isEmpty || state.filter.isRangeBackwards) {

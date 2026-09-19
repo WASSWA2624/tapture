@@ -1075,6 +1075,20 @@ abstract final class Copy {
   /// The archive was written to [location] on this device.
   static String feedbackDownloadedTo(String location) => 'Saved to $location';
 
+  /// Shared Downloads subfolder on Android and desktop. The › mirrors with
+  /// the surrounding line in right-to-left layouts (FE-L10N-05).
+  static const String downloadsTaptureFolder = 'Downloads › Tapture';
+
+  /// Where archives land, before anything is downloaded.
+  static String feedbackDownloadsGoTo(String place) => 'Downloads go to $place';
+
+  /// Opens the system Downloads view or the Tapture folder.
+  static const String feedbackOpenFolder = 'Open folder';
+
+  /// Warning when [place] could not be opened.
+  static String feedbackOpenFolderFailed(String place) =>
+      'The folder could not be opened. Look in $place.';
+
   /// Nothing has been written yet.
   static const String feedbackEmptyHeadline = 'No feedback yet';
 

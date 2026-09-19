@@ -66,6 +66,19 @@ void main() {
     );
   });
 
+  test('feedbackDownloadsGoTo names the Downloads Tapture folder', () {
+    expect(Copy.downloadsTaptureFolder, 'Downloads › Tapture');
+    expect(
+      Copy.feedbackDownloadsGoTo(Copy.downloadsTaptureFolder),
+      'Downloads go to Downloads › Tapture',
+    );
+    expect(Copy.feedbackOpenFolder, 'Open folder');
+    expect(
+      Copy.feedbackOpenFolderFailed(Copy.downloadsTaptureFolder),
+      'The folder could not be opened. Look in Downloads › Tapture.',
+    );
+  });
+
   test('feedbackDiscardDraftMessage reads correctly at zero, one and many', () {
     expect(Copy.feedbackDiscardDraftTitle, 'Discard this feedback?');
     expect(
@@ -439,6 +452,10 @@ List<String> get _values {
     Copy.feedbackDownloadCount(2),
     Copy.feedbackDownloadStarted,
     Copy.feedbackDownloadedTo('downloads/file.xlsx'),
+    Copy.downloadsTaptureFolder,
+    Copy.feedbackDownloadsGoTo(Copy.downloadsTaptureFolder),
+    Copy.feedbackOpenFolder,
+    Copy.feedbackOpenFolderFailed(Copy.downloadsTaptureFolder),
     Copy.feedbackEmptyHeadline,
     Copy.feedbackEmptyMessage,
     Copy.feedbackNoMatchHeadline,
