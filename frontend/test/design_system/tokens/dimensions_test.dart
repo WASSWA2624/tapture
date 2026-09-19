@@ -28,6 +28,7 @@ void main() {
     expect(Sizes.minTapTarget, 48);
     expect(Sizes.controlHeight, 52);
     expect(Sizes.listPane, 280);
+    expect(Sizes.dialogMaxWidth, 560);
     expect(Sizes.controlHeight, greaterThanOrEqualTo(Sizes.minTapTarget));
   });
 

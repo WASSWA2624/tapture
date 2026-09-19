@@ -7,11 +7,11 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
-import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 
+import 'feedback_confirmations.dart';
 import 'feedback_draft.dart';
 import 'feedback_draft_controller.dart';
 import 'feedback_window_share_controller.dart';
@@ -164,12 +164,9 @@ class _FeedbackDraftBarState extends ConsumerState<FeedbackDraftBar> {
   }
 
   Future<void> _discard() async {
-    final bool confirmed = await showAppConfirm(
+    final bool confirmed = await confirmDiscardFeedbackDraft(
       context,
-      title: Copy.feedbackDiscardDraft,
-      message: Copy.feedbackDiscardDraftMessage,
-      confirmLabel: Copy.discard,
-      destructive: true,
+      images: ref.read(feedbackDraftProvider)?.shots.length ?? 0,
     );
     if (confirmed) {
       _draft.clear();

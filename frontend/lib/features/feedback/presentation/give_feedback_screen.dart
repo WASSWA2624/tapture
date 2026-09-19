@@ -8,7 +8,6 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
-import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
@@ -17,6 +16,7 @@ import 'package:tapture/core/widgets/forms/app_form.dart';
 
 import '../domain/feedback_category.dart';
 import '../domain/feedback_entry.dart';
+import 'feedback_confirmations.dart';
 import 'feedback_draft.dart';
 import 'feedback_draft_controller.dart';
 import 'feedback_labels.dart';
@@ -174,12 +174,9 @@ class _GiveFeedbackState extends ConsumerState<GiveFeedbackScreen> {
   }
 
   Future<void> _discard() async {
-    final bool confirmed = await showAppConfirm(
+    final bool confirmed = await confirmDiscardFeedbackDraft(
       context,
-      title: Copy.feedbackDiscardDraft,
-      message: Copy.feedbackDiscardDraftMessage,
-      confirmLabel: Copy.discard,
-      destructive: true,
+      images: ref.read(feedbackDraftProvider)?.shots.length ?? 0,
     );
     if (confirmed) {
       _draft.clear();

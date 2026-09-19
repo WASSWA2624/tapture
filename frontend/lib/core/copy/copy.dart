@@ -918,9 +918,18 @@ abstract final class Copy {
   /// Discards the in-progress feedback draft.
   static const String feedbackDiscardDraft = 'Discard draft';
 
-  /// Confirms discarding the in-progress feedback draft.
-  static const String feedbackDiscardDraftMessage =
-      'This feedback and its photos will be cleared.';
+  /// Title of the discard-draft confirm.
+  static const String feedbackDiscardDraftTitle = 'Discard this feedback?';
+
+  /// Body of the discard-draft confirm, naming the image count (FE-SIMP-07).
+  static String feedbackDiscardDraftMessage(int images) {
+    return Intl.plural(
+      images,
+      zero: 'This feedback will be cleared.',
+      one: 'This feedback and its 1 image will be cleared.',
+      other: 'This feedback and its $images images will be cleared.',
+    );
+  }
 
   /// Collapses the feedback form so the rest of the app stays usable.
   static const String feedbackContinueLater = 'Continue later';

@@ -11,4 +11,9 @@ abstract final class Sizes {
   /// Master-detail list column on expanded windows. Below the readable
   /// column cap so the detail pane keeps most of the width (FE-RESP-04).
   static const double listPane = 280;
+
+  /// Confirmation and alert maximum. Material 3's dialog cap, so a
+  /// confirmation stays a readable column on tablets and desktops
+  /// (FE-RESP-04).
+  static const double dialogMaxWidth = 560;
 }

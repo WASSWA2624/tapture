@@ -13,7 +13,6 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/lifecycle/lifecycle.dart';
 import 'package:tapture/core/widgets/app_floating_button.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
-import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/responsive/form_factor.dart';
@@ -23,6 +22,7 @@ import 'package:tapture/features/settings/settings.dart';
 import '../domain/feedback_origin.dart';
 import 'delete_feedback_screen.dart';
 import 'download_feedback_screen.dart';
+import 'feedback_confirmations.dart';
 import 'feedback_context_capture.dart';
 import 'feedback_draft.dart';
 import 'feedback_draft_bar.dart';
@@ -93,12 +93,9 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
     if (!mounted) {
       return false;
     }
-    final bool confirmed = await showAppConfirm(
+    final bool confirmed = await confirmDiscardFeedbackDraft(
       context,
-      title: Copy.feedbackDiscardDraft,
-      message: Copy.feedbackDiscardDraftMessage,
-      confirmLabel: Copy.discard,
-      destructive: true,
+      images: ref.read(feedbackDraftProvider)?.shots.length ?? 0,
     );
     if (confirmed) {
       ref.read(feedbackDraftProvider.notifier).clear();

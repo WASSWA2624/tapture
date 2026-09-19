@@ -343,7 +343,7 @@ void main() {
     await tester.tap(find.byTooltip(Copy.close));
     await tester.pumpAndSettle();
     expect(find.byType(GiveFeedbackScreen), findsNothing);
-    expect(find.text(Copy.feedbackDiscardDraftMessage), findsNothing);
+    expect(find.text(Copy.feedbackDiscardDraftTitle), findsNothing);
     expect(find.byType(FeedbackDraftBar), findsOneWidget);
     expect(find.text('Still writing'), findsOneWidget);
     // The app under the bar stays usable.
@@ -525,7 +525,8 @@ void main() {
     final Future<AppExitResponse> cancelled = harness.observer
         .didRequestAppExit();
     await tester.pumpAndSettle();
-    expect(find.text(Copy.feedbackDiscardDraftMessage), findsOneWidget);
+    expect(find.text(Copy.feedbackDiscardDraftTitle), findsOneWidget);
+    expect(find.text(Copy.feedbackDiscardDraftMessage(0)), findsOneWidget);
     await tester.tap(find.text(Copy.cancel));
     await tester.pumpAndSettle();
     expect(await cancelled, AppExitResponse.cancel);
@@ -553,7 +554,8 @@ void main() {
     final Future<AppExitResponse> pending = harness.observer
         .didRequestAppExit();
     await tester.pumpAndSettle();
-    expect(find.text(Copy.feedbackDiscardDraftMessage), findsOneWidget);
+    expect(find.text(Copy.feedbackDiscardDraftTitle), findsOneWidget);
+    expect(find.text(Copy.feedbackDiscardDraftMessage(0)), findsOneWidget);
     await tester.tap(find.text(Copy.cancel));
     await tester.pumpAndSettle();
     expect(await pending, AppExitResponse.cancel);
@@ -565,18 +567,19 @@ void main() {
   ) async {
     final _Harness harness = await _pump(tester);
     expect(await harness.observer.didRequestAppExit(), AppExitResponse.exit);
-    expect(find.text(Copy.feedbackDiscardDraftMessage), findsNothing);
+    expect(find.text(Copy.feedbackDiscardDraftTitle), findsNothing);
   });
 
   testWidgets('discard asks first, then drops the draft', (
     WidgetTester tester,
   ) async {
-    final _Harness harness = await _pump(tester);
+    final _Harness harness = await _pump(tester, screenshot: aFeedbackPng);
     await tester.tap(find.byKey(const ValueKey<String>('app-page-overflow')));
     await tester.pumpAndSettle();
     await tester.tap(find.text(Copy.feedbackDiscardDraft));
     await tester.pumpAndSettle();
-    expect(find.text(Copy.feedbackDiscardDraftMessage), findsOneWidget);
+    expect(find.text(Copy.feedbackDiscardDraftTitle), findsOneWidget);
+    expect(find.text(Copy.feedbackDiscardDraftMessage(1)), findsOneWidget);
     await tester.tap(find.text(Copy.discard));
     await tester.pumpAndSettle();
     expect(harness.draft, isNull);
@@ -597,7 +600,8 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text(Copy.feedbackDiscardDraftMessage), findsOneWidget);
+    expect(find.text(Copy.feedbackDiscardDraftTitle), findsOneWidget);
+    expect(find.text(Copy.feedbackDiscardDraftMessage(0)), findsOneWidget);
     await tester.tap(find.text(Copy.cancel));
     await tester.pumpAndSettle();
     expect(find.byType(FeedbackDraftBar), findsOneWidget);

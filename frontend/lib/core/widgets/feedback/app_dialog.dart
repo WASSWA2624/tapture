@@ -56,6 +56,7 @@ class AppDialog extends StatelessWidget {
     final AppColors colors = context.colors;
     return Dialog(
       backgroundColor: colors.surface,
+      insetPadding: const EdgeInsets.all(Space.x6),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Radii.lg),
         side: BorderSide(color: colors.outline, width: Space.x0 / 2),
@@ -65,46 +66,71 @@ class AppDialog extends StatelessWidget {
         scopesRoute: true,
         label: title,
         explicitChildNodes: true,
-        child: Padding(
-          padding: const EdgeInsets.all(Space.x4),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Text(
-                title,
-                style: AppText.title.copyWith(color: colors.onSurface),
-              ),
-              const SizedBox(height: Space.x3),
-              Text(
-                message,
-                style: AppText.body.copyWith(color: colors.onSurface),
-              ),
-              const SizedBox(height: Space.x4),
-              Wrap(
-                alignment: WrapAlignment.end,
-                spacing: Space.x2,
-                runSpacing: Space.x2,
-                children: <Widget>[
-                  if (!_alert)
+        child: ConstrainedBox(
+          key: const ValueKey<String>('app-dialog-surface'),
+          constraints: const BoxConstraints(maxWidth: Sizes.dialogMaxWidth),
+          child: Padding(
+            padding: const EdgeInsets.all(Space.x4),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                _title(colors),
+                const SizedBox(height: Space.x3),
+                Text(
+                  message,
+                  style: AppText.body.copyWith(color: colors.onSurface),
+                ),
+                const SizedBox(height: Space.x4),
+                Wrap(
+                  alignment: WrapAlignment.end,
+                  spacing: Space.x2,
+                  runSpacing: Space.x2,
+                  children: <Widget>[
+                    if (!_alert)
+                      AppButton(
+                        label: Copy.cancel,
+                        variant: AppButtonVariant.text,
+                        onPressed: () => _cancel(context),
+                      ),
                     AppButton(
-                      label: Copy.cancel,
-                      variant: AppButtonVariant.text,
-                      onPressed: () => _cancel(context),
+                      label: confirmLabel,
+                      variant: destructive
+                          ? AppButtonVariant.destructive
+                          : AppButtonVariant.primary,
+                      onPressed: () => _confirm(context),
                     ),
-                  AppButton(
-                    label: confirmLabel,
-                    variant: destructive
-                        ? AppButtonVariant.destructive
-                        : AppButtonVariant.primary,
-                    onPressed: () => _confirm(context),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _title(AppColors colors) {
+    final Text heading = Text(
+      title,
+      style: AppText.title.copyWith(color: colors.onSurface),
+    );
+    if (!destructive) {
+      return heading;
+    }
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        ExcludeSemantics(
+          child: Icon(
+            Icons.warning_amber_outlined,
+            color: colors.danger,
+            size: Space.x6,
+          ),
+        ),
+        const SizedBox(width: Space.x3),
+        Expanded(child: heading),
+      ],
     );
   }
 

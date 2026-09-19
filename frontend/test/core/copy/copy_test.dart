@@ -66,6 +66,22 @@ void main() {
     );
   });
 
+  test('feedbackDiscardDraftMessage reads correctly at zero, one and many', () {
+    expect(Copy.feedbackDiscardDraftTitle, 'Discard this feedback?');
+    expect(
+      Copy.feedbackDiscardDraftMessage(0),
+      'This feedback will be cleared.',
+    );
+    expect(
+      Copy.feedbackDiscardDraftMessage(1),
+      'This feedback and its 1 image will be cleared.',
+    );
+    expect(
+      Copy.feedbackDiscardDraftMessage(3),
+      'This feedback and its 3 images will be cleared.',
+    );
+  });
+
   test('no Copy value uses a synonym the naming checker rejects', () {
     for (final String value in _values) {
       expect(value, isNotEmpty);
@@ -359,7 +375,10 @@ List<String> get _values {
     Copy.feedbackRemoveShot('Projects'),
     Copy.feedbackShotPreview,
     Copy.feedbackDiscardDraft,
-    Copy.feedbackDiscardDraftMessage,
+    Copy.feedbackDiscardDraftTitle,
+    Copy.feedbackDiscardDraftMessage(0),
+    Copy.feedbackDiscardDraftMessage(1),
+    Copy.feedbackDiscardDraftMessage(3),
     Copy.feedbackContinueLater,
     Copy.feedbackDraftBarHint,
     Copy.feedbackShotAdded('Projects'),
