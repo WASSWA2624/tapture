@@ -20,11 +20,20 @@ import 'feedback_window_share_controller.dart';
 /// the operator moves through the app, and the way back to the full form.
 class FeedbackDraftBar extends ConsumerStatefulWidget {
   /// Creates the bar. [bottomInset] pads for the gesture bar when nothing
-  /// below the bar already does.
-  const FeedbackDraftBar({super.key, this.bottomInset = true});
+  /// below the bar already does. [onAddScreen] adds a screenshot of the
+  /// screen under the overlay; null hides that control.
+  const FeedbackDraftBar({
+    super.key,
+    this.bottomInset = true,
+    this.onAddScreen,
+  });
 
   /// Whether the bar keeps clear of the system gesture inset itself.
   final bool bottomInset;
+
+  /// Captures the screen the operator is looking at. The bar does not
+  /// take the still itself (FE-STATE-04).
+  final VoidCallback? onAddScreen;
 
   @override
   ConsumerState<FeedbackDraftBar> createState() => _FeedbackDraftBarState();
@@ -123,6 +132,14 @@ class _FeedbackDraftBarState extends ConsumerState<FeedbackDraftBar> {
                     selected: true,
                     outlined: false,
                     onPressed: () => unawaited(_addStill(context)),
+                  ),
+                if (widget.onAddScreen != null)
+                  AppIconButton(
+                    icon: Icons.screenshot_monitor_outlined,
+                    semanticLabel: Copy.feedbackAddScreen,
+                    tooltip: Copy.feedbackAddScreen,
+                    outlined: false,
+                    onPressed: widget.onAddScreen,
                   ),
                 AppIconButton(
                   icon: Icons.open_in_full,

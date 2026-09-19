@@ -334,6 +334,82 @@ void main() {
     },
   );
 
+  testWidgets(
+    'the folded bar screenshot control adds one image and is labelled',
+    (WidgetTester tester) async {
+      final _Harness harness = await _pump(tester);
+      expect(harness.draft!.shots, isEmpty);
+      await tester.tap(find.byTooltip(Copy.close));
+      await tester.pumpAndSettle();
+      final Finder add = find.descendant(
+        of: find.byType(FeedbackDraftBar),
+        matching: find.byTooltip(Copy.feedbackAddScreen),
+      );
+      expect(add, findsOneWidget);
+      expect(add, meetsTapTarget());
+      expect(add, hasSemanticLabel(Copy.feedbackAddScreen));
+      await _addThisScreen(tester, harness);
+      expect(
+        find.text(Copy.feedbackShotAdded(FeedbackOrigin.unknown.screen)),
+        findsWidgets,
+      );
+    },
+  );
+
+  testWidgets('both screenshot tips show when capture is unavailable', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      size: const Size(360, 800),
+      screenCapture: const ScreenCapture.fake(canCapture: false),
+    );
+    expect(find.text(Copy.feedbackShotTipScreens), findsOneWidget);
+    expect(find.text(Copy.feedbackShotTipApps), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('neither screenshot tip shows when capture is available', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      screenCapture: const ScreenCapture.fake(canCapture: true),
+    );
+    expect(find.text(Copy.feedbackShotTipScreens), findsNothing);
+    expect(find.text(Copy.feedbackShotTipApps), findsNothing);
+  });
+
+  testWidgets('the folded bar has no overflow at 360 dp with an image count', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, size: const Size(360, 800), screenshot: aFeedbackPng);
+    await tester.tap(find.byTooltip(Copy.close));
+    await tester.pumpAndSettle();
+    expect(
+      find.descendant(
+        of: find.byType(FeedbackDraftBar),
+        matching: find.bySemanticsLabel(Copy.feedbackImageCount(1)),
+      ),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.getRect(find.byType(FeedbackDraftBar)).right,
+      lessThanOrEqualTo(360),
+    );
+
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await tester.pumpAndSettle();
+    expect(find.byType(FeedbackDraftBar), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.getRect(find.byType(FeedbackDraftBar)).right,
+      lessThanOrEqualTo(360),
+    );
+  });
+
   testWidgets('close folds the form into the bar and keeps everything', (
     WidgetTester tester,
   ) async {

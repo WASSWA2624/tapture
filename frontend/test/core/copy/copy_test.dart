@@ -372,6 +372,8 @@ List<String> get _values {
     Copy.feedbackOtherWindow,
     Copy.feedbackTakePhoto,
     Copy.feedbackChoosePhoto,
+    Copy.feedbackShotTipScreens,
+    Copy.feedbackShotTipApps,
     Copy.feedbackRemoveShot('Projects'),
     Copy.feedbackShotPreview,
     Copy.feedbackDiscardDraft,

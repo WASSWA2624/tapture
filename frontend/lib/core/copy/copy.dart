@@ -899,6 +899,17 @@ abstract final class Copy {
   /// Opens the device library for photos to attach.
   static const String feedbackChoosePhoto = 'Choose photos';
 
+  /// How to capture another Tapture screen when other windows cannot be
+  /// shared.
+  static const String feedbackShotTipScreens =
+      'Another screen: tap Close, open it, then tap Screenshot '
+      'current screen in the bar.';
+
+  /// How to attach a system screenshot of another app.
+  static const String feedbackShotTipApps =
+      'Another app: take a screenshot with your device, then add it '
+      'with Choose photos.';
+
   /// The attach checkbox, counting the images it covers.
   static String feedbackAttachImages(int n) {
     return Intl.plural(n, one: 'Attach 1 image', other: 'Attach $n images');

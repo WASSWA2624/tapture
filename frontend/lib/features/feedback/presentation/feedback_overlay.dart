@@ -141,7 +141,8 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
           Positioned.fill(
             child: RepaintBoundary(key: _workspaceKey, child: form),
           ),
-        if (fold.open && !expanded) const _FoldedFeedbackBar(),
+        if (fold.open && !expanded)
+          _FoldedFeedbackBar(onAddScreen: () => unawaited(_addThisScreen())),
         if (!expanded)
           AppFloatingButton(
             key: const ValueKey<String>('feedback-button'),
@@ -329,7 +330,9 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
 /// Positions the folded bar above the larger of its resting offset and the
 /// keyboard, so only this widget rebuilds when the inset changes.
 class _FoldedFeedbackBar extends StatelessWidget {
-  const _FoldedFeedbackBar();
+  const _FoldedFeedbackBar({this.onAddScreen});
+
+  final VoidCallback? onAddScreen;
 
   @override
   Widget build(BuildContext context) {
@@ -342,7 +345,7 @@ class _FoldedFeedbackBar extends StatelessWidget {
       start: 0,
       end: 0,
       bottom: math.max(resting, MediaQuery.viewInsetsOf(context).bottom),
-      child: FeedbackDraftBar(bottomInset: !compact),
+      child: FeedbackDraftBar(bottomInset: !compact, onAddScreen: onAddScreen),
     );
   }
 }

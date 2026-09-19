@@ -136,6 +136,17 @@ class FeedbackShots extends ConsumerWidget {
             style: AppText.caption.copyWith(color: context.colors.onSurface),
           ),
         ],
+        if (!canCapture) ...<Widget>[
+          const SizedBox(height: Space.x1),
+          Text(
+            Copy.feedbackShotTipScreens,
+            style: AppText.caption.copyWith(color: context.colors.onSurface),
+          ),
+          Text(
+            Copy.feedbackShotTipApps,
+            style: AppText.caption.copyWith(color: context.colors.onSurface),
+          ),
+        ],
         if (attach && shots.isNotEmpty) ...<Widget>[
           const SizedBox(height: Space.x1),
           _ShotGallery(
