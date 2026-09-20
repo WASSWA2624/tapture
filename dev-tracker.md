@@ -1,8 +1,8 @@
 # Tapture — development tracker
 
-**87 of 281 tasks complete (31.0%)** · last updated 2026-09-19
+**88 of 281 tasks complete (31.3%)** · last updated 2026-09-20
 
-`████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░`
+`█████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
 ## Phase progress
 
@@ -16,7 +16,7 @@
 | 06 — Application shell | 5 | 5 | `██████████████` 100% |
 | 07 — Account and settings | 5 | 5 | `██████████████` 100% |
 | 08 — Projects | 6 | 6 | `██████████████` 100% |
-| 09 — Templates | 0 | 17 | `░░░░░░░░░░░░░░` 0% |
+| 09 — Templates | 1 | 17 | `█░░░░░░░░░░░░░` 6% |
 | 10 — Reference data | 0 | 8 | `░░░░░░░░░░░░░░` 0% |
 | 11 — Context | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 12 — Capture | 0 | 22 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **87** | **281** | `████░░░░░░░░░░` 31.0% |
+| **Total** | **88** | **281** | `████░░░░░░░░░░` 31.3% |
 
 ## Completed
 
@@ -123,6 +123,7 @@
 | 085 — Project home screen | 2026-09-19 | Open-project home reads `currentProjectDetailsProvider` (no route id), shows pinned context, derived Review/Process/Export/Share counts as tappable `AppCard`s, and one footer `Continue capturing` in the lower third. Counts come from `watchHome` and route through `AppRoutes` filtered lists. Guarded by four AsyncValueView widget tests plus a navigation test for each count filter. |
 | 086 — Project details and per-project settings | 2026-09-19 | Two `AppForm` screens over the same row: details write name, description, organisation, dates and status without touching `folderName`; settings persist nullable overrides on the project row and resolve unset fields to the app store. AI off and do-not-send-images on refuse provider calls and image egress. Guarded by populated/dirty/failure widget tests, a rename-leaves-folderName unit test, and override-then-fallback resolution. |
 | 087 — Archive, unarchive and delete a project | 2026-09-19 | Archive hides a project behind Show archived and from default exports without touching records or files. Delete confirms once through `showAppConfirm` with typed name, counts and Export first, then writes one tombstone per owned entity and moves the folder into `.recycle`. Guarded by archive/unarchive/filter widget tests, typed-name/cancel/export-first delete tests, and a tombstone-plus-recycle unit test that leaves the file on disk. |
+| 088 — Template domain model and repository | 2026-09-20 | Immutable `TemplateDef` / `FieldDef` / `TemplateRow` and three-value `Requiredness`, Drift mapper, `TemplateRepositoryImpl`, barrel `templateRepositoryProvider`, and the in-memory fake later screens test against. Table-only columns stay on the model; attributes the table has no column for (`helpText`, `requiredWhen`, `hidden`, `group`, identity flag, recommended, auto-fill kind, `templateKey`) live in JSON so a round-trip drops nothing. Guarded by a row→domain→row mapper test and the same save/watch/delete suite on the in-memory database and the fake. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -289,11 +290,14 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 052 | The constraint says five tables; the steps name four (projects plus three context tables). | Open — implemented the four named tables; a later pass can add pins if 113 needs a fifth |
 | 052 | FE-STR-06 allows one public class per file; context definitions, state and presets are three classes. | Open — `ContextState` and `ContextPresets` live in part files of `context.dart`, the two files the task named |
 | 052 | Task 082 models organisation/description/`startsOn`; this task stores `client`/`startedAt`. | Closed by 082 — organisation maps to `client`, dates to `startedAt`/`completedAt`, description lives in the settings JSON |
-| 053 | Dart cannot name a companion field `required`. | Open — SQL column is `required`; the getter is `isRequired`. 088's three-value `Requiredness` is still later |
+| 053 | Dart cannot name a companion field `required`. | Closed by 088 — SQL column stays `required` / `isRequired`; domain `Requiredness` is the three-value enum, persisted as the bool plus extras JSON |
 | 053 | The task has no Contract. | Open — extra `upsertTemplate` / `upsertTemplateField` / `listTemplateFields` / `upsertTemplateRow` / `lookupTemplateRow` so the named tests have a write path |
 | 049 | `*.g.dart` is gitignored (002) and FE-CODE-13 wants generated output committed. | Open — `app_database.g.dart` is force-added; the ignore rule or this constraint has to give |
 | 049 | Git-for-Windows hook `sh` has no `sed`; `core.autocrlf` leaves hook sources as CRLF. | Open — commit-msg reads the subject with `IFS= read`; hook installer strips leftover CR; 009 still wants `.gitattributes` |
 | 047 | Widget gallery measured `MediaQuery.sizeOf` to size the preview. | Closed by 049 — the preview uses `LayoutBuilder` constraints so only `core/widgets/responsive/` reads MediaQuery size |
+| 088 | FE-STR-06 allows one public class per file; the Files list names only `template_def.dart` and the impl. | Open — extra `field_def.dart`, `template_row.dart` and `template_mapper.dart`; `Requiredness`, `FieldType`, `InputMode` and `AutoFill` sit in `field_def.dart` after the class |
+| 088 | The table stores `required` and `autoFill` as bools; §12.2 needs three-value requiredness and an auto-fill kind. | Open — extras live in the validation JSON under `_tapture`; `templateKey` lives in the detection JSON. A schema task can give them columns |
+| 088 | The prompt says the interface was declared in 111. | Open — the port is the one task 062 shipped; 111 is lookup matching |
 
 ## Checklist
 
@@ -426,9 +430,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 09 — Templates
 
-*0 of 17 complete.*
+*1 of 17 complete.*
 
-- [ ] [088 — Template domain model and repository](dev-plan/09-templates/088-template-model.md)
+- [x] [088 — Template domain model and repository](dev-plan/09-templates/088-template-model.md)
 - [ ] [089 — Field type registry](dev-plan/09-templates/089-field-type-registry.md)
 - [ ] [090 — Shipped template asset format and atomicity checker](dev-plan/09-templates/090-shipped-templates-assets.md)
 - [ ] [091 — Author the shipped template library](dev-plan/09-templates/091-shipped-template-library.md)

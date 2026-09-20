@@ -143,7 +143,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 
 *The definition of every record shape: shipped, built in the app, or read from a spreadsheet. Columns are atomic (§13.1) and requiredness belongs to the user (§13.2) — both are enforced here, not assumed.*
 
-- [ ] [088 — Template domain model and repository](09-templates/088-template-model.md)
+- [x] [088 — Template domain model and repository](09-templates/088-template-model.md)
 - [ ] [089 — Field type registry](09-templates/089-field-type-registry.md)
 - [ ] [090 — Shipped template asset format and atomicity checker](09-templates/090-shipped-templates-assets.md)
 - [ ] [091 — Author the shipped template library](09-templates/091-shipped-template-library.md)

@@ -62,12 +62,27 @@ RecordFactory aRecord({String? projectId, Map<String, String>? fields}) {
 }
 
 /// A template with sensible defaults. Override [name] when the test cares.
-TemplateFactory aTemplate({String? name, String? projectId}) {
-  return (
-    id: 'template-1',
-    projectId: projectId ?? 'project-1',
+TemplateFactory aTemplate({
+  String? id,
+  String? name,
+  String? projectId,
+  String? templateKey,
+  int? version,
+  List<FieldDef>? fields,
+  List<String>? identityFieldKeys,
+  List<TemplateRow>? rows,
+}) {
+  return TemplateDef(
+    id: id ?? 'template-1',
+    templateKey: templateKey ?? 'test_template',
     name: name ?? 'Test template',
-    version: 1,
+    version: version ?? 1,
+    fields: fields ?? const <FieldDef>[],
+    identityFieldKeys: identityFieldKeys ?? const <String>[],
+    rows: rows ?? const <TemplateRow>[],
+    projectId: projectId ?? 'project-1',
+    kind: 'item',
+    source: 'built',
   );
 }
 

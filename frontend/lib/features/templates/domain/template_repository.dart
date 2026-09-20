@@ -2,6 +2,12 @@ import 'dart:async';
 
 import 'package:tapture/core/errors/result.dart';
 
+import 'template_def.dart';
+
+export 'field_def.dart';
+export 'template_def.dart';
+export 'template_row.dart';
+
 /// Persistence port for templates. Drift types stop at the data layer.
 abstract interface class TemplateRepository {
   /// Live templates owned by [projectId], including none when the project is
@@ -17,11 +23,3 @@ abstract interface class TemplateRepository {
   /// Tombstones [id]. [reason] is required so a later audit can say why.
   Future<Result<void>> delete(String id, {required String reason});
 }
-
-/// Shape of a record: identity, owning project and structural version.
-typedef TemplateDef = ({
-  String id,
-  String? projectId,
-  String name,
-  int version,
-});

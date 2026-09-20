@@ -49,6 +49,6 @@ class FieldDef {
 
 ## Definition of done
 
-- [ ] `TemplateDef`, `FieldDef` and `TemplateRow` carry every attribute of §12.2, with requiredness a three-value enum.
-- [ ] Tests: `frontend/test/features/templates/template_mapper_test.dart` round-trips every attribute; repository tests run against an in-memory database, and ship the fake later tasks use (FE-STATE-10).
-- [ ] Contract above is implemented exactly, with nothing else made public.
+- [x] `TemplateDef`, `FieldDef` and `TemplateRow` carry every attribute of §12.2, with requiredness a three-value enum.
+- [x] Tests: `frontend/test/features/templates/template_mapper_test.dart` round-trips every attribute; repository tests run against an in-memory database, and ship the fake later tasks use (FE-STATE-10).
+- [x] Contract above is implemented exactly, with nothing else made public.

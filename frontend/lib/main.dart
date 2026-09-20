@@ -25,6 +25,7 @@ import 'features/projects/data/project_repository_impl.dart';
 import 'features/projects/presentation/current_project.dart';
 import 'features/settings/presentation/offline_switch.dart';
 import 'features/settings/settings.dart';
+import 'features/templates/data/template_repository_impl.dart';
 
 /// Errors captured for bootstrap tests; the same objects are also logged.
 @visibleForTesting
@@ -86,6 +87,14 @@ Future<void> _run() async {
       }),
       projectRepositoryProvider.overrideWith((Ref _) {
         return ProjectRepositoryImpl(
+          db: db,
+          clock: clock,
+          deviceId: id,
+          ids: ids,
+        );
+      }),
+      templateRepositoryProvider.overrideWith((Ref _) {
+        return TemplateRepositoryImpl(
           db: db,
           clock: clock,
           deviceId: id,
