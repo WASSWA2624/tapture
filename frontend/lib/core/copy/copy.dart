@@ -688,6 +688,59 @@ abstract final class Copy {
   static const String workbookCorruptRecovery =
       'Keep the original. Export a copy and try again.';
 
+  /// Title of the spreadsheet column-mapping screen.
+  static const String xlsxMappingTitle = 'Map columns';
+
+  /// Headline when no spreadsheet was given.
+  static const String xlsxMappingEmptyHeadline = 'No spreadsheet';
+
+  /// Body when the mapping screen has no file to read.
+  static const String xlsxMappingEmptyMessage =
+      'Choose a spreadsheet to map its columns onto a template.';
+
+  /// Primary action that creates the template from the confirmed mapping.
+  static const String xlsxMappingConfirm = 'Create template';
+
+  /// Overflow command that omits one spreadsheet column.
+  static const String xlsxMappingSkip = 'Skip this column';
+
+  /// Overflow command that brings a skipped column back.
+  static const String xlsxMappingInclude = 'Include this column';
+
+  /// Subtitle when the operator has skipped a column.
+  static const String xlsxMappingSkipped = 'Skipped';
+
+  /// Proposed field shown on the right of a mapping row.
+  static String xlsxMappingProposal({
+    required String field,
+    required String type,
+    required String rule,
+  }) {
+    return '$field · $type · $rule';
+  }
+
+  /// Proposed label when a spreadsheet column has no header.
+  static String xlsxMappingUntitled(String column) => 'Column $column';
+
+  /// Template name when the sheet tab is blank.
+  static const String xlsxMappingDefaultName = 'Spreadsheet';
+
+  /// The chosen spreadsheet vanished before confirm.
+  static const String xlsxMappingMissing =
+      'That spreadsheet is no longer on this device.';
+
+  /// Recovery when the chosen spreadsheet is missing.
+  static const String xlsxMappingMissingRecovery =
+      'Choose the spreadsheet again, then try again.';
+
+  /// A copy of this name is already in the project templates folder.
+  static const String xlsxMappingExists =
+      'A copy of that spreadsheet is already in this project.';
+
+  /// Recovery when the destination copy already exists.
+  static const String xlsxMappingExistsRecovery =
+      'Rename the spreadsheet, then try again.';
+
   /// Soft-deletes a template no record uses.
   static const String templatesDelete = 'Delete template';
 

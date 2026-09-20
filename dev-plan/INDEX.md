@@ -157,7 +157,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [099 — Template versioning and record migration](09-templates/099-template-versioning.md)
 - [x] [100 — Export and import a template as JSON](09-templates/100-template-export-json.md)
 - [x] [101 — Read a spreadsheet and infer its shape](09-templates/101-xlsx-read-workbook.md)
-- [ ] [102 — Confirm the column mapping and create the template](09-templates/102-xlsx-mapping-screen.md)
+- [x] [102 — Confirm the column mapping and create the template](09-templates/102-xlsx-mapping-screen.md)
 - [ ] [103 — Predefined rows, aliases and the capture checklist](09-templates/103-predefined-rows-import.md)
 - [ ] [104 — Detection profile editor](09-templates/104-template-detection-profile.md)
 

@@ -37,6 +37,7 @@ import 'package:tapture/features/templates/presentation/template_create_screen.d
 import 'package:tapture/features/templates/presentation/template_import_action.dart';
 import 'package:tapture/features/templates/presentation/template_list_screen.dart';
 import 'package:tapture/features/templates/presentation/template_migration_screen.dart';
+import 'package:tapture/features/templates/presentation/xlsx_mapping_screen.dart';
 
 export 'package:tapture/features/projects/presentation/current_project.dart'
     show CurrentProject, currentProjectProvider, openProjectIdProvider;
@@ -115,6 +116,9 @@ abstract final class AppRoutes {
 
   /// JSON import. Listed before [template] so `import` is not an id.
   static const String templateImport = '$templates/import';
+
+  /// Spreadsheet mapping. Listed before [template] so `xlsx` is not an id.
+  static const String templateXlsx = '$templates/xlsx';
 
   /// Field list for [id]. Task 094 owns the screen.
   static String template(String id) => '$templates/${Uri.encodeComponent(id)}';
@@ -415,6 +419,16 @@ List<RouteBase> get _routes {
                   path: 'import',
                   builder: (BuildContext _, GoRouterState state) {
                     return TemplateImportAction(payload: state.extra);
+                  },
+                ),
+                GoRoute(
+                  path: 'xlsx',
+                  builder: (BuildContext _, GoRouterState state) {
+                    return XlsxMappingScreen(
+                      path: state.extra is String
+                          ? state.extra as String
+                          : null,
+                    );
                   },
                 ),
                 GoRoute(

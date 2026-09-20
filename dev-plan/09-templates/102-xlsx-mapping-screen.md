@@ -28,7 +28,7 @@ project's `templates/` folder.
 
 ## Definition of done
 
-- [ ] Nothing is imported until the user confirms the mapping.
-- [ ] The original file on disk is byte-identical to the one the user chose.
-- [ ] A template created this way exports back into the same sheet, header row and column letters.
-- [ ] Tests: widget test of `xlsx_mapping_screen.dart` covering empty and failure states and the skip path; hash comparison test of the workbook before and after import.
+- [x] Nothing is imported until the user confirms the mapping.
+- [x] The original file on disk is byte-identical to the one the user chose.
+- [x] A template created this way exports back into the same sheet, header row and column letters.
+- [x] Tests: widget test of `xlsx_mapping_screen.dart` covering empty and failure states and the skip path; hash comparison test of the workbook before and after import.

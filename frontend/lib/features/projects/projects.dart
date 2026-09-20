@@ -7,6 +7,7 @@ export 'domain/project_settings.dart';
 export 'domain/project_status.dart';
 export 'presentation/current_project.dart'
     show
+        currentProjectDetailsProvider,
         currentProjectProvider,
         openProjectIdProvider,
         projectSettingsStoreProvider;

@@ -18,6 +18,6 @@ Tasks 088–104 (17). Each file is a standalone implementation prompt.
 - [x] [099 — Template versioning and record migration](099-template-versioning.md)
 - [x] [100 — Export and import a template as JSON](100-template-export-json.md)
 - [x] [101 — Read a spreadsheet and infer its shape](101-xlsx-read-workbook.md)
-- [ ] [102 — Confirm the column mapping and create the template](102-xlsx-mapping-screen.md)
+- [x] [102 — Confirm the column mapping and create the template](102-xlsx-mapping-screen.md)
 - [ ] [103 — Predefined rows, aliases and the capture checklist](103-predefined-rows-import.md)
 - [ ] [104 — Detection profile editor](104-template-detection-profile.md)
