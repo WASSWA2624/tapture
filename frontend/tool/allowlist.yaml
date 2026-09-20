@@ -23,6 +23,10 @@ packages:
     version: ^3.0.7
     purpose: Incremental SHA-256 for file identity and duplicate detection (FE-PERF-07). Replaces a hand-rolled digest.
     task: "024"
+  cupertino_icons:
+    version: ^1.0.9
+    purpose: The CupertinoIcons font the Flutter framework itself names. No Tapture code imports Cupertino, but Material pulls the adaptive text-selection and magnifier widgets in, so the compiled app carries IconData pointing at a font that was not bundled and the APK build warned about every one of them. MIT, flutter.dev. Replaces shipping a build that names glyphs it does not carry; icon tree-shaking keeps only the few the framework reaches.
+    task: "332"
   connectivity_plus:
     version: ^7.3.1
     purpose: Platform radio state (online / metered / offline). Reached only through connectivity_service (FE-STR-11). Replaces a hand-rolled reachability check.
@@ -84,8 +88,8 @@ packages:
     purpose: Pure-Dart ZIP writing (and reading, in tests) behind core/export's XLSX encoder, so a workbook builds on the web as well as on device. MIT. Replaces a hand-rolled ZIP container and CRC. Capped at 3.x because that is the release already in the offline cache this build runs from; task 205 reuses it for the data package.
     task: "282"
   speech_to_text:
-    version: ^7.4.0
-    purpose: On-device and platform speech recognition behind core/ai/stt_service (FE-STR-11), so every free-text field can take dictation. BSD-3-Clause. Replaces a hand-rolled Android/iOS/web recogniser channel. Pinned at 7.4 because that is the release in the offline cache this build runs from.
+    version: ^7.5.0
+    purpose: On-device and platform speech recognition behind core/ai/stt_service (FE-STR-11), so every free-text field can take dictation. BSD-3-Clause. Replaces a hand-rolled Android/iOS/web recogniser channel. Raised to 7.5 in task 332 because 7.4 applies the Kotlin Gradle Plugin, which the Android build warns a future Flutter will reject; 7.5 uses built-in Kotlin and needs exactly the Flutter 3.44 / Dart 3.12 this project pins.
     task: "283"
   image_picker:
     version: ^1.2.3

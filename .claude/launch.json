@@ -4,7 +4,7 @@
     {
       "name": "tapture-web-preview",
       "runtimeExecutable": "cmd",
-      "runtimeArgs": ["/c", "cd /d frontend && flutter run -d web-server --web-port 5180 --web-hostname localhost"],
+      "runtimeArgs": ["/c", "cd /d frontend && flutter run -d web-server --web-port 5180 --web-hostname localhost --no-web-resources-cdn"],
       "port": 5180
     }
   ]

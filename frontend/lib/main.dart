@@ -56,7 +56,11 @@ Future<void> _run() async {
     clock: const SystemClock(),
     biometrics: BiometricLock(),
   );
-  final SettingsStore offlineStore = await _openOfflineStore();
+  // One database for the whole app. A second AppDatabase over the same file
+  // races with the first -- drift warns about it, and the two connections can
+  // corrupt the store. Suites never open it at all (FE-TEST-03).
+  final AppDatabase? database = _runningUnderTest ? null : AppDatabase.open();
+  final SettingsStore offlineStore = await _openOfflineStore(database);
   const SystemClock clock = SystemClock();
   final List<Override> overrides = <Override>[
     appLockProvider.overrideWith((Ref ref) => lock),
@@ -74,7 +78,7 @@ Future<void> _run() async {
     final String id = await deviceId(clock: clock, ids: ids);
     final PlatformFacts facts = await platformFacts(clock: clock);
     final DeviceDescriptor device = await deviceDescriptor();
-    final AppDatabase db = AppDatabase.open();
+    final AppDatabase db = database!;
     overrides.addAll(<Override>[
       feedbackClockProvider.overrideWith((Ref _) => clock),
       feedbackDeviceIdProvider.overrideWith((Ref _) => id),
@@ -142,16 +146,16 @@ void _installLifecycleObserver() {
   WidgetsBinding.instance.addObserver(_lifecycleObserver!);
 }
 
-Future<SettingsStore> _openOfflineStore() async {
-  // Suites never open the on-disk database (FE-TEST-03). Production still
-  // honours a persisted choice at launch.
-  if (_runningUnderTest) {
+Future<SettingsStore> _openOfflineStore(AppDatabase? db) async {
+  // Suites never open the on-disk database, so they arrive here without one
+  // (FE-TEST-03). Production still honours a persisted choice at launch.
+  if (db == null) {
     return SettingsStore.fake();
   }
   try {
     const SystemClock clock = SystemClock();
     return await SettingsStore.open(
-      db: AppDatabase.open(),
+      db: db,
       deviceId: await deviceId(clock: clock, ids: UuidV7Service(clock)),
       clock: clock,
     );

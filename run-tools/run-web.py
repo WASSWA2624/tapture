@@ -53,6 +53,11 @@ def entry() -> None:
         device,
         "--web-port",
         str(args.port),
+        # CanvasKit and the Flutter web SDK come from gstatic.com by default, so
+        # the engine never boots on a machine that is offline or behind a proxy
+        # that blocks it. The dev server already serves the SDK's own copy at
+        # /canvaskit/; this makes the app load it from there.
+        "--no-web-resources-cdn",
         "--release" if args.release else "--debug",
     ]
     if args.server:
