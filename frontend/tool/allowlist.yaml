@@ -31,6 +31,10 @@ packages:
     version: ^12.0.3
     purpose: Runtime camera, microphone, location and storage requests. Reached only through permissions_service (FE-STR-11). Replaces a hand-rolled permission channel.
     task: "026"
+  share_plus:
+    version: ^12.0.2
+    purpose: System share/open chooser for a file copy on Android and iOS, reached only through DownloadService.openExternally (FE-STR-11). BSD-3-Clause. Replaces adding open_file or url_launcher for the same hand-off.
+    task: "330"
   flutter_secure_storage:
     version: ^9.2.4
     purpose: Platform Keystore/Keychain for keys and credentials. Reached only through secure_storage (FE-STR-11, FE-SEC-01). Replaces writing secrets to preferences or the database.
