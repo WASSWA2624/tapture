@@ -658,6 +658,83 @@ abstract final class Copy {
   /// Field-list destination after create, duplicate or open. Task 094 owns it.
   static const String templateFieldsTitle = 'Fields';
 
+  /// Primary action that opens the add-field flow. Task 095 owns the sheet.
+  static const String templatesAddField = 'Add a field';
+
+  /// Opens the editor for one field. Task 095 owns the sheet.
+  static const String templatesEditField = 'Edit field';
+
+  /// Removes a field from the template and retires its values.
+  static const String templatesDeleteField = 'Delete field';
+
+  /// Title of the field-delete confirmation, naming the field.
+  static String templatesDeleteFieldTitle(String label) => 'Delete $label?';
+
+  /// Body of the field-delete confirmation, naming the value count.
+  static String templatesDeleteFieldMessage({required int values}) {
+    return Intl.plural(
+      values,
+      zero:
+          'No records hold a value. The field leaves this template. '
+          'Existing values stay and export as retired.',
+      one: '1 record holds a value. That value stays and exports as retired.',
+      other:
+          '$values records hold a value. Those values stay and export as '
+          'retired.',
+    );
+  }
+
+  /// Headline when a template has no fields.
+  static const String templatesFieldsEmptyHeadline = 'No fields yet';
+
+  /// Body when the field list is empty. The next action is adding one.
+  static const String templatesFieldsEmptyMessage =
+      'Add a field so this template can capture.';
+
+  /// REQUIRED badge on a field row.
+  static const String fieldRequired = 'Required';
+
+  /// RECOMMENDED badge on a field row.
+  static const String fieldRecommended = 'Recommended';
+
+  /// OPTIONAL badge on a field row.
+  static const String fieldOptional = 'Optional';
+
+  /// Moves [label] one place earlier in capture and export order.
+  static String fieldMoveUp(String label) => 'Move $label up';
+
+  /// Moves [label] one place later in capture and export order.
+  static String fieldMoveDown(String label) => 'Move $label down';
+
+  /// Drag handle that reorders [label].
+  static String fieldReorder(String label) => 'Reorder $label';
+
+  /// Operator-facing name of a §12.1 field type.
+  static String fieldTypeLabel(String type) {
+    return switch (type) {
+      'text' => 'Text',
+      'longText' => 'Long text',
+      'number' => 'Number',
+      'decimal' => 'Decimal',
+      'currency' => 'Currency',
+      'percentage' => 'Percentage',
+      'date' => 'Date',
+      'time' => 'Time',
+      'dateTime' => 'Date and time',
+      'boolean' => 'Boolean',
+      'choice' => 'Choice',
+      'multiChoice' => 'Multi-choice',
+      'lookup' => 'Lookup',
+      'barcode' => 'Barcode',
+      'photoReference' => 'Photo reference',
+      'documentReference' => 'Document reference',
+      'gpsLocation' => 'GPS location',
+      'signature' => 'Signature',
+      'computed' => 'Computed',
+      _ => type,
+    };
+  }
+
   /// Suggested name when duplicating [name].
   static String templateCopyName(String name) => '$name (copy)';
 

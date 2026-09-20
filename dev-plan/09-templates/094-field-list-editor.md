@@ -29,7 +29,7 @@ requiredness badge, with add, edit, drag reorder, and a delete that retires valu
 
 ## Definition of done
 
-- [ ] This list is the only place fields are managed.
-- [ ] Reordering never changes stored values or output column mapping.
-- [ ] Deleting a field never loses captured data: retired values survive and export as retired.
-- [ ] Tests: widget test of `field_list_screen.dart` covering empty and failure states and a reorder; test that retired values survive a delete and export as retired.
+- [x] This list is the only place fields are managed.
+- [x] Reordering never changes stored values or output column mapping.
+- [x] Deleting a field never loses captured data: retired values survive and export as retired.
+- [x] Tests: widget test of `field_list_screen.dart` covering empty and failure states and a reorder; test that retired values survive a delete and export as retired.

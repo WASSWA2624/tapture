@@ -12,25 +12,31 @@ part 'status_style.dart';
 /// Screens do not map status to colour themselves. The compact [badge]
 /// constructor fits [AppListTile] trailing and status slots.
 class AppStatusPill extends StatelessWidget {
-  /// Creates the full pill.
-  const AppStatusPill({super.key, required this.status}) : _compact = false;
+  /// Creates the full pill. [label] replaces the status word when the
+  /// same chrome is reused for requiredness.
+  const AppStatusPill({super.key, required this.status, this.label})
+    : _compact = false;
 
   /// Creates the compact badge for list rows.
-  const AppStatusPill.badge({super.key, required this.status})
+  const AppStatusPill.badge({super.key, required this.status, this.label})
     : _compact = true;
 
   /// Lifecycle value to render. Every value has a style.
   final RecordStatus status;
+
+  /// Visible word when this pill is not naming a record lifecycle.
+  final String? label;
 
   final bool _compact;
 
   @override
   Widget build(BuildContext context) {
     final AppColors colors = context.colors;
-    final (Color color, IconData icon, String label) = StatusStyle.of(
+    final (Color color, IconData icon, String styleLabel) = StatusStyle.of(
       status,
       colors,
     );
+    final String label = this.label ?? styleLabel;
     final double pad = _compact ? Space.x1 : Space.x2;
     final double iconSize = _compact ? Space.x4 : Space.x5;
     final TextStyle textStyle = (_compact ? AppText.caption : AppText.label)

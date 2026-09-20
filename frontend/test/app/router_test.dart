@@ -32,6 +32,11 @@ void main() {
     expect(AppRoutes.templateLibrary, '/templates/library');
     expect(AppRoutes.template('ab'), '/templates/ab');
     expect(AppRoutes.templateExport('ab'), '/templates/ab/export');
+    expect(AppRoutes.templateFieldCreate('ab'), '/templates/ab/fields/new');
+    expect(
+      AppRoutes.templateField('ab', 'serial'),
+      '/templates/ab/fields/serial',
+    );
     expect(AppRoutes.queue, '/queue');
     expect(AppRoutes.exports, '/exports');
     expect(

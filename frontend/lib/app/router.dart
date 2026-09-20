@@ -27,6 +27,7 @@ import 'package:tapture/features/settings/presentation/capture_settings_screen.d
 import 'package:tapture/features/settings/presentation/settings_screen.dart';
 import 'package:tapture/features/settings/presentation/storage_settings_screen.dart';
 import 'package:tapture/features/settings/settings.dart';
+import 'package:tapture/features/templates/presentation/field_list_screen.dart';
 import 'package:tapture/features/templates/presentation/shipped_picker_screen.dart';
 import 'package:tapture/features/templates/presentation/template_create_screen.dart';
 import 'package:tapture/features/templates/presentation/template_list_screen.dart';
@@ -111,6 +112,13 @@ abstract final class AppRoutes {
 
   /// JSON export for [id]. Task 100 owns the screen.
   static String templateExport(String id) => '${template(id)}/export';
+
+  /// Add-field destination. Task 095 owns the sheet.
+  static String templateFieldCreate(String id) => '${template(id)}/fields/new';
+
+  /// Edit-field destination for [fieldKey]. Task 095 owns the sheet.
+  static String templateField(String id, String fieldKey) =>
+      '${template(id)}/fields/${Uri.encodeComponent(fieldKey)}';
 
   /// Unprocessed-queue destination the status line opens. Task 159 owns the
   /// screen.
@@ -384,14 +392,28 @@ List<RouteBase> get _routes {
                 ),
                 GoRoute(
                   path: ':templateId',
-                  builder: (BuildContext _, GoRouterState _) {
-                    return const _RoutePage(name: 'template-fields');
+                  builder: (BuildContext _, GoRouterState state) {
+                    return FieldListScreen(
+                      templateId: state.pathParameters['templateId']!,
+                    );
                   },
                   routes: <RouteBase>[
                     GoRoute(
                       path: 'export',
                       builder: (BuildContext _, GoRouterState _) {
                         return const _RoutePage(name: 'template-export');
+                      },
+                    ),
+                    GoRoute(
+                      path: 'fields/new',
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const _RoutePage(name: 'field-add');
+                      },
+                    ),
+                    GoRoute(
+                      path: 'fields/:fieldKey',
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const _RoutePage(name: 'field-edit');
                       },
                     ),
                   ],
@@ -522,6 +544,8 @@ String _titleFor(String name) {
     'template-library' => Copy.templatesPickLibrary,
     'template-fields' => Copy.templateFieldsTitle,
     'template-export' => Copy.templatesExport,
+    'field-add' => Copy.templatesAddField,
+    'field-edit' => Copy.templatesEditField,
     'queue' => Copy.navQueue,
     'exports' => Copy.navExports,
     _ => Copy.emptyHeadline,
@@ -538,6 +562,8 @@ IconData _iconFor(String name) {
     'template-library' => Icons.article_outlined,
     'template-fields' => Icons.view_list_outlined,
     'template-export' => Icons.ios_share_outlined,
+    'field-add' => Icons.add,
+    'field-edit' => Icons.edit_outlined,
     'queue' => Icons.pending_outlined,
     'exports' => Icons.ios_share_outlined,
     _ => Icons.inbox_outlined,
