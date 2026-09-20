@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/outdoor_theme.dart';
 import 'package:tapture/core/copy/copy.dart';
@@ -18,6 +19,37 @@ void main() {
           matchesGoldenFile('goldens/app_overflow_menu_${mode.name}.png'),
         );
       });
+
+      testWidgets('both variants in ${mode.name}', (WidgetTester tester) async {
+        await _pumpGallery(tester, mode.theme, states: true);
+        await tester.pump();
+        await expectLater(
+          find.byType(AppPage),
+          matchesGoldenFile(
+            'goldens/app_overflow_menu_variants_${mode.name}.png',
+          ),
+        );
+      });
+
+      testWidgets('both variants at 200 percent in ${mode.name}', (
+        WidgetTester tester,
+      ) async {
+        tester.platformDispatcher.textScaleFactorTestValue = 2;
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        await _pumpGallery(
+          tester,
+          mode.theme,
+          states: true,
+          surface: const Size(400, 640),
+        );
+        await tester.pump();
+        await expectLater(
+          find.byType(AppPage),
+          matchesGoldenFile(
+            'goldens/app_overflow_menu_variants_text2_${mode.name}.png',
+          ),
+        );
+      });
     }
   });
 }
@@ -30,9 +62,14 @@ List<({String name, ThemeData theme})> get _modes {
   ];
 }
 
-Future<void> _pumpGallery(WidgetTester tester, ThemeData theme) async {
+Future<void> _pumpGallery(
+  WidgetTester tester,
+  ThemeData theme, {
+  bool states = false,
+  Size surface = const Size(400, 240),
+}) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(400, 240);
+  tester.view.physicalSize = surface;
   addTearDown(() {
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();
@@ -43,26 +80,69 @@ Future<void> _pumpGallery(WidgetTester tester, ThemeData theme) async {
       debugShowCheckedModeBanner: false,
       themeAnimationDuration: Duration.zero,
       theme: theme,
-      home: const AppPage(
+      home: AppPage(
         title: 'Overflow',
-        body: Wrap(
-          spacing: Space.x2,
-          runSpacing: Space.x2,
-          children: <Widget>[
-            AppOverflowMenu(
-              key: ValueKey<String>('app-overflow'),
-              items: <AppOverflowAction>[
-                AppOverflowAction(
-                  icon: Icons.save_outlined,
-                  label: Copy.save,
-                  onTap: _ignorePress,
-                ),
-              ],
-            ),
-          ],
-        ),
+        body: states ? _states(theme) : _outlinedOnly(),
       ),
     ),
+  );
+}
+
+Widget _outlinedOnly() {
+  return const Wrap(
+    spacing: Space.x2,
+    runSpacing: Space.x2,
+    children: <Widget>[
+      AppOverflowMenu(
+        key: ValueKey<String>('app-overflow'),
+        items: <AppOverflowAction>[
+          AppOverflowAction(
+            icon: Icons.save_outlined,
+            label: Copy.save,
+            onTap: _ignorePress,
+          ),
+        ],
+      ),
+    ],
+  );
+}
+
+Widget _states(ThemeData theme) {
+  const List<AppOverflowAction> items = <AppOverflowAction>[
+    AppOverflowAction(
+      icon: Icons.save_outlined,
+      label: Copy.save,
+      onTap: _ignorePress,
+    ),
+  ];
+  final Color fill =
+      theme.extension<AppColors>()?.surfaceVariant ??
+      AppColors.light.surfaceVariant;
+  Widget filled(Widget child) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: fill,
+        borderRadius: BorderRadius.circular(Radii.sm),
+      ),
+      child: child,
+    );
+  }
+
+  return Wrap(
+    spacing: Space.x2,
+    runSpacing: Space.x2,
+    children: <Widget>[
+      const AppOverflowMenu(items: items),
+      filled(const AppOverflowMenu(items: items)),
+      filled(const AppOverflowMenu(items: items)),
+      filled(const AppOverflowMenu(items: items)),
+      const AppOverflowMenu(items: <AppOverflowAction>[]),
+      const AppOverflowMenu(outlined: false, items: items),
+      filled(const AppOverflowMenu(outlined: false, items: items)),
+      filled(const AppOverflowMenu(outlined: false, items: items)),
+      filled(const AppOverflowMenu(outlined: false, items: items)),
+      const AppOverflowMenu(outlined: false, items: <AppOverflowAction>[]),
+    ],
   );
 }
 

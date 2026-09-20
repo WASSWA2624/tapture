@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/color_swatches.dart';
+import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/outdoor_theme.dart';
 import 'package:tapture/app/theme/surface_levels.dart';
@@ -424,16 +425,7 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         ],
       ),
       const SizedBox(height: Space.x3),
-      const AppOverflowMenu(
-        key: ValueKey<String>('app-overflow'),
-        items: <AppOverflowAction>[
-          AppOverflowAction(
-            icon: Icons.save_outlined,
-            label: Copy.save,
-            onTap: _noop,
-          ),
-        ],
-      ),
+      ..._overflowMenus(),
       const SizedBox(height: Space.x3),
       const SizedBox(
         height: Sizes.minTapTarget * 3,
@@ -454,6 +446,88 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       const AppPrimaryAction(label: Copy.save, busy: true, onPressed: _noop),
       const SizedBox(height: Space.x6),
     ];
+  }
+
+  List<Widget> _overflowMenus() {
+    const List<AppOverflowAction> items = <AppOverflowAction>[
+      AppOverflowAction(
+        icon: Icons.save_outlined,
+        label: Copy.save,
+        onTap: _noop,
+      ),
+    ];
+    final Color fill = context.colors.surfaceVariant;
+    return <Widget>[
+      Wrap(
+        spacing: Space.x2,
+        runSpacing: Space.x2,
+        children: <Widget>[
+          const AppOverflowMenu(
+            key: ValueKey<String>('app-overflow'),
+            items: items,
+          ),
+          _overflowFill(
+            key: const ValueKey<String>('app-overflow-hover'),
+            fill: fill,
+            child: const AppOverflowMenu(items: items),
+          ),
+          _overflowFill(
+            key: const ValueKey<String>('app-overflow-focus'),
+            fill: fill,
+            child: const AppOverflowMenu(items: items),
+          ),
+          _overflowFill(
+            key: const ValueKey<String>('app-overflow-pressed'),
+            fill: fill,
+            child: const AppOverflowMenu(items: items),
+          ),
+          const AppOverflowMenu(
+            key: ValueKey<String>('app-overflow-disabled'),
+            items: <AppOverflowAction>[],
+          ),
+          const AppOverflowMenu(
+            key: ValueKey<String>('app-overflow-borderless'),
+            outlined: false,
+            items: items,
+          ),
+          _overflowFill(
+            key: const ValueKey<String>('app-overflow-borderless-hover'),
+            fill: fill,
+            child: const AppOverflowMenu(outlined: false, items: items),
+          ),
+          _overflowFill(
+            key: const ValueKey<String>('app-overflow-borderless-focus'),
+            fill: fill,
+            child: const AppOverflowMenu(outlined: false, items: items),
+          ),
+          _overflowFill(
+            key: const ValueKey<String>('app-overflow-borderless-pressed'),
+            fill: fill,
+            child: const AppOverflowMenu(outlined: false, items: items),
+          ),
+          const AppOverflowMenu(
+            key: ValueKey<String>('app-overflow-borderless-disabled'),
+            outlined: false,
+            items: <AppOverflowAction>[],
+          ),
+        ],
+      ),
+    ];
+  }
+
+  Widget _overflowFill({
+    required Key key,
+    required Color fill,
+    required Widget child,
+  }) {
+    return DecoratedBox(
+      key: key,
+      decoration: BoxDecoration(
+        color: fill,
+        borderRadius: BorderRadius.circular(Radii.sm),
+      ),
+      child: child,
+    );
   }
 
   List<Widget> _fields() {

@@ -16,6 +16,7 @@ class AppOverflowMenu extends StatelessWidget {
     super.key,
     required this.items,
     this.inverted = false,
+    this.outlined = true,
   });
 
   /// Labelled commands shown when the control is opened.
@@ -23,6 +24,10 @@ class AppOverflowMenu extends StatelessWidget {
 
   /// When true, the icon sits on a primary fill (status line, branded bar).
   final bool inverted;
+
+  /// When false, the control has no outline, for one that sits inside a
+  /// list row. The widget style wins over the theme's.
+  final bool outlined;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +52,7 @@ class AppOverflowMenu extends StatelessWidget {
           shadowColor: _noShadow,
           surfaceTintColor: colors.surface,
           shape: _menuShape(colors),
+          style: outlined ? null : _borderlessStyle(colors),
           icon: Icon(
             Icons.more_vert,
             size: Space.x6,
@@ -97,6 +103,21 @@ ShapeBorder _menuShape(AppColors colors) {
   return RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(Radii.md),
     side: BorderSide(color: colors.outline, width: Space.x0 / 2),
+  );
+}
+
+/// Bare ink at rest; a token surface on hover, focus and press, so the
+/// control stays noticeable without a box (FE-THEME-01, FE-A11Y-06).
+ButtonStyle _borderlessStyle(AppColors colors) {
+  return IconButton.styleFrom(side: BorderSide.none).copyWith(
+    backgroundColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.hovered) ||
+          states.contains(WidgetState.focused) ||
+          states.contains(WidgetState.pressed)) {
+        return colors.surfaceVariant;
+      }
+      return null;
+    }),
   );
 }
 

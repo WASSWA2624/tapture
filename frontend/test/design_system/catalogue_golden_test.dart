@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart' hide StepState;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/color_swatches.dart';
 import 'package:tapture/app/theme/dimensions.dart';
@@ -10,6 +11,7 @@ import 'package:tapture/app/theme/type_ramp.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_brand_lockup.dart';
 import 'package:tapture/core/widgets/app_button.dart';
@@ -44,6 +46,8 @@ import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
+import 'package:tapture/core/widgets/fields/field_editor.dart';
+import 'package:tapture/core/widgets/fields/field_value.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/forms/keep_focused_visible.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
@@ -333,6 +337,25 @@ Widget _sample(String name, TextEditingController field) {
       return const ContentConstraint(child: Text(Copy.galleryLayout));
     case 'error_boundary':
       return const ErrorBoundary(child: Text(Copy.save));
+    case 'field_editor':
+      return ProviderScope(
+        overrides: <Override>[
+          fieldEditorBindingsProvider.overrideWithValue(_fieldEditorBindings),
+        ],
+        child: const FieldEditor(
+          field: (
+            fieldKey: 'serial',
+            label: 'Serial',
+            type: 'text',
+            options: <Object>[],
+            helpText: null,
+            unit: null,
+            validation: <String, Object?>{},
+          ),
+          value: FieldValue(fieldKey: 'serial', value: 'ABB-1'),
+          onChanged: _ignoreFieldValue,
+        ),
+      );
     case 'gallery_index':
       return const WidgetGalleryScreen();
     case 'keep_focused_visible':
@@ -378,4 +401,32 @@ void _ignoreDate(DateTime? value) {}
 
 void _ignoreSet(Set<String> value) {}
 
+void _ignoreFieldValue(FieldValue _) {}
+
 Future<void> _submit() async {}
+
+const FieldEditorBindings _fieldEditorBindings = (
+  kindOf: _fieldEditorKind,
+  validate: _fieldEditorValidate,
+  normalise: _fieldEditorNormalise,
+);
+
+String _fieldEditorKind(String _) => 'appTextField';
+
+Result<void> _fieldEditorValidate({
+  required String type,
+  required Object? value,
+  required List<Object> options,
+  required Map<String, Object?> validation,
+}) {
+  return const Success<void>(null);
+}
+
+Object? _fieldEditorNormalise({
+  required String type,
+  required Object? value,
+  required List<Object> options,
+  required Map<String, Object?> validation,
+}) {
+  return value;
+}
