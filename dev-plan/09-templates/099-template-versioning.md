@@ -27,6 +27,6 @@ shows exactly what a migration will do before any record moves forward.
 
 ## Definition of done
 
-- [ ] Old records still render and export correctly after a template edit, and keep their captured version.
-- [ ] No record is migrated without the user first seeing the added, removed and retyped fields and the counts.
-- [ ] Tests: unit test that a record keeps its captured version across a bump and that the recorded diff matches the change; widget test of `template_migration_screen.dart` covering empty and failure states.
+- [x] Old records still render and export correctly after a template edit, and keep their captured version.
+- [x] No record is migrated without the user first seeing the added, removed and retyped fields and the counts.
+- [x] Tests: unit test that a record keeps its captured version across a bump and that the recorded diff matches the change; widget test of `template_migration_screen.dart` covering empty and failure states.

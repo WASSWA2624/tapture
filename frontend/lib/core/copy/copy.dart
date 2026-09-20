@@ -989,6 +989,39 @@ abstract final class Copy {
   static const String outputMappingImportedHint =
       'These letters came from the workbook. You can change them.';
 
+  /// Title of the template-migration screen.
+  static const String templateMigrationTitle = 'Move records';
+
+  /// What staying on a captured version means.
+  static const String templateMigrationExplain =
+      'Records stay on the version they were captured under until you move them.';
+
+  /// Headline when every record is already on the current version.
+  static const String templateMigrationEmptyHeadline = 'Nothing to move';
+
+  /// Body when no record is behind the current template version.
+  static const String templateMigrationEmptyMessage =
+      'Every record is already on this template version.';
+
+  /// Added-fields section on the migration screen.
+  static const String templateMigrationAdded = 'Added fields';
+
+  /// Removed-fields section on the migration screen.
+  static const String templateMigrationRemoved = 'Removed fields';
+
+  /// Retyped-fields section on the migration screen.
+  static const String templateMigrationRetyped = 'Retyped fields';
+
+  /// Confirm heading before records move.
+  static const String templateMigrationConfirmTitle = 'Move these records?';
+
+  /// Confirm body: one write, or nothing moves.
+  static const String templateMigrationConfirm =
+      'This writes every listed record to the new version in one step.';
+
+  /// Primary action that starts the confirmed move.
+  static const String templateMigrationAction = 'Move records';
+
   /// Suggested name when duplicating [name].
   static String templateCopyName(String name) => '$name (copy)';
 

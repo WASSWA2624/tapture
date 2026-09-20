@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/features/templates/domain/template_repository.dart';
+import 'package:tapture/features/templates/domain/template_versioning.dart';
 
 /// In-memory [TemplateRepository] for feature tests that must not open a
 /// database (FE-STATE-10).
@@ -48,7 +49,10 @@ final class FakeTemplateRepository implements TemplateRepository {
     }
     final String id = template.id.isEmpty ? 'template-${_next++}' : template.id;
     final TemplateDef? existing = _rows[id];
-    final TemplateDef stored = template.copyWith(
+    final TemplateDef incoming = existing == null
+        ? template
+        : TemplateVersioning.remember(from: existing, to: template);
+    final TemplateDef stored = incoming.copyWith(
       id: id,
       version: existing == null
           ? (template.version < 1 ? 1 : template.version)

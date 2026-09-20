@@ -14,6 +14,7 @@ import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 
 import '../domain/template_repository.dart';
+import '../domain/template_versioning.dart';
 import 'template_mapper.dart';
 
 /// Drift-backed [TemplateRepository]. The only feature file besides the
@@ -59,9 +60,15 @@ final class TemplateRepositoryImpl implements TemplateRepository {
       return FailureResult<TemplateDef>(invalid);
     }
     return runInTransaction(_db, () async {
+      final TemplateDef? existing = template.id.isEmpty
+          ? null
+          : await _load(template.id);
+      final TemplateDef stamped = existing == null
+          ? template
+          : TemplateVersioning.remember(from: existing, to: template);
       final Result<sqlite.Template> written = await upsertTemplate(
         _db,
-        row: TemplateMapper.headerToRow(template),
+        row: TemplateMapper.headerToRow(stamped),
         clock: _clock,
         deviceId: _deviceId,
         ids: _ids,
@@ -73,8 +80,8 @@ final class TemplateRepositoryImpl implements TemplateRepository {
             recoveryAction: failure.recoveryAction ?? 'Try again.',
           );
         case Success<sqlite.Template>(:final sqlite.Template value):
-          await _replaceFields(templateId: value.id, fields: template.fields);
-          await _replaceRows(templateId: value.id, rows: template.rows);
+          await _replaceFields(templateId: value.id, fields: stamped.fields);
+          await _replaceRows(templateId: value.id, rows: stamped.rows);
           final TemplateDef? loaded = await _load(value.id);
           if (loaded == null) {
             throw const StorageFailure(

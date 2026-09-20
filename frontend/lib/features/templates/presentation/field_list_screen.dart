@@ -60,6 +60,11 @@ class FieldListScreen extends ConsumerWidget {
                 icon: Icons.view_column_outlined,
                 onTap: () => _openOutput(context, template.id),
               ),
+              AppOverflowAction(
+                label: Copy.templateMigrationTitle,
+                icon: Icons.upgrade,
+                onTap: () => _openMigrate(context, template.id),
+              ),
             ],
       footer: template == null
           ? null
@@ -339,6 +344,10 @@ void _openOutput(BuildContext context, String templateId) {
   context.go(_outputLocation(templateId));
 }
 
+void _openMigrate(BuildContext context, String templateId) {
+  context.go(_migrateLocation(templateId));
+}
+
 void _openEdit(BuildContext context, String templateId, String fieldKey) {
   context.go(_editLocation(templateId, fieldKey));
 }
@@ -350,6 +359,7 @@ const String _newSegment = 'new';
 const String _requiredSegment = 'required';
 const String _identitySegment = 'identity';
 const String _outputSegment = 'output';
+const String _migrateSegment = 'migrate';
 
 String _addLocation(String id) {
   return '$_templatesRoot/${Uri.encodeComponent(id)}/$_fieldsSegment/'
@@ -371,4 +381,8 @@ String _identityLocation(String id) {
 
 String _outputLocation(String id) {
   return '$_templatesRoot/${Uri.encodeComponent(id)}/$_outputSegment';
+}
+
+String _migrateLocation(String id) {
+  return '$_templatesRoot/${Uri.encodeComponent(id)}/$_migrateSegment';
 }

@@ -35,6 +35,7 @@ import 'package:tapture/features/templates/presentation/required_columns_screen.
 import 'package:tapture/features/templates/presentation/shipped_picker_screen.dart';
 import 'package:tapture/features/templates/presentation/template_create_screen.dart';
 import 'package:tapture/features/templates/presentation/template_list_screen.dart';
+import 'package:tapture/features/templates/presentation/template_migration_screen.dart';
 
 export 'package:tapture/features/projects/presentation/current_project.dart'
     show CurrentProject, currentProjectProvider, openProjectIdProvider;
@@ -132,6 +133,9 @@ abstract final class AppRoutes {
 
   /// Output columns for [id]. Task 098 owns the screen.
   static String templateOutput(String id) => '${template(id)}/output';
+
+  /// Record migration for [id]. Task 099 owns the screen.
+  static String templateMigrate(String id) => '${template(id)}/migrate';
 
   /// Unprocessed-queue destination the status line opens. Task 159 owns the
   /// screen.
@@ -442,6 +446,14 @@ List<RouteBase> get _routes {
                       },
                     ),
                     GoRoute(
+                      path: 'migrate',
+                      builder: (BuildContext _, GoRouterState state) {
+                        return TemplateMigrationScreen(
+                          templateId: state.pathParameters['templateId']!,
+                        );
+                      },
+                    ),
+                    GoRoute(
                       path: 'fields/new',
                       builder: (BuildContext _, GoRouterState state) {
                         return FieldAddSheet(
@@ -589,6 +601,7 @@ String _titleFor(String name) {
     'template-required' => Copy.requiredColumnsTitle,
     'template-identity' => Copy.identityFieldsTitle,
     'template-output' => Copy.outputMappingTitle,
+    'template-migrate' => Copy.templateMigrationTitle,
     'field-add' => Copy.templatesAddField,
     'field-edit' => Copy.templatesEditField,
     'queue' => Copy.navQueue,
@@ -610,6 +623,7 @@ IconData _iconFor(String name) {
     'template-required' => Icons.rule,
     'template-identity' => Icons.fingerprint,
     'template-output' => Icons.view_column_outlined,
+    'template-migrate' => Icons.upgrade,
     'field-add' => Icons.add,
     'field-edit' => Icons.edit_outlined,
     'queue' => Icons.pending_outlined,
