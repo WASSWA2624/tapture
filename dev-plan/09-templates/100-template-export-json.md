@@ -27,6 +27,6 @@ projects and devices and behaves identically at the other end.
 
 ## Definition of done
 
-- [ ] An exported template imports elsewhere with identical behaviour, rows and aliases included.
-- [ ] An unknown schema version imports nothing and says why in plain language.
-- [ ] Tests: round-trip export-and-import test over a template exercising every attribute; widget test of `template_import_action.dart` covering empty and failure states, including the rejected-version path.
+- [x] An exported template imports elsewhere with identical behaviour, rows and aliases included.
+- [x] An unknown schema version imports nothing and says why in plain language.
+- [x] Tests: round-trip export-and-import test over a template exercising every attribute; widget test of `template_import_action.dart` covering empty and failure states, including the rejected-version path.

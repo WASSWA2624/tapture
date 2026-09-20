@@ -165,6 +165,7 @@ void main() {
     expect(find.text(Copy.templatesOpen), findsOneWidget);
     expect(find.text(Copy.projectsDuplicate), findsOneWidget);
     expect(find.text(Copy.templatesExport), findsOneWidget);
+    expect(find.text(Copy.templatesImport), findsOneWidget);
     expect(find.text(Copy.templatesDelete), findsNothing);
   });
 }
@@ -192,6 +193,12 @@ Future<void> _pump(
             path: 'library',
             builder: (BuildContext _, GoRouterState _) {
               return const Text('library');
+            },
+          ),
+          GoRoute(
+            path: 'import',
+            builder: (BuildContext _, GoRouterState _) {
+              return const Text('import');
             },
           ),
           GoRoute(

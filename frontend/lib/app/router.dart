@@ -34,6 +34,7 @@ import 'package:tapture/features/templates/presentation/output_mapping_screen.da
 import 'package:tapture/features/templates/presentation/required_columns_screen.dart';
 import 'package:tapture/features/templates/presentation/shipped_picker_screen.dart';
 import 'package:tapture/features/templates/presentation/template_create_screen.dart';
+import 'package:tapture/features/templates/presentation/template_import_action.dart';
 import 'package:tapture/features/templates/presentation/template_list_screen.dart';
 import 'package:tapture/features/templates/presentation/template_migration_screen.dart';
 
@@ -111,6 +112,9 @@ abstract final class AppRoutes {
 
   /// Shipped-library picker. Task 093 owns the screen.
   static const String templateLibrary = '$templates/library';
+
+  /// JSON import. Listed before [template] so `import` is not an id.
+  static const String templateImport = '$templates/import';
 
   /// Field list for [id]. Task 094 owns the screen.
   static String template(String id) => '$templates/${Uri.encodeComponent(id)}';
@@ -405,6 +409,12 @@ List<RouteBase> get _routes {
                   path: 'library',
                   builder: (BuildContext _, GoRouterState _) {
                     return const ShippedPickerScreen();
+                  },
+                ),
+                GoRoute(
+                  path: 'import',
+                  builder: (BuildContext _, GoRouterState state) {
+                    return TemplateImportAction(payload: state.extra);
                   },
                 ),
                 GoRoute(

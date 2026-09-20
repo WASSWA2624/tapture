@@ -96,6 +96,11 @@ class TemplateListScreen extends ConsumerWidget {
         icon: Icons.ios_share_outlined,
         onTap: () => context.go(_exportLocation(template.id)),
       ),
+      AppOverflowAction(
+        label: Copy.templatesImport,
+        icon: Icons.file_upload_outlined,
+        onTap: () => context.go(_importLocation),
+      ),
       if (recordCount == 0)
         AppOverflowAction(
           label: Copy.templatesDelete,
@@ -175,14 +180,17 @@ final Provider<Map<String, int>> templateRecordCountsProvider =
     });
 
 /// Must match [AppRoutes.templateCreate], [AppRoutes.templateLibrary],
-/// [AppRoutes.template] and [AppRoutes.templateExport]. This file cannot
-/// import `router.dart` — the router imports the screen.
+/// [AppRoutes.templateImport], [AppRoutes.template] and
+/// [AppRoutes.templateExport]. This file cannot import `router.dart` — the
+/// router imports the screen.
 const String _templatesRoot = '/templates';
 const String _newSegment = 'new';
 const String _librarySegment = 'library';
+const String _importSegment = 'import';
 const String _exportSegment = 'export';
 const String _createLocation = '$_templatesRoot/$_newSegment';
 const String _libraryLocation = '$_templatesRoot/$_librarySegment';
+const String _importLocation = '$_templatesRoot/$_importSegment';
 const String _deleteReason = 'Removed from the project.';
 
 String _fieldsLocation(String id) {

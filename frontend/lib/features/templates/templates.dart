@@ -3,6 +3,7 @@ library;
 
 export 'data/shipped_template_loader.dart'
     show shippedTemplateLoaderProvider, ShippedTemplateLoader;
+export 'data/template_json.dart' show TemplateJson;
 export 'data/template_repository_impl.dart' show templateRepositoryProvider;
 export 'domain/field_def.dart';
 export 'domain/field_type_registry.dart';

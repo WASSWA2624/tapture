@@ -640,6 +640,39 @@ abstract final class Copy {
   /// Overflow command that writes a template out. Task 100 owns the screen.
   static const String templatesExport = 'Export template';
 
+  /// Overflow command that reads a template JSON into this project.
+  static const String templatesImport = 'Import template';
+
+  /// Empty import destination: no file was given.
+  static const String templatesImportEmptyHeadline = 'No template file';
+
+  /// Empty import destination explanation.
+  static const String templatesImportEmptyMessage =
+      'Choose a template file to add it to this project.';
+
+  /// Rejected because schema_version is missing or not this app's version.
+  static const String templatesImportUnknownSchema =
+      'That template file uses a schema this app does not read.';
+
+  /// Recovery for an unknown schema version.
+  static const String templatesImportUnknownSchemaRecovery =
+      'Export the template again from this version of Tapture.';
+
+  /// Rejected because the JSON is not a template object.
+  static const String templatesImportInvalid = 'That file is not a template.';
+
+  /// Recovery for an invalid template JSON.
+  static const String templatesImportInvalidRecovery =
+      'Choose a template file and try again.';
+
+  /// Rejected because two fields share a key.
+  static const String templatesImportDuplicateField =
+      'Each field key must be unique on a template.';
+
+  /// Recovery for a duplicate field key.
+  static const String templatesImportDuplicateFieldRecovery =
+      'Rename the duplicate key and export again.';
+
   /// Soft-deletes a template no record uses.
   static const String templatesDelete = 'Delete template';
 
