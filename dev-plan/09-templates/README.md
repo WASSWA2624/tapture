@@ -5,7 +5,7 @@ The definition of every record shape: shipped, built in the app, or read from a 
 Tasks 088–104 (17). Each file is a standalone implementation prompt.
 
 - [x] [088 — Template domain model and repository](088-template-model.md)
-- [ ] [089 — Field type registry](089-field-type-registry.md)
+- [x] [089 — Field type registry](089-field-type-registry.md)
 - [ ] [090 — Shipped template asset format and atomicity checker](090-shipped-templates-assets.md)
 - [ ] [091 — Author the shipped template library](091-shipped-template-library.md)
 - [ ] [092 — Template list, blank create and duplicate](092-template-list.md)

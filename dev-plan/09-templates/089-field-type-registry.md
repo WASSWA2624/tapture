@@ -30,6 +30,6 @@ type themselves.
 
 ## Definition of done
 
-- [ ] Capture, review, validation and export all read behaviour from this registry rather than switching on type.
-- [ ] Every type of §12.1 is present, and a type missing any of its four behaviours fails the registry test.
-- [ ] Tests: unit test over the declared set asserting completeness and that each entry supplies all four behaviours.
+- [x] Capture, review, validation and export all read behaviour from this registry rather than switching on type.
+- [x] Every type of §12.1 is present, and a type missing any of its four behaviours fails the registry test.
+- [x] Tests: unit test over the declared set asserting completeness and that each entry supplies all four behaviours.
