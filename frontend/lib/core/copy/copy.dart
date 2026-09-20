@@ -911,6 +911,44 @@ abstract final class Copy {
   static const String fieldAddEmptyMessage =
       'Open the template list and pick a template first.';
 
+  /// Title of the bulk requiredness screen.
+  static const String requiredColumnsTitle = 'Required columns';
+
+  /// Headline when the template has no fields to re-scope.
+  static const String requiredColumnsEmptyHeadline = 'No columns to set';
+
+  /// Body when the required-columns list is empty.
+  static const String requiredColumnsEmptyMessage =
+      'Add a field first, then choose what this project insists on.';
+
+  /// Hide toggle on a required-columns row.
+  static const String requiredColumnHide = 'Hide';
+
+  /// Reveals an inherited §13.3 group.
+  static const String requiredColumnShowGroup = 'Show group';
+
+  /// Collapses an inherited §13.3 group.
+  static const String requiredColumnHideGroup = 'Hide group';
+
+  /// Heading for fields that do not sit in a named group.
+  static const String requiredColumnUngrouped = 'Fields';
+
+  /// Screen-reader name of the three-radio grid for [label].
+  static String requiredColumnRadios(String label) => 'Required? · $label';
+
+  /// One radio cell: field [label] and the requiredness [mark].
+  static String requiredColumnCell(String label, String mark) {
+    return '$label, $mark';
+  }
+
+  /// Reminder of the shipped requiredness after the user moves it.
+  static String requiredColumnShipped(String mark) => 'Shipped as $mark';
+
+  /// Operator-facing name of a field group.
+  static String requiredColumnGroup(String group) {
+    return shippedLabel('templates.groups.$group.$group');
+  }
+
   /// Suggested name when duplicating [name].
   static String templateCopyName(String name) => '$name (copy)';
 

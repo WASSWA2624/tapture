@@ -39,11 +39,11 @@ class RequirednessController {
 
 ## Definition of done
 
-- [ ] A shipped template can be re-scoped from forty suggested columns to eight required ones in a single pass.
-- [ ] Changing requiredness produces exactly one new template version, and records captured under an earlier version are not marked incomplete.
-- [ ] A field made REQUIRED blocks approval, never capture: an incomplete record still saves and lands in NEEDS_REVIEW.
-- [ ] Tests: widget test over the three-radio grid and the hide toggle; unit test that a multi-field pass commits one version.
-- [ ] Contract above is implemented exactly, with nothing else made public.
+- [x] A shipped template can be re-scoped from forty suggested columns to eight required ones in a single pass.
+- [x] Changing requiredness produces exactly one new template version, and records captured under an earlier version are not marked incomplete.
+- [x] A field made REQUIRED blocks approval, never capture: an incomplete record still saves and lands in NEEDS_REVIEW.
+- [x] Tests: widget test over the three-radio grid and the hide toggle; unit test that a multi-field pass commits one version.
+- [x] Contract above is implemented exactly, with nothing else made public.
 
 ## Out of scope
 

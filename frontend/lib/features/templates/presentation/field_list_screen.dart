@@ -42,6 +42,15 @@ class FieldListScreen extends ConsumerWidget {
       key: const ValueKey<String>('route-template-fields'),
       title: template?.name ?? Copy.templateFieldsTitle,
       scrollable: false,
+      overflow: template == null
+          ? const <AppOverflowAction>[]
+          : <AppOverflowAction>[
+              AppOverflowAction(
+                label: Copy.requiredColumnsTitle,
+                icon: Icons.rule,
+                onTap: () => _openRequired(context, template.id),
+              ),
+            ],
       footer: template == null
           ? null
           : AppPrimaryAction(
@@ -308,6 +317,10 @@ void _openAdd(BuildContext context, String templateId) {
   context.go(_addLocation(templateId));
 }
 
+void _openRequired(BuildContext context, String templateId) {
+  context.go(_requiredLocation(templateId));
+}
+
 void _openEdit(BuildContext context, String templateId, String fieldKey) {
   context.go(_editLocation(templateId, fieldKey));
 }
@@ -316,6 +329,7 @@ void _openEdit(BuildContext context, String templateId, String fieldKey) {
 const String _templatesRoot = '/templates';
 const String _fieldsSegment = 'fields';
 const String _newSegment = 'new';
+const String _requiredSegment = 'required';
 
 String _addLocation(String id) {
   return '$_templatesRoot/${Uri.encodeComponent(id)}/$_fieldsSegment/'
@@ -325,4 +339,8 @@ String _addLocation(String id) {
 String _editLocation(String id, String fieldKey) {
   return '$_templatesRoot/${Uri.encodeComponent(id)}/$_fieldsSegment/'
       '${Uri.encodeComponent(fieldKey)}';
+}
+
+String _requiredLocation(String id) {
+  return '$_templatesRoot/${Uri.encodeComponent(id)}/$_requiredSegment';
 }

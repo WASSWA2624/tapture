@@ -29,6 +29,7 @@ import 'package:tapture/features/settings/presentation/storage_settings_screen.d
 import 'package:tapture/features/settings/settings.dart';
 import 'package:tapture/features/templates/presentation/field_add_sheet.dart';
 import 'package:tapture/features/templates/presentation/field_list_screen.dart';
+import 'package:tapture/features/templates/presentation/required_columns_screen.dart';
 import 'package:tapture/features/templates/presentation/shipped_picker_screen.dart';
 import 'package:tapture/features/templates/presentation/template_create_screen.dart';
 import 'package:tapture/features/templates/presentation/template_list_screen.dart';
@@ -120,6 +121,9 @@ abstract final class AppRoutes {
   /// Edit-field destination for [fieldKey]. Task 095 owns the sheet.
   static String templateField(String id, String fieldKey) =>
       '${template(id)}/fields/${Uri.encodeComponent(fieldKey)}';
+
+  /// Bulk requiredness for [id]. Task 096 owns the screen.
+  static String templateRequired(String id) => '${template(id)}/required';
 
   /// Unprocessed-queue destination the status line opens. Task 159 owns the
   /// screen.
@@ -406,6 +410,14 @@ List<RouteBase> get _routes {
                       },
                     ),
                     GoRoute(
+                      path: 'required',
+                      builder: (BuildContext _, GoRouterState state) {
+                        return RequiredColumnsScreen(
+                          templateId: state.pathParameters['templateId']!,
+                        );
+                      },
+                    ),
+                    GoRoute(
                       path: 'fields/new',
                       builder: (BuildContext _, GoRouterState state) {
                         return FieldAddSheet(
@@ -550,6 +562,7 @@ String _titleFor(String name) {
     'template-library' => Copy.templatesPickLibrary,
     'template-fields' => Copy.templateFieldsTitle,
     'template-export' => Copy.templatesExport,
+    'template-required' => Copy.requiredColumnsTitle,
     'field-add' => Copy.templatesAddField,
     'field-edit' => Copy.templatesEditField,
     'queue' => Copy.navQueue,
@@ -568,6 +581,7 @@ IconData _iconFor(String name) {
     'template-library' => Icons.article_outlined,
     'template-fields' => Icons.view_list_outlined,
     'template-export' => Icons.ios_share_outlined,
+    'template-required' => Icons.rule,
     'field-add' => Icons.add,
     'field-edit' => Icons.edit_outlined,
     'queue' => Icons.pending_outlined,
