@@ -65,6 +65,16 @@ class FieldListScreen extends ConsumerWidget {
                 icon: Icons.upgrade,
                 onTap: () => _openMigrate(context, template.id),
               ),
+              AppOverflowAction(
+                label: Copy.rowAliasesTitle,
+                icon: Icons.alternate_email,
+                onTap: () => _openAliases(context, template.id),
+              ),
+              AppOverflowAction(
+                label: Copy.checklistTitle,
+                icon: Icons.checklist,
+                onTap: () => _openChecklist(context, template.id),
+              ),
             ],
       footer: template == null
           ? null
@@ -348,6 +358,14 @@ void _openMigrate(BuildContext context, String templateId) {
   context.go(_migrateLocation(templateId));
 }
 
+void _openAliases(BuildContext context, String templateId) {
+  context.go(_aliasesLocation(templateId));
+}
+
+void _openChecklist(BuildContext context, String templateId) {
+  context.go(_checklistLocation(templateId));
+}
+
 void _openEdit(BuildContext context, String templateId, String fieldKey) {
   context.go(_editLocation(templateId, fieldKey));
 }
@@ -360,6 +378,8 @@ const String _requiredSegment = 'required';
 const String _identitySegment = 'identity';
 const String _outputSegment = 'output';
 const String _migrateSegment = 'migrate';
+const String _aliasesSegment = 'aliases';
+const String _checklistSegment = 'checklist';
 
 String _addLocation(String id) {
   return '$_templatesRoot/${Uri.encodeComponent(id)}/$_fieldsSegment/'
@@ -385,4 +405,12 @@ String _outputLocation(String id) {
 
 String _migrateLocation(String id) {
   return '$_templatesRoot/${Uri.encodeComponent(id)}/$_migrateSegment';
+}
+
+String _aliasesLocation(String id) {
+  return '$_templatesRoot/${Uri.encodeComponent(id)}/$_aliasesSegment';
+}
+
+String _checklistLocation(String id) {
+  return '$_templatesRoot/${Uri.encodeComponent(id)}/$_checklistSegment';
 }

@@ -37,6 +37,12 @@ void main() {
       AppRoutes.templateField('ab', 'serial'),
       '/templates/ab/fields/serial',
     );
+    expect(AppRoutes.templateAliases('ab'), '/templates/ab/aliases');
+    expect(AppRoutes.templateChecklist('ab'), '/templates/ab/checklist');
+    expect(
+      AppRoutes.captureRow(projectId: 'ab', templateId: 't1', rowId: 'm-1'),
+      '/projects/ab/capture?template=t1&row=m-1',
+    );
     expect(AppRoutes.queue, '/queue');
     expect(AppRoutes.exports, '/exports');
     expect(

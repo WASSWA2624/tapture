@@ -27,11 +27,13 @@ import 'package:tapture/features/settings/presentation/capture_settings_screen.d
 import 'package:tapture/features/settings/presentation/settings_screen.dart';
 import 'package:tapture/features/settings/presentation/storage_settings_screen.dart';
 import 'package:tapture/features/settings/settings.dart';
+import 'package:tapture/features/templates/presentation/checklist_screen.dart';
 import 'package:tapture/features/templates/presentation/field_add_sheet.dart';
 import 'package:tapture/features/templates/presentation/field_list_screen.dart';
 import 'package:tapture/features/templates/presentation/identity_fields_screen.dart';
 import 'package:tapture/features/templates/presentation/output_mapping_screen.dart';
 import 'package:tapture/features/templates/presentation/required_columns_screen.dart';
+import 'package:tapture/features/templates/presentation/row_aliases_screen.dart';
 import 'package:tapture/features/templates/presentation/shipped_picker_screen.dart';
 import 'package:tapture/features/templates/presentation/template_create_screen.dart';
 import 'package:tapture/features/templates/presentation/template_import_action.dart';
@@ -144,6 +146,33 @@ abstract final class AppRoutes {
 
   /// Record migration for [id]. Task 099 owns the screen.
   static String templateMigrate(String id) => '${template(id)}/migrate';
+
+  /// Per-row aliases for [id]. Task 103 owns the screen.
+  static String templateAliases(String id) => '${template(id)}/aliases';
+
+  /// Capture checklist for [id]. Task 103 owns the screen.
+  static String templateChecklist(String id) => '${template(id)}/checklist';
+
+  /// Query key for the template a capture was opened from.
+  static const String templateQuery = 'template';
+
+  /// Query key for the checklist row a capture was opened from.
+  static const String rowQuery = 'row';
+
+  /// Capture for [projectId], already aimed at [templateId] and [rowId].
+  static String captureRow({
+    required String projectId,
+    required String templateId,
+    required String rowId,
+  }) {
+    return Uri(
+      path: capture(projectId),
+      queryParameters: <String, String>{
+        templateQuery: templateId,
+        rowQuery: rowId,
+      },
+    ).toString();
+  }
 
   /// Unprocessed-queue destination the status line opens. Task 159 owns the
   /// screen.
@@ -473,6 +502,22 @@ List<RouteBase> get _routes {
                       path: 'migrate',
                       builder: (BuildContext _, GoRouterState state) {
                         return TemplateMigrationScreen(
+                          templateId: state.pathParameters['templateId']!,
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      path: 'aliases',
+                      builder: (BuildContext _, GoRouterState state) {
+                        return RowAliasesScreen(
+                          templateId: state.pathParameters['templateId']!,
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      path: 'checklist',
+                      builder: (BuildContext _, GoRouterState state) {
+                        return ChecklistScreen(
                           templateId: state.pathParameters['templateId']!,
                         );
                       },

@@ -26,7 +26,7 @@ matcher local names, and the progress view that shows what has been found and wh
 
 ## Definition of done
 
-- [ ] Rows import with their spreadsheet positions preserved, so a later export writes back to the right line.
-- [ ] "BP machine" reliably matches "Blood Pressure Machine".
-- [ ] The operator can see what is still missing in the current room.
-- [ ] Tests: repository tests for `predefined_rows_import.dart` against an in-memory database, plus the fake later tests use; widget tests of `row_aliases_screen.dart` and `checklist_screen.dart` covering empty and failure states.
+- [x] Rows import with their spreadsheet positions preserved, so a later export writes back to the right line.
+- [x] "BP machine" reliably matches "Blood Pressure Machine".
+- [x] The operator can see what is still missing in the current room.
+- [x] Tests: repository tests for `predefined_rows_import.dart` against an in-memory database, plus the fake later tests use; widget tests of `row_aliases_screen.dart` and `checklist_screen.dart` covering empty and failure states.

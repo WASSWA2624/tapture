@@ -741,6 +741,68 @@ abstract final class Copy {
   static const String xlsxMappingExistsRecovery =
       'Rename the spreadsheet, then try again.';
 
+  /// Title of the per-row aliases screen.
+  static const String rowAliasesTitle = 'Row aliases';
+
+  /// Headline when the template has no checklist rows to name.
+  static const String rowAliasesEmptyHeadline = 'No rows to name';
+
+  /// Body when the aliases list is empty.
+  static const String rowAliasesEmptyMessage =
+      'Import spreadsheet rows first, then add the local names that should '
+      'match them.';
+
+  /// Field label for a row's aliases.
+  static const String rowAliasesField = 'Aliases';
+
+  /// Hint showing how local names are written.
+  static const String rowAliasesHint = 'BP machine, BP';
+
+  /// Overflow command that reads aliases from one spreadsheet column.
+  static const String rowAliasesImport = 'Import from a column';
+
+  /// Field label for the alias column letter.
+  static const String rowAliasesColumn = 'Alias column';
+
+  /// Stated absence when a row has no aliases yet.
+  static const String rowAliasesNone = 'No aliases yet';
+
+  /// Subtitle listing the aliases already stored on a row.
+  static String rowAliasesList(List<String> aliases) {
+    if (aliases.isEmpty) {
+      return rowAliasesNone;
+    }
+    return aliases.join(', ');
+  }
+
+  /// Title of the capture checklist.
+  static const String checklistTitle = 'Checklist';
+
+  /// Headline when the template has no predefined rows.
+  static const String checklistEmptyHeadline = 'Nothing on the checklist';
+
+  /// Body when the checklist is empty.
+  static const String checklistEmptyMessage =
+      'Import spreadsheet rows to see what is still missing.';
+
+  /// Status word for a row that has been found.
+  static const String checklistFound = 'Found';
+
+  /// Status word for a row that is still missing.
+  static const String checklistMissing = 'Missing';
+
+  /// Group name when a row has no room or context.
+  static const String checklistUngrouped = 'Ungrouped';
+
+  /// Group heading: the room name and how many rows have been found.
+  static String checklistProgress({
+    required String group,
+    required int found,
+    required int total,
+  }) {
+    return '$group · Found $found of $total';
+  }
+
   /// Soft-deletes a template no record uses.
   static const String templatesDelete = 'Delete template';
 
