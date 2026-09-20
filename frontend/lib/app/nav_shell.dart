@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/feedback_host.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
@@ -10,6 +11,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/responsive/responsive_builder.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
+import 'package:tapture/features/projects/projects.dart';
 
 /// The four-destination frame: bar on compact, rail on medium, rail plus a
 /// list pane on expanded. [shell] keeps each branch's stack (FE-RESP-03).
@@ -178,61 +180,57 @@ class _Rail extends StatelessWidget {
   }
 }
 
-class _Pane extends StatelessWidget {
+class _Pane extends ConsumerWidget {
   const _Pane({required this.index});
 
   final int index;
 
   @override
-  Widget build(BuildContext context) {
-    return Material(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool projects = index == 0;
+    final String query = ref.watch(projectListSearchQueryProvider);
+    return RepaintBoundary(
       key: const ValueKey<String>('nav-pane'),
-      color: context.colors.surface,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          border: BorderDirectional(
-            end: BorderSide(color: context.colors.outline, width: Space.x0 / 2),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                Space.x4,
-                Space.x4,
-                Space.x4,
-                Space.x2,
+      child: Material(
+        color: context.colors.surface,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            border: BorderDirectional(
+              end: BorderSide(
+                color: context.colors.outline,
+                width: Space.x0 / 2,
               ),
-              child: Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: Text(
-                  _destinations[index].label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppText.title.copyWith(
-                    color: context.colors.onSurface,
-                  ),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                  Space.x3,
+                  Space.x4,
+                  Space.x3,
+                  Space.x2,
+                ),
+                child: AppSearchField(
+                  hint: Copy.search,
+                  text: projects ? query : null,
+                  onChanged: projects
+                      ? ref.read(projectListSearchQueryProvider.notifier).set
+                      : (_) {},
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                Space.x3,
-                Space.x0,
-                Space.x3,
-                Space.x2,
+              Expanded(
+                child: projects
+                    ? const ProjectListView(filtered: true)
+                    : AppEmptyState(
+                        icon: _destinations[index].icon,
+                        headline: Copy.emptyHeadline,
+                        message: Copy.emptyMessage,
+                      ),
               ),
-              child: AppSearchField(hint: Copy.search, onChanged: (_) {}),
-            ),
-            Expanded(
-              child: AppEmptyState(
-                icon: _destinations[index].icon,
-                headline: Copy.emptyHeadline,
-                message: Copy.emptyMessage,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

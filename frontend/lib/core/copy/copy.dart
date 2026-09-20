@@ -376,6 +376,13 @@ abstract final class Copy {
   /// Primary empty-state action on the project list.
   static const String projectsCreate = 'Create a project';
 
+  /// Headline when the project search matches nothing.
+  static const String projectsNoMatchHeadline = 'No matching projects';
+
+  /// Body when the project search matches nothing.
+  static const String projectsNoMatchMessage =
+      'Try a different name, or create a project.';
+
   /// Secondary empty-state action on the project list. Reserved for task 222
   /// once bundle import ships; the Projects empty state does not show it yet.
   static const String projectsImport = 'Import a project';

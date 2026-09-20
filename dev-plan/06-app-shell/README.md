@@ -2,7 +2,7 @@
 
 Navigation, the always-visible status line, and the frame every feature plugs into.
 
-Tasks 072–324 (7). Each file is a standalone implementation prompt.
+Tasks 072–325 (8). Each file is a standalone implementation prompt.
 
 - [x] [072 — Router, route table and guards](072-router-setup.md)
 - [x] [073 — Adaptive navigation shell](073-nav-shell.md)
@@ -11,6 +11,7 @@ Tasks 072–324 (7). Each file is a standalone implementation prompt.
 - [x] [076 — Global error and crash recovery screen](076-global-error-page.md)
 - [x] [317 — Fix navigation icons and the Capture tab state](317-fix-navigation-icons-and-capture-state.md)
 - [x] [324 — Fix the project home count navigation](324-fix-count-card-navigation.md)
+- [x] [325 — Show the project list in the expanded list pane](325-show-projects-in-list-pane.md)
 
 ## As built
 

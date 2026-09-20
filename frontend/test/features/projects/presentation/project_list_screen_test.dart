@@ -223,6 +223,56 @@ void main() {
     },
   );
 
+  testWidgets('Create a project shows with zero projects at every width', (
+    WidgetTester tester,
+  ) async {
+    for (final double width in <double>[400, 800, 1200]) {
+      final FakeProjectRepository repo = FakeProjectRepository();
+      addTearDown(repo.dispose);
+      _bindSize(tester, width);
+      await _pump(tester, repo: repo);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AppPrimaryAction), findsOneWidget);
+      expect(find.text(Copy.projectsCreate), findsWidgets);
+      expect(find.text(Copy.projectsEmptyHeadline), findsOneWidget);
+    }
+  });
+
+  testWidgets(
+    'Create a project stays in the body at 400 and 800 dp with projects',
+    (WidgetTester tester) async {
+      for (final double width in <double>[400, 800]) {
+        final FakeProjectRepository repo = FakeProjectRepository();
+        addTearDown(repo.dispose);
+        _ok(await repo.create(aProject(name: 'Alpha')));
+        _bindSize(tester, width);
+        await _pump(tester, repo: repo);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(AppListTile), findsOneWidget);
+        expect(find.text('Alpha'), findsOneWidget);
+        expect(find.byType(AppPrimaryAction), findsOneWidget);
+        expect(find.text(Copy.projectsCreate), findsOneWidget);
+      }
+    },
+  );
+
+  testWidgets('Create a project hides at 1200 dp when projects exist', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    _bindSize(tester, 1200);
+    await _pump(tester, repo: repo);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AppListTile), findsNothing);
+    expect(find.byType(AppPrimaryAction), findsNothing);
+    expect(find.text(Copy.projectsCreate), findsNothing);
+  });
+
   testWidgets('Show archived fits at 360 dp and 200 percent text', (
     WidgetTester tester,
   ) async {
@@ -311,4 +361,13 @@ T _ok<T>(Result<T> result) {
       failure.message,
     ),
   };
+}
+
+void _bindSize(WidgetTester tester, double width) {
+  tester.view.devicePixelRatio = 1;
+  tester.view.physicalSize = Size(width, 800);
+  addTearDown(() {
+    tester.view.resetPhysicalSize();
+    tester.view.resetDevicePixelRatio();
+  });
 }

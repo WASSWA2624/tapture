@@ -77,6 +77,11 @@ void main() {
   test('project list empty copy names create and reserves import', () {
     expect(Copy.projectsEmptyMessage, 'Create a project to start capturing.');
     expect(Copy.projectsImport, 'Import a project');
+    expect(Copy.projectsNoMatchHeadline, 'No matching projects');
+    expect(
+      Copy.projectsNoMatchMessage,
+      'Try a different name, or create a project.',
+    );
   });
 
   test('feedbackEntryTitle joins the number, id and message', () {
@@ -239,6 +244,8 @@ List<String> get _values {
     Copy.projectsEmptyHeadline,
     Copy.projectsEmptyMessage,
     Copy.projectsCreate,
+    Copy.projectsNoMatchHeadline,
+    Copy.projectsNoMatchMessage,
     Copy.projectsImport,
     Copy.projectsDuplicate,
     Copy.projectAllProjects,

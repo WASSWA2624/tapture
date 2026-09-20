@@ -11,3 +11,9 @@ export 'presentation/current_project.dart'
         currentProjectProvider,
         openProjectIdProvider,
         projectSettingsStoreProvider;
+export 'presentation/project_list_filter.dart'
+    show
+        projectListFilteredProvider,
+        projectListSearchQueryProvider,
+        projectListShowArchivedProvider;
+export 'presentation/project_list_view.dart';
