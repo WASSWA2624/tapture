@@ -1,0 +1,684 @@
+{
+  "schema_version": 1,
+  "template_key": "utility_point",
+  "name": "templates.utility_point.name",
+  "kind": "utility",
+  "identity_fields": [
+    "structure_tag",
+    "structure_type",
+    "gps_latitude",
+    "gps_longitude"
+  ],
+  "inherits_groups": [
+    "record_admin",
+    "location_context",
+    "evidence",
+    "review"
+  ],
+  "fields": [
+    {
+      "field_key": "structure_tag",
+      "label": "templates.utility_point.structure_tag",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "identity"
+    },
+    {
+      "field_key": "structure_type",
+      "label": "templates.utility_point.structure_type",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "identity",
+      "options": [
+        {
+          "code": "borehole",
+          "label": "templates.choices.structure_type.borehole"
+        },
+        {
+          "code": "shallow_well",
+          "label": "templates.choices.structure_type.shallow_well"
+        },
+        {
+          "code": "protected_spring",
+          "label": "templates.choices.structure_type.protected_spring"
+        },
+        {
+          "code": "water_tank",
+          "label": "templates.choices.structure_type.water_tank"
+        },
+        {
+          "code": "standpipe",
+          "label": "templates.choices.structure_type.standpipe"
+        },
+        {
+          "code": "kiosk",
+          "label": "templates.choices.structure_type.kiosk"
+        },
+        {
+          "code": "pump_house",
+          "label": "templates.choices.structure_type.pump_house"
+        },
+        {
+          "code": "transformer",
+          "label": "templates.choices.structure_type.transformer"
+        },
+        {
+          "code": "power_pole",
+          "label": "templates.choices.structure_type.power_pole"
+        },
+        {
+          "code": "solar_array",
+          "label": "templates.choices.structure_type.solar_array"
+        },
+        {
+          "code": "generator",
+          "label": "templates.choices.structure_type.generator"
+        },
+        {
+          "code": "septic_tank",
+          "label": "templates.choices.structure_type.septic_tank"
+        },
+        {
+          "code": "culvert",
+          "label": "templates.choices.structure_type.culvert"
+        },
+        {
+          "code": "mast",
+          "label": "templates.choices.structure_type.mast"
+        },
+        {
+          "code": "other",
+          "label": "templates.choices.structure_type.other"
+        }
+      ]
+    },
+    {
+      "field_key": "reference_number",
+      "label": "templates.utility_point.reference_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "scheme_name",
+      "label": "templates.utility_point.scheme_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "installation_date",
+      "label": "templates.utility_point.installation_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "installation"
+    },
+    {
+      "field_key": "installer_name",
+      "label": "templates.utility_point.installer_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "installation"
+    },
+    {
+      "field_key": "funding_source",
+      "label": "templates.utility_point.funding_source",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "installation"
+    },
+    {
+      "field_key": "contractor_name",
+      "label": "templates.utility_point.contractor_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "installation"
+    },
+    {
+      "field_key": "manufacturer_name",
+      "label": "templates.utility_point.manufacturer_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "installation"
+    },
+    {
+      "field_key": "model_name",
+      "label": "templates.utility_point.model_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "installation"
+    },
+    {
+      "field_key": "design_standard",
+      "label": "templates.utility_point.design_standard",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "installation"
+    },
+    {
+      "field_key": "capacity_value",
+      "label": "templates.utility_point.capacity_value",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical",
+      "unit": "as_declared"
+    },
+    {
+      "field_key": "capacity_unit",
+      "label": "templates.utility_point.capacity_unit",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "depth_m",
+      "label": "templates.utility_point.depth_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "diameter_mm",
+      "label": "templates.utility_point.diameter_mm",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "static_water_level_m",
+      "label": "templates.utility_point.static_water_level_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "yield_l_per_hour",
+      "label": "templates.utility_point.yield_l_per_hour",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical",
+      "unit": "count"
+    },
+    {
+      "field_key": "pump_type",
+      "label": "templates.utility_point.pump_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "pump_power_kw",
+      "label": "templates.utility_point.pump_power_kw",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "head_m",
+      "label": "templates.utility_point.head_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "voltage_v",
+      "label": "templates.utility_point.voltage_v",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "phase_count",
+      "label": "templates.utility_point.phase_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "power_rating_kva",
+      "label": "templates.utility_point.power_rating_kva",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "storage_capacity_l",
+      "label": "templates.utility_point.storage_capacity_l",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "pipe_length_m",
+      "label": "templates.utility_point.pipe_length_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "panel_count",
+      "label": "templates.utility_point.panel_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "panel_rating_w",
+      "label": "templates.utility_point.panel_rating_w",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "battery_capacity_ah",
+      "label": "templates.utility_point.battery_capacity_ah",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "inverter_rating_kva",
+      "label": "templates.utility_point.inverter_rating_kva",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "households_served_count",
+      "label": "templates.utility_point.households_served_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "service_area"
+    },
+    {
+      "field_key": "persons_served_count",
+      "label": "templates.utility_point.persons_served_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "service_area"
+    },
+    {
+      "field_key": "institutions_served_count",
+      "label": "templates.utility_point.institutions_served_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "service_area"
+    },
+    {
+      "field_key": "distance_to_furthest_user_m",
+      "label": "templates.utility_point.distance_to_furthest_user_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "service_area"
+    },
+    {
+      "field_key": "service_hours_per_day",
+      "label": "templates.utility_point.service_hours_per_day",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "service_area",
+      "unit": "count"
+    },
+    {
+      "field_key": "queue_time_minutes",
+      "label": "templates.utility_point.queue_time_minutes",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "service_area"
+    },
+    {
+      "field_key": "water_quality_tested",
+      "label": "templates.utility_point.water_quality_tested",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "quality"
+    },
+    {
+      "field_key": "water_quality_test_date",
+      "label": "templates.utility_point.water_quality_test_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "quality"
+    },
+    {
+      "field_key": "water_quality_result",
+      "label": "templates.utility_point.water_quality_result",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "quality"
+    },
+    {
+      "field_key": "turbidity_ntu",
+      "label": "templates.utility_point.turbidity_ntu",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "quality"
+    },
+    {
+      "field_key": "ph_value",
+      "label": "templates.utility_point.ph_value",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "quality",
+      "unit": "pH"
+    },
+    {
+      "field_key": "chlorine_residual_mgl",
+      "label": "templates.utility_point.chlorine_residual_mgl",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "quality"
+    },
+    {
+      "field_key": "ecoli_detected",
+      "label": "templates.utility_point.ecoli_detected",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "quality"
+    },
+    {
+      "field_key": "functional_status",
+      "label": "templates.utility_point.functional_status",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "status",
+      "options": [
+        {
+          "code": "functional",
+          "label": "templates.choices.functional_status.functional"
+        },
+        {
+          "code": "partially_functional",
+          "label": "templates.choices.functional_status.partially_functional"
+        },
+        {
+          "code": "not_functional",
+          "label": "templates.choices.functional_status.not_functional"
+        },
+        {
+          "code": "abandoned",
+          "label": "templates.choices.functional_status.abandoned"
+        }
+      ]
+    },
+    {
+      "field_key": "functionality_verified_date",
+      "label": "templates.utility_point.functionality_verified_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "status"
+    },
+    {
+      "field_key": "seasonal_reliability",
+      "label": "templates.utility_point.seasonal_reliability",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "status"
+    },
+    {
+      "field_key": "breakdown_since_date",
+      "label": "templates.utility_point.breakdown_since_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "status"
+    },
+    {
+      "field_key": "breakdown_cause",
+      "label": "templates.utility_point.breakdown_cause",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "status"
+    },
+    {
+      "field_key": "days_non_functional",
+      "label": "templates.utility_point.days_non_functional",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "status"
+    },
+    {
+      "field_key": "previous_repair_date",
+      "label": "templates.utility_point.previous_repair_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "status"
+    },
+    {
+      "field_key": "repair_history_note_raw",
+      "label": "templates.utility_point.repair_history_note_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "status"
+    },
+    {
+      "field_key": "management_arrangement",
+      "label": "templates.utility_point.management_arrangement",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "management",
+      "options": [
+        {
+          "code": "community_committee",
+          "label": "templates.choices.management_arrangement.community_committee"
+        },
+        {
+          "code": "private_operator",
+          "label": "templates.choices.management_arrangement.private_operator"
+        },
+        {
+          "code": "local_government",
+          "label": "templates.choices.management_arrangement.local_government"
+        },
+        {
+          "code": "institution",
+          "label": "templates.choices.management_arrangement.institution"
+        },
+        {
+          "code": "utility_company",
+          "label": "templates.choices.management_arrangement.utility_company"
+        },
+        {
+          "code": "none",
+          "label": "templates.choices.management_arrangement.none"
+        }
+      ]
+    },
+    {
+      "field_key": "committee_present",
+      "label": "templates.utility_point.committee_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "committee_active",
+      "label": "templates.utility_point.committee_active",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "caretaker_name",
+      "label": "templates.utility_point.caretaker_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "caretaker_trained",
+      "label": "templates.utility_point.caretaker_trained",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "caretaker_contact",
+      "label": "templates.utility_point.caretaker_contact",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "user_fee_charged",
+      "label": "templates.utility_point.user_fee_charged",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "fee_amount",
+      "label": "templates.utility_point.fee_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "fee_currency",
+      "label": "templates.utility_point.fee_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "fee_period",
+      "label": "templates.utility_point.fee_period",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "fee_collection_rate_percent",
+      "label": "templates.utility_point.fee_collection_rate_percent",
+      "type": "percentage",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "spare_parts_accessible",
+      "label": "templates.utility_point.spare_parts_accessible",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "maintenance_fund_present",
+      "label": "templates.utility_point.maintenance_fund_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "maintenance_fund_balance_amount",
+      "label": "templates.utility_point.maintenance_fund_balance_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "apron_present",
+      "label": "templates.utility_point.apron_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "protection"
+    },
+    {
+      "field_key": "apron_condition_grade",
+      "label": "templates.utility_point.apron_condition_grade",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "protection"
+    },
+    {
+      "field_key": "drainage_channel_present",
+      "label": "templates.utility_point.drainage_channel_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "protection"
+    },
+    {
+      "field_key": "soak_pit_present",
+      "label": "templates.utility_point.soak_pit_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "protection"
+    },
+    {
+      "field_key": "fencing_present",
+      "label": "templates.utility_point.fencing_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "protection"
+    },
+    {
+      "field_key": "fence_condition_grade",
+      "label": "templates.utility_point.fence_condition_grade",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "protection"
+    },
+    {
+      "field_key": "vandalism_evident",
+      "label": "templates.utility_point.vandalism_evident",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "protection"
+    },
+    {
+      "field_key": "contamination_risk_nearby",
+      "label": "templates.utility_point.contamination_risk_nearby",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "protection"
+    },
+    {
+      "field_key": "condition_grade",
+      "label": "templates.utility_point.condition_grade",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "condition"
+    },
+    {
+      "field_key": "action_required",
+      "label": "templates.utility_point.action_required",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "action_priority",
+      "label": "templates.utility_point.action_priority",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "estimated_cost_amount",
+      "label": "templates.utility_point.estimated_cost_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "estimated_cost_currency",
+      "label": "templates.utility_point.estimated_cost_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "recommendation_raw",
+      "label": "templates.utility_point.recommendation_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "maintenance_fund_balance_currency",
+      "label": "templates.utility_point.maintenance_fund_balance_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "management"
+    }
+  ],
+  "child_rows": []
+}

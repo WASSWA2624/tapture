@@ -1,0 +1,578 @@
+{
+  "schema_version": 1,
+  "template_key": "ict_equipment",
+  "name": "templates.ict_equipment.name",
+  "kind": "ict",
+  "identity_fields": [
+    "asset_tag",
+    "serial_number",
+    "service_tag"
+  ],
+  "inherits_groups": [
+    "record_admin",
+    "location_context",
+    "evidence",
+    "review"
+  ],
+  "fields": [
+    {
+      "field_key": "service_tag",
+      "label": "templates.ict_equipment.service_tag",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "imei_number",
+      "label": "templates.ict_equipment.imei_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "mac_address_ethernet",
+      "label": "templates.ict_equipment.mac_address_ethernet",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "mac_address_wifi",
+      "label": "templates.ict_equipment.mac_address_wifi",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "device_type",
+      "label": "templates.ict_equipment.device_type",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "classification",
+      "options": [
+        {
+          "code": "desktop",
+          "label": "templates.choices.device_type.desktop"
+        },
+        {
+          "code": "laptop",
+          "label": "templates.choices.device_type.laptop"
+        },
+        {
+          "code": "tablet",
+          "label": "templates.choices.device_type.tablet"
+        },
+        {
+          "code": "phone",
+          "label": "templates.choices.device_type.phone"
+        },
+        {
+          "code": "server",
+          "label": "templates.choices.device_type.server"
+        },
+        {
+          "code": "printer",
+          "label": "templates.choices.device_type.printer"
+        },
+        {
+          "code": "scanner",
+          "label": "templates.choices.device_type.scanner"
+        },
+        {
+          "code": "copier",
+          "label": "templates.choices.device_type.copier"
+        },
+        {
+          "code": "switch",
+          "label": "templates.choices.device_type.switch"
+        },
+        {
+          "code": "router",
+          "label": "templates.choices.device_type.router"
+        },
+        {
+          "code": "access_point",
+          "label": "templates.choices.device_type.access_point"
+        },
+        {
+          "code": "firewall",
+          "label": "templates.choices.device_type.firewall"
+        },
+        {
+          "code": "ups",
+          "label": "templates.choices.device_type.ups"
+        },
+        {
+          "code": "projector",
+          "label": "templates.choices.device_type.projector"
+        },
+        {
+          "code": "display",
+          "label": "templates.choices.device_type.display"
+        },
+        {
+          "code": "camera",
+          "label": "templates.choices.device_type.camera"
+        },
+        {
+          "code": "storage",
+          "label": "templates.choices.device_type.storage"
+        },
+        {
+          "code": "other",
+          "label": "templates.choices.device_type.other"
+        },
+        {
+          "code": "ip_assignment_static",
+          "label": "templates.choices.device_type.ip_assignment_static"
+        },
+        {
+          "code": "dhcp",
+          "label": "templates.choices.device_type.dhcp"
+        },
+        {
+          "code": "not_connected",
+          "label": "templates.choices.device_type.not_connected"
+        }
+      ]
+    },
+    {
+      "field_key": "form_factor",
+      "label": "templates.ict_equipment.form_factor",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "classification"
+    },
+    {
+      "field_key": "processor_brand",
+      "label": "templates.ict_equipment.processor_brand",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "processor"
+    },
+    {
+      "field_key": "processor_model",
+      "label": "templates.ict_equipment.processor_model",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "processor"
+    },
+    {
+      "field_key": "processor_speed_ghz",
+      "label": "templates.ict_equipment.processor_speed_ghz",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "processor"
+    },
+    {
+      "field_key": "processor_core_count",
+      "label": "templates.ict_equipment.processor_core_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "processor"
+    },
+    {
+      "field_key": "ram_gb",
+      "label": "templates.ict_equipment.ram_gb",
+      "type": "number",
+      "required": "RECOMMENDED",
+      "group": "memory_storage"
+    },
+    {
+      "field_key": "ram_type",
+      "label": "templates.ict_equipment.ram_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "memory_storage"
+    },
+    {
+      "field_key": "ram_slots_used",
+      "label": "templates.ict_equipment.ram_slots_used",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "memory_storage"
+    },
+    {
+      "field_key": "ram_slots_total",
+      "label": "templates.ict_equipment.ram_slots_total",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "memory_storage",
+      "unit": "count"
+    },
+    {
+      "field_key": "storage_type",
+      "label": "templates.ict_equipment.storage_type",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "memory_storage",
+      "options": [
+        {
+          "code": "hdd",
+          "label": "templates.choices.storage_type.hdd"
+        },
+        {
+          "code": "ssd",
+          "label": "templates.choices.storage_type.ssd"
+        },
+        {
+          "code": "nvme",
+          "label": "templates.choices.storage_type.nvme"
+        },
+        {
+          "code": "emmc",
+          "label": "templates.choices.storage_type.emmc"
+        },
+        {
+          "code": "hybrid",
+          "label": "templates.choices.storage_type.hybrid"
+        }
+      ]
+    },
+    {
+      "field_key": "storage_capacity_gb",
+      "label": "templates.ict_equipment.storage_capacity_gb",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "memory_storage"
+    },
+    {
+      "field_key": "storage_free_gb",
+      "label": "templates.ict_equipment.storage_free_gb",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "memory_storage"
+    },
+    {
+      "field_key": "secondary_storage_capacity_gb",
+      "label": "templates.ict_equipment.secondary_storage_capacity_gb",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "memory_storage"
+    },
+    {
+      "field_key": "screen_size_inches",
+      "label": "templates.ict_equipment.screen_size_inches",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "display"
+    },
+    {
+      "field_key": "screen_resolution",
+      "label": "templates.ict_equipment.screen_resolution",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "display"
+    },
+    {
+      "field_key": "touchscreen_present",
+      "label": "templates.ict_equipment.touchscreen_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "display"
+    },
+    {
+      "field_key": "gpu_model",
+      "label": "templates.ict_equipment.gpu_model",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "display"
+    },
+    {
+      "field_key": "gpu_memory_gb",
+      "label": "templates.ict_equipment.gpu_memory_gb",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "display"
+    },
+    {
+      "field_key": "battery_present",
+      "label": "templates.ict_equipment.battery_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "power"
+    },
+    {
+      "field_key": "battery_health_percent",
+      "label": "templates.ict_equipment.battery_health_percent",
+      "type": "percentage",
+      "required": "OPTIONAL",
+      "group": "power"
+    },
+    {
+      "field_key": "psu_rating_w",
+      "label": "templates.ict_equipment.psu_rating_w",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "power"
+    },
+    {
+      "field_key": "ups_connected",
+      "label": "templates.ict_equipment.ups_connected",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "power"
+    },
+    {
+      "field_key": "operating_system_name",
+      "label": "templates.ict_equipment.operating_system_name",
+      "type": "text",
+      "required": "RECOMMENDED",
+      "group": "software"
+    },
+    {
+      "field_key": "operating_system_version",
+      "label": "templates.ict_equipment.operating_system_version",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "software"
+    },
+    {
+      "field_key": "os_build",
+      "label": "templates.ict_equipment.os_build",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "software"
+    },
+    {
+      "field_key": "os_licence_type",
+      "label": "templates.ict_equipment.os_licence_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "software"
+    },
+    {
+      "field_key": "os_licence_key_held",
+      "label": "templates.ict_equipment.os_licence_key_held",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "software"
+    },
+    {
+      "field_key": "os_activation_status",
+      "label": "templates.ict_equipment.os_activation_status",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "software"
+    },
+    {
+      "field_key": "office_suite_name",
+      "label": "templates.ict_equipment.office_suite_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "software"
+    },
+    {
+      "field_key": "office_suite_version",
+      "label": "templates.ict_equipment.office_suite_version",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "software"
+    },
+    {
+      "field_key": "office_licence_type",
+      "label": "templates.ict_equipment.office_licence_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "software"
+    },
+    {
+      "field_key": "antivirus_name",
+      "label": "templates.ict_equipment.antivirus_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "software"
+    },
+    {
+      "field_key": "antivirus_expiry_date",
+      "label": "templates.ict_equipment.antivirus_expiry_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "software"
+    },
+    {
+      "field_key": "last_patched_date",
+      "label": "templates.ict_equipment.last_patched_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "software"
+    },
+    {
+      "field_key": "hostname",
+      "label": "templates.ict_equipment.hostname",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "network"
+    },
+    {
+      "field_key": "domain_joined",
+      "label": "templates.ict_equipment.domain_joined",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "network"
+    },
+    {
+      "field_key": "domain_name",
+      "label": "templates.ict_equipment.domain_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "network"
+    },
+    {
+      "field_key": "ip_address",
+      "label": "templates.ict_equipment.ip_address",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "network"
+    },
+    {
+      "field_key": "ip_assignment",
+      "label": "templates.ict_equipment.ip_assignment",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "network"
+    },
+    {
+      "field_key": "vlan_id",
+      "label": "templates.ict_equipment.vlan_id",
+      "type": "lookup",
+      "required": "OPTIONAL",
+      "group": "network"
+    },
+    {
+      "field_key": "network_port_number",
+      "label": "templates.ict_equipment.network_port_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "network"
+    },
+    {
+      "field_key": "patch_panel_reference",
+      "label": "templates.ict_equipment.patch_panel_reference",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "network"
+    },
+    {
+      "field_key": "switch_name",
+      "label": "templates.ict_equipment.switch_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "network"
+    },
+    {
+      "field_key": "disk_encryption_enabled",
+      "label": "templates.ict_equipment.disk_encryption_enabled",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "security"
+    },
+    {
+      "field_key": "bios_password_set",
+      "label": "templates.ict_equipment.bios_password_set",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "security"
+    },
+    {
+      "field_key": "remote_management_enabled",
+      "label": "templates.ict_equipment.remote_management_enabled",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "security"
+    },
+    {
+      "field_key": "data_wipe_required",
+      "label": "templates.ict_equipment.data_wipe_required",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "security"
+    },
+    {
+      "field_key": "data_wipe_date",
+      "label": "templates.ict_equipment.data_wipe_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "security"
+    },
+    {
+      "field_key": "assigned_user_name",
+      "label": "templates.ict_equipment.assigned_user_name",
+      "type": "text",
+      "required": "RECOMMENDED",
+      "group": "assignment"
+    },
+    {
+      "field_key": "assigned_user_staff_number",
+      "label": "templates.ict_equipment.assigned_user_staff_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "assignment"
+    },
+    {
+      "field_key": "assigned_department",
+      "label": "templates.ict_equipment.assigned_department",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "assignment"
+    },
+    {
+      "field_key": "date_issued",
+      "label": "templates.ict_equipment.date_issued",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "assignment"
+    },
+    {
+      "field_key": "return_due_date",
+      "label": "templates.ict_equipment.return_due_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "assignment"
+    },
+    {
+      "field_key": "issue_form_reference",
+      "label": "templates.ict_equipment.issue_form_reference",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "assignment"
+    },
+    {
+      "field_key": "monitor_count",
+      "label": "templates.ict_equipment.monitor_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "peripherals"
+    },
+    {
+      "field_key": "keyboard_present",
+      "label": "templates.ict_equipment.keyboard_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "peripherals"
+    },
+    {
+      "field_key": "mouse_present",
+      "label": "templates.ict_equipment.mouse_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "peripherals"
+    },
+    {
+      "field_key": "docking_station_present",
+      "label": "templates.ict_equipment.docking_station_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "peripherals"
+    },
+    {
+      "field_key": "printer_shared",
+      "label": "templates.ict_equipment.printer_shared",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "peripherals"
+    }
+  ],
+  "child_rows": [],
+  "derives_from": "equipment_asset"
+}

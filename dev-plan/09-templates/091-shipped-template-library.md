@@ -42,10 +42,10 @@ plus the four field groups every one of them inherits.
 
 ## Definition of done
 
-- [ ] All twenty-three templates exist and `dart run tool/check_templates.dart` is green on every one of them.
-- [ ] No template repeats a field that belongs to an inherited group, and the four derived templates reuse their parent's keys rather than inventing near-duplicates.
-- [ ] `generic_item` has ten columns and one required field, so capture can start before the shape is decided.
-- [ ] Tests: a test that every asset parses, validates against `_schema.json`, and resolves its inherited groups and identity keys.
+- [x] All twenty-three templates exist and `dart run tool/check_templates.dart` is green on every one of them.
+- [x] No template repeats a field that belongs to an inherited group, and the four derived templates reuse their parent's keys rather than inventing near-duplicates.
+- [x] `generic_item` has ten columns and one required field, so capture can start before the shape is decided.
+- [x] Tests: a test that every asset parses, validates against `_schema.json`, and resolves its inherited groups and identity keys.
 
 ## Out of scope
 

@@ -1,0 +1,694 @@
+{
+  "schema_version": 1,
+  "template_key": "incident_report",
+  "name": "templates.incident_report.name",
+  "kind": "incident",
+  "identity_fields": [
+    "incident_reference",
+    "occurred_date",
+    "occurred_time",
+    "exact_location_description"
+  ],
+  "inherits_groups": [
+    "record_admin",
+    "location_context",
+    "evidence",
+    "review"
+  ],
+  "fields": [
+    {
+      "field_key": "incident_reference",
+      "label": "templates.incident_report.incident_reference",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "identity"
+    },
+    {
+      "field_key": "incident_type",
+      "label": "templates.incident_report.incident_type",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "identity",
+      "options": [
+        {
+          "code": "accident",
+          "label": "templates.choices.incident_type.accident"
+        },
+        {
+          "code": "injury",
+          "label": "templates.choices.incident_type.injury"
+        },
+        {
+          "code": "near_miss",
+          "label": "templates.choices.incident_type.near_miss"
+        },
+        {
+          "code": "property_damage",
+          "label": "templates.choices.incident_type.property_damage"
+        },
+        {
+          "code": "theft",
+          "label": "templates.choices.incident_type.theft"
+        },
+        {
+          "code": "vandalism",
+          "label": "templates.choices.incident_type.vandalism"
+        },
+        {
+          "code": "breakdown",
+          "label": "templates.choices.incident_type.breakdown"
+        },
+        {
+          "code": "fire",
+          "label": "templates.choices.incident_type.fire"
+        },
+        {
+          "code": "environmental",
+          "label": "templates.choices.incident_type.environmental"
+        },
+        {
+          "code": "security",
+          "label": "templates.choices.incident_type.security"
+        },
+        {
+          "code": "data_breach",
+          "label": "templates.choices.incident_type.data_breach"
+        },
+        {
+          "code": "complaint",
+          "label": "templates.choices.incident_type.complaint"
+        },
+        {
+          "code": "other",
+          "label": "templates.choices.incident_type.other"
+        }
+      ]
+    },
+    {
+      "field_key": "incident_category",
+      "label": "templates.incident_report.incident_category",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "severity",
+      "label": "templates.incident_report.severity",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "identity",
+      "options": [
+        {
+          "code": "negligible",
+          "label": "templates.choices.severity.negligible"
+        },
+        {
+          "code": "minor",
+          "label": "templates.choices.severity.minor"
+        },
+        {
+          "code": "moderate",
+          "label": "templates.choices.severity.moderate"
+        },
+        {
+          "code": "major",
+          "label": "templates.choices.severity.major"
+        },
+        {
+          "code": "catastrophic",
+          "label": "templates.choices.severity.catastrophic"
+        }
+      ]
+    },
+    {
+      "field_key": "reportable_externally",
+      "label": "templates.incident_report.reportable_externally",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "occurred_date",
+      "label": "templates.incident_report.occurred_date",
+      "type": "date",
+      "required": "REQUIRED",
+      "group": "when_where"
+    },
+    {
+      "field_key": "occurred_time",
+      "label": "templates.incident_report.occurred_time",
+      "type": "time",
+      "required": "OPTIONAL",
+      "group": "when_where"
+    },
+    {
+      "field_key": "discovered_date",
+      "label": "templates.incident_report.discovered_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "when_where"
+    },
+    {
+      "field_key": "discovered_time",
+      "label": "templates.incident_report.discovered_time",
+      "type": "time",
+      "required": "OPTIONAL",
+      "group": "when_where"
+    },
+    {
+      "field_key": "reported_date",
+      "label": "templates.incident_report.reported_date",
+      "type": "date",
+      "required": "REQUIRED",
+      "group": "when_where"
+    },
+    {
+      "field_key": "reported_time",
+      "label": "templates.incident_report.reported_time",
+      "type": "time",
+      "required": "OPTIONAL",
+      "group": "when_where"
+    },
+    {
+      "field_key": "exact_location_description",
+      "label": "templates.incident_report.exact_location_description",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "when_where"
+    },
+    {
+      "field_key": "weather_conditions",
+      "label": "templates.incident_report.weather_conditions",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "when_where"
+    },
+    {
+      "field_key": "light_conditions",
+      "label": "templates.incident_report.light_conditions",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "when_where"
+    },
+    {
+      "field_key": "activity_at_time",
+      "label": "templates.incident_report.activity_at_time",
+      "type": "time",
+      "required": "OPTIONAL",
+      "group": "when_where"
+    },
+    {
+      "field_key": "reported_by_name",
+      "label": "templates.incident_report.reported_by_name",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "people"
+    },
+    {
+      "field_key": "reported_by_role",
+      "label": "templates.incident_report.reported_by_role",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "people"
+    },
+    {
+      "field_key": "reported_by_contact",
+      "label": "templates.incident_report.reported_by_contact",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "people"
+    },
+    {
+      "field_key": "persons_involved_count",
+      "label": "templates.incident_report.persons_involved_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "people"
+    },
+    {
+      "field_key": "persons_injured_count",
+      "label": "templates.incident_report.persons_injured_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "people"
+    },
+    {
+      "field_key": "injury_severity",
+      "label": "templates.incident_report.injury_severity",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "people",
+      "options": [
+        {
+          "code": "negligible",
+          "label": "templates.choices.injury_severity.negligible"
+        },
+        {
+          "code": "minor",
+          "label": "templates.choices.injury_severity.minor"
+        },
+        {
+          "code": "moderate",
+          "label": "templates.choices.injury_severity.moderate"
+        },
+        {
+          "code": "major",
+          "label": "templates.choices.injury_severity.major"
+        },
+        {
+          "code": "catastrophic",
+          "label": "templates.choices.injury_severity.catastrophic"
+        }
+      ]
+    },
+    {
+      "field_key": "fatalities_count",
+      "label": "templates.incident_report.fatalities_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "people"
+    },
+    {
+      "field_key": "first_aid_given",
+      "label": "templates.incident_report.first_aid_given",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "people"
+    },
+    {
+      "field_key": "hospitalisation_required",
+      "label": "templates.incident_report.hospitalisation_required",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "people"
+    },
+    {
+      "field_key": "hospital_name",
+      "label": "templates.incident_report.hospital_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "people"
+    },
+    {
+      "field_key": "witness_name",
+      "label": "templates.incident_report.witness_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "people"
+    },
+    {
+      "field_key": "witness_contact",
+      "label": "templates.incident_report.witness_contact",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "people"
+    },
+    {
+      "field_key": "witness_statement_raw",
+      "label": "templates.incident_report.witness_statement_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "people"
+    },
+    {
+      "field_key": "asset_tag",
+      "label": "templates.incident_report.asset_tag",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "subject"
+    },
+    {
+      "field_key": "asset_name",
+      "label": "templates.incident_report.asset_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "subject"
+    },
+    {
+      "field_key": "asset_damage_extent",
+      "label": "templates.incident_report.asset_damage_extent",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "subject"
+    },
+    {
+      "field_key": "property_damaged_description_raw",
+      "label": "templates.incident_report.property_damaged_description_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "subject"
+    },
+    {
+      "field_key": "estimated_loss_amount",
+      "label": "templates.incident_report.estimated_loss_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "subject"
+    },
+    {
+      "field_key": "loss_currency",
+      "label": "templates.incident_report.loss_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "subject"
+    },
+    {
+      "field_key": "environmental_release_occurred",
+      "label": "templates.incident_report.environmental_release_occurred",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "subject"
+    },
+    {
+      "field_key": "substance_released",
+      "label": "templates.incident_report.substance_released",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "subject"
+    },
+    {
+      "field_key": "quantity_released",
+      "label": "templates.incident_report.quantity_released",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "subject"
+    },
+    {
+      "field_key": "quantity_released_unit",
+      "label": "templates.incident_report.quantity_released_unit",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "subject"
+    },
+    {
+      "field_key": "incident_description_raw",
+      "label": "templates.incident_report.incident_description_raw",
+      "type": "long_text",
+      "required": "REQUIRED",
+      "group": "description"
+    },
+    {
+      "field_key": "incident_description_refined",
+      "label": "templates.incident_report.incident_description_refined",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "description"
+    },
+    {
+      "field_key": "immediate_cause_raw",
+      "label": "templates.incident_report.immediate_cause_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "description"
+    },
+    {
+      "field_key": "root_cause_raw",
+      "label": "templates.incident_report.root_cause_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "description"
+    },
+    {
+      "field_key": "root_cause_refined",
+      "label": "templates.incident_report.root_cause_refined",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "description"
+    },
+    {
+      "field_key": "contributing_factor",
+      "label": "templates.incident_report.contributing_factor",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "description"
+    },
+    {
+      "field_key": "unsafe_act_identified",
+      "label": "templates.incident_report.unsafe_act_identified",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "description"
+    },
+    {
+      "field_key": "unsafe_condition_identified",
+      "label": "templates.incident_report.unsafe_condition_identified",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "description"
+    },
+    {
+      "field_key": "ppe_in_use",
+      "label": "templates.incident_report.ppe_in_use",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "description"
+    },
+    {
+      "field_key": "procedure_followed",
+      "label": "templates.incident_report.procedure_followed",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "description"
+    },
+    {
+      "field_key": "training_adequate",
+      "label": "templates.incident_report.training_adequate",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "description"
+    },
+    {
+      "field_key": "immediate_action_raw",
+      "label": "templates.incident_report.immediate_action_raw",
+      "type": "long_text",
+      "required": "REQUIRED",
+      "group": "response"
+    },
+    {
+      "field_key": "area_secured",
+      "label": "templates.incident_report.area_secured",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "response"
+    },
+    {
+      "field_key": "work_stopped",
+      "label": "templates.incident_report.work_stopped",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "response"
+    },
+    {
+      "field_key": "emergency_services_notified",
+      "label": "templates.incident_report.emergency_services_notified",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "response"
+    },
+    {
+      "field_key": "emergency_service_type",
+      "label": "templates.incident_report.emergency_service_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "response"
+    },
+    {
+      "field_key": "police_case_number",
+      "label": "templates.incident_report.police_case_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "response"
+    },
+    {
+      "field_key": "insurance_notified",
+      "label": "templates.incident_report.insurance_notified",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "response"
+    },
+    {
+      "field_key": "insurance_claim_number",
+      "label": "templates.incident_report.insurance_claim_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "response"
+    },
+    {
+      "field_key": "claim_amount",
+      "label": "templates.incident_report.claim_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "response"
+    },
+    {
+      "field_key": "claim_currency",
+      "label": "templates.incident_report.claim_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "response"
+    },
+    {
+      "field_key": "investigation_required",
+      "label": "templates.incident_report.investigation_required",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "investigation"
+    },
+    {
+      "field_key": "investigator_name",
+      "label": "templates.incident_report.investigator_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "investigation"
+    },
+    {
+      "field_key": "investigation_start_date",
+      "label": "templates.incident_report.investigation_start_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "investigation"
+    },
+    {
+      "field_key": "investigation_completed_date",
+      "label": "templates.incident_report.investigation_completed_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "investigation"
+    },
+    {
+      "field_key": "investigation_findings_raw",
+      "label": "templates.incident_report.investigation_findings_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "investigation"
+    },
+    {
+      "field_key": "investigation_report_filename",
+      "label": "templates.incident_report.investigation_report_filename",
+      "type": "document_reference",
+      "required": "OPTIONAL",
+      "group": "investigation"
+    },
+    {
+      "field_key": "corrective_action_raw",
+      "label": "templates.incident_report.corrective_action_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "corrective_action_refined",
+      "label": "templates.incident_report.corrective_action_refined",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "preventive_action_raw",
+      "label": "templates.incident_report.preventive_action_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "action_owner_name",
+      "label": "templates.incident_report.action_owner_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "action_priority",
+      "label": "templates.incident_report.action_priority",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "target_completion_date",
+      "label": "templates.incident_report.target_completion_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "action_completed_date",
+      "label": "templates.incident_report.action_completed_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "effectiveness_verified",
+      "label": "templates.incident_report.effectiveness_verified",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "status",
+      "label": "templates.incident_report.status",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "status",
+      "options": [
+        {
+          "code": "open",
+          "label": "templates.choices.status.open"
+        },
+        {
+          "code": "under_investigation",
+          "label": "templates.choices.status.under_investigation"
+        },
+        {
+          "code": "action_pending",
+          "label": "templates.choices.status.action_pending"
+        },
+        {
+          "code": "closed",
+          "label": "templates.choices.status.closed"
+        },
+        {
+          "code": "reopened",
+          "label": "templates.choices.status.reopened"
+        }
+      ]
+    },
+    {
+      "field_key": "closed_date",
+      "label": "templates.incident_report.closed_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "status"
+    },
+    {
+      "field_key": "closed_by_name",
+      "label": "templates.incident_report.closed_by_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "status"
+    },
+    {
+      "field_key": "recurrence_count",
+      "label": "templates.incident_report.recurrence_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "status"
+    },
+    {
+      "field_key": "similar_incident_reference",
+      "label": "templates.incident_report.similar_incident_reference",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "status"
+    },
+    {
+      "field_key": "estimated_loss_currency",
+      "label": "templates.incident_report.estimated_loss_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "subject"
+    }
+  ],
+  "child_rows": []
+}

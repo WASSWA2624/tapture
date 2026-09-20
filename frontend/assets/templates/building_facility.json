@@ -1,0 +1,1831 @@
+{
+  "schema_version": 1,
+  "template_key": "building_facility",
+  "name": "templates.building_facility.name",
+  "kind": "building",
+  "identity_fields": [
+    "building_code",
+    "facility_code",
+    "building_name"
+  ],
+  "inherits_groups": [
+    "record_admin",
+    "location_context",
+    "evidence",
+    "review"
+  ],
+  "fields": [
+    {
+      "field_key": "building_name",
+      "label": "templates.building_facility.building_name",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "identity"
+    },
+    {
+      "field_key": "alternate_name",
+      "label": "templates.building_facility.alternate_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "facility_code",
+      "label": "templates.building_facility.facility_code",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "facility_name",
+      "label": "templates.building_facility.facility_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "ownership_type",
+      "label": "templates.building_facility.ownership_type",
+      "type": "choice",
+      "required": "RECOMMENDED",
+      "group": "identity",
+      "options": [
+        {
+          "code": "government",
+          "label": "templates.choices.ownership_type.government"
+        },
+        {
+          "code": "private",
+          "label": "templates.choices.ownership_type.private"
+        },
+        {
+          "code": "community",
+          "label": "templates.choices.ownership_type.community"
+        },
+        {
+          "code": "religious",
+          "label": "templates.choices.ownership_type.religious"
+        },
+        {
+          "code": "leased",
+          "label": "templates.choices.ownership_type.leased"
+        },
+        {
+          "code": "unknown",
+          "label": "templates.choices.ownership_type.unknown"
+        }
+      ]
+    },
+    {
+      "field_key": "owner_name",
+      "label": "templates.building_facility.owner_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "title_deed_number",
+      "label": "templates.building_facility.title_deed_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "custodian_organisation",
+      "label": "templates.building_facility.custodian_organisation",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "building_use",
+      "label": "templates.building_facility.building_use",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "classification",
+      "options": [
+        {
+          "code": "office",
+          "label": "templates.choices.building_use.office"
+        },
+        {
+          "code": "classroom",
+          "label": "templates.choices.building_use.classroom"
+        },
+        {
+          "code": "ward",
+          "label": "templates.choices.building_use.ward"
+        },
+        {
+          "code": "clinic",
+          "label": "templates.choices.building_use.clinic"
+        },
+        {
+          "code": "laboratory",
+          "label": "templates.choices.building_use.laboratory"
+        },
+        {
+          "code": "store",
+          "label": "templates.choices.building_use.store"
+        },
+        {
+          "code": "workshop",
+          "label": "templates.choices.building_use.workshop"
+        },
+        {
+          "code": "residence",
+          "label": "templates.choices.building_use.residence"
+        },
+        {
+          "code": "hall",
+          "label": "templates.choices.building_use.hall"
+        },
+        {
+          "code": "kitchen",
+          "label": "templates.choices.building_use.kitchen"
+        },
+        {
+          "code": "toilet_block",
+          "label": "templates.choices.building_use.toilet_block"
+        },
+        {
+          "code": "market",
+          "label": "templates.choices.building_use.market"
+        },
+        {
+          "code": "warehouse",
+          "label": "templates.choices.building_use.warehouse"
+        },
+        {
+          "code": "other",
+          "label": "templates.choices.building_use.other"
+        }
+      ]
+    },
+    {
+      "field_key": "construction_type",
+      "label": "templates.building_facility.construction_type",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "classification",
+      "options": [
+        {
+          "code": "permanent",
+          "label": "templates.choices.construction_type.permanent"
+        },
+        {
+          "code": "semi_permanent",
+          "label": "templates.choices.construction_type.semi_permanent"
+        },
+        {
+          "code": "temporary",
+          "label": "templates.choices.construction_type.temporary"
+        },
+        {
+          "code": "prefabricated",
+          "label": "templates.choices.construction_type.prefabricated"
+        }
+      ]
+    },
+    {
+      "field_key": "storeys_above_ground",
+      "label": "templates.building_facility.storeys_above_ground",
+      "type": "number",
+      "required": "RECOMMENDED",
+      "group": "classification",
+      "unit": "count"
+    },
+    {
+      "field_key": "storeys_below_ground",
+      "label": "templates.building_facility.storeys_below_ground",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "classification",
+      "unit": "count"
+    },
+    {
+      "field_key": "room_count",
+      "label": "templates.building_facility.room_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "classification"
+    },
+    {
+      "field_key": "unit_count",
+      "label": "templates.building_facility.unit_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "classification"
+    },
+    {
+      "field_key": "block_designation",
+      "label": "templates.building_facility.block_designation",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "classification"
+    },
+    {
+      "field_key": "gross_floor_area_sqm",
+      "label": "templates.building_facility.gross_floor_area_sqm",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "dimensions"
+    },
+    {
+      "field_key": "footprint_area_sqm",
+      "label": "templates.building_facility.footprint_area_sqm",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "dimensions"
+    },
+    {
+      "field_key": "plot_area_sqm",
+      "label": "templates.building_facility.plot_area_sqm",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "dimensions"
+    },
+    {
+      "field_key": "building_length_m",
+      "label": "templates.building_facility.building_length_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "dimensions"
+    },
+    {
+      "field_key": "building_width_m",
+      "label": "templates.building_facility.building_width_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "dimensions"
+    },
+    {
+      "field_key": "eaves_height_m",
+      "label": "templates.building_facility.eaves_height_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "dimensions"
+    },
+    {
+      "field_key": "ridge_height_m",
+      "label": "templates.building_facility.ridge_height_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "dimensions"
+    },
+    {
+      "field_key": "construction_year",
+      "label": "templates.building_facility.construction_year",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "age"
+    },
+    {
+      "field_key": "commissioning_date",
+      "label": "templates.building_facility.commissioning_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "age"
+    },
+    {
+      "field_key": "last_renovation_year",
+      "label": "templates.building_facility.last_renovation_year",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "age"
+    },
+    {
+      "field_key": "design_life_years",
+      "label": "templates.building_facility.design_life_years",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "age"
+    },
+    {
+      "field_key": "foundation_type",
+      "label": "templates.building_facility.foundation_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "foundation"
+    },
+    {
+      "field_key": "foundation_condition_grade",
+      "label": "templates.building_facility.foundation_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "foundation",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.foundation_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.foundation_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.foundation_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.foundation_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.foundation_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "foundation_defect_note_raw",
+      "label": "templates.building_facility.foundation_defect_note_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "foundation"
+    },
+    {
+      "field_key": "frame_material",
+      "label": "templates.building_facility.frame_material",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "frame"
+    },
+    {
+      "field_key": "frame_condition_grade",
+      "label": "templates.building_facility.frame_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "frame",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.frame_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.frame_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.frame_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.frame_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.frame_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "wall_material",
+      "label": "templates.building_facility.wall_material",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "walls"
+    },
+    {
+      "field_key": "wall_thickness_mm",
+      "label": "templates.building_facility.wall_thickness_mm",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "walls"
+    },
+    {
+      "field_key": "wall_finish_internal",
+      "label": "templates.building_facility.wall_finish_internal",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "walls"
+    },
+    {
+      "field_key": "wall_finish_external",
+      "label": "templates.building_facility.wall_finish_external",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "walls"
+    },
+    {
+      "field_key": "wall_condition_grade",
+      "label": "templates.building_facility.wall_condition_grade",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "walls",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.wall_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.wall_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.wall_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.wall_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.wall_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "crack_severity",
+      "label": "templates.building_facility.crack_severity",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "walls"
+    },
+    {
+      "field_key": "damp_present",
+      "label": "templates.building_facility.damp_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "walls"
+    },
+    {
+      "field_key": "roof_structure_material",
+      "label": "templates.building_facility.roof_structure_material",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "roof"
+    },
+    {
+      "field_key": "roof_covering_material",
+      "label": "templates.building_facility.roof_covering_material",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "roof"
+    },
+    {
+      "field_key": "roof_pitch_type",
+      "label": "templates.building_facility.roof_pitch_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "roof"
+    },
+    {
+      "field_key": "roof_condition_grade",
+      "label": "templates.building_facility.roof_condition_grade",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "roof",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.roof_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.roof_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.roof_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.roof_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.roof_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "leakage_present",
+      "label": "templates.building_facility.leakage_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "roof"
+    },
+    {
+      "field_key": "gutters_present",
+      "label": "templates.building_facility.gutters_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "roof"
+    },
+    {
+      "field_key": "gutter_condition_grade",
+      "label": "templates.building_facility.gutter_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "roof",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.gutter_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.gutter_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.gutter_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.gutter_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.gutter_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "ceiling_material",
+      "label": "templates.building_facility.ceiling_material",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "roof"
+    },
+    {
+      "field_key": "ceiling_condition_grade",
+      "label": "templates.building_facility.ceiling_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "roof",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.ceiling_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.ceiling_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.ceiling_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.ceiling_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.ceiling_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "floor_material",
+      "label": "templates.building_facility.floor_material",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "floors"
+    },
+    {
+      "field_key": "floor_finish",
+      "label": "templates.building_facility.floor_finish",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "floors"
+    },
+    {
+      "field_key": "floor_condition_grade",
+      "label": "templates.building_facility.floor_condition_grade",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "floors",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.floor_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.floor_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.floor_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.floor_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.floor_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "floor_level_even",
+      "label": "templates.building_facility.floor_level_even",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "floors"
+    },
+    {
+      "field_key": "door_material",
+      "label": "templates.building_facility.door_material",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "openings"
+    },
+    {
+      "field_key": "door_count",
+      "label": "templates.building_facility.door_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "openings"
+    },
+    {
+      "field_key": "door_lockable_count",
+      "label": "templates.building_facility.door_lockable_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "openings"
+    },
+    {
+      "field_key": "door_condition_grade",
+      "label": "templates.building_facility.door_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "openings",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.door_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.door_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.door_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.door_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.door_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "window_material",
+      "label": "templates.building_facility.window_material",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "openings"
+    },
+    {
+      "field_key": "window_count",
+      "label": "templates.building_facility.window_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "openings"
+    },
+    {
+      "field_key": "window_panes_broken_count",
+      "label": "templates.building_facility.window_panes_broken_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "openings"
+    },
+    {
+      "field_key": "window_condition_grade",
+      "label": "templates.building_facility.window_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "openings",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.window_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.window_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.window_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.window_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.window_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "burglar_proofing_present",
+      "label": "templates.building_facility.burglar_proofing_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "openings"
+    },
+    {
+      "field_key": "mosquito_screening_present",
+      "label": "templates.building_facility.mosquito_screening_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "openings"
+    },
+    {
+      "field_key": "staircase_present",
+      "label": "templates.building_facility.staircase_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "circulation"
+    },
+    {
+      "field_key": "staircase_material",
+      "label": "templates.building_facility.staircase_material",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "circulation"
+    },
+    {
+      "field_key": "staircase_condition_grade",
+      "label": "templates.building_facility.staircase_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "circulation",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.staircase_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.staircase_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.staircase_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.staircase_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.staircase_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "handrail_present",
+      "label": "templates.building_facility.handrail_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "circulation"
+    },
+    {
+      "field_key": "corridor_width_m",
+      "label": "templates.building_facility.corridor_width_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "circulation"
+    },
+    {
+      "field_key": "veranda_present",
+      "label": "templates.building_facility.veranda_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "circulation"
+    },
+    {
+      "field_key": "veranda_condition_grade",
+      "label": "templates.building_facility.veranda_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "circulation",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.veranda_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.veranda_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.veranda_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.veranda_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.veranda_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "electricity_connected",
+      "label": "templates.building_facility.electricity_connected",
+      "type": "boolean",
+      "required": "REQUIRED",
+      "group": "electrical"
+    },
+    {
+      "field_key": "electricity_source",
+      "label": "templates.building_facility.electricity_source",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "electrical"
+    },
+    {
+      "field_key": "supply_reliability",
+      "label": "templates.building_facility.supply_reliability",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "electrical"
+    },
+    {
+      "field_key": "wiring_type",
+      "label": "templates.building_facility.wiring_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "electrical"
+    },
+    {
+      "field_key": "wiring_condition_grade",
+      "label": "templates.building_facility.wiring_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "electrical",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.wiring_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.wiring_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.wiring_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.wiring_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.wiring_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "distribution_board_condition_grade",
+      "label": "templates.building_facility.distribution_board_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "electrical",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.distribution_board_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.distribution_board_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.distribution_board_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.distribution_board_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.distribution_board_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "light_point_count",
+      "label": "templates.building_facility.light_point_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "electrical"
+    },
+    {
+      "field_key": "light_points_working",
+      "label": "templates.building_facility.light_points_working",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "electrical"
+    },
+    {
+      "field_key": "socket_count",
+      "label": "templates.building_facility.socket_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "electrical"
+    },
+    {
+      "field_key": "sockets_working",
+      "label": "templates.building_facility.sockets_working",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "electrical"
+    },
+    {
+      "field_key": "earthing_present",
+      "label": "templates.building_facility.earthing_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "electrical"
+    },
+    {
+      "field_key": "lightning_arrestor_present",
+      "label": "templates.building_facility.lightning_arrestor_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "electrical"
+    },
+    {
+      "field_key": "backup_power_present",
+      "label": "templates.building_facility.backup_power_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "electrical"
+    },
+    {
+      "field_key": "backup_power_type",
+      "label": "templates.building_facility.backup_power_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "electrical"
+    },
+    {
+      "field_key": "solar_installed",
+      "label": "templates.building_facility.solar_installed",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "electrical"
+    },
+    {
+      "field_key": "solar_capacity_kw",
+      "label": "templates.building_facility.solar_capacity_kw",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "electrical"
+    },
+    {
+      "field_key": "solar_battery_present",
+      "label": "templates.building_facility.solar_battery_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "electrical"
+    },
+    {
+      "field_key": "water_connected",
+      "label": "templates.building_facility.water_connected",
+      "type": "boolean",
+      "required": "REQUIRED",
+      "group": "water"
+    },
+    {
+      "field_key": "water_source_main",
+      "label": "templates.building_facility.water_source_main",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "water"
+    },
+    {
+      "field_key": "water_supply_reliability",
+      "label": "templates.building_facility.water_supply_reliability",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "water"
+    },
+    {
+      "field_key": "plumbing_condition_grade",
+      "label": "templates.building_facility.plumbing_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "water",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.plumbing_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.plumbing_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.plumbing_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.plumbing_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.plumbing_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "water_storage_capacity_l",
+      "label": "templates.building_facility.water_storage_capacity_l",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "water"
+    },
+    {
+      "field_key": "tank_count",
+      "label": "templates.building_facility.tank_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "water"
+    },
+    {
+      "field_key": "tank_condition_grade",
+      "label": "templates.building_facility.tank_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "water",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.tank_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.tank_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.tank_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.tank_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.tank_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "tap_count",
+      "label": "templates.building_facility.tap_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "water"
+    },
+    {
+      "field_key": "taps_working",
+      "label": "templates.building_facility.taps_working",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "water"
+    },
+    {
+      "field_key": "water_quality_tested",
+      "label": "templates.building_facility.water_quality_tested",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "water"
+    },
+    {
+      "field_key": "water_treatment_present",
+      "label": "templates.building_facility.water_treatment_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "water"
+    },
+    {
+      "field_key": "toilet_type",
+      "label": "templates.building_facility.toilet_type",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "sanitation",
+      "options": [
+        {
+          "code": "flush_to_sewer",
+          "label": "templates.choices.toilet_type.flush_to_sewer"
+        },
+        {
+          "code": "flush_to_septic",
+          "label": "templates.choices.toilet_type.flush_to_septic"
+        },
+        {
+          "code": "vip_latrine",
+          "label": "templates.choices.toilet_type.vip_latrine"
+        },
+        {
+          "code": "pit_latrine",
+          "label": "templates.choices.toilet_type.pit_latrine"
+        },
+        {
+          "code": "ecosan",
+          "label": "templates.choices.toilet_type.ecosan"
+        },
+        {
+          "code": "none",
+          "label": "templates.choices.toilet_type.none"
+        }
+      ]
+    },
+    {
+      "field_key": "toilet_stance_count_male",
+      "label": "templates.building_facility.toilet_stance_count_male",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "sanitation",
+      "unit": "count"
+    },
+    {
+      "field_key": "toilet_stance_count_female",
+      "label": "templates.building_facility.toilet_stance_count_female",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "sanitation",
+      "unit": "count"
+    },
+    {
+      "field_key": "toilet_stance_count_pwd",
+      "label": "templates.building_facility.toilet_stance_count_pwd",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "sanitation",
+      "unit": "count"
+    },
+    {
+      "field_key": "toilet_stance_count_staff",
+      "label": "templates.building_facility.toilet_stance_count_staff",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "sanitation",
+      "unit": "count"
+    },
+    {
+      "field_key": "toilet_stances_working",
+      "label": "templates.building_facility.toilet_stances_working",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "sanitation"
+    },
+    {
+      "field_key": "sanitation_condition_grade",
+      "label": "templates.building_facility.sanitation_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "sanitation",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.sanitation_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.sanitation_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.sanitation_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.sanitation_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.sanitation_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "handwashing_facility_present",
+      "label": "templates.building_facility.handwashing_facility_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "sanitation"
+    },
+    {
+      "field_key": "handwashing_soap_present",
+      "label": "templates.building_facility.handwashing_soap_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "sanitation"
+    },
+    {
+      "field_key": "bathroom_count",
+      "label": "templates.building_facility.bathroom_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "sanitation"
+    },
+    {
+      "field_key": "septic_tank_present",
+      "label": "templates.building_facility.septic_tank_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "sanitation"
+    },
+    {
+      "field_key": "septic_tank_condition_grade",
+      "label": "templates.building_facility.septic_tank_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "sanitation",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.septic_tank_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.septic_tank_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.septic_tank_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.septic_tank_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.septic_tank_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "sewer_connected",
+      "label": "templates.building_facility.sewer_connected",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "sanitation"
+    },
+    {
+      "field_key": "drainage_type",
+      "label": "templates.building_facility.drainage_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "sanitation"
+    },
+    {
+      "field_key": "drainage_condition_grade",
+      "label": "templates.building_facility.drainage_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "sanitation",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.drainage_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.drainage_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.drainage_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.drainage_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.drainage_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "waste_disposal_method",
+      "label": "templates.building_facility.waste_disposal_method",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "waste"
+    },
+    {
+      "field_key": "waste_storage_present",
+      "label": "templates.building_facility.waste_storage_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "waste"
+    },
+    {
+      "field_key": "incinerator_present",
+      "label": "templates.building_facility.incinerator_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "waste"
+    },
+    {
+      "field_key": "incinerator_condition_grade",
+      "label": "templates.building_facility.incinerator_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "waste",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.incinerator_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.incinerator_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.incinerator_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.incinerator_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.incinerator_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "placenta_pit_present",
+      "label": "templates.building_facility.placenta_pit_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "waste"
+    },
+    {
+      "field_key": "internet_connected",
+      "label": "templates.building_facility.internet_connected",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "connectivity"
+    },
+    {
+      "field_key": "internet_connection_type",
+      "label": "templates.building_facility.internet_connection_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "connectivity"
+    },
+    {
+      "field_key": "network_points_count",
+      "label": "templates.building_facility.network_points_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "connectivity"
+    },
+    {
+      "field_key": "phone_line_present",
+      "label": "templates.building_facility.phone_line_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "connectivity"
+    },
+    {
+      "field_key": "fire_extinguisher_count",
+      "label": "templates.building_facility.fire_extinguisher_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "fire_safety"
+    },
+    {
+      "field_key": "fire_extinguishers_serviced",
+      "label": "templates.building_facility.fire_extinguishers_serviced",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "fire_safety"
+    },
+    {
+      "field_key": "fire_extinguisher_expiry_date",
+      "label": "templates.building_facility.fire_extinguisher_expiry_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "fire_safety"
+    },
+    {
+      "field_key": "fire_exit_count",
+      "label": "templates.building_facility.fire_exit_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "fire_safety"
+    },
+    {
+      "field_key": "fire_exit_unobstructed",
+      "label": "templates.building_facility.fire_exit_unobstructed",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "fire_safety"
+    },
+    {
+      "field_key": "emergency_lighting_present",
+      "label": "templates.building_facility.emergency_lighting_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "fire_safety"
+    },
+    {
+      "field_key": "fire_alarm_present",
+      "label": "templates.building_facility.fire_alarm_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "fire_safety"
+    },
+    {
+      "field_key": "fire_assembly_point_present",
+      "label": "templates.building_facility.fire_assembly_point_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "fire_safety"
+    },
+    {
+      "field_key": "first_aid_kit_present",
+      "label": "templates.building_facility.first_aid_kit_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "fire_safety"
+    },
+    {
+      "field_key": "perimeter_fence_present",
+      "label": "templates.building_facility.perimeter_fence_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "security"
+    },
+    {
+      "field_key": "fence_material",
+      "label": "templates.building_facility.fence_material",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "security"
+    },
+    {
+      "field_key": "fence_condition_grade",
+      "label": "templates.building_facility.fence_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "security",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.fence_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.fence_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.fence_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.fence_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.fence_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "gate_present",
+      "label": "templates.building_facility.gate_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "security"
+    },
+    {
+      "field_key": "gate_lockable",
+      "label": "templates.building_facility.gate_lockable",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "security"
+    },
+    {
+      "field_key": "security_lighting_present",
+      "label": "templates.building_facility.security_lighting_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "security"
+    },
+    {
+      "field_key": "guard_post_present",
+      "label": "templates.building_facility.guard_post_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "security"
+    },
+    {
+      "field_key": "cctv_present",
+      "label": "templates.building_facility.cctv_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "security"
+    },
+    {
+      "field_key": "cctv_camera_count",
+      "label": "templates.building_facility.cctv_camera_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "security"
+    },
+    {
+      "field_key": "ramp_present",
+      "label": "templates.building_facility.ramp_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "accessibility"
+    },
+    {
+      "field_key": "ramp_gradient_compliant",
+      "label": "templates.building_facility.ramp_gradient_compliant",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "accessibility"
+    },
+    {
+      "field_key": "accessible_entrance_present",
+      "label": "templates.building_facility.accessible_entrance_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "accessibility"
+    },
+    {
+      "field_key": "accessible_toilet_present",
+      "label": "templates.building_facility.accessible_toilet_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "accessibility"
+    },
+    {
+      "field_key": "handrail_accessible_present",
+      "label": "templates.building_facility.handrail_accessible_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "accessibility"
+    },
+    {
+      "field_key": "lift_present",
+      "label": "templates.building_facility.lift_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "accessibility"
+    },
+    {
+      "field_key": "lift_functional",
+      "label": "templates.building_facility.lift_functional",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "accessibility"
+    },
+    {
+      "field_key": "tactile_guidance_present",
+      "label": "templates.building_facility.tactile_guidance_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "accessibility"
+    },
+    {
+      "field_key": "accessibility_condition_grade",
+      "label": "templates.building_facility.accessibility_condition_grade",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "accessibility",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.accessibility_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.accessibility_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.accessibility_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.accessibility_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.accessibility_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "occupancy_status",
+      "label": "templates.building_facility.occupancy_status",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "occupancy",
+      "options": [
+        {
+          "code": "in_use",
+          "label": "templates.choices.occupancy_status.in_use"
+        },
+        {
+          "code": "partially_used",
+          "label": "templates.choices.occupancy_status.partially_used"
+        },
+        {
+          "code": "vacant",
+          "label": "templates.choices.occupancy_status.vacant"
+        },
+        {
+          "code": "under_construction",
+          "label": "templates.choices.occupancy_status.under_construction"
+        },
+        {
+          "code": "condemned",
+          "label": "templates.choices.occupancy_status.condemned"
+        }
+      ]
+    },
+    {
+      "field_key": "occupant_organisation",
+      "label": "templates.building_facility.occupant_organisation",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "occupancy"
+    },
+    {
+      "field_key": "designed_capacity_persons",
+      "label": "templates.building_facility.designed_capacity_persons",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "occupancy"
+    },
+    {
+      "field_key": "current_occupancy_persons",
+      "label": "templates.building_facility.current_occupancy_persons",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "occupancy"
+    },
+    {
+      "field_key": "vacant_since_date",
+      "label": "templates.building_facility.vacant_since_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "occupancy"
+    },
+    {
+      "field_key": "overall_condition_grade",
+      "label": "templates.building_facility.overall_condition_grade",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "assessment",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.overall_condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.overall_condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.overall_condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.overall_condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.overall_condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "condition_score_percent",
+      "label": "templates.building_facility.condition_score_percent",
+      "type": "percentage",
+      "required": "OPTIONAL",
+      "group": "assessment"
+    },
+    {
+      "field_key": "structural_risk_level",
+      "label": "templates.building_facility.structural_risk_level",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "assessment"
+    },
+    {
+      "field_key": "habitable",
+      "label": "templates.building_facility.habitable",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "assessment"
+    },
+    {
+      "field_key": "intervention_required",
+      "label": "templates.building_facility.intervention_required",
+      "type": "choice",
+      "required": "RECOMMENDED",
+      "group": "assessment",
+      "options": [
+        {
+          "code": "none",
+          "label": "templates.choices.intervention_required.none"
+        },
+        {
+          "code": "routine_maintenance",
+          "label": "templates.choices.intervention_required.routine_maintenance"
+        },
+        {
+          "code": "minor_repair",
+          "label": "templates.choices.intervention_required.minor_repair"
+        },
+        {
+          "code": "major_repair",
+          "label": "templates.choices.intervention_required.major_repair"
+        },
+        {
+          "code": "rehabilitation",
+          "label": "templates.choices.intervention_required.rehabilitation"
+        },
+        {
+          "code": "demolition",
+          "label": "templates.choices.intervention_required.demolition"
+        },
+        {
+          "code": "new_construction",
+          "label": "templates.choices.intervention_required.new_construction"
+        }
+      ]
+    },
+    {
+      "field_key": "intervention_priority",
+      "label": "templates.building_facility.intervention_priority",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "assessment"
+    },
+    {
+      "field_key": "estimated_cost_amount",
+      "label": "templates.building_facility.estimated_cost_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "assessment"
+    },
+    {
+      "field_key": "estimated_cost_currency",
+      "label": "templates.building_facility.estimated_cost_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "assessment"
+    },
+    {
+      "field_key": "recommendation_raw",
+      "label": "templates.building_facility.recommendation_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "assessment"
+    },
+    {
+      "field_key": "recommendation_refined",
+      "label": "templates.building_facility.recommendation_refined",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "assessment"
+    },
+    {
+      "field_key": "target_completion_date",
+      "label": "templates.building_facility.target_completion_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "assessment"
+    }
+  ],
+  "child_rows": []
+}

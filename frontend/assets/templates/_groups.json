@@ -1,0 +1,367 @@
+{
+  "record_admin": {
+    "input_mode": "auto",
+    "fields": [
+      {
+        "field_key": "record_uid",
+        "label": "templates.groups.record_admin.record_uid",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "record_admin"
+      },
+      {
+        "field_key": "record_number",
+        "label": "templates.groups.record_admin.record_number",
+        "type": "number",
+        "required": "REQUIRED",
+        "group": "record_admin"
+      },
+      {
+        "field_key": "template_key",
+        "label": "templates.groups.record_admin.template_key",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "record_admin"
+      },
+      {
+        "field_key": "template_version",
+        "label": "templates.groups.record_admin.template_version",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "record_admin"
+      },
+      {
+        "field_key": "captured_date",
+        "label": "templates.groups.record_admin.captured_date",
+        "type": "date",
+        "required": "REQUIRED",
+        "group": "record_admin"
+      },
+      {
+        "field_key": "captured_time",
+        "label": "templates.groups.record_admin.captured_time",
+        "type": "time",
+        "required": "REQUIRED",
+        "group": "record_admin"
+      },
+      {
+        "field_key": "captured_by_user_id",
+        "label": "templates.groups.record_admin.captured_by_user_id",
+        "type": "lookup",
+        "required": "REQUIRED",
+        "group": "record_admin"
+      },
+      {
+        "field_key": "captured_by_name",
+        "label": "templates.groups.record_admin.captured_by_name",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "record_admin"
+      },
+      {
+        "field_key": "device_id",
+        "label": "templates.groups.record_admin.device_id",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "record_admin"
+      },
+      {
+        "field_key": "created_at",
+        "label": "templates.groups.record_admin.created_at",
+        "type": "date_time",
+        "required": "REQUIRED",
+        "group": "record_admin"
+      },
+      {
+        "field_key": "updated_at",
+        "label": "templates.groups.record_admin.updated_at",
+        "type": "date_time",
+        "required": "OPTIONAL",
+        "group": "record_admin"
+      },
+      {
+        "field_key": "updated_by_user_id",
+        "label": "templates.groups.record_admin.updated_by_user_id",
+        "type": "lookup",
+        "required": "OPTIONAL",
+        "group": "record_admin"
+      },
+      {
+        "field_key": "record_status",
+        "label": "templates.groups.record_admin.record_status",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "record_admin"
+      },
+      {
+        "field_key": "sync_state",
+        "label": "templates.groups.record_admin.sync_state",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "record_admin"
+      }
+    ]
+  },
+  "location_context": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "country",
+        "label": "templates.groups.location_context.country",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "location"
+      },
+      {
+        "field_key": "region_state",
+        "label": "templates.groups.location_context.region_state",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "location"
+      },
+      {
+        "field_key": "district",
+        "label": "templates.groups.location_context.district",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "location"
+      },
+      {
+        "field_key": "subcounty_division",
+        "label": "templates.groups.location_context.subcounty_division",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "location"
+      },
+      {
+        "field_key": "parish_ward",
+        "label": "templates.groups.location_context.parish_ward",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "location"
+      },
+      {
+        "field_key": "village_street",
+        "label": "templates.groups.location_context.village_street",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "location"
+      },
+      {
+        "field_key": "site_code",
+        "label": "templates.groups.location_context.site_code",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "location"
+      },
+      {
+        "field_key": "site_name",
+        "label": "templates.groups.location_context.site_name",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "location"
+      },
+      {
+        "field_key": "building_code",
+        "label": "templates.groups.location_context.building_code",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "location"
+      },
+      {
+        "field_key": "floor_code",
+        "label": "templates.groups.location_context.floor_code",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "location"
+      },
+      {
+        "field_key": "room_code",
+        "label": "templates.groups.location_context.room_code",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "location"
+      },
+      {
+        "field_key": "room_name",
+        "label": "templates.groups.location_context.room_name",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "location"
+      },
+      {
+        "field_key": "gps_latitude",
+        "label": "templates.groups.location_context.gps_latitude",
+        "type": "number",
+        "required": "OPTIONAL",
+        "group": "location",
+        "unit": "deg"
+      },
+      {
+        "field_key": "gps_longitude",
+        "label": "templates.groups.location_context.gps_longitude",
+        "type": "number",
+        "required": "OPTIONAL",
+        "group": "location",
+        "unit": "deg"
+      },
+      {
+        "field_key": "gps_accuracy_m",
+        "label": "templates.groups.location_context.gps_accuracy_m",
+        "type": "number",
+        "required": "OPTIONAL",
+        "group": "location"
+      },
+      {
+        "field_key": "gps_captured_at",
+        "label": "templates.groups.location_context.gps_captured_at",
+        "type": "date_time",
+        "required": "OPTIONAL",
+        "group": "location"
+      },
+      {
+        "field_key": "location_note",
+        "label": "templates.groups.location_context.location_note",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "location"
+      }
+    ]
+  },
+  "evidence": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "photo_count",
+        "label": "templates.groups.evidence.photo_count",
+        "type": "number",
+        "required": "OPTIONAL",
+        "group": "evidence"
+      },
+      {
+        "field_key": "primary_photo_filename",
+        "label": "templates.groups.evidence.primary_photo_filename",
+        "type": "photo_reference",
+        "required": "OPTIONAL",
+        "group": "evidence"
+      },
+      {
+        "field_key": "photo_filenames",
+        "label": "templates.groups.evidence.photo_filenames",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "evidence"
+      },
+      {
+        "field_key": "document_filenames",
+        "label": "templates.groups.evidence.document_filenames",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "evidence"
+      },
+      {
+        "field_key": "audio_filenames",
+        "label": "templates.groups.evidence.audio_filenames",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "evidence"
+      },
+      {
+        "field_key": "caption_raw",
+        "label": "templates.groups.evidence.caption_raw",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "evidence"
+      },
+      {
+        "field_key": "caption_refined",
+        "label": "templates.groups.evidence.caption_refined",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "evidence"
+      },
+      {
+        "field_key": "voice_transcript_raw",
+        "label": "templates.groups.evidence.voice_transcript_raw",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "evidence"
+      },
+      {
+        "field_key": "voice_transcript_refined",
+        "label": "templates.groups.evidence.voice_transcript_refined",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "evidence"
+      },
+      {
+        "field_key": "operator_note",
+        "label": "templates.groups.evidence.operator_note",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "evidence"
+      }
+    ]
+  },
+  "review": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "confidence_overall",
+        "label": "templates.groups.review.confidence_overall",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "review"
+      },
+      {
+        "field_key": "fields_needing_review",
+        "label": "templates.groups.review.fields_needing_review",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "review"
+      },
+      {
+        "field_key": "source_conflict_present",
+        "label": "templates.groups.review.source_conflict_present",
+        "type": "boolean",
+        "required": "OPTIONAL",
+        "group": "review"
+      },
+      {
+        "field_key": "reviewed_by_user_id",
+        "label": "templates.groups.review.reviewed_by_user_id",
+        "type": "lookup",
+        "required": "OPTIONAL",
+        "group": "review"
+      },
+      {
+        "field_key": "reviewed_date",
+        "label": "templates.groups.review.reviewed_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "review"
+      },
+      {
+        "field_key": "approved_by_user_id",
+        "label": "templates.groups.review.approved_by_user_id",
+        "type": "lookup",
+        "required": "OPTIONAL",
+        "group": "review"
+      },
+      {
+        "field_key": "approved_date",
+        "label": "templates.groups.review.approved_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "review"
+      },
+      {
+        "field_key": "rejection_reason",
+        "label": "templates.groups.review.rejection_reason",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "review"
+      }
+    ]
+  }
+}

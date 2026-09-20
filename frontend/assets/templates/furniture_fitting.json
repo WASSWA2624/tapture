@@ -1,0 +1,267 @@
+{
+  "schema_version": 1,
+  "template_key": "furniture_fitting",
+  "name": "templates.furniture_fitting.name",
+  "kind": "furniture",
+  "identity_fields": [
+    "asset_tag",
+    "item_name",
+    "room_code"
+  ],
+  "inherits_groups": [
+    "record_admin",
+    "location_context",
+    "evidence",
+    "review"
+  ],
+  "fields": [
+    {
+      "field_key": "material_secondary",
+      "label": "templates.furniture_fitting.material_secondary",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "build"
+    },
+    {
+      "field_key": "finish_type",
+      "label": "templates.furniture_fitting.finish_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "build"
+    },
+    {
+      "field_key": "finish_colour",
+      "label": "templates.furniture_fitting.finish_colour",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "build"
+    },
+    {
+      "field_key": "upholstery_material",
+      "label": "templates.furniture_fitting.upholstery_material",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "build"
+    },
+    {
+      "field_key": "upholstery_colour",
+      "label": "templates.furniture_fitting.upholstery_colour",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "build"
+    },
+    {
+      "field_key": "seat_height_mm",
+      "label": "templates.furniture_fitting.seat_height_mm",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "dimensions"
+    },
+    {
+      "field_key": "seat_capacity",
+      "label": "templates.furniture_fitting.seat_capacity",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "configuration",
+      "unit": "count"
+    },
+    {
+      "field_key": "drawer_count",
+      "label": "templates.furniture_fitting.drawer_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "configuration"
+    },
+    {
+      "field_key": "shelf_count",
+      "label": "templates.furniture_fitting.shelf_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "configuration"
+    },
+    {
+      "field_key": "door_count",
+      "label": "templates.furniture_fitting.door_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "configuration"
+    },
+    {
+      "field_key": "leaf_count",
+      "label": "templates.furniture_fitting.leaf_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "configuration"
+    },
+    {
+      "field_key": "lockable",
+      "label": "templates.furniture_fitting.lockable",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "configuration"
+    },
+    {
+      "field_key": "key_available",
+      "label": "templates.furniture_fitting.key_available",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "configuration"
+    },
+    {
+      "field_key": "castors_present",
+      "label": "templates.furniture_fitting.castors_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "configuration"
+    },
+    {
+      "field_key": "adjustable_height",
+      "label": "templates.furniture_fitting.adjustable_height",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "configuration"
+    },
+    {
+      "field_key": "quantity_repairable",
+      "label": "templates.furniture_fitting.quantity_repairable",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "quantity"
+    },
+    {
+      "field_key": "quantity_missing",
+      "label": "templates.furniture_fitting.quantity_missing",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "quantity"
+    },
+    {
+      "field_key": "damage_type",
+      "label": "templates.furniture_fitting.damage_type",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "condition",
+      "options": [
+        {
+          "code": "none",
+          "label": "templates.choices.damage_type.none"
+        },
+        {
+          "code": "broken_leg",
+          "label": "templates.choices.damage_type.broken_leg"
+        },
+        {
+          "code": "broken_seat",
+          "label": "templates.choices.damage_type.broken_seat"
+        },
+        {
+          "code": "torn_upholstery",
+          "label": "templates.choices.damage_type.torn_upholstery"
+        },
+        {
+          "code": "missing_part",
+          "label": "templates.choices.damage_type.missing_part"
+        },
+        {
+          "code": "cracked_surface",
+          "label": "templates.choices.damage_type.cracked_surface"
+        },
+        {
+          "code": "rust",
+          "label": "templates.choices.damage_type.rust"
+        },
+        {
+          "code": "rot",
+          "label": "templates.choices.damage_type.rot"
+        },
+        {
+          "code": "loose_joint",
+          "label": "templates.choices.damage_type.loose_joint"
+        },
+        {
+          "code": "other",
+          "label": "templates.choices.damage_type.other"
+        }
+      ]
+    },
+    {
+      "field_key": "damage_extent",
+      "label": "templates.furniture_fitting.damage_extent",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "damage_description_raw",
+      "label": "templates.furniture_fitting.damage_description_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "stability_safe",
+      "label": "templates.furniture_fitting.stability_safe",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "pest_damage_present",
+      "label": "templates.furniture_fitting.pest_damage_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "water_damage_present",
+      "label": "templates.furniture_fitting.water_damage_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "estimated_repair_cost_amount",
+      "label": "templates.furniture_fitting.estimated_repair_cost_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "estimated_repair_cost_currency",
+      "label": "templates.furniture_fitting.estimated_repair_cost_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "replacement_cost_amount",
+      "label": "templates.furniture_fitting.replacement_cost_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "replacement_cost_currency",
+      "label": "templates.furniture_fitting.replacement_cost_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "unit_cost_amount",
+      "label": "templates.furniture_fitting.unit_cost_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "acquisition"
+    },
+    {
+      "field_key": "unit_cost_currency",
+      "label": "templates.furniture_fitting.unit_cost_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "acquisition"
+    }
+  ],
+  "child_rows": [],
+  "derives_from": "equipment_asset"
+}

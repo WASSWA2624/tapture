@@ -1,0 +1,664 @@
+{
+  "schema_version": 1,
+  "template_key": "plant_tree",
+  "name": "templates.plant_tree.name",
+  "kind": "plant",
+  "identity_fields": [
+    "specimen_tag",
+    "plot_code",
+    "row_number",
+    "position_in_row"
+  ],
+  "inherits_groups": [
+    "record_admin",
+    "location_context",
+    "evidence",
+    "review"
+  ],
+  "fields": [
+    {
+      "field_key": "specimen_tag",
+      "label": "templates.plant_tree.specimen_tag",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "identity"
+    },
+    {
+      "field_key": "species_scientific_name",
+      "label": "templates.plant_tree.species_scientific_name",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "identity"
+    },
+    {
+      "field_key": "species_common_name",
+      "label": "templates.plant_tree.species_common_name",
+      "type": "text",
+      "required": "RECOMMENDED",
+      "group": "identity"
+    },
+    {
+      "field_key": "species_local_name",
+      "label": "templates.plant_tree.species_local_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "botanical_family",
+      "label": "templates.plant_tree.botanical_family",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "variety_cultivar",
+      "label": "templates.plant_tree.variety_cultivar",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "species_identified_by",
+      "label": "templates.plant_tree.species_identified_by",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "identification_confidence",
+      "label": "templates.plant_tree.identification_confidence",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "indigenous_status",
+      "label": "templates.plant_tree.indigenous_status",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "conservation_status",
+      "label": "templates.plant_tree.conservation_status",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "plot_code",
+      "label": "templates.plant_tree.plot_code",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "location"
+    },
+    {
+      "field_key": "transect_code",
+      "label": "templates.plant_tree.transect_code",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "location"
+    },
+    {
+      "field_key": "row_number",
+      "label": "templates.plant_tree.row_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "location"
+    },
+    {
+      "field_key": "position_in_row",
+      "label": "templates.plant_tree.position_in_row",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "location",
+      "unit": "count"
+    },
+    {
+      "field_key": "spacing_within_row_m",
+      "label": "templates.plant_tree.spacing_within_row_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "location"
+    },
+    {
+      "field_key": "spacing_between_rows_m",
+      "label": "templates.plant_tree.spacing_between_rows_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "location"
+    },
+    {
+      "field_key": "altitude_m",
+      "label": "templates.plant_tree.altitude_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "location"
+    },
+    {
+      "field_key": "count_observed",
+      "label": "templates.plant_tree.count_observed",
+      "type": "number",
+      "required": "REQUIRED",
+      "group": "counting",
+      "unit": "count"
+    },
+    {
+      "field_key": "count_method",
+      "label": "templates.plant_tree.count_method",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "counting",
+      "options": [
+        {
+          "code": "total_count",
+          "label": "templates.choices.count_method.total_count"
+        },
+        {
+          "code": "sample_plot",
+          "label": "templates.choices.count_method.sample_plot"
+        },
+        {
+          "code": "transect",
+          "label": "templates.choices.count_method.transect"
+        },
+        {
+          "code": "estimate",
+          "label": "templates.choices.count_method.estimate"
+        }
+      ]
+    },
+    {
+      "field_key": "plot_area_sqm",
+      "label": "templates.plant_tree.plot_area_sqm",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "counting"
+    },
+    {
+      "field_key": "density_per_hectare",
+      "label": "templates.plant_tree.density_per_hectare",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "counting",
+      "unit": "count"
+    },
+    {
+      "field_key": "height_m",
+      "label": "templates.plant_tree.height_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "diameter_breast_height_cm",
+      "label": "templates.plant_tree.diameter_breast_height_cm",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "basal_diameter_cm",
+      "label": "templates.plant_tree.basal_diameter_cm",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "crown_diameter_m",
+      "label": "templates.plant_tree.crown_diameter_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "crown_height_m",
+      "label": "templates.plant_tree.crown_height_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "stem_count",
+      "label": "templates.plant_tree.stem_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "bole_height_m",
+      "label": "templates.plant_tree.bole_height_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "volume_estimate_cbm",
+      "label": "templates.plant_tree.volume_estimate_cbm",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "age_years",
+      "label": "templates.plant_tree.age_years",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "age_estimated",
+      "label": "templates.plant_tree.age_estimated",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "age_determination_method",
+      "label": "templates.plant_tree.age_determination_method",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "health_status",
+      "label": "templates.plant_tree.health_status",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "condition",
+      "options": [
+        {
+          "code": "healthy",
+          "label": "templates.choices.health_status.healthy"
+        },
+        {
+          "code": "stressed",
+          "label": "templates.choices.health_status.stressed"
+        },
+        {
+          "code": "diseased",
+          "label": "templates.choices.health_status.diseased"
+        },
+        {
+          "code": "severely_damaged",
+          "label": "templates.choices.health_status.severely_damaged"
+        },
+        {
+          "code": "dead",
+          "label": "templates.choices.health_status.dead"
+        },
+        {
+          "code": "removed",
+          "label": "templates.choices.health_status.removed"
+        }
+      ]
+    },
+    {
+      "field_key": "vigour_score",
+      "label": "templates.plant_tree.vigour_score",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "condition",
+      "unit": "count"
+    },
+    {
+      "field_key": "defoliation_percent",
+      "label": "templates.plant_tree.defoliation_percent",
+      "type": "percentage",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "dieback_percent",
+      "label": "templates.plant_tree.dieback_percent",
+      "type": "percentage",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "leaf_colour_normal",
+      "label": "templates.plant_tree.leaf_colour_normal",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "wilting_present",
+      "label": "templates.plant_tree.wilting_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "stem_damage_present",
+      "label": "templates.plant_tree.stem_damage_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "bark_damage_present",
+      "label": "templates.plant_tree.bark_damage_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "lean_angle_degrees",
+      "label": "templates.plant_tree.lean_angle_degrees",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "hollow_present",
+      "label": "templates.plant_tree.hollow_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "deadwood_present",
+      "label": "templates.plant_tree.deadwood_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "pest_present",
+      "label": "templates.plant_tree.pest_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "pests"
+    },
+    {
+      "field_key": "pest_name",
+      "label": "templates.plant_tree.pest_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "pests"
+    },
+    {
+      "field_key": "pest_severity",
+      "label": "templates.plant_tree.pest_severity",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "pests"
+    },
+    {
+      "field_key": "affected_part",
+      "label": "templates.plant_tree.affected_part",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "pests"
+    },
+    {
+      "field_key": "disease_present",
+      "label": "templates.plant_tree.disease_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "pests"
+    },
+    {
+      "field_key": "disease_name",
+      "label": "templates.plant_tree.disease_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "pests"
+    },
+    {
+      "field_key": "disease_severity",
+      "label": "templates.plant_tree.disease_severity",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "pests"
+    },
+    {
+      "field_key": "disease_symptoms_raw",
+      "label": "templates.plant_tree.disease_symptoms_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "pests"
+    },
+    {
+      "field_key": "damage_cause",
+      "label": "templates.plant_tree.damage_cause",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "pests"
+    },
+    {
+      "field_key": "damage_extent_percent",
+      "label": "templates.plant_tree.damage_extent_percent",
+      "type": "percentage",
+      "required": "OPTIONAL",
+      "group": "pests"
+    },
+    {
+      "field_key": "growth_stage",
+      "label": "templates.plant_tree.growth_stage",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "phenology",
+      "options": [
+        {
+          "code": "seedling",
+          "label": "templates.choices.growth_stage.seedling"
+        },
+        {
+          "code": "sapling",
+          "label": "templates.choices.growth_stage.sapling"
+        },
+        {
+          "code": "juvenile",
+          "label": "templates.choices.growth_stage.juvenile"
+        },
+        {
+          "code": "mature",
+          "label": "templates.choices.growth_stage.mature"
+        },
+        {
+          "code": "over_mature",
+          "label": "templates.choices.growth_stage.over_mature"
+        },
+        {
+          "code": "senescent",
+          "label": "templates.choices.growth_stage.senescent"
+        }
+      ]
+    },
+    {
+      "field_key": "flowering",
+      "label": "templates.plant_tree.flowering",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "phenology"
+    },
+    {
+      "field_key": "fruiting",
+      "label": "templates.plant_tree.fruiting",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "phenology"
+    },
+    {
+      "field_key": "fruit_count_estimate",
+      "label": "templates.plant_tree.fruit_count_estimate",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "phenology",
+      "unit": "count"
+    },
+    {
+      "field_key": "seeding",
+      "label": "templates.plant_tree.seeding",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "phenology"
+    },
+    {
+      "field_key": "yield_estimate_value",
+      "label": "templates.plant_tree.yield_estimate_value",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "phenology",
+      "unit": "count"
+    },
+    {
+      "field_key": "yield_estimate_unit",
+      "label": "templates.plant_tree.yield_estimate_unit",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "phenology"
+    },
+    {
+      "field_key": "harvest_date_expected",
+      "label": "templates.plant_tree.harvest_date_expected",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "phenology"
+    },
+    {
+      "field_key": "planting_date",
+      "label": "templates.plant_tree.planting_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "planting_material_source",
+      "label": "templates.plant_tree.planting_material_source",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "nursery_name",
+      "label": "templates.plant_tree.nursery_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "survival_status",
+      "label": "templates.plant_tree.survival_status",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "irrigation_method",
+      "label": "templates.plant_tree.irrigation_method",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "irrigation_frequency",
+      "label": "templates.plant_tree.irrigation_frequency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "fertiliser_applied",
+      "label": "templates.plant_tree.fertiliser_applied",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "fertiliser_type",
+      "label": "templates.plant_tree.fertiliser_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "pruning_done",
+      "label": "templates.plant_tree.pruning_done",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "pruning_required",
+      "label": "templates.plant_tree.pruning_required",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "weeding_done",
+      "label": "templates.plant_tree.weeding_done",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "mulching_present",
+      "label": "templates.plant_tree.mulching_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "protection_present",
+      "label": "templates.plant_tree.protection_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "protection_type",
+      "label": "templates.plant_tree.protection_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "management"
+    },
+    {
+      "field_key": "action_required",
+      "label": "templates.plant_tree.action_required",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "action_priority",
+      "label": "templates.plant_tree.action_priority",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "removal_recommended",
+      "label": "templates.plant_tree.removal_recommended",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "removal_reason",
+      "label": "templates.plant_tree.removal_reason",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "treatment_recommended_raw",
+      "label": "templates.plant_tree.treatment_recommended_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "target_completion_date",
+      "label": "templates.plant_tree.target_completion_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "action"
+    }
+  ],
+  "child_rows": []
+}

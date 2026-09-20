@@ -1,0 +1,598 @@
+{
+  "schema_version": 1,
+  "template_key": "inspection_check",
+  "name": "templates.inspection_check.name",
+  "kind": "inspection",
+  "identity_fields": [
+    "inspection_reference",
+    "standard_clause_reference"
+  ],
+  "inherits_groups": [
+    "record_admin",
+    "location_context",
+    "evidence",
+    "review"
+  ],
+  "fields": [
+    {
+      "field_key": "inspection_reference",
+      "label": "templates.inspection_check.inspection_reference",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "inspection"
+    },
+    {
+      "field_key": "inspection_date",
+      "label": "templates.inspection_check.inspection_date",
+      "type": "date",
+      "required": "REQUIRED",
+      "group": "inspection"
+    },
+    {
+      "field_key": "inspection_type",
+      "label": "templates.inspection_check.inspection_type",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "inspection",
+      "options": [
+        {
+          "code": "routine",
+          "label": "templates.choices.inspection_type.routine"
+        },
+        {
+          "code": "follow_up",
+          "label": "templates.choices.inspection_type.follow_up"
+        },
+        {
+          "code": "ad_hoc",
+          "label": "templates.choices.inspection_type.ad_hoc"
+        },
+        {
+          "code": "complaint",
+          "label": "templates.choices.inspection_type.complaint"
+        },
+        {
+          "code": "licensing",
+          "label": "templates.choices.inspection_type.licensing"
+        },
+        {
+          "code": "handover",
+          "label": "templates.choices.inspection_type.handover"
+        }
+      ]
+    },
+    {
+      "field_key": "inspector_name",
+      "label": "templates.inspection_check.inspector_name",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "inspection"
+    },
+    {
+      "field_key": "inspector_staff_number",
+      "label": "templates.inspection_check.inspector_staff_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "inspection"
+    },
+    {
+      "field_key": "inspector_organisation",
+      "label": "templates.inspection_check.inspector_organisation",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "inspection"
+    },
+    {
+      "field_key": "inspector_role",
+      "label": "templates.inspection_check.inspector_role",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "inspection"
+    },
+    {
+      "field_key": "accompanying_officer_name",
+      "label": "templates.inspection_check.accompanying_officer_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "inspection"
+    },
+    {
+      "field_key": "inspection_start_time",
+      "label": "templates.inspection_check.inspection_start_time",
+      "type": "time",
+      "required": "OPTIONAL",
+      "group": "inspection"
+    },
+    {
+      "field_key": "inspection_end_time",
+      "label": "templates.inspection_check.inspection_end_time",
+      "type": "time",
+      "required": "OPTIONAL",
+      "group": "inspection"
+    },
+    {
+      "field_key": "subject_type",
+      "label": "templates.inspection_check.subject_type",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "subject"
+    },
+    {
+      "field_key": "subject_identifier",
+      "label": "templates.inspection_check.subject_identifier",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "subject"
+    },
+    {
+      "field_key": "subject_name",
+      "label": "templates.inspection_check.subject_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "subject"
+    },
+    {
+      "field_key": "subject_location_code",
+      "label": "templates.inspection_check.subject_location_code",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "subject"
+    },
+    {
+      "field_key": "subject_owner_name",
+      "label": "templates.inspection_check.subject_owner_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "subject"
+    },
+    {
+      "field_key": "subject_contact_phone",
+      "label": "templates.inspection_check.subject_contact_phone",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "subject"
+    },
+    {
+      "field_key": "standard_name",
+      "label": "templates.inspection_check.standard_name",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "framework"
+    },
+    {
+      "field_key": "standard_version",
+      "label": "templates.inspection_check.standard_version",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "framework"
+    },
+    {
+      "field_key": "standard_clause_reference",
+      "label": "templates.inspection_check.standard_clause_reference",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "framework"
+    },
+    {
+      "field_key": "checklist_code",
+      "label": "templates.inspection_check.checklist_code",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "framework"
+    },
+    {
+      "field_key": "checklist_version",
+      "label": "templates.inspection_check.checklist_version",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "framework"
+    },
+    {
+      "field_key": "requirement_text",
+      "label": "templates.inspection_check.requirement_text",
+      "type": "long_text",
+      "required": "REQUIRED",
+      "group": "framework"
+    },
+    {
+      "field_key": "requirement_category",
+      "label": "templates.inspection_check.requirement_category",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "framework"
+    },
+    {
+      "field_key": "requirement_weight",
+      "label": "templates.inspection_check.requirement_weight",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "framework",
+      "unit": "count"
+    },
+    {
+      "field_key": "is_critical_requirement",
+      "label": "templates.inspection_check.is_critical_requirement",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "framework"
+    },
+    {
+      "field_key": "compliance_status",
+      "label": "templates.inspection_check.compliance_status",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "finding",
+      "options": [
+        {
+          "code": "compliant",
+          "label": "templates.choices.compliance_status.compliant"
+        },
+        {
+          "code": "partially_compliant",
+          "label": "templates.choices.compliance_status.partially_compliant"
+        },
+        {
+          "code": "non_compliant",
+          "label": "templates.choices.compliance_status.non_compliant"
+        },
+        {
+          "code": "not_applicable",
+          "label": "templates.choices.compliance_status.not_applicable"
+        },
+        {
+          "code": "not_assessed",
+          "label": "templates.choices.compliance_status.not_assessed"
+        }
+      ]
+    },
+    {
+      "field_key": "observation_raw",
+      "label": "templates.inspection_check.observation_raw",
+      "type": "long_text",
+      "required": "REQUIRED",
+      "group": "finding"
+    },
+    {
+      "field_key": "observation_refined",
+      "label": "templates.inspection_check.observation_refined",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "finding"
+    },
+    {
+      "field_key": "score_awarded",
+      "label": "templates.inspection_check.score_awarded",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "finding",
+      "unit": "count"
+    },
+    {
+      "field_key": "score_maximum",
+      "label": "templates.inspection_check.score_maximum",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "finding",
+      "unit": "count"
+    },
+    {
+      "field_key": "score_percent",
+      "label": "templates.inspection_check.score_percent",
+      "type": "percentage",
+      "required": "OPTIONAL",
+      "group": "finding"
+    },
+    {
+      "field_key": "evidence_type",
+      "label": "templates.inspection_check.evidence_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "finding"
+    },
+    {
+      "field_key": "evidence_reference",
+      "label": "templates.inspection_check.evidence_reference",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "finding"
+    },
+    {
+      "field_key": "evidence_photo_filename",
+      "label": "templates.inspection_check.evidence_photo_filename",
+      "type": "photo_reference",
+      "required": "OPTIONAL",
+      "group": "finding"
+    },
+    {
+      "field_key": "measurement_value",
+      "label": "templates.inspection_check.measurement_value",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "finding",
+      "unit": "count"
+    },
+    {
+      "field_key": "measurement_unit",
+      "label": "templates.inspection_check.measurement_unit",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "finding"
+    },
+    {
+      "field_key": "threshold_value",
+      "label": "templates.inspection_check.threshold_value",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "finding",
+      "unit": "count"
+    },
+    {
+      "field_key": "within_threshold",
+      "label": "templates.inspection_check.within_threshold",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "finding"
+    },
+    {
+      "field_key": "risk_category",
+      "label": "templates.inspection_check.risk_category",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "risk"
+    },
+    {
+      "field_key": "likelihood_rating",
+      "label": "templates.inspection_check.likelihood_rating",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "risk",
+      "unit": "count"
+    },
+    {
+      "field_key": "severity_rating",
+      "label": "templates.inspection_check.severity_rating",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "risk",
+      "unit": "count"
+    },
+    {
+      "field_key": "risk_score",
+      "label": "templates.inspection_check.risk_score",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "risk",
+      "unit": "count"
+    },
+    {
+      "field_key": "risk_level",
+      "label": "templates.inspection_check.risk_level",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "risk",
+      "options": [
+        {
+          "code": "low",
+          "label": "templates.choices.risk_level.low"
+        },
+        {
+          "code": "medium",
+          "label": "templates.choices.risk_level.medium"
+        },
+        {
+          "code": "high",
+          "label": "templates.choices.risk_level.high"
+        },
+        {
+          "code": "critical",
+          "label": "templates.choices.risk_level.critical"
+        }
+      ]
+    },
+    {
+      "field_key": "immediate_danger",
+      "label": "templates.inspection_check.immediate_danger",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "risk"
+    },
+    {
+      "field_key": "work_stopped",
+      "label": "templates.inspection_check.work_stopped",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "risk"
+    },
+    {
+      "field_key": "corrective_action_raw",
+      "label": "templates.inspection_check.corrective_action_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "corrective_action_refined",
+      "label": "templates.inspection_check.corrective_action_refined",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "action_owner_name",
+      "label": "templates.inspection_check.action_owner_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "action_owner_role",
+      "label": "templates.inspection_check.action_owner_role",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "action_priority",
+      "label": "templates.inspection_check.action_priority",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "target_completion_date",
+      "label": "templates.inspection_check.target_completion_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "estimated_cost_amount",
+      "label": "templates.inspection_check.estimated_cost_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "estimated_cost_currency",
+      "label": "templates.inspection_check.estimated_cost_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "enforcement_notice_issued",
+      "label": "templates.inspection_check.enforcement_notice_issued",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "notice_reference",
+      "label": "templates.inspection_check.notice_reference",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "penalty_amount",
+      "label": "templates.inspection_check.penalty_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "penalty_currency",
+      "label": "templates.inspection_check.penalty_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "previous_inspection_date",
+      "label": "templates.inspection_check.previous_inspection_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "history"
+    },
+    {
+      "field_key": "previous_finding_reference",
+      "label": "templates.inspection_check.previous_finding_reference",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "history"
+    },
+    {
+      "field_key": "previous_compliance_status",
+      "label": "templates.inspection_check.previous_compliance_status",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "history",
+      "options": [
+        {
+          "code": "compliant",
+          "label": "templates.choices.previous_compliance_status.compliant"
+        },
+        {
+          "code": "partially_compliant",
+          "label": "templates.choices.previous_compliance_status.partially_compliant"
+        },
+        {
+          "code": "non_compliant",
+          "label": "templates.choices.previous_compliance_status.non_compliant"
+        },
+        {
+          "code": "not_applicable",
+          "label": "templates.choices.previous_compliance_status.not_applicable"
+        },
+        {
+          "code": "not_assessed",
+          "label": "templates.choices.previous_compliance_status.not_assessed"
+        }
+      ]
+    },
+    {
+      "field_key": "repeat_finding",
+      "label": "templates.inspection_check.repeat_finding",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "history"
+    },
+    {
+      "field_key": "follow_up_required",
+      "label": "templates.inspection_check.follow_up_required",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "history"
+    },
+    {
+      "field_key": "follow_up_date",
+      "label": "templates.inspection_check.follow_up_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "history"
+    },
+    {
+      "field_key": "closed_date",
+      "label": "templates.inspection_check.closed_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "history"
+    },
+    {
+      "field_key": "closed_by_name",
+      "label": "templates.inspection_check.closed_by_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "history"
+    },
+    {
+      "field_key": "inspector_signature",
+      "label": "templates.inspection_check.inspector_signature",
+      "type": "signature",
+      "required": "OPTIONAL",
+      "group": "signoff"
+    },
+    {
+      "field_key": "responsible_person_name",
+      "label": "templates.inspection_check.responsible_person_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "signoff"
+    },
+    {
+      "field_key": "responsible_person_signature",
+      "label": "templates.inspection_check.responsible_person_signature",
+      "type": "signature",
+      "required": "OPTIONAL",
+      "group": "signoff"
+    },
+    {
+      "field_key": "signoff_date",
+      "label": "templates.inspection_check.signoff_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "signoff"
+    }
+  ],
+  "child_rows": []
+}

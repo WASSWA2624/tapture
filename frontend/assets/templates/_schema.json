@@ -49,6 +49,10 @@
         "$ref": "#/$defs/field"
       }
     },
+    "derives_from": {
+      "type": "string",
+      "description": "Parent template_key when this asset extends another (§11.1)."
+    },
     "child_rows": {
       "type": "array",
       "items": {

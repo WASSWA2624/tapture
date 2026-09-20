@@ -1,0 +1,809 @@
+{
+  "schema_version": 1,
+  "template_key": "equipment_asset",
+  "name": "templates.equipment_asset.name",
+  "kind": "equipment",
+  "identity_fields": [
+    "asset_tag",
+    "serial_number",
+    "manufacturer_name"
+  ],
+  "inherits_groups": [
+    "record_admin",
+    "location_context",
+    "evidence",
+    "review"
+  ],
+  "fields": [
+    {
+      "field_key": "asset_tag",
+      "label": "templates.equipment_asset.asset_tag",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "identity"
+    },
+    {
+      "field_key": "asset_tag_scheme",
+      "label": "templates.equipment_asset.asset_tag_scheme",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "serial_number",
+      "label": "templates.equipment_asset.serial_number",
+      "type": "number",
+      "required": "RECOMMENDED",
+      "group": "identity"
+    },
+    {
+      "field_key": "alternate_tag",
+      "label": "templates.equipment_asset.alternate_tag",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "barcode_value",
+      "label": "templates.equipment_asset.barcode_value",
+      "type": "barcode",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "barcode_symbology",
+      "label": "templates.equipment_asset.barcode_symbology",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "item_name",
+      "label": "templates.equipment_asset.item_name",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "description"
+    },
+    {
+      "field_key": "item_description_raw",
+      "label": "templates.equipment_asset.item_description_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "description"
+    },
+    {
+      "field_key": "item_description_refined",
+      "label": "templates.equipment_asset.item_description_refined",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "description"
+    },
+    {
+      "field_key": "category",
+      "label": "templates.equipment_asset.category",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "description"
+    },
+    {
+      "field_key": "sub_category",
+      "label": "templates.equipment_asset.sub_category",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "description"
+    },
+    {
+      "field_key": "asset_class",
+      "label": "templates.equipment_asset.asset_class",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "description"
+    },
+    {
+      "field_key": "manufacturer_name",
+      "label": "templates.equipment_asset.manufacturer_name",
+      "type": "text",
+      "required": "RECOMMENDED",
+      "group": "make"
+    },
+    {
+      "field_key": "brand_name",
+      "label": "templates.equipment_asset.brand_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "make"
+    },
+    {
+      "field_key": "model_name",
+      "label": "templates.equipment_asset.model_name",
+      "type": "text",
+      "required": "RECOMMENDED",
+      "group": "make"
+    },
+    {
+      "field_key": "model_number",
+      "label": "templates.equipment_asset.model_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "make"
+    },
+    {
+      "field_key": "part_number",
+      "label": "templates.equipment_asset.part_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "make"
+    },
+    {
+      "field_key": "year_of_manufacture",
+      "label": "templates.equipment_asset.year_of_manufacture",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "make"
+    },
+    {
+      "field_key": "country_of_origin",
+      "label": "templates.equipment_asset.country_of_origin",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "make"
+    },
+    {
+      "field_key": "power_source",
+      "label": "templates.equipment_asset.power_source",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "technical",
+      "options": [
+        {
+          "code": "mains",
+          "label": "templates.choices.power_source.mains"
+        },
+        {
+          "code": "generator",
+          "label": "templates.choices.power_source.generator"
+        },
+        {
+          "code": "solar",
+          "label": "templates.choices.power_source.solar"
+        },
+        {
+          "code": "battery",
+          "label": "templates.choices.power_source.battery"
+        },
+        {
+          "code": "manual",
+          "label": "templates.choices.power_source.manual"
+        },
+        {
+          "code": "fuel",
+          "label": "templates.choices.power_source.fuel"
+        },
+        {
+          "code": "not_applicable",
+          "label": "templates.choices.power_source.not_applicable"
+        }
+      ]
+    },
+    {
+      "field_key": "voltage_v",
+      "label": "templates.equipment_asset.voltage_v",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "current_a",
+      "label": "templates.equipment_asset.current_a",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "power_rating_w",
+      "label": "templates.equipment_asset.power_rating_w",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "frequency_hz",
+      "label": "templates.equipment_asset.frequency_hz",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "phase_count",
+      "label": "templates.equipment_asset.phase_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "capacity_value",
+      "label": "templates.equipment_asset.capacity_value",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical",
+      "unit": "as_declared"
+    },
+    {
+      "field_key": "capacity_unit",
+      "label": "templates.equipment_asset.capacity_unit",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "length_mm",
+      "label": "templates.equipment_asset.length_mm",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "width_mm",
+      "label": "templates.equipment_asset.width_mm",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "height_mm",
+      "label": "templates.equipment_asset.height_mm",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "weight_kg",
+      "label": "templates.equipment_asset.weight_kg",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "colour",
+      "label": "templates.equipment_asset.colour",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "material_primary",
+      "label": "templates.equipment_asset.material_primary",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "technical"
+    },
+    {
+      "field_key": "quantity_counted",
+      "label": "templates.equipment_asset.quantity_counted",
+      "type": "number",
+      "required": "REQUIRED",
+      "group": "quantity"
+    },
+    {
+      "field_key": "unit_of_measure",
+      "label": "templates.equipment_asset.unit_of_measure",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "quantity"
+    },
+    {
+      "field_key": "quantity_serviceable",
+      "label": "templates.equipment_asset.quantity_serviceable",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "quantity"
+    },
+    {
+      "field_key": "quantity_unserviceable",
+      "label": "templates.equipment_asset.quantity_unserviceable",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "quantity"
+    },
+    {
+      "field_key": "supplier_id",
+      "label": "templates.equipment_asset.supplier_id",
+      "type": "lookup",
+      "required": "OPTIONAL",
+      "group": "acquisition"
+    },
+    {
+      "field_key": "supplier_name",
+      "label": "templates.equipment_asset.supplier_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "acquisition"
+    },
+    {
+      "field_key": "purchase_order_number",
+      "label": "templates.equipment_asset.purchase_order_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "acquisition"
+    },
+    {
+      "field_key": "invoice_number",
+      "label": "templates.equipment_asset.invoice_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "acquisition"
+    },
+    {
+      "field_key": "acquisition_date",
+      "label": "templates.equipment_asset.acquisition_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "acquisition"
+    },
+    {
+      "field_key": "acquisition_method",
+      "label": "templates.equipment_asset.acquisition_method",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "acquisition",
+      "options": [
+        {
+          "code": "purchased",
+          "label": "templates.choices.acquisition_method.purchased"
+        },
+        {
+          "code": "donated",
+          "label": "templates.choices.acquisition_method.donated"
+        },
+        {
+          "code": "transferred",
+          "label": "templates.choices.acquisition_method.transferred"
+        },
+        {
+          "code": "leased",
+          "label": "templates.choices.acquisition_method.leased"
+        },
+        {
+          "code": "constructed",
+          "label": "templates.choices.acquisition_method.constructed"
+        },
+        {
+          "code": "unknown",
+          "label": "templates.choices.acquisition_method.unknown"
+        }
+      ]
+    },
+    {
+      "field_key": "funding_source",
+      "label": "templates.equipment_asset.funding_source",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "acquisition"
+    },
+    {
+      "field_key": "donor_name",
+      "label": "templates.equipment_asset.donor_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "acquisition"
+    },
+    {
+      "field_key": "purchase_cost_amount",
+      "label": "templates.equipment_asset.purchase_cost_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "acquisition"
+    },
+    {
+      "field_key": "purchase_cost_currency",
+      "label": "templates.equipment_asset.purchase_cost_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "acquisition"
+    },
+    {
+      "field_key": "current_value_amount",
+      "label": "templates.equipment_asset.current_value_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "acquisition"
+    },
+    {
+      "field_key": "current_value_currency",
+      "label": "templates.equipment_asset.current_value_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "acquisition"
+    },
+    {
+      "field_key": "depreciation_rate_percent",
+      "label": "templates.equipment_asset.depreciation_rate_percent",
+      "type": "percentage",
+      "required": "OPTIONAL",
+      "group": "acquisition"
+    },
+    {
+      "field_key": "useful_life_years",
+      "label": "templates.equipment_asset.useful_life_years",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "acquisition"
+    },
+    {
+      "field_key": "expected_replacement_date",
+      "label": "templates.equipment_asset.expected_replacement_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "acquisition"
+    },
+    {
+      "field_key": "warranty_start_date",
+      "label": "templates.equipment_asset.warranty_start_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "warranty"
+    },
+    {
+      "field_key": "warranty_end_date",
+      "label": "templates.equipment_asset.warranty_end_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "warranty"
+    },
+    {
+      "field_key": "warranty_provider_name",
+      "label": "templates.equipment_asset.warranty_provider_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "warranty"
+    },
+    {
+      "field_key": "warranty_reference",
+      "label": "templates.equipment_asset.warranty_reference",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "warranty"
+    },
+    {
+      "field_key": "service_provider_name",
+      "label": "templates.equipment_asset.service_provider_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "service"
+    },
+    {
+      "field_key": "service_contract_number",
+      "label": "templates.equipment_asset.service_contract_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "service"
+    },
+    {
+      "field_key": "service_interval_months",
+      "label": "templates.equipment_asset.service_interval_months",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "service"
+    },
+    {
+      "field_key": "last_service_date",
+      "label": "templates.equipment_asset.last_service_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "service"
+    },
+    {
+      "field_key": "next_service_due_date",
+      "label": "templates.equipment_asset.next_service_due_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "service"
+    },
+    {
+      "field_key": "owning_department",
+      "label": "templates.equipment_asset.owning_department",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "custody"
+    },
+    {
+      "field_key": "custodian_name",
+      "label": "templates.equipment_asset.custodian_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "custody"
+    },
+    {
+      "field_key": "custodian_staff_number",
+      "label": "templates.equipment_asset.custodian_staff_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "custody"
+    },
+    {
+      "field_key": "date_assigned",
+      "label": "templates.equipment_asset.date_assigned",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "custody"
+    },
+    {
+      "field_key": "installation_date",
+      "label": "templates.equipment_asset.installation_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "custody"
+    },
+    {
+      "field_key": "commissioning_date",
+      "label": "templates.equipment_asset.commissioning_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "custody"
+    },
+    {
+      "field_key": "condition_grade",
+      "label": "templates.equipment_asset.condition_grade",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "condition",
+      "options": [
+        {
+          "code": "a",
+          "label": "templates.choices.condition_grade.a"
+        },
+        {
+          "code": "b",
+          "label": "templates.choices.condition_grade.b"
+        },
+        {
+          "code": "c",
+          "label": "templates.choices.condition_grade.c"
+        },
+        {
+          "code": "d",
+          "label": "templates.choices.condition_grade.d"
+        },
+        {
+          "code": "e",
+          "label": "templates.choices.condition_grade.e"
+        }
+      ]
+    },
+    {
+      "field_key": "condition_score_percent",
+      "label": "templates.equipment_asset.condition_score_percent",
+      "type": "percentage",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "condition_note_raw",
+      "label": "templates.equipment_asset.condition_note_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "functional_status",
+      "label": "templates.equipment_asset.functional_status",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "condition",
+      "options": [
+        {
+          "code": "functional",
+          "label": "templates.choices.functional_status.functional"
+        },
+        {
+          "code": "partially_functional",
+          "label": "templates.choices.functional_status.partially_functional"
+        },
+        {
+          "code": "not_functional",
+          "label": "templates.choices.functional_status.not_functional"
+        },
+        {
+          "code": "not_assessed",
+          "label": "templates.choices.functional_status.not_assessed"
+        }
+      ]
+    },
+    {
+      "field_key": "in_use_status",
+      "label": "templates.equipment_asset.in_use_status",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "condition",
+      "options": [
+        {
+          "code": "in_use",
+          "label": "templates.choices.in_use_status.in_use"
+        },
+        {
+          "code": "idle",
+          "label": "templates.choices.in_use_status.idle"
+        },
+        {
+          "code": "in_store",
+          "label": "templates.choices.in_use_status.in_store"
+        },
+        {
+          "code": "under_repair",
+          "label": "templates.choices.in_use_status.under_repair"
+        },
+        {
+          "code": "decommissioned",
+          "label": "templates.choices.in_use_status.decommissioned"
+        }
+      ]
+    },
+    {
+      "field_key": "utilisation_percent",
+      "label": "templates.equipment_asset.utilisation_percent",
+      "type": "percentage",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "fault_present",
+      "label": "templates.equipment_asset.fault_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "fault"
+    },
+    {
+      "field_key": "fault_category",
+      "label": "templates.equipment_asset.fault_category",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "fault"
+    },
+    {
+      "field_key": "fault_description_raw",
+      "label": "templates.equipment_asset.fault_description_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "fault"
+    },
+    {
+      "field_key": "fault_description_refined",
+      "label": "templates.equipment_asset.fault_description_refined",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "fault"
+    },
+    {
+      "field_key": "downtime_since_date",
+      "label": "templates.equipment_asset.downtime_since_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "fault"
+    },
+    {
+      "field_key": "downtime_days",
+      "label": "templates.equipment_asset.downtime_days",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "fault"
+    },
+    {
+      "field_key": "action_required",
+      "label": "templates.equipment_asset.action_required",
+      "type": "choice",
+      "required": "RECOMMENDED",
+      "group": "action",
+      "options": [
+        {
+          "code": "none",
+          "label": "templates.choices.action_required.none"
+        },
+        {
+          "code": "service",
+          "label": "templates.choices.action_required.service"
+        },
+        {
+          "code": "repair",
+          "label": "templates.choices.action_required.repair"
+        },
+        {
+          "code": "replace",
+          "label": "templates.choices.action_required.replace"
+        },
+        {
+          "code": "dispose",
+          "label": "templates.choices.action_required.dispose"
+        },
+        {
+          "code": "investigate",
+          "label": "templates.choices.action_required.investigate"
+        }
+      ]
+    },
+    {
+      "field_key": "action_priority",
+      "label": "templates.equipment_asset.action_priority",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "target_completion_date",
+      "label": "templates.equipment_asset.target_completion_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "estimated_cost_amount",
+      "label": "templates.equipment_asset.estimated_cost_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "estimated_cost_currency",
+      "label": "templates.equipment_asset.estimated_cost_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "recommendation_raw",
+      "label": "templates.equipment_asset.recommendation_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "recommendation_refined",
+      "label": "templates.equipment_asset.recommendation_refined",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "action"
+    },
+    {
+      "field_key": "disposal_status",
+      "label": "templates.equipment_asset.disposal_status",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "disposal"
+    },
+    {
+      "field_key": "disposal_date",
+      "label": "templates.equipment_asset.disposal_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "disposal"
+    },
+    {
+      "field_key": "disposal_method",
+      "label": "templates.equipment_asset.disposal_method",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "disposal"
+    },
+    {
+      "field_key": "disposal_reference",
+      "label": "templates.equipment_asset.disposal_reference",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "disposal"
+    },
+    {
+      "field_key": "disposal_value_amount",
+      "label": "templates.equipment_asset.disposal_value_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "disposal"
+    },
+    {
+      "field_key": "disposal_value_currency",
+      "label": "templates.equipment_asset.disposal_value_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "disposal"
+    }
+  ],
+  "child_rows": []
+}

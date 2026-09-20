@@ -1,0 +1,623 @@
+{
+  "schema_version": 1,
+  "template_key": "staff_member",
+  "name": "templates.staff_member.name",
+  "kind": "staff",
+  "identity_fields": [
+    "staff_number",
+    "national_id_number"
+  ],
+  "inherits_groups": [
+    "record_admin",
+    "location_context",
+    "evidence",
+    "review"
+  ],
+  "fields": [
+    {
+      "field_key": "staff_number",
+      "label": "templates.staff_member.staff_number",
+      "type": "number",
+      "required": "REQUIRED",
+      "group": "identity"
+    },
+    {
+      "field_key": "given_name",
+      "label": "templates.staff_member.given_name",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "identity"
+    },
+    {
+      "field_key": "middle_name",
+      "label": "templates.staff_member.middle_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "family_name",
+      "label": "templates.staff_member.family_name",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "identity"
+    },
+    {
+      "field_key": "sex",
+      "label": "templates.staff_member.sex",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "date_of_birth",
+      "label": "templates.staff_member.date_of_birth",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "national_id_number",
+      "label": "templates.staff_member.national_id_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "photo_filename",
+      "label": "templates.staff_member.photo_filename",
+      "type": "photo_reference",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "job_title",
+      "label": "templates.staff_member.job_title",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "employment"
+    },
+    {
+      "field_key": "position_code",
+      "label": "templates.staff_member.position_code",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "employment"
+    },
+    {
+      "field_key": "cadre_grade",
+      "label": "templates.staff_member.cadre_grade",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "employment"
+    },
+    {
+      "field_key": "salary_scale",
+      "label": "templates.staff_member.salary_scale",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "employment"
+    },
+    {
+      "field_key": "department",
+      "label": "templates.staff_member.department",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "employment"
+    },
+    {
+      "field_key": "duty_station_code",
+      "label": "templates.staff_member.duty_station_code",
+      "type": "text",
+      "required": "RECOMMENDED",
+      "group": "employment"
+    },
+    {
+      "field_key": "duty_station_name",
+      "label": "templates.staff_member.duty_station_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "employment"
+    },
+    {
+      "field_key": "reporting_supervisor_staff_number",
+      "label": "templates.staff_member.reporting_supervisor_staff_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "employment"
+    },
+    {
+      "field_key": "employment_type",
+      "label": "templates.staff_member.employment_type",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "employment",
+      "options": [
+        {
+          "code": "permanent",
+          "label": "templates.choices.employment_type.permanent"
+        },
+        {
+          "code": "contract",
+          "label": "templates.choices.employment_type.contract"
+        },
+        {
+          "code": "temporary",
+          "label": "templates.choices.employment_type.temporary"
+        },
+        {
+          "code": "casual",
+          "label": "templates.choices.employment_type.casual"
+        },
+        {
+          "code": "volunteer",
+          "label": "templates.choices.employment_type.volunteer"
+        },
+        {
+          "code": "seconded",
+          "label": "templates.choices.employment_type.seconded"
+        },
+        {
+          "code": "intern",
+          "label": "templates.choices.employment_type.intern"
+        }
+      ]
+    },
+    {
+      "field_key": "appointment_date",
+      "label": "templates.staff_member.appointment_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "employment"
+    },
+    {
+      "field_key": "contract_start_date",
+      "label": "templates.staff_member.contract_start_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "employment"
+    },
+    {
+      "field_key": "contract_end_date",
+      "label": "templates.staff_member.contract_end_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "employment"
+    },
+    {
+      "field_key": "probation_end_date",
+      "label": "templates.staff_member.probation_end_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "employment"
+    },
+    {
+      "field_key": "years_of_service",
+      "label": "templates.staff_member.years_of_service",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "employment",
+      "unit": "count"
+    },
+    {
+      "field_key": "retirement_date",
+      "label": "templates.staff_member.retirement_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "employment"
+    },
+    {
+      "field_key": "payroll_number",
+      "label": "templates.staff_member.payroll_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "payroll"
+    },
+    {
+      "field_key": "basic_salary_amount",
+      "label": "templates.staff_member.basic_salary_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "payroll"
+    },
+    {
+      "field_key": "salary_currency",
+      "label": "templates.staff_member.salary_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "payroll"
+    },
+    {
+      "field_key": "allowance_amount",
+      "label": "templates.staff_member.allowance_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "payroll"
+    },
+    {
+      "field_key": "payment_method",
+      "label": "templates.staff_member.payment_method",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "payroll"
+    },
+    {
+      "field_key": "bank_name",
+      "label": "templates.staff_member.bank_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "payroll"
+    },
+    {
+      "field_key": "pay_status",
+      "label": "templates.staff_member.pay_status",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "payroll"
+    },
+    {
+      "field_key": "last_paid_date",
+      "label": "templates.staff_member.last_paid_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "payroll"
+    },
+    {
+      "field_key": "highest_qualification",
+      "label": "templates.staff_member.highest_qualification",
+      "type": "text",
+      "required": "RECOMMENDED",
+      "group": "qualification"
+    },
+    {
+      "field_key": "qualification_field",
+      "label": "templates.staff_member.qualification_field",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "qualification"
+    },
+    {
+      "field_key": "awarding_institution",
+      "label": "templates.staff_member.awarding_institution",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "qualification"
+    },
+    {
+      "field_key": "qualification_year",
+      "label": "templates.staff_member.qualification_year",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "qualification"
+    },
+    {
+      "field_key": "additional_qualification",
+      "label": "templates.staff_member.additional_qualification",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "qualification"
+    },
+    {
+      "field_key": "qualification_verified",
+      "label": "templates.staff_member.qualification_verified",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "qualification"
+    },
+    {
+      "field_key": "certificate_photo_filename",
+      "label": "templates.staff_member.certificate_photo_filename",
+      "type": "photo_reference",
+      "required": "OPTIONAL",
+      "group": "qualification"
+    },
+    {
+      "field_key": "professional_body_name",
+      "label": "templates.staff_member.professional_body_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "registration"
+    },
+    {
+      "field_key": "registration_number",
+      "label": "templates.staff_member.registration_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "registration"
+    },
+    {
+      "field_key": "registration_issue_date",
+      "label": "templates.staff_member.registration_issue_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "registration"
+    },
+    {
+      "field_key": "registration_expiry_date",
+      "label": "templates.staff_member.registration_expiry_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "registration"
+    },
+    {
+      "field_key": "licence_status",
+      "label": "templates.staff_member.licence_status",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "registration"
+    },
+    {
+      "field_key": "practising_certificate_present",
+      "label": "templates.staff_member.practising_certificate_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "registration"
+    },
+    {
+      "field_key": "post_established",
+      "label": "templates.staff_member.post_established",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "posting"
+    },
+    {
+      "field_key": "post_filled",
+      "label": "templates.staff_member.post_filled",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "posting"
+    },
+    {
+      "field_key": "post_vacant_since_date",
+      "label": "templates.staff_member.post_vacant_since_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "posting"
+    },
+    {
+      "field_key": "acting_capacity",
+      "label": "templates.staff_member.acting_capacity",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "posting"
+    },
+    {
+      "field_key": "secondment_organisation",
+      "label": "templates.staff_member.secondment_organisation",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "posting"
+    },
+    {
+      "field_key": "deployment_location_code",
+      "label": "templates.staff_member.deployment_location_code",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "posting"
+    },
+    {
+      "field_key": "attendance_status",
+      "label": "templates.staff_member.attendance_status",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "presence",
+      "options": [
+        {
+          "code": "present",
+          "label": "templates.choices.attendance_status.present"
+        },
+        {
+          "code": "absent_without_leave",
+          "label": "templates.choices.attendance_status.absent_without_leave"
+        },
+        {
+          "code": "on_approved_leave",
+          "label": "templates.choices.attendance_status.on_approved_leave"
+        },
+        {
+          "code": "on_duty_elsewhere",
+          "label": "templates.choices.attendance_status.on_duty_elsewhere"
+        },
+        {
+          "code": "on_training",
+          "label": "templates.choices.attendance_status.on_training"
+        },
+        {
+          "code": "suspended",
+          "label": "templates.choices.attendance_status.suspended"
+        },
+        {
+          "code": "post_vacant",
+          "label": "templates.choices.attendance_status.post_vacant"
+        }
+      ]
+    },
+    {
+      "field_key": "verification_method",
+      "label": "templates.staff_member.verification_method",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "presence",
+      "options": [
+        {
+          "code": "physically_seen",
+          "label": "templates.choices.verification_method.physically_seen"
+        },
+        {
+          "code": "signed_register",
+          "label": "templates.choices.verification_method.signed_register"
+        },
+        {
+          "code": "biometric",
+          "label": "templates.choices.verification_method.biometric"
+        },
+        {
+          "code": "supervisor_confirmed",
+          "label": "templates.choices.verification_method.supervisor_confirmed"
+        }
+      ]
+    },
+    {
+      "field_key": "verification_date",
+      "label": "templates.staff_member.verification_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "presence"
+    },
+    {
+      "field_key": "verification_time",
+      "label": "templates.staff_member.verification_time",
+      "type": "time",
+      "required": "OPTIONAL",
+      "group": "presence"
+    },
+    {
+      "field_key": "absence_reason",
+      "label": "templates.staff_member.absence_reason",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "presence"
+    },
+    {
+      "field_key": "absence_start_date",
+      "label": "templates.staff_member.absence_start_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "presence"
+    },
+    {
+      "field_key": "expected_return_date",
+      "label": "templates.staff_member.expected_return_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "presence"
+    },
+    {
+      "field_key": "leave_type",
+      "label": "templates.staff_member.leave_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "presence"
+    },
+    {
+      "field_key": "leave_balance_days",
+      "label": "templates.staff_member.leave_balance_days",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "presence"
+    },
+    {
+      "field_key": "duty_roster_shift",
+      "label": "templates.staff_member.duty_roster_shift",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "presence"
+    },
+    {
+      "field_key": "last_training_name",
+      "label": "templates.staff_member.last_training_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "training"
+    },
+    {
+      "field_key": "last_training_date",
+      "label": "templates.staff_member.last_training_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "training"
+    },
+    {
+      "field_key": "training_days_last_year",
+      "label": "templates.staff_member.training_days_last_year",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "training"
+    },
+    {
+      "field_key": "training_need_identified",
+      "label": "templates.staff_member.training_need_identified",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "training"
+    },
+    {
+      "field_key": "last_appraisal_date",
+      "label": "templates.staff_member.last_appraisal_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "performance"
+    },
+    {
+      "field_key": "appraisal_rating",
+      "label": "templates.staff_member.appraisal_rating",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "performance"
+    },
+    {
+      "field_key": "disciplinary_case_open",
+      "label": "templates.staff_member.disciplinary_case_open",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "performance"
+    },
+    {
+      "field_key": "phone_primary",
+      "label": "templates.staff_member.phone_primary",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "contact"
+    },
+    {
+      "field_key": "email_address",
+      "label": "templates.staff_member.email_address",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "contact"
+    },
+    {
+      "field_key": "residence_district",
+      "label": "templates.staff_member.residence_district",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "contact"
+    },
+    {
+      "field_key": "next_of_kin_name",
+      "label": "templates.staff_member.next_of_kin_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "contact"
+    },
+    {
+      "field_key": "next_of_kin_relationship",
+      "label": "templates.staff_member.next_of_kin_relationship",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "contact"
+    },
+    {
+      "field_key": "next_of_kin_phone",
+      "label": "templates.staff_member.next_of_kin_phone",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "contact"
+    },
+    {
+      "field_key": "basic_salary_currency",
+      "label": "templates.staff_member.basic_salary_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "payroll"
+    },
+    {
+      "field_key": "allowance_currency",
+      "label": "templates.staff_member.allowance_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "payroll"
+    }
+  ],
+  "child_rows": []
+}

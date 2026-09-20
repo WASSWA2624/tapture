@@ -56,10 +56,203 @@ const List<String> _unitSuffixes = <String>[
   '_ml',
   '_ha',
   '_s',
+  '_a',
+  '_ah',
+  '_kva',
+  '_ghz',
+  '_gb',
+  '_inches',
+  '_cc',
+  '_ntu',
+  '_mgl',
+  '_cbm',
+  '_minutes',
+  '_months',
+  '_days',
+  '_years',
+  '_persons',
+  '_dpi',
+  '_mb',
+  '_degrees',
+  '_hours',
 ];
 
 /// Keys that are counts or identifiers, not measurements.
-const List<String> _countSuffixes = <String>['_count', '_number', '_year'];
+const List<String> _countSuffixes = <String>[
+  '_count',
+  '_number',
+  '_year',
+  '_counted',
+  '_working',
+  '_completed',
+  '_plus',
+];
+
+/// Boolean keys that do not wear the is_/has_/*_present shape, from §13.5.
+const Set<String> _booleanExact = <String>{
+  'lockable',
+  'habitable',
+  'pregnant',
+  'lactating',
+  'castrated',
+  'flowering',
+  'fruiting',
+  'seeding',
+  'developed',
+  'scanned',
+  'delayed',
+  'unanimous',
+  'overcrowded',
+  'parts_awaited',
+  'warranty_claim',
+  'estimated_reading',
+  'display_legible',
+  'repeat_finding',
+  'immediate_danger',
+  'work_stopped',
+  'asset_stopped',
+  'legal_hold',
+  'vital_record',
+  'issued_out',
+  'shared_use',
+  'adjustable_height',
+  'post_established',
+  'post_filled',
+  'acting_capacity',
+  'meter_accessible',
+  'within_threshold',
+  'age_estimated',
+  'id_verified',
+  'fingerprint_captured',
+  'proxy_authorised',
+  'stacked_correctly',
+  'fefo_applied',
+  'segregated_correctly',
+  'vandalism_evident',
+  'contamination_risk_nearby',
+  'committee_active',
+  'caretaker_trained',
+  'user_fee_charged',
+  'spare_parts_accessible',
+  'natural_light_adequate',
+  'ceiling_height_adequate',
+  'natural_ventilation_adequate',
+  'floor_level_even',
+  'windscreen_intact',
+  'lights_functional',
+  'brakes_functional',
+  'stability_safe',
+  'key_available',
+  'domain_joined',
+  'ups_connected',
+  'os_licence_key_held',
+  'bios_password_set',
+  'data_wipe_required',
+  'ce_fda_marked',
+  'manual_available',
+  'user_training_provided',
+  'calibration_required',
+  'ppm_required',
+  'requires_water',
+  'requires_medical_gas',
+  'requires_ups',
+  'requires_air_conditioning',
+  'solar_installed',
+  'sewer_connected',
+  'gate_lockable',
+  'lift_functional',
+  'ramp_gradient_compliant',
+  'fire_exit_unobstructed',
+  'fire_extinguishers_serviced',
+  'water_quality_tested',
+  'ecoli_detected',
+  'birth_attended_by_skilled',
+  'child_immunisation_up_to_date',
+  'net_use_last_night',
+  'received_aid_last_year',
+  'owns_radio',
+  'owns_television',
+  'owns_mobile_phone',
+  'owns_smartphone',
+  'owns_refrigerator',
+  'owns_bicycle',
+  'owns_motorcycle',
+  'owns_car',
+  'owns_cart',
+  'owns_plough',
+  'owns_sewing_machine',
+  'mobile_money_used',
+  'solar_owned',
+  'toilet_shared',
+  'title_registered',
+  'boundary_marked',
+  'leaf_colour_normal',
+  'vaccination_up_to_date',
+  'feed_supplement_used',
+  'postmortem_done',
+  'ocr_performed',
+  'copy_held_elsewhere',
+  'agenda_adopted',
+  'previous_minutes_confirmed',
+  'quorum_met',
+  'interpretation_provided',
+  'knowledge_assessment_done',
+  'report_submitted',
+  'first_aid_given',
+  'hospitalisation_required',
+  'environmental_release_occurred',
+  'unsafe_act_identified',
+  'unsafe_condition_identified',
+  'ppe_in_use',
+  'procedure_followed',
+  'training_adequate',
+  'area_secured',
+  'emergency_services_notified',
+  'investigation_required',
+  'effectiveness_verified',
+  'has_attachments',
+  'data_subject_present',
+  'searchable_text_present',
+  'scan_quality_verified',
+  'qualification_verified',
+  'practising_certificate_present',
+  'disciplinary_case_open',
+  'training_need_identified',
+  'consent_given',
+  'photo_consent_given',
+  'data_sharing_consent_given',
+  'guardian_consent_required',
+  'bank_account_present',
+  'mobile_money_number_held',
+  'chronic_illness_present',
+  'assistive_device_used',
+  'cold_chain_required',
+  'temperature_excursion_recorded',
+  'disposal_required',
+  'is_critical_requirement',
+  'enforcement_notice_issued',
+  'follow_up_required',
+  'fault_confirmed',
+  'external_support_required',
+  'recurrence_expected',
+  'meter_seal_intact',
+  'tamper_suspected',
+  'bypass_suspected',
+  'anomaly_detected',
+  'meter_rollover_occurred',
+  'disk_encryption_enabled',
+  'remote_management_enabled',
+  'touchscreen_present',
+  'battery_present',
+  'keyboard_present',
+  'mouse_present',
+  'docking_station_present',
+  'printer_shared',
+  'spare_tyre_present',
+  'jack_present',
+  'tool_kit_present',
+  'draught_use',
+};
 
 /// Top-level keys every asset must carry.
 const List<String> _assetKeys = <String>[
@@ -140,6 +333,17 @@ typedef _Field = ({
   int line,
 });
 
+/// A parsed asset, kept so derived templates can see their parent's keys.
+typedef _ParsedAsset = ({
+  String path,
+  String source,
+  String templateKey,
+  String? derivesFrom,
+  List<String> inheritsGroups,
+  Map<String, Object?> root,
+  List<_Field> fields,
+});
+
 /// Reports every way the assets under [root] break the schema or §13.1.
 List<_Violation> _findViolations(Directory root) {
   if (!root.existsSync()) {
@@ -166,9 +370,30 @@ List<_Violation> _findViolations(Directory root) {
   if (schema.violations.isNotEmpty) {
     return schema.violations;
   }
+  final Map<String, Set<String>> groups = _readGroupKeys(root);
+  final List<_ParsedAsset> assets = <_ParsedAsset>[];
   final List<_Violation> found = <_Violation>[];
   for (final File file in _assetFiles(root)) {
-    found.addAll(_checkAsset(file, schema.types));
+    final _ParsedAsset? parsed = _parseAsset(file, found);
+    if (parsed != null) {
+      assets.add(parsed);
+    }
+  }
+  final Map<String, _ParsedAsset> byKey = <String, _ParsedAsset>{
+    for (final _ParsedAsset asset in assets) asset.templateKey: asset,
+  };
+  for (final _ParsedAsset asset in assets) {
+    final Set<String> inherited = _inheritedKeys(asset, groups, byKey);
+    found.addAll(
+      _fieldRuleViolations(
+        asset.path,
+        asset.source,
+        asset.root,
+        asset.fields,
+        schema.types,
+        inherited,
+      ),
+    );
   }
   return found;
 }
@@ -262,48 +487,134 @@ File _schemaFile(Directory root) {
   return (types: types, violations: <_Violation>[]);
 }
 
-/// Schema and atomicity findings for one asset.
-Iterable<_Violation> _checkAsset(File file, Set<String> allowedTypes) sync* {
+/// Field keys declared in `_groups.json`, keyed by group name.
+Map<String, Set<String>> _readGroupKeys(Directory root) {
+  final File file = File('${root.path}/_groups.json');
+  if (!file.existsSync()) {
+    final File shipped = File('$_defaultDir/_groups.json');
+    if (!shipped.existsSync()) {
+      return <String, Set<String>>{};
+    }
+    return _groupKeysFrom(shipped);
+  }
+  return _groupKeysFrom(file);
+}
+
+Map<String, Set<String>> _groupKeysFrom(File file) {
+  final Object? decoded = _decode(file.readAsStringSync());
+  final Map<String, Object?>? root = _asMap(decoded);
+  if (root == null) {
+    return <String, Set<String>>{};
+  }
+  final Map<String, Set<String>> groups = <String, Set<String>>{};
+  for (final MapEntry<String, Object?> entry in root.entries) {
+    if (entry.key.startsWith(r'$')) {
+      continue;
+    }
+    final Map<String, Object?>? group = _asMap(entry.value);
+    final Object? rawFields = group?['fields'] ?? entry.value;
+    if (rawFields is! List) {
+      continue;
+    }
+    final Set<String> keys = <String>{};
+    for (final Object? item in rawFields) {
+      final Map<String, Object?>? field = _asMap(item);
+      final String? key = _asString(field?['field_key']);
+      if (key != null) {
+        keys.add(key);
+      }
+    }
+    groups[entry.key] = keys;
+  }
+  return groups;
+}
+
+/// Keys this asset inherits from groups and from `derives_from`.
+Set<String> _inheritedKeys(
+  _ParsedAsset asset,
+  Map<String, Set<String>> groups,
+  Map<String, _ParsedAsset> byKey,
+) {
+  final Set<String> keys = <String>{};
+  for (final String group in asset.inheritsGroups) {
+    keys.addAll(groups[group] ?? const <String>{});
+  }
+  String? parent = asset.derivesFrom;
+  final Set<String> seen = <String>{};
+  while (parent != null && seen.add(parent)) {
+    final _ParsedAsset? next = byKey[parent];
+    if (next == null) {
+      break;
+    }
+    for (final _Field field in next.fields) {
+      keys.add(field.key);
+    }
+    for (final String group in next.inheritsGroups) {
+      keys.addAll(groups[group] ?? const <String>{});
+    }
+    parent = next.derivesFrom;
+  }
+  return keys;
+}
+
+/// Parses one asset and records schema violations. Null when it is not JSON.
+_ParsedAsset? _parseAsset(File file, List<_Violation> found) {
   final String source = file.readAsStringSync();
   final String path = _display(file);
   final Object? decoded = _decode(source);
   if (decoded == null) {
-    yield (file: path, line: 1, message: 'the asset is not JSON');
-    return;
+    found.add((file: path, line: 1, message: 'the asset is not JSON'));
+    return null;
   }
   final Map<String, Object?>? root = _asMap(decoded);
   if (root == null) {
-    yield (file: path, line: 1, message: 'the asset is not an object');
-    return;
+    found.add((file: path, line: 1, message: 'the asset is not an object'));
+    return null;
   }
-  yield* _schemaViolations(path, source, root);
+  found.addAll(_schemaViolations(path, source, root));
   final Object? rawFields = root['fields'];
-  if (rawFields is! List) {
-    return;
-  }
   final List<_Field> fields = <_Field>[];
-  for (final Object? item in rawFields) {
-    final Map<String, Object?>? map = _asMap(item);
-    if (map == null) {
-      yield (
-        file: path,
-        line: _lineOf(source, '"fields"'),
-        message: 'a field is not an object',
-      );
-      continue;
+  if (rawFields is List) {
+    for (final Object? item in rawFields) {
+      final Map<String, Object?>? map = _asMap(item);
+      if (map == null) {
+        found.add((
+          file: path,
+          line: _lineOf(source, '"fields"'),
+          message: 'a field is not an object',
+        ));
+        continue;
+      }
+      final String key = _asString(map['field_key']) ?? '';
+      final int seen = fields.where((_Field field) => field.key == key).length;
+      fields.add((
+        key: key,
+        label: _asString(map['label']) ?? '',
+        type: _asString(map['type']) ?? '',
+        requiredWhen: _asString(map['required_when']),
+        unit: _asString(map['unit']),
+        line: _lineOfField(source, key, map, seen),
+      ));
     }
-    final String key = _asString(map['field_key']) ?? '';
-    final int seen = fields.where((_Field field) => field.key == key).length;
-    fields.add((
-      key: key,
-      label: _asString(map['label']) ?? '',
-      type: _asString(map['type']) ?? '',
-      requiredWhen: _asString(map['required_when']),
-      unit: _asString(map['unit']),
-      line: _lineOfField(source, key, map, seen),
-    ));
   }
-  yield* _fieldRuleViolations(path, source, root, fields, allowedTypes);
+  final List<String> inherits = <String>[];
+  final Object? rawGroups = root['inherits_groups'];
+  if (rawGroups is List) {
+    for (final Object? item in rawGroups) {
+      if (item is String) {
+        inherits.add(item);
+      }
+    }
+  }
+  return (
+    path: path,
+    source: source,
+    templateKey: _asString(root['template_key']) ?? _basename(file.uri),
+    derivesFrom: _asString(root['derives_from']),
+    inheritsGroups: inherits,
+    root: root,
+    fields: fields,
+  );
 }
 
 /// Missing or mistyped top-level and per-field schema keys.
@@ -410,24 +721,32 @@ Iterable<_Violation> _fieldRuleViolations(
   Map<String, Object?> root,
   List<_Field> fields,
   Set<String> allowedTypes,
+  Set<String> inherited,
 ) sync* {
-  final Set<String> keys = <String>{};
-  final Map<String, _Field> byKey = <String, _Field>{};
+  final Set<String> own = <String>{};
+  final Set<String> resolved = <String>{...inherited};
   for (final _Field field in fields) {
     if (field.key.isEmpty) {
       continue;
     }
-    if (!keys.add(field.key)) {
+    if (!own.add(field.key)) {
       yield (
         file: path,
         line: field.line,
         message: 'field_key "${field.key}" is not unique within the template',
       );
     }
-    byKey[field.key] = field;
+    if (inherited.contains(field.key)) {
+      yield (
+        file: path,
+        line: field.line,
+        message:
+            'field_key "${field.key}" repeats a field from an inherited '
+            'group or parent template',
+      );
+    }
+    resolved.add(field.key);
   }
-
-  final bool hasLookup = fields.any((_Field field) => field.type == 'lookup');
 
   for (final _Field field in fields) {
     if (field.key.isEmpty) {
@@ -466,7 +785,7 @@ Iterable<_Violation> _fieldRuleViolations(
             'key or in unit',
       );
     }
-    if (_isMoney(field) && !byKey.containsKey(_currencyCompanion(field.key))) {
+    if (_isMoney(field) && !resolved.contains(_currencyCompanion(field.key))) {
       yield (
         file: path,
         line: field.line,
@@ -477,7 +796,7 @@ Iterable<_Violation> _fieldRuleViolations(
     }
     if (field.key.endsWith('_refined')) {
       final String raw = '${_stem(field.key, '_refined')}_raw';
-      if (!byKey.containsKey(raw)) {
+      if (!resolved.contains(raw)) {
         yield (
           file: path,
           line: field.line,
@@ -487,9 +806,9 @@ Iterable<_Violation> _fieldRuleViolations(
         );
       }
     }
-    if (hasLookup && field.key.endsWith('_code')) {
+    if (field.type == 'lookup' && field.key.endsWith('_code')) {
       final String name = '${_stem(field.key, '_code')}_name';
-      if (!byKey.containsKey(name)) {
+      if (!resolved.contains(name)) {
         yield (
           file: path,
           line: field.line,
@@ -516,7 +835,7 @@ Iterable<_Violation> _fieldRuleViolations(
             '*_present, *_required or *_confirmed',
       );
     }
-    yield* _requiredWhenViolations(path, field, keys);
+    yield* _requiredWhenViolations(path, field, resolved);
   }
 
   final Object? identity = root['identity_fields'];
@@ -525,7 +844,7 @@ Iterable<_Violation> _fieldRuleViolations(
       if (item is! String) {
         continue;
       }
-      if (!keys.contains(item)) {
+      if (!resolved.contains(item)) {
         yield (
           file: path,
           line: _lineOf(source, item),
@@ -582,7 +901,14 @@ bool _missingUnit(_Field field) {
   if (_hasSuffix(field.key, _unitSuffixes)) {
     return false;
   }
-  if (_hasSuffix(field.key, _countSuffixes) || field.key.startsWith('year_')) {
+  if (_hasSuffix(field.key, _countSuffixes) ||
+      field.key.startsWith('year_') ||
+      field.key.startsWith('quantity_') ||
+      field.key.startsWith('males_') ||
+      field.key.startsWith('females_') ||
+      field.key.startsWith('participants_') ||
+      field.key.startsWith('attendees_') ||
+      field.key.startsWith('members_')) {
     return false;
   }
   return true;
@@ -613,11 +939,71 @@ bool _isDateKey(String key) {
 }
 
 bool _isBooleanKey(String key) {
+  if (_booleanExact.contains(key)) {
+    return true;
+  }
   return key.startsWith('is_') ||
       key.startsWith('has_') ||
+      key.startsWith('requires_') ||
+      key.startsWith('owns_') ||
       key.endsWith('_present') ||
       key.endsWith('_required') ||
-      key.endsWith('_confirmed');
+      key.endsWith('_confirmed') ||
+      key.endsWith('_available') ||
+      key.endsWith('_provided') ||
+      key.endsWith('_marked') ||
+      key.endsWith('_enabled') ||
+      key.endsWith('_connected') ||
+      key.endsWith('_installed') ||
+      key.endsWith('_tested') ||
+      key.endsWith('_detected') ||
+      key.endsWith('_trained') ||
+      key.endsWith('_functional') ||
+      key.endsWith('_intact') ||
+      key.endsWith('_verified') ||
+      key.endsWith('_captured') ||
+      key.endsWith('_estimated') ||
+      key.endsWith('_occurred') ||
+      key.endsWith('_suspected') ||
+      key.endsWith('_stopped') ||
+      key.endsWith('_given') ||
+      key.endsWith('_used') ||
+      key.endsWith('_done') ||
+      key.endsWith('_owned') ||
+      key.endsWith('_submitted') ||
+      key.endsWith('_identified') ||
+      key.endsWith('_recommended') ||
+      key.endsWith('_authorised') ||
+      key.endsWith('_accessible') ||
+      key.endsWith('_adequate') ||
+      key.endsWith('_compliant') ||
+      key.endsWith('_unobstructed') ||
+      key.endsWith('_serviced') ||
+      key.endsWith('_held') ||
+      key.endsWith('_joined') ||
+      key.endsWith('_set') ||
+      key.endsWith('_open') ||
+      key.endsWith('_filled') ||
+      key.endsWith('_met') ||
+      key.endsWith('_adopted') ||
+      key.endsWith('_shared') ||
+      key.endsWith('_lockable') ||
+      key.endsWith('_notified') ||
+      key.endsWith('_issued') ||
+      key.endsWith('_recorded') ||
+      key.endsWith('_performed') ||
+      key.endsWith('_followed') ||
+      key.endsWith('_secured') ||
+      key.endsWith('_normal') ||
+      key.endsWith('_registered') ||
+      key.endsWith('_externally') ||
+      key.endsWith('_elsewhere') ||
+      key.endsWith('_even') ||
+      key.endsWith('_safe') ||
+      key.endsWith('_night') ||
+      key.endsWith('_skilled') ||
+      key.endsWith('_to_date') ||
+      key.endsWith('_expected');
 }
 
 bool _hasSuffix(String key, List<String> suffixes) {

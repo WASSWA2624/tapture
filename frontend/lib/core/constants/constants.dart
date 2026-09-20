@@ -2,3 +2,4 @@
 library;
 
 export 'app_constants.dart';
+export 'template_assets.dart';

@@ -1,0 +1,1160 @@
+{
+  "schema_version": 1,
+  "template_key": "person_beneficiary",
+  "name": "templates.person_beneficiary.name",
+  "kind": "person",
+  "identity_fields": [
+    "person_uid",
+    "id_type",
+    "id_number",
+    "given_name",
+    "family_name",
+    "date_of_birth"
+  ],
+  "inherits_groups": [
+    "record_admin",
+    "location_context",
+    "evidence",
+    "review"
+  ],
+  "fields": [
+    {
+      "field_key": "person_uid",
+      "label": "templates.person_beneficiary.person_uid",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "identity"
+    },
+    {
+      "field_key": "name_prefix",
+      "label": "templates.person_beneficiary.name_prefix",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "given_name",
+      "label": "templates.person_beneficiary.given_name",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "identity"
+    },
+    {
+      "field_key": "middle_name",
+      "label": "templates.person_beneficiary.middle_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "family_name",
+      "label": "templates.person_beneficiary.family_name",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "identity"
+    },
+    {
+      "field_key": "preferred_name",
+      "label": "templates.person_beneficiary.preferred_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "name_suffix",
+      "label": "templates.person_beneficiary.name_suffix",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "name_in_local_script",
+      "label": "templates.person_beneficiary.name_in_local_script",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "sex",
+      "label": "templates.person_beneficiary.sex",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "demographics",
+      "options": [
+        {
+          "code": "female",
+          "label": "templates.choices.sex.female"
+        },
+        {
+          "code": "male",
+          "label": "templates.choices.sex.male"
+        },
+        {
+          "code": "other",
+          "label": "templates.choices.sex.other"
+        },
+        {
+          "code": "prefer_not_to_say",
+          "label": "templates.choices.sex.prefer_not_to_say"
+        }
+      ]
+    },
+    {
+      "field_key": "date_of_birth",
+      "label": "templates.person_beneficiary.date_of_birth",
+      "type": "text",
+      "required": "RECOMMENDED",
+      "group": "demographics"
+    },
+    {
+      "field_key": "age_years",
+      "label": "templates.person_beneficiary.age_years",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "demographics"
+    },
+    {
+      "field_key": "age_estimated",
+      "label": "templates.person_beneficiary.age_estimated",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "demographics"
+    },
+    {
+      "field_key": "age_group",
+      "label": "templates.person_beneficiary.age_group",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "demographics"
+    },
+    {
+      "field_key": "marital_status",
+      "label": "templates.person_beneficiary.marital_status",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "demographics",
+      "options": [
+        {
+          "code": "active",
+          "label": "templates.choices.marital_status.active"
+        },
+        {
+          "code": "inactive",
+          "label": "templates.choices.marital_status.inactive"
+        },
+        {
+          "code": "pending_verification",
+          "label": "templates.choices.marital_status.pending_verification"
+        },
+        {
+          "code": "exited",
+          "label": "templates.choices.marital_status.exited"
+        },
+        {
+          "code": "deceased",
+          "label": "templates.choices.marital_status.deceased"
+        },
+        {
+          "code": "disability_status_none",
+          "label": "templates.choices.marital_status.disability_status_none"
+        },
+        {
+          "code": "some_difficulty",
+          "label": "templates.choices.marital_status.some_difficulty"
+        },
+        {
+          "code": "a_lot_of_difficulty",
+          "label": "templates.choices.marital_status.a_lot_of_difficulty"
+        },
+        {
+          "code": "cannot_do_at_all",
+          "label": "templates.choices.marital_status.cannot_do_at_all"
+        }
+      ]
+    },
+    {
+      "field_key": "nationality",
+      "label": "templates.person_beneficiary.nationality",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "demographics"
+    },
+    {
+      "field_key": "ethnicity_group",
+      "label": "templates.person_beneficiary.ethnicity_group",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "demographics"
+    },
+    {
+      "field_key": "religion",
+      "label": "templates.person_beneficiary.religion",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "demographics"
+    },
+    {
+      "field_key": "language_primary",
+      "label": "templates.person_beneficiary.language_primary",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "demographics"
+    },
+    {
+      "field_key": "language_secondary",
+      "label": "templates.person_beneficiary.language_secondary",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "demographics"
+    },
+    {
+      "field_key": "literacy_level",
+      "label": "templates.person_beneficiary.literacy_level",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "demographics"
+    },
+    {
+      "field_key": "id_type",
+      "label": "templates.person_beneficiary.id_type",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "identification",
+      "options": [
+        {
+          "code": "national_id",
+          "label": "templates.choices.id_type.national_id"
+        },
+        {
+          "code": "passport",
+          "label": "templates.choices.id_type.passport"
+        },
+        {
+          "code": "voter_card",
+          "label": "templates.choices.id_type.voter_card"
+        },
+        {
+          "code": "refugee_card",
+          "label": "templates.choices.id_type.refugee_card"
+        },
+        {
+          "code": "driving_licence",
+          "label": "templates.choices.id_type.driving_licence"
+        },
+        {
+          "code": "birth_certificate",
+          "label": "templates.choices.id_type.birth_certificate"
+        },
+        {
+          "code": "none",
+          "label": "templates.choices.id_type.none"
+        }
+      ]
+    },
+    {
+      "field_key": "id_number",
+      "label": "templates.person_beneficiary.id_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "identification"
+    },
+    {
+      "field_key": "id_issue_date",
+      "label": "templates.person_beneficiary.id_issue_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "identification"
+    },
+    {
+      "field_key": "id_expiry_date",
+      "label": "templates.person_beneficiary.id_expiry_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "identification"
+    },
+    {
+      "field_key": "id_verified",
+      "label": "templates.person_beneficiary.id_verified",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "identification"
+    },
+    {
+      "field_key": "id_photo_filename",
+      "label": "templates.person_beneficiary.id_photo_filename",
+      "type": "photo_reference",
+      "required": "OPTIONAL",
+      "group": "identification"
+    },
+    {
+      "field_key": "secondary_id_type",
+      "label": "templates.person_beneficiary.secondary_id_type",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "identification",
+      "options": [
+        {
+          "code": "national_id",
+          "label": "templates.choices.secondary_id_type.national_id"
+        },
+        {
+          "code": "passport",
+          "label": "templates.choices.secondary_id_type.passport"
+        },
+        {
+          "code": "voter_card",
+          "label": "templates.choices.secondary_id_type.voter_card"
+        },
+        {
+          "code": "refugee_card",
+          "label": "templates.choices.secondary_id_type.refugee_card"
+        },
+        {
+          "code": "driving_licence",
+          "label": "templates.choices.secondary_id_type.driving_licence"
+        },
+        {
+          "code": "birth_certificate",
+          "label": "templates.choices.secondary_id_type.birth_certificate"
+        },
+        {
+          "code": "none",
+          "label": "templates.choices.secondary_id_type.none"
+        }
+      ]
+    },
+    {
+      "field_key": "secondary_id_number",
+      "label": "templates.person_beneficiary.secondary_id_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "identification"
+    },
+    {
+      "field_key": "phone_primary",
+      "label": "templates.person_beneficiary.phone_primary",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "contact"
+    },
+    {
+      "field_key": "phone_secondary",
+      "label": "templates.person_beneficiary.phone_secondary",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "contact"
+    },
+    {
+      "field_key": "phone_owner",
+      "label": "templates.person_beneficiary.phone_owner",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "contact"
+    },
+    {
+      "field_key": "email_address",
+      "label": "templates.person_beneficiary.email_address",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "contact"
+    },
+    {
+      "field_key": "alternate_contact_name",
+      "label": "templates.person_beneficiary.alternate_contact_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "contact"
+    },
+    {
+      "field_key": "alternate_contact_phone",
+      "label": "templates.person_beneficiary.alternate_contact_phone",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "contact"
+    },
+    {
+      "field_key": "alternate_contact_relationship",
+      "label": "templates.person_beneficiary.alternate_contact_relationship",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "contact"
+    },
+    {
+      "field_key": "plot_house_number",
+      "label": "templates.person_beneficiary.plot_house_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "address"
+    },
+    {
+      "field_key": "postal_address",
+      "label": "templates.person_beneficiary.postal_address",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "address"
+    },
+    {
+      "field_key": "landmark_description",
+      "label": "templates.person_beneficiary.landmark_description",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "address"
+    },
+    {
+      "field_key": "residence_duration_years",
+      "label": "templates.person_beneficiary.residence_duration_years",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "address"
+    },
+    {
+      "field_key": "residence_status",
+      "label": "templates.person_beneficiary.residence_status",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "address",
+      "options": [
+        {
+          "code": "active",
+          "label": "templates.choices.residence_status.active"
+        },
+        {
+          "code": "inactive",
+          "label": "templates.choices.residence_status.inactive"
+        },
+        {
+          "code": "pending_verification",
+          "label": "templates.choices.residence_status.pending_verification"
+        },
+        {
+          "code": "exited",
+          "label": "templates.choices.residence_status.exited"
+        },
+        {
+          "code": "deceased",
+          "label": "templates.choices.residence_status.deceased"
+        },
+        {
+          "code": "disability_status_none",
+          "label": "templates.choices.residence_status.disability_status_none"
+        },
+        {
+          "code": "some_difficulty",
+          "label": "templates.choices.residence_status.some_difficulty"
+        },
+        {
+          "code": "a_lot_of_difficulty",
+          "label": "templates.choices.residence_status.a_lot_of_difficulty"
+        },
+        {
+          "code": "cannot_do_at_all",
+          "label": "templates.choices.residence_status.cannot_do_at_all"
+        }
+      ]
+    },
+    {
+      "field_key": "household_id",
+      "label": "templates.person_beneficiary.household_id",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "household"
+    },
+    {
+      "field_key": "household_role",
+      "label": "templates.person_beneficiary.household_role",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "household"
+    },
+    {
+      "field_key": "household_size",
+      "label": "templates.person_beneficiary.household_size",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "household",
+      "unit": "count"
+    },
+    {
+      "field_key": "dependants_count",
+      "label": "templates.person_beneficiary.dependants_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "household"
+    },
+    {
+      "field_key": "head_of_household_name",
+      "label": "templates.person_beneficiary.head_of_household_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "household"
+    },
+    {
+      "field_key": "relationship_to_head",
+      "label": "templates.person_beneficiary.relationship_to_head",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "household"
+    },
+    {
+      "field_key": "education_level",
+      "label": "templates.person_beneficiary.education_level",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "socioeconomic"
+    },
+    {
+      "field_key": "years_of_schooling",
+      "label": "templates.person_beneficiary.years_of_schooling",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "socioeconomic",
+      "unit": "count"
+    },
+    {
+      "field_key": "occupation",
+      "label": "templates.person_beneficiary.occupation",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "socioeconomic"
+    },
+    {
+      "field_key": "employment_status",
+      "label": "templates.person_beneficiary.employment_status",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "socioeconomic",
+      "options": [
+        {
+          "code": "active",
+          "label": "templates.choices.employment_status.active"
+        },
+        {
+          "code": "inactive",
+          "label": "templates.choices.employment_status.inactive"
+        },
+        {
+          "code": "pending_verification",
+          "label": "templates.choices.employment_status.pending_verification"
+        },
+        {
+          "code": "exited",
+          "label": "templates.choices.employment_status.exited"
+        },
+        {
+          "code": "deceased",
+          "label": "templates.choices.employment_status.deceased"
+        },
+        {
+          "code": "disability_status_none",
+          "label": "templates.choices.employment_status.disability_status_none"
+        },
+        {
+          "code": "some_difficulty",
+          "label": "templates.choices.employment_status.some_difficulty"
+        },
+        {
+          "code": "a_lot_of_difficulty",
+          "label": "templates.choices.employment_status.a_lot_of_difficulty"
+        },
+        {
+          "code": "cannot_do_at_all",
+          "label": "templates.choices.employment_status.cannot_do_at_all"
+        }
+      ]
+    },
+    {
+      "field_key": "employer_name",
+      "label": "templates.person_beneficiary.employer_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "socioeconomic"
+    },
+    {
+      "field_key": "monthly_income_amount",
+      "label": "templates.person_beneficiary.monthly_income_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "socioeconomic"
+    },
+    {
+      "field_key": "income_currency",
+      "label": "templates.person_beneficiary.income_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "socioeconomic"
+    },
+    {
+      "field_key": "income_source_main",
+      "label": "templates.person_beneficiary.income_source_main",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "socioeconomic"
+    },
+    {
+      "field_key": "income_regularity",
+      "label": "templates.person_beneficiary.income_regularity",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "socioeconomic"
+    },
+    {
+      "field_key": "bank_account_present",
+      "label": "templates.person_beneficiary.bank_account_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "socioeconomic"
+    },
+    {
+      "field_key": "mobile_money_number_held",
+      "label": "templates.person_beneficiary.mobile_money_number_held",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "socioeconomic"
+    },
+    {
+      "field_key": "disability_status",
+      "label": "templates.person_beneficiary.disability_status",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "vulnerability",
+      "options": [
+        {
+          "code": "active",
+          "label": "templates.choices.disability_status.active"
+        },
+        {
+          "code": "inactive",
+          "label": "templates.choices.disability_status.inactive"
+        },
+        {
+          "code": "pending_verification",
+          "label": "templates.choices.disability_status.pending_verification"
+        },
+        {
+          "code": "exited",
+          "label": "templates.choices.disability_status.exited"
+        },
+        {
+          "code": "deceased",
+          "label": "templates.choices.disability_status.deceased"
+        },
+        {
+          "code": "disability_status_none",
+          "label": "templates.choices.disability_status.disability_status_none"
+        },
+        {
+          "code": "some_difficulty",
+          "label": "templates.choices.disability_status.some_difficulty"
+        },
+        {
+          "code": "a_lot_of_difficulty",
+          "label": "templates.choices.disability_status.a_lot_of_difficulty"
+        },
+        {
+          "code": "cannot_do_at_all",
+          "label": "templates.choices.disability_status.cannot_do_at_all"
+        }
+      ]
+    },
+    {
+      "field_key": "disability_type",
+      "label": "templates.person_beneficiary.disability_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "vulnerability"
+    },
+    {
+      "field_key": "disability_severity",
+      "label": "templates.person_beneficiary.disability_severity",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "vulnerability"
+    },
+    {
+      "field_key": "assistive_device_used",
+      "label": "templates.person_beneficiary.assistive_device_used",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "vulnerability"
+    },
+    {
+      "field_key": "chronic_illness_present",
+      "label": "templates.person_beneficiary.chronic_illness_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "vulnerability"
+    },
+    {
+      "field_key": "chronic_illness_type",
+      "label": "templates.person_beneficiary.chronic_illness_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "vulnerability"
+    },
+    {
+      "field_key": "pregnant",
+      "label": "templates.person_beneficiary.pregnant",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "vulnerability"
+    },
+    {
+      "field_key": "lactating",
+      "label": "templates.person_beneficiary.lactating",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "vulnerability"
+    },
+    {
+      "field_key": "vulnerability_category",
+      "label": "templates.person_beneficiary.vulnerability_category",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "vulnerability"
+    },
+    {
+      "field_key": "orphan_status",
+      "label": "templates.person_beneficiary.orphan_status",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "vulnerability",
+      "options": [
+        {
+          "code": "active",
+          "label": "templates.choices.orphan_status.active"
+        },
+        {
+          "code": "inactive",
+          "label": "templates.choices.orphan_status.inactive"
+        },
+        {
+          "code": "pending_verification",
+          "label": "templates.choices.orphan_status.pending_verification"
+        },
+        {
+          "code": "exited",
+          "label": "templates.choices.orphan_status.exited"
+        },
+        {
+          "code": "deceased",
+          "label": "templates.choices.orphan_status.deceased"
+        },
+        {
+          "code": "disability_status_none",
+          "label": "templates.choices.orphan_status.disability_status_none"
+        },
+        {
+          "code": "some_difficulty",
+          "label": "templates.choices.orphan_status.some_difficulty"
+        },
+        {
+          "code": "a_lot_of_difficulty",
+          "label": "templates.choices.orphan_status.a_lot_of_difficulty"
+        },
+        {
+          "code": "cannot_do_at_all",
+          "label": "templates.choices.orphan_status.cannot_do_at_all"
+        }
+      ]
+    },
+    {
+      "field_key": "displacement_status",
+      "label": "templates.person_beneficiary.displacement_status",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "vulnerability",
+      "options": [
+        {
+          "code": "active",
+          "label": "templates.choices.displacement_status.active"
+        },
+        {
+          "code": "inactive",
+          "label": "templates.choices.displacement_status.inactive"
+        },
+        {
+          "code": "pending_verification",
+          "label": "templates.choices.displacement_status.pending_verification"
+        },
+        {
+          "code": "exited",
+          "label": "templates.choices.displacement_status.exited"
+        },
+        {
+          "code": "deceased",
+          "label": "templates.choices.displacement_status.deceased"
+        },
+        {
+          "code": "disability_status_none",
+          "label": "templates.choices.displacement_status.disability_status_none"
+        },
+        {
+          "code": "some_difficulty",
+          "label": "templates.choices.displacement_status.some_difficulty"
+        },
+        {
+          "code": "a_lot_of_difficulty",
+          "label": "templates.choices.displacement_status.a_lot_of_difficulty"
+        },
+        {
+          "code": "cannot_do_at_all",
+          "label": "templates.choices.displacement_status.cannot_do_at_all"
+        }
+      ]
+    },
+    {
+      "field_key": "refugee_status",
+      "label": "templates.person_beneficiary.refugee_status",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "vulnerability",
+      "options": [
+        {
+          "code": "active",
+          "label": "templates.choices.refugee_status.active"
+        },
+        {
+          "code": "inactive",
+          "label": "templates.choices.refugee_status.inactive"
+        },
+        {
+          "code": "pending_verification",
+          "label": "templates.choices.refugee_status.pending_verification"
+        },
+        {
+          "code": "exited",
+          "label": "templates.choices.refugee_status.exited"
+        },
+        {
+          "code": "deceased",
+          "label": "templates.choices.refugee_status.deceased"
+        },
+        {
+          "code": "disability_status_none",
+          "label": "templates.choices.refugee_status.disability_status_none"
+        },
+        {
+          "code": "some_difficulty",
+          "label": "templates.choices.refugee_status.some_difficulty"
+        },
+        {
+          "code": "a_lot_of_difficulty",
+          "label": "templates.choices.refugee_status.a_lot_of_difficulty"
+        },
+        {
+          "code": "cannot_do_at_all",
+          "label": "templates.choices.refugee_status.cannot_do_at_all"
+        }
+      ]
+    },
+    {
+      "field_key": "beneficiary_category",
+      "label": "templates.person_beneficiary.beneficiary_category",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "programme"
+    },
+    {
+      "field_key": "programme_code",
+      "label": "templates.person_beneficiary.programme_code",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "programme"
+    },
+    {
+      "field_key": "registration_number",
+      "label": "templates.person_beneficiary.registration_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "programme"
+    },
+    {
+      "field_key": "enrolment_date",
+      "label": "templates.person_beneficiary.enrolment_date",
+      "type": "date",
+      "required": "RECOMMENDED",
+      "group": "programme"
+    },
+    {
+      "field_key": "referral_source",
+      "label": "templates.person_beneficiary.referral_source",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "programme"
+    },
+    {
+      "field_key": "entitlement_type",
+      "label": "templates.person_beneficiary.entitlement_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "programme"
+    },
+    {
+      "field_key": "status",
+      "label": "templates.person_beneficiary.status",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "programme",
+      "options": [
+        {
+          "code": "active",
+          "label": "templates.choices.status.active"
+        },
+        {
+          "code": "inactive",
+          "label": "templates.choices.status.inactive"
+        },
+        {
+          "code": "pending_verification",
+          "label": "templates.choices.status.pending_verification"
+        },
+        {
+          "code": "exited",
+          "label": "templates.choices.status.exited"
+        },
+        {
+          "code": "deceased",
+          "label": "templates.choices.status.deceased"
+        },
+        {
+          "code": "disability_status_none",
+          "label": "templates.choices.status.disability_status_none"
+        },
+        {
+          "code": "some_difficulty",
+          "label": "templates.choices.status.some_difficulty"
+        },
+        {
+          "code": "a_lot_of_difficulty",
+          "label": "templates.choices.status.a_lot_of_difficulty"
+        },
+        {
+          "code": "cannot_do_at_all",
+          "label": "templates.choices.status.cannot_do_at_all"
+        }
+      ]
+    },
+    {
+      "field_key": "exit_date",
+      "label": "templates.person_beneficiary.exit_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "programme"
+    },
+    {
+      "field_key": "exit_reason",
+      "label": "templates.person_beneficiary.exit_reason",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "programme"
+    },
+    {
+      "field_key": "benefit_type",
+      "label": "templates.person_beneficiary.benefit_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "benefit"
+    },
+    {
+      "field_key": "benefit_quantity",
+      "label": "templates.person_beneficiary.benefit_quantity",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "benefit"
+    },
+    {
+      "field_key": "benefit_unit",
+      "label": "templates.person_beneficiary.benefit_unit",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "benefit"
+    },
+    {
+      "field_key": "benefit_value_amount",
+      "label": "templates.person_beneficiary.benefit_value_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "benefit"
+    },
+    {
+      "field_key": "benefit_currency",
+      "label": "templates.person_beneficiary.benefit_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "benefit"
+    },
+    {
+      "field_key": "distribution_date",
+      "label": "templates.person_beneficiary.distribution_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "benefit"
+    },
+    {
+      "field_key": "distribution_point",
+      "label": "templates.person_beneficiary.distribution_point",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "benefit"
+    },
+    {
+      "field_key": "collected_by_name",
+      "label": "templates.person_beneficiary.collected_by_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "benefit"
+    },
+    {
+      "field_key": "collected_by_relationship",
+      "label": "templates.person_beneficiary.collected_by_relationship",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "benefit"
+    },
+    {
+      "field_key": "collection_signature",
+      "label": "templates.person_beneficiary.collection_signature",
+      "type": "signature",
+      "required": "OPTIONAL",
+      "group": "benefit"
+    },
+    {
+      "field_key": "proxy_authorised",
+      "label": "templates.person_beneficiary.proxy_authorised",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "benefit"
+    },
+    {
+      "field_key": "consent_given",
+      "label": "templates.person_beneficiary.consent_given",
+      "type": "boolean",
+      "required": "REQUIRED",
+      "group": "consent"
+    },
+    {
+      "field_key": "consent_date",
+      "label": "templates.person_beneficiary.consent_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "consent"
+    },
+    {
+      "field_key": "consent_method",
+      "label": "templates.person_beneficiary.consent_method",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "consent",
+      "options": [
+        {
+          "code": "written",
+          "label": "templates.choices.consent_method.written"
+        },
+        {
+          "code": "verbal",
+          "label": "templates.choices.consent_method.verbal"
+        },
+        {
+          "code": "digital_signature",
+          "label": "templates.choices.consent_method.digital_signature"
+        },
+        {
+          "code": "thumbprint",
+          "label": "templates.choices.consent_method.thumbprint"
+        }
+      ]
+    },
+    {
+      "field_key": "consent_document_filename",
+      "label": "templates.person_beneficiary.consent_document_filename",
+      "type": "document_reference",
+      "required": "OPTIONAL",
+      "group": "consent"
+    },
+    {
+      "field_key": "photo_consent_given",
+      "label": "templates.person_beneficiary.photo_consent_given",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "consent"
+    },
+    {
+      "field_key": "data_sharing_consent_given",
+      "label": "templates.person_beneficiary.data_sharing_consent_given",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "consent"
+    },
+    {
+      "field_key": "data_retention_until_date",
+      "label": "templates.person_beneficiary.data_retention_until_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "consent"
+    },
+    {
+      "field_key": "guardian_consent_required",
+      "label": "templates.person_beneficiary.guardian_consent_required",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "consent"
+    },
+    {
+      "field_key": "guardian_name",
+      "label": "templates.person_beneficiary.guardian_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "consent"
+    },
+    {
+      "field_key": "guardian_relationship",
+      "label": "templates.person_beneficiary.guardian_relationship",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "consent"
+    },
+    {
+      "field_key": "portrait_photo_filename",
+      "label": "templates.person_beneficiary.portrait_photo_filename",
+      "type": "photo_reference",
+      "required": "OPTIONAL",
+      "group": "evidence"
+    },
+    {
+      "field_key": "signature_image_filename",
+      "label": "templates.person_beneficiary.signature_image_filename",
+      "type": "document_reference",
+      "required": "OPTIONAL",
+      "group": "evidence"
+    },
+    {
+      "field_key": "fingerprint_captured",
+      "label": "templates.person_beneficiary.fingerprint_captured",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "evidence"
+    },
+    {
+      "field_key": "biometric_reference",
+      "label": "templates.person_beneficiary.biometric_reference",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "evidence"
+    },
+    {
+      "field_key": "monthly_income_currency",
+      "label": "templates.person_beneficiary.monthly_income_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "socioeconomic"
+    },
+    {
+      "field_key": "benefit_value_currency",
+      "label": "templates.person_beneficiary.benefit_value_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "benefit"
+    }
+  ],
+  "child_rows": []
+}

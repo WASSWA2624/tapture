@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "template_key": "generic_item",
+  "name": "templates.generic_item.name",
+  "kind": "generic",
+  "identity_fields": [
+    "item_identifier",
+    "item_name",
+    "site_code"
+  ],
+  "inherits_groups": [
+    "record_admin",
+    "location_context",
+    "evidence",
+    "review"
+  ],
+  "fields": [
+    {
+      "field_key": "item_identifier",
+      "label": "templates.generic_item.item_identifier",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "item_name",
+      "label": "templates.generic_item.item_name",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "identity"
+    },
+    {
+      "field_key": "description_raw",
+      "label": "templates.generic_item.description_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "description"
+    },
+    {
+      "field_key": "description_refined",
+      "label": "templates.generic_item.description_refined",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "description"
+    },
+    {
+      "field_key": "quantity_counted",
+      "label": "templates.generic_item.quantity_counted",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "quantity"
+    },
+    {
+      "field_key": "unit_of_measure",
+      "label": "templates.generic_item.unit_of_measure",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "quantity"
+    },
+    {
+      "field_key": "condition_grade",
+      "label": "templates.generic_item.condition_grade",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "status",
+      "label": "templates.generic_item.status",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "condition"
+    },
+    {
+      "field_key": "notes_raw",
+      "label": "templates.generic_item.notes_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "notes"
+    },
+    {
+      "field_key": "notes_refined",
+      "label": "templates.generic_item.notes_refined",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "notes"
+    }
+  ],
+  "child_rows": []
+}

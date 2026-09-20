@@ -1,0 +1,687 @@
+{
+  "schema_version": 1,
+  "template_key": "event_activity",
+  "name": "templates.event_activity.name",
+  "kind": "event",
+  "identity_fields": [
+    "activity_code",
+    "activity_title",
+    "start_date",
+    "venue_name"
+  ],
+  "inherits_groups": [
+    "record_admin",
+    "location_context",
+    "evidence",
+    "review"
+  ],
+  "fields": [
+    {
+      "field_key": "activity_code",
+      "label": "templates.event_activity.activity_code",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "identity"
+    },
+    {
+      "field_key": "activity_title",
+      "label": "templates.event_activity.activity_title",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "identity"
+    },
+    {
+      "field_key": "activity_type",
+      "label": "templates.event_activity.activity_type",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "identity",
+      "options": [
+        {
+          "code": "training",
+          "label": "templates.choices.activity_type.training"
+        },
+        {
+          "code": "workshop",
+          "label": "templates.choices.activity_type.workshop"
+        },
+        {
+          "code": "meeting",
+          "label": "templates.choices.activity_type.meeting"
+        },
+        {
+          "code": "outreach",
+          "label": "templates.choices.activity_type.outreach"
+        },
+        {
+          "code": "distribution",
+          "label": "templates.choices.activity_type.distribution"
+        },
+        {
+          "code": "campaign",
+          "label": "templates.choices.activity_type.campaign"
+        },
+        {
+          "code": "screening",
+          "label": "templates.choices.activity_type.screening"
+        },
+        {
+          "code": "demonstration",
+          "label": "templates.choices.activity_type.demonstration"
+        },
+        {
+          "code": "supervision_visit",
+          "label": "templates.choices.activity_type.supervision_visit"
+        },
+        {
+          "code": "launch",
+          "label": "templates.choices.activity_type.launch"
+        },
+        {
+          "code": "community_dialogue",
+          "label": "templates.choices.activity_type.community_dialogue"
+        },
+        {
+          "code": "other",
+          "label": "templates.choices.activity_type.other"
+        }
+      ]
+    },
+    {
+      "field_key": "programme_code",
+      "label": "templates.event_activity.programme_code",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "project_code",
+      "label": "templates.event_activity.project_code",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "start_date",
+      "label": "templates.event_activity.start_date",
+      "type": "date",
+      "required": "REQUIRED",
+      "group": "schedule"
+    },
+    {
+      "field_key": "start_time",
+      "label": "templates.event_activity.start_time",
+      "type": "time",
+      "required": "OPTIONAL",
+      "group": "schedule"
+    },
+    {
+      "field_key": "end_date",
+      "label": "templates.event_activity.end_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "schedule"
+    },
+    {
+      "field_key": "end_time",
+      "label": "templates.event_activity.end_time",
+      "type": "time",
+      "required": "OPTIONAL",
+      "group": "schedule"
+    },
+    {
+      "field_key": "duration_hours",
+      "label": "templates.event_activity.duration_hours",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "schedule"
+    },
+    {
+      "field_key": "session_count",
+      "label": "templates.event_activity.session_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "schedule"
+    },
+    {
+      "field_key": "planned_start_date",
+      "label": "templates.event_activity.planned_start_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "schedule"
+    },
+    {
+      "field_key": "delayed",
+      "label": "templates.event_activity.delayed",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "schedule"
+    },
+    {
+      "field_key": "delay_reason",
+      "label": "templates.event_activity.delay_reason",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "schedule"
+    },
+    {
+      "field_key": "venue_name",
+      "label": "templates.event_activity.venue_name",
+      "type": "text",
+      "required": "REQUIRED",
+      "group": "place"
+    },
+    {
+      "field_key": "venue_type",
+      "label": "templates.event_activity.venue_type",
+      "type": "choice",
+      "required": "OPTIONAL",
+      "group": "place",
+      "options": [
+        {
+          "code": "office",
+          "label": "templates.choices.venue_type.office"
+        },
+        {
+          "code": "community_hall",
+          "label": "templates.choices.venue_type.community_hall"
+        },
+        {
+          "code": "school",
+          "label": "templates.choices.venue_type.school"
+        },
+        {
+          "code": "health_facility",
+          "label": "templates.choices.venue_type.health_facility"
+        },
+        {
+          "code": "place_of_worship",
+          "label": "templates.choices.venue_type.place_of_worship"
+        },
+        {
+          "code": "open_ground",
+          "label": "templates.choices.venue_type.open_ground"
+        },
+        {
+          "code": "household",
+          "label": "templates.choices.venue_type.household"
+        },
+        {
+          "code": "online",
+          "label": "templates.choices.venue_type.online"
+        },
+        {
+          "code": "other",
+          "label": "templates.choices.venue_type.other"
+        }
+      ]
+    },
+    {
+      "field_key": "catchment_area",
+      "label": "templates.event_activity.catchment_area",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "place"
+    },
+    {
+      "field_key": "organiser_name",
+      "label": "templates.event_activity.organiser_name",
+      "type": "text",
+      "required": "RECOMMENDED",
+      "group": "organisation"
+    },
+    {
+      "field_key": "organiser_organisation",
+      "label": "templates.event_activity.organiser_organisation",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "organisation"
+    },
+    {
+      "field_key": "implementing_partner",
+      "label": "templates.event_activity.implementing_partner",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "organisation"
+    },
+    {
+      "field_key": "collaborating_partner",
+      "label": "templates.event_activity.collaborating_partner",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "organisation"
+    },
+    {
+      "field_key": "funding_source",
+      "label": "templates.event_activity.funding_source",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "organisation"
+    },
+    {
+      "field_key": "donor_name",
+      "label": "templates.event_activity.donor_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "organisation"
+    },
+    {
+      "field_key": "budget_amount",
+      "label": "templates.event_activity.budget_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "organisation"
+    },
+    {
+      "field_key": "budget_currency",
+      "label": "templates.event_activity.budget_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "organisation"
+    },
+    {
+      "field_key": "actual_cost_amount",
+      "label": "templates.event_activity.actual_cost_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "organisation"
+    },
+    {
+      "field_key": "cost_currency",
+      "label": "templates.event_activity.cost_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "organisation"
+    },
+    {
+      "field_key": "cost_variance_amount",
+      "label": "templates.event_activity.cost_variance_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "organisation"
+    },
+    {
+      "field_key": "participants_planned",
+      "label": "templates.event_activity.participants_planned",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "participation"
+    },
+    {
+      "field_key": "participants_actual",
+      "label": "templates.event_activity.participants_actual",
+      "type": "number",
+      "required": "REQUIRED",
+      "group": "participation"
+    },
+    {
+      "field_key": "participants_male",
+      "label": "templates.event_activity.participants_male",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "participation"
+    },
+    {
+      "field_key": "participants_female",
+      "label": "templates.event_activity.participants_female",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "participation"
+    },
+    {
+      "field_key": "participants_other_sex",
+      "label": "templates.event_activity.participants_other_sex",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "participation"
+    },
+    {
+      "field_key": "participants_under_18",
+      "label": "templates.event_activity.participants_under_18",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "participation"
+    },
+    {
+      "field_key": "participants_18_35",
+      "label": "templates.event_activity.participants_18_35",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "participation"
+    },
+    {
+      "field_key": "participants_36_59",
+      "label": "templates.event_activity.participants_36_59",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "participation"
+    },
+    {
+      "field_key": "participants_60_plus",
+      "label": "templates.event_activity.participants_60_plus",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "participation"
+    },
+    {
+      "field_key": "participants_with_disability",
+      "label": "templates.event_activity.participants_with_disability",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "participation"
+    },
+    {
+      "field_key": "participants_new",
+      "label": "templates.event_activity.participants_new",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "participation"
+    },
+    {
+      "field_key": "participants_returning",
+      "label": "templates.event_activity.participants_returning",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "participation"
+    },
+    {
+      "field_key": "attendance_sheet_filename",
+      "label": "templates.event_activity.attendance_sheet_filename",
+      "type": "document_reference",
+      "required": "OPTIONAL",
+      "group": "participation"
+    },
+    {
+      "field_key": "registration_method",
+      "label": "templates.event_activity.registration_method",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "participation"
+    },
+    {
+      "field_key": "facilitator_name",
+      "label": "templates.event_activity.facilitator_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "facilitation"
+    },
+    {
+      "field_key": "facilitator_organisation",
+      "label": "templates.event_activity.facilitator_organisation",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "facilitation"
+    },
+    {
+      "field_key": "facilitator_count",
+      "label": "templates.event_activity.facilitator_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "facilitation"
+    },
+    {
+      "field_key": "resource_person_name",
+      "label": "templates.event_activity.resource_person_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "facilitation"
+    },
+    {
+      "field_key": "language_used",
+      "label": "templates.event_activity.language_used",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "facilitation"
+    },
+    {
+      "field_key": "interpretation_provided",
+      "label": "templates.event_activity.interpretation_provided",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "facilitation"
+    },
+    {
+      "field_key": "objective_raw",
+      "label": "templates.event_activity.objective_raw",
+      "type": "long_text",
+      "required": "REQUIRED",
+      "group": "content"
+    },
+    {
+      "field_key": "objective_refined",
+      "label": "templates.event_activity.objective_refined",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "content"
+    },
+    {
+      "field_key": "topics_covered",
+      "label": "templates.event_activity.topics_covered",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "content"
+    },
+    {
+      "field_key": "methodology_used",
+      "label": "templates.event_activity.methodology_used",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "content"
+    },
+    {
+      "field_key": "materials_used",
+      "label": "templates.event_activity.materials_used",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "content"
+    },
+    {
+      "field_key": "curriculum_reference",
+      "label": "templates.event_activity.curriculum_reference",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "content"
+    },
+    {
+      "field_key": "session_duration_minutes",
+      "label": "templates.event_activity.session_duration_minutes",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "content"
+    },
+    {
+      "field_key": "item_distributed_name",
+      "label": "templates.event_activity.item_distributed_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "distribution"
+    },
+    {
+      "field_key": "item_quantity",
+      "label": "templates.event_activity.item_quantity",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "distribution",
+      "unit": "count"
+    },
+    {
+      "field_key": "item_unit",
+      "label": "templates.event_activity.item_unit",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "distribution"
+    },
+    {
+      "field_key": "item_value_amount",
+      "label": "templates.event_activity.item_value_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "distribution"
+    },
+    {
+      "field_key": "item_currency",
+      "label": "templates.event_activity.item_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "distribution"
+    },
+    {
+      "field_key": "distribution_list_filename",
+      "label": "templates.event_activity.distribution_list_filename",
+      "type": "document_reference",
+      "required": "OPTIONAL",
+      "group": "distribution"
+    },
+    {
+      "field_key": "recipients_count",
+      "label": "templates.event_activity.recipients_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "distribution"
+    },
+    {
+      "field_key": "outcome_raw",
+      "label": "templates.event_activity.outcome_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "outcome"
+    },
+    {
+      "field_key": "outcome_refined",
+      "label": "templates.event_activity.outcome_refined",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "outcome"
+    },
+    {
+      "field_key": "knowledge_assessment_done",
+      "label": "templates.event_activity.knowledge_assessment_done",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "outcome"
+    },
+    {
+      "field_key": "pre_test_average_score",
+      "label": "templates.event_activity.pre_test_average_score",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "outcome",
+      "unit": "count"
+    },
+    {
+      "field_key": "post_test_average_score",
+      "label": "templates.event_activity.post_test_average_score",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "outcome",
+      "unit": "count"
+    },
+    {
+      "field_key": "satisfaction_rating",
+      "label": "templates.event_activity.satisfaction_rating",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "outcome",
+      "unit": "count"
+    },
+    {
+      "field_key": "participants_certified_count",
+      "label": "templates.event_activity.participants_certified_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "outcome"
+    },
+    {
+      "field_key": "challenges_raw",
+      "label": "templates.event_activity.challenges_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "outcome"
+    },
+    {
+      "field_key": "challenges_refined",
+      "label": "templates.event_activity.challenges_refined",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "outcome"
+    },
+    {
+      "field_key": "lessons_learned_raw",
+      "label": "templates.event_activity.lessons_learned_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "outcome"
+    },
+    {
+      "field_key": "follow_up_required",
+      "label": "templates.event_activity.follow_up_required",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "follow_up"
+    },
+    {
+      "field_key": "follow_up_action_raw",
+      "label": "templates.event_activity.follow_up_action_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "follow_up"
+    },
+    {
+      "field_key": "follow_up_owner_name",
+      "label": "templates.event_activity.follow_up_owner_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "follow_up"
+    },
+    {
+      "field_key": "follow_up_date",
+      "label": "templates.event_activity.follow_up_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "follow_up"
+    },
+    {
+      "field_key": "next_activity_date",
+      "label": "templates.event_activity.next_activity_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "follow_up"
+    },
+    {
+      "field_key": "report_submitted",
+      "label": "templates.event_activity.report_submitted",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "follow_up"
+    },
+    {
+      "field_key": "report_filename",
+      "label": "templates.event_activity.report_filename",
+      "type": "document_reference",
+      "required": "OPTIONAL",
+      "group": "follow_up"
+    },
+    {
+      "field_key": "actual_cost_currency",
+      "label": "templates.event_activity.actual_cost_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "organisation"
+    },
+    {
+      "field_key": "cost_variance_currency",
+      "label": "templates.event_activity.cost_variance_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "organisation"
+    },
+    {
+      "field_key": "item_value_currency",
+      "label": "templates.event_activity.item_value_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "distribution"
+    }
+  ],
+  "child_rows": []
+}

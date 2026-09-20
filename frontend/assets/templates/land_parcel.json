@@ -1,0 +1,747 @@
+{
+  "schema_version": 1,
+  "template_key": "land_parcel",
+  "name": "templates.land_parcel.name",
+  "kind": "land",
+  "identity_fields": [
+    "parcel_number",
+    "title_number",
+    "block_number",
+    "plot_number"
+  ],
+  "inherits_groups": [
+    "record_admin",
+    "location_context",
+    "evidence",
+    "review"
+  ],
+  "fields": [
+    {
+      "field_key": "parcel_number",
+      "label": "templates.land_parcel.parcel_number",
+      "type": "number",
+      "required": "REQUIRED",
+      "group": "identity"
+    },
+    {
+      "field_key": "title_number",
+      "label": "templates.land_parcel.title_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "block_number",
+      "label": "templates.land_parcel.block_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "plot_number",
+      "label": "templates.land_parcel.plot_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "survey_reference",
+      "label": "templates.land_parcel.survey_reference",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "cadastral_sheet_number",
+      "label": "templates.land_parcel.cadastral_sheet_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "local_reference_name",
+      "label": "templates.land_parcel.local_reference_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "identity"
+    },
+    {
+      "field_key": "tenure_type",
+      "label": "templates.land_parcel.tenure_type",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "tenure",
+      "options": [
+        {
+          "code": "freehold",
+          "label": "templates.choices.tenure_type.freehold"
+        },
+        {
+          "code": "leasehold",
+          "label": "templates.choices.tenure_type.leasehold"
+        },
+        {
+          "code": "customary",
+          "label": "templates.choices.tenure_type.customary"
+        },
+        {
+          "code": "mailo",
+          "label": "templates.choices.tenure_type.mailo"
+        },
+        {
+          "code": "public",
+          "label": "templates.choices.tenure_type.public"
+        },
+        {
+          "code": "communal",
+          "label": "templates.choices.tenure_type.communal"
+        },
+        {
+          "code": "licence",
+          "label": "templates.choices.tenure_type.licence"
+        },
+        {
+          "code": "informal",
+          "label": "templates.choices.tenure_type.informal"
+        }
+      ]
+    },
+    {
+      "field_key": "registered_owner_name",
+      "label": "templates.land_parcel.registered_owner_name",
+      "type": "text",
+      "required": "RECOMMENDED",
+      "group": "tenure"
+    },
+    {
+      "field_key": "owner_type",
+      "label": "templates.land_parcel.owner_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "owner_id_number",
+      "label": "templates.land_parcel.owner_id_number",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "owner_contact_phone",
+      "label": "templates.land_parcel.owner_contact_phone",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "co_owner_name",
+      "label": "templates.land_parcel.co_owner_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "acquisition_method",
+      "label": "templates.land_parcel.acquisition_method",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "acquisition_date",
+      "label": "templates.land_parcel.acquisition_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "lease_start_date",
+      "label": "templates.land_parcel.lease_start_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "lease_end_date",
+      "label": "templates.land_parcel.lease_end_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "lease_term_years",
+      "label": "templates.land_parcel.lease_term_years",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "annual_ground_rent_amount",
+      "label": "templates.land_parcel.annual_ground_rent_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "ownership_evidence_type",
+      "label": "templates.land_parcel.ownership_evidence_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "ownership_document_filename",
+      "label": "templates.land_parcel.ownership_document_filename",
+      "type": "document_reference",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "title_registered",
+      "label": "templates.land_parcel.title_registered",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "dispute_present",
+      "label": "templates.land_parcel.dispute_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "dispute_type",
+      "label": "templates.land_parcel.dispute_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "dispute_description_raw",
+      "label": "templates.land_parcel.dispute_description_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "dispute_parties",
+      "label": "templates.land_parcel.dispute_parties",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "area_value",
+      "label": "templates.land_parcel.area_value",
+      "type": "number",
+      "required": "REQUIRED",
+      "group": "measurement",
+      "unit": "count"
+    },
+    {
+      "field_key": "area_unit",
+      "label": "templates.land_parcel.area_unit",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "measurement",
+      "options": [
+        {
+          "code": "hectare",
+          "label": "templates.choices.area_unit.hectare"
+        },
+        {
+          "code": "acre",
+          "label": "templates.choices.area_unit.acre"
+        },
+        {
+          "code": "square_metre",
+          "label": "templates.choices.area_unit.square_metre"
+        },
+        {
+          "code": "square_foot",
+          "label": "templates.choices.area_unit.square_foot"
+        },
+        {
+          "code": "decimal",
+          "label": "templates.choices.area_unit.decimal"
+        }
+      ]
+    },
+    {
+      "field_key": "perimeter_m",
+      "label": "templates.land_parcel.perimeter_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "corner_point_count",
+      "label": "templates.land_parcel.corner_point_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "boundary_capture_method",
+      "label": "templates.land_parcel.boundary_capture_method",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "boundary_file_reference",
+      "label": "templates.land_parcel.boundary_file_reference",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "boundary_marked",
+      "label": "templates.land_parcel.boundary_marked",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "boundary_marker_type",
+      "label": "templates.land_parcel.boundary_marker_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "boundary_dispute_present",
+      "label": "templates.land_parcel.boundary_dispute_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "north_neighbour_name",
+      "label": "templates.land_parcel.north_neighbour_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "south_neighbour_name",
+      "label": "templates.land_parcel.south_neighbour_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "east_neighbour_name",
+      "label": "templates.land_parcel.east_neighbour_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "west_neighbour_name",
+      "label": "templates.land_parcel.west_neighbour_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "measurement"
+    },
+    {
+      "field_key": "road_access_present",
+      "label": "templates.land_parcel.road_access_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "access"
+    },
+    {
+      "field_key": "access_road_type",
+      "label": "templates.land_parcel.access_road_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "access"
+    },
+    {
+      "field_key": "access_road_condition",
+      "label": "templates.land_parcel.access_road_condition",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "access"
+    },
+    {
+      "field_key": "distance_to_main_road_m",
+      "label": "templates.land_parcel.distance_to_main_road_m",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "access"
+    },
+    {
+      "field_key": "distance_to_town_km",
+      "label": "templates.land_parcel.distance_to_town_km",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "access"
+    },
+    {
+      "field_key": "right_of_way_present",
+      "label": "templates.land_parcel.right_of_way_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "access"
+    },
+    {
+      "field_key": "terrain_type",
+      "label": "templates.land_parcel.terrain_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "physical"
+    },
+    {
+      "field_key": "slope_percent",
+      "label": "templates.land_parcel.slope_percent",
+      "type": "percentage",
+      "required": "OPTIONAL",
+      "group": "physical"
+    },
+    {
+      "field_key": "soil_type",
+      "label": "templates.land_parcel.soil_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "physical"
+    },
+    {
+      "field_key": "soil_depth_cm",
+      "label": "templates.land_parcel.soil_depth_cm",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "physical"
+    },
+    {
+      "field_key": "drainage_status",
+      "label": "templates.land_parcel.drainage_status",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "physical"
+    },
+    {
+      "field_key": "flood_risk_level",
+      "label": "templates.land_parcel.flood_risk_level",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "physical"
+    },
+    {
+      "field_key": "erosion_present",
+      "label": "templates.land_parcel.erosion_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "physical"
+    },
+    {
+      "field_key": "rock_outcrop_present",
+      "label": "templates.land_parcel.rock_outcrop_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "physical"
+    },
+    {
+      "field_key": "water_source_present",
+      "label": "templates.land_parcel.water_source_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "physical"
+    },
+    {
+      "field_key": "water_source_type",
+      "label": "templates.land_parcel.water_source_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "physical"
+    },
+    {
+      "field_key": "vegetation_cover_type",
+      "label": "templates.land_parcel.vegetation_cover_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "physical"
+    },
+    {
+      "field_key": "tree_cover_percent",
+      "label": "templates.land_parcel.tree_cover_percent",
+      "type": "percentage",
+      "required": "OPTIONAL",
+      "group": "physical"
+    },
+    {
+      "field_key": "current_land_use",
+      "label": "templates.land_parcel.current_land_use",
+      "type": "choice",
+      "required": "REQUIRED",
+      "group": "use",
+      "options": [
+        {
+          "code": "residential",
+          "label": "templates.choices.current_land_use.residential"
+        },
+        {
+          "code": "commercial",
+          "label": "templates.choices.current_land_use.commercial"
+        },
+        {
+          "code": "industrial",
+          "label": "templates.choices.current_land_use.industrial"
+        },
+        {
+          "code": "institutional",
+          "label": "templates.choices.current_land_use.institutional"
+        },
+        {
+          "code": "agricultural",
+          "label": "templates.choices.current_land_use.agricultural"
+        },
+        {
+          "code": "grazing",
+          "label": "templates.choices.current_land_use.grazing"
+        },
+        {
+          "code": "forest",
+          "label": "templates.choices.current_land_use.forest"
+        },
+        {
+          "code": "wetland",
+          "label": "templates.choices.current_land_use.wetland"
+        },
+        {
+          "code": "recreational",
+          "label": "templates.choices.current_land_use.recreational"
+        },
+        {
+          "code": "road_reserve",
+          "label": "templates.choices.current_land_use.road_reserve"
+        },
+        {
+          "code": "vacant",
+          "label": "templates.choices.current_land_use.vacant"
+        },
+        {
+          "code": "mixed",
+          "label": "templates.choices.current_land_use.mixed"
+        }
+      ]
+    },
+    {
+      "field_key": "previous_land_use",
+      "label": "templates.land_parcel.previous_land_use",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "use"
+    },
+    {
+      "field_key": "planned_land_use",
+      "label": "templates.land_parcel.planned_land_use",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "use"
+    },
+    {
+      "field_key": "zoning_classification",
+      "label": "templates.land_parcel.zoning_classification",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "use"
+    },
+    {
+      "field_key": "developed",
+      "label": "templates.land_parcel.developed",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "use"
+    },
+    {
+      "field_key": "development_type",
+      "label": "templates.land_parcel.development_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "use"
+    },
+    {
+      "field_key": "structures_present_count",
+      "label": "templates.land_parcel.structures_present_count",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "use"
+    },
+    {
+      "field_key": "structure_description_raw",
+      "label": "templates.land_parcel.structure_description_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "group": "use"
+    },
+    {
+      "field_key": "cultivated_area_value",
+      "label": "templates.land_parcel.cultivated_area_value",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "use",
+      "unit": "count"
+    },
+    {
+      "field_key": "crop_type_main",
+      "label": "templates.land_parcel.crop_type_main",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "use"
+    },
+    {
+      "field_key": "fallow_area_value",
+      "label": "templates.land_parcel.fallow_area_value",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "use",
+      "unit": "count"
+    },
+    {
+      "field_key": "encroachment_present",
+      "label": "templates.land_parcel.encroachment_present",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "use"
+    },
+    {
+      "field_key": "encroachment_type",
+      "label": "templates.land_parcel.encroachment_type",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "use"
+    },
+    {
+      "field_key": "encroachment_area_value",
+      "label": "templates.land_parcel.encroachment_area_value",
+      "type": "number",
+      "required": "OPTIONAL",
+      "group": "use",
+      "unit": "count"
+    },
+    {
+      "field_key": "electricity_available",
+      "label": "templates.land_parcel.electricity_available",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "services"
+    },
+    {
+      "field_key": "water_supply_available",
+      "label": "templates.land_parcel.water_supply_available",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "services"
+    },
+    {
+      "field_key": "sewer_available",
+      "label": "templates.land_parcel.sewer_available",
+      "type": "boolean",
+      "required": "OPTIONAL",
+      "group": "services"
+    },
+    {
+      "field_key": "telecom_coverage",
+      "label": "templates.land_parcel.telecom_coverage",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "services"
+    },
+    {
+      "field_key": "valuation_amount",
+      "label": "templates.land_parcel.valuation_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "valuation"
+    },
+    {
+      "field_key": "valuation_currency",
+      "label": "templates.land_parcel.valuation_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "valuation"
+    },
+    {
+      "field_key": "valuation_date",
+      "label": "templates.land_parcel.valuation_date",
+      "type": "date",
+      "required": "OPTIONAL",
+      "group": "valuation"
+    },
+    {
+      "field_key": "valuation_method",
+      "label": "templates.land_parcel.valuation_method",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "valuation"
+    },
+    {
+      "field_key": "valuer_name",
+      "label": "templates.land_parcel.valuer_name",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "valuation"
+    },
+    {
+      "field_key": "rateable_value_amount",
+      "label": "templates.land_parcel.rateable_value_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "valuation"
+    },
+    {
+      "field_key": "annual_rates_amount",
+      "label": "templates.land_parcel.annual_rates_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "valuation"
+    },
+    {
+      "field_key": "rates_payment_status",
+      "label": "templates.land_parcel.rates_payment_status",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "valuation"
+    },
+    {
+      "field_key": "rates_arrears_amount",
+      "label": "templates.land_parcel.rates_arrears_amount",
+      "type": "currency",
+      "required": "OPTIONAL",
+      "group": "valuation"
+    },
+    {
+      "field_key": "annual_ground_rent_currency",
+      "label": "templates.land_parcel.annual_ground_rent_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "tenure"
+    },
+    {
+      "field_key": "rateable_value_currency",
+      "label": "templates.land_parcel.rateable_value_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "valuation"
+    },
+    {
+      "field_key": "annual_rates_currency",
+      "label": "templates.land_parcel.annual_rates_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "valuation"
+    },
+    {
+      "field_key": "rates_arrears_currency",
+      "label": "templates.land_parcel.rates_arrears_currency",
+      "type": "text",
+      "required": "OPTIONAL",
+      "group": "valuation"
+    }
+  ],
+  "child_rows": []
+}
