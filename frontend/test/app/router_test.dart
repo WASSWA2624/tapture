@@ -39,6 +39,7 @@ void main() {
     );
     expect(AppRoutes.templateAliases('ab'), '/templates/ab/aliases');
     expect(AppRoutes.templateChecklist('ab'), '/templates/ab/checklist');
+    expect(AppRoutes.templateDetection('ab'), '/templates/ab/detection');
     expect(
       AppRoutes.captureRow(projectId: 'ab', templateId: 't1', rowId: 'm-1'),
       '/projects/ab/capture?template=t1&row=m-1',

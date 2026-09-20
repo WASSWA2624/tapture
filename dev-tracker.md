@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**103 of 281 tasks complete (36.7%)** · last updated 2026-09-20
+**104 of 281 tasks complete (37.0%)** · last updated 2026-09-20
 
 `███████████████░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -16,7 +16,7 @@
 | 06 — Application shell | 5 | 5 | `██████████████` 100% |
 | 07 — Account and settings | 5 | 5 | `██████████████` 100% |
 | 08 — Projects | 6 | 6 | `██████████████` 100% |
-| 09 — Templates | 16 | 17 | `█████████████░` 94% |
+| 09 — Templates | 17 | 17 | `██████████████` 100% |
 | 10 — Reference data | 0 | 8 | `░░░░░░░░░░░░░░` 0% |
 | 11 — Context | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 12 — Capture | 0 | 22 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **103** | **281** | `█████░░░░░░░░░` 36.7% |
+| **Total** | **104** | **281** | `█████░░░░░░░░░` 37.0% |
 
 ## Completed
 
@@ -138,6 +138,7 @@
 | 101 — Read a spreadsheet and infer its shape | 2026-09-20 | `WorkbookReader` opens XLSX or CSV off the UI thread via the isolate runner, reporting sheet names, used range, merged cells and rows. Password-protected and corrupt files fail with distinct copy. `HeaderDetection` scores title blocks below unique label rows. `TypeInference` proposes registry type names, units and option lists as editable suggestions. Guarded by a twenty-sheet isolate open, title-block and CSV mapping, corrupt and password fixtures, and mixed-column inference tests. |
 | 102 — Confirm the column mapping and create the template | 2026-09-20 | `XlsxMappingScreen` shows one `AppListTile` per spreadsheet column — source header on the left, proposed field, type and rule on the right — each editable and skippable. Nothing is written until confirm. `XlsxTemplateImport` then saves the template with sheet name, header row and column letters, and copies the chosen workbook byte-identically into the project `templates/` folder once. Guarded by empty, failure and skip widget tests plus a before-and-after SHA-256 comparison of the original and the stored copy. |
 | 103 — Predefined rows, aliases and the capture checklist | 2026-09-20 | `PredefinedRowsImport` maps identifier and label columns onto checklist rows, keeps the original spreadsheet line for write-back, and matches local names such as "BP machine" to "Blood Pressure Machine". `RowAliasesScreen` edits per-row aliases and can overlay a chosen column. `ChecklistScreen` is a virtualised list grouped by room, with `AppStatusPill` found/missing and "Found X of Y" per group; tapping a row starts capture. Guarded by in-memory and fake repository tests plus empty/failure widget tests of both screens. |
+| 104 — Detection profile editor | 2026-09-20 | `DetectionProfileScreen` edits object classes, keywords, identifier patterns, linked datasets and negative keywords on `TemplateDef.detection`. Identifier patterns are the validation patterns fields already declare. A shipped template gets kind, identity labels and field patterns as defaults; a blank template keeps an empty profile that matches nothing. A negative keyword excludes a profile the positives would have matched. Guarded by empty/failure widget tests and a negative-keyword unit test. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -463,7 +464,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 09 — Templates
 
-*16 of 17 complete.*
+*17 of 17 complete.*
 
 - [x] [088 — Template domain model and repository](dev-plan/09-templates/088-template-model.md)
 - [x] [089 — Field type registry](dev-plan/09-templates/089-field-type-registry.md)
@@ -481,7 +482,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [101 — Read a spreadsheet and infer its shape](dev-plan/09-templates/101-xlsx-read-workbook.md)
 - [x] [102 — Confirm the column mapping and create the template](dev-plan/09-templates/102-xlsx-mapping-screen.md)
 - [x] [103 — Predefined rows, aliases and the capture checklist](dev-plan/09-templates/103-predefined-rows-import.md)
-- [ ] [104 — Detection profile editor](dev-plan/09-templates/104-template-detection-profile.md)
+- [x] [104 — Detection profile editor](dev-plan/09-templates/104-template-detection-profile.md)
 
 ### 10 — Reference data
 

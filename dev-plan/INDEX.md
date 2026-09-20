@@ -159,7 +159,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [101 — Read a spreadsheet and infer its shape](09-templates/101-xlsx-read-workbook.md)
 - [x] [102 — Confirm the column mapping and create the template](09-templates/102-xlsx-mapping-screen.md)
 - [x] [103 — Predefined rows, aliases and the capture checklist](09-templates/103-predefined-rows-import.md)
-- [ ] [104 — Detection profile editor](09-templates/104-template-detection-profile.md)
+- [x] [104 — Detection profile editor](09-templates/104-template-detection-profile.md)
 
 ## 10 — Reference data
 

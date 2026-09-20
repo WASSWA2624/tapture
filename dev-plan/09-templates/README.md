@@ -20,4 +20,4 @@ Tasks 088–104 (17). Each file is a standalone implementation prompt.
 - [x] [101 — Read a spreadsheet and infer its shape](101-xlsx-read-workbook.md)
 - [x] [102 — Confirm the column mapping and create the template](102-xlsx-mapping-screen.md)
 - [x] [103 — Predefined rows, aliases and the capture checklist](103-predefined-rows-import.md)
-- [ ] [104 — Detection profile editor](104-template-detection-profile.md)
+- [x] [104 — Detection profile editor](104-template-detection-profile.md)

@@ -24,6 +24,6 @@ object classes, keywords, identifier patterns, linked datasets and negative keyw
 
 ## Definition of done
 
-- [ ] Every template carries a profile, with sensible defaults for shipped ones and a working empty one for blanks.
-- [ ] A negative keyword demotes a template that the positive keywords would have matched.
-- [ ] Tests: widget test of `detection_profile_screen.dart` covering empty and failure states; unit test that a negative keyword excludes an otherwise-matching profile.
+- [x] Every template carries a profile, with sensible defaults for shipped ones and a working empty one for blanks.
+- [x] A negative keyword demotes a template that the positive keywords would have matched.
+- [x] Tests: widget test of `detection_profile_screen.dart` covering empty and failure states; unit test that a negative keyword excludes an otherwise-matching profile.

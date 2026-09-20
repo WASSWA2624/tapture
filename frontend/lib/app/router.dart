@@ -28,6 +28,7 @@ import 'package:tapture/features/settings/presentation/settings_screen.dart';
 import 'package:tapture/features/settings/presentation/storage_settings_screen.dart';
 import 'package:tapture/features/settings/settings.dart';
 import 'package:tapture/features/templates/presentation/checklist_screen.dart';
+import 'package:tapture/features/templates/presentation/detection_profile_screen.dart';
 import 'package:tapture/features/templates/presentation/field_add_sheet.dart';
 import 'package:tapture/features/templates/presentation/field_list_screen.dart';
 import 'package:tapture/features/templates/presentation/identity_fields_screen.dart';
@@ -152,6 +153,9 @@ abstract final class AppRoutes {
 
   /// Capture checklist for [id]. Task 103 owns the screen.
   static String templateChecklist(String id) => '${template(id)}/checklist';
+
+  /// Detection profile for [id]. Task 104 owns the screen.
+  static String templateDetection(String id) => '${template(id)}/detection';
 
   /// Query key for the template a capture was opened from.
   static const String templateQuery = 'template';
@@ -518,6 +522,14 @@ List<RouteBase> get _routes {
                       path: 'checklist',
                       builder: (BuildContext _, GoRouterState state) {
                         return ChecklistScreen(
+                          templateId: state.pathParameters['templateId']!,
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      path: 'detection',
+                      builder: (BuildContext _, GoRouterState state) {
+                        return DetectionProfileScreen(
                           templateId: state.pathParameters['templateId']!,
                         );
                       },

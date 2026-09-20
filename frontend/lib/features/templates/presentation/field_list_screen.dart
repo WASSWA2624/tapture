@@ -75,6 +75,11 @@ class FieldListScreen extends ConsumerWidget {
                 icon: Icons.checklist,
                 onTap: () => _openChecklist(context, template.id),
               ),
+              AppOverflowAction(
+                label: Copy.detectionProfileTitle,
+                icon: Icons.center_focus_strong,
+                onTap: () => _openDetection(context, template.id),
+              ),
             ],
       footer: template == null
           ? null
@@ -366,6 +371,10 @@ void _openChecklist(BuildContext context, String templateId) {
   context.go(_checklistLocation(templateId));
 }
 
+void _openDetection(BuildContext context, String templateId) {
+  context.go(_detectionLocation(templateId));
+}
+
 void _openEdit(BuildContext context, String templateId, String fieldKey) {
   context.go(_editLocation(templateId, fieldKey));
 }
@@ -380,6 +389,7 @@ const String _outputSegment = 'output';
 const String _migrateSegment = 'migrate';
 const String _aliasesSegment = 'aliases';
 const String _checklistSegment = 'checklist';
+const String _detectionSegment = 'detection';
 
 String _addLocation(String id) {
   return '$_templatesRoot/${Uri.encodeComponent(id)}/$_fieldsSegment/'
@@ -413,4 +423,8 @@ String _aliasesLocation(String id) {
 
 String _checklistLocation(String id) {
   return '$_templatesRoot/${Uri.encodeComponent(id)}/$_checklistSegment';
+}
+
+String _detectionLocation(String id) {
+  return '$_templatesRoot/${Uri.encodeComponent(id)}/$_detectionSegment';
 }

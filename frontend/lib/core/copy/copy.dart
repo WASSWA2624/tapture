@@ -803,6 +803,57 @@ abstract final class Copy {
     return '$group · Found $found of $total';
   }
 
+  /// Title of the detection-profile screen.
+  static const String detectionProfileTitle = 'Detection';
+
+  /// What the detection profile decides.
+  static const String detectionProfileExplain =
+      'A photo is matched to this template from these signals. A negative '
+      'keyword rules it out.';
+
+  /// Headline when no template is open.
+  static const String detectionProfileEmptyHeadline =
+      'No template to configure';
+
+  /// Body when the detection screen has no template.
+  static const String detectionProfileEmptyMessage =
+      'Open a template first, then set how a photo is matched to it.';
+
+  /// Field label for vision object classes.
+  static const String detectionProfileClasses = 'Object classes';
+
+  /// Field label for OCR keywords.
+  static const String detectionProfileKeywords = 'Keywords';
+
+  /// Section for identifier patterns reused from field validation.
+  static const String detectionProfilePatterns = 'Identifier patterns';
+
+  /// Section for datasets already bound on lookup fields.
+  static const String detectionProfileDatasets = 'Linked datasets';
+
+  /// Field label for keywords that exclude this template.
+  static const String detectionProfileNegative = 'Negative keywords';
+
+  /// Hint on a comma-separated signal list.
+  static const String detectionProfileHint = 'Separate with a comma';
+
+  /// Shown when no field has a validation pattern to reuse.
+  static const String detectionProfileNoPatterns =
+      'Identifier patterns come from field validation. Add a pattern on a '
+      'field first.';
+
+  /// Shown when no lookup field names a dataset.
+  static const String detectionProfileNoDatasets =
+      'Linked datasets come from lookup fields. Bind a lookup first.';
+
+  /// The template vanished before the profile was saved.
+  static const String detectionProfileMissing =
+      'That template is no longer on this device.';
+
+  /// Recovery when the template is missing.
+  static const String detectionProfileMissingRecovery =
+      'Open the template list and try again.';
+
   /// Soft-deletes a template no record uses.
   static const String templatesDelete = 'Delete template';
 
