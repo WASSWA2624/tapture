@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart' hide StepState;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/color_swatches.dart';
 import 'package:tapture/app/theme/dimensions.dart';
@@ -13,6 +14,7 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_brand_lockup.dart';
 import 'package:tapture/core/widgets/app_button.dart';
@@ -47,6 +49,8 @@ import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
+import 'package:tapture/core/widgets/fields/field_editor.dart';
+import 'package:tapture/core/widgets/fields/field_value.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/forms/keep_focused_visible.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
@@ -629,6 +633,25 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),
+      ProviderScope(
+        overrides: <Override>[
+          fieldEditorBindingsProvider.overrideWithValue(_galleryBindings),
+        ],
+        child: const FieldEditor(
+          field: (
+            fieldKey: 'serial',
+            label: 'Serial',
+            type: 'text',
+            options: <Object>[],
+            helpText: null,
+            unit: null,
+            validation: <String, Object?>{},
+          ),
+          value: FieldValue(fieldKey: 'serial', value: 'ABB-1'),
+          onChanged: _ignoreFieldValue,
+        ),
+      ),
+      const SizedBox(height: Space.x4),
       AppForm(
         fields: <Widget>[
           AppTextField(
@@ -858,4 +881,32 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
   static void _noop() {}
 
   static void _ignoreAnchor(Rect _) {}
+}
+
+void _ignoreFieldValue(FieldValue _) {}
+
+const FieldEditorBindings _galleryBindings = (
+  kindOf: _galleryKind,
+  validate: _galleryValidate,
+  normalise: _galleryNormalise,
+);
+
+String _galleryKind(String _) => 'appTextField';
+
+Result<void> _galleryValidate({
+  required String type,
+  required Object? value,
+  required List<Object> options,
+  required Map<String, Object?> validation,
+}) {
+  return const Success<void>(null);
+}
+
+Object? _galleryNormalise({
+  required String type,
+  required Object? value,
+  required List<Object> options,
+  required Map<String, Object?> validation,
+}) {
+  return value;
 }

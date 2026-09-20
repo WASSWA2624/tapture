@@ -33,7 +33,7 @@ class FieldEditor extends ConsumerWidget {
 
 ## Definition of done
 
-- [ ] Every correction is recorded with what it replaced.
-- [ ] Editing through this widget yields the same behaviour in review, records, capture and duplicate resolution.
-- [ ] Tests: widget test asserting the audit row and the MANUAL source after an edit, across at least one text, one choice and one date field.
-- [ ] Contract above is implemented exactly, with nothing else made public.
+- [x] Every correction is recorded with what it replaced.
+- [x] Editing through this widget yields the same behaviour in review, records, capture and duplicate resolution.
+- [x] Tests: widget test asserting the audit row and the MANUAL source after an edit, across at least one text, one choice and one date field.
+- [x] Contract above is implemented exactly, with nothing else made public.

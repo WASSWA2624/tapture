@@ -34,6 +34,8 @@ export 'fields/app_radio_group.dart';
 export 'fields/app_switch_tile.dart';
 export 'fields/app_text_field.dart';
 export 'fields/choice.dart';
+export 'fields/field_editor.dart';
+export 'fields/field_value.dart';
 export 'forms/app_form.dart';
 export 'forms/focus_actions.dart';
 export 'forms/keep_focused_visible.dart';

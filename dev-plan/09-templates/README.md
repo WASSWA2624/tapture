@@ -13,7 +13,7 @@ Tasks 088–104 (17). Each file is a standalone implementation prompt.
 - [x] [094 — Field list editor, reorder and delete](094-field-list-editor.md)
 - [x] [095 — Add and edit a field, with Advanced, validation and options](095-field-add-basic.md)
 - [x] [096 — Required columns screen](096-required-columns-screen.md)
-- [ ] [097 — Field editor widget](097-field-editor-inline.md)
+- [x] [097 — Field editor widget](097-field-editor-inline.md)
 - [ ] [098 — Identity fields and output column mapping](098-identity-fields.md)
 - [ ] [099 — Template versioning and record migration](099-template-versioning.md)
 - [ ] [100 — Export and import a template as JSON](100-template-export-json.md)

@@ -9,3 +9,5 @@ export 'domain/field_type_registry.dart';
 export 'domain/template_def.dart';
 export 'domain/template_row.dart';
 export 'domain/template_version.dart';
+export 'presentation/field_editor_bindings.dart'
+    show fieldEditorField, templateFieldEditorBindings;

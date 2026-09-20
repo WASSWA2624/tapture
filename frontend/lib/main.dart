@@ -19,6 +19,7 @@ import 'core/lifecycle/lifecycle.dart';
 import 'core/logging/logger.dart';
 import 'core/security/secure_storage.dart';
 import 'core/time/clock.dart';
+import 'core/widgets/fields/field_editor.dart';
 import 'features/feedback/feedback.dart';
 import 'features/feedback/presentation/feedback_providers.dart';
 import 'features/projects/data/project_repository_impl.dart';
@@ -26,6 +27,7 @@ import 'features/projects/presentation/current_project.dart';
 import 'features/settings/presentation/offline_switch.dart';
 import 'features/settings/settings.dart';
 import 'features/templates/data/template_repository_impl.dart';
+import 'features/templates/presentation/field_editor_bindings.dart';
 
 /// Errors captured for bootstrap tests; the same objects are also logged.
 @visibleForTesting
@@ -62,6 +64,7 @@ Future<void> _run() async {
     ),
     lifecycleObserverProvider.overrideWith((Ref ref) => _lifecycleObserver!),
     leaveGuardProvider.overrideWith((Ref _) => LeaveGuard()),
+    fieldEditorBindingsProvider.overrideWithValue(templateFieldEditorBindings),
   ];
   if (!_runningUnderTest) {
     final UuidV7Service ids = UuidV7Service(clock);
