@@ -130,6 +130,68 @@ void main() {
     expect(details, contains('projects_by_status'));
   });
 
+  test('the pin-first list is served by projects_by_status_pin', () async {
+    _ok(
+      await upsertProject(
+        db,
+        row: _project(name: 'Alpha', folderName: 'alpha-1'),
+        clock: FixedClock(t0),
+        deviceId: 'device-a',
+        ids: ids,
+      ),
+    );
+    final List<QueryRow> plan = await db
+        .customSelect(
+          'EXPLAIN QUERY PLAN SELECT * FROM projects '
+          "WHERE status = 'active' ORDER BY (pinned_at IS NOT NULL) DESC, "
+          'updated_at DESC, id ASC',
+        )
+        .get();
+    final String details = plan
+        .map((QueryRow row) => row.read<String>('detail'))
+        .join('; ');
+    expect(details, contains('projects_by_status_pin'));
+  });
+
+  test('pinned rows list first, then newest', () async {
+    final Project first = _ok(
+      await upsertProject(
+        db,
+        row: _project(name: 'Alpha', folderName: 'alpha-1'),
+        clock: FixedClock(t0),
+        deviceId: 'device-a',
+        ids: ids,
+      ),
+    );
+    _ok(
+      await upsertProject(
+        db,
+        row: _project(name: 'Beta', folderName: 'beta-1'),
+        clock: FixedClock(t1),
+        deviceId: 'device-a',
+        ids: ids,
+      ),
+    );
+    await (db.update(db.projects)
+          ..where(($ProjectsTable tbl) => tbl.id.equals(first.id)))
+        .write(ProjectsCompanion(pinnedAt: Value<DateTime>(t2)));
+    final List<Project> page = _ok(
+      await listProjectsByStatus(
+        db,
+        status: ProjectStatus.active,
+        offset: 0,
+        limit: 2,
+      ),
+    );
+    expect(page.map((Project row) => row.name).toList(), <String>[
+      'Alpha',
+      'Beta',
+    ]);
+    expect(page.first.pinnedAt, isNotNull);
+    expect(page.first.updatedAt.toUtc(), t0);
+    expect(page.first.rev, 1);
+  });
+
   test('malformed settings JSON is refused and never stored', () async {
     final Result<Project> invalid = await upsertProject(
       db,
@@ -194,6 +256,7 @@ void main() {
         'completed_at',
         'folder_name',
         'settings',
+        'pinned_at',
       ]),
     );
   });

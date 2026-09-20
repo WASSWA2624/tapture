@@ -104,13 +104,6 @@ final class FakeProjectRepository implements ProjectRepository {
           lastWorkedAt: _counts[project.id]?.lastWorkedAt ?? project.updatedAt,
         ),
     ];
-    rows.sort((ProjectListRow a, ProjectListRow b) {
-      final int byWork = b.lastWorkedAt.compareTo(a.lastWorkedAt);
-      if (byWork != 0) {
-        return byWork;
-      }
-      return b.project.updatedAt.compareTo(a.project.updatedAt);
-    });
     return rows;
   }
 
@@ -203,6 +196,7 @@ final class FakeProjectRepository implements ProjectRepository {
       organisation: project.organisation,
       startsOn: project.startsOn,
       endsOn: project.endsOn,
+      pinnedAt: current.pinnedAt,
     );
     _emit();
     return const Success<void>(null);
@@ -243,6 +237,30 @@ final class FakeProjectRepository implements ProjectRepository {
     return const Success<void>(null);
   }
 
+  @override
+  Future<Result<void>> setPinned(String id, bool pinned) async {
+    final Project? current = _rows[id];
+    if (current == null) {
+      return const FailureResult<void>(_missing);
+    }
+    _rows[id] = Project(
+      id: current.id,
+      name: current.name,
+      status: current.status,
+      folderName: current.folderName,
+      settings: current.settings,
+      createdAt: current.createdAt,
+      updatedAt: current.updatedAt,
+      description: current.description,
+      organisation: current.organisation,
+      startsOn: current.startsOn,
+      endsOn: current.endsOn,
+      pinnedAt: pinned ? DateTime.utc(2026, 9, 17, 12) : null,
+    );
+    _emit();
+    return const Success<void>(null);
+  }
+
   List<Project> _visible(bool includeArchived) {
     final List<Project> rows = _rows.values.where((Project row) {
       if (row.status == ProjectStatus.deleted) {
@@ -253,7 +271,7 @@ final class FakeProjectRepository implements ProjectRepository {
       }
       return true;
     }).toList();
-    rows.sort((Project a, Project b) => b.updatedAt.compareTo(a.updatedAt));
+    rows.sort(_byPinThenNewest);
     return rows;
   }
 
@@ -301,3 +319,16 @@ typedef _ListCounts = ({
   int unprocessedCount,
   DateTime? lastWorkedAt,
 });
+
+int _byPinThenNewest(Project a, Project b) {
+  final bool aPinned = a.pinnedAt != null;
+  final bool bPinned = b.pinnedAt != null;
+  if (aPinned != bPinned) {
+    return aPinned ? -1 : 1;
+  }
+  final int byUpdated = b.updatedAt.compareTo(a.updatedAt);
+  if (byUpdated != 0) {
+    return byUpdated;
+  }
+  return a.id.compareTo(b.id);
+}

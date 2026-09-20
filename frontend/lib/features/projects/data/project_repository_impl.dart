@@ -65,9 +65,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   Stream<List<Project>> watchAll({bool includeArchived = false}) {
     final SimpleSelectStatement<sqlite.$ProjectsTable, sqlite.Project> query =
         _db.select(_db.projects)
-          ..orderBy(<OrderClauseGenerator<sqlite.$ProjectsTable>>[
-            (sqlite.$ProjectsTable tbl) => OrderingTerm.desc(tbl.updatedAt),
-          ]);
+          ..orderBy(projects_db.projectPinThenNewestOrder);
     if (includeArchived) {
       query.where(
         (sqlite.$ProjectsTable tbl) =>
@@ -206,6 +204,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
         organisation: project.organisation,
         startsOn: project.startsOn,
         endsOn: project.endsOn,
+        pinnedAt: current.pinnedAt,
       ),
     );
     return written.map((Project _) {});
@@ -242,9 +241,17 @@ final class ProjectRepositoryImpl implements ProjectRepository {
         unprocessedCount,
         lastRecordAt,
       ])
-      ..groupBy(<Expression<Object>>[projects.id]);
+      ..groupBy(<Expression<Object>>[projects.id])
+      ..orderBy(<OrderingTerm>[
+        OrderingTerm(
+          expression: projects.pinnedAt.isNotNull(),
+          mode: OrderingMode.desc,
+        ),
+        OrderingTerm.desc(projects.updatedAt),
+        OrderingTerm.asc(projects.id),
+      ]);
     return query.watch().map((List<TypedResult> rows) {
-      final List<ProjectListRow> list = <ProjectListRow>[
+      return <ProjectListRow>[
         for (final TypedResult row in rows)
           _listRow(
             row: row,
@@ -254,8 +261,6 @@ final class ProjectRepositoryImpl implements ProjectRepository {
             lastRecordAt: lastRecordAt,
           ),
       ];
-      list.sort(_byLastWorked);
-      return list;
     });
   }
 
@@ -357,6 +362,28 @@ final class ProjectRepositoryImpl implements ProjectRepository {
       ProjectMapper.fromRow(existing).copyWith(status: status),
     );
     return written.map((Project _) {});
+  }
+
+  @override
+  Future<Result<void>> setPinned(String id, bool pinned) async {
+    final sqlite.Project? existing = await _byId(id);
+    if (existing == null) {
+      return const FailureResult<void>(_missing);
+    }
+    try {
+      await (_db.update(
+        _db.projects,
+      )..where((sqlite.$ProjectsTable tbl) => tbl.id.equals(id))).write(
+        sqlite.ProjectsCompanion(
+          pinnedAt: Value<DateTime?>(pinned ? _clock.nowUtc() : null),
+        ),
+      );
+      return const Success<void>(null);
+    } on Failure catch (failure) {
+      return FailureResult<void>(failure);
+    } on Object catch (error) {
+      return FailureResult<void>(storageFailureFrom(error));
+    }
   }
 
   Future<void> _tombstoneOwned(String projectId) async {
@@ -800,6 +827,11 @@ final class _EmptyProjectRepository implements ProjectRepository {
   }
 
   @override
+  Future<Result<void>> setPinned(String id, bool pinned) async {
+    return const FailureResult<void>(_missing);
+  }
+
+  @override
   Future<Result<void>> delete(String id) async {
     return const FailureResult<void>(_missing);
   }
@@ -842,14 +874,6 @@ DateTime _later(DateTime project, DateTime? records) {
     return project;
   }
   return records;
-}
-
-int _byLastWorked(ProjectListRow a, ProjectListRow b) {
-  final int byWork = b.lastWorkedAt.compareTo(a.lastWorkedAt);
-  if (byWork != 0) {
-    return byWork;
-  }
-  return b.project.updatedAt.compareTo(a.project.updatedAt);
 }
 
 const List<String> _closedRecordStatuses = <String>[

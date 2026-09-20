@@ -2237,6 +2237,17 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _pinnedAtMeta = const VerificationMeta(
+    'pinnedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> pinnedAt = GeneratedColumn<DateTime>(
+    'pinned_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -2251,6 +2262,7 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
     completedAt,
     folderName,
     settings,
+    pinnedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2345,6 +2357,12 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
     } else if (isInserting) {
       context.missing(_settingsMeta);
     }
+    if (data.containsKey('pinned_at')) {
+      context.handle(
+        _pinnedAtMeta,
+        pinnedAt.isAcceptableOrUnknown(data['pinned_at']!, _pinnedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -2404,6 +2422,10 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
         DriftSqlType.string,
         data['${effectivePrefix}settings'],
       )!,
+      pinnedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}pinned_at'],
+      ),
     );
   }
 
@@ -2452,6 +2474,10 @@ class Project extends DataClass implements Insertable<Project> {
 
   /// Project settings JSON. An object, validated before it is stored.
   final String settings;
+
+  /// When this project was pinned. Null means unpinned. A pin is not work,
+  /// so writes to this column must not stamp [updatedAt] or [rev].
+  final DateTime? pinnedAt;
   const Project({
     required this.id,
     required this.createdAt,
@@ -2465,6 +2491,7 @@ class Project extends DataClass implements Insertable<Project> {
     this.completedAt,
     required this.folderName,
     required this.settings,
+    this.pinnedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2489,6 +2516,9 @@ class Project extends DataClass implements Insertable<Project> {
     }
     map['folder_name'] = Variable<String>(folderName);
     map['settings'] = Variable<String>(settings);
+    if (!nullToAbsent || pinnedAt != null) {
+      map['pinned_at'] = Variable<DateTime>(pinnedAt);
+    }
     return map;
   }
 
@@ -2510,6 +2540,9 @@ class Project extends DataClass implements Insertable<Project> {
           : Value(completedAt),
       folderName: Value(folderName),
       settings: Value(settings),
+      pinnedAt: pinnedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pinnedAt),
     );
   }
 
@@ -2533,6 +2566,7 @@ class Project extends DataClass implements Insertable<Project> {
       completedAt: serializer.fromJson<DateTime?>(json['completedAt']),
       folderName: serializer.fromJson<String>(json['folderName']),
       settings: serializer.fromJson<String>(json['settings']),
+      pinnedAt: serializer.fromJson<DateTime?>(json['pinnedAt']),
     );
   }
   @override
@@ -2553,6 +2587,7 @@ class Project extends DataClass implements Insertable<Project> {
       'completedAt': serializer.toJson<DateTime?>(completedAt),
       'folderName': serializer.toJson<String>(folderName),
       'settings': serializer.toJson<String>(settings),
+      'pinnedAt': serializer.toJson<DateTime?>(pinnedAt),
     };
   }
 
@@ -2569,6 +2604,7 @@ class Project extends DataClass implements Insertable<Project> {
     Value<DateTime?> completedAt = const Value.absent(),
     String? folderName,
     String? settings,
+    Value<DateTime?> pinnedAt = const Value.absent(),
   }) => Project(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -2582,6 +2618,7 @@ class Project extends DataClass implements Insertable<Project> {
     completedAt: completedAt.present ? completedAt.value : this.completedAt,
     folderName: folderName ?? this.folderName,
     settings: settings ?? this.settings,
+    pinnedAt: pinnedAt.present ? pinnedAt.value : this.pinnedAt,
   );
   Project copyWithCompanion(ProjectsCompanion data) {
     return Project(
@@ -2603,6 +2640,7 @@ class Project extends DataClass implements Insertable<Project> {
           ? data.folderName.value
           : this.folderName,
       settings: data.settings.present ? data.settings.value : this.settings,
+      pinnedAt: data.pinnedAt.present ? data.pinnedAt.value : this.pinnedAt,
     );
   }
 
@@ -2620,7 +2658,8 @@ class Project extends DataClass implements Insertable<Project> {
           ..write('startedAt: $startedAt, ')
           ..write('completedAt: $completedAt, ')
           ..write('folderName: $folderName, ')
-          ..write('settings: $settings')
+          ..write('settings: $settings, ')
+          ..write('pinnedAt: $pinnedAt')
           ..write(')'))
         .toString();
   }
@@ -2639,6 +2678,7 @@ class Project extends DataClass implements Insertable<Project> {
     completedAt,
     folderName,
     settings,
+    pinnedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -2655,7 +2695,8 @@ class Project extends DataClass implements Insertable<Project> {
           other.startedAt == this.startedAt &&
           other.completedAt == this.completedAt &&
           other.folderName == this.folderName &&
-          other.settings == this.settings);
+          other.settings == this.settings &&
+          other.pinnedAt == this.pinnedAt);
 }
 
 class ProjectsCompanion extends UpdateCompanion<Project> {
@@ -2671,6 +2712,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
   final Value<DateTime?> completedAt;
   final Value<String> folderName;
   final Value<String> settings;
+  final Value<DateTime?> pinnedAt;
   final Value<int> rowid;
   const ProjectsCompanion({
     this.id = const Value.absent(),
@@ -2685,6 +2727,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     this.completedAt = const Value.absent(),
     this.folderName = const Value.absent(),
     this.settings = const Value.absent(),
+    this.pinnedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ProjectsCompanion.insert({
@@ -2700,6 +2743,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     this.completedAt = const Value.absent(),
     required String folderName,
     required String settings,
+    this.pinnedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : createdAt = Value(createdAt),
        updatedAt = Value(updatedAt),
@@ -2721,6 +2765,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     Expression<DateTime>? completedAt,
     Expression<String>? folderName,
     Expression<String>? settings,
+    Expression<DateTime>? pinnedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2736,6 +2781,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
       if (completedAt != null) 'completed_at': completedAt,
       if (folderName != null) 'folder_name': folderName,
       if (settings != null) 'settings': settings,
+      if (pinnedAt != null) 'pinned_at': pinnedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2753,6 +2799,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     Value<DateTime?>? completedAt,
     Value<String>? folderName,
     Value<String>? settings,
+    Value<DateTime?>? pinnedAt,
     Value<int>? rowid,
   }) {
     return ProjectsCompanion(
@@ -2768,6 +2815,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
       completedAt: completedAt ?? this.completedAt,
       folderName: folderName ?? this.folderName,
       settings: settings ?? this.settings,
+      pinnedAt: pinnedAt ?? this.pinnedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2813,6 +2861,9 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     if (settings.present) {
       map['settings'] = Variable<String>(settings.value);
     }
+    if (pinnedAt.present) {
+      map['pinned_at'] = Variable<DateTime>(pinnedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2834,6 +2885,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
           ..write('completedAt: $completedAt, ')
           ..write('folderName: $folderName, ')
           ..write('settings: $settings, ')
+          ..write('pinnedAt: $pinnedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();

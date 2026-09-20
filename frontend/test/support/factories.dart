@@ -38,6 +38,7 @@ ProjectFactory aProject({
   String? name,
   ProjectStatus? status,
   DateTime? updatedAt,
+  DateTime? pinnedAt,
 }) {
   final DateTime at = DateTime.utc(2026, 9, 17, 8);
   return Project(
@@ -48,6 +49,7 @@ ProjectFactory aProject({
     settings: const ProjectSettings(),
     createdAt: at,
     updatedAt: updatedAt ?? at,
+    pinnedAt: pinnedAt,
   );
 }
 

@@ -30,6 +30,7 @@ abstract final class ProjectMapper {
       organisation: _optionalText(row.client),
       startsOn: row.startedAt,
       endsOn: row.completedAt,
+      pinnedAt: row.pinnedAt,
     );
   }
 
@@ -48,6 +49,7 @@ abstract final class ProjectMapper {
       completedAt: Value<DateTime?>(project.endsOn),
       folderName: Value<String>(project.folderName),
       settings: Value<String>(_encodeSettings(project)),
+      pinnedAt: Value<DateTime?>(project.pinnedAt),
     );
   }
 

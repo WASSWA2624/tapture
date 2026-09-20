@@ -20,6 +20,17 @@ void main() {
     expect(renamed.organisation, 'Acme');
     expect(renamed.status, ProjectStatus.archived);
     expect(renamed.createdAt, original.createdAt);
+    expect(renamed.pinnedAt, original.pinnedAt);
+  });
+
+  test('copyWith keeps a pin unless a new timestamp is given', () {
+    final DateTime pin = DateTime.utc(2026, 9, 18, 12);
+    final Project pinned = aProject(pinnedAt: pin);
+    expect(pinned.copyWith(name: 'Renamed').pinnedAt, pin);
+    expect(
+      pinned.copyWith(pinnedAt: DateTime.utc(2026, 9, 19)).pinnedAt,
+      DateTime.utc(2026, 9, 19),
+    );
   });
 
   test('only an active project is included in default exports', () {

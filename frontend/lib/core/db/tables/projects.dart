@@ -33,6 +33,10 @@ class Projects extends Table with MergeColumns {
 
   /// Project settings JSON. An object, validated before it is stored.
   TextColumn get settings => text()();
+
+  /// When this project was pinned. Null means unpinned. A pin is not work,
+  /// so writes to this column must not stamp [updatedAt] or [rev].
+  DateTimeColumn get pinnedAt => dateTime().nullable()();
 }
 
 /// Lifecycle of a [Project] row.
@@ -69,10 +73,10 @@ Future<Result<Project>> upsertProject(
   ).upsert(row);
 }
 
-/// A page of projects in [status], newest [Project.updatedAt] first.
+/// A page of projects in [status], pinned first, then newest.
 ///
-/// The `WHERE status` plus `ORDER BY updated_at` shape is what
-/// `projects_by_status` was created to serve.
+/// The `WHERE status` plus pin-then-newest order is what
+/// `projects_by_status_pin` was created to serve.
 Future<Result<List<Project>>> listProjectsByStatus(
   GeneratedDatabase db, {
   required ProjectStatus status,
@@ -84,9 +88,7 @@ Future<Result<List<Project>>> listProjectsByStatus(
     final List<Project> rows =
         await (database.select(database.projects)
               ..where(($ProjectsTable tbl) => tbl.status.equalsValue(status))
-              ..orderBy(<OrderClauseGenerator<$ProjectsTable>>[
-                ($ProjectsTable tbl) => OrderingTerm.desc(tbl.updatedAt),
-              ])
+              ..orderBy(projectPinThenNewestOrder)
               ..limit(limit, offset: offset))
             .get();
     return Success<List<Project>>(rows);
@@ -95,6 +97,18 @@ Future<Result<List<Project>>> listProjectsByStatus(
   } on Object catch (error) {
     return FailureResult<List<Project>>(storageFailureFrom(error));
   }
+}
+
+/// Pinned rows first, then newest [Project.updatedAt], then a stable id.
+List<OrderClauseGenerator<$ProjectsTable>> get projectPinThenNewestOrder {
+  return <OrderClauseGenerator<$ProjectsTable>>[
+    ($ProjectsTable tbl) => OrderingTerm(
+      expression: tbl.pinnedAt.isNotNull(),
+      mode: OrderingMode.desc,
+    ),
+    ($ProjectsTable tbl) => OrderingTerm.desc(tbl.updatedAt),
+    ($ProjectsTable tbl) => OrderingTerm.asc(tbl.id),
+  ];
 }
 
 void _ensureSettingsJson(Insertable<Project> row) {

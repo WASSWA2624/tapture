@@ -588,6 +588,73 @@ void main() {
     );
   });
 
+  test('setPinned writes only the pin and leaves last worked alone', () async {
+    _ok(await repo.create(aProject()));
+    final sqlite.Project before = (await db.select(db.projects).get()).single;
+    final DateTime lastWorked =
+        (await repo.watchList().first).single.lastWorkedAt;
+    _ok(await repo.setPinned('project-1', true));
+    final sqlite.Project after = (await db.select(db.projects).get()).single;
+    expect(after.pinnedAt, isNotNull);
+    expect(after.updatedAt, before.updatedAt);
+    expect(after.rev, before.rev);
+    expect(after.updatedByDevice, before.updatedByDevice);
+    expect(after.name, before.name);
+    expect((await repo.watchList().first).single.lastWorkedAt, lastWorked);
+  });
+
+  test('setPinned survives a close and reopen', () async {
+    await db.close();
+    final Directory directory = Directory.systemTemp.createTempSync(
+      'tapture_pin_',
+    );
+    addTearDown(() {
+      if (directory.existsSync()) {
+        directory.deleteSync(recursive: true);
+      }
+    });
+    AppDatabase fileDb = AppDatabase.open(directoryPath: directory.path);
+    ProjectRepositoryImpl fileRepo = ProjectRepositoryImpl(
+      db: fileDb,
+      clock: clock,
+      deviceId: 'device-test',
+      ids: UuidV7Service.sequence(clock),
+    );
+    _ok(await fileRepo.create(aProject()));
+    _ok(await fileRepo.setPinned('project-1', true));
+    await fileDb.close();
+    fileDb = AppDatabase.open(directoryPath: directory.path);
+    addTearDown(fileDb.close);
+    fileRepo = ProjectRepositoryImpl(
+      db: fileDb,
+      clock: clock,
+      deviceId: 'device-test',
+      ids: UuidV7Service.sequence(clock),
+    );
+    final Project pinned = (await fileRepo.watchAll().first).single;
+    expect(pinned.pinnedAt, isNotNull);
+    final sqlite.Project row =
+        (await fileDb.select(fileDb.projects).get()).single;
+    expect(row.rev, 1);
+  });
+
+  test('pinned rows with the same updatedAt keep a stable id order', () async {
+    _ok(await repo.create(aProject(id: 'b', name: 'Bravo')));
+    _ok(await repo.create(aProject(id: 'a', name: 'Alpha')));
+    _ok(await repo.setPinned('b', true));
+    _ok(await repo.setPinned('a', true));
+    expect(
+      (await repo.watchAll().first).map((Project row) => row.id).toList(),
+      <String>['a', 'b'],
+    );
+    expect(
+      (await repo.watchList().first)
+          .map((ProjectListRow row) => row.project.id)
+          .toList(),
+      <String>['a', 'b'],
+    );
+  });
+
   test('presentation under projects imports no core/db', () {
     final Directory presentation = Directory(
       'lib/features/projects/presentation',

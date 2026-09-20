@@ -72,6 +72,9 @@ void runProjectRepositoryContract(ProjectRepository Function() repository) {
     );
     expect(_failure(status), isA<StorageFailure>());
     expect(_failure(status).recoveryAction, isNotEmpty);
+    final Result<void> pinned = await repo.setPinned('missing', true);
+    expect(_failure(pinned), isA<StorageFailure>());
+    expect(_failure(pinned).recoveryAction, isNotEmpty);
   });
 
   test('watchAll emits after create', () async {
@@ -116,6 +119,94 @@ void runProjectRepositoryContract(ProjectRepository Function() repository) {
     final Project renamed = (await repo.watchAll().first).single;
     expect(renamed.name, 'Alpha Renamed');
     expect(renamed.folderName, 'test-project');
+  });
+
+  test('setPinned pins and unpins without changing updatedAt', () async {
+    final ProjectRepository repo = repository();
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    final DateTime updated = (await repo.watchAll().first).single.updatedAt;
+    _ok(await repo.setPinned('project-1', true));
+    final Project pinned = (await repo.watchAll().first).single;
+    expect(pinned.pinnedAt, isNotNull);
+    expect(pinned.updatedAt, updated);
+    _ok(await repo.setPinned('project-1', false));
+    final Project unpinned = (await repo.watchAll().first).single;
+    expect(unpinned.pinnedAt, isNull);
+    expect(unpinned.updatedAt, updated);
+  });
+
+  test('watchAll and watchList emit pinned rows first, then newest', () async {
+    final ProjectRepository repo = repository();
+    final DateTime olderAt = DateTime.utc(2026, 9, 17, 8);
+    final DateTime newerAt = DateTime.utc(2026, 9, 17, 9);
+    _ok(
+      await repo.create(
+        aProject(id: 'older', name: 'Older', updatedAt: olderAt),
+      ),
+    );
+    _ok(
+      await repo.create(
+        aProject(id: 'newer', name: 'Newer', updatedAt: newerAt),
+      ),
+    );
+    expect(
+      (await repo.watchAll().first).map((Project row) => row.id).toList(),
+      <String>['newer', 'older'],
+    );
+    expect(
+      (await repo.watchList().first)
+          .map((ProjectListRow row) => row.project.id)
+          .toList(),
+      <String>['newer', 'older'],
+    );
+    _ok(await repo.setPinned('older', true));
+    expect(
+      (await repo.watchAll().first).map((Project row) => row.id).toList(),
+      <String>['older', 'newer'],
+    );
+    expect(
+      (await repo.watchList().first)
+          .map((ProjectListRow row) => row.project.id)
+          .toList(),
+      <String>['older', 'newer'],
+    );
+    _ok(await repo.setPinned('older', false));
+    expect(
+      (await repo.watchAll().first).map((Project row) => row.id).toList(),
+      <String>['newer', 'older'],
+    );
+  });
+
+  test('a pinned archived project stays behind includeArchived', () async {
+    final ProjectRepository repo = repository();
+    _ok(await repo.create(aProject(id: 'active', name: 'Active')));
+    _ok(
+      await repo.create(
+        aProject(
+          id: 'archived',
+          name: 'Archived',
+          status: ProjectStatus.archived,
+        ),
+      ),
+    );
+    _ok(await repo.setPinned('archived', true));
+    expect(
+      (await repo.watchAll().first).map((Project row) => row.id).toList(),
+      <String>['active'],
+    );
+    expect(await repo.watchList().first, hasLength(1));
+    expect(
+      (await repo.watchAll(includeArchived: true).first)
+          .map((Project row) => row.id)
+          .toList(),
+      <String>['archived', 'active'],
+    );
+    expect(
+      (await repo.watchList(includeArchived: true).first)
+          .map((ProjectListRow row) => row.project.id)
+          .toList(),
+      <String>['archived', 'active'],
+    );
   });
 }
 

@@ -1,6 +1,6 @@
 # Tapture — task index
 
-326 implementation prompts across 25 phases. Work top to bottom.
+327 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task.
 
@@ -141,6 +141,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [320 — Use a checkbox for Show archived](08-projects/320-use-checkbox-for-show-archived.md)
 - [x] [321 — Enable dictation on project fields](08-projects/321-enable-dictation-on-project-fields.md)
 - [x] [323 — Redesign the project home count cards](08-projects/323-redesign-project-home-count-cards.md)
+- [x] [327 — Add project pinning](08-projects/327-add-project-pinning.md)
 
 ## 09 — Templates
 

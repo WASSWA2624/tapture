@@ -20,6 +20,7 @@ final class Project {
     this.organisation,
     this.startsOn,
     this.endsOn,
+    this.pinnedAt,
   });
 
   /// Merge identity. Stable across a rename.
@@ -55,6 +56,9 @@ final class Project {
   /// When the row last changed.
   final DateTime updatedAt;
 
+  /// When this project was pinned. Null means unpinned.
+  final DateTime? pinnedAt;
+
   /// Active projects appear on the landing list and in default exports.
   bool get includedInDefaultExports => status == ProjectStatus.active;
 
@@ -68,6 +72,7 @@ final class Project {
     DateTime? startsOn,
     DateTime? endsOn,
     ProjectSettings? settings,
+    DateTime? pinnedAt,
   }) {
     return Project(
       id: id,
@@ -81,6 +86,7 @@ final class Project {
       organisation: organisation ?? this.organisation,
       startsOn: startsOn ?? this.startsOn,
       endsOn: endsOn ?? this.endsOn,
+      pinnedAt: pinnedAt ?? this.pinnedAt,
     );
   }
 
@@ -97,6 +103,7 @@ final class Project {
     settings,
     createdAt,
     updatedAt,
+    pinnedAt,
   );
 
   @override
@@ -113,6 +120,7 @@ final class Project {
             other.folderName == folderName &&
             other.settings == settings &&
             other.createdAt == createdAt &&
-            other.updatedAt == updatedAt);
+            other.updatedAt == updatedAt &&
+            other.pinnedAt == pinnedAt);
   }
 }

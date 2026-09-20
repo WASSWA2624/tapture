@@ -16,6 +16,7 @@ void main() {
       client: 'Acme Health',
       startedAt: started,
       completedAt: ended,
+      pinnedAt: DateTime.utc(2026, 9, 18, 12),
       settings: jsonEncode(<String, Object?>{
         'aiEnabled': false,
         'doNotSendImages': true,
@@ -36,6 +37,7 @@ void main() {
     expect(project.status, ProjectStatus.active);
     expect(project.startsOn, started);
     expect(project.endsOn, ended);
+    expect(project.pinnedAt, DateTime.utc(2026, 9, 18, 12));
     expect(project.folderName, 'alpha-1');
     expect(project.settings.aiEnabled, isFalse);
     expect(project.settings.doNotSendImages, isTrue);
@@ -53,6 +55,7 @@ void main() {
     expect(companion.status.value, projects_db.ProjectStatus.active);
     expect(companion.startedAt.value, started);
     expect(companion.completedAt.value, ended);
+    expect(companion.pinnedAt.value, DateTime.utc(2026, 9, 18, 12));
 
     final Object? encoded = jsonDecode(companion.settings.value);
     expect(encoded, isA<Map<Object?, Object?>>());
@@ -85,6 +88,7 @@ void main() {
     expect(ProjectMapper.fromRow(_row(client: '')).organisation, isNull);
     expect(ProjectMapper.fromRow(_row()).description, isNull);
     expect(ProjectMapper.fromRow(_row()).settings.folderStrategy, isNull);
+    expect(ProjectMapper.fromRow(_row()).pinnedAt, isNull);
   });
 }
 
@@ -93,6 +97,7 @@ sqlite.Project _row({
   String settings = '{}',
   DateTime? startedAt,
   DateTime? completedAt,
+  DateTime? pinnedAt,
 }) {
   final DateTime at = DateTime.utc(2026, 9, 17, 8);
   return sqlite.Project(
@@ -108,5 +113,6 @@ sqlite.Project _row({
     completedAt: completedAt,
     folderName: 'alpha-1',
     settings: settings,
+    pinnedAt: pinnedAt,
   );
 }

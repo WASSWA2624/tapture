@@ -33,6 +33,10 @@ abstract interface class ProjectRepository {
   /// Moves [id] to [status] without rewriting other fields.
   Future<Result<void>> setStatus(String id, ProjectStatus status);
 
+  /// Pins or unpins [id] without rewriting other fields or bumping
+  /// [Project.updatedAt].
+  Future<Result<void>> setPinned(String id, bool pinned);
+
   /// Soft-deletes [id] and its owned rows, writes one tombstone per
   /// entity, then moves the project folder into the recycle area.
   Future<Result<void>> delete(String id);

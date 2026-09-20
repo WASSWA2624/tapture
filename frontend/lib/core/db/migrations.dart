@@ -29,6 +29,7 @@ kUpgradeSteps = <int, _UpgradeStep>{
   11: migrateToV11,
   12: migrateToV12,
   13: migrateToV13,
+  14: migrateToV14,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -175,6 +176,37 @@ Future<void> migrateToV13(Migrator migrator, AppDatabase db) async {
   await migrator.addColumn(db.deviceProfile, db.deviceProfile.accountId);
 }
 
+/// Schema version 14: nullable pin timestamp on each project row.
+Future<void> migrateToV14(Migrator migrator, AppDatabase db) async {
+  final List<QueryRow> tables = await db
+      .customSelect(
+        "SELECT name FROM sqlite_master WHERE type = 'table' "
+        "AND name = 'projects'",
+      )
+      .get();
+  if (tables.isEmpty) {
+    return;
+  }
+  final List<QueryRow> info = await db
+      .customSelect('PRAGMA table_info("projects")')
+      .get();
+  final Set<String> columns = <String>{
+    for (final QueryRow row in info) row.read<String>('name'),
+  };
+  if (!columns.contains('pinned_at')) {
+    await migrator.addColumn(db.projects, db.projects.pinnedAt);
+  }
+  await ensureProjectsPinIndex(db);
+}
+
+/// Expression index that serves pinned-first, then newest (FE-PERF-03).
+Future<void> ensureProjectsPinIndex(AppDatabase db) async {
+  await db.customStatement(
+    'CREATE INDEX IF NOT EXISTS projects_by_status_pin ON projects '
+    '(status, (pinned_at IS NOT NULL), updated_at, id)',
+  );
+}
+
 /// Runs the named step for [version], after the destructive-migration gate.
 Future<void> runUpgradeStep({
   required int version,
@@ -194,6 +226,7 @@ MigrationStrategy appMigration(AppDatabase db) {
   return MigrationStrategy(
     onCreate: (Migrator migrator) async {
       await migrator.createAll();
+      await ensureProjectsPinIndex(db);
     },
     onUpgrade: (Migrator migrator, int from, int to) async {
       for (int version = from + 1; version <= to; version++) {
