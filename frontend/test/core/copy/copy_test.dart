@@ -74,6 +74,11 @@ void main() {
     expect(Copy.navProjectsCountBadge(100), '99+');
   });
 
+  test('projectListNumber is the locale-formatted position', () {
+    expect(Copy.projectListNumber(1), '1');
+    expect(Copy.projectListNumber(12), '12');
+  });
+
   test('fieldsCount reads correctly at zero, one and many', () {
     expect(Copy.fieldsCount(0), 'No fields');
     expect(Copy.fieldsCount(1), '1 field');
@@ -271,6 +276,13 @@ List<String> get _values {
     Copy.projectDeleteTypeName,
     Copy.projectExportFirst,
     Copy.projectShowArchived,
+    Copy.projectPin,
+    Copy.projectUnpin,
+    Copy.projectRename,
+    Copy.projectRenameTitle,
+    Copy.projectRenameMessage,
+    Copy.projectListNumber(1),
+    Copy.projectListNumber(12),
     Copy.projectCreateTitle,
     Copy.projectDuplicateTitle,
     Copy.projectName,

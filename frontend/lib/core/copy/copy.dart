@@ -452,6 +452,26 @@ abstract final class Copy {
   /// Filter that reveals archived projects on the landing list.
   static const String projectShowArchived = 'Show archived';
 
+  /// Pins a project to the top of the list.
+  static const String projectPin = 'Pin';
+
+  /// Removes a project from the top of the list.
+  static const String projectUnpin = 'Unpin';
+
+  /// Opens the rename dialog for a project.
+  static const String projectRename = 'Rename';
+
+  /// Title of the rename dialog.
+  static const String projectRenameTitle = 'Rename project';
+
+  /// Body of the rename dialog. The folder on disk stays put.
+  static const String projectRenameMessage = 'The folder on disk stays put.';
+
+  /// Visible position of a project in the current list.
+  static String projectListNumber(int n) {
+    return NumberFormat.decimalPattern().format(n);
+  }
+
   /// Title of the create-project form.
   static const String projectCreateTitle = 'New project';
 

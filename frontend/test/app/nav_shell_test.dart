@@ -24,6 +24,7 @@ import 'package:tapture/features/projects/domain/project_repository.dart';
 import 'package:tapture/features/projects/projects.dart';
 
 import '../features/projects/fakes/fake_project_repository.dart';
+import '../support/a11y_matchers.dart';
 import '../support/factories.dart';
 
 void main() {
@@ -322,7 +323,7 @@ void main() {
     expect(find.text(Copy.projectsNoMatchMessage), findsOneWidget);
     expect(
       find.descendant(of: _pane(), matching: find.text(Copy.projectsCreate)),
-      findsOneWidget,
+      findsNWidgets(2),
     );
   });
 
@@ -363,7 +364,99 @@ void main() {
     );
     expect(find.byType(AppListTile), findsOneWidget);
     expect(find.text(Copy.continueCapturing), findsOneWidget);
-    expect(find.text(Copy.projectsCreate), findsNothing);
+    expect(
+      find.descendant(of: _pane(), matching: find.text(Copy.projectsCreate)),
+      findsOneWidget,
+    );
+    expect(find.byKey(ProjectListActions.createKey), findsOneWidget);
+    expect(find.byKey(ProjectListActions.createKey), meetsTapTarget());
+    expect(find.byKey(ProjectListActions.overflowKey), findsOneWidget);
+    expect(find.byKey(ProjectListActions.overflowKey), meetsTapTarget());
+    expect(
+      tester.getBottomLeft(find.byKey(ProjectListActions.createKey)).dy,
+      lessThan(tester.getTopLeft(_paneSearch()).dy),
+    );
+  });
+
+  testWidgets(
+    'the pane more menu toggles Show archived and the list responds',
+    (WidgetTester tester) async {
+      final FakeProjectRepository repo = await _seedProjects(<String>['Alpha']);
+      addTearDown(repo.dispose);
+      _ok(await repo.setStatus('project-1', ProjectStatus.archived));
+      await _pump(tester, width: 1200, repo: repo);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.descendant(of: _pane(), matching: find.text('Alpha')),
+        findsNothing,
+      );
+
+      await tester.tap(find.byKey(ProjectListActions.overflowKey));
+      await tester.pumpAndSettle();
+      expect(find.text(Copy.projectShowArchived), findsOneWidget);
+      await tester.tap(find.text(Copy.projectShowArchived));
+      await tester.pumpAndSettle();
+      expect(
+        find.descendant(of: _pane(), matching: find.text('Alpha')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey<String>('project-row-project-1')),
+          matching: find.text('1'),
+        ),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets('pane search renumbers the visible rows from 1', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = await _seedProjects(<String>[
+      'Alpha',
+      'Beta',
+    ]);
+    addTearDown(repo.dispose);
+    await _pump(tester, width: 1200, repo: repo);
+    await tester.pumpAndSettle();
+
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey<String>('project-row-project-1')),
+        matching: find.text('1'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey<String>('project-row-project-2')),
+        matching: find.text('2'),
+      ),
+      findsOneWidget,
+    );
+
+    await tester.enterText(_paneSearch(), 'Alp');
+    await tester.pump(AppConstants.interaction.debounce);
+    expect(
+      find.descendant(of: _pane(), matching: find.text('Beta')),
+      findsNothing,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey<String>('project-row-project-1')),
+        matching: find.text('1'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey<String>('project-row-project-1')),
+        matching: find.text('2'),
+      ),
+      findsNothing,
+    );
   });
 
   testWidgets('at 1200 dp with no projects the body keeps Create a project', (
@@ -604,7 +697,10 @@ void main() {
         _ok(await repo.create(aProject(id: 'p$index', name: 'Project $index')));
       }
       await _expectCountAtSizes(tester, repo, '99+');
-      expect(find.text('100'), findsNothing);
+      expect(
+        find.descendant(of: find.byType(Badge), matching: find.text('100')),
+        findsNothing,
+      );
     },
   );
 

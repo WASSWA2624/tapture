@@ -33,7 +33,13 @@ void main() {
 
     expect(find.byType(StatusLine), findsOneWidget);
     expect(find.text(Copy.appName), findsOneWidget);
-    expect(find.byIcon(Icons.more_vert), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(StatusLine),
+        matching: find.byIcon(Icons.more_vert),
+      ),
+      findsOneWidget,
+    );
     expect(find.text('Alpha · Ward 1'), findsNothing);
     expect(find.text(Copy.networkOnline), findsNothing);
 

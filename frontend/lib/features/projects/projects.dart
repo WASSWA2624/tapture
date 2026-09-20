@@ -13,6 +13,7 @@ export 'presentation/current_project.dart'
         projectListProvider,
         projectNavCountProvider,
         projectSettingsStoreProvider;
+export 'presentation/project_list_actions.dart';
 export 'presentation/project_list_filter.dart'
     show
         projectListFilteredProvider,

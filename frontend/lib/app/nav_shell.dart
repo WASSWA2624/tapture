@@ -237,12 +237,23 @@ class _Pane extends ConsumerWidget {
                   Space.x3,
                   Space.x2,
                 ),
-                child: AppSearchField(
-                  hint: Copy.search,
-                  text: projects ? query : null,
-                  onChanged: projects
-                      ? ref.read(projectListSearchQueryProvider.notifier).set
-                      : (_) {},
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    if (projects) ...<Widget>[
+                      ProjectListActions.paneToolbar(context, ref),
+                      const SizedBox(height: Space.x2),
+                    ],
+                    AppSearchField(
+                      hint: Copy.search,
+                      text: projects ? query : null,
+                      onChanged: projects
+                          ? ref
+                                .read(projectListSearchQueryProvider.notifier)
+                                .set
+                          : (_) {},
+                    ),
+                  ],
                 ),
               ),
               Expanded(

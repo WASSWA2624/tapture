@@ -7,7 +7,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/router.dart';
 import 'package:tapture/app/theme/app_theme.dart';
-import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -171,56 +170,71 @@ void main() {
     }
   });
 
-  testWidgets('Project details opens the edit form', (
+  testWidgets(
+    'the title bar offers create and Show archived at 400 and 800 dp',
+    (WidgetTester tester) async {
+      for (final double width in <double>[400, 800]) {
+        final FakeProjectRepository repo = FakeProjectRepository();
+        addTearDown(repo.dispose);
+        _ok(await repo.create(aProject(name: 'Alpha')));
+        _ok(await repo.setStatus('project-1', ProjectStatus.archived));
+        _bindSize(tester, width);
+        await _pump(tester, repo: repo);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(Checkbox), findsNothing);
+        expect(find.byType(AppSwitchTile), findsNothing);
+        expect(find.text('Alpha'), findsNothing);
+        expect(find.byKey(ProjectListActions.createKey), findsOneWidget);
+        expect(find.byKey(ProjectListActions.createKey), meetsTapTarget());
+        expect(
+          find.byKey(ProjectListActions.createKey),
+          hasSemanticLabel(Copy.projectsCreate),
+        );
+        expect(find.byTooltip(Copy.projectsCreate), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey<String>('app-page-overflow')),
+          meetsTapTarget(),
+        );
+        expect(
+          find.byKey(const ValueKey<String>('app-page-overflow')),
+          hasSemanticLabel(Copy.overflowMenu),
+        );
+
+        await tester.tap(find.byKey(ProjectListActions.createKey));
+        await tester.pumpAndSettle();
+        expect(find.text('create'), findsOneWidget);
+      }
+    },
+  );
+
+  testWidgets('Show archived lives in the more menu and filters the list', (
     WidgetTester tester,
   ) async {
     final FakeProjectRepository repo = FakeProjectRepository();
     addTearDown(repo.dispose);
     _ok(await repo.create(aProject(name: 'Alpha')));
+    _ok(await repo.setStatus('project-1', ProjectStatus.archived));
     await _pump(tester, repo: repo);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(AppOverflowMenu));
+    expect(find.byType(Checkbox), findsNothing);
+    expect(find.text('Alpha'), findsNothing);
+
+    await _openPageOverflow(tester);
+    expect(find.text(Copy.projectShowArchived), findsOneWidget);
+    expect(find.byIcon(Icons.inventory_2_outlined), findsWidgets);
+    await tester.tap(find.text(Copy.projectShowArchived));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(Copy.projectEditTitle));
+    expect(find.text('Alpha'), findsOneWidget);
+    expect(_rowNumber('project-1', '1'), findsOneWidget);
+
+    await _openPageOverflow(tester);
+    expect(find.byIcon(Icons.check), findsOneWidget);
+    await tester.tap(find.text(Copy.projectShowArchived));
     await tester.pumpAndSettle();
-    expect(find.text('edit'), findsOneWidget);
+    expect(find.text('Alpha'), findsNothing);
   });
-
-  testWidgets(
-    'Show archived is a checkbox that reveals and hides archived rows',
-    (WidgetTester tester) async {
-      final FakeProjectRepository repo = FakeProjectRepository();
-      addTearDown(repo.dispose);
-      _ok(await repo.create(aProject(name: 'Alpha')));
-      _ok(await repo.setStatus('project-1', ProjectStatus.archived));
-      await _pump(tester, repo: repo);
-      await tester.pumpAndSettle();
-
-      expect(find.byType(Switch), findsNothing);
-      expect(find.byType(Checkbox), findsOneWidget);
-      expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, isFalse);
-      expect(find.byType(AppSwitchTile), meetsTapTarget());
-      expect(
-        find.byType(AppSwitchTile),
-        hasSemanticLabel(Copy.projectShowArchived),
-      );
-      expect(tester.getTopLeft(find.byType(AppSwitchTile)).dx, Space.x4);
-      expect(find.text('Alpha'), findsNothing);
-
-      await tester.tap(find.byType(Checkbox));
-      await tester.pump();
-      await tester.pump();
-      expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, isTrue);
-      expect(find.text('Alpha'), findsOneWidget);
-
-      await tester.tap(find.byType(Checkbox));
-      await tester.pump();
-      await tester.pump();
-      expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, isFalse);
-      expect(find.text('Alpha'), findsNothing);
-    },
-  );
 
   testWidgets('Create a project shows with zero projects at every width', (
     WidgetTester tester,
@@ -290,11 +304,56 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(find.byType(Checkbox), findsOneWidget);
+    expect(find.byType(Checkbox), findsNothing);
     expect(
-      find.byType(AppSwitchTile),
-      hasSemanticLabel(Copy.projectShowArchived),
+      find.byKey(const ValueKey<String>('app-page-overflow')),
+      findsOneWidget,
     );
+    await _openPageOverflow(tester);
+    expect(find.text(Copy.projectShowArchived), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('rows are numbered in display order and renumber on pin', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(id: 'project-1', name: 'Alpha')));
+    _ok(await repo.create(aProject(id: 'project-2', name: 'Beta')));
+    await _pump(tester, repo: repo);
+    await tester.pumpAndSettle();
+
+    expect(_rowNumber('project-1', '1'), findsOneWidget);
+    expect(_rowNumber('project-2', '2'), findsOneWidget);
+
+    await tester.tap(_rowMenu('project-2'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.projectPin));
+    await tester.pumpAndSettle();
+
+    expect(_rowNumber('project-2', '1'), findsOneWidget);
+    expect(_rowNumber('project-1', '2'), findsOneWidget);
+    expect(
+      repo.stored.where((Project p) => p.id == 'project-2').single.pinnedAt,
+      isNotNull,
+    );
+  });
+
+  testWidgets('the row number leads at the start edge in RTL', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    await _pump(tester, repo: repo, rtl: true);
+    await tester.pumpAndSettle();
+
+    final double numberX = tester.getCenter(_rowNumber('project-1', '1')).dx;
+    final double titleX = tester.getCenter(find.text('Alpha')).dx;
+    final double menuX = tester.getCenter(_rowMenu('project-1')).dx;
+    expect(numberX, greaterThan(titleX));
+    expect(titleX, greaterThan(menuX));
   });
 }
 
@@ -302,6 +361,7 @@ Future<void> _pump(
   WidgetTester tester, {
   FakeProjectRepository? repo,
   List<Override> overrides = const <Override>[],
+  bool rtl = false,
 }) async {
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.projects,
@@ -348,8 +408,35 @@ Future<void> _pump(
       child: MaterialApp.router(
         theme: buildTheme(brightness: Brightness.light),
         routerConfig: router,
+        builder: rtl
+            ? (BuildContext _, Widget? child) {
+                return Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: child!,
+                );
+              }
+            : null,
       ),
     ),
+  );
+}
+
+Future<void> _openPageOverflow(WidgetTester tester) async {
+  await tester.tap(find.byKey(const ValueKey<String>('app-page-overflow')));
+  await tester.pumpAndSettle();
+}
+
+Finder _rowMenu(String id) {
+  return find.descendant(
+    of: find.byKey(ValueKey<String>('project-row-$id')),
+    matching: find.byType(AppOverflowMenu),
+  );
+}
+
+Finder _rowNumber(String id, String n) {
+  return find.descendant(
+    of: find.byKey(ValueKey<String>('project-row-$id')),
+    matching: find.text(n),
   );
 }
 

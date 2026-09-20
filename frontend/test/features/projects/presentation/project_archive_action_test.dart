@@ -63,9 +63,10 @@ void main() {
     expect(find.byType(AppListTile), findsNothing);
     expect(find.text('Alpha'), findsNothing);
 
-    await tester.tap(find.byType(Checkbox));
-    await tester.pump();
-    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey<String>('app-page-overflow')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.projectShowArchived));
+    await tester.pumpAndSettle();
 
     expect(find.text('Alpha'), findsOneWidget);
   });

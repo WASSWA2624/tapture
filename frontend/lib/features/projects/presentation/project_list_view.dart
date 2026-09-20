@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
@@ -10,10 +11,12 @@ import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/project_repository.dart';
+import '../projects.dart' show projectRepositoryProvider;
 import 'current_project.dart';
 import 'project_archive_action.dart';
 import 'project_delete_action.dart';
 import 'project_list_filter.dart';
+import 'project_rename_action.dart';
 
 /// The project rows the landing screen and the expanded list pane share
 /// (FE-CONS-02).
@@ -43,44 +46,33 @@ class ProjectListView extends ConsumerWidget {
         return SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              for (final ProjectListRow row in rows)
+              for (int index = 0; index < rows.length; index++)
                 AppListTile(
-                  title: row.project.name,
+                  key: ValueKey<String>(
+                    'project-row-${rows[index].project.id}',
+                  ),
+                  leading: ExcludeSemantics(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        Copy.projectListNumber(index + 1),
+                        style: AppText.label,
+                      ),
+                    ),
+                  ),
+                  title: rows[index].project.name,
                   subtitle: Copy.projectListSubtitle(
-                    records: row.recordCount,
-                    unprocessed: row.unprocessedCount,
-                    lastWorked: Copy.projectLastWorked(row.lastWorkedAt),
+                    records: rows[index].recordCount,
+                    unprocessed: rows[index].unprocessedCount,
+                    lastWorked: Copy.projectLastWorked(
+                      rows[index].lastWorkedAt,
+                    ),
                   ),
                   trailing: AppOverflowMenu(
-                    items: <AppOverflowAction>[
-                      AppOverflowAction(
-                        label: Copy.projectEditTitle,
-                        icon: Icons.edit_outlined,
-                        onTap: () => _openDetails(context, ref, row.project.id),
-                      ),
-                      AppOverflowAction(
-                        label: row.project.status == ProjectStatus.archived
-                            ? Copy.projectUnarchive
-                            : Copy.projectArchive,
-                        icon: Icons.inventory_2_outlined,
-                        onTap: () => unawaited(
-                          ProjectArchiveAction.apply(ref, row.project),
-                        ),
-                      ),
-                      AppOverflowAction(
-                        label: Copy.projectDelete,
-                        icon: Icons.delete_outline,
-                        onTap: () => unawaited(
-                          ProjectDeleteAction.confirm(
-                            context,
-                            ref,
-                            row.project,
-                          ),
-                        ),
-                      ),
-                    ],
+                    outlined: false,
+                    items: _rowActions(context, ref, rows[index].project),
                   ),
-                  onTap: () => _openRow(context, ref, row.project.id),
+                  onTap: () => _openRow(context, ref, rows[index].project.id),
                 ),
             ],
           ),
@@ -115,9 +107,39 @@ void _openRow(BuildContext context, WidgetRef ref, String id) {
   context.go(_projectHome(id));
 }
 
-void _openDetails(BuildContext context, WidgetRef ref, String id) {
-  ref.read(currentProjectProvider.notifier).open(id);
-  context.go(_projectEdit(id));
+List<AppOverflowAction> _rowActions(
+  BuildContext context,
+  WidgetRef ref,
+  Project project,
+) {
+  final bool pinned = project.pinnedAt != null;
+  return <AppOverflowAction>[
+    AppOverflowAction(
+      label: Copy.projectRename,
+      icon: Icons.edit_outlined,
+      onTap: () => unawaited(ProjectRenameAction.open(context, ref, project)),
+    ),
+    AppOverflowAction(
+      label: pinned ? Copy.projectUnpin : Copy.projectPin,
+      icon: Icons.push_pin_outlined,
+      onTap: () => unawaited(
+        ref.read(projectRepositoryProvider).setPinned(project.id, !pinned),
+      ),
+    ),
+    AppOverflowAction(
+      label: project.status == ProjectStatus.archived
+          ? Copy.projectUnarchive
+          : Copy.projectArchive,
+      icon: Icons.inventory_2_outlined,
+      onTap: () => unawaited(ProjectArchiveAction.apply(ref, project)),
+    ),
+    AppOverflowAction(
+      label: Copy.projectDelete,
+      icon: Icons.delete_outline,
+      onTap: () =>
+          unawaited(ProjectDeleteAction.confirm(context, ref, project)),
+    ),
+  ];
 }
 
 /// Must match [AppRoutes.project]. This file cannot import `router.dart`
@@ -126,15 +148,9 @@ String _projectHome(String id) {
   return '$_projectsRoot/${Uri.encodeComponent(id)}';
 }
 
-/// Must match [AppRoutes.projectEdit].
-String _projectEdit(String id) {
-  return '$_projectsRoot/${Uri.encodeComponent(id)}/$_editSegment';
-}
-
-/// Must match [AppRoutes.projects], [AppRoutes.projectCreate],
-/// [AppRoutes.projectEdit] and [AppRoutes.fromQuery].
+/// Must match [AppRoutes.projects], [AppRoutes.projectCreate] and
+/// [AppRoutes.fromQuery].
 const String _projectsRoot = '/projects';
 const String _newSegment = 'new';
-const String _editSegment = 'edit';
 const String _createLocation = '$_projectsRoot/$_newSegment';
 const String _fromQuery = 'from';

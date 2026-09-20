@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
-import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 
 import '../domain/project_repository.dart';
 import 'current_project.dart';
 import 'project_home_screen.dart';
-import 'project_list_filter.dart';
+import 'project_list_actions.dart';
 import 'project_list_view.dart';
 
 /// Landing list: every active project as one row with counts and
@@ -23,7 +22,6 @@ class ProjectListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool expanded = context.sizeClass == SizeClass.expanded;
-    final bool showArchived = ref.watch(projectListShowArchivedProvider);
     final AsyncValue<List<ProjectListRow>> value = ref.watch(
       projectListProvider,
     );
@@ -47,7 +45,13 @@ class ProjectListScreen extends ConsumerWidget {
     return AppPage(
       key: const ValueKey<String>('route-projects'),
       title: Copy.navProjects,
-      showAppBar: false,
+      showAppBar: !expanded,
+      actions: expanded
+          ? const <Widget>[]
+          : ProjectListActions.barActions(context),
+      overflow: expanded
+          ? const <AppOverflowAction>[]
+          : ProjectListActions.overflow(ref),
       inset: false,
       scrollable: false,
       footer: value.hasValue && (!hasRows || !expanded)
@@ -56,28 +60,9 @@ class ProjectListScreen extends ConsumerWidget {
               onPressed: () => context.go(_createLocation),
             )
           : null,
-      body: Column(
-        children: <Widget>[
-          if (!expanded)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Space.x4),
-              child: AppSwitchTile.checkbox(
-                title: Copy.projectShowArchived,
-                value: showArchived,
-                dense: true,
-                controlFirst: true,
-                onChanged: ref
-                    .read(projectListShowArchivedProvider.notifier)
-                    .set,
-              ),
-            ),
-          Expanded(
-            child: expanded && hasRows
-                ? const SizedBox.shrink()
-                : const ProjectListView(),
-          ),
-        ],
-      ),
+      body: expanded && hasRows
+          ? const SizedBox.shrink()
+          : const ProjectListView(),
     );
   }
 }
