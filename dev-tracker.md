@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**100 of 281 tasks complete (35.6%)** · last updated 2026-09-20
+**101 of 281 tasks complete (35.9%)** · last updated 2026-09-20
 
 `██████████████░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -16,7 +16,7 @@
 | 06 — Application shell | 5 | 5 | `██████████████` 100% |
 | 07 — Account and settings | 5 | 5 | `██████████████` 100% |
 | 08 — Projects | 6 | 6 | `██████████████` 100% |
-| 09 — Templates | 13 | 17 | `███████████░░░` 76% |
+| 09 — Templates | 14 | 17 | `████████████░░` 82% |
 | 10 — Reference data | 0 | 8 | `░░░░░░░░░░░░░░` 0% |
 | 11 — Context | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 12 — Capture | 0 | 22 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **100** | **281** | `████░░░░░░░░░░` 35.6% |
+| **Total** | **101** | **281** | `█████░░░░░░░░░` 35.9% |
 
 ## Completed
 
@@ -135,6 +135,7 @@
 | 097 — Field editor widget | 2026-09-20 | One `FieldEditor` in `core/widgets/` edits any value through the catalogue widget the type registry names. It never switches on the type: `fieldEditorBindingsProvider` is the registry port, overridden with `templateFieldEditorBindings`. An edit sets source MANUAL, marks verified, and appends an audit row with the previous value — including a change back to the original. `FieldValue` lives in core until records own it. Guarded by text/choice/date widget tests plus a change-back audit test. |
 | 098 — Identity fields and output column mapping | 2026-09-20 | Two field-list screens edit the template-level identity set and each field's output column. Identity is a multi-select over existing fields and rewrites `identityFieldKeys` plus `FieldDef.identity` through one `TemplateRepository.save`. Built and shipped templates auto-assign unique headers from labels; imported workbooks keep their letters and never invent missing ones. `duplicateOutputColumn` refuses a second claim on the same letter. Guarded by identity empty/failure/save widget tests and a duplicate-column unit test plus output empty/failure/save widget tests. |
 | 100 — Export and import a template as JSON | 2026-09-20 | `TemplateJson` stamps `schema_version` 1 and carries every §12.2 attribute, identity keys, predefined rows and row aliases. Decode validates shape, types and unique field keys before any write, rejects an unknown schema with a plain message, and always inserts a new project-owned template at version 1. `TemplateImportAction` is empty with no payload, shows `AppErrorState` on a failed decode (including schema 2), and persists only after a successful decode. Guarded by a round-trip encode-and-import test over every attribute and empty/failure/rejected-version widget tests. |
+| 101 — Read a spreadsheet and infer its shape | 2026-09-20 | `WorkbookReader` opens XLSX or CSV off the UI thread via the isolate runner, reporting sheet names, used range, merged cells and rows. Password-protected and corrupt files fail with distinct copy. `HeaderDetection` scores title blocks below unique label rows. `TypeInference` proposes registry type names, units and option lists as editable suggestions. Guarded by a twenty-sheet isolate open, title-block and CSV mapping, corrupt and password fixtures, and mixed-column inference tests. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -460,7 +461,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 09 — Templates
 
-*13 of 17 complete.*
+*14 of 17 complete.*
 
 - [x] [088 — Template domain model and repository](dev-plan/09-templates/088-template-model.md)
 - [x] [089 — Field type registry](dev-plan/09-templates/089-field-type-registry.md)
@@ -475,7 +476,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [098 — Identity fields and output column mapping](dev-plan/09-templates/098-identity-fields.md)
 - [x] [099 — Template versioning and record migration](dev-plan/09-templates/099-template-versioning.md)
 - [x] [100 — Export and import a template as JSON](dev-plan/09-templates/100-template-export-json.md)
-- [ ] [101 — Read a spreadsheet and infer its shape](dev-plan/09-templates/101-xlsx-read-workbook.md)
+- [x] [101 — Read a spreadsheet and infer its shape](dev-plan/09-templates/101-xlsx-read-workbook.md)
 - [ ] [102 — Confirm the column mapping and create the template](dev-plan/09-templates/102-xlsx-mapping-screen.md)
 - [ ] [103 — Predefined rows, aliases and the capture checklist](dev-plan/09-templates/103-predefined-rows-import.md)
 - [ ] [104 — Detection profile editor](dev-plan/09-templates/104-template-detection-profile.md)

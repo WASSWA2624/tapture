@@ -33,7 +33,7 @@ three files.
 
 ## Definition of done
 
-- [ ] A twenty-sheet workbook opens without freezing the interface.
-- [ ] A workbook with a title block above the header still maps correctly.
-- [ ] Suggestions are visibly suggestions and always editable.
-- [ ] Tests: reader test against a fixture workbook including a corrupt and a password-protected file; unit tests over fixtures with and without title rows; unit tests of inference over mixed sample columns.
+- [x] A twenty-sheet workbook opens without freezing the interface.
+- [x] A workbook with a title block above the header still maps correctly.
+- [x] Suggestions are visibly suggestions and always editable.
+- [x] Tests: reader test against a fixture workbook including a corrupt and a password-protected file; unit tests over fixtures with and without title rows; unit tests of inference over mixed sample columns.

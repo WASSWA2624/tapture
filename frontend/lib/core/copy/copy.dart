@@ -673,6 +673,21 @@ abstract final class Copy {
   static const String templatesImportDuplicateFieldRecovery =
       'Rename the duplicate key and export again.';
 
+  /// The chosen spreadsheet is encrypted.
+  static const String workbookPassword =
+      'That spreadsheet is locked with a password.';
+
+  /// Recovery for a password-protected spreadsheet.
+  static const String workbookPasswordRecovery =
+      'Unlock it, save a copy, and choose the copy.';
+
+  /// The chosen spreadsheet could not be parsed.
+  static const String workbookCorrupt = 'That spreadsheet could not be read.';
+
+  /// Recovery for a corrupt spreadsheet.
+  static const String workbookCorruptRecovery =
+      'Keep the original. Export a copy and try again.';
+
   /// Soft-deletes a template no record uses.
   static const String templatesDelete = 'Delete template';
 

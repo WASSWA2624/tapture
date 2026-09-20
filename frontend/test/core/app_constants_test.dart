@@ -77,6 +77,10 @@ void main() {
       AppConstants.hashing.chunkBytes,
       inInclusiveRange(4 * 1024, 1024 * 1024),
     );
+    expect(AppConstants.workbook.headerScanRows, inInclusiveRange(5, 100));
+    expect(AppConstants.workbook.sampleRows, inInclusiveRange(5, 200));
+    expect(AppConstants.workbook.optionMax, inInclusiveRange(2, 32));
+    expect(AppConstants.workbook.identifierMinLength, inInclusiveRange(4, 16));
     expect(AppConstants.operator.initialsMin, 1);
     expect(AppConstants.operator.initialsMax, 3);
     expect(

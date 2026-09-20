@@ -157,6 +157,22 @@ abstract final class AppConstants {
   /// Streaming reads for hashing and other heavy file jobs (FE-PERF-07).
   static const ({int chunkBytes}) hashing = (chunkBytes: 64 * 1024);
 
+  /// Spreadsheet import: how many leading rows to score as a header, how
+  /// many data rows to sample for type inference, the largest repeating
+  /// set treated as a choice, and the shortest identifier.
+  static const ({
+    int headerScanRows,
+    int sampleRows,
+    int optionMax,
+    int identifierMinLength,
+  })
+  workbook = (
+    headerScanRows: 30,
+    sampleRows: 40,
+    optionMax: 12,
+    identifierMinLength: 6,
+  );
+
   /// Local operator identity: initials length and preference-map keys.
   /// [contactKey] is read for one-time migration; new writes use
   /// [emailKey] and [phoneKey].
