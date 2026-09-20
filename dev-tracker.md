@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**89 of 281 tasks complete (31.7%)** · last updated 2026-09-20
+**90 of 281 tasks complete (32.0%)** · last updated 2026-09-20
 
 `█████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -16,7 +16,7 @@
 | 06 — Application shell | 5 | 5 | `██████████████` 100% |
 | 07 — Account and settings | 5 | 5 | `██████████████` 100% |
 | 08 — Projects | 6 | 6 | `██████████████` 100% |
-| 09 — Templates | 2 | 17 | `██░░░░░░░░░░░░` 12% |
+| 09 — Templates | 3 | 17 | `███░░░░░░░░░░░` 18% |
 | 10 — Reference data | 0 | 8 | `░░░░░░░░░░░░░░` 0% |
 | 11 — Context | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 12 — Capture | 0 | 22 | `░░░░░░░░░░░░░░` 0% |
@@ -125,6 +125,7 @@
 | 087 — Archive, unarchive and delete a project | 2026-09-19 | Archive hides a project behind Show archived and from default exports without touching records or files. Delete confirms once through `showAppConfirm` with typed name, counts and Export first, then writes one tombstone per owned entity and moves the folder into `.recycle`. Guarded by archive/unarchive/filter widget tests, typed-name/cancel/export-first delete tests, and a tombstone-plus-recycle unit test that leaves the file on disk. |
 | 088 — Template domain model and repository | 2026-09-20 | Immutable `TemplateDef` / `FieldDef` / `TemplateRow` and three-value `Requiredness`, Drift mapper, `TemplateRepositoryImpl`, barrel `templateRepositoryProvider`, and the in-memory fake later screens test against. Table-only columns stay on the model; attributes the table has no column for (`helpText`, `requiredWhen`, `hidden`, `group`, identity flag, recommended, auto-fill kind, `templateKey`) live in JSON so a round-trip drops nothing. Guarded by a row→domain→row mapper test and the same save/watch/delete suite on the in-memory database and the fake. |
 | 089 — Field type registry | 2026-09-20 | One `FieldTypeRegistry` entry per §12.1 type: named catalogue editor (or signature / GPS / computed), validator, normaliser and storage-and-export form. Presentation supplies the widget builder; domain imports no Flutter. Adding a type is one switch case. Guarded by a completeness test that fails if any of the 19 types or any of the four behaviours is missing. |
+| 090 — Shipped template asset format and atomicity checker | 2026-09-20 | `_schema.json` names the asset shape and the 19 registry types. `check_templates.dart` refuses packed keys (`make_model`, `address`), money without a `_currency` companion, refined without raw, and the rest of §13.1, with file and line. Broken fixtures live under `test/tool/fixtures/` so they cannot fail the default `assets/templates/` scan. Wired as the `templates` verify gate. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -300,6 +301,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 088 | The table stores `required` and `autoFill` as bools; §12.2 needs three-value requiredness and an auto-fill kind. | Open — extras live in the validation JSON under `_tapture`; `templateKey` lives in the detection JSON. A schema task can give them columns |
 | 088 | The prompt says the interface was declared in 111. | Open — the port is the one task 062 shipped; 111 is lookup matching |
 | 089 | Task 097 puts `FieldEditor` in `core/widgets/` taking feature `FieldDef`. | Open — the registry stays in `features/templates/domain`; core cannot import it. 097 will need a core-facing port or to live in the feature |
+| 090 | Broken fixtures cannot live in `assets/templates/` or verify fails. | Open — they ship under `test/tool/fixtures/templates/`; 091 authors the real library into `assets/templates/` |
 
 ## Checklist
 
@@ -432,11 +434,11 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 09 — Templates
 
-*2 of 17 complete.*
+*3 of 17 complete.*
 
 - [x] [088 — Template domain model and repository](dev-plan/09-templates/088-template-model.md)
 - [x] [089 — Field type registry](dev-plan/09-templates/089-field-type-registry.md)
-- [ ] [090 — Shipped template asset format and atomicity checker](dev-plan/09-templates/090-shipped-templates-assets.md)
+- [x] [090 — Shipped template asset format and atomicity checker](dev-plan/09-templates/090-shipped-templates-assets.md)
 - [ ] [091 — Author the shipped template library](dev-plan/09-templates/091-shipped-template-library.md)
 - [ ] [092 — Template list, blank create and duplicate](dev-plan/09-templates/092-template-list.md)
 - [ ] [093 — Shipped template loader and library picker](dev-plan/09-templates/093-shipped-template-loader.md)

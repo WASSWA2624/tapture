@@ -145,7 +145,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 
 - [x] [088 — Template domain model and repository](09-templates/088-template-model.md)
 - [x] [089 — Field type registry](09-templates/089-field-type-registry.md)
-- [ ] [090 — Shipped template asset format and atomicity checker](09-templates/090-shipped-templates-assets.md)
+- [x] [090 — Shipped template asset format and atomicity checker](09-templates/090-shipped-templates-assets.md)
 - [ ] [091 — Author the shipped template library](09-templates/091-shipped-template-library.md)
 - [ ] [092 — Template list, blank create and duplicate](09-templates/092-template-list.md)
 - [ ] [093 — Shipped template loader and library picker](09-templates/093-shipped-template-loader.md)

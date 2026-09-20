@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "template_key": "broken_packed_label",
+  "name": "templates.fixture.name",
+  "kind": "fixture",
+  "identity_fields": ["serial_number"],
+  "inherits_groups": [],
+  "fields": [
+    {
+      "field_key": "serial_number",
+      "label": "templates.fixture.serial_number",
+      "type": "text",
+      "required": "REQUIRED"
+    },
+    {
+      "field_key": "district_and_village",
+      "label": "District and village",
+      "type": "text",
+      "required": "OPTIONAL"
+    }
+  ],
+  "child_rows": []
+}

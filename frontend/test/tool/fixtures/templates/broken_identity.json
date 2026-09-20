@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "template_key": "broken_identity",
+  "name": "templates.fixture.name",
+  "kind": "fixture",
+  "identity_fields": ["missing_key"],
+  "inherits_groups": [],
+  "fields": [
+    {
+      "field_key": "serial_number",
+      "label": "templates.fixture.serial_number",
+      "type": "text",
+      "required": "REQUIRED"
+    }
+  ],
+  "child_rows": []
+}

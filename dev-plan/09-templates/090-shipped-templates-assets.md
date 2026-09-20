@@ -49,11 +49,11 @@ Future<int> main(List<String> args)  // scans frontend/assets/templates/, exits 
 
 ## Definition of done
 
-- [ ] A column named `make_model`, `address` or `cost` without a currency fails the checker with a file and a line.
-- [ ] A `caption_refined` without `caption_raw` fails the checker.
-- [ ] The checker runs inside `dart run tool/verify.dart` and blocks a build.
-- [ ] Tests: `frontend/test/tool/check_templates_test.dart` runs the checker over the valid fixture and over one deliberately broken fixture per rule, asserting file and line in each message.
-- [ ] Contract above is implemented exactly, with nothing else made public.
+- [x] A column named `make_model`, `address` or `cost` without a currency fails the checker with a file and a line.
+- [x] A `caption_refined` without `caption_raw` fails the checker.
+- [x] The checker runs inside `dart run tool/verify.dart` and blocks a build.
+- [x] Tests: `frontend/test/tool/check_templates_test.dart` runs the checker over the valid fixture and over one deliberately broken fixture per rule, asserting file and line in each message.
+- [x] Contract above is implemented exactly, with nothing else made public.
 
 ## Out of scope
 

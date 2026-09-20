@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tapture.app/schemas/shipped-template.json",
+  "title": "Shipped template asset",
+  "description": "JSON shape of one shipped template. required on each field is a suggested default only — any user who can edit the template may move a field between REQUIRED, RECOMMENDED and OPTIONAL (§13.2). The asset never locks requiredness.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version",
+    "template_key",
+    "name",
+    "kind",
+    "identity_fields",
+    "inherits_groups",
+    "fields",
+    "child_rows"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "template_key": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(_[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Localisation key, not an English string (FE-L10N-01)."
+    },
+    "kind": {
+      "type": "string"
+    },
+    "identity_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "inherits_groups": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/field"
+      }
+    },
+    "child_rows": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "$defs": {
+    "field": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["field_key", "label", "type", "required"],
+      "properties": {
+        "field_key": {
+          "type": "string",
+          "description": "Stable snake_case key. Never renamed once shipped."
+        },
+        "label": {
+          "type": "string",
+          "description": "Localisation key, not an English string (FE-L10N-01)."
+        },
+        "type": {
+          "description": "A FieldType from the registry of task 089. An unknown name is a violation (FE-CONS-07).",
+          "enum": [
+            "text",
+            "long_text",
+            "number",
+            "decimal",
+            "currency",
+            "percentage",
+            "date",
+            "time",
+            "date_time",
+            "boolean",
+            "choice",
+            "multi_choice",
+            "lookup",
+            "barcode",
+            "photo_reference",
+            "document_reference",
+            "gps_location",
+            "signature",
+            "computed"
+          ]
+        },
+        "required": {
+          "description": "Suggested default only. The user can change REQUIRED, RECOMMENDED or OPTIONAL on a copy of this template (§13.2). The schema carries no locked requiredness.",
+          "enum": ["REQUIRED", "RECOMMENDED", "OPTIONAL"]
+        },
+        "required_when": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "options": {
+          "type": "array"
+        },
+        "group": {
+          "type": "string"
+        },
+        "help": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
