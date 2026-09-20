@@ -28,6 +28,10 @@ void main() {
     expect(AppRoutes.records, '/records');
     expect(AppRoutes.more, '/more');
     expect(AppRoutes.templates, '/templates');
+    expect(AppRoutes.templateCreate, '/templates/new');
+    expect(AppRoutes.templateLibrary, '/templates/library');
+    expect(AppRoutes.template('ab'), '/templates/ab');
+    expect(AppRoutes.templateExport('ab'), '/templates/ab/export');
     expect(AppRoutes.queue, '/queue');
     expect(AppRoutes.exports, '/exports');
     expect(
@@ -129,6 +133,24 @@ void main() {
     await _go(tester, router, AppRoutes.templates);
     expect(
       find.byKey(const ValueKey<String>('route-templates')),
+      findsOneWidget,
+    );
+
+    await _go(tester, router, AppRoutes.templateCreate);
+    expect(
+      find.byKey(const ValueKey<String>('route-template-create')),
+      findsOneWidget,
+    );
+
+    await _go(tester, router, AppRoutes.templateLibrary);
+    expect(
+      find.byKey(const ValueKey<String>('route-template-library')),
+      findsOneWidget,
+    );
+
+    await _go(tester, router, AppRoutes.template('t1'));
+    expect(
+      find.byKey(const ValueKey<String>('route-template-fields')),
       findsOneWidget,
     );
 

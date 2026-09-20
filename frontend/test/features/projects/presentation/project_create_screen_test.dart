@@ -7,7 +7,6 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/fields/dictation_scope.dart';
-import 'package:tapture/features/projects/presentation/current_project.dart';
 import 'package:tapture/features/projects/presentation/project_create_screen.dart';
 import 'package:tapture/features/projects/projects.dart';
 

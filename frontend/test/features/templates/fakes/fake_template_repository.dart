@@ -11,6 +11,12 @@ final class FakeTemplateRepository implements TemplateRepository {
   final StreamController<void> _changes = StreamController<void>.broadcast();
   int _next = 0;
 
+  /// When set, [save] returns this instead of writing.
+  Failure? saveFailure;
+
+  /// How many templates the fake currently holds.
+  int get count => _rows.length;
+
   /// Releases the watch stream. Tests call this from `tearDown`.
   void dispose() {
     _changes.close();
@@ -28,6 +34,10 @@ final class FakeTemplateRepository implements TemplateRepository {
 
   @override
   Future<Result<TemplateDef>> save(TemplateDef template) async {
+    final Failure? forced = saveFailure;
+    if (forced != null) {
+      return FailureResult<TemplateDef>(forced);
+    }
     if (template.name.trim().isEmpty) {
       return const FailureResult<TemplateDef>(
         ValidationFailure(

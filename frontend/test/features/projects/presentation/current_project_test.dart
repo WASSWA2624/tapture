@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:tapture/app/app.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/features/projects/presentation/current_project.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/settings/settings.dart';
 

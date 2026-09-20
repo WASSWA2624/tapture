@@ -52,11 +52,15 @@ ProjectFactory aProject({
 }
 
 /// A record draft filed under [projectId] with optional [fields].
-RecordFactory aRecord({String? projectId, Map<String, String>? fields}) {
+RecordFactory aRecord({
+  String? projectId,
+  String? templateId,
+  Map<String, String>? fields,
+}) {
   return (
     id: null,
     projectId: projectId ?? 'project-1',
-    templateId: 'template-1',
+    templateId: templateId ?? 'template-1',
     fields: fields ?? const <String, String>{'serial': 'A-1'},
   );
 }

@@ -30,7 +30,7 @@ or a duplicate of an existing template.
 
 ## Definition of done
 
-- [ ] A blank template is immediately usable after one added field.
-- [ ] Duplicating leaves the original's records on the original, and the copy carries its fields, rows and aliases.
-- [ ] Delete is offered only for a template no record uses.
-- [ ] Tests: widget tests of `template_list_screen.dart` and `template_create_screen.dart` covering empty and failure states; a test that duplication copies fields, rows and aliases and copies no records.
+- [x] A blank template is immediately usable after one added field.
+- [x] Duplicating leaves the original's records on the original, and the copy carries its fields, rows and aliases.
+- [x] Delete is offered only for a template no record uses.
+- [x] Tests: widget tests of `template_list_screen.dart` and `template_create_screen.dart` covering empty and failure states; a test that duplication copies fields, rows and aliases and copies no records.

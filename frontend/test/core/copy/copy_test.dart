@@ -64,6 +64,12 @@ void main() {
     expect(Copy.notDetected, isNotEmpty);
   });
 
+  test('fieldsCount reads correctly at zero, one and many', () {
+    expect(Copy.fieldsCount(0), 'No fields');
+    expect(Copy.fieldsCount(1), '1 field');
+    expect(Copy.fieldsCount(2), '2 fields');
+  });
+
   test('feedbackShotTipScreens names Continue later', () {
     expect(Copy.feedbackShotTipScreens, contains(Copy.feedbackContinueLater));
   });
@@ -140,6 +146,9 @@ List<String> get _values {
     Copy.recordsCount(0),
     Copy.recordsCount(1),
     Copy.recordsCount(2),
+    Copy.fieldsCount(0),
+    Copy.fieldsCount(1),
+    Copy.fieldsCount(2),
     Copy.clearField('Name'),
     Copy.showField('PIN'),
     Copy.hideField('PIN'),
@@ -302,6 +311,19 @@ List<String> get _values {
     Copy.navRecords,
     Copy.navMore,
     Copy.navTemplates,
+    Copy.templatesEmptyHeadline,
+    Copy.templatesEmptyMessage,
+    Copy.templatesPickLibrary,
+    Copy.templatesCreate,
+    Copy.templatesCreateTitle,
+    Copy.templatesOpen,
+    Copy.templatesExport,
+    Copy.templatesDelete,
+    Copy.templatesDeleteTitle('Assets'),
+    Copy.templatesDeleteMessage(fields: 2, records: 0),
+    Copy.templateFieldsTitle,
+    Copy.templateCopyName('Assets'),
+    Copy.templateListSubtitle(fields: 2, records: 0),
     Copy.navQueue,
     Copy.navExports,
     Copy.operatorNameUse,

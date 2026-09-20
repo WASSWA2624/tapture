@@ -27,6 +27,8 @@ import 'package:tapture/features/settings/presentation/capture_settings_screen.d
 import 'package:tapture/features/settings/presentation/settings_screen.dart';
 import 'package:tapture/features/settings/presentation/storage_settings_screen.dart';
 import 'package:tapture/features/settings/settings.dart';
+import 'package:tapture/features/templates/presentation/template_create_screen.dart';
+import 'package:tapture/features/templates/presentation/template_list_screen.dart';
 
 export 'package:tapture/features/projects/presentation/current_project.dart'
     show CurrentProject, currentProjectProvider, openProjectIdProvider;
@@ -96,6 +98,18 @@ abstract final class AppRoutes {
   /// Pinned-template destination the status line opens. Task 092 owns the
   /// screen.
   static const String templates = '/templates';
+
+  /// Blank-template form. Listed before [template] so `new` is not an id.
+  static const String templateCreate = '$templates/new';
+
+  /// Shipped-library picker. Task 093 owns the screen.
+  static const String templateLibrary = '$templates/library';
+
+  /// Field list for [id]. Task 094 owns the screen.
+  static String template(String id) => '$templates/${Uri.encodeComponent(id)}';
+
+  /// JSON export for [id]. Task 100 owns the screen.
+  static String templateExport(String id) => '${template(id)}/export';
 
   /// Unprocessed-queue destination the status line opens. Task 159 owns the
   /// screen.
@@ -352,8 +366,36 @@ List<RouteBase> get _routes {
             GoRoute(
               path: AppRoutes.templates,
               builder: (BuildContext _, GoRouterState _) {
-                return const _RoutePage(name: 'templates');
+                return const TemplateListScreen();
               },
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'new',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const TemplateCreateScreen();
+                  },
+                ),
+                GoRoute(
+                  path: 'library',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const _RoutePage(name: 'template-library');
+                  },
+                ),
+                GoRoute(
+                  path: ':templateId',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const _RoutePage(name: 'template-fields');
+                  },
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'export',
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const _RoutePage(name: 'template-export');
+                      },
+                    ),
+                  ],
+                ),
+              ],
             ),
             GoRoute(
               path: AppRoutes.queue,
@@ -476,6 +518,9 @@ String _titleFor(String name) {
     'records' || 'record' => Copy.navRecords,
     'more' => Copy.navMore,
     'templates' => Copy.navTemplates,
+    'template-library' => Copy.templatesPickLibrary,
+    'template-fields' => Copy.templateFieldsTitle,
+    'template-export' => Copy.templatesExport,
     'queue' => Copy.navQueue,
     'exports' => Copy.navExports,
     _ => Copy.emptyHeadline,
@@ -489,6 +534,9 @@ IconData _iconFor(String name) {
     'records' || 'record' => Icons.list_alt_outlined,
     'more' => Icons.settings_outlined,
     'templates' => Icons.article_outlined,
+    'template-library' => Icons.article_outlined,
+    'template-fields' => Icons.view_list_outlined,
+    'template-export' => Icons.ios_share_outlined,
     'queue' => Icons.pending_outlined,
     'exports' => Icons.ios_share_outlined,
     _ => Icons.inbox_outlined,

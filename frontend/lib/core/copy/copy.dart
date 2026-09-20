@@ -20,6 +20,16 @@ abstract final class Copy {
     );
   }
 
+  /// How many fields a template holds. Zero is a stated absence, not a blank.
+  static String fieldsCount(int n) {
+    return Intl.plural(
+      n,
+      zero: 'No fields',
+      one: '1 field',
+      other: '$n fields',
+    );
+  }
+
   /// Clears the named field.
   static String clearField(String label) => 'Clear $label';
 
@@ -607,6 +617,57 @@ abstract final class Copy {
 
   /// Pinned-template destination the status line opens.
   static const String navTemplates = 'Templates';
+
+  /// Headline when the open project has no templates.
+  static const String templatesEmptyHeadline = 'No templates yet';
+
+  /// Body when the template list is empty. The next action is the library.
+  static const String templatesEmptyMessage =
+      'Pick a shipped template to start capturing, or create a blank template.';
+
+  /// Empty-state action that opens the shipped-library picker.
+  static const String templatesPickLibrary = 'Pick a shipped template';
+
+  /// Primary action that opens the blank-template form.
+  static const String templatesCreate = 'Create a blank template';
+
+  /// Title of the blank-template form.
+  static const String templatesCreateTitle = 'New template';
+
+  /// Opens the field list for a template.
+  static const String templatesOpen = 'Open';
+
+  /// Overflow command that writes a template out. Task 100 owns the screen.
+  static const String templatesExport = 'Export template';
+
+  /// Soft-deletes a template no record uses.
+  static const String templatesDelete = 'Delete template';
+
+  /// Title of the delete confirmation, naming the template.
+  static String templatesDeleteTitle(String name) => 'Delete $name?';
+
+  /// Body of the delete confirmation, naming field and record counts.
+  static String templatesDeleteMessage({
+    required int fields,
+    required int records,
+  }) {
+    return 'This hides ${fieldsCount(fields)}. '
+        '${recordsCount(records)} stay on this template.';
+  }
+
+  /// Field-list destination after create, duplicate or open. Task 094 owns it.
+  static const String templateFieldsTitle = 'Fields';
+
+  /// Suggested name when duplicating [name].
+  static String templateCopyName(String name) => '$name (copy)';
+
+  /// Field and record counts on one template list row.
+  static String templateListSubtitle({
+    required int fields,
+    required int records,
+  }) {
+    return '${fieldsCount(fields)} · ${recordsCount(records)}';
+  }
 
   /// Unprocessed-queue destination the status line opens.
   static const String navQueue = 'Unprocessed';
