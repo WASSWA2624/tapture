@@ -124,6 +124,29 @@ final StreamProvider<List<ProjectListRow>> projectListProvider =
           .watchList(includeArchived: includeArchived);
     }, retry: (int _, Object _) => null);
 
+/// How many active projects the Projects destination opens onto.
+///
+/// Derived from [projectListProvider] so the badge does not open a
+/// second watch (FE-STATE-06). Archived rows are omitted even when the
+/// landing list is showing them, so the number always matches the
+/// default destination list.
+final Provider<int> projectNavCountProvider = Provider<int>((Ref ref) {
+  return ref
+      .watch(projectListProvider)
+      .maybeWhen(
+        data: (List<ProjectListRow> rows) {
+          int count = 0;
+          for (final ProjectListRow row in rows) {
+            if (row.project.status == ProjectStatus.active) {
+              count += 1;
+            }
+          }
+          return count;
+        },
+        orElse: () => 0,
+      );
+});
+
 /// The open [Project], or null when none is open or the list has not
 /// resolved it yet. Derived from [currentProjectProvider] and
 /// [projectListProvider]; not a second stored copy (FE-STATE-06).

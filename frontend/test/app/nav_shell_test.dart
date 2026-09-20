@@ -14,13 +14,13 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/files.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/projects/domain/project_repository.dart';
-import 'package:tapture/features/projects/presentation/current_project.dart';
 import 'package:tapture/features/projects/projects.dart';
 
 import '../features/projects/fakes/fake_project_repository.dart';
@@ -573,6 +573,202 @@ void main() {
       expect(find.text(Copy.emptyHeadline), findsNothing);
     },
   );
+
+  testWidgets(
+    'Projects shows no badge at zero and the count at one, nine and 99+',
+    (WidgetTester tester) async {
+      final FakeProjectRepository repo = FakeProjectRepository();
+      addTearDown(repo.dispose);
+      for (final ({double width, double height}) size
+          in <({double width, double height})>[
+            (width: 400, height: 800),
+            (width: 800, height: 400),
+            (width: 800, height: 1200),
+            (width: 1200, height: 800),
+          ]) {
+        await _pump(tester, width: size.width, height: size.height, repo: repo);
+        await tester.pumpAndSettle();
+        expect(find.byType(Badge), findsNothing);
+        expect(_chromeFor(tester, size.width), findsOneWidget);
+      }
+
+      _ok(await repo.create(aProject(id: 'p1', name: 'One')));
+      await _expectCountAtSizes(tester, repo, '1');
+
+      for (int index = 2; index <= 9; index++) {
+        _ok(await repo.create(aProject(id: 'p$index', name: 'Project $index')));
+      }
+      await _expectCountAtSizes(tester, repo, '9');
+
+      for (int index = 10; index <= 100; index++) {
+        _ok(await repo.create(aProject(id: 'p$index', name: 'Project $index')));
+      }
+      await _expectCountAtSizes(tester, repo, '99+');
+      expect(find.text('100'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'creating, archiving, deleting and restoring update the Projects badge',
+    (WidgetTester tester) async {
+      final FakeProjectRepository repo = FakeProjectRepository();
+      addTearDown(repo.dispose);
+      await _pump(tester, width: 400, repo: repo);
+      await tester.pumpAndSettle();
+      expect(find.byType(Badge), findsNothing);
+
+      _ok(await repo.create(aProject(id: 'live', name: 'Live')));
+      await tester.pumpAndSettle();
+      expect(_badgeLabel(tester), '1');
+
+      _ok(await repo.create(aProject(id: 'second', name: 'Second')));
+      await tester.pumpAndSettle();
+      expect(_badgeLabel(tester), '2');
+
+      _ok(await repo.setStatus('second', ProjectStatus.archived));
+      await tester.pumpAndSettle();
+      expect(_badgeLabel(tester), '1');
+
+      _ok(await repo.setStatus('second', ProjectStatus.active));
+      await tester.pumpAndSettle();
+      expect(_badgeLabel(tester), '2');
+
+      _ok(await repo.delete('second'));
+      await tester.pumpAndSettle();
+      expect(_badgeLabel(tester), '1');
+
+      _ok(await repo.delete('live'));
+      await tester.pumpAndSettle();
+      expect(find.byType(Badge), findsNothing);
+    },
+  );
+
+  testWidgets('Capture, Records and Settings never gain a badge', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = await _seedProjects(<String>['Alpha']);
+    addTearDown(repo.dispose);
+    for (final double width in <double>[400, 800, 1200]) {
+      await _pump(tester, width: width, repo: repo);
+      await tester.pumpAndSettle();
+      expect(find.byType(Badge), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey<String>('nav-icon-1')),
+          matching: find.byType(Badge),
+        ),
+        findsNothing,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey<String>('nav-icon-2')),
+          matching: find.byType(Badge),
+        ),
+        findsNothing,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey<String>('nav-icon-3')),
+          matching: find.byType(Badge),
+        ),
+        findsNothing,
+      );
+    }
+  });
+
+  testWidgets(
+    'the Projects badge meets 4.5:1 in light, dark, outdoor and on the inverted rail',
+    (WidgetTester tester) async {
+      final FakeProjectRepository repo = await _seedProjects(<String>['Alpha']);
+      addTearDown(repo.dispose);
+      for (final AppThemeMode mode in <AppThemeMode>[
+        AppThemeMode.light,
+        AppThemeMode.dark,
+        AppThemeMode.outdoor,
+      ]) {
+        await _pump(tester, width: 400, repo: repo, mode: mode);
+        await tester.pumpAndSettle();
+        _expectBadgeContrast(tester);
+      }
+
+      await _pump(tester, width: 800, repo: repo, mode: AppThemeMode.light);
+      await tester.pumpAndSettle();
+      expect(_railInverted(tester), isTrue);
+      _expectBadgeContrast(tester, inverted: true);
+    },
+  );
+
+  testWidgets('the Projects destination announces its count', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = await _seedProjects(<String>[
+      'Alpha',
+      'Beta',
+    ]);
+    addTearDown(repo.dispose);
+    await _pump(tester, width: 400, repo: repo);
+    await tester.pumpAndSettle();
+    _expectAnnouncesCount(tester, 2);
+
+    _ok(await repo.create(aProject(id: 'third', name: 'Gamma')));
+    await tester.pumpAndSettle();
+    expect(_badgeLabel(tester), '3');
+    _expectAnnouncesCount(tester, 3);
+
+    await _setWidth(tester, 800);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey<String>('nav-rail')), findsOneWidget);
+    expect(_badgeLabel(tester), '3');
+    _expectAnnouncesCount(tester, 3);
+  });
+
+  testWidgets('the badge does not clip or push labels at 200 percent text', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    for (int index = 0; index < 12; index++) {
+      _ok(await repo.create(aProject(id: 'p$index', name: 'Project $index')));
+    }
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    for (final double width in <double>[400, 800, 1200]) {
+      await _pump(tester, width: width, repo: repo);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(_shellLabel(tester, Copy.navProjects), findsOneWidget);
+      expect(_shellLabel(tester, Copy.navCapture), findsOneWidget);
+      expect(_badgeLabel(tester), '12');
+    }
+  });
+
+  testWidgets('in RTL the badge sits at the icon end, not hard right', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = await _seedProjects(<String>['Alpha']);
+    addTearDown(repo.dispose);
+    tester.platformDispatcher.localeTestValue = const Locale('ar');
+    addTearDown(tester.platformDispatcher.clearLocaleTestValue);
+    for (final double width in <double>[400, 800]) {
+      await _pump(tester, width: width, repo: repo);
+      await tester.pumpAndSettle();
+      final Badge badge = tester.widget<Badge>(find.byType(Badge));
+      expect(badge.alignment, AlignmentDirectional.topEnd);
+      final BuildContext iconContext = tester.element(
+        find.byKey(const ValueKey<String>('nav-icon-0')),
+      );
+      if (Directionality.of(iconContext) == TextDirection.rtl) {
+        expect(
+          tester.getCenter(find.byType(Badge)).dx,
+          lessThan(
+            tester
+                .getCenter(find.byKey(const ValueKey<String>('nav-icon-0')))
+                .dx,
+          ),
+        );
+      }
+    }
+  });
 }
 
 Future<GoRouter> _pump(
@@ -581,6 +777,7 @@ Future<GoRouter> _pump(
   double height = 800,
   String? projectId,
   FakeProjectRepository? repo,
+  AppThemeMode? mode,
   List<Override> overrides = const <Override>[],
 }) async {
   _bindWidth(tester, width, height: height);
@@ -592,6 +789,14 @@ Future<GoRouter> _pump(
         networkOnlineOverride(),
         if (repo != null)
           projectRepositoryProvider.overrideWith((Ref _) => repo),
+        if (mode != null)
+          themeModeProvider.overrideWith(
+            () => ThemeModeController.withStore(
+              TextStore.memory(<String, String>{
+                AppConstants.preferences.themeMode: mode.name,
+              }),
+            ),
+          ),
         ...overrides,
       ],
       child: const TaptureApp(),
@@ -721,4 +926,65 @@ bool _railInverted(WidgetTester tester) {
       colors.onSurface == AppColors.outdoor.onSurface &&
       colors.outline == AppColors.outdoor.outline;
   return Theme.of(context).brightness == Brightness.light && !outdoor;
+}
+
+Finder _chromeFor(WidgetTester tester, double width) {
+  if (width < 600) {
+    return find.byKey(const ValueKey<String>('nav-bar'));
+  }
+  return find.byKey(const ValueKey<String>('nav-rail'));
+}
+
+Future<void> _expectCountAtSizes(
+  WidgetTester tester,
+  FakeProjectRepository repo,
+  String label,
+) async {
+  for (final ({double width, double height}) size
+      in <({double width, double height})>[
+        (width: 400, height: 800),
+        (width: 800, height: 400),
+        (width: 800, height: 1200),
+        (width: 1200, height: 800),
+      ]) {
+    await _pump(tester, width: size.width, height: size.height, repo: repo);
+    await tester.pumpAndSettle();
+    expect(_chromeFor(tester, size.width), findsOneWidget);
+    expect(_badgeLabel(tester), label);
+    expect(find.byType(Badge), findsOneWidget);
+  }
+}
+
+String _badgeLabel(WidgetTester tester) {
+  final Badge badge = tester.widget<Badge>(find.byType(Badge));
+  final Text label = badge.label! as Text;
+  return label.data!;
+}
+
+void _expectBadgeContrast(WidgetTester tester, {bool inverted = false}) {
+  final Badge badge = tester.widget<Badge>(find.byType(Badge));
+  final Color fill = badge.backgroundColor!;
+  final Color ink = badge.textColor!;
+  final AppColors expected = inverted
+      ? AppColors.dark
+      : tester.element(find.byType(NavShell)).colors;
+  expect(fill, expected.primary);
+  expect(ink, expected.onPrimary);
+  expect(_contrast(ink, fill), greaterThanOrEqualTo(4.5));
+}
+
+void _expectAnnouncesCount(WidgetTester tester, int count) {
+  final Semantics semantics = tester.widget<Semantics>(
+    find.byKey(const ValueKey<String>('nav-count-live')),
+  );
+  expect(semantics.properties.label, Copy.navProjectsCount(count));
+  expect(semantics.properties.liveRegion, isTrue);
+}
+
+double _contrast(Color a, Color b) {
+  final double left = a.computeLuminance();
+  final double right = b.computeLuminance();
+  final double lighter = left > right ? left : right;
+  final double darker = left > right ? right : left;
+  return (lighter + 0.05) / (darker + 0.05);
 }

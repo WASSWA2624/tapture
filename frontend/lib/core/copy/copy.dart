@@ -366,6 +366,26 @@ abstract final class Copy {
   /// Shell destination: the project list.
   static const String navProjects = 'Projects';
 
+  /// Spoken count on the Projects destination. Keeps the exact number.
+  static String navProjectsCount(int n) {
+    final String formatted = NumberFormat.decimalPattern().format(n);
+    return Intl.plural(
+      n,
+      zero: 'No projects',
+      one: '1 project',
+      other: '$formatted projects',
+    );
+  }
+
+  /// Visible badge on the Projects destination. Caps at 99+ so the
+  /// rail does not widen at large counts (FE-RESP-06).
+  static String navProjectsCountBadge(int n) {
+    if (n > 99) {
+      return '99+';
+    }
+    return NumberFormat.decimalPattern().format(n);
+  }
+
   /// Headline when the project list has nothing to show.
   static const String projectsEmptyHeadline = 'No projects yet';
 

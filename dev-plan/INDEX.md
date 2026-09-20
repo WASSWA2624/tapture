@@ -1,6 +1,6 @@
 # Tapture — task index
 
-327 implementation prompts across 25 phases. Work top to bottom.
+328 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task.
 
@@ -115,6 +115,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [317 — Fix navigation icons and the Capture tab state](06-app-shell/317-fix-navigation-icons-and-capture-state.md)
 - [x] [324 — Fix the project home count navigation](06-app-shell/324-fix-count-card-navigation.md)
 - [x] [325 — Show the project list in the expanded list pane](06-app-shell/325-show-projects-in-list-pane.md)
+- [x] [328 — Show the project count on the Projects destination](06-app-shell/328-show-project-count-on-destination.md)
 
 ## 07 — Account and settings
 

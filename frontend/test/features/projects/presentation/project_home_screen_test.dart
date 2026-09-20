@@ -18,7 +18,6 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/projects/domain/project_repository.dart';
-import 'package:tapture/features/projects/presentation/current_project.dart';
 import 'package:tapture/features/projects/presentation/project_home_screen.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/settings/settings.dart';

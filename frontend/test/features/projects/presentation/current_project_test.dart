@@ -97,6 +97,40 @@ void main() {
       expect(to, AppRoutes.capture('project-1'));
     },
   );
+
+  test(
+    'projectNavCount counts active rows from the existing list watch',
+    () async {
+      final FakeProjectRepository repo = FakeProjectRepository();
+      addTearDown(repo.dispose);
+      _ok(await repo.create(aProject(id: 'active', name: 'Active')));
+      _ok(
+        await repo.create(
+          aProject(
+            id: 'archived',
+            name: 'Archived',
+            status: ProjectStatus.archived,
+          ),
+        ),
+      );
+      final ProviderContainer container = _container(
+        repo: repo,
+        store: SettingsStore.fake(),
+      );
+      addTearDown(container.dispose);
+      container.listen(projectListProvider, (_, _) {});
+      await Future<void>.delayed(Duration.zero);
+      expect(container.read(projectNavCountProvider), 1);
+
+      container.read(projectListShowArchivedProvider.notifier).set(true);
+      await Future<void>.delayed(Duration.zero);
+      expect(container.read(projectNavCountProvider), 1);
+
+      _ok(await repo.setStatus('archived', ProjectStatus.active));
+      await Future<void>.delayed(Duration.zero);
+      expect(container.read(projectNavCountProvider), 2);
+    },
+  );
 }
 
 ProviderContainer _container({

@@ -64,6 +64,16 @@ void main() {
     expect(Copy.notDetected, isNotEmpty);
   });
 
+  test('navProjectsCount keeps the exact number and caps the badge', () {
+    expect(Copy.navProjectsCount(0), 'No projects');
+    expect(Copy.navProjectsCount(1), '1 project');
+    expect(Copy.navProjectsCount(2), '2 projects');
+    expect(Copy.navProjectsCount(100), '100 projects');
+    expect(Copy.navProjectsCountBadge(9), '9');
+    expect(Copy.navProjectsCountBadge(99), '99');
+    expect(Copy.navProjectsCountBadge(100), '99+');
+  });
+
   test('fieldsCount reads correctly at zero, one and many', () {
     expect(Copy.fieldsCount(0), 'No fields');
     expect(Copy.fieldsCount(1), '1 field');

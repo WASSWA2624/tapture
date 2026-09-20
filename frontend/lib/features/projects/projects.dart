@@ -10,6 +10,8 @@ export 'presentation/current_project.dart'
         currentProjectDetailsProvider,
         currentProjectProvider,
         openProjectIdProvider,
+        projectListProvider,
+        projectNavCountProvider,
         projectSettingsStoreProvider;
 export 'presentation/project_list_filter.dart'
     show
