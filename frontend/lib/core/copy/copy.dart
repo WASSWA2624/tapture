@@ -949,6 +949,46 @@ abstract final class Copy {
     return shippedLabel('templates.groups.$group.$group');
   }
 
+  /// Title of the identity-fields screen.
+  static const String identityFieldsTitle = 'Identity fields';
+
+  /// What changing the identity set does.
+  static const String identityFieldsExplain =
+      'These fields decide whether two records are the same thing.';
+
+  /// Headline when the template has no fields to mark as identity.
+  static const String identityFieldsEmptyHeadline = 'No fields to mark';
+
+  /// Body when the identity list is empty.
+  static const String identityFieldsEmptyMessage =
+      'Add a field first, then choose which ones identify a record.';
+
+  /// Title of the output-column mapping screen.
+  static const String outputMappingTitle = 'Output columns';
+
+  /// Headline when the template has no fields to map.
+  static const String outputMappingEmptyHeadline = 'No columns to map';
+
+  /// Body when the output-mapping list is empty.
+  static const String outputMappingEmptyMessage =
+      'Add a field first, then choose where each one writes.';
+
+  /// Why two fields cannot share an output column.
+  static const String outputMappingDuplicate =
+      'Two fields cannot write to the same column.';
+
+  /// What to do after a duplicate output column is refused.
+  static const String outputMappingDuplicateRecovery =
+      'Give each field its own column, then save.';
+
+  /// Hint on a template built in the app, whose headers are generated.
+  static const String outputMappingBuiltHint =
+      'Headers are generated from the field labels. You can change them.';
+
+  /// Hint on a template imported from a workbook.
+  static const String outputMappingImportedHint =
+      'These letters came from the workbook. You can change them.';
+
   /// Suggested name when duplicating [name].
   static String templateCopyName(String name) => '$name (copy)';
 

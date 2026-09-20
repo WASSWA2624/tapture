@@ -29,6 +29,8 @@ import 'package:tapture/features/settings/presentation/storage_settings_screen.d
 import 'package:tapture/features/settings/settings.dart';
 import 'package:tapture/features/templates/presentation/field_add_sheet.dart';
 import 'package:tapture/features/templates/presentation/field_list_screen.dart';
+import 'package:tapture/features/templates/presentation/identity_fields_screen.dart';
+import 'package:tapture/features/templates/presentation/output_mapping_screen.dart';
 import 'package:tapture/features/templates/presentation/required_columns_screen.dart';
 import 'package:tapture/features/templates/presentation/shipped_picker_screen.dart';
 import 'package:tapture/features/templates/presentation/template_create_screen.dart';
@@ -124,6 +126,12 @@ abstract final class AppRoutes {
 
   /// Bulk requiredness for [id]. Task 096 owns the screen.
   static String templateRequired(String id) => '${template(id)}/required';
+
+  /// Identity keys for [id]. Task 098 owns the screen.
+  static String templateIdentity(String id) => '${template(id)}/identity';
+
+  /// Output columns for [id]. Task 098 owns the screen.
+  static String templateOutput(String id) => '${template(id)}/output';
 
   /// Unprocessed-queue destination the status line opens. Task 159 owns the
   /// screen.
@@ -418,6 +426,22 @@ List<RouteBase> get _routes {
                       },
                     ),
                     GoRoute(
+                      path: 'identity',
+                      builder: (BuildContext _, GoRouterState state) {
+                        return IdentityFieldsScreen(
+                          templateId: state.pathParameters['templateId']!,
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      path: 'output',
+                      builder: (BuildContext _, GoRouterState state) {
+                        return OutputMappingScreen(
+                          templateId: state.pathParameters['templateId']!,
+                        );
+                      },
+                    ),
+                    GoRoute(
                       path: 'fields/new',
                       builder: (BuildContext _, GoRouterState state) {
                         return FieldAddSheet(
@@ -563,6 +587,8 @@ String _titleFor(String name) {
     'template-fields' => Copy.templateFieldsTitle,
     'template-export' => Copy.templatesExport,
     'template-required' => Copy.requiredColumnsTitle,
+    'template-identity' => Copy.identityFieldsTitle,
+    'template-output' => Copy.outputMappingTitle,
     'field-add' => Copy.templatesAddField,
     'field-edit' => Copy.templatesEditField,
     'queue' => Copy.navQueue,
@@ -582,6 +608,8 @@ IconData _iconFor(String name) {
     'template-fields' => Icons.view_list_outlined,
     'template-export' => Icons.ios_share_outlined,
     'template-required' => Icons.rule,
+    'template-identity' => Icons.fingerprint,
+    'template-output' => Icons.view_column_outlined,
     'field-add' => Icons.add,
     'field-edit' => Icons.edit_outlined,
     'queue' => Icons.pending_outlined,

@@ -27,6 +27,6 @@ detection, and which spreadsheet column or generated header each field writes to
 
 ## Definition of done
 
-- [ ] Duplicate detection has an explicit, visible configuration rather than an implied one.
-- [ ] Two fields cannot claim the same output column.
-- [ ] Tests: widget test of `identity_fields_screen.dart` covering empty and failure states; unit test rejecting a duplicate output column.
+- [x] Duplicate detection has an explicit, visible configuration rather than an implied one.
+- [x] Two fields cannot claim the same output column.
+- [x] Tests: widget test of `identity_fields_screen.dart` covering empty and failure states; unit test rejecting a duplicate output column.

@@ -153,7 +153,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [095 — Add and edit a field, with Advanced, validation and options](09-templates/095-field-add-basic.md)
 - [x] [096 — Required columns screen](09-templates/096-required-columns-screen.md)
 - [x] [097 — Field editor widget](09-templates/097-field-editor-inline.md)
-- [ ] [098 — Identity fields and output column mapping](09-templates/098-identity-fields.md)
+- [x] [098 — Identity fields and output column mapping](09-templates/098-identity-fields.md)
 - [ ] [099 — Template versioning and record migration](09-templates/099-template-versioning.md)
 - [ ] [100 — Export and import a template as JSON](09-templates/100-template-export-json.md)
 - [ ] [101 — Read a spreadsheet and infer its shape](09-templates/101-xlsx-read-workbook.md)

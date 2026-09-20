@@ -50,6 +50,16 @@ class FieldListScreen extends ConsumerWidget {
                 icon: Icons.rule,
                 onTap: () => _openRequired(context, template.id),
               ),
+              AppOverflowAction(
+                label: Copy.identityFieldsTitle,
+                icon: Icons.fingerprint,
+                onTap: () => _openIdentity(context, template.id),
+              ),
+              AppOverflowAction(
+                label: Copy.outputMappingTitle,
+                icon: Icons.view_column_outlined,
+                onTap: () => _openOutput(context, template.id),
+              ),
             ],
       footer: template == null
           ? null
@@ -321,6 +331,14 @@ void _openRequired(BuildContext context, String templateId) {
   context.go(_requiredLocation(templateId));
 }
 
+void _openIdentity(BuildContext context, String templateId) {
+  context.go(_identityLocation(templateId));
+}
+
+void _openOutput(BuildContext context, String templateId) {
+  context.go(_outputLocation(templateId));
+}
+
 void _openEdit(BuildContext context, String templateId, String fieldKey) {
   context.go(_editLocation(templateId, fieldKey));
 }
@@ -330,6 +348,8 @@ const String _templatesRoot = '/templates';
 const String _fieldsSegment = 'fields';
 const String _newSegment = 'new';
 const String _requiredSegment = 'required';
+const String _identitySegment = 'identity';
+const String _outputSegment = 'output';
 
 String _addLocation(String id) {
   return '$_templatesRoot/${Uri.encodeComponent(id)}/$_fieldsSegment/'
@@ -343,4 +363,12 @@ String _editLocation(String id, String fieldKey) {
 
 String _requiredLocation(String id) {
   return '$_templatesRoot/${Uri.encodeComponent(id)}/$_requiredSegment';
+}
+
+String _identityLocation(String id) {
+  return '$_templatesRoot/${Uri.encodeComponent(id)}/$_identitySegment';
+}
+
+String _outputLocation(String id) {
+  return '$_templatesRoot/${Uri.encodeComponent(id)}/$_outputSegment';
 }
