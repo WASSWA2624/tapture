@@ -6,18 +6,17 @@
 The project list carries its own actions — create, filter and a list-level more menu holding Show
 archived — and each row is numbered and carries a borderless three-dot menu offering Rename, Pin,
 Archive and Delete. On expanded the actions sit in the list pane's header; on compact and medium, which
-have no pane, the same actions sit in the project list screen's title bar, so no platform loses one.
+have no pane, the same actions sit in the project list screen's title bar, so no surface loses one.
 "Show archived" leaves the body. Correct in light, dark and outdoor, in both orientations, and at 200
 percent text.
 
 ## Evidence
 - FBK0000006: the reporter asks for a create button, a filter button and a three-dot more button holding
-  a projects context menu; for "Show archived" to move out of the project screen area into that menu;
-  for the list to be numbered; and for each row to carry a three-dot more button with no border but
-  still noticeable, offering archive, pin, rename, open with and delete.
-  `screenshots/FBK0000006.png` shows "Show archived" as a checkbox above the body list, and the pane
-  with no actions at all; `-2` shows today's row menu — Project details, Archive, Delete project. Web,
-  desktop, expanded (1280x585 @1.5x), landscape, light, text scale 1.
+  a projects context menu; for "Show archived" to move into that menu; for the list to be numbered; and
+  for each row to carry a borderless-but-noticeable three-dot menu offering archive, pin, rename, open
+  with and delete. `screenshots/FBK0000006.png` shows "Show archived" as a checkbox above the body list
+  and the pane with no actions; `-2` shows today's row menu — Project details, Archive, Delete project.
+  Web, desktop, expanded, landscape, light.
 - Current code:
   - The pane has no actions: `frontend/lib/app/nav_shell.dart:181-240` builds a search field and its
     content, nothing else.
@@ -30,6 +29,18 @@ percent text.
     (`frontend/lib/features/projects/presentation/project_list_filter.dart:15-19`).
 
 ## Scope
+- Reach: the cause spans a size-class branch — the pane header exists only at expanded — and shared
+  feature widgets (section 4, rows 2 and 1). Build the three actions as **one list read by both
+  layouts**: expanded renders them in the pane header, compact and medium render the same three through
+  `AppPage.actions` and `AppPage.overflow`, so the two cannot drift. The row number and the borderless
+  menu live in `ProjectListView`, so they land wherever it renders — the pane at expanded, the body at
+  compact and medium. Every platform, both orientations, light, dark and outdoor, 200 percent text, and
+  RTL, where the number leads at `start` and the trailing menu flips.
+- Excluded, with reasons:
+  - **Right-click and long-press do not open the row menu.** FE-CONS-10 reserves long-press for
+    selection, and adding a second path to the same menu would make project rows behave unlike every
+    other row in the app. The three-dot control is the one way in, on pointer and on touch alike.
+  - **"Open with"** is 007's work, so this prompt's menu ships without it.
 - Change:
   - `frontend/lib/app/nav_shell.dart`: a pane header row holding the create action, a filter control and
     an `AppOverflowMenu`, above the search field.
@@ -49,19 +60,17 @@ percent text.
   storage and ordering that 004 delivers. "Open with" is 007's work; do not add it here.
 
 ## Rules
-- FE-CONS-01, FE-CONS-05 and FE-CONS-06: `AppOverflowMenu`, `AppIconButton`, `AppPrimaryAction`,
-  `AppListTile` and the one dialog API only; a destructive action pairs a confirm with an undo.
-- FE-CONS-07 and FE-CONS-08: one vocabulary and one icon per concept — reuse `edit_outlined`,
-  `inventory_2_outlined` and `delete_outline`, and fix one icon each for pin and filter.
-- FE-CONS-09: the row number is formatted by the shared formatter, in the active locale.
-- FE-SIMP-01: one primary action — create is the pane header's only filled control.
-- FE-SIMP-07: the rename dialog has a safe default and a way out; Delete still names the count.
-- FE-A11Y-01, FE-A11Y-02 and FE-A11Y-06: 48 dp, labels and tooltips on every icon control, and
-  traversal order matching visual order across the new header.
-- FE-L10N-01, FE-L10N-03 and FE-L10N-05: `Copy` strings, no assembled sentences, `start`/`end` so the
-  number leads correctly in RTL.
-- FE-RESP-02, FE-RESP-04 and FE-RESP-06: size class from `context.sizeClass`; the header wraps rather
-  than clipping at 200 percent text.
+*Surfaces are in Reach; these are the constraints on the change itself.*
+- FE-CONS-01, FE-CONS-05, FE-CONS-06: `AppOverflowMenu`, `AppIconButton`, `AppPrimaryAction`,
+  `AppListTile` and the one dialog API only; destructive actions pair a confirm with an undo.
+- FE-CONS-07, FE-CONS-08, FE-CONS-09: reuse `edit_outlined`, `inventory_2_outlined` and
+  `delete_outline`, fix one icon for pin; the row number uses the shared formatter.
+- FE-CONS-10: long-press stays selection — the three-dot control is the only way into the row menu.
+- FE-SIMP-01, FE-SIMP-07: create is the header's only filled control; rename has a safe default and a
+  way out, and Delete still names the count.
+- FE-A11Y-01, FE-A11Y-02, FE-A11Y-06: 48 dp, labels and tooltips, traversal order matching visual order.
+- FE-L10N-01, FE-L10N-03: `Copy` strings, no assembled sentences.
+- FE-RESP-02: size class from `context.sizeClass`, never a `MediaQuery` width comparison.
 
 ## Steps
 1. Record the work in the plan with
@@ -74,15 +83,15 @@ percent text.
 5. Add Rename and Pin/Unpin to the row menu, reusing `ProjectArchiveAction` and `ProjectDeleteAction`
    patterns for the new action file.
 6. Tests:
-   - `frontend/test/app/nav_shell_test.dart`: at 1200 dp the pane header shows create, filter and the
-     more menu; the menu toggles Show archived and the pane list responds.
+   - `frontend/test/app/nav_shell_test.dart`: at 1200 dp the pane header shows the actions; the menu
+     toggles Show archived and the pane list responds.
    - `frontend/test/features/projects/presentation/project_list_screen_test.dart`: at 400 and 800 dp the
-     same three actions are reachable from the title bar; the body no longer contains the checkbox;
-     rows are numbered 1..n in the order shown, and renumber when the filter or search changes.
+     same actions are reachable from the title bar; the body has no checkbox; rows are numbered 1..n in
+     the order shown and renumber when filter, search or pinning changes.
    - `project_list_view_test.dart`: the row menu offers Rename, Pin, Archive and Delete; Rename saves
-     and cancels; Pin moves the row to the top and the number follows; the menu has no border and still
-     meets the 48 dp, label and tooltip matchers.
-   - Goldens for the pane header and a numbered pinned row, light, dark and outdoor, at default and 200
+     and cancels; Pin moves the row to the top; the menu has no border and still meets the 48 dp, label
+     and tooltip matchers; long-press does not open it.
+   - Goldens: the pane header and a numbered pinned row, light, dark and outdoor, default and 200
      percent text.
 
 ## Human review
@@ -112,6 +121,8 @@ Proceed only with an explicit answer. If the answer is "proceed", do all three r
 - [ ] Pin moves the row to the top of the list and persists across a restart.
 - [ ] Every new control meets the 48 dp, label, tooltip and contrast matchers in light, dark and outdoor.
 - [ ] Nothing clips at 200 percent text at 400, 800 and 1200 dp, in both orientations.
+- [ ] In RTL the row number leads at the start edge and the three-dot menu sits at the end edge.
+- [ ] Long-press on a row does not open the menu, on touch or with a pointer (FE-CONS-10).
 - [ ] FBK0000006's actions, numbering, row-menu and Show-archived parts are resolved; "open with" is 007.
 
 ## Verification

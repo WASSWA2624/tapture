@@ -28,6 +28,19 @@ on, and is hidden rather than dead where the platform cannot do it.
     import (task [102](../../dev-plan/09-templates/102-xlsx-mapping-screen.md)), and the phase 18 export output.
 
 ## Scope
+- Reach: the cause is a `core/` service (section 4, row 3) — the interface and its callers are shared,
+  the implementations are per platform. The ones that change, named:
+  `frontend/lib/core/files/download_service_io.dart` gains the capability twice over, as the system
+  chooser on Android and iOS and as the shell's open verb on Windows, macOS and Linux;
+  `download_service_web.dart` reports `canOpenExternally` false and falls back to a download;
+  `download_service_stub.dart` reports false and does nothing. The menu item is shared, so it renders at
+  all three widths, both orientations, in light, dark and outdoor, and at 200 percent text.
+  This is a suggestion, and a suggestion carries (section 4): it was reported on desktop web but lands
+  on Android, iOS and the three desktops as well, within the interaction budget — one menu row, not a
+  new screen (FE-SIMP-01, FE-SIMP-02, FE-SIMP-06).
+- Excluded: no surface is dropped. The web is served by a *different outcome* — a download rather than a
+  chooser, because a browser cannot hand a file to a local app — which is the review's third question,
+  not silence.
 - Change:
   - `frontend/lib/core/files/download_service.dart` and its `_io`, `_web` and `_stub` implementations:
     an `openExternally` capability with a `canOpenExternally` flag, plus a fake, following the shape
@@ -49,17 +62,15 @@ on, and is hidden rather than dead where the platform cannot do it.
   area; never pass the stored original's path to another app, which could rewrite it in place.
 - FE-FLOW-06: a new package needs its own task, an allowlist entry with a pinned version, a licence
   check and a note on what it replaces.
-- FE-STR-11: camera, files, permissions and the like are reached only through a `core/` service with an
-  interface and a fake. No feature calls the plugin directly.
-- FE-CONS-01: extend `DownloadService`; do not add a parallel share service.
-- FE-CONS-04 and FE-CONS-11: failure renders through `AppErrorState` from a typed `Failure`; no screen
-  writes its own error copy.
-- FE-SIMP-10 and FE-SIMP-11: plain language, and the item says what it will do — "Download a copy" on
-  the web, "Open with" elsewhere.
-- FE-SEC-01 to FE-SEC-11: no new network egress; check the storage permission path on Android before
-  writing the copy, and leave nothing readable behind if the hand-off fails.
-- FE-TEST-03, FE-TEST-05 and FE-TEST-10: a hand-written fake, no real plugin in tests, and the denied,
-  no-app-installed and cancelled paths are tested as carefully as success.
+- FE-STR-11, FE-CONS-01: extend `DownloadService` — one `core/` service with an interface and a fake.
+  No feature calls the plugin directly, and no parallel share service.
+- FE-CONS-04, FE-CONS-11: failure renders through `AppErrorState` from a typed `Failure`.
+- FE-SIMP-10, FE-SIMP-11: plain language; the item says what it will do — "Download a copy" on the web,
+  "Open with" elsewhere.
+- FE-SEC-01 to FE-SEC-11: no new network egress; check Android's storage permission before writing the
+  copy, and leave nothing readable behind if the hand-off fails.
+- FE-TEST-03, FE-TEST-05, FE-TEST-10: a hand-written fake, no real plugin in tests, and the denied,
+  no-app-installed and cancelled paths tested as carefully as success.
 
 ## Steps
 1. Record the work in the plan with

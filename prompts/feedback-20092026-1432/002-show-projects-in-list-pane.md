@@ -25,6 +25,18 @@ dark and outdoor, in both orientations, and at 200 percent text.
   `AppPrimaryAction` footer shows whenever the list has loaded (`:44-49`).
 
 ## Scope
+- Reach: the cause is a size-class branch — `_Pane` inside `NavShell`'s `expanded` arm (section 4, row
+  2) — rendering a shared widget (row 1). The pane exists at **1024 dp and above**
+  (`frontend/lib/core/widgets/responsive/breakpoints.dart:31-34`), which is a **width, not a platform**:
+  it lands on a maximised desktop browser, Windows, macOS and Linux windows, an iPad in portrait *and*
+  landscape, an unfolded foldable and an Android tablet — and it must disappear again when that same
+  desktop window is dragged under 1024 dp. Compact and medium keep the list in the body and the footer
+  button exactly as today; that is a verified outcome here, not an assumption. Both orientations, light,
+  dark and outdoor, 200 percent text, and RTL mirroring.
+- Excluded: the **Records** pane keeps today's empty state, because task
+  [163](../../dev-plan/14-records/163-records-list.md) owns the records list and building it here would
+  widen the behaviour (rule 5). Capture and Settings have no pane at all (`hasList` is false) and are
+  untouched.
 - Change:
   - `frontend/lib/features/projects/presentation/project_list_view.dart` (new): the rows, their
     overflow and their tap behaviour, lifted unchanged out of `ProjectListScreen` so the pane and the
@@ -99,6 +111,9 @@ Proceed only with an explicit answer. If the answer is "proceed", do both recomm
 - [ ] Changing width between 400 and 1200 dp loses neither the typed search nor the open project.
 - [ ] The pane renders loading, empty, error and offline, and clips nothing at 200 percent text in
       light, dark and outdoor, in both orientations.
+- [ ] Dragging a desktop window across 1024 dp moves the list between pane and body without a dropped
+      frame of empty state, and an iPad or foldable at 1024 dp gets the pane in portrait too.
+- [ ] In RTL the pane mirrors: the search field, rows and their trailing controls all flip.
 - [ ] FBK0000006's list-pane, heading, body-duplication and create-button parts are resolved. Its
       remaining parts are covered by 003, 004, 005, 006 and 007.
 

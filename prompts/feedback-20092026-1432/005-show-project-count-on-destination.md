@@ -21,6 +21,15 @@ the label at 200 percent text in either orientation.
   Neither `_Bar` (`:105-140`) nor `_Rail` (`:142-179`) can show a count, and the shell reads no data.
 
 ## Scope
+- Reach: the cause is a size-class branch — one destination list feeding both `_Bar` and `_Rail`
+  (section 4, row 2). Define the count once on `_Destination` so the two layouts cannot drift; that
+  shared-layer fix is the point, not two badge call sites. It lands on compact (the `NavigationBar`, on
+  a phone and on any window under 600 dp), and on medium and expanded (the `NavigationRail`, on
+  tablets, foldables, desktop and web) — every platform, both orientations, light, dark and outdoor,
+  **including the inverted light-desktop rail** where `AppColors.dark` is in force, at 200 percent text,
+  and in RTL, where the badge sits at the icon's end rather than hard right.
+- Excluded: Capture, Records and Settings get no badge. No entry asks for one, and adding them would
+  widen the behaviour (rule 5) — stated rather than left silent.
 - Change:
   - `frontend/lib/app/nav_shell.dart`: let a destination supply a count, and wrap its icon in Material's
     `Badge` in both `_Bar` and `_Rail`. Read the count from the projects barrel (FE-STR-08) — the shell
@@ -82,6 +91,7 @@ Proceed only with an explicit answer. If the answer is "proceed", do both recomm
 - [ ] The count is announced to screen readers, with a plural-correct, locale-formatted string.
 - [ ] The badge meets 4.5:1 in light, dark and outdoor, including on the inverted light-desktop rail.
 - [ ] At 200 percent text nothing clips and no label is pushed out, at all three widths.
+- [ ] In RTL the badge sits at the icon's end, not hard right, on both the bar and the rail.
 - [ ] Capture, Records and Settings are visually unchanged.
 
 ## Verification

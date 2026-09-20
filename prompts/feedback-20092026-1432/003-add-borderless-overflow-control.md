@@ -20,6 +20,14 @@ dark and outdoor, at every width, and at 200 percent text.
   (`frontend/lib/core/widgets/app_icon_button.dart:38-52`); the overflow control has no equivalent.
 
 ## Scope
+- Reach: the cause is shared Dart — one catalogue widget and one central theme (section 4, row 1). The
+  new flag is available to **every** `AppOverflowMenu` on every platform (Android, iOS, web, Windows,
+  macOS, Linux) and at every size class, which is exactly why the default must stay byte-identical: the
+  blast radius of a changed default is the whole app. Only the project row adopts it, in 006; every
+  other call site keeps the outlined form. Verify in light, dark and outdoor, at 200 percent text, in
+  RTL, and for both input models — keyboard focus with a pointer on desktop and web, and screen reader
+  plus switch access on mobile. Hover exists only where there is a pointer; see the review below.
+- Excluded: nothing. A shared widget has no surface it does not reach.
 - Change:
   - `frontend/lib/core/widgets/app_overflow_menu.dart`: add `bool outlined = true`; when false, pass a
     `style` with `side: BorderSide.none` and keep the 48 dp target, the token icon size, the semantic
@@ -65,13 +73,22 @@ dark and outdoor, at every width, and at 200 percent text.
   focus and press? **Recommendation: bare ink at rest, tonal surface on hover, focus and press**, which
   keeps rows quiet, matches `AppIconButton(outlined: false)`, and still meets FE-THEME-10 because the
   glyph itself carries the contrast.
+- That recommendation leans on hover, and **hover does not exist on touch** (section 4, row 4): on a
+  phone or tablet the control would sit at its rest state until it is pressed, so "noticeable" has to be
+  carried by the rest state alone. Draw the glyph at full `onSurface` ink rather than a secondary or
+  reduced ink, so one visual works for both input models — or fork the rest state per platform?
+  **Recommendation: full `onSurface` ink at rest everywhere**, with hover and focus layered on top for
+  pointer and keyboard users. One geometry, one golden set, and nothing that only reviewers with a mouse
+  can see. Do not fork by platform: FE-THEME-03 already forbids geometry that moves between modes.
 
-Proceed only with an explicit answer. If the answer is "proceed", do the recommendation.
+Proceed only with an explicit answer. If the answer is "proceed", do both recommendations.
 
 ## Acceptance criteria
 - [ ] `AppOverflowMenu()` with no arguments renders exactly as it does today at every existing call site.
 - [ ] `AppOverflowMenu(outlined: false)` renders no border, keeps a 48 dp target, and opens the same menu.
 - [ ] The borderless variant shows a visible hover, focus and pressed state in light, dark and outdoor.
+- [ ] With hover and focus suppressed — the touch case — the borderless variant is still discernible as
+      a control at rest, its glyph meeting the contrast matcher in all three themes.
 - [ ] Both variants pass the label, tooltip, target-size and contrast matchers in all three themes.
 - [ ] Both variants appear in the widget gallery in every state.
 - [ ] Nothing clips at 200 percent text at 400, 800 and 1200 dp.

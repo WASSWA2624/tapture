@@ -24,6 +24,16 @@ menu item and the list marker.
     `frontend/lib/core/db/migrations.dart:18-31` and `kDestructiveSteps` empty (`:35`).
 
 ## Scope
+- Reach: the cause is shared Dart — one table, one model, one repository (section 4, row 1) — reached
+  through a store that has per-platform implementations (row 3). The upgrade must be proven on **both**
+  `frontend/lib/core/db/app_database_io.dart` (Android, iOS, Windows, macOS, Linux) and
+  `app_database_web.dart`, because a native `sqlite3` file and the browser's database do not fail the
+  same way on a half-applied migration; `app_database_stub.dart` is the unsupported fallback and needs
+  no step. There is no size-class, orientation or theme reach here, deliberately: this prompt ships no
+  interface. The ordering it introduces is what every later surface inherits, which is what lets 006
+  adopt it at all three widths without a second sort.
+- Excluded: every visible surface — the menu item and the list marker are 006's work, so that the
+  schema bump can be reviewed and reverted on its own.
 - Change:
   - `frontend/lib/core/db/tables/projects.dart`: add a nullable `DateTimeColumn get pinnedAt`. Extend
     the `projects_by_status` index, or add one, so "pinned first, then newest" is served by the index
@@ -82,7 +92,8 @@ Proceed only with an explicit answer. If the answer is "proceed", do both recomm
 step 3 before an answer: the schema version is public once it ships.
 
 ## Acceptance criteria
-- [ ] A database at version 13 upgrades to 14 with every project row intact and `pinnedAt` null.
+- [ ] A database at version 13 upgrades to 14 with every project row intact and `pinnedAt` null, proven
+      on the native `sqlite3` database and on the web database, not just one of them.
 - [ ] `setPinned` pins and unpins, and the value survives a restart.
 - [ ] `watchList` and `watchAll` emit pinned projects first, then newest first, with a stable tie order.
 - [ ] Pinning changes neither `updatedAt`, nor the merge revision, nor "Last worked" (unless the review

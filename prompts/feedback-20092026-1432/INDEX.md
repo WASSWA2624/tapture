@@ -1,7 +1,8 @@
 # Feedback prompts — TAPTURE-20092026-1432.xlsx
 
-3 entries → 7 prompts. Generated 20 Sep 2026. Repository commit: 44174bc (every `path:line` below was
-confirmed against 198e01a; 44174bc changes only `prompts/` and no file under `frontend/` or `dev-plan/`).
+3 entries → 7 prompts. Generated 20 Sep 2026. Repository commit: b56d0cc (every `path:line` below was
+confirmed against 198e01a; nothing under `frontend/lib`, `backend/` or `dev-plan/` has changed since —
+the only later edits are to the generator document itself).
 
 All three entries came from one profile: web on desktop Chrome, expanded (viewport 1280x585 @1.5x,
 display 853x480), landscape, light, text scale 1, online, production build 1.0.0, locale `en_US`. Ten
@@ -12,13 +13,33 @@ images, all of the Projects area:
   unprocessed-queue and an export placeholder.
 - `FBK0000008.png` shows the same project home and the four-item rail.
 
-Because every entry came from one platform and one width, each prompt states the target at compact,
-medium and expanded, portrait and landscape, in light, dark and outdoor, and at 200 percent text
-(FE-RESP-10, FE-A11Y-03, FE-L10N-06). Where the feedback describes something only desktop can do,
-the prompt says what the other platforms do instead rather than leaving them behind: 001 covers Android
-Back and browser Back as well as a title-bar control; 002 keeps the list in the body where there is no
-pane; 006 moves the pane header's actions into the title bar at compact and medium; 007 falls back to a
-download on the web, where no app can be launched.
+## Reach
+
+One profile reported all three entries, so that profile is a sample, not the scope (section 4). Each
+prompt names where its cause lives, fixes it at that layer, and carries the outcome to every surface
+that shares it:
+
+| Prompt | Where the cause lives | Carries to | Stated exclusion |
+| :--- | :--- | :--- | :--- |
+| 001 | Shared Dart + system back | All platforms, all 3 widths; back expressed as each platform expects | None |
+| 002 | Size-class branch (`_Pane`) | Every surface ≥1024 dp — desktop, iPad portrait, foldables — not "desktop" | Records pane waits for task 163 |
+| 003 | Shared `core/` widget + theme | Every `AppOverflowMenu`, every platform and width | None — a shared widget reaches everything |
+| 004 | Shared model + per-platform store | Native `sqlite3` **and** the web database | All visible surfaces (they are 006) |
+| 005 | Size-class branch (destinations) | Bar at compact, rail at medium and expanded; inverted rail included | Other three destinations get no badge |
+| 006 | Size-class branch + shared widgets | Pane header at expanded, title bar at compact and medium | Long-press and right-click (FE-CONS-10) |
+| 007 | `core/` service, per-platform impls | `_io` (chooser on mobile, shell open on desktop), `_web` (download), `_stub` | None dropped; web gets a different outcome |
+
+Three reach findings changed a prompt rather than just its wording:
+- **003** originally leaned on hover to make the borderless control noticeable. Hover does not exist on
+  touch, so the rest state now has to carry the affordance by itself; the review question says so.
+- **004** must prove its migration on the web database as well as the native one, because a half-applied
+  upgrade does not fail the same way on both.
+- **006** explicitly rules long-press *out*: FE-CONS-10 reserves it for selection, so the three-dot
+  control stays the one way into the row menu on pointer and touch alike.
+
+Every prompt's acceptance criteria are written against the surfaces its Reach names, at compact, medium
+and expanded, both orientations, in light, dark and outdoor, at 200 percent text, and in RTL where
+layout mirrors (FE-RESP-10, FE-A11Y-03, FE-L10N-05, FE-L10N-06).
 
 ## Run order
 | Prompt | Title | Feedback | Type | Priority | Depends on |
