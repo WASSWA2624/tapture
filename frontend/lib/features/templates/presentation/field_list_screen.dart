@@ -380,7 +380,7 @@ void _openEdit(BuildContext context, String templateId, String fieldKey) {
 }
 
 /// Must match [AppRoutes.templateFieldCreate] and [AppRoutes.templateField].
-const String _templatesRoot = '/templates';
+const String _templatesRoot = '/more/templates';
 const String _fieldsSegment = 'fields';
 const String _newSegment = 'new';
 const String _requiredSegment = 'required';

@@ -107,9 +107,9 @@ abstract final class AppRoutes {
   /// Settings tab of the four-destination shell.
   static const String more = '/more';
 
-  /// Pinned-template destination the status line opens. Task 092 owns the
-  /// screen.
-  static const String templates = '/templates';
+  /// Pinned-template destination the status line opens. Nested under
+  /// [more] so Settings stays in the branch stack.
+  static const String templates = '$more/templates';
 
   /// Blank-template form. Listed before [template] so `new` is not an id.
   static const String templateCreate = '$templates/new';
@@ -178,12 +178,23 @@ abstract final class AppRoutes {
     ).toString();
   }
 
-  /// Unprocessed-queue destination the status line opens. Task 159 owns the
-  /// screen.
-  static const String queue = '/queue';
+  /// Unprocessed-queue destination the status line opens. Nested under
+  /// [more] so Settings stays in the branch stack. Task 159 owns the screen.
+  static const String queue = '$more/queue';
 
-  /// Export history. Task 207 owns the screen.
-  static const String exports = '/exports';
+  /// Export history. Nested under [more]. Task 207 owns the screen.
+  static const String exports = '$more/exports';
+
+  /// Records list for [projectId].
+  static String projectRecords(String projectId) =>
+      '${project(projectId)}/records';
+
+  /// Unprocessed queue for [projectId].
+  static String projectQueue(String projectId) => '${project(projectId)}/queue';
+
+  /// Export history for [projectId].
+  static String projectExports(String projectId) =>
+      '${project(projectId)}/exports';
 
   /// Query key for a filtered list opened from a home count.
   static const String filterQuery = 'filter';
@@ -220,6 +231,30 @@ abstract final class AppRoutes {
   static String exportsFiltered(String filter) {
     return Uri(
       path: exports,
+      queryParameters: <String, String>{filterQuery: filter},
+    ).toString();
+  }
+
+  /// Project records already filtered to [filter].
+  static String projectRecordsFiltered(String projectId, String filter) {
+    return Uri(
+      path: projectRecords(projectId),
+      queryParameters: <String, String>{filterQuery: filter},
+    ).toString();
+  }
+
+  /// Project queue already filtered to [filter].
+  static String projectQueueFiltered(String projectId, String filter) {
+    return Uri(
+      path: projectQueue(projectId),
+      queryParameters: <String, String>{filterQuery: filter},
+    ).toString();
+  }
+
+  /// Project export history already filtered to [filter].
+  static String projectExportsFiltered(String projectId, String filter) {
+    return Uri(
+      path: projectExports(projectId),
       queryParameters: <String, String>{filterQuery: filter},
     ).toString();
   }
@@ -270,6 +305,10 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
     initialLocation: AppRoutes.projects,
     refreshListenable: refresh,
     redirect: (BuildContext _, GoRouterState state) {
+      final String? legacy = _legacyLocation(state);
+      if (legacy != null) {
+        return legacy;
+      }
       for (final RouteGuard guard in appGuards()) {
         final String? to = guard(state, ref);
         if (to != null) {
@@ -341,6 +380,27 @@ List<RouteBase> get _routes {
                       metadata: _projectScoped,
                       builder: (BuildContext _, GoRouterState _) {
                         return const ProjectSettingsScreen();
+                      },
+                    ),
+                    GoRoute(
+                      path: 'records',
+                      metadata: _projectScoped,
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const _RoutePage(name: 'records');
+                      },
+                    ),
+                    GoRoute(
+                      path: 'queue',
+                      metadata: _projectScoped,
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const _RoutePage(name: 'queue');
+                      },
+                    ),
+                    GoRoute(
+                      path: 'exports',
+                      metadata: _projectScoped,
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const _RoutePage(name: 'exports');
                       },
                     ),
                   ],
@@ -428,144 +488,144 @@ List<RouteBase> get _routes {
                     return const AboutScreen();
                   },
                 ),
-              ],
-            ),
-            GoRoute(
-              path: AppRoutes.templates,
-              builder: (BuildContext _, GoRouterState _) {
-                return const TemplateListScreen();
-              },
-              routes: <RouteBase>[
                 GoRoute(
-                  path: 'new',
+                  path: 'templates',
                   builder: (BuildContext _, GoRouterState _) {
-                    return const TemplateCreateScreen();
-                  },
-                ),
-                GoRoute(
-                  path: 'library',
-                  builder: (BuildContext _, GoRouterState _) {
-                    return const ShippedPickerScreen();
-                  },
-                ),
-                GoRoute(
-                  path: 'import',
-                  builder: (BuildContext _, GoRouterState state) {
-                    return TemplateImportAction(payload: state.extra);
-                  },
-                ),
-                GoRoute(
-                  path: 'xlsx',
-                  builder: (BuildContext _, GoRouterState state) {
-                    return XlsxMappingScreen(
-                      path: state.extra is String
-                          ? state.extra as String
-                          : null,
-                    );
-                  },
-                ),
-                GoRoute(
-                  path: ':templateId',
-                  builder: (BuildContext _, GoRouterState state) {
-                    return FieldListScreen(
-                      templateId: state.pathParameters['templateId']!,
-                    );
+                    return const TemplateListScreen();
                   },
                   routes: <RouteBase>[
                     GoRoute(
-                      path: 'export',
+                      path: 'new',
                       builder: (BuildContext _, GoRouterState _) {
-                        return const _RoutePage(name: 'template-export');
+                        return const TemplateCreateScreen();
                       },
                     ),
                     GoRoute(
-                      path: 'required',
+                      path: 'library',
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const ShippedPickerScreen();
+                      },
+                    ),
+                    GoRoute(
+                      path: 'import',
                       builder: (BuildContext _, GoRouterState state) {
-                        return RequiredColumnsScreen(
-                          templateId: state.pathParameters['templateId']!,
+                        return TemplateImportAction(payload: state.extra);
+                      },
+                    ),
+                    GoRoute(
+                      path: 'xlsx',
+                      builder: (BuildContext _, GoRouterState state) {
+                        return XlsxMappingScreen(
+                          path: state.extra is String
+                              ? state.extra as String
+                              : null,
                         );
                       },
                     ),
                     GoRoute(
-                      path: 'identity',
+                      path: ':templateId',
                       builder: (BuildContext _, GoRouterState state) {
-                        return IdentityFieldsScreen(
+                        return FieldListScreen(
                           templateId: state.pathParameters['templateId']!,
                         );
                       },
-                    ),
-                    GoRoute(
-                      path: 'output',
-                      builder: (BuildContext _, GoRouterState state) {
-                        return OutputMappingScreen(
-                          templateId: state.pathParameters['templateId']!,
-                        );
-                      },
-                    ),
-                    GoRoute(
-                      path: 'migrate',
-                      builder: (BuildContext _, GoRouterState state) {
-                        return TemplateMigrationScreen(
-                          templateId: state.pathParameters['templateId']!,
-                        );
-                      },
-                    ),
-                    GoRoute(
-                      path: 'aliases',
-                      builder: (BuildContext _, GoRouterState state) {
-                        return RowAliasesScreen(
-                          templateId: state.pathParameters['templateId']!,
-                        );
-                      },
-                    ),
-                    GoRoute(
-                      path: 'checklist',
-                      builder: (BuildContext _, GoRouterState state) {
-                        return ChecklistScreen(
-                          templateId: state.pathParameters['templateId']!,
-                        );
-                      },
-                    ),
-                    GoRoute(
-                      path: 'detection',
-                      builder: (BuildContext _, GoRouterState state) {
-                        return DetectionProfileScreen(
-                          templateId: state.pathParameters['templateId']!,
-                        );
-                      },
-                    ),
-                    GoRoute(
-                      path: 'fields/new',
-                      builder: (BuildContext _, GoRouterState state) {
-                        return FieldAddSheet(
-                          templateId: state.pathParameters['templateId']!,
-                        );
-                      },
-                    ),
-                    GoRoute(
-                      path: 'fields/:fieldKey',
-                      builder: (BuildContext _, GoRouterState state) {
-                        return FieldAddSheet(
-                          templateId: state.pathParameters['templateId']!,
-                          fieldKey: state.pathParameters['fieldKey'],
-                        );
-                      },
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: 'export',
+                          builder: (BuildContext _, GoRouterState _) {
+                            return const _RoutePage(name: 'template-export');
+                          },
+                        ),
+                        GoRoute(
+                          path: 'required',
+                          builder: (BuildContext _, GoRouterState state) {
+                            return RequiredColumnsScreen(
+                              templateId: state.pathParameters['templateId']!,
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: 'identity',
+                          builder: (BuildContext _, GoRouterState state) {
+                            return IdentityFieldsScreen(
+                              templateId: state.pathParameters['templateId']!,
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: 'output',
+                          builder: (BuildContext _, GoRouterState state) {
+                            return OutputMappingScreen(
+                              templateId: state.pathParameters['templateId']!,
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: 'migrate',
+                          builder: (BuildContext _, GoRouterState state) {
+                            return TemplateMigrationScreen(
+                              templateId: state.pathParameters['templateId']!,
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: 'aliases',
+                          builder: (BuildContext _, GoRouterState state) {
+                            return RowAliasesScreen(
+                              templateId: state.pathParameters['templateId']!,
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: 'checklist',
+                          builder: (BuildContext _, GoRouterState state) {
+                            return ChecklistScreen(
+                              templateId: state.pathParameters['templateId']!,
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: 'detection',
+                          builder: (BuildContext _, GoRouterState state) {
+                            return DetectionProfileScreen(
+                              templateId: state.pathParameters['templateId']!,
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: 'fields/new',
+                          builder: (BuildContext _, GoRouterState state) {
+                            return FieldAddSheet(
+                              templateId: state.pathParameters['templateId']!,
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: 'fields/:fieldKey',
+                          builder: (BuildContext _, GoRouterState state) {
+                            return FieldAddSheet(
+                              templateId: state.pathParameters['templateId']!,
+                              fieldKey: state.pathParameters['fieldKey'],
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
+                GoRoute(
+                  path: 'queue',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const _RoutePage(name: 'queue');
+                  },
+                ),
+                GoRoute(
+                  path: 'exports',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const _RoutePage(name: 'exports');
+                  },
+                ),
               ],
-            ),
-            GoRoute(
-              path: AppRoutes.queue,
-              builder: (BuildContext _, GoRouterState _) {
-                return const _RoutePage(name: 'queue');
-              },
-            ),
-            GoRoute(
-              path: AppRoutes.exports,
-              builder: (BuildContext _, GoRouterState _) {
-                return const _RoutePage(name: 'exports');
-              },
             ),
           ],
         ),
@@ -584,6 +644,28 @@ List<RouteBase> get _routes {
   }
   return routes;
 }
+
+String? _legacyLocation(GoRouterState state) {
+  final String path = state.uri.path;
+  for (final ({String from, String to}) prefix in _legacyPrefixes) {
+    if (path == prefix.from || path.startsWith('${prefix.from}/')) {
+      return Uri(
+        path: '${prefix.to}${path.substring(prefix.from.length)}',
+        queryParameters: state.uri.queryParameters.isEmpty
+            ? null
+            : state.uri.queryParameters,
+      ).toString();
+    }
+  }
+  return null;
+}
+
+const List<({String from, String to})> _legacyPrefixes =
+    <({String from, String to})>[
+      (from: '/queue', to: AppRoutes.queue),
+      (from: '/exports', to: AppRoutes.exports),
+      (from: '/templates', to: AppRoutes.templates),
+    ];
 
 Widget _notFound(BuildContext context, GoRouterState state) {
   final String path = state.uri.path.replaceAll('"', "'");
@@ -613,10 +695,12 @@ class _RoutePage extends StatelessWidget {
     final bool settings = name == 'more';
     final bool listLike = _isListRoute(name);
     final bool showSearch = listLike && context.sizeClass != SizeClass.expanded;
+    final bool canPop = Navigator.of(context).canPop();
     return AppPage(
       key: ValueKey<String>('route-$name'),
       title: title,
-      showAppBar: false,
+      showAppBar: canPop,
+      compactBar: true,
       inset: !listLike && !settings,
       body: Column(
         mainAxisSize: MainAxisSize.min,

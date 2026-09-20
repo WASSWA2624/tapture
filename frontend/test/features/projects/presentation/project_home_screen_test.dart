@@ -10,7 +10,9 @@ import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
+import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
@@ -142,29 +144,29 @@ void main() {
       await tester.pump();
       await tester.pump();
       await tester.tap(tap);
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(router.state.uri.path, path);
       expect(router.state.uri.queryParameters[AppRoutes.filterQuery], filter);
     }
 
     await expectOpens(
       tap: find.byKey(const ValueKey<String>('home-review')),
-      path: AppRoutes.records,
+      path: AppRoutes.projectRecords('project-1'),
       filter: AppRoutes.reviewFilter,
     );
     await expectOpens(
       tap: find.byKey(const ValueKey<String>('home-process')),
-      path: AppRoutes.queue,
+      path: AppRoutes.projectQueue('project-1'),
       filter: AppRoutes.processFilter,
     );
     await expectOpens(
       tap: find.byKey(const ValueKey<String>('home-export')),
-      path: AppRoutes.records,
+      path: AppRoutes.projectRecords('project-1'),
       filter: AppRoutes.exportFilter,
     );
     await expectOpens(
       tap: find.byKey(const ValueKey<String>('home-share')),
-      path: AppRoutes.exports,
+      path: AppRoutes.projectExports('project-1'),
       filter: AppRoutes.shareFilter,
     );
     await expectOpens(
@@ -305,6 +307,81 @@ void main() {
       _expectCountCards(tester);
     },
   );
+
+  testWidgets('popping a count list returns to the home with counts intact', (
+    WidgetTester tester,
+  ) async {
+    final List<({String key, String path, String filter})> cards =
+        <({String key, String path, String filter})>[
+          (
+            key: 'home-review',
+            path: AppRoutes.projectRecords('project-1'),
+            filter: AppRoutes.reviewFilter,
+          ),
+          (
+            key: 'home-process',
+            path: AppRoutes.projectQueue('project-1'),
+            filter: AppRoutes.processFilter,
+          ),
+          (
+            key: 'home-export',
+            path: AppRoutes.projectRecords('project-1'),
+            filter: AppRoutes.exportFilter,
+          ),
+          (
+            key: 'home-share',
+            path: AppRoutes.projectExports('project-1'),
+            filter: AppRoutes.shareFilter,
+          ),
+        ];
+
+    for (final Size size in <Size>[
+      const Size(400, 800),
+      const Size(800, 400),
+      const Size(800, 1200),
+      const Size(1200, 800),
+    ]) {
+      _setSurface(tester, size);
+      final GoRouter router = await _pumpPopulated(tester);
+      await tester.tap(find.byKey(const ValueKey<String>('home-review')));
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, AppRoutes.projectRecords('project-1'));
+      await tester.tap(find.byType(AppIconButton));
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, AppRoutes.project('project-1'));
+      _expectCountCards(tester);
+      await tester.pumpWidget(const SizedBox.shrink());
+    }
+
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    _setSurface(tester, const Size(400, 800));
+    for (final ({String key, String path, String filter}) card in cards) {
+      final GoRouter router = await _pumpPopulated(tester);
+      await tester.tap(find.byKey(ValueKey<String>(card.key)));
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, card.path);
+      expect(
+        router.state.uri.queryParameters[AppRoutes.filterQuery],
+        card.filter,
+      );
+      expect(find.byType(AppIconButton), findsOneWidget);
+      expect(find.byType(AppIconButton), meetsTapTarget());
+      expect(
+        find.byType(AppIconButton),
+        hasSemanticLabel(
+          MaterialLocalizations.of(
+            tester.element(find.byType(AppIconButton)),
+          ).backButtonTooltip,
+        ),
+      );
+      await tester.tap(find.byType(AppIconButton));
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, AppRoutes.project('project-1'));
+      _expectCountCards(tester);
+      await tester.pumpWidget(const SizedBox.shrink());
+    }
+  });
 }
 
 Future<GoRouter> _pump(
@@ -353,27 +430,39 @@ Future<GoRouter> _pump(
                   return const Text('settings');
                 },
               ),
+              GoRoute(
+                path: 'records',
+                builder: (BuildContext _, GoRouterState _) {
+                  return const AppPage(
+                    title: Copy.navRecords,
+                    compactBar: true,
+                    body: Text('records'),
+                  );
+                },
+              ),
+              GoRoute(
+                path: 'queue',
+                builder: (BuildContext _, GoRouterState _) {
+                  return const AppPage(
+                    title: Copy.navQueue,
+                    compactBar: true,
+                    body: Text('queue'),
+                  );
+                },
+              ),
+              GoRoute(
+                path: 'exports',
+                builder: (BuildContext _, GoRouterState _) {
+                  return const AppPage(
+                    title: Copy.navExports,
+                    compactBar: true,
+                    body: Text('exports'),
+                  );
+                },
+              ),
             ],
           ),
         ],
-      ),
-      GoRoute(
-        path: AppRoutes.records,
-        builder: (BuildContext _, GoRouterState _) {
-          return const Text('records');
-        },
-      ),
-      GoRoute(
-        path: AppRoutes.queue,
-        builder: (BuildContext _, GoRouterState _) {
-          return const Text('queue');
-        },
-      ),
-      GoRoute(
-        path: AppRoutes.exports,
-        builder: (BuildContext _, GoRouterState _) {
-          return const Text('exports');
-        },
       ),
     ],
   );

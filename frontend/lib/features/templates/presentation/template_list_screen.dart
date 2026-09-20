@@ -183,7 +183,7 @@ final Provider<Map<String, int>> templateRecordCountsProvider =
 /// [AppRoutes.templateImport], [AppRoutes.template] and
 /// [AppRoutes.templateExport]. This file cannot import `router.dart` — the
 /// router imports the screen.
-const String _templatesRoot = '/templates';
+const String _templatesRoot = '/more/templates';
 const String _newSegment = 'new';
 const String _librarySegment = 'library';
 const String _importSegment = 'import';

@@ -126,7 +126,7 @@ Future<void> _pump(
               },
             ),
             GoRoute(
-              path: '/exports',
+              path: '/more/exports',
               builder: (BuildContext _, GoRouterState _) {
                 return const Text('exports');
               },

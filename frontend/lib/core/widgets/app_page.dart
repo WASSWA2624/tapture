@@ -138,11 +138,11 @@ class AppPage extends StatelessWidget {
 }
 
 extension on AppPage {
-  /// A compact bar's back control: the same borderless arrow as a field's
-  /// controls, so a compact header spends no weight on chrome. Null where
-  /// there is nothing to go back to, or the bar is not compact.
+  /// A back control when the route can pop: the same borderless arrow as a
+  /// field's controls, so a compact header spends no weight on chrome. Null
+  /// where there is nothing to go back to.
   Widget? _compactBack(BuildContext context) {
-    if (!compactBar || !(ModalRoute.of(context)?.canPop ?? false)) {
+    if (!(ModalRoute.of(context)?.canPop ?? false)) {
       return null;
     }
     final String back = MaterialLocalizations.of(context).backButtonTooltip;

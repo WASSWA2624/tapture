@@ -582,7 +582,7 @@ String _listLocation(String id) {
   return '$_templatesRoot/${Uri.encodeComponent(id)}';
 }
 
-const String _templatesRoot = '/templates';
+const String _templatesRoot = '/more/templates';
 
 final RegExp _startsLetter = RegExp(r'^[a-z]');
 final RegExp _packed = RegExp(

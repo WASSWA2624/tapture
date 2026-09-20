@@ -27,36 +27,54 @@ void main() {
     expect(AppRoutes.record('cd'), '/records/cd');
     expect(AppRoutes.records, '/records');
     expect(AppRoutes.more, '/more');
-    expect(AppRoutes.templates, '/templates');
-    expect(AppRoutes.templateCreate, '/templates/new');
-    expect(AppRoutes.templateLibrary, '/templates/library');
-    expect(AppRoutes.template('ab'), '/templates/ab');
-    expect(AppRoutes.templateExport('ab'), '/templates/ab/export');
-    expect(AppRoutes.templateFieldCreate('ab'), '/templates/ab/fields/new');
+    expect(AppRoutes.templates, '/more/templates');
+    expect(AppRoutes.templateCreate, '/more/templates/new');
+    expect(AppRoutes.templateLibrary, '/more/templates/library');
+    expect(AppRoutes.template('ab'), '/more/templates/ab');
+    expect(AppRoutes.templateExport('ab'), '/more/templates/ab/export');
+    expect(
+      AppRoutes.templateFieldCreate('ab'),
+      '/more/templates/ab/fields/new',
+    );
     expect(
       AppRoutes.templateField('ab', 'serial'),
-      '/templates/ab/fields/serial',
+      '/more/templates/ab/fields/serial',
     );
-    expect(AppRoutes.templateAliases('ab'), '/templates/ab/aliases');
-    expect(AppRoutes.templateChecklist('ab'), '/templates/ab/checklist');
-    expect(AppRoutes.templateDetection('ab'), '/templates/ab/detection');
+    expect(AppRoutes.templateAliases('ab'), '/more/templates/ab/aliases');
+    expect(AppRoutes.templateChecklist('ab'), '/more/templates/ab/checklist');
+    expect(AppRoutes.templateDetection('ab'), '/more/templates/ab/detection');
     expect(
       AppRoutes.captureRow(projectId: 'ab', templateId: 't1', rowId: 'm-1'),
       '/projects/ab/capture?template=t1&row=m-1',
     );
-    expect(AppRoutes.queue, '/queue');
-    expect(AppRoutes.exports, '/exports');
+    expect(AppRoutes.queue, '/more/queue');
+    expect(AppRoutes.exports, '/more/exports');
+    expect(AppRoutes.projectRecords('ab'), '/projects/ab/records');
+    expect(AppRoutes.projectQueue('ab'), '/projects/ab/queue');
+    expect(AppRoutes.projectExports('ab'), '/projects/ab/exports');
     expect(
       AppRoutes.recordsFiltered(AppRoutes.reviewFilter),
       '/records?filter=needsReview',
     );
     expect(
       AppRoutes.queueFiltered(AppRoutes.processFilter),
-      '/queue?filter=queued',
+      '/more/queue?filter=queued',
     );
     expect(
       AppRoutes.exportsFiltered(AppRoutes.shareFilter),
-      '/exports?filter=share',
+      '/more/exports?filter=share',
+    );
+    expect(
+      AppRoutes.projectRecordsFiltered('ab', AppRoutes.reviewFilter),
+      '/projects/ab/records?filter=needsReview',
+    );
+    expect(
+      AppRoutes.projectQueueFiltered('ab', AppRoutes.processFilter),
+      '/projects/ab/queue?filter=queued',
+    );
+    expect(
+      AppRoutes.projectExportsFiltered('ab', AppRoutes.shareFilter),
+      '/projects/ab/exports?filter=share',
     );
     expect(AppRoutes.settingsOperator, '/more/operator');
     expect(AppRoutes.settingsCapture, '/more/capture');
@@ -172,6 +190,18 @@ void main() {
     await _go(tester, router, AppRoutes.exports);
     expect(find.byKey(const ValueKey<String>('route-exports')), findsOneWidget);
 
+    await _go(
+      tester,
+      router,
+      AppRoutes.projectRecordsFiltered('p1', AppRoutes.reviewFilter),
+    );
+    expect(router.state.uri.path, AppRoutes.projectRecords('p1'));
+    expect(
+      router.state.uri.queryParameters[AppRoutes.filterQuery],
+      AppRoutes.reviewFilter,
+    );
+    expect(find.byKey(const ValueKey<String>('route-records')), findsWidgets);
+
     await _go(tester, router, AppRoutes.more);
     expect(find.text(Copy.operatorProfileTitle), findsOneWidget);
     expect(find.text(Copy.settingsAboutTitle), findsOneWidget);
@@ -184,6 +214,105 @@ void main() {
     await tester.pump();
     expect(find.byType(WidgetGalleryScreen), findsOneWidget);
   });
+
+  testWidgets('legacy queue, exports and templates paths redirect', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter router = await _pump(tester, projectId: 'p1');
+
+    await _go(tester, router, '/queue?filter=queued');
+    expect(router.state.uri.path, AppRoutes.queue);
+    expect(
+      router.state.uri.queryParameters[AppRoutes.filterQuery],
+      AppRoutes.processFilter,
+    );
+    expect(find.byKey(const ValueKey<String>('route-queue')), findsOneWidget);
+
+    await _go(tester, router, '/exports?filter=share');
+    expect(router.state.uri.path, AppRoutes.exports);
+    expect(
+      router.state.uri.queryParameters[AppRoutes.filterQuery],
+      AppRoutes.shareFilter,
+    );
+    expect(find.byKey(const ValueKey<String>('route-exports')), findsOneWidget);
+
+    await _go(tester, router, '/templates');
+    expect(router.state.uri.path, AppRoutes.templates);
+    expect(
+      find.byKey(const ValueKey<String>('route-templates')),
+      findsOneWidget,
+    );
+
+    await _go(tester, router, '/templates/library');
+    expect(router.state.uri.path, AppRoutes.templateLibrary);
+    expect(
+      find.byKey(const ValueKey<String>('route-template-library')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('queue, exports and templates keep Settings beneath them', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter router = await _pump(tester);
+
+    await _go(tester, router, AppRoutes.queue);
+    expect(find.byKey(const ValueKey<String>('route-queue')), findsOneWidget);
+    expect(router.canPop(), isTrue);
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(router.state.uri.path, AppRoutes.more);
+    expect(find.text(Copy.operatorProfileTitle), findsOneWidget);
+
+    await _go(tester, router, AppRoutes.exports);
+    expect(find.byKey(const ValueKey<String>('route-exports')), findsOneWidget);
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(router.state.uri.path, AppRoutes.more);
+    expect(find.text(Copy.operatorProfileTitle), findsOneWidget);
+
+    await _go(tester, router, AppRoutes.templates);
+    expect(
+      find.byKey(const ValueKey<String>('route-templates')),
+      findsOneWidget,
+    );
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(router.state.uri.path, AppRoutes.more);
+    expect(find.text(Copy.operatorProfileTitle), findsOneWidget);
+  });
+
+  testWidgets(
+    'a project-scoped list path with no open project diverts and resumes',
+    (WidgetTester tester) async {
+      final GoRouter router = await _pump(tester);
+      final String intended = AppRoutes.projectRecordsFiltered(
+        'p1',
+        AppRoutes.reviewFilter,
+      );
+
+      await _go(tester, router, intended);
+      expect(
+        find.byKey(const ValueKey<String>('route-projects')),
+        findsOneWidget,
+      );
+      expect(router.state.uri.path, AppRoutes.projects);
+      expect(router.state.uri.queryParameters[AppRoutes.fromQuery], intended);
+
+      final BuildContext context = tester.element(find.byType(TaptureApp));
+      ProviderScope.containerOf(
+        context,
+      ).read(openProjectIdProvider.notifier).open('p1');
+      await tester.pumpAndSettle();
+
+      expect(router.state.uri.path, AppRoutes.projectRecords('p1'));
+      expect(
+        router.state.uri.queryParameters[AppRoutes.filterQuery],
+        AppRoutes.reviewFilter,
+      );
+      expect(find.byKey(const ValueKey<String>('route-records')), findsWidgets);
+    },
+  );
 
   testWidgets('a record deep link opens it directly', (
     WidgetTester tester,

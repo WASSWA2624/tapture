@@ -79,4 +79,4 @@ class ProjectDeleteAction extends ConsumerWidget {
 }
 
 /// Must match [AppRoutes.exports]. This file cannot import `router.dart`.
-const String _exportsRoot = '/exports';
+const String _exportsRoot = '/more/exports';

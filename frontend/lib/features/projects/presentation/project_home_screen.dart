@@ -152,34 +152,35 @@ class _HomeBody extends ConsumerWidget {
   }
 
   List<Widget> _countRows(BuildContext context, ProjectHomeCounts counts) {
+    final String projectId = view.project.id;
     final List<Widget> cards = <Widget>[
       _CountCard(
         cardKey: const ValueKey<String>('home-review'),
         label: Copy.homeReview,
         count: counts.review,
         semanticLabel: Copy.homeReviewPending(counts.review),
-        onTap: () => context.go(_reviewList),
+        onTap: () => unawaited(context.push(_reviewList(projectId))),
       ),
       _CountCard(
         cardKey: const ValueKey<String>('home-process'),
         label: Copy.homeProcess,
         count: counts.process,
         semanticLabel: Copy.homeProcessPending(counts.process),
-        onTap: () => context.go(_processList),
+        onTap: () => unawaited(context.push(_processList(projectId))),
       ),
       _CountCard(
         cardKey: const ValueKey<String>('home-export'),
         label: Copy.homeExport,
         count: counts.toExport,
         semanticLabel: Copy.homeExportPending(counts.toExport),
-        onTap: () => context.go(_exportList),
+        onTap: () => unawaited(context.push(_exportList(projectId))),
       ),
       _CountCard(
         cardKey: const ValueKey<String>('home-share'),
         label: Copy.homeShare,
         count: counts.toShare,
         semanticLabel: Copy.homeSharePending(counts.toShare),
-        onTap: () => context.go(_shareList),
+        onTap: () => unawaited(context.push(_shareList(projectId))),
       ),
     ];
     final int columns = context.sizeClass == SizeClass.compact ? 2 : 4;
@@ -343,11 +344,32 @@ String _filtered(String root, String filter) {
   ).toString();
 }
 
-/// Must match [AppRoutes] path helpers.
+/// Must match [AppRoutes.projectRecords], [AppRoutes.projectQueue] and
+/// [AppRoutes.projectExports]. This file cannot import `router.dart`.
+String _recordsRoot(String id) {
+  return '$_projectsRoot/${Uri.encodeComponent(id)}/$_recordsSegment';
+}
+
+String _queueRoot(String id) {
+  return '$_projectsRoot/${Uri.encodeComponent(id)}/$_queueSegment';
+}
+
+String _exportsRoot(String id) {
+  return '$_projectsRoot/${Uri.encodeComponent(id)}/$_exportsSegment';
+}
+
+String _reviewList(String id) => _filtered(_recordsRoot(id), _reviewFilter);
+
+String _processList(String id) => _filtered(_queueRoot(id), _processFilter);
+
+String _exportList(String id) => _filtered(_recordsRoot(id), _exportFilter);
+
+String _shareList(String id) => _filtered(_exportsRoot(id), _shareFilter);
+
 const String _projectsRoot = '/projects';
-const String _recordsRoot = '/records';
-const String _queueRoot = '/queue';
-const String _exportsRoot = '/exports';
+const String _recordsSegment = 'records';
+const String _queueSegment = 'queue';
+const String _exportsSegment = 'exports';
 const String _newSegment = 'new';
 const String _editSegment = 'edit';
 const String _settingsSegment = 'settings';
@@ -358,8 +380,3 @@ const String _reviewFilter = 'needsReview';
 const String _processFilter = 'queued';
 const String _exportFilter = 'approved';
 const String _shareFilter = 'share';
-
-final String _reviewList = _filtered(_recordsRoot, _reviewFilter);
-final String _processList = _filtered(_queueRoot, _processFilter);
-final String _exportList = _filtered(_recordsRoot, _exportFilter);
-final String _shareList = _filtered(_exportsRoot, _shareFilter);

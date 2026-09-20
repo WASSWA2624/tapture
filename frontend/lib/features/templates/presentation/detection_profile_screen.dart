@@ -554,7 +554,7 @@ String _fieldsLocation(String id) {
 
 final RegExp _tokenSplit = RegExp(r'[,;\n]');
 
-const String _templatesRoot = '/templates';
+const String _templatesRoot = '/more/templates';
 const String _shippedSource = 'shipped';
 const String _classesKey = 'object_classes';
 const String _keywordsKey = 'keywords';

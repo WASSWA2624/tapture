@@ -235,7 +235,7 @@ String _fieldsLocation(String id) {
   return '$_templatesRoot/${Uri.encodeComponent(id)}';
 }
 
-const String _templatesRoot = '/templates';
+const String _templatesRoot = '/more/templates';
 
 const Set<String> _inherited = <String>{
   'record_admin',

@@ -88,6 +88,61 @@ void main() {
     expect(overflowTapped, isTrue);
   });
 
+  testWidgets('a pushed page shows a labelled 48dp back control', (
+    WidgetTester tester,
+  ) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(400, 800);
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildTheme(brightness: Brightness.light),
+        home: Builder(
+          builder: (BuildContext context) {
+            return TextButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext _) {
+                      return const AppPage(
+                        title: 'Child',
+                        compactBar: true,
+                        body: Text('child'),
+                      );
+                    },
+                  ),
+                );
+              },
+              child: const Text('open'),
+            );
+          },
+        ),
+      ),
+    );
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AppIconButton), findsOneWidget);
+    expect(find.byType(AppIconButton), meetsTapTarget());
+    expect(
+      find.byType(AppIconButton),
+      hasSemanticLabel(
+        MaterialLocalizations.of(
+          tester.element(find.byType(AppIconButton)),
+        ).backButtonTooltip,
+      ),
+    );
+
+    await tester.tap(find.byType(AppIconButton));
+    await tester.pumpAndSettle();
+    expect(find.text('open'), findsOneWidget);
+  });
+
   testWidgets('rotation keeps the body', (WidgetTester tester) async {
     await _pumpPage(
       tester,
