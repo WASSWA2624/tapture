@@ -27,6 +27,7 @@ import 'package:tapture/features/settings/presentation/capture_settings_screen.d
 import 'package:tapture/features/settings/presentation/settings_screen.dart';
 import 'package:tapture/features/settings/presentation/storage_settings_screen.dart';
 import 'package:tapture/features/settings/settings.dart';
+import 'package:tapture/features/templates/presentation/shipped_picker_screen.dart';
 import 'package:tapture/features/templates/presentation/template_create_screen.dart';
 import 'package:tapture/features/templates/presentation/template_list_screen.dart';
 
@@ -378,7 +379,7 @@ List<RouteBase> get _routes {
                 GoRoute(
                   path: 'library',
                   builder: (BuildContext _, GoRouterState _) {
-                    return const _RoutePage(name: 'template-library');
+                    return const ShippedPickerScreen();
                   },
                 ),
                 GoRoute(

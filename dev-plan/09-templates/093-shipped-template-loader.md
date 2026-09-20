@@ -26,6 +26,6 @@ building a field.
 
 ## Definition of done
 
-- [ ] A new project is capture-ready without building anything: pick, preview, add.
-- [ ] Editing a copied template cannot affect the library, and a second copy of the same asset is unaffected by the first.
-- [ ] Tests: repository tests for `shipped_template_loader.dart` against an in-memory database, plus the fake later tests use; widget test of `shipped_picker_screen.dart` covering its empty and failure states.
+- [x] A new project is capture-ready without building anything: pick, preview, add.
+- [x] Editing a copied template cannot affect the library, and a second copy of the same asset is unaffected by the first.
+- [x] Tests: repository tests for `shipped_template_loader.dart` against an in-memory database, plus the fake later tests use; widget test of `shipped_picker_screen.dart` covering its empty and failure states.

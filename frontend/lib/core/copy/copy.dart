@@ -669,6 +669,100 @@ abstract final class Copy {
     return '${fieldsCount(fields)} · ${recordsCount(records)}';
   }
 
+  /// Title of the shipped-library picker.
+  static const String templatesLibraryTitle = 'Shipped templates';
+
+  /// Headline when the packed library could not be listed.
+  static const String templatesLibraryEmptyHeadline = 'No shipped templates';
+
+  /// Body when the packed library is empty. Next action is a blank template.
+  static const String templatesLibraryEmptyMessage =
+      'Create a blank template to start capturing.';
+
+  /// Copies the previewed library entry into the open project.
+  static const String templatesAdd = 'Add to this project';
+
+  /// Operator-facing name of a packed template, keyed by [templateKey].
+  static String shippedTemplateName(String templateKey) {
+    return switch (templateKey) {
+      'equipment_asset' => 'Equipment / Asset',
+      'medical_equipment' => 'Medical equipment',
+      'ict_equipment' => 'ICT equipment',
+      'vehicle_plant' => 'Vehicle / Plant',
+      'furniture_fitting' => 'Furniture and fittings',
+      'building_facility' => 'Building / Facility',
+      'room_space' => 'Room / Space',
+      'utility_point' => 'Utility / Service point',
+      'stock_item' => 'Stock / Store',
+      'inspection_check' => 'Inspection / Compliance',
+      'work_order' => 'Maintenance / Work order',
+      'meter_reading' => 'Meter reading',
+      'person_beneficiary' => 'Person / Beneficiary',
+      'staff_member' => 'Staff / Workforce',
+      'household_survey' => 'Household / Dwelling',
+      'land_parcel' => 'Land / Plot / Parcel',
+      'plant_tree' => 'Plant / Tree survey',
+      'livestock_animal' => 'Livestock / Animal',
+      'document_record' => 'Document / Archive',
+      'meeting' => 'Meeting',
+      'event_activity' => 'Event / Activity',
+      'incident_report' => 'Incident / Issue',
+      'generic_item' => 'Generic',
+      _ => shippedLabel('templates.$templateKey.name'),
+    };
+  }
+
+  /// §13.4 kind heading for the library list.
+  static String shippedKindTitle(String kind) {
+    return switch (kind) {
+      'equipment' => 'Equipment / Asset',
+      'medical' => 'Medical equipment',
+      'ict' => 'ICT equipment',
+      'vehicle' => 'Vehicle / Plant',
+      'furniture' => 'Furniture and fittings',
+      'building' => 'Building / Facility',
+      'room' => 'Room / Space',
+      'utility' => 'Utility / Service point',
+      'stock' => 'Stock / Store',
+      'inspection' => 'Inspection / Compliance',
+      'work_order' => 'Maintenance / Work order',
+      'meter' => 'Meter reading',
+      'person' => 'Person / Beneficiary',
+      'staff' => 'Staff / Workforce',
+      'household' => 'Household / Dwelling',
+      'land' => 'Land / Plot / Parcel',
+      'plant' => 'Plant / Tree survey',
+      'livestock' => 'Livestock / Animal',
+      'document' => 'Document / Archive',
+      'meeting' => 'Meeting',
+      'event' => 'Event / Activity',
+      'incident' => 'Incident / Issue',
+      'generic' => 'Generic',
+      _ => kind,
+    };
+  }
+
+  /// Resolves a packed localisation key at render time (FE-L10N-07).
+  static String shippedLabel(String key) {
+    if (!key.startsWith('templates.') || !key.contains('.')) {
+      return key;
+    }
+    final String last = key.split('.').last;
+    final String stem = last.startsWith('item_')
+        ? last.substring('item_'.length)
+        : last;
+    if (stem.isEmpty) {
+      return last;
+    }
+    final List<String> words = stem.split('_');
+    final StringBuffer buffer = StringBuffer(words.first);
+    for (int index = 1; index < words.length; index++) {
+      buffer.write(' ${words[index]}');
+    }
+    final String text = buffer.toString();
+    return '${text[0].toUpperCase()}${text.substring(1)}';
+  }
+
   /// Unprocessed-queue destination the status line opens.
   static const String navQueue = 'Unprocessed';
 
