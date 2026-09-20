@@ -735,6 +735,182 @@ abstract final class Copy {
     };
   }
 
+  /// Label of the field being added or edited. Template content follows.
+  static const String fieldLabel = 'Label';
+
+  /// Type picker on the add-field sheet.
+  static const String fieldType = 'Type';
+
+  /// Three-way requiredness question on the add-field sheet.
+  static const String fieldRequiredness = 'Required?';
+
+  /// Collapsed section that holds every §12.2 attribute the add flow defaults.
+  static const String fieldAdvanced = 'Advanced';
+
+  /// Reveals the collapsed Advanced section.
+  static const String fieldAdvancedShow = 'Show advanced';
+
+  /// Hides the Advanced section again.
+  static const String fieldAdvancedHide = 'Hide advanced';
+
+  /// Lets the user keep a two-fact label after the warning.
+  static const String fieldKeepAnyway = 'Keep anyway';
+
+  /// Warns that a label packs two facts (§13.1) without blocking the save.
+  static const String fieldTwoFactsWarning =
+      'This label packs two facts. Split it into two fields, or keep this '
+      'one anyway.';
+
+  /// Default written when the operator leaves the field empty.
+  static const String fieldDefaultValue = 'Default value';
+
+  /// Displayed and exported unit, for example kg.
+  static const String fieldUnit = 'Unit';
+
+  /// One short line of guidance shown under the field.
+  static const String fieldHelp = 'Help';
+
+  /// Who may write the field.
+  static const String fieldInputMode = 'Who may fill it';
+
+  /// [InputMode.any].
+  static const String fieldInputAny = 'Anyone';
+
+  /// [InputMode.manualOnly].
+  static const String fieldInputManual = 'A person only';
+
+  /// [InputMode.aiAllowed].
+  static const String fieldInputAi = 'AI may propose';
+
+  /// [InputMode.auto].
+  static const String fieldInputAuto = 'Filled by the app';
+
+  /// Whether the field may be pinned as context.
+  static const String fieldStickable = 'Pin as context';
+
+  /// Context hierarchy level, when this field is a level of that hierarchy.
+  static const String fieldContextLevel = 'Context level';
+
+  /// System fill source.
+  static const String fieldAutoFill = 'Fill automatically';
+
+  /// No automatic fill.
+  static const String fieldAutoFillNone = 'Do not fill';
+
+  /// Operator-facing name of an [AutoFill] source.
+  static String fieldAutoFillLabel(String source) {
+    return switch (source) {
+      'now' => 'Now',
+      'today' => 'Today',
+      'time' => 'Time of day',
+      'sequence' => 'Next in sequence',
+      'operator' => 'Signed-in operator',
+      'device' => 'This device',
+      'gps' => 'Current location',
+      'context' => 'Pinned context',
+      _ => fieldAutoFillNone,
+    };
+  }
+
+  /// Store an AI-refined companion beside the raw value.
+  static const String fieldRefine = 'Store a refined companion';
+
+  /// Whether the field participates in duplicate detection.
+  static const String fieldIdentity = 'Use for duplicates';
+
+  /// Expression that makes the field required.
+  static const String fieldRequiredWhen = 'Required when';
+
+  /// Plain-language reading of a required-when expression.
+  static String fieldRequiredWhenPreview(String reading) {
+    return 'Required when $reading';
+  }
+
+  /// Keeps the field out of capture and export; values stay.
+  static const String fieldHidden = 'Hide from capture and export';
+
+  /// Explains that hide is not a delete.
+  static const String fieldHiddenHelp =
+      'Values already captured stay on the record.';
+
+  /// Validation editor heading.
+  static const String fieldValidationTitle = 'Validation';
+
+  /// Headline when no validation rule is set.
+  static const String fieldValidationEmptyHeadline = 'No validation yet';
+
+  /// Body when the validation editor is empty.
+  static const String fieldValidationEmptyMessage =
+      'Add a pattern, length, range or required-with rule.';
+
+  /// Pattern picker.
+  static const String fieldPattern = 'Pattern';
+
+  /// No pattern.
+  static const String fieldPatternNone = 'None';
+
+  /// Ready-made serial pattern.
+  static const String fieldPatternSerial = 'Serial';
+
+  /// Ready-made asset-tag pattern.
+  static const String fieldPatternAssetTag = 'Asset tag';
+
+  /// Ready-made registration pattern.
+  static const String fieldPatternRegistration = 'Registration';
+
+  /// Custom regular expression.
+  static const String fieldPatternCustom = 'Custom';
+
+  /// Live box that tries the current validation against a sample.
+  static const String fieldPatternTest = 'Try a value';
+
+  /// Sample matches the rule.
+  static const String fieldPatternTestPass = 'That value is allowed.';
+
+  /// Minimum length.
+  static const String fieldMinLength = 'Shortest';
+
+  /// Maximum length.
+  static const String fieldMaxLength = 'Longest';
+
+  /// Inclusive lower bound.
+  static const String fieldRangeMin = 'Lowest';
+
+  /// Inclusive upper bound.
+  static const String fieldRangeMax = 'Highest';
+
+  /// Another field that must be filled with this one.
+  static const String fieldRequiredWith = 'Required with';
+
+  /// Choice-options editor heading.
+  static const String fieldOptionsTitle = 'Choices';
+
+  /// Headline when a choice field has no options.
+  static const String fieldOptionsEmptyHeadline = 'No choices yet';
+
+  /// Body when the options editor is empty.
+  static const String fieldOptionsEmptyMessage =
+      'Add a choice so capture has something to pick.';
+
+  /// Label of a new choice.
+  static const String fieldOptionLabel = 'Choice name';
+
+  /// Adds a choice to the list.
+  static const String fieldOptionAdd = 'Add a choice';
+
+  /// Retires a choice without rewriting stored codes.
+  static const String fieldOptionRetire = 'Retire choice';
+
+  /// Badge on a retired choice.
+  static const String fieldOptionRetired = 'Retired';
+
+  /// Headline when the add sheet cannot find the template.
+  static const String fieldAddEmptyHeadline = 'No template to edit';
+
+  /// Body when the add sheet has no template.
+  static const String fieldAddEmptyMessage =
+      'Open the template list and pick a template first.';
+
   /// Suggested name when duplicating [name].
   static String templateCopyName(String name) => '$name (copy)';
 

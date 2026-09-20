@@ -27,6 +27,7 @@ import 'package:tapture/features/settings/presentation/capture_settings_screen.d
 import 'package:tapture/features/settings/presentation/settings_screen.dart';
 import 'package:tapture/features/settings/presentation/storage_settings_screen.dart';
 import 'package:tapture/features/settings/settings.dart';
+import 'package:tapture/features/templates/presentation/field_add_sheet.dart';
 import 'package:tapture/features/templates/presentation/field_list_screen.dart';
 import 'package:tapture/features/templates/presentation/shipped_picker_screen.dart';
 import 'package:tapture/features/templates/presentation/template_create_screen.dart';
@@ -406,14 +407,19 @@ List<RouteBase> get _routes {
                     ),
                     GoRoute(
                       path: 'fields/new',
-                      builder: (BuildContext _, GoRouterState _) {
-                        return const _RoutePage(name: 'field-add');
+                      builder: (BuildContext _, GoRouterState state) {
+                        return FieldAddSheet(
+                          templateId: state.pathParameters['templateId']!,
+                        );
                       },
                     ),
                     GoRoute(
                       path: 'fields/:fieldKey',
-                      builder: (BuildContext _, GoRouterState _) {
-                        return const _RoutePage(name: 'field-edit');
+                      builder: (BuildContext _, GoRouterState state) {
+                        return FieldAddSheet(
+                          templateId: state.pathParameters['templateId']!,
+                          fieldKey: state.pathParameters['fieldKey'],
+                        );
                       },
                     ),
                   ],

@@ -150,7 +150,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [092 — Template list, blank create and duplicate](09-templates/092-template-list.md)
 - [x] [093 — Shipped template loader and library picker](09-templates/093-shipped-template-loader.md)
 - [x] [094 — Field list editor, reorder and delete](09-templates/094-field-list-editor.md)
-- [ ] [095 — Add and edit a field, with Advanced, validation and options](09-templates/095-field-add-basic.md)
+- [x] [095 — Add and edit a field, with Advanced, validation and options](09-templates/095-field-add-basic.md)
 - [ ] [096 — Required columns screen](09-templates/096-required-columns-screen.md)
 - [ ] [097 — Field editor widget](09-templates/097-field-editor-inline.md)
 - [ ] [098 — Identity fields and output column mapping](09-templates/098-identity-fields.md)

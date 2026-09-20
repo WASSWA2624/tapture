@@ -1,8 +1,8 @@
 # Tapture — development tracker
 
-**94 of 281 tasks complete (33.5%)** · last updated 2026-09-20
+**95 of 281 tasks complete (33.8%)** · last updated 2026-09-20
 
-`█████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░`
+`██████████████░░░░░░░░░░░░░░░░░░░░░░░░░░`
 
 ## Phase progress
 
@@ -16,7 +16,7 @@
 | 06 — Application shell | 5 | 5 | `██████████████` 100% |
 | 07 — Account and settings | 5 | 5 | `██████████████` 100% |
 | 08 — Projects | 6 | 6 | `██████████████` 100% |
-| 09 — Templates | 7 | 17 | `██████░░░░░░░░` 41% |
+| 09 — Templates | 8 | 17 | `███████░░░░░░░` 47% |
 | 10 — Reference data | 0 | 8 | `░░░░░░░░░░░░░░` 0% |
 | 11 — Context | 0 | 7 | `░░░░░░░░░░░░░░` 0% |
 | 12 — Capture | 0 | 22 | `░░░░░░░░░░░░░░` 0% |
@@ -33,7 +33,7 @@
 | 23 — Hardening | 0 | 9 | `░░░░░░░░░░░░░░` 0% |
 | 24 — The minimal backend | 0 | 26 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 11 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **94** | **281** | `████░░░░░░░░░░` 33.5% |
+| **Total** | **95** | **281** | `████░░░░░░░░░░` 33.8% |
 
 ## Completed
 
@@ -130,6 +130,7 @@
 | 092 — Template list, blank create and duplicate | 2026-09-20 | Project templates list as `AppListTile` rows with field and record counts. Blank create asks only for a name and opens the field-list route. Duplicate copies fields, rows and aliases; records stay on the original. Delete is offered only when no record uses the template. Guarded by empty/failure list and create widget tests plus a duplication test that copies no records. |
 | 093 — Shipped template loader and library picker | 2026-09-20 | Runtime loader validates each packed asset against `_schema.json`, resolves §13.3 groups and `derives_from`, and copies a version-1 project-owned `TemplateDef` without mutating the asset. `ShippedPickerScreen` lists §13.4 kinds, previews resolved field labels, and allows renaming on add. Guarded by in-memory loader tests plus empty/failure picker widget tests; `FakeShippedTemplateLoader` is the later-test fake. |
 | 094 — Field list editor, reorder and delete | 2026-09-20 | Field list is the only place fields are managed: `AppListTile` rows with type and `AppStatusPill` requiredness, keyboard move-up/down plus drag reorder, and a shared-dialog delete that names the value count then retires values. Reorder writes list order only — `outputColumn` and stored values stay put. Guarded by empty/failure/reorder widget tests and an in-memory delete that leaves values and exports them as retired. |
+| 095 — Add and edit a field, with Advanced, validation and options | 2026-09-20 | Three-question add/edit (`Label`, `Type`, `Required?`) defaults every other §12.2 attribute and keeps Advanced collapsed. Field keys are unique snake_case with the unit appended when measured. Two-fact labels warn once with Keep anyway. `required_when` is checked against the field list as typed. Hide is not a delete: values stay and unhide restores them to capture/export. Validation has ready-made serial/asset-tag/registration patterns plus a live test box; option rename updates the label only. Any save bumps the template version. Guarded by key/`required_when`/hide/rename unit tests and empty/failure widget tests of the sheet and both editors. |
 | 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
 | 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
 | 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
@@ -312,7 +313,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 091 | Files lists only JSON; FE-STR-12 forbids a literal path at the call site. | Open — `TemplateAssets` in `core/constants/` names schema, groups and every library path |
 | 092 | Record summaries have no `templateId`, and records have no repository provider yet. | Open — `templateRecordCountsProvider` defaults to none; tests override it. 093/capture can replace the map with a watch |
 | 092 | Field list (094), library picker (093) and template export (100) do not exist. | Closed — 093 owns `/templates/library`; 094 owns `/templates/:id`; export stays `/templates/:id/export` until 100 |
-| 094 | Add and edit are named on this screen; 095 owns the sheet. | Open — add/edit go to `/templates/:id/fields/new` and `/templates/:id/fields/:fieldKey` placeholders until 095 |
+| 094 | Add and edit are named on this screen; 095 owns the sheet. | Closed by 095 — `/templates/:id/fields/new` and `/templates/:id/fields/:fieldKey` open `FieldAddSheet` |
 | 094 | Record field values have no repository provider yet. | Open — `fieldValueCountsProvider` defaults to none; tests override it. Capture can replace the map with a watch |
 | 094 | `AppStatusPill` only names record lifecycle. | Open — requiredness reuses the pill with `Copy.fieldRequired` / Recommended / Optional as the label until a shared requiredness status exists |
 | 093 | Packed labels are l10n keys and task 238 has not shipped ARB files. | Open — `Copy.shippedLabel` resolves a key at render and copy time from its last segment; `Copy.shippedTemplateName` holds the 23 library names |
@@ -449,7 +450,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 09 — Templates
 
-*7 of 17 complete.*
+*8 of 17 complete.*
 
 - [x] [088 — Template domain model and repository](dev-plan/09-templates/088-template-model.md)
 - [x] [089 — Field type registry](dev-plan/09-templates/089-field-type-registry.md)
@@ -458,7 +459,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [092 — Template list, blank create and duplicate](dev-plan/09-templates/092-template-list.md)
 - [x] [093 — Shipped template loader and library picker](dev-plan/09-templates/093-shipped-template-loader.md)
 - [x] [094 — Field list editor, reorder and delete](dev-plan/09-templates/094-field-list-editor.md)
-- [ ] [095 — Add and edit a field, with Advanced, validation and options](dev-plan/09-templates/095-field-add-basic.md)
+- [x] [095 — Add and edit a field, with Advanced, validation and options](dev-plan/09-templates/095-field-add-basic.md)
 - [ ] [096 — Required columns screen](dev-plan/09-templates/096-required-columns-screen.md)
 - [ ] [097 — Field editor widget](dev-plan/09-templates/097-field-editor-inline.md)
 - [ ] [098 — Identity fields and output column mapping](dev-plan/09-templates/098-identity-fields.md)

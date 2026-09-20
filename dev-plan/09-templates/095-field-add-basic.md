@@ -43,11 +43,11 @@ rules and choice options.
 
 ## Definition of done
 
-- [ ] A field is added in under ten seconds and lands OPTIONAL unless the user says otherwise; a two-fact label is questioned once and the user can still insist.
-- [ ] `required_when` naming an unknown field is refused at edit time, not at capture time.
-- [ ] Hiding a field removes it from capture and export, and a later unhide brings its old values back intact.
-- [ ] A validation rule can be tested against a sample value before saving, and renaming an option does not rewrite historical records.
-- [ ] Tests: unit tests over key generation and collision handling, `required_when` expression validation, the hide/unhide value round trip, and option rename leaving stored codes untouched; widget tests of `field_add_sheet.dart`, `field_validation_editor.dart` and `field_options_editor.dart` covering empty and failure states.
+- [x] A field is added in under ten seconds and lands OPTIONAL unless the user says otherwise; a two-fact label is questioned once and the user can still insist.
+- [x] `required_when` naming an unknown field is refused at edit time, not at capture time.
+- [x] Hiding a field removes it from capture and export, and a later unhide brings its old values back intact.
+- [x] A validation rule can be tested against a sample value before saving, and renaming an option does not rewrite historical records.
+- [x] Tests: unit tests over key generation and collision handling, `required_when` expression validation, the hide/unhide value round trip, and option rename leaving stored codes untouched; widget tests of `field_add_sheet.dart`, `field_validation_editor.dart` and `field_options_editor.dart` covering empty and failure states.
 
 ## Out of scope
 
