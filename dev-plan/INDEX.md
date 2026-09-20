@@ -1,6 +1,6 @@
 # Tapture — task index
 
-329 implementation prompts across 25 phases. Work top to bottom.
+331 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task.
 
@@ -102,6 +102,8 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [069 — Storage headroom guard](05-file-storage/069-storage-guard.md)
 - [x] [070 — Orphan file scanner](05-file-storage/070-orphan-scanner.md)
 - [x] [071 — Imported file validation](05-file-storage/071-file-validation.md)
+- [x] [330 — Add share_plus for opening files externally](05-file-storage/330-add-share-plus.md)
+- [x] [331 — Open a project's files in an external app](05-file-storage/331-open-project-files-externally.md)
 
 ## 06 — Application shell
 

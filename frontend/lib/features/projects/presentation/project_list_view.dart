@@ -16,6 +16,7 @@ import 'current_project.dart';
 import 'project_archive_action.dart';
 import 'project_delete_action.dart';
 import 'project_list_filter.dart';
+import 'project_open_externally_action.dart';
 import 'project_rename_action.dart';
 
 /// The project rows the landing screen and the expanded list pane share
@@ -113,6 +114,11 @@ List<AppOverflowAction> _rowActions(
   Project project,
 ) {
   final bool pinned = project.pinnedAt != null;
+  final AppOverflowAction? open = projectOpenExternallyMenuItem(
+    context,
+    ref,
+    project,
+  );
   return <AppOverflowAction>[
     AppOverflowAction(
       label: Copy.projectRename,
@@ -126,6 +132,7 @@ List<AppOverflowAction> _rowActions(
         ref.read(projectRepositoryProvider).setPinned(project.id, !pinned),
       ),
     ),
+    ?open,
     AppOverflowAction(
       label: project.status == ProjectStatus.archived
           ? Copy.projectUnarchive

@@ -2,11 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/storage_root.dart';
+import 'package:tapture/core/permissions/permissions_service.dart';
 
 import 'download_service.dart';
+import 'external_open_outcome.dart';
+
+export 'external_open_outcome.dart';
 
 /// Native channel that writes into shared `Download/Tapture` on Android 10+.
 const MethodChannel _filesChannel = MethodChannel('com.tapture.app/files');
@@ -22,7 +28,12 @@ DownloadService platformDownloads() {
     return androidDownloads();
   }
   if (Platform.isIOS) {
-    return folderDownloads(_downloadsFolder, taptureSubfolder: false);
+    return folderDownloads(
+      _downloadsFolder,
+      taptureSubfolder: false,
+      checkStorage: true,
+      useShare: true,
+    );
   }
   return folderDownloads(_downloadsFolder);
 }
@@ -33,10 +44,27 @@ DownloadService platformDownloads() {
 DownloadService androidDownloads({
   MethodChannel? channel,
   DownloadService? fallback,
+  Future<Directory> Function()? cacheDir,
+  Future<ExternalOpenOutcome> Function({
+    required String path,
+    required String mimeType,
+    required String fileName,
+  })?
+  share,
+  PermissionsService? permissions,
 }) {
   return _ChannelDownloads(
     channel: channel ?? _filesChannel,
-    fallback: fallback ?? folderDownloads(_downloadsFolder),
+    fallback:
+        fallback ??
+        folderDownloads(
+          _downloadsFolder,
+          cacheDir: cacheDir,
+          share: share,
+          permissions: permissions,
+          checkStorage: true,
+          useShare: true,
+        ),
   );
 }
 
@@ -49,6 +77,16 @@ DownloadService folderDownloads(
   bool? canOpenFolder,
   String? destination,
   Future<void> Function(String executable, List<String> arguments)? open,
+  Future<Directory> Function()? cacheDir,
+  Future<ExternalOpenOutcome> Function({
+    required String path,
+    required String mimeType,
+    required String fileName,
+  })?
+  share,
+  PermissionsService? permissions,
+  bool checkStorage = false,
+  bool useShare = false,
 }) {
   return _FolderDownloads(
     folder,
@@ -57,6 +95,11 @@ DownloadService folderDownloads(
     destination:
         destination ?? (taptureSubfolder ? Copy.downloadsTaptureFolder : null),
     open: open,
+    cacheDir: cacheDir,
+    share: share,
+    permissions: permissions,
+    checkStorage: checkStorage,
+    useShare: useShare,
   );
 }
 
@@ -82,11 +125,26 @@ final class _FolderDownloads implements DownloadService {
     required this.canOpenFolder,
     required this.destination,
     required this._open,
+    required this._cacheDir,
+    required this._share,
+    required this._permissions,
+    required this._checkStorage,
+    required this._useShare,
   });
 
   final Future<Directory> Function() _folder;
   final bool _taptureSubfolder;
   final Future<void> Function(String executable, List<String> arguments)? _open;
+  final Future<Directory> Function()? _cacheDir;
+  final Future<ExternalOpenOutcome> Function({
+    required String path,
+    required String mimeType,
+    required String fileName,
+  })?
+  _share;
+  final PermissionsService? _permissions;
+  final bool _checkStorage;
+  final bool _useShare;
 
   @override
   final String? destination;
@@ -96,6 +154,12 @@ final class _FolderDownloads implements DownloadService {
 
   @override
   bool get canChooseLocation => false;
+
+  @override
+  bool get canOpenExternally => true;
+
+  @override
+  bool get canDownloadCopy => false;
 
   @override
   Future<Result<String?>> saveAs({
@@ -144,6 +208,25 @@ final class _FolderDownloads implements DownloadService {
     }
   }
 
+  @override
+  Future<Result<void>> openExternally({
+    required String fileName,
+    required Uint8List bytes,
+    required String mimeType,
+  }) {
+    return _openCopyExternally(
+      fileName: fileName,
+      bytes: bytes,
+      mimeType: mimeType,
+      cacheDir: _cacheDir ?? _defaultCacheDir,
+      permissions: _permissions ?? PermissionsService(),
+      checkStorage: _checkStorage,
+      useShare: _useShare,
+      share: _share,
+      open: _open,
+    );
+  }
+
   Future<Directory> _targetFolder() async {
     final Directory base = await _folder();
     return _taptureSubfolder ? Directory('${base.path}/$_taptureFolder') : base;
@@ -164,6 +247,25 @@ final class _ChannelDownloads implements DownloadService {
 
   @override
   bool get canChooseLocation => true;
+
+  @override
+  bool get canOpenExternally => true;
+
+  @override
+  bool get canDownloadCopy => false;
+
+  @override
+  Future<Result<void>> openExternally({
+    required String fileName,
+    required Uint8List bytes,
+    required String mimeType,
+  }) {
+    return _fallback.openExternally(
+      fileName: fileName,
+      bytes: bytes,
+      mimeType: mimeType,
+    );
+  }
 
   @override
   Future<Result<String?>> saveAs({
@@ -265,5 +367,120 @@ Future<void> _runOpen(String executable, List<String> arguments) async {
   }
   if (result.exitCode != 0) {
     throw ProcessException(executable, arguments);
+  }
+}
+
+Future<Result<void>> _openCopyExternally({
+  required String fileName,
+  required Uint8List bytes,
+  required String mimeType,
+  required Future<Directory> Function() cacheDir,
+  required PermissionsService permissions,
+  required bool checkStorage,
+  required bool useShare,
+  required Future<ExternalOpenOutcome> Function({
+    required String path,
+    required String mimeType,
+    required String fileName,
+  })?
+  share,
+  required Future<void> Function(String executable, List<String> arguments)?
+  open,
+}) async {
+  File? copy;
+  try {
+    if (checkStorage) {
+      final Result<PermissionState> granted = await permissions.request(
+        AppPermission.storage,
+      );
+      switch (granted) {
+        case FailureResult<PermissionState>(:final Failure failure):
+          return FailureResult<void>(failure);
+        case Success<PermissionState>():
+          break;
+      }
+    }
+    final Directory cache = await cacheDir();
+    await cache.create(recursive: true);
+    copy = File(
+      '${cache.path}/open-${DateTime.now().microsecondsSinceEpoch}-'
+      '${_safeCopyName(fileName)}',
+    );
+    await copy.writeAsBytes(bytes, flush: true);
+    if (useShare) {
+      final ExternalOpenOutcome outcome = await (share ?? _sharePlus)(
+        path: copy.path,
+        mimeType: mimeType,
+        fileName: fileName,
+      );
+      await _deleteCopy(copy);
+      copy = null;
+      return switch (outcome) {
+        ExternalOpenOutcome.success => const Success<void>(null),
+        ExternalOpenOutcome.dismissed => const FailureResult<void>(
+          CancelledFailure(),
+        ),
+        ExternalOpenOutcome.unavailable => FailureResult<void>(
+          openExternallyNoHandlerFailure(),
+        ),
+      };
+    }
+    await (open ?? _runOpen)(_openExecutable, <String>[copy.path]);
+    return const Success<void>(null);
+  } on Failure catch (failure) {
+    await _deleteCopy(copy);
+    return FailureResult<void>(failure);
+  } on Object {
+    await _deleteCopy(copy);
+    return FailureResult<void>(
+      useShare
+          ? openExternallyFailure(fileName)
+          : openExternallyNoHandlerFailure(),
+    );
+  }
+}
+
+Future<ExternalOpenOutcome> _sharePlus({
+  required String path,
+  required String mimeType,
+  required String fileName,
+}) async {
+  final ShareResult result = await SharePlus.instance.share(
+    ShareParams(
+      files: <XFile>[XFile(path, mimeType: mimeType, name: fileName)],
+    ),
+  );
+  return switch (result.status) {
+    ShareResultStatus.success => ExternalOpenOutcome.success,
+    ShareResultStatus.dismissed => ExternalOpenOutcome.dismissed,
+    ShareResultStatus.unavailable => ExternalOpenOutcome.unavailable,
+  };
+}
+
+Future<Directory> _defaultCacheDir() async {
+  final Result<Directory> cache = await StorageRoot().cacheDir();
+  switch (cache) {
+    case FailureResult<Directory>(:final Failure failure):
+      throw failure;
+    case Success<Directory>(:final Directory value):
+      return value;
+  }
+}
+
+String _safeCopyName(String fileName) {
+  final String base = fileName.split(RegExp(r'[/\\]')).last;
+  return base.isEmpty ? 'file' : base;
+}
+
+Future<void> _deleteCopy(File? copy) async {
+  if (copy == null) {
+    return;
+  }
+  try {
+    if (copy.existsSync()) {
+      await copy.delete();
+    }
+  } on Object {
+    // A leftover copy is worse than swallowing a delete error.
   }
 }

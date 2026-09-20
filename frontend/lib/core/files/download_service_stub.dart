@@ -42,4 +42,19 @@ final class _NoDownloads implements DownloadService {
   }) async {
     return FailureResult<String?>(downloadFailure(fileName));
   }
+
+  @override
+  bool get canOpenExternally => false;
+
+  @override
+  bool get canDownloadCopy => false;
+
+  @override
+  Future<Result<void>> openExternally({
+    required String fileName,
+    required Uint8List bytes,
+    required String mimeType,
+  }) async {
+    return FailureResult<void>(openExternallyFailure(fileName));
+  }
 }

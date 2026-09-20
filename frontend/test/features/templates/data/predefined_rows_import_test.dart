@@ -5,7 +5,6 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/templates/data/template_repository_impl.dart';
-import 'package:tapture/features/templates/domain/template_repository.dart';
 import 'package:tapture/features/templates/templates.dart';
 
 import '../../../support/factories.dart';

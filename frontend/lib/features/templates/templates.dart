@@ -10,6 +10,7 @@ export 'data/xlsx_template_import.dart' show XlsxTemplateImport;
 export 'domain/field_def.dart';
 export 'domain/field_type_registry.dart';
 export 'domain/template_def.dart';
+export 'domain/template_repository.dart';
 export 'domain/template_row.dart';
 export 'domain/template_version.dart';
 export 'domain/template_versioning.dart';

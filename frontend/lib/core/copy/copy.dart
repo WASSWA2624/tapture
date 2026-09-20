@@ -467,6 +467,51 @@ abstract final class Copy {
   /// Body of the rename dialog. The folder on disk stays put.
   static const String projectRenameMessage = 'The folder on disk stays put.';
 
+  /// Hands a copy of a project file to another app.
+  static const String projectOpenWith = 'Open with';
+
+  /// Saves a copy of a project file on the web, where no app can be launched.
+  static const String projectDownloadCopy = 'Download a copy';
+
+  /// Shown when Open with is asked for a project that has no file.
+  static const String projectNothingToOpen =
+      'This project has no spreadsheet, document or PDF to open yet.';
+
+  /// What to do when there is nothing to open.
+  static const String projectNothingToOpenRecovery =
+      'Import a template workbook or export the project, then try again.';
+
+  /// Title when the hand-off to another app failed.
+  static const String projectOpenFailedTitle = 'Could not open the file';
+
+  /// Body when the hand-off failed.
+  static const String projectOpenFailed =
+      'Tapture could not hand the file to another app.';
+
+  /// Body when the named file could not be handed off.
+  static String projectOpenFailedNamed(String fileName) =>
+      'Tapture could not hand $fileName to another app.';
+
+  /// Recovery when the hand-off failed.
+  static const String projectOpenFailedRecovery =
+      'Free some space, then try again.';
+
+  /// When no installed app can open the file type.
+  static const String projectOpenNoApp =
+      'No app on this device can open that file.';
+
+  /// Recovery when no reader is installed.
+  static const String projectOpenNoAppRecovery =
+      'Install a reader for this file type, then try again.';
+
+  /// When storage permission was refused before writing the copy.
+  static const String projectOpenPermission =
+      'Tapture needs storage access to open a copy of this file.';
+
+  /// Recovery when storage permission was refused.
+  static const String projectOpenPermissionRecovery =
+      'Allow storage access, then try again.';
+
   /// Visible position of a project in the current list.
   static String projectListNumber(int n) {
     return NumberFormat.decimalPattern().format(n);

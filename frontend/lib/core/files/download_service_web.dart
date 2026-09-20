@@ -38,6 +38,29 @@ final class _BrowserDownloads implements DownloadService {
   }
 
   @override
+  bool get canOpenExternally => false;
+
+  @override
+  bool get canDownloadCopy => true;
+
+  @override
+  Future<Result<void>> openExternally({
+    required String fileName,
+    required Uint8List bytes,
+    required String mimeType,
+  }) async {
+    final Result<String?> saved = await save(
+      fileName: fileName,
+      bytes: bytes,
+      mimeType: mimeType,
+    );
+    return saved.fold(
+      FailureResult<void>.new,
+      (String? _) => const Success<void>(null),
+    );
+  }
+
+  @override
   Future<Result<String?>> save({
     required String fileName,
     required Uint8List bytes,

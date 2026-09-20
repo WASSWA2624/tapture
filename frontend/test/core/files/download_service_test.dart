@@ -7,6 +7,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/download_service.dart';
 import 'package:tapture/core/files/download_service_io.dart';
+import 'package:tapture/core/permissions/permissions_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -289,6 +290,205 @@ void main() {
     expect(failure?.recoveryAction, isNotEmpty);
     expect(File('${folder.path}/Tapture/note.zip').existsSync(), isFalse);
   });
+
+  test('the fake reports Open with and never receives a stored path', () async {
+    String? seenName;
+    Uint8List? seenBytes;
+    String? seenMime;
+    final DownloadService downloads = DownloadService.fake(
+      canOpenExternally: true,
+      onOpenExternally: (String fileName, Uint8List bytes, String mimeType) {
+        seenName = fileName;
+        seenBytes = bytes;
+        seenMime = mimeType;
+      },
+    );
+    final Uint8List bytes = Uint8List.fromList(<int>[9, 8, 7]);
+
+    expect(downloads.canOpenExternally, isTrue);
+    expect(downloads.canDownloadCopy, isFalse);
+    _okVoid(
+      await downloads.openExternally(
+        fileName: 'book.xlsx',
+        bytes: bytes,
+        mimeType: 'application/vnd.ms-excel',
+      ),
+    );
+
+    expect(seenName, 'book.xlsx');
+    expect(seenName, isNot(contains('/')));
+    expect(seenName, isNot(contains(r'\')));
+    expect(seenBytes, bytes);
+    expect(seenMime, 'application/vnd.ms-excel');
+  });
+
+  test(
+    'a cancelled fake chooser is CancelledFailure and writes nothing',
+    () async {
+      final DownloadService downloads = DownloadService.fake(
+        canOpenExternally: true,
+        openCancel: true,
+      );
+
+      final Result<void> result = await downloads.openExternally(
+        fileName: 'book.xlsx',
+        bytes: Uint8List.fromList(<int>[1]),
+        mimeType: 'application/pdf',
+      );
+      final Failure? failure = result.fold(
+        (Failure value) => value,
+        (_) => null,
+      );
+
+      expect(failure, isA<CancelledFailure>());
+      expect(failure?.recoveryAction, isNotEmpty);
+    },
+  );
+
+  test('a missing-handler fake is a typed storage failure', () async {
+    final DownloadService downloads = DownloadService.fake(
+      canOpenExternally: true,
+      openNoHandler: true,
+    );
+
+    final Result<void> result = await downloads.openExternally(
+      fileName: 'book.xlsx',
+      bytes: Uint8List.fromList(<int>[1]),
+      mimeType: 'application/pdf',
+    );
+    final Failure? failure = result.fold((Failure value) => value, (_) => null);
+
+    expect(failure, isA<StorageFailure>());
+    expect(failure?.message, openExternallyNoHandlerFailure().message);
+    expect(failure?.recoveryAction, isNotEmpty);
+  });
+
+  test(
+    'desktop openExternally opens a cache copy and leaves the original',
+    () async {
+      final Directory folder = _tempFolder();
+      final File original = File('${folder.path}/original.xlsx')
+        ..writeAsBytesSync(<int>[1, 2, 3]);
+      final DateTime modified = original.lastModifiedSync();
+      final Directory cache = Directory('${folder.path}/cache')..createSync();
+      String? executable;
+      List<String>? arguments;
+      final DownloadService downloads = folderDownloads(
+        () async => folder,
+        cacheDir: () async => cache,
+        open: (String command, List<String> args) async {
+          executable = command;
+          arguments = args;
+        },
+      );
+      final Uint8List bytes = original.readAsBytesSync();
+
+      _okVoid(
+        await downloads.openExternally(
+          fileName: 'book.xlsx',
+          bytes: bytes,
+          mimeType: 'application/vnd.ms-excel',
+        ),
+      );
+
+      expect(original.readAsBytesSync(), <int>[1, 2, 3]);
+      expect(original.lastModifiedSync(), modified);
+      expect(executable, _desktopOpenCommand);
+      expect(arguments, isNotNull);
+      expect(_slash(arguments!.single), isNot(_slash(original.path)));
+      expect(_slash(arguments!.single), contains('/cache/open-'));
+      expect(File(arguments!.single).readAsBytesSync(), bytes);
+      expect(downloads.canOpenExternally, isTrue);
+      expect(downloads.canDownloadCopy, isFalse);
+    },
+  );
+
+  test('a cancelled share deletes the copy and leaves the original', () async {
+    final Directory folder = _tempFolder();
+    final File original = File('${folder.path}/original.xlsx')
+      ..writeAsBytesSync(<int>[4, 5, 6]);
+    final DateTime modified = original.lastModifiedSync();
+    final Directory cache = Directory('${folder.path}/cache')..createSync();
+    final DownloadService downloads = folderDownloads(
+      () async => folder,
+      cacheDir: () async => cache,
+      useShare: true,
+      share:
+          ({
+            required String path,
+            required String mimeType,
+            required String fileName,
+          }) async {
+            expect(File(path).existsSync(), isTrue);
+            expect(_slash(path), isNot(_slash(original.path)));
+            return ExternalOpenOutcome.dismissed;
+          },
+    );
+
+    final Result<void> result = await downloads.openExternally(
+      fileName: 'book.xlsx',
+      bytes: original.readAsBytesSync(),
+      mimeType: 'application/vnd.ms-excel',
+    );
+    final Failure? failure = result.fold((Failure value) => value, (_) => null);
+
+    expect(failure, isA<CancelledFailure>());
+    expect(original.readAsBytesSync(), <int>[4, 5, 6]);
+    expect(original.lastModifiedSync(), modified);
+    expect(_openCopies(cache), isEmpty);
+  });
+
+  test('a missing share handler deletes the copy', () async {
+    final Directory folder = _tempFolder();
+    final Directory cache = Directory('${folder.path}/cache')..createSync();
+    final DownloadService downloads = folderDownloads(
+      () async => folder,
+      cacheDir: () async => cache,
+      useShare: true,
+      share:
+          ({
+            required String path,
+            required String mimeType,
+            required String fileName,
+          }) async {
+            return ExternalOpenOutcome.unavailable;
+          },
+    );
+
+    final Result<void> result = await downloads.openExternally(
+      fileName: 'book.xlsx',
+      bytes: Uint8List.fromList(<int>[1]),
+      mimeType: 'application/pdf',
+    );
+    final Failure? failure = result.fold((Failure value) => value, (_) => null);
+
+    expect(failure, isA<StorageFailure>());
+    expect(failure?.message, openExternallyNoHandlerFailure().message);
+    expect(_openCopies(cache), isEmpty);
+  });
+
+  test('denied storage permission writes no copy', () async {
+    final Directory folder = _tempFolder();
+    final Directory cache = Directory('${folder.path}/cache')..createSync();
+    final DownloadService downloads = folderDownloads(
+      () async => folder,
+      cacheDir: () async => cache,
+      checkStorage: true,
+      permissions: PermissionsService.fake(),
+      open: (String _, List<String> _) async {},
+    );
+
+    final Result<void> result = await downloads.openExternally(
+      fileName: 'book.xlsx',
+      bytes: Uint8List.fromList(<int>[1]),
+      mimeType: 'application/pdf',
+    );
+    final Failure? failure = result.fold((Failure value) => value, (_) => null);
+
+    expect(failure, isA<PermissionFailure>());
+    expect(failure?.recoveryAction, isNotEmpty);
+    expect(_openCopies(cache), isEmpty);
+  });
 }
 
 Directory _tempFolder() {
@@ -338,3 +538,12 @@ String get _desktopOpenCommand {
 }
 
 String _slash(String? path) => (path ?? '').replaceAll(r'\', '/');
+
+List<File> _openCopies(Directory cache) {
+  return cache.listSync().whereType<File>().where((File file) {
+    final String name = file.uri.pathSegments.isEmpty
+        ? ''
+        : file.uri.pathSegments.last;
+    return name.startsWith('open-');
+  }).toList();
+}

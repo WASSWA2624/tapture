@@ -12,7 +12,6 @@ import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/settings/settings.dart';
 import 'package:tapture/features/templates/data/template_repository_impl.dart';
-import 'package:tapture/features/templates/domain/template_repository.dart';
 import 'package:tapture/features/templates/presentation/field_add_sheet.dart';
 import 'package:tapture/features/templates/presentation/requiredness_controller.dart';
 import 'package:tapture/features/templates/presentation/template_list_screen.dart';

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,9 +8,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/router.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/app/theme/theme_controller.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/download_service.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
@@ -241,6 +244,90 @@ void main() {
     expect(find.byType(AppOverflowMenu), hasSemanticLabel(Copy.overflowMenu));
   });
 
+  testWidgets(
+    'Open with is hidden on the home when nothing can be handed off',
+    (WidgetTester tester) async {
+      await _pumpPopulated(tester);
+      await tester.tap(find.byType(AppOverflowMenu));
+      await tester.pumpAndSettle();
+      expect(find.text(Copy.projectOpenWith), findsNothing);
+      expect(find.text(Copy.projectDownloadCopy), findsNothing);
+    },
+  );
+
+  testWidgets('Open with sits after Settings when a file exists', (
+    WidgetTester tester,
+  ) async {
+    await _pumpPopulated(tester, overrides: _openableOverrides());
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(AppOverflowMenu));
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.projectOpenWith), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey<String>('project-open-project-1')),
+      meetsTapTarget(),
+    );
+    expect(find.byType(AppOverflowMenu), hasSemanticLabel(Copy.overflowMenu));
+  });
+
+  testWidgets('a failed home Open with renders AppErrorState', (
+    WidgetTester tester,
+  ) async {
+    await _pumpPopulated(
+      tester,
+      overrides: _openableOverrides(
+        downloads: DownloadService.fake(
+          canOpenExternally: true,
+          openNoHandler: true,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(AppOverflowMenu));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.projectOpenWith));
+    await tester.pumpAndSettle();
+    expect(find.byType(AppErrorState), findsOneWidget);
+  });
+
+  testWidgets(
+    'home Open with meets tap target, label and tooltip matchers at each width',
+    (WidgetTester tester) async {
+      for (final Size size in <Size>[
+        const Size(400, 800),
+        const Size(800, 1200),
+        const Size(1200, 800),
+      ]) {
+        for (final AppThemeMode mode in <AppThemeMode>[
+          AppThemeMode.light,
+          AppThemeMode.dark,
+          AppThemeMode.outdoor,
+        ]) {
+          _setSurface(tester, size);
+          await _pumpPopulated(
+            tester,
+            overrides: _openableOverrides(),
+            mode: mode,
+          );
+          await tester.pumpAndSettle();
+          await tester.tap(find.byType(AppOverflowMenu));
+          await tester.pumpAndSettle();
+          expect(
+            find.byKey(const ValueKey<String>('project-open-project-1')),
+            meetsTapTarget(),
+          );
+          expect(
+            find.byType(AppOverflowMenu),
+            hasSemanticLabel(Copy.overflowMenu),
+          );
+          expect(find.byTooltip(Copy.overflowMenu), findsWidgets);
+          await expectNoA11yIssues(tester);
+          await tester.pumpWidget(const SizedBox.shrink());
+        }
+      }
+    },
+  );
+
   testWidgets('count cards form a 2×2 grid at 393 dp', (
     WidgetTester tester,
   ) async {
@@ -383,12 +470,31 @@ void main() {
   });
 }
 
+List<Override> _openableOverrides({DownloadService? downloads}) {
+  return <Override>[
+    downloadServiceProvider.overrideWith(
+      (Ref _) => downloads ?? DownloadService.fake(canOpenExternally: true),
+    ),
+    projectOpenableFileLookupProvider.overrideWith(
+      (Ref _) => ProjectOpenableFileLookup.fake(
+        file: (
+          fileName: 'book.xlsx',
+          bytes: Uint8List.fromList(<int>[1, 2, 3]),
+          mimeType:
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ),
+      ),
+    ),
+  ];
+}
+
 Future<GoRouter> _pump(
   WidgetTester tester, {
   FakeProjectRepository? repo,
   String? openProjectId,
   String? contextLabel,
   List<Override> overrides = const <Override>[],
+  AppThemeMode mode = AppThemeMode.light,
 }) async {
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.project(openProjectId ?? 'project-1'),
@@ -485,7 +591,12 @@ Future<GoRouter> _pump(
         ...overrides,
       ],
       child: MaterialApp.router(
-        theme: buildTheme(brightness: Brightness.light),
+        theme: buildTheme(
+          brightness: mode == AppThemeMode.dark
+              ? Brightness.dark
+              : Brightness.light,
+          outdoor: mode == AppThemeMode.outdoor,
+        ),
         routerConfig: router,
       ),
     ),
@@ -493,7 +604,11 @@ Future<GoRouter> _pump(
   return router;
 }
 
-Future<GoRouter> _pumpPopulated(WidgetTester tester) async {
+Future<GoRouter> _pumpPopulated(
+  WidgetTester tester, {
+  List<Override> overrides = const <Override>[],
+  AppThemeMode mode = AppThemeMode.light,
+}) async {
   final FakeProjectRepository repo = FakeProjectRepository();
   addTearDown(repo.dispose);
   _ok(await repo.create(aProject(name: 'Alpha')));
@@ -509,6 +624,8 @@ Future<GoRouter> _pumpPopulated(WidgetTester tester) async {
     repo: repo,
     openProjectId: 'project-1',
     contextLabel: 'Ward 1',
+    overrides: overrides,
+    mode: mode,
   );
   await tester.pump();
   await tester.pump();

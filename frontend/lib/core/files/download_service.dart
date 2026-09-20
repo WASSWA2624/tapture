@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -22,7 +23,9 @@ abstract interface class DownloadService {
   /// save return a storage failure. [destination], [canOpenFolder] and
   /// [onOpenFolder] stand in for the location line and Open folder.
   /// [canChooseLocation], [onSaveAs] and [saveAsCancel] stand in for Save
-  /// to a folder.
+  /// to a folder. [canOpenExternally], [canDownloadCopy] and
+  /// [onOpenExternally] stand in for Open with. The fake never writes a
+  /// file and never receives a stored path (FE-TEST-03, FE-SEC-08).
   factory DownloadService.fake({
     void Function(String fileName, Uint8List bytes, String mimeType)? onSave,
     bool fail = false,
@@ -33,6 +36,13 @@ abstract interface class DownloadService {
     bool canChooseLocation = false,
     bool saveAsCancel = false,
     void Function(String fileName, Uint8List bytes, String mimeType)? onSaveAs,
+    bool canOpenExternally = false,
+    bool canDownloadCopy = false,
+    bool openCancel = false,
+    bool openNoHandler = false,
+    bool openPermissionDenied = false,
+    void Function(String fileName, Uint8List bytes, String mimeType)?
+    onOpenExternally,
   }) {
     return _FakeDownloadService(
       onSave: onSave,
@@ -44,6 +54,12 @@ abstract interface class DownloadService {
       canChooseLocation: canChooseLocation,
       saveAsCancel: saveAsCancel,
       onSaveAs: onSaveAs,
+      canOpenExternally: canOpenExternally,
+      canDownloadCopy: canDownloadCopy,
+      openCancel: openCancel,
+      openNoHandler: openNoHandler,
+      openPermissionDenied: openPermissionDenied,
+      onOpenExternally: onOpenExternally,
     );
   }
 
@@ -78,7 +94,28 @@ abstract interface class DownloadService {
     required Uint8List bytes,
     required String mimeType,
   });
+
+  /// Whether [openExternally] can hand a copy to another app.
+  bool get canOpenExternally;
+
+  /// Whether the platform can save a copy instead of opening one. The web
+  /// uses this so the menu still offers a way out of the app.
+  bool get canDownloadCopy;
+
+  /// Hands a copy of [bytes] named [fileName] to another app, or saves it
+  /// where the platform cannot open one. Never takes a stored path.
+  Future<Result<void>> openExternally({
+    required String fileName,
+    required Uint8List bytes,
+    required String mimeType,
+  });
 }
+
+/// Where a file is handed to the operator. Tests keep the fake.
+final Provider<DownloadService> downloadServiceProvider =
+    Provider<DownloadService>((Ref _) {
+      return DownloadService.fake();
+    });
 
 final class _FakeDownloadService implements DownloadService {
   _FakeDownloadService({
@@ -91,6 +128,12 @@ final class _FakeDownloadService implements DownloadService {
     required this.canChooseLocation,
     required this._saveAsCancel,
     required this._onSaveAs,
+    required this.canOpenExternally,
+    required this.canDownloadCopy,
+    required this._openCancel,
+    required this._openNoHandler,
+    required this._openPermissionDenied,
+    required this._onOpenExternally,
   });
 
   final void Function(String fileName, Uint8List bytes, String mimeType)?
@@ -101,6 +144,11 @@ final class _FakeDownloadService implements DownloadService {
   final bool _saveAsCancel;
   final void Function(String fileName, Uint8List bytes, String mimeType)?
   _onSaveAs;
+  final bool _openCancel;
+  final bool _openNoHandler;
+  final bool _openPermissionDenied;
+  final void Function(String fileName, Uint8List bytes, String mimeType)?
+  _onOpenExternally;
 
   @override
   final String? destination;
@@ -110,6 +158,12 @@ final class _FakeDownloadService implements DownloadService {
 
   @override
   final bool canChooseLocation;
+
+  @override
+  final bool canOpenExternally;
+
+  @override
+  final bool canDownloadCopy;
 
   @override
   Future<Result<void>> openFolder() async {
@@ -150,6 +204,33 @@ final class _FakeDownloadService implements DownloadService {
     _onSave?.call(fileName, bytes, mimeType);
     return Success<String?>('downloads/$fileName');
   }
+
+  @override
+  Future<Result<void>> openExternally({
+    required String fileName,
+    required Uint8List bytes,
+    required String mimeType,
+  }) async {
+    _onOpenExternally?.call(fileName, bytes, mimeType);
+    if (_openPermissionDenied) {
+      return const FailureResult<void>(
+        PermissionFailure(
+          message: Copy.projectOpenPermission,
+          recoveryAction: Copy.projectOpenPermissionRecovery,
+        ),
+      );
+    }
+    if (_openCancel) {
+      return const FailureResult<void>(CancelledFailure());
+    }
+    if (_openNoHandler) {
+      return FailureResult<void>(openExternallyNoHandlerFailure());
+    }
+    if (_fail || (!canOpenExternally && !canDownloadCopy)) {
+      return FailureResult<void>(openExternallyFailure(fileName));
+    }
+    return const Success<void>(null);
+  }
 }
 
 /// The failure any platform returns when the file could not be saved.
@@ -166,5 +247,21 @@ StorageFailure openFolderFailure(String place) {
   return StorageFailure(
     message: Copy.feedbackOpenFolderFailed(place),
     recoveryAction: 'Open Downloads on this device and look in Tapture.',
+  );
+}
+
+/// The failure any platform returns when a copy could not be handed off.
+StorageFailure openExternallyFailure(String fileName) {
+  return StorageFailure(
+    message: Copy.projectOpenFailedNamed(fileName),
+    recoveryAction: Copy.projectOpenFailedRecovery,
+  );
+}
+
+/// The failure when no installed app can open the copy.
+StorageFailure openExternallyNoHandlerFailure() {
+  return const StorageFailure(
+    message: Copy.projectOpenNoApp,
+    recoveryAction: Copy.projectOpenNoAppRecovery,
   );
 }

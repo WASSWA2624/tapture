@@ -22,8 +22,11 @@ import 'core/time/clock.dart';
 import 'core/widgets/fields/field_editor.dart';
 import 'features/feedback/feedback.dart';
 import 'features/feedback/presentation/feedback_providers.dart';
+import 'features/projects/data/project_openable_file_lookup_factory.dart';
 import 'features/projects/data/project_repository_impl.dart';
 import 'features/projects/presentation/current_project.dart';
+import 'features/projects/presentation/project_open_externally_action.dart'
+    show projectOpenableFileLookupProvider;
 import 'features/settings/presentation/offline_switch.dart';
 import 'features/settings/settings.dart';
 import 'features/templates/data/template_repository_impl.dart';
@@ -81,6 +84,12 @@ Future<void> _run() async {
         return FeedbackRepositoryImpl.platform(clock: clock, ids: ids);
       }),
       feedbackDownloadsProvider.overrideWith((Ref _) => DownloadService()),
+      downloadServiceProvider.overrideWith((Ref _) => DownloadService()),
+      projectOpenableFileLookupProvider.overrideWith((Ref ref) {
+        return createProjectOpenableFileLookup(
+          templates: ref.watch(templateRepositoryProvider),
+        );
+      }),
       feedbackPhotosProvider.overrideWith((Ref _) => PhotoPicker()),
       feedbackScreenCaptureProvider.overrideWith((Ref _) => ScreenCapture()),
       sttServiceProvider.overrideWith((Ref ref) {

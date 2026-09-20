@@ -21,6 +21,7 @@ import 'current_project.dart';
 import 'project_archive_action.dart';
 import 'project_delete_action.dart';
 import 'project_duplicate_action.dart';
+import 'project_open_externally_action.dart';
 
 /// Open-project home: what to do next, with one primary capture action.
 class ProjectHomeScreen extends ConsumerWidget {
@@ -202,6 +203,11 @@ class _HomeBody extends ConsumerWidget {
 
   List<AppOverflowAction> _menu(BuildContext context, WidgetRef ref) {
     final Project project = view.project;
+    final AppOverflowAction? open = projectOpenExternallyMenuItem(
+      context,
+      ref,
+      project,
+    );
     return <AppOverflowAction>[
       AppOverflowAction(
         label: Copy.projectAllProjects,
@@ -230,6 +236,7 @@ class _HomeBody extends ConsumerWidget {
         icon: Icons.tune,
         onTap: () => context.go(_settings(project.id)),
       ),
+      ?open,
       AppOverflowAction(
         label: project.status == ProjectStatus.archived
             ? Copy.projectUnarchive

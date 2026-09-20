@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -5,11 +7,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/router.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/app/theme/theme_controller.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/download_service.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
+import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/projects/projects.dart';
 
 import '../../../support/a11y_matchers.dart';
@@ -43,6 +48,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text(Copy.projectRename), findsOneWidget);
       expect(find.text(Copy.projectPin), findsOneWidget);
+      expect(find.text(Copy.projectOpenWith), findsNothing);
+      expect(find.text(Copy.projectDownloadCopy), findsNothing);
       expect(find.text(Copy.projectArchive), findsOneWidget);
       expect(find.text(Copy.projectDelete), findsOneWidget);
       expect(find.text(Copy.projectEditTitle), findsNothing);
@@ -153,14 +160,162 @@ void main() {
     expect(find.text(Copy.projectRenameTitle), findsNothing);
     expect(repo.stored.single.name, 'Alpha');
   });
+
+  testWidgets('Open with is hidden when the project has no file', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    await _pump(
+      tester,
+      repo: repo,
+      overrides: <Override>[
+        downloadServiceProvider.overrideWith(
+          (Ref _) => DownloadService.fake(canOpenExternally: true),
+        ),
+      ],
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(_rowMenu('project-1'));
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.projectOpenWith), findsNothing);
+    expect(find.text(Copy.projectDownloadCopy), findsNothing);
+  });
+
+  testWidgets('Open with is present when a file can be handed off', (
+    WidgetTester tester,
+  ) async {
+    await _pumpOpenable(tester);
+    await tester.tap(_rowMenu('project-1'));
+    await tester.pumpAndSettle();
+
+    expect(find.text(Copy.projectOpenWith), findsOneWidget);
+    expect(_openWithItem(), meetsTapTarget());
+    expect(_rowMenu('project-1'), hasSemanticLabel(Copy.overflowMenu));
+    expect(find.byTooltip(Copy.overflowMenu), findsOneWidget);
+  });
+
+  testWidgets('Download a copy is the web label', (WidgetTester tester) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    await _pump(
+      tester,
+      repo: repo,
+      overrides: _openableOverrides(
+        downloads: DownloadService.fake(canDownloadCopy: true),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(_rowMenu('project-1'));
+    await tester.pumpAndSettle();
+
+    expect(find.text(Copy.projectDownloadCopy), findsOneWidget);
+    expect(find.text(Copy.projectOpenWith), findsNothing);
+  });
+
+  testWidgets('a failed Open with renders AppErrorState', (
+    WidgetTester tester,
+  ) async {
+    String? handedName;
+    await _pumpOpenable(
+      tester,
+      downloads: DownloadService.fake(
+        canOpenExternally: true,
+        openCancel: true,
+        onOpenExternally: (String fileName, Uint8List _, String _) {
+          handedName = fileName;
+        },
+      ),
+    );
+    await tester.tap(_rowMenu('project-1'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.projectOpenWith));
+    await tester.pumpAndSettle();
+
+    expect(handedName, 'book.xlsx');
+    expect(handedName, isNot(contains('/')));
+    expect(find.byType(AppErrorState), findsOneWidget);
+    expect(find.text(Copy.projectOpenFailedTitle), findsOneWidget);
+  });
+
+  testWidgets(
+    'Open with meets tap target, label and tooltip matchers at each width',
+    (WidgetTester tester) async {
+      for (final Size size in <Size>[
+        const Size(400, 800),
+        const Size(800, 1200),
+        const Size(1200, 800),
+      ]) {
+        for (final AppThemeMode mode in <AppThemeMode>[
+          AppThemeMode.light,
+          AppThemeMode.dark,
+          AppThemeMode.outdoor,
+        ]) {
+          await _pumpOpenable(tester, size: size, mode: mode);
+          await tester.tap(_rowMenu('project-1'));
+          await tester.pumpAndSettle();
+          expect(_openWithItem(), meetsTapTarget());
+          expect(_rowMenu('project-1'), hasSemanticLabel(Copy.overflowMenu));
+          expect(find.byTooltip(Copy.overflowMenu), findsWidgets);
+          await expectNoA11yIssues(tester);
+          await tester.pumpWidget(const SizedBox.shrink());
+        }
+      }
+    },
+  );
+}
+
+Future<void> _pumpOpenable(
+  WidgetTester tester, {
+  DownloadService? downloads,
+  Size size = const Size(400, 800),
+  AppThemeMode mode = AppThemeMode.light,
+}) async {
+  final FakeProjectRepository repo = FakeProjectRepository();
+  addTearDown(repo.dispose);
+  _ok(await repo.create(aProject(name: 'Alpha')));
+  await _pump(
+    tester,
+    repo: repo,
+    size: size,
+    mode: mode,
+    overrides: _openableOverrides(downloads: downloads),
+  );
+  await tester.pumpAndSettle();
+}
+
+List<Override> _openableOverrides({DownloadService? downloads}) {
+  return <Override>[
+    downloadServiceProvider.overrideWith(
+      (Ref _) => downloads ?? DownloadService.fake(canOpenExternally: true),
+    ),
+    projectOpenableFileLookupProvider.overrideWith(
+      (Ref _) => ProjectOpenableFileLookup.fake(file: _aFile()),
+    ),
+  ];
+}
+
+ProjectOpenableFile _aFile() {
+  return (
+    fileName: 'book.xlsx',
+    bytes: Uint8List.fromList(<int>[1, 2, 3]),
+    mimeType:
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  );
 }
 
 Future<void> _pump(
   WidgetTester tester, {
   required FakeProjectRepository repo,
+  Size size = const Size(400, 800),
+  AppThemeMode mode = AppThemeMode.light,
+  List<Override> overrides = const <Override>[],
 }) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(400, 800);
+  tester.view.physicalSize = size;
   addTearDown(() {
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();
@@ -182,13 +337,23 @@ Future<void> _pump(
       retry: (int _, Object _) => null,
       overrides: <Override>[
         projectRepositoryProvider.overrideWith((Ref _) => repo),
+        ...overrides,
       ],
       child: MaterialApp.router(
-        theme: buildTheme(brightness: Brightness.light),
+        theme: buildTheme(
+          brightness: mode == AppThemeMode.dark
+              ? Brightness.dark
+              : Brightness.light,
+          outdoor: mode == AppThemeMode.outdoor,
+        ),
         routerConfig: router,
       ),
     ),
   );
+}
+
+Finder _openWithItem() {
+  return find.byKey(const ValueKey<String>('project-open-project-1'));
 }
 
 Finder _rowMenu(String id) {
