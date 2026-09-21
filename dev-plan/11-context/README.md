@@ -2,12 +2,7 @@
 
 Set a value once, and it applies to every record until changed.
 
-Tasks 113–119 (7). Each file is a standalone implementation prompt.
+Task 106 (1). One prompt for the whole phase; it absorbed the seven that held 113–119, and the numbers it gave up
+are listed in [RETIRED.md](../RETIRED.md).
 
-- [ ] [113 — Context model, repository and persistence](113-context-model.md)
-- [ ] [114 — Define the context hierarchy](114-context-hierarchy-editor.md)
-- [ ] [115 — Context bar, level picker and pinned fields](115-context-bar.md)
-- [ ] [116 — Cascade clearing](116-context-cascade-clear.md)
-- [ ] [117 — Apply context to records and the folder path](117-context-apply-to-record.md)
-- [ ] [118 — Context presets: save and apply](118-context-presets-save.md)
-- [ ] [119 — Optional auto-clear and movement prompt](119-context-auto-clear.md)
+- [ ] [106 — Context: hierarchy, bar and inheritance](106-context.md)

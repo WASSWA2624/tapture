@@ -12,6 +12,16 @@ const String _defaultPlanRoot = '../dev-plan';
 /// a phase README — describes the plan rather than being a task in it.
 final RegExp _taskFileName = RegExp(r'^(\d{3})-(.+)\.md$');
 
+/// The ledger of numbers the plan has given up, which is what turns a hole in
+/// the numbering into something stated rather than something lost.
+const String _retiredLedger = 'RETIRED.md';
+
+/// The heading the ledger keeps its machine-read table under.
+const String _retiredSection = 'Retired numbers';
+
+/// One row of that table: `| 121–281 | why |`, or `| 121 | why |` for one.
+final RegExp _retiredRow = RegExp(r'^\|\s*(\d{3})\s*(?:[-–—]\s*(\d{3})\s*)?\|');
+
 /// The number the file claims in its own first heading: `# 003 — Title`.
 final RegExp _heading = RegExp(r'^#\s+(\d+)\s');
 
@@ -64,9 +74,10 @@ Future<int> main(List<String> args) async {
 }
 
 /// Reports every way the plan under [root] contradicts itself: a file whose
-/// heading disagrees with its name, a number used twice or skipped, a slug
-/// used twice, a missing section, a Definition of done nobody can tick, and a
-/// dependency that does not resolve or points forward.
+/// heading disagrees with its name, a number used twice or skipped without
+/// being retired, a retired number still in use, a slug used twice, a missing
+/// section, a Definition of done nobody can tick, and a dependency that does
+/// not resolve or points forward.
 ///
 /// Reports all of them, so one run says everything that has to change.
 List<_Violation> _findViolations(Directory root, List<_Task> tasks) {
@@ -90,11 +101,42 @@ List<_Violation> _findViolations(Directory root, List<_Task> tasks) {
   }
   return <_Violation>[
     ..._numberingViolations(tasks),
-    ..._uniquenessViolations(tasks),
+    ..._uniquenessViolations(tasks, _retiredNumbers(root)),
     ..._sectionViolations(tasks),
     ..._definitionOfDoneViolations(tasks),
     ..._dependencyViolations(tasks),
   ];
+}
+
+/// Every number the ledger under [root] retires, and none when there is no
+/// ledger to read.
+///
+/// Merging tasks leaves their numbers behind. Reusing one would make the
+/// tracker and the commit history point at work that is not there any more, so
+/// the plan retires the number instead and says so here.
+Set<int> _retiredNumbers(Directory root) {
+  final File ledger = File.fromUri(root.uri.resolve(_retiredLedger));
+  if (!ledger.existsSync()) {
+    return <int>{};
+  }
+  final List<String> lines = ledger.readAsLinesSync();
+  final int start = _lineOfSection(lines, _retiredSection);
+  if (start == 0) {
+    return <int>{};
+  }
+  final Set<int> retired = <int>{};
+  for (final String line in _sectionBody(lines, start)) {
+    final Match? row = _retiredRow.firstMatch(line.trim());
+    if (row == null) {
+      continue;
+    }
+    final int first = int.parse(row.group(1)!);
+    final int last = int.parse(row.group(2) ?? row.group(1)!);
+    for (int number = first; number <= last; number++) {
+      retired.add(number);
+    }
+  }
+  return retired;
 }
 
 /// Reports a file whose first heading claims a different number than its name,
@@ -127,12 +169,17 @@ Iterable<_Violation> _numberingViolations(List<_Task> tasks) sync* {
   }
 }
 
-/// Reports a number or a slug used twice, and a number the plan skips.
+/// Reports a number or a slug used twice, a number the plan skips without
+/// retiring it, and a number [retired] names that a file still carries.
 ///
 /// Contiguity matters because the plan is the backlog (FE-FLOW-08): a gap is
 /// either a task somebody deleted without saying so or one that was never
-/// written.
-Iterable<_Violation> _uniquenessViolations(List<_Task> tasks) sync* {
+/// written. Saying so in `RETIRED.md` is what makes the third case — a task
+/// merged into another — a decision on the record rather than a hole.
+Iterable<_Violation> _uniquenessViolations(
+  List<_Task> tasks,
+  Set<int> retired,
+) sync* {
   final Map<int, List<_Task>> byNumber = <int, List<_Task>>{};
   final Map<String, List<_Task>> bySlug = <String, List<_Task>>{};
   for (final _Task task in tasks) {
@@ -165,15 +212,28 @@ Iterable<_Violation> _uniquenessViolations(List<_Task> tasks) sync* {
       }
     }
   }
+  for (final int number in retired.toList()..sort()) {
+    final List<_Task>? live = byNumber[number];
+    if (live != null) {
+      yield (
+        file: live.first.path,
+        line: 1,
+        message:
+            'task ${_padded(number)} is retired in $_retiredLedger, so no file '
+            'may carry that number again',
+      );
+    }
+  }
   final int highest = byNumber.keys.reduce((int a, int b) => a > b ? a : b);
   for (int number = 1; number <= highest; number++) {
-    if (!byNumber.containsKey(number)) {
+    if (!byNumber.containsKey(number) && !retired.contains(number)) {
       yield (
         file: _parentOf(tasks.first.path),
         line: 0,
         message:
             'the plan runs to ${_padded(highest)} but has no task '
-            '${_padded(number)}; the numbering has a hole in it',
+            '${_padded(number)}; the numbering has a hole in it, and '
+            '$_retiredLedger does not retire it',
       );
     }
   }

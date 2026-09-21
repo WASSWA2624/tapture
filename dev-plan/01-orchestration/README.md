@@ -34,7 +34,7 @@ Reproduce this phase by implementing 001–018 in order against `frontend/`. The
 | Analyzer | `frontend/analysis_options.yaml` — `strict-casts` / `-inference` / `-raw-types`, enabled rules promoted to error; `public_member_api_docs` on `lib/core/` |
 | Folders | `frontend/lib/app/`, shared `core/` subsystems, 17 features × 3 layers, each with a barrel. Canonical list: `frontend/tool/paths.dart` |
 | Allowlist | `frontend/tool/allowlist.yaml` + `check_dependencies.dart` |
-| Plan checker | `frontend/tool/check_plan.dart` — 281 `NNN-slug.md` files, required sections, lower-numbered deps |
+| Plan checker | `frontend/tool/check_plan.dart` — every `NNN-slug.md` file, required sections, lower-numbered deps, and holes only where `dev-plan/RETIRED.md` retires the number |
 | Task scaffolder | `frontend/tool/new_task.dart` + `tool/task_template.md` |
 | Verify | `frontend/tool/verify.dart` — format, analyzer, dependencies, structure, plan, **test presence (`--strict`)**, guardrail tests, unit/widget tests; goldens and integration run unless `--fast` |
 | Hooks | `frontend/tool/hooks/pre-commit`, `commit-msg`, `install_hooks.dart` |

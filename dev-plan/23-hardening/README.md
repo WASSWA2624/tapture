@@ -2,17 +2,11 @@
 
 Making the finished app fast, legible, reachable and unbreakable in the field.
 
-Tasks 236–332 (44). Each file is a standalone implementation prompt.
+Task 118, then 282–332 (36). Task 118 is one prompt for the whole hardening pass; it absorbed the nine that held
+236–244, and the numbers it gave up are listed in [RETIRED.md](../RETIRED.md). The tasks from 282 onwards came out
+of field feedback and each stands alone.
 
-- [ ] [236 — Layout, accessibility and text-scale audit](236-responsive-audit.md)
-- [ ] [237 — Landscape and foldables](237-orientation-support.md)
-- [ ] [238 — Copy pass and localisation scaffolding](238-copy-review.md)
-- [ ] [239 — Empty-state coverage test](239-empty-states-review.md)
-- [ ] [240 — Performance pass: lists, indexes, start-up, memory and background work](240-list-performance.md)
-- [ ] [241 — Failure injection suite](241-error-recovery-review.md)
-- [ ] [242 — App icon, splash and store branding](242-branding-assets.md)
-- [ ] [243 — Device matrix runner](243-device-matrix-testing.md)
-- [ ] [244 — In-app friction log](244-field-trial.md)
+- [ ] [118 — Hardening: fast, legible, reachable and unbreakable in the field](118-hardening.md)
 - [x] [282 — In-app feedback: floating button, capture, download and delete](282-in-app-feedback.md)
 - [x] [283 — Feedback screens: compact layout, dictation and reopen safety](283-feedback-dictation-and-layout.md)
 - [x] [284 — Feedback archive: ship the prompts generator](284-feedback-prompts-generator.md)
@@ -25,15 +19,15 @@ Tasks 236–332 (44). Each file is a standalone implementation prompt.
 - [x] [291 — Mark required optional fields](291-mark-required-optional-fields.md)
 - [x] [292 — Add email phone fields](292-add-email-phone-fields.md)
 - [x] [293 — Add feedback close control](293-add-feedback-close-control.md)
-- [ ] [294 — Split operator contact fields](294-split-operator-contact-fields.md)
-- [ ] [295 — Include feedback UI screenshot](295-include-feedback-ui-screenshot.md)
+- [x] [294 — Split operator contact fields](294-split-operator-contact-fields.md)
+- [x] [295 — Include feedback UI screenshot](295-include-feedback-ui-screenshot.md)
 - [x] [296 — Add other window screenshot](296-add-other-window-screenshot.md)
 - [x] [297 — Warn before closing the tab with a draft](297-warn-before-closing-tab-with-draft.md)
 - [x] [298 — Confirm desktop exit with a draft](298-confirm-desktop-exit-with-draft.md)
 - [x] [299 — Align the feedback shot controls](299-align-feedback-shot-controls.md)
-- [ ] [300 — Soften input placeholder text](300-soften-input-placeholder-text.md)
-- [ ] [301 — Number feedback rows with their message](301-number-feedback-rows-with-message.md)
-- [ ] [302 — Add a window share session to screen capture](302-add-window-share-session-api.md)
+- [x] [300 — Soften input placeholder text](300-soften-input-placeholder-text.md)
+- [x] [301 — Number feedback rows with their message](301-number-feedback-rows-with-message.md)
+- [x] [302 — Add a window share session to screen capture](302-add-window-share-session-api.md)
 - [x] [303 — Add repeat external window screenshots](303-add-repeat-external-window-screenshots.md)
 - [x] [304 — Fix the storage root on Android](304-fix-storage-root-on-android.md)
 - [x] [305 — Save downloads to a public Tapture folder](305-save-downloads-to-public-tapture-folder.md)

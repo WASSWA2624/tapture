@@ -1,6 +1,6 @@
 # 283 — Feedback screens: compact layout, dictation and reopen safety
 
-**Phase** 23 · Hardening  |  **Depends on** [282](282-in-app-feedback.md), [131](../12-capture/131-voice-permission.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
+**Phase** 23 · Hardening  |  **Depends on** [107](../12-capture/107-capture.md), [282](282-in-app-feedback.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement
 

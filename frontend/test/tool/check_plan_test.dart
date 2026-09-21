@@ -178,6 +178,86 @@ void main() {
       expect(run.exitCode, 1);
     });
 
+    test('a hole the ledger retires is not reported', () async {
+      final Directory plan = _plan(<_Fixture>[
+        _task(1, 'alpha'),
+        _task(3, 'gamma'),
+      ], ledger: _ledger(<String>['| 002 | Merged into 001. |']));
+
+      final _Run run = await _check(<String>[plan.path]);
+
+      expect(run.violations, isEmpty);
+      expect(run.exitCode, 0);
+    });
+
+    test('a range in the ledger retires every number in it', () async {
+      final Directory plan = _plan(<_Fixture>[
+        _task(1, 'alpha'),
+        _task(5, 'epsilon'),
+      ], ledger: _ledger(<String>['| 002–004 | Merged into 001. |']));
+
+      final _Run run = await _check(<String>[plan.path]);
+
+      expect(run.violations, isEmpty);
+      expect(run.exitCode, 0);
+    });
+
+    test('a hole the ledger does not retire is still reported', () async {
+      final Directory plan = _plan(<_Fixture>[
+        _task(1, 'alpha'),
+        _task(4, 'delta'),
+      ], ledger: _ledger(<String>['| 002 | Merged into 001. |']));
+
+      final _Run run = await _check(<String>[plan.path]);
+
+      expect(
+        run.violations,
+        contains(
+          contains(
+            'has no task 003; the numbering has a hole in it, and '
+            'RETIRED.md does not retire it',
+          ),
+        ),
+      );
+      expect(run.violations, isNot(contains(contains('has no task 002'))));
+      expect(run.exitCode, 1);
+    });
+
+    test('a retired number a file still carries is reported', () async {
+      final Directory plan = _plan(<_Fixture>[
+        _task(1, 'alpha'),
+        _task(2, 'beta'),
+      ], ledger: _ledger(<String>['| 002 | Merged into 001. |']));
+
+      final _Run run = await _check(<String>[plan.path]);
+
+      expect(
+        run.violations,
+        contains(
+          contains(
+            'task 002 is retired in RETIRED.md, so no file may carry that '
+            'number again',
+          ),
+        ),
+      );
+      expect(run.exitCode, 1);
+    });
+
+    test('a row outside the ledger section retires nothing', () async {
+      final Directory plan = _plan(
+        <_Fixture>[_task(1, 'alpha'), _task(3, 'gamma')],
+        ledger:
+            '# Retired task numbers\n\n## What absorbed what\n\n'
+            '| Was | Is now |\n| :--- | :--- |\n'
+            '| 002 | Merged into 001. |\n',
+      );
+
+      final _Run run = await _check(<String>[plan.path]);
+
+      expect(run.violations, contains(contains('has no task 002')));
+      expect(run.exitCode, 1);
+    });
+
     test('each required section that is missing is reported', () async {
       final Directory plan = _plan(<_Fixture>[
         (name: '001-alpha.md', body: '# 001 — Alpha\n\nNothing here.\n'),
@@ -370,8 +450,9 @@ String _slugFor(int number) {
   return slugs[(number - 1) % slugs.length];
 }
 
-/// Writes a throwaway plan holding [fixtures] in one phase folder.
-Directory _plan(List<_Fixture> fixtures) {
+/// Writes a throwaway plan holding [fixtures] in one phase folder, and the
+/// [ledger] of retired numbers beside them when there is one.
+Directory _plan(List<_Fixture> fixtures, {String? ledger}) {
   final Directory root = Directory.systemTemp.createTempSync('tapture_plan_');
   addTearDown(() => root.deleteSync(recursive: true));
   final Directory plan = Directory('${root.path}/plan/01-phase')
@@ -379,7 +460,23 @@ Directory _plan(List<_Fixture> fixtures) {
   for (final _Fixture fixture in fixtures) {
     File('${plan.path}/${fixture.name}').writeAsStringSync(fixture.body);
   }
+  if (ledger != null) {
+    File('${root.path}/plan/RETIRED.md').writeAsStringSync(ledger);
+  }
   return Directory('${root.path}/plan');
+}
+
+/// A `RETIRED.md` whose table holds [rows].
+///
+/// The prose around the table is what the real ledger carries, so a fixture
+/// that parses only because it is bare would prove nothing.
+String _ledger(List<String> rows) {
+  return '# Retired task numbers\n\n'
+      'A merged task takes the lowest number of the range it absorbs. The rest '
+      'are retired rather than reused.\n\n'
+      '## Retired numbers\n\n'
+      '| Numbers | Retired because |\n| :--- | :--- |\n'
+      '${rows.join('\n')}\n';
 }
 
 /// Runs the checker with [args] and reads back what it found.
