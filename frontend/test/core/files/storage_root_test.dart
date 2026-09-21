@@ -6,6 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/storage_root.dart';
+import 'package:tapture/features/settings/data/settings_store.dart';
+import 'package:tapture/features/settings/domain/setting_keys.dart';
 
 void main() {
   test(
@@ -156,6 +158,83 @@ void main() {
     expect(failure?.recoveryAction, isNotEmpty);
     expect(File('${app.path}/Tapture').readAsStringSync(), 'blocked');
     expect(File('${shared.path}/Tapture').readAsStringSync(), 'blocked');
+  });
+
+  test('an empty preferred path uses the Documents fallback', () async {
+    final Directory documents = _tempDocs();
+    final StorageRoot storage = StorageRoot.fake(
+      documentsDirectory: documents,
+      preferredPath: '',
+    );
+
+    final Directory root = _ok(await storage.resolve());
+
+    expect(_slash(root.path), _slash('${documents.path}/Tapture'));
+  });
+
+  test('a stored root path is what the next resolve returns', () async {
+    final Directory documents = _tempDocs();
+    final Directory chosen = _tempDocs();
+    final SettingsStore store = SettingsStore.fake();
+    await store.write(SettingKeys.storageRootPath, chosen.path);
+    final StorageRoot storage = StorageRoot.fake(
+      documentsDirectory: documents,
+      preferredPath: store.read(SettingKeys.storageRootPath),
+    );
+
+    final Directory root = _ok(await storage.resolve());
+
+    expect(_slash(root.path), _slash(chosen.path));
+    expect(store.read(SettingKeys.storageRootPath), chosen.path);
+  });
+
+  test('a saved writable folder is the path resolve returns', () async {
+    final Directory documents = _tempDocs();
+    final Directory chosen = _tempDocs();
+    final StorageRoot storage = StorageRoot.fake(
+      documentsDirectory: documents,
+      preferredPath: chosen.path,
+    );
+
+    final Directory root = _ok(await storage.resolve());
+
+    expect(_slash(root.path), _slash(chosen.path));
+    expect(Directory('${root.path}/.cache').existsSync(), isTrue);
+    expect(Directory('${documents.path}/Tapture').existsSync(), isFalse);
+  });
+
+  test('a failed preferred probe falls back to Documents', () async {
+    final Directory documents = _tempDocs();
+    final Directory chosen = _tempDocs();
+    final StorageRoot storage = StorageRoot.fake(
+      documentsDirectory: documents,
+      preferredPath: chosen.path,
+      preferredWritable: false,
+    );
+
+    final Directory root = _ok(await storage.resolve());
+
+    expect(_slash(root.path), _slash('${documents.path}/Tapture'));
+    expect(chosen.listSync(), isEmpty);
+  });
+
+  test('openAt probes the path without falling back', () async {
+    final Directory documents = _tempDocs();
+    final Directory chosen = _tempDocs();
+    final StorageRoot storage = StorageRoot.fake(documentsDirectory: documents);
+
+    final Directory opened = _ok(await storage.openAt(chosen.path));
+    expect(_slash(opened.path), _slash(chosen.path));
+
+    final StorageRoot blocked = StorageRoot.fake(
+      documentsDirectory: documents,
+      preferredWritable: false,
+    );
+    final Result<Directory> refused = await blocked.openAt(chosen.path);
+    expect(
+      refused.fold((Failure failure) => failure, (_) => null),
+      isA<StorageFailure>(),
+    );
   });
 }
 

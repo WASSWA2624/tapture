@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/storage_root.dart';
+import 'package:tapture/core/files/volume_stats.dart';
 
 /// Watched free-space headroom on the storage root's volume.
 ///
@@ -16,16 +18,16 @@ abstract interface class StorageGuard {
   /// Resolves free space through [storageRoot].
   ///
   /// When [lifecycle] emits [AppLifecycleState.resumed], this polls once.
-  /// [freeBytes] is the test seam for a fake volume size.
+  /// [volume] is the test seam for a fake volume size.
   factory StorageGuard({
     required StorageRoot storageRoot,
     Stream<AppLifecycleState>? lifecycle,
-    Future<int> Function(Directory root)? freeBytes,
+    Future<VolumeStats> Function(Directory root)? volume,
   }) {
     return _StorageGuard(
       storageRoot: storageRoot,
       lifecycle: lifecycle,
-      freeBytes: freeBytes ?? _platformFreeBytes,
+      volume: volume ?? _platformVolume,
     );
   }
 
@@ -33,21 +35,36 @@ abstract interface class StorageGuard {
   factory StorageGuard.fake({
     required StorageRoot storageRoot,
     required int Function() freeBytes,
+    int Function()? totalBytes,
+    int Function()? usedBytes,
+    bool volumeFails = false,
     Stream<AppLifecycleState>? lifecycle,
   }) {
     return _StorageGuard(
       storageRoot: storageRoot,
       lifecycle: lifecycle,
-      freeBytes: (Directory _) async => freeBytes(),
+      volumeFails: volumeFails,
+      volume: (Directory _) async {
+        final int free = freeBytes();
+        final int used = usedBytes?.call() ?? 0;
+        final int total = totalBytes?.call() ?? (used + free);
+        return VolumeStats(totalBytes: total, usedBytes: used, freeBytes: free);
+      },
     );
   }
 
   /// Current headroom. Replays the last value to a new listener.
   Stream<HeadroomState> watch();
 
+  /// Reads total, used and free bytes on the storage root's volume.
+  Future<Result<VolumeStats>> volume();
+
   /// Reads free space now and classifies it. Call on resume and at session
   /// start — not per shutter.
   Future<Result<HeadroomState>> check();
+
+  /// Classifies [freeBytes] against [AppConstants.storage].
+  static HeadroomState classify(int freeBytes) => _classify(freeBytes);
 
   /// Polls once for a new capture session and clears the low warning.
   Future<Result<HeadroomState>> beginSession();
@@ -90,7 +107,8 @@ final Provider<StorageGuard> storageGuardProvider = Provider<StorageGuard>((
 final class _StorageGuard implements StorageGuard {
   _StorageGuard({
     required this._storageRoot,
-    required this._freeBytes,
+    required this._volume,
+    this._volumeFails = false,
     Stream<AppLifecycleState>? lifecycle,
   }) {
     _output = StreamController<HeadroomState>.broadcast(
@@ -103,7 +121,8 @@ final class _StorageGuard implements StorageGuard {
   }
 
   final StorageRoot _storageRoot;
-  final Future<int> Function(Directory root) _freeBytes;
+  final Future<VolumeStats> Function(Directory root) _volume;
+  final bool _volumeFails;
 
   late final StreamController<HeadroomState> _output;
   StreamSubscription<AppLifecycleState>? _lifecycleSub;
@@ -117,23 +136,36 @@ final class _StorageGuard implements StorageGuard {
   Stream<HeadroomState> watch() => _output.stream;
 
   @override
-  Future<Result<HeadroomState>> check() async {
+  Future<Result<VolumeStats>> volume() async {
+    if (_volumeFails) {
+      return const FailureResult<VolumeStats>(_unreadable);
+    }
     try {
       final Result<Directory> root = await _storageRoot.resolve();
       switch (root) {
         case FailureResult<Directory>(:final failure):
-          return FailureResult<HeadroomState>(failure);
+          return FailureResult<VolumeStats>(failure);
         case Success<Directory>(:final value):
-          final int bytes = await _freeBytes(value);
-          final HeadroomState state = _classify(bytes);
-          _last = state;
-          _emit(state);
-          return Success<HeadroomState>(state);
+          return Success<VolumeStats>(await _volume(value));
       }
     } on Failure catch (failure) {
-      return FailureResult<HeadroomState>(failure);
+      return FailureResult<VolumeStats>(failure);
     } on Object {
-      return const FailureResult<HeadroomState>(_unreadable);
+      return const FailureResult<VolumeStats>(_unreadable);
+    }
+  }
+
+  @override
+  Future<Result<HeadroomState>> check() async {
+    final Result<VolumeStats> stats = await volume();
+    switch (stats) {
+      case FailureResult<VolumeStats>(:final failure):
+        return FailureResult<HeadroomState>(failure);
+      case Success<VolumeStats>(:final value):
+        final HeadroomState state = _classify(value.freeBytes);
+        _last = state;
+        _emit(state);
+        return Success<HeadroomState>(state);
     }
   }
 
@@ -217,30 +249,50 @@ HeadroomState _classify(int bytes) {
   return HeadroomState.ample;
 }
 
-Future<int> _platformFreeBytes(Directory root) {
-  if (Platform.isWindows) {
-    return _windowsFreeBytes(root.path);
+const MethodChannel _filesChannel = MethodChannel('com.tapture.app/files');
+
+Future<VolumeStats> _platformVolume(Directory root) {
+  if (Platform.isAndroid) {
+    return _androidVolume(root.path);
   }
-  return _posixFreeBytes(root.path);
+  if (Platform.isWindows) {
+    return _windowsVolume(root.path);
+  }
+  return _posixVolume(root.path);
 }
 
-Future<int> _windowsFreeBytes(String path) async {
+Future<VolumeStats> _androidVolume(String path) async {
+  final Object? raw = await _filesChannel.invokeMethod<Object>(
+    'volumeStats',
+    <String, Object>{'path': path},
+  );
+  if (raw is! Map) {
+    throw _unreadable;
+  }
+  try {
+    return VolumeStats.fromChannel(Map<Object?, Object?>.from(raw));
+  } on Object {
+    throw _unreadable;
+  }
+}
+
+Future<VolumeStats> _windowsVolume(String path) async {
   final String letter = _windowsDriveLetter(path);
   final ProcessResult result = await Process.run('powershell.exe', <String>[
     '-NoProfile',
     '-NonInteractive',
     '-Command',
-    'Write-Output (Get-PSDrive -Name $letter).Free',
+    '\$d = Get-PSDrive -Name $letter; Write-Output (\$d.Used.ToString() + \' \' + \$d.Free.ToString())',
   ]);
   final Object? stdout = result.stdout;
   if (result.exitCode != 0 || stdout is! String) {
     throw _unreadable;
   }
-  final int? bytes = int.tryParse(stdout.trim());
-  if (bytes == null) {
+  try {
+    return VolumeStats.parseWindowsPsDrive(stdout);
+  } on Object {
     throw _unreadable;
   }
-  return bytes;
 }
 
 String _windowsDriveLetter(String path) {
@@ -256,7 +308,7 @@ String _windowsDriveLetter(String path) {
   throw _unreadable;
 }
 
-Future<int> _posixFreeBytes(String path) async {
+Future<VolumeStats> _posixVolume(String path) async {
   final ProcessResult result = await Process.run('df', <String>['-Pk', path]);
   if (result.exitCode != 0) {
     throw _unreadable;
@@ -265,20 +317,11 @@ Future<int> _posixFreeBytes(String path) async {
   if (stdout is! String) {
     throw _unreadable;
   }
-  final List<String> lines = stdout.trim().split(RegExp(r'\r?\n'));
-  if (lines.length < 2) {
+  try {
+    return VolumeStats.parsePosixDf(stdout);
+  } on Object {
     throw _unreadable;
   }
-  final List<String> parts = lines.last.trim().split(RegExp(r'\s+'));
-  final int start = int.tryParse(parts.first) == null ? 1 : 0;
-  if (parts.length < start + 3) {
-    throw _unreadable;
-  }
-  final int? kilobytes = int.tryParse(parts[start + 2]);
-  if (kilobytes == null) {
-    throw _unreadable;
-  }
-  return kilobytes * 1024;
 }
 
 const StorageFailure _criticalRefusal = StorageFailure(

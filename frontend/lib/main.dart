@@ -14,6 +14,7 @@ import 'core/device/platform_facts.dart';
 import 'core/files/download_service.dart';
 import 'core/files/photo_picker.dart';
 import 'core/files/screen_capture.dart';
+import 'core/files/storage_root.dart';
 import 'core/ids/uuid_service.dart';
 import 'core/lifecycle/lifecycle.dart';
 import 'core/logging/logger.dart';
@@ -66,6 +67,12 @@ Future<void> _run() async {
     appLockProvider.overrideWith((Ref ref) => lock),
     offlineStoreProvider.overrideWith((Ref _) => offlineStore),
     projectSettingsStoreProvider.overrideWith((Ref _) => offlineStore),
+    storageRootProvider.overrideWith((Ref _) {
+      return StorageRoot(
+        preferredPath: () async =>
+            offlineStore.read(SettingKeys.storageRootPath),
+      );
+    }),
     themeModeProvider.overrideWith(
       () => ThemeModeController.withStore(SettingsTextStore(offlineStore)),
     ),

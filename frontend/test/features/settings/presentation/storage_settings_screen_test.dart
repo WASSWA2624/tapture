@@ -5,12 +5,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/app/theme/outdoor_theme.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/cache_cleanup.dart';
+import 'package:tapture/core/files/folder_picker.dart';
 import 'package:tapture/core/files/storage_guard.dart';
 import 'package:tapture/core/files/storage_root.dart';
+import 'package:tapture/core/files/volume_stats.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
@@ -180,6 +185,146 @@ void main() {
       expect(find.textContaining(Copy.fileSize(0)), findsWidgets);
     },
   );
+
+  testWidgets(
+    'Storage shows total, used and available beside the headroom words',
+    (WidgetTester tester) async {
+      const int total = 4 * 1024 * 1024 * 1024;
+      const int used = 3 * 1024 * 1024 * 1024;
+      const int free = 1 * 1024 * 1024 * 1024;
+      const VolumeStats volume = VolumeStats(
+        totalBytes: total,
+        usedBytes: used,
+        freeBytes: free,
+      );
+      for (final ({ThemeData theme, Size size}) shot
+          in <({ThemeData theme, Size size})>[
+            (
+              theme: buildTheme(brightness: Brightness.light),
+              size: const Size(400, 800),
+            ),
+            (
+              theme: buildTheme(brightness: Brightness.dark),
+              size: const Size(1200, 800),
+            ),
+            (
+              theme: buildOutdoorTheme(Brightness.light),
+              size: const Size(1200, 800),
+            ),
+          ]) {
+        await _pump(
+          tester,
+          size: shot.size,
+          theme: shot.theme,
+          textScale: 2,
+          store: SettingsStore.fake(),
+          volume: volume,
+          rootPath: r'D:\Tapture',
+        );
+        await tester.pump();
+
+        expect(find.text(Copy.settingsVolumeTotal), findsOneWidget);
+        expect(find.text(Copy.settingsVolumeUsed), findsOneWidget);
+        expect(find.text(Copy.settingsVolumeAvailable), findsOneWidget);
+        expect(find.text(Copy.fileSize(total)), findsOneWidget);
+        expect(find.text(Copy.fileSize(used)), findsOneWidget);
+        expect(find.text(Copy.fileSize(free)), findsOneWidget);
+        expect(find.text(Copy.settingsHeadroomAmple), findsOneWidget);
+        expect(find.text(Copy.settingsClearCache), findsOneWidget);
+        expect(find.text(Copy.settingsRetention), findsOneWidget);
+      }
+    },
+  );
+
+  testWidgets('low and critical volumes keep their words beside the numbers', (
+    WidgetTester tester,
+  ) async {
+    for (final ({int free, String label, HeadroomState headroom}) shot
+        in <({int free, String label, HeadroomState headroom})>[
+          (
+            free: AppConstants.storage.lowBytes - 1,
+            label: Copy.settingsHeadroomLow,
+            headroom: HeadroomState.low,
+          ),
+          (
+            free: AppConstants.storage.criticalBytes - 1,
+            label: Copy.settingsHeadroomCritical,
+            headroom: HeadroomState.critical,
+          ),
+        ]) {
+      await _pump(
+        tester,
+        store: SettingsStore.fake(),
+        headroom: shot.headroom,
+        volume: VolumeStats(
+          totalBytes: shot.free + (2 * 1024 * 1024 * 1024),
+          usedBytes: 2 * 1024 * 1024 * 1024,
+          freeBytes: shot.free,
+        ),
+      );
+      await tester.pump();
+      expect(find.text(shot.label), findsOneWidget);
+      expect(find.text(Copy.fileSize(shot.free)), findsOneWidget);
+      expect(find.text(Copy.settingsHeadroomAmple), findsNothing);
+    }
+  });
+
+  testWidgets('a failed volume probe shows the error state with retry', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      store: SettingsStore.fake(),
+      failWith: const StorageFailure(
+        message: 'Tapture could not read free space on this device.',
+        recoveryAction: 'Free up space or export a project, then try again.',
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(find.byType(AppErrorState), findsOneWidget);
+    expect(find.text(Copy.tryAgain), findsOneWidget);
+    expect(find.textContaining('could not read free space'), findsOneWidget);
+    expect(find.text(Copy.settingsHeadroomAmple), findsNothing);
+    expect(find.text(Copy.settingsVolumeTotal), findsNothing);
+  });
+
+  testWidgets('Storage shows the active root path', (
+    WidgetTester tester,
+  ) async {
+    final Directory temp = Directory.systemTemp.createTempSync(
+      'tapture-root-row-',
+    );
+    addTearDown(() {
+      if (temp.existsSync()) {
+        temp.deleteSync(recursive: true);
+      }
+    });
+    await _pump(
+      tester,
+      store: SettingsStore.fake(),
+      rootPath: '${temp.path}${Platform.pathSeparator}Tapture',
+    );
+    await tester.pump();
+    expect(find.text(Copy.settingsStorageRoot), findsOneWidget);
+    expect(find.textContaining('Tapture'), findsWidgets);
+  });
+
+  testWidgets('web does not offer a folder picker', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      store: SettingsStore.fake(),
+      rootPath: r'D:\Tapture',
+      folderPicker: const FolderPicker.fake(canPick: false),
+    );
+    await tester.pump();
+    final AppListTile tile = tester.widget<AppListTile>(
+      find.widgetWithText(AppListTile, Copy.settingsStorageRoot),
+    );
+    expect(tile.onTap, isNull);
+  });
 }
 
 class _CacheDelete implements CacheCleanup {
@@ -204,6 +349,7 @@ Future<void> _pump(
   StorageGuard? storageGuard,
   SettingsStore? store,
   CacheCleanup? cacheCleanup,
+  FolderPicker? folderPicker,
   Object? failWith,
   bool pending = false,
   bool empty = false,
@@ -218,9 +364,24 @@ Future<void> _pump(
   >?
   projects,
   int? cacheBytes,
+  VolumeStats? volume,
+  String? rootPath,
+  HeadroomState? headroom,
+  Size size = const Size(400, 800),
+  ThemeData? theme,
+  double textScale = 1,
 }) {
+  tester.view.devicePixelRatio = 1;
+  tester.view.physicalSize = size;
+  tester.platformDispatcher.textScaleFactorTestValue = textScale;
+  addTearDown(() {
+    tester.view.resetPhysicalSize();
+    tester.view.resetDevicePixelRatio();
+    tester.platformDispatcher.clearTextScaleFactorTestValue();
+  });
   return tester.pumpWidget(
     ProviderScope(
+      key: UniqueKey(),
       retry: (int _, Object _) => null,
       overrides: <Override>[
         storageSettingsOverride(
@@ -228,19 +389,25 @@ Future<void> _pump(
           storageGuard: storageGuard,
           store: store,
           cacheCleanup: cacheCleanup,
+          folderPicker: folderPicker,
           failWith: failWith,
           pending: pending,
           empty: empty,
           projects: projects,
           cacheBytes: cacheBytes,
+          volume: volume,
+          rootPath: rootPath,
+          headroom: headroom,
         ),
         if (storageRoot != null)
           storageRootProvider.overrideWith((Ref _) => storageRoot),
         if (storageGuard != null)
           storageGuardProvider.overrideWith((Ref _) => storageGuard),
+        if (folderPicker != null)
+          folderPickerProvider.overrideWith((Ref _) => folderPicker),
       ],
       child: MaterialApp(
-        theme: buildTheme(brightness: Brightness.light),
+        theme: theme ?? buildTheme(brightness: Brightness.light),
         home: const StorageSettingsScreen(),
       ),
     ),

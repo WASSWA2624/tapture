@@ -8,10 +8,13 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/device/device_identity.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/cache_cleanup.dart';
+import 'package:tapture/core/files/folder_picker.dart';
 import 'package:tapture/core/files/storage_guard.dart';
 import 'package:tapture/core/files/storage_root.dart';
+import 'package:tapture/core/files/volume_stats.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
@@ -56,10 +59,34 @@ class StorageSettingsScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               const AppSectionHeader(title: Copy.settingsHeadroomHeader),
-              AppListTile(
-                title: _headroomLabel(view.headroom),
-                subtitle: Copy.settingsStorageSubtitle,
-              ),
+              if (view.volume != null) ...<Widget>[
+                AppListTile(
+                  title: _headroomLabel(view.headroom!),
+                  subtitle: Copy.settingsStorageSubtitle,
+                ),
+                AppListTile(
+                  title: Copy.settingsVolumeTotal,
+                  subtitle: Copy.fileSize(view.volume!.totalBytes),
+                ),
+                AppListTile(
+                  title: Copy.settingsVolumeUsed,
+                  subtitle: Copy.fileSize(view.volume!.usedBytes),
+                ),
+                AppListTile(
+                  title: Copy.settingsVolumeAvailable,
+                  subtitle: Copy.fileSize(view.volume!.freeBytes),
+                ),
+              ],
+              if (view.rootPath.isNotEmpty)
+                AppListTile(
+                  title: Copy.settingsStorageRoot,
+                  subtitle: view.rootPath,
+                  onTap: ref.read(folderPickerProvider).canPick
+                      ? () {
+                          unawaited(notifier.chooseRoot(context));
+                        }
+                      : null,
+                ),
               AppListTile(
                 title: Copy.settingsClearCache,
                 subtitle: Copy.settingsCacheSize(
@@ -102,6 +129,7 @@ Override storageSettingsOverride({
   StorageGuard? storageGuard,
   SettingsStore? store,
   CacheCleanup? cacheCleanup,
+  FolderPicker? folderPicker,
   Object? failWith,
   bool pending = false,
   bool empty = false,
@@ -117,6 +145,8 @@ Override storageSettingsOverride({
   projects,
   int? cacheBytes,
   HeadroomState? headroom,
+  VolumeStats? volume,
+  String? rootPath,
 }) {
   return storageSettingsProvider.overrideWith(
     () => _StorageSettings.withDeps(
@@ -124,14 +154,27 @@ Override storageSettingsOverride({
       storageGuard: storageGuard,
       store: store,
       cacheCleanup: cacheCleanup,
+      folderPicker: folderPicker,
       failWith: failWith,
       pending: pending,
       empty: empty,
-      snapshot: projects == null && cacheBytes == null
+      snapshot:
+          projects == null &&
+              cacheBytes == null &&
+              volume == null &&
+              rootPath == null
           ? null
           : (
               projects: projects ?? const <_ProjectUse>[],
               headroom: headroom ?? HeadroomState.ample,
+              volume:
+                  volume ??
+                  const VolumeStats(
+                    totalBytes: 1 << 30,
+                    usedBytes: 0,
+                    freeBytes: 1 << 30,
+                  ),
+              rootPath: rootPath ?? '',
               cacheBytes: cacheBytes ?? 0,
               retentionDays: SettingKeys.retentionDays.defaultValue,
               showUsage: true,
@@ -159,7 +202,9 @@ typedef _ProjectUse = ({
 
 typedef _StorageView = ({
   List<_ProjectUse> projects,
-  HeadroomState headroom,
+  HeadroomState? headroom,
+  VolumeStats? volume,
+  String rootPath,
   int cacheBytes,
   int retentionDays,
   bool showUsage,
@@ -171,6 +216,7 @@ class _StorageSettings extends AsyncNotifier<_StorageView> {
       _storageGuard = null,
       _store = null,
       _cacheCleanup = null,
+      _folderPicker = null,
       _failWith = null,
       _pending = false,
       _empty = false,
@@ -181,6 +227,7 @@ class _StorageSettings extends AsyncNotifier<_StorageView> {
     this._storageGuard,
     this._store,
     this._cacheCleanup,
+    this._folderPicker,
     this._failWith,
     this._pending = false,
     this._empty = false,
@@ -191,6 +238,7 @@ class _StorageSettings extends AsyncNotifier<_StorageView> {
   final StorageGuard? _storageGuard;
   final SettingsStore? _store;
   final CacheCleanup? _cacheCleanup;
+  final FolderPicker? _folderPicker;
   final Object? _failWith;
   final bool _pending;
   final bool _empty;
@@ -209,7 +257,9 @@ class _StorageSettings extends AsyncNotifier<_StorageView> {
     if (_empty) {
       return Future<_StorageView>.value((
         projects: const <_ProjectUse>[],
-        headroom: HeadroomState.ample,
+        headroom: null,
+        volume: null,
+        rootPath: '',
         cacheBytes: 0,
         retentionDays: SettingKeys.retentionDays.defaultValue,
         showUsage: false,
@@ -254,6 +304,8 @@ class _StorageSettings extends AsyncNotifier<_StorageView> {
       state = AsyncData<_StorageView>((
         projects: current.projects,
         headroom: current.headroom,
+        volume: current.volume,
+        rootPath: current.rootPath,
         cacheBytes: nextCache < 0 ? 0 : nextCache,
         retentionDays: current.retentionDays,
         showUsage: current.showUsage,
@@ -274,38 +326,90 @@ class _StorageSettings extends AsyncNotifier<_StorageView> {
     state = AsyncData<_StorageView>(await _load());
   }
 
+  /// Picks a folder, probes it, persists the path, then reloads.
+  Future<void> chooseRoot(BuildContext context) async {
+    final FolderPicker picker = _folderPicker ?? ref.read(folderPickerProvider);
+    final Result<String?> picked = await picker.pick();
+    switch (picked) {
+      case FailureResult<String?>(:final Failure failure):
+        if (failure is CancelledFailure) {
+          return;
+        }
+        if (context.mounted) {
+          await showAppAlert(
+            context,
+            title: Copy.settingsStorageRoot,
+            message: failure.message,
+          );
+        }
+        return;
+      case Success<String?>(:final String? value):
+        if (value == null || value.isEmpty) {
+          return;
+        }
+        final Result<Directory> probed = await (await _root()).openAt(value);
+        if (probed is FailureResult<Directory>) {
+          if (context.mounted) {
+            await showAppAlert(
+              context,
+              title: Copy.settingsStorageRoot,
+              message: probed.failure.message,
+            );
+          }
+          return;
+        }
+        final Result<void> written = await (await _settings()).write(
+          SettingKeys.storageRootPath,
+          value,
+        );
+        if (written is FailureResult<void>) {
+          if (context.mounted) {
+            await showAppAlert(
+              context,
+              title: Copy.settingsStorageRoot,
+              message: written.failure.message,
+            );
+          }
+          return;
+        }
+        ref.invalidate(storageRootProvider);
+        state = AsyncData<_StorageView>(await _load());
+    }
+  }
+
   Future<_StorageView> _load() async {
     final SettingsStore store = await _settings();
     final int retentionDays = store.read(SettingKeys.retentionDays);
-    try {
-      final StorageRoot root = await _root();
-      final Result<HeadroomState> headroom = await (await _guard()).check();
-      final HeadroomState state = switch (headroom) {
-        Success<HeadroomState>(:final HeadroomState value) => value,
-        FailureResult<HeadroomState>() => HeadroomState.ample,
-      };
-      final Result<Directory> resolved = await root.resolve();
-      switch (resolved) {
-        case FailureResult<Directory>():
-          return _usageOnly(retentionDays);
-        case Success<Directory>(:final Directory value):
-          return (
-            projects: _projectUse(value),
-            headroom: state,
-            cacheBytes: _sum(Directory('${value.path}/.cache')),
-            retentionDays: retentionDays,
-            showUsage: true,
-          );
-      }
-    } on Object {
-      return _usageOnly(retentionDays);
+    final StorageRoot root = await _root();
+    final Result<Directory> resolved = await root.resolve();
+    switch (resolved) {
+      case FailureResult<Directory>():
+        return _usageOnly(retentionDays);
+      case Success<Directory>(:final Directory value):
+        final Result<VolumeStats> volume = await (await _guard()).volume();
+        switch (volume) {
+          case FailureResult<VolumeStats>(:final Failure failure):
+            throw failure;
+          case Success<VolumeStats>(value: final VolumeStats stats):
+            return (
+              projects: _projectUse(value),
+              headroom: StorageGuard.classify(stats.freeBytes),
+              volume: stats,
+              rootPath: value.path,
+              cacheBytes: _sum(Directory('${value.path}/.cache')),
+              retentionDays: retentionDays,
+              showUsage: true,
+            );
+        }
     }
   }
 
   _StorageView _usageOnly(int retentionDays) {
     return (
       projects: const <_ProjectUse>[],
-      headroom: HeadroomState.ample,
+      headroom: null,
+      volume: null,
+      rootPath: '',
       cacheBytes: 0,
       retentionDays: retentionDays,
       showUsage: true,
@@ -384,7 +488,7 @@ int _sum(Directory directory) {
 }
 
 Object _asError(Object error) {
-  if (error is Exception || error is Error) {
+  if (error is Failure || error is Exception || error is Error) {
     return error;
   }
   return Exception(error.toString());

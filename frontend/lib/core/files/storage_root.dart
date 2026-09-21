@@ -35,6 +35,7 @@ abstract interface class StorageRoot {
   factory StorageRoot({
     Future<Directory> Function()? documentsDirectory,
     Future<Directory?> Function()? publicDocuments,
+    Future<String?> Function()? preferredPath,
   }) {
     return _StorageRoot(
       documentsDirectory: documentsDirectory ?? _platformDocumentsDirectory,
@@ -43,6 +44,7 @@ abstract interface class StorageRoot {
           (documentsDirectory == null
               ? _platformPublicDocuments
               : () async => null),
+      preferredPath: preferredPath,
     );
   }
 
@@ -57,21 +59,29 @@ abstract interface class StorageRoot {
     required Directory documentsDirectory,
     Directory? publicDocuments,
     bool writable = true,
+    String? preferredPath,
+    bool preferredWritable = true,
   }) {
     return _StorageRoot(
       documentsDirectory: () async => documentsDirectory,
       publicDocuments: publicDocuments == null
           ? () async => null
           : () async => publicDocuments,
+      preferredPath: preferredPath == null ? null : () async => preferredPath,
       writable: writable,
+      preferredWritable: preferredWritable,
     );
   }
 
   /// The visible `Tapture/` folder. Creates it and `.cache` if they are
   /// absent, memoises a successful result for the process, and returns a
   /// [StorageFailure] naming the path when the location is missing or not
-  /// writable. Does not ask for a runtime permission.
+  /// writable. Does not ask for a runtime permission. A persisted preferred
+  /// path that still passes the write probe is used first.
   Future<Result<Directory>> resolve();
+
+  /// Probes [path] as the storage root without falling back to Documents.
+  Future<Result<Directory>> openAt(String path);
 
   /// `Tapture/.cache`, the only home for derived artefacts. Disposable: a
   /// missing folder is created again rather than treated as lost data.
@@ -124,12 +134,16 @@ final class _StorageRoot implements StorageRoot {
   _StorageRoot({
     required this._documentsDirectory,
     required this._publicDocuments,
+    this._preferredPath,
     this._writable = true,
+    this._preferredWritable = true,
   });
 
   final Future<Directory> Function() _documentsDirectory;
   final Future<Directory?> Function() _publicDocuments;
+  final Future<String?> Function()? _preferredPath;
   final bool _writable;
+  final bool _preferredWritable;
 
   Directory? _root;
   Future<Result<Directory>>? _inFlight;
@@ -152,6 +166,11 @@ final class _StorageRoot implements StorageRoot {
   }
 
   @override
+  Future<Result<Directory>> openAt(String path) {
+    return _tryOpenRoot(Directory(path), writable: _preferredWritable);
+  }
+
+  @override
   Future<Result<Directory>> cacheDir() async {
     final Result<Directory> resolved = await resolve();
     switch (resolved) {
@@ -163,6 +182,16 @@ final class _StorageRoot implements StorageRoot {
   }
 
   Future<Result<Directory>> _open() async {
+    final String? preferred = await _readPreferred();
+    if (preferred != null && preferred.isNotEmpty) {
+      final Result<Directory> opened = await _tryOpenRoot(
+        Directory(preferred),
+        writable: _preferredWritable,
+      );
+      if (opened is Success<Directory>) {
+        return opened;
+      }
+    }
     final Directory? shared = await _resolvePublic();
     if (shared != null) {
       final Result<Directory> opened = await _tryOpen(shared);
@@ -173,6 +202,18 @@ final class _StorageRoot implements StorageRoot {
     return _tryOpen(await _documentsDirectory());
   }
 
+  Future<String?> _readPreferred() async {
+    final Future<String?> Function()? preferredPath = _preferredPath;
+    if (preferredPath == null) {
+      return null;
+    }
+    try {
+      return await preferredPath();
+    } on Object {
+      return null;
+    }
+  }
+
   Future<Directory?> _resolvePublic() async {
     try {
       return await _publicDocuments();
@@ -181,13 +222,22 @@ final class _StorageRoot implements StorageRoot {
     }
   }
 
-  Future<Result<Directory>> _tryOpen(Directory documents) async {
-    final String path = '${documents.path}/$_rootName';
+  Future<Result<Directory>> _tryOpen(Directory documents) {
+    return _tryOpenRoot(
+      Directory('${documents.path}/$_rootName'),
+      writable: _writable,
+    );
+  }
+
+  Future<Result<Directory>> _tryOpenRoot(
+    Directory root, {
+    required bool writable,
+  }) async {
+    final String path = root.path;
     try {
-      if (!_writable) {
+      if (!writable) {
         return FailureResult<Directory>(_unwritable(path));
       }
-      final Directory root = Directory(path);
       await root.create(recursive: true);
       final Result<Directory> cache = await _ensureCache(root);
       if (cache is FailureResult<Directory>) {

@@ -10,6 +10,8 @@ import android.os.Build
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.os.StatFs
+import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import io.flutter.embedding.android.FlutterActivity
@@ -19,6 +21,7 @@ import java.util.concurrent.Executors
 
 private const val CHANNEL = "com.tapture.app/files"
 private const val SAVE_AS_REQUEST = 7101
+private const val PICK_DIR_REQUEST = 7102
 private val io = Executors.newSingleThreadExecutor()
 private val main = Handler(Looper.getMainLooper())
 
@@ -26,6 +29,7 @@ class MainActivity : FlutterActivity() {
     private var saveAsResult: MethodChannel.Result? = null
     private var saveAsBytes: ByteArray? = null
     private var saveAsFileName: String? = null
+    private var pickDirResult: MethodChannel.Result? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -46,6 +50,8 @@ class MainActivity : FlutterActivity() {
                         result,
                     )
                     "publicDocumentsPath" -> publicDocumentsPath(result)
+                    "volumeStats" -> volumeStats(call.argument("path"), result)
+                    "pickDirectory" -> pickDirectory(result)
                     else -> result.notImplemented()
                 }
             }
@@ -85,6 +91,10 @@ class MainActivity : FlutterActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         @Suppress("DEPRECATION")
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_DIR_REQUEST) {
+            finishPickDirectory(resultCode, data)
+            return
+        }
         if (requestCode != SAVE_AS_REQUEST) {
             return
         }
@@ -145,6 +155,78 @@ class MainActivity : FlutterActivity() {
         } catch (_: Exception) {
             result.error("open_failed", "Could not open Downloads.", null)
         }
+    }
+
+    private fun volumeStats(path: String?, result: MethodChannel.Result) {
+        val target = path ?: Environment.getDataDirectory().absolutePath
+        try {
+            val stat = StatFs(target)
+            val total = stat.totalBytes
+            val free = stat.availableBytes
+            result.success(
+                hashMapOf(
+                    "totalBytes" to total,
+                    "freeBytes" to free,
+                    "usedBytes" to (total - free),
+                ),
+            )
+        } catch (_: Exception) {
+            result.error("unreadable", "Could not read volume stats.", null)
+        }
+    }
+
+    private fun pickDirectory(result: MethodChannel.Result) {
+        if (pickDirResult != null) {
+            result.error("busy", "A folder pick is already open.", null)
+            return
+        }
+        pickDirResult = result
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+        try {
+            @Suppress("DEPRECATION")
+            startActivityForResult(intent, PICK_DIR_REQUEST)
+        } catch (_: Exception) {
+            pickDirResult = null
+            result.error("pick_failed", "Could not open a folder picker.", null)
+        }
+    }
+
+    private fun finishPickDirectory(resultCode: Int, data: Intent?) {
+        val pending = pickDirResult
+        pickDirResult = null
+        if (pending == null) {
+            return
+        }
+        val uri: Uri? = data?.data
+        if (resultCode != Activity.RESULT_OK || uri == null) {
+            pending.error("cancelled", "The pick was cancelled.", null)
+            return
+        }
+        try {
+            contentResolver.takePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
+            )
+        } catch (_: Exception) {
+            // Persistable grants are optional; a path is enough for resolve.
+        }
+        val path = treeUriToPath(uri)
+        if (path.isNullOrEmpty()) {
+            pending.error("pick_failed", "Could not read that folder.", null)
+            return
+        }
+        pending.success(path)
+    }
+
+    private fun treeUriToPath(uri: Uri): String? {
+        val docId = DocumentsContract.getTreeDocumentId(uri)
+        if (docId.startsWith("primary:")) {
+            val rel = docId.removePrefix("primary:")
+            val base = Environment.getExternalStorageDirectory().absolutePath
+            return if (rel.isEmpty()) base else "$base/$rel"
+        }
+        return uri.path
     }
 
     private fun publicDocumentsPath(result: MethodChannel.Result) {

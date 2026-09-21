@@ -8,6 +8,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/storage_guard.dart';
 import 'package:tapture/core/files/storage_root.dart';
+import 'package:tapture/core/files/volume_stats.dart';
 import 'package:tapture/core/lifecycle/lifecycle_observer.dart';
 
 void main() {
@@ -121,6 +122,29 @@ void main() {
     expect(await dropped.future, HeadroomState.critical);
     expect(reads, 2);
   });
+
+  test('the fake volume reports the known byte counts', () async {
+    const int free = 300;
+    const int used = 100;
+    const int total = 400;
+    final StorageGuard guard = await _open(
+      _Volume(free),
+      totalBytes: () => total,
+      usedBytes: () => used,
+    );
+    final VolumeStats stats = _ok(await guard.volume());
+    expect(stats.totalBytes, total);
+    expect(stats.usedBytes, used);
+    expect(stats.freeBytes, free);
+  });
+
+  test('a failed volume read is a failure, not ample', () async {
+    final StorageGuard guard = await _open(_Volume(1 << 30), volumeFails: true);
+    expect(await guard.volume(), isA<FailureResult<VolumeStats>>());
+    final Result<HeadroomState> checked = await guard.check();
+    expect(checked, isA<FailureResult<HeadroomState>>());
+    expect(checked.fold((Failure _) => true, (_) => false), isTrue);
+  });
 }
 
 final class _Volume {
@@ -133,6 +157,9 @@ Future<StorageGuard> _open(
   _Volume volume, {
   Stream<AppLifecycleState>? lifecycle,
   void Function()? onRead,
+  int Function()? totalBytes,
+  int Function()? usedBytes,
+  bool volumeFails = false,
 }) async {
   final Directory documents = Directory.systemTemp.createTempSync(
     'tapture-guard-',
@@ -147,6 +174,9 @@ Future<StorageGuard> _open(
   final StorageGuard guard = StorageGuard.fake(
     storageRoot: storage,
     lifecycle: lifecycle,
+    volumeFails: volumeFails,
+    totalBytes: totalBytes,
+    usedBytes: usedBytes,
     freeBytes: () {
       onRead?.call();
       return volume.bytes;

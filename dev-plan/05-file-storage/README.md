@@ -2,7 +2,7 @@
 
 The organised folder tree on the device, and every service that writes into it.
 
-Tasks 065–331 (9). Each file is a standalone implementation prompt.
+Tasks 065–335 (10). Each file is a standalone implementation prompt.
 
 - [x] [065 — Storage root resolution](065-storage-root.md)
 - [x] [066 — Project folder tree, name sanitiser and photo path builder](066-project-folder-service.md)
@@ -13,6 +13,7 @@ Tasks 065–331 (9). Each file is a standalone implementation prompt.
 - [x] [071 — Imported file validation](071-file-validation.md)
 - [x] [330 — Add share_plus for opening files externally](330-add-share-plus.md)
 - [x] [331 — Open a project's files in an external app](331-open-project-files-externally.md)
+- [x] [335 — Show storage volume totals and set the root](335-show-storage-volume-and-root.md)
 
 ## As built
 
