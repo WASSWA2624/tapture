@@ -21,6 +21,8 @@ void main() {
 
   test('defaults that exist on AppConstants are not restated', () {
     expect(SettingKeys.gpsEnabled.defaultValue, isFalse);
+    expect(SettingKeys.storageRootPath.defaultValue, isNull);
+    expect(SettingKeys.lastLocation.defaultValue, '');
     expect(SettingKeys.photoQuality.defaultValue, AppConstants.images.quality);
     expect(
       SettingKeys.folderStrategy.defaultValue,

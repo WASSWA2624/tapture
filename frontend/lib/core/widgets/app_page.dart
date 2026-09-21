@@ -86,6 +86,8 @@ class AppPage extends StatelessWidget {
     final bool invertedBar = Theme.of(context).brightness != Brightness.dark;
     final List<Widget> barActions = <Widget>[
       ...actions,
+      if (actions.isNotEmpty && overflow.isNotEmpty)
+        const SizedBox(width: Space.x2),
       if (overflow.isNotEmpty)
         AppOverflowMenu(
           key: const ValueKey<String>('app-page-overflow'),

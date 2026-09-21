@@ -6,6 +6,7 @@ import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
+import 'package:tapture/features/settings/settings.dart';
 
 import '../domain/project_repository.dart';
 import 'current_project.dart';
@@ -40,8 +41,6 @@ class ProjectListScreen extends ConsumerWidget {
     if (expanded && open != null && !diverted) {
       return const ProjectHomeScreen();
     }
-    final List<ProjectListRow>? rows = value.asData?.value;
-    final bool hasRows = rows != null && rows.isNotEmpty;
     return AppPage(
       key: const ValueKey<String>('route-projects'),
       title: Copy.navProjects,
@@ -54,15 +53,13 @@ class ProjectListScreen extends ConsumerWidget {
           : ProjectListActions.overflow(ref),
       inset: false,
       scrollable: false,
-      footer: value.hasValue && (!hasRows || !expanded)
+      footer: value.hasValue && !expanded
           ? AppPrimaryAction(
               label: Copy.projectsCreate,
               onPressed: () => context.go(_createLocation),
             )
           : null,
-      body: expanded && hasRows
-          ? const SizedBox.shrink()
-          : const ProjectListView(),
+      body: expanded ? const SizedBox.shrink() : const ProjectListView(),
     );
   }
 }
@@ -75,6 +72,12 @@ void _resumeLastProject(BuildContext context, WidgetRef ref) {
     context,
   ).uri.queryParameters[_fromQuery];
   if (from != null && from.isNotEmpty) {
+    return;
+  }
+  final String stored = ref
+      .read(projectSettingsStoreProvider)
+      .read(SettingKeys.lastLocation);
+  if (stored.isNotEmpty) {
     return;
   }
   final String? id = ref

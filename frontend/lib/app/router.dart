@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Router;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -301,8 +303,9 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
   ) {
     refresh.value++;
   });
+  final SettingsStore store = ref.read(projectSettingsStoreProvider);
   final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.projects,
+    initialLocation: _initialLocation(store),
     refreshListenable: refresh,
     redirect: (BuildContext _, GoRouterState state) {
       final String? legacy = _legacyLocation(state);
@@ -320,9 +323,45 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
     routes: _routes,
     errorBuilder: _notFound,
   );
-  ref.onDispose(router.dispose);
+  void persist() => _persistLastLocation(store, router);
+  router.routerDelegate.addListener(persist);
+  ref.onDispose(() {
+    router.routerDelegate.removeListener(persist);
+    router.dispose();
+  });
   return router;
 });
+
+String _initialLocation(SettingsStore store) {
+  final String stored = store.read(SettingKeys.lastLocation);
+  if (stored.isEmpty || stored == AppRoutes.lock) {
+    return AppRoutes.projects;
+  }
+  if (!_isInternalLocation(stored)) {
+    return AppRoutes.projects;
+  }
+  return stored;
+}
+
+void _persistLastLocation(SettingsStore store, GoRouter router) {
+  final Uri uri;
+  try {
+    uri = router.state.uri;
+  } on StateError {
+    return;
+  }
+  if (uri.path == AppRoutes.lock) {
+    return;
+  }
+  final String location = uri.toString();
+  if (!_isInternalLocation(location)) {
+    return;
+  }
+  if (store.read(SettingKeys.lastLocation) == location) {
+    return;
+  }
+  unawaited(store.write(SettingKeys.lastLocation, location));
+}
 
 List<RouteBase> get _routes {
   final List<RouteBase> routes = <RouteBase>[

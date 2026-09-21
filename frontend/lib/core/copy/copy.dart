@@ -366,26 +366,6 @@ abstract final class Copy {
   /// Shell destination: the project list.
   static const String navProjects = 'Projects';
 
-  /// Spoken count on the Projects destination. Keeps the exact number.
-  static String navProjectsCount(int n) {
-    final String formatted = NumberFormat.decimalPattern().format(n);
-    return Intl.plural(
-      n,
-      zero: 'No projects',
-      one: '1 project',
-      other: '$formatted projects',
-    );
-  }
-
-  /// Visible badge on the Projects destination. Caps at 99+ so the
-  /// rail does not widen at large counts (FE-RESP-06).
-  static String navProjectsCountBadge(int n) {
-    if (n > 99) {
-      return '99+';
-    }
-    return NumberFormat.decimalPattern().format(n);
-  }
-
   /// Headline when the project list has nothing to show.
   static const String projectsEmptyHeadline = 'No projects yet';
 
@@ -1694,6 +1674,28 @@ abstract final class Copy {
   /// Retention group on the storage screen.
   static const String settingsRetentionHeader = 'Retention';
 
+  /// Storage-root row name.
+  static const String settingsStorageRoot = 'Storage folder';
+
+  /// Total volume label.
+  static const String settingsVolumeTotal = 'Total';
+
+  /// Used volume label.
+  static const String settingsVolumeUsed = 'Used';
+
+  /// Available volume label.
+  static const String settingsVolumeAvailable = 'Available';
+
+  /// The three volume figures on one line.
+  static String settingsVolumeFigures({
+    required String total,
+    required String used,
+    required String available,
+  }) {
+    return '$settingsVolumeTotal $total · $settingsVolumeUsed $used · '
+        '$settingsVolumeAvailable $available';
+  }
+
   /// Headroom is ample.
   static const String settingsHeadroomAmple = 'Plenty of space';
 
@@ -1768,7 +1770,10 @@ abstract final class Copy {
     if (bytes < k * k) {
       return '${(bytes / k).round()} KB';
     }
-    return '${(bytes / (k * k)).round()} MB';
+    if (bytes < k * k * k) {
+      return '${(bytes / (k * k)).round()} MB';
+    }
+    return '${(bytes / (k * k * k)).round()} GB';
   }
 
   /// Per-project breakdown on one line.

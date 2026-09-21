@@ -64,16 +64,6 @@ void main() {
     expect(Copy.notDetected, isNotEmpty);
   });
 
-  test('navProjectsCount keeps the exact number and caps the badge', () {
-    expect(Copy.navProjectsCount(0), 'No projects');
-    expect(Copy.navProjectsCount(1), '1 project');
-    expect(Copy.navProjectsCount(2), '2 projects');
-    expect(Copy.navProjectsCount(100), '100 projects');
-    expect(Copy.navProjectsCountBadge(9), '9');
-    expect(Copy.navProjectsCountBadge(99), '99');
-    expect(Copy.navProjectsCountBadge(100), '99+');
-  });
-
   test('projectListNumber is the locale-formatted position', () {
     expect(Copy.projectListNumber(1), '1');
     expect(Copy.projectListNumber(12), '12');
@@ -680,6 +670,11 @@ List<String> get _values {
     Copy.settingsFolderStrategySubtitle('By context'),
     Copy.settingsProjectsHeader,
     Copy.settingsHeadroomHeader,
+    Copy.settingsStorageRoot,
+    Copy.settingsVolumeTotal,
+    Copy.settingsVolumeUsed,
+    Copy.settingsVolumeAvailable,
+    Copy.settingsVolumeFigures(total: '2 GB', used: '1 GB', available: '1 GB'),
     Copy.settingsRetentionHeader,
     Copy.settingsHeadroomAmple,
     Copy.settingsHeadroomLow,
@@ -704,6 +699,7 @@ List<String> get _values {
     Copy.fileSize(12),
     Copy.fileSize(2048),
     Copy.fileSize(2 * 1024 * 1024),
+    Copy.fileSize(2 * 1024 * 1024 * 1024),
     Copy.settingsProjectUse(
       photos: '1 B',
       documents: '0 B',

@@ -2,7 +2,7 @@
 
 Navigation, the always-visible status line, and the frame every feature plugs into.
 
-Tasks 072–333 (10). Each file is a standalone implementation prompt.
+Tasks 072–334 (11). Each file is a standalone implementation prompt.
 
 - [x] [072 — Router, route table and guards](072-router-setup.md)
 - [x] [073 — Adaptive navigation shell](073-nav-shell.md)
@@ -14,6 +14,7 @@ Tasks 072–333 (10). Each file is a standalone implementation prompt.
 - [x] [325 — Show the project list in the expanded list pane](325-show-projects-in-list-pane.md)
 - [x] [328 — Show the project count on the Projects destination](328-show-project-count-on-destination.md)
 - [x] [333 — Shell back and screen title](333-shell-back-and-title.md)
+- [x] [334 — Resolve projects shell feedback](334-resolve-projects-shell-feedback.md)
 
 ## As built
 

@@ -72,6 +72,18 @@ abstract final class SettingKeys {
     null,
   );
 
+  /// Chosen storage-root folder. Null or empty keeps the Documents fallback.
+  static const SettingKey<String?> storageRootPath = SettingKey<String?>(
+    'storage.rootPath',
+    null,
+  );
+
+  /// Last committed internal route, path and query. Empty on first launch.
+  static const SettingKey<String> lastLocation = SettingKey<String>(
+    'navigation.lastLocation',
+    '',
+  );
+
   /// Default for new exports. The key itself is never stored here.
   static const SettingKey<bool> encryptExports = SettingKey<bool>(
     'security.encryptExports',
@@ -151,6 +163,8 @@ abstract final class SettingKeys {
     retentionDays.name,
     offlineByChoice.name,
     openProjectId.name,
+    storageRootPath.name,
+    lastLocation.name,
     encryptExports.name,
     appLockEnabled.name,
     aiDoNotSendImages.name,

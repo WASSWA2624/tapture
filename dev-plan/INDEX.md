@@ -1,6 +1,6 @@
 # Tapture — task index
 
-333 implementation prompts across 25 phases. Work top to bottom.
+334 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task.
 
@@ -119,6 +119,7 @@ Every task inherits [STANDARD.md](STANDARD.md); read it once before the first ta
 - [x] [325 — Show the project list in the expanded list pane](06-app-shell/325-show-projects-in-list-pane.md)
 - [x] [328 — Show the project count on the Projects destination](06-app-shell/328-show-project-count-on-destination.md)
 - [x] [333 — Shell back and screen title](06-app-shell/333-shell-back-and-title.md)
+- [x] [334 — Resolve projects shell feedback](06-app-shell/334-resolve-projects-shell-feedback.md)
 
 ## 07 — Account and settings
 

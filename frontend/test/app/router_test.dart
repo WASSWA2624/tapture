@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/app.dart';
@@ -9,7 +10,10 @@ import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
+import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/settings/presentation/appearance_settings_screen.dart';
+import 'package:tapture/features/settings/presentation/storage_settings_screen.dart';
+import 'package:tapture/features/settings/settings.dart';
 
 void main() {
   test('AppRoutes helpers are the declared paths', () {
@@ -339,12 +343,121 @@ void main() {
     );
     expect(router.state.uri.path, AppRoutes.projects);
   });
+
+  testWidgets('a stored internal location is the first route', (
+    WidgetTester tester,
+  ) async {
+    final SettingsStore store = SettingsStore.fake(
+      stored: <String, Object?>{
+        SettingKeys.lastLocation.name: AppRoutes.settingsStorage,
+      },
+    );
+    final GoRouter router = await _pump(
+      tester,
+      store: store,
+      overrides: <Override>[storageSettingsOverride(cacheBytes: 0)],
+    );
+    await tester.pump();
+    expect(router.state.uri.path, AppRoutes.settingsStorage);
+  });
+
+  testWidgets('a stored records filter is the first route', (
+    WidgetTester tester,
+  ) async {
+    final String location = AppRoutes.recordsFiltered(AppRoutes.reviewFilter);
+    final SettingsStore store = SettingsStore.fake(
+      stored: <String, Object?>{SettingKeys.lastLocation.name: location},
+    );
+    final GoRouter router = await _pump(tester, store: store);
+    await tester.pump();
+    expect(router.state.uri.path, AppRoutes.records);
+    expect(
+      router.state.uri.queryParameters[AppRoutes.filterQuery],
+      AppRoutes.reviewFilter,
+    );
+  });
+
+  testWidgets('https and lock are ignored at launch', (
+    WidgetTester tester,
+  ) async {
+    for (final String stored in <String>[
+      'https://example.com',
+      AppRoutes.lock,
+    ]) {
+      final SettingsStore store = SettingsStore.fake(
+        stored: <String, Object?>{SettingKeys.lastLocation.name: stored},
+      );
+      final GoRouter router = await _pump(tester, store: store);
+      await tester.pump();
+      expect(router.state.uri.path, AppRoutes.projects);
+    }
+  });
+
+  testWidgets('an empty last location opens projects', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter router = await _pump(tester, store: SettingsStore.fake());
+    await tester.pump();
+    expect(router.state.uri.path, AppRoutes.projects);
+  });
+
+  testWidgets(
+    'a stored project route whose project is missing lands on projects',
+    (WidgetTester tester) async {
+      final SettingsStore store = SettingsStore.fake(
+        stored: <String, Object?>{
+          SettingKeys.lastLocation.name: AppRoutes.project('missing'),
+        },
+      );
+      final GoRouter router = await _pump(tester, store: store);
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, AppRoutes.projects);
+    },
+  );
+
+  testWidgets('navigation persists the last internal location and skips lock', (
+    WidgetTester tester,
+  ) async {
+    final SettingsStore store = SettingsStore.fake();
+    final GoRouter router = await _pump(tester, store: store);
+    await tester.pump();
+
+    await _go(tester, router, AppRoutes.more);
+    expect(store.read(SettingKeys.lastLocation), AppRoutes.more);
+
+    await _go(
+      tester,
+      router,
+      AppRoutes.recordsFiltered(AppRoutes.reviewFilter),
+    );
+    expect(
+      store.read(SettingKeys.lastLocation),
+      AppRoutes.recordsFiltered(AppRoutes.reviewFilter),
+    );
+
+    await _go(tester, router, AppRoutes.lock);
+    expect(router.state.uri.path, AppRoutes.lock);
+    expect(
+      store.read(SettingKeys.lastLocation),
+      AppRoutes.recordsFiltered(AppRoutes.reviewFilter),
+    );
+  });
 }
 
-Future<GoRouter> _pump(WidgetTester tester, {String? projectId}) async {
+Future<GoRouter> _pump(
+  WidgetTester tester, {
+  String? projectId,
+  SettingsStore? store,
+  List<Override> overrides = const <Override>[],
+}) async {
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [networkOnlineOverride()],
+      overrides: <Override>[
+        networkOnlineOverride(),
+        if (store != null)
+          projectSettingsStoreProvider.overrideWith((Ref _) => store),
+        ...overrides,
+      ],
       child: const TaptureApp(),
     ),
   );

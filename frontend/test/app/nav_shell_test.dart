@@ -323,7 +323,7 @@ void main() {
     expect(find.text(Copy.projectsNoMatchMessage), findsOneWidget);
     expect(
       find.descendant(of: _pane(), matching: find.text(Copy.projectsCreate)),
-      findsNWidgets(2),
+      findsOneWidget,
     );
   });
 
@@ -465,8 +465,8 @@ void main() {
     await _pump(tester, width: 1200);
     await tester.pumpAndSettle();
 
-    expect(find.byType(AppPrimaryAction), findsOneWidget);
-    expect(find.text(Copy.projectsCreate), findsWidgets);
+    expect(find.byType(AppPrimaryAction), findsNothing);
+    expect(find.text(Copy.projectsCreate), findsOneWidget);
     expect(
       find.descendant(
         of: _pane(),
@@ -668,74 +668,22 @@ void main() {
   );
 
   testWidgets(
-    'Projects shows no badge at zero and the count at one, nine and 99+',
+    'Projects shows no badge at compact and 1200 dp in light, dark and outdoor',
     (WidgetTester tester) async {
-      final FakeProjectRepository repo = FakeProjectRepository();
+      final FakeProjectRepository repo = await _seedProjects(<String>['Alpha']);
       addTearDown(repo.dispose);
-      for (final ({double width, double height}) size
-          in <({double width, double height})>[
-            (width: 400, height: 800),
-            (width: 800, height: 400),
-            (width: 800, height: 1200),
-            (width: 1200, height: 800),
-          ]) {
-        await _pump(tester, width: size.width, height: size.height, repo: repo);
-        await tester.pumpAndSettle();
-        expect(find.byType(Badge), findsNothing);
-        expect(_chromeFor(tester, size.width), findsOneWidget);
+      for (final AppThemeMode mode in <AppThemeMode>[
+        AppThemeMode.light,
+        AppThemeMode.dark,
+        AppThemeMode.outdoor,
+      ]) {
+        for (final double width in <double>[400, 1200]) {
+          await _pump(tester, width: width, repo: repo, mode: mode);
+          await tester.pumpAndSettle();
+          expect(find.byType(Badge), findsNothing);
+          expect(_shellLabel(tester, Copy.navProjects), findsOneWidget);
+        }
       }
-
-      _ok(await repo.create(aProject(id: 'p1', name: 'One')));
-      await _expectCountAtSizes(tester, repo, '1');
-
-      for (int index = 2; index <= 9; index++) {
-        _ok(await repo.create(aProject(id: 'p$index', name: 'Project $index')));
-      }
-      await _expectCountAtSizes(tester, repo, '9');
-
-      for (int index = 10; index <= 100; index++) {
-        _ok(await repo.create(aProject(id: 'p$index', name: 'Project $index')));
-      }
-      await _expectCountAtSizes(tester, repo, '99+');
-      expect(
-        find.descendant(of: find.byType(Badge), matching: find.text('100')),
-        findsNothing,
-      );
-    },
-  );
-
-  testWidgets(
-    'creating, archiving, deleting and restoring update the Projects badge',
-    (WidgetTester tester) async {
-      final FakeProjectRepository repo = FakeProjectRepository();
-      addTearDown(repo.dispose);
-      await _pump(tester, width: 400, repo: repo);
-      await tester.pumpAndSettle();
-      expect(find.byType(Badge), findsNothing);
-
-      _ok(await repo.create(aProject(id: 'live', name: 'Live')));
-      await tester.pumpAndSettle();
-      expect(_badgeLabel(tester), '1');
-
-      _ok(await repo.create(aProject(id: 'second', name: 'Second')));
-      await tester.pumpAndSettle();
-      expect(_badgeLabel(tester), '2');
-
-      _ok(await repo.setStatus('second', ProjectStatus.archived));
-      await tester.pumpAndSettle();
-      expect(_badgeLabel(tester), '1');
-
-      _ok(await repo.setStatus('second', ProjectStatus.active));
-      await tester.pumpAndSettle();
-      expect(_badgeLabel(tester), '2');
-
-      _ok(await repo.delete('second'));
-      await tester.pumpAndSettle();
-      expect(_badgeLabel(tester), '1');
-
-      _ok(await repo.delete('live'));
-      await tester.pumpAndSettle();
-      expect(find.byType(Badge), findsNothing);
     },
   );
 
@@ -747,7 +695,7 @@ void main() {
     for (final double width in <double>[400, 800, 1200]) {
       await _pump(tester, width: width, repo: repo);
       await tester.pumpAndSettle();
-      expect(find.byType(Badge), findsOneWidget);
+      expect(find.byType(Badge), findsNothing);
       expect(
         find.descendant(
           of: find.byKey(const ValueKey<String>('nav-icon-1')),
@@ -772,98 +720,67 @@ void main() {
     }
   });
 
-  testWidgets(
-    'the Projects badge meets 4.5:1 in light, dark, outdoor and on the inverted rail',
-    (WidgetTester tester) async {
+  testWidgets('Create a project appears once at 400 and 1200 dp', (
+    WidgetTester tester,
+  ) async {
+    for (final double width in <double>[400, 1200]) {
       final FakeProjectRepository repo = await _seedProjects(<String>['Alpha']);
       addTearDown(repo.dispose);
-      for (final AppThemeMode mode in <AppThemeMode>[
-        AppThemeMode.light,
-        AppThemeMode.dark,
-        AppThemeMode.outdoor,
-      ]) {
-        await _pump(tester, width: 400, repo: repo, mode: mode);
-        await tester.pumpAndSettle();
-        _expectBadgeContrast(tester);
-      }
-
-      await _pump(tester, width: 800, repo: repo, mode: AppThemeMode.light);
+      final GoRouter router = await _pump(tester, width: width, repo: repo);
       await tester.pumpAndSettle();
-      expect(_railInverted(tester), isTrue);
-      _expectBadgeContrast(tester, inverted: true);
+      expect(find.text(Copy.projectsCreate), findsOneWidget);
+      await tester.tap(find.text(Copy.projectsCreate));
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, AppRoutes.projectCreate);
+    }
+  });
+
+  testWidgets(
+    'at 1200 dp the project row stays inside the pane, including landscape and text scale 2',
+    (WidgetTester tester) async {
+      final FakeProjectRepository repo = await _seedProjects(<String>[
+        'A very long project name that should ellipsize in the pane',
+      ]);
+      addTearDown(repo.dispose);
+      for (final ({double width, double height, double scale}) shot
+          in <({double width, double height, double scale})>[
+            (width: 1200, height: 800, scale: 1),
+            (width: 1200, height: 800, scale: 2),
+            (width: 1400, height: 900, scale: 1),
+          ]) {
+        tester.platformDispatcher.textScaleFactorTestValue = shot.scale;
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        await _pump(tester, width: shot.width, height: shot.height, repo: repo);
+        await tester.pumpAndSettle();
+        final Finder row = find.byKey(
+          const ValueKey<String>('project-row-project-1'),
+        );
+        expect(row, findsOneWidget);
+        expect(
+          tester.getTopRight(row).dx,
+          lessThanOrEqualTo(tester.getTopRight(_pane()).dx + 0.5),
+        );
+        expect(tester.takeException(), isNull);
+      }
     },
   );
 
-  testWidgets('the Projects destination announces its count', (
-    WidgetTester tester,
-  ) async {
-    final FakeProjectRepository repo = await _seedProjects(<String>[
-      'Alpha',
-      'Beta',
-    ]);
-    addTearDown(repo.dispose);
-    await _pump(tester, width: 400, repo: repo);
-    await tester.pumpAndSettle();
-    _expectAnnouncesCount(tester, 2);
-
-    _ok(await repo.create(aProject(id: 'third', name: 'Gamma')));
-    await tester.pumpAndSettle();
-    expect(_badgeLabel(tester), '3');
-    _expectAnnouncesCount(tester, 3);
-
-    await _setWidth(tester, 800);
-    await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey<String>('nav-rail')), findsOneWidget);
-    expect(_badgeLabel(tester), '3');
-    _expectAnnouncesCount(tester, 3);
-  });
-
-  testWidgets('the badge does not clip or push labels at 200 percent text', (
-    WidgetTester tester,
-  ) async {
-    final FakeProjectRepository repo = FakeProjectRepository();
-    addTearDown(repo.dispose);
-    for (int index = 0; index < 12; index++) {
-      _ok(await repo.create(aProject(id: 'p$index', name: 'Project $index')));
-    }
-    tester.platformDispatcher.textScaleFactorTestValue = 2;
-    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    for (final double width in <double>[400, 800, 1200]) {
-      await _pump(tester, width: width, repo: repo);
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(_shellLabel(tester, Copy.navProjects), findsOneWidget);
-      expect(_shellLabel(tester, Copy.navCapture), findsOneWidget);
-      expect(_badgeLabel(tester), '12');
-    }
-  });
-
-  testWidgets('in RTL the badge sits at the icon end, not hard right', (
+  testWidgets('at 400 dp the project row is not forced to 280 dp', (
     WidgetTester tester,
   ) async {
     final FakeProjectRepository repo = await _seedProjects(<String>['Alpha']);
     addTearDown(repo.dispose);
-    tester.platformDispatcher.localeTestValue = const Locale('ar');
-    addTearDown(tester.platformDispatcher.clearLocaleTestValue);
-    for (final double width in <double>[400, 800]) {
-      await _pump(tester, width: width, repo: repo);
-      await tester.pumpAndSettle();
-      final Badge badge = tester.widget<Badge>(find.byType(Badge));
-      expect(badge.alignment, AlignmentDirectional.topEnd);
-      final BuildContext iconContext = tester.element(
-        find.byKey(const ValueKey<String>('nav-icon-0')),
-      );
-      if (Directionality.of(iconContext) == TextDirection.rtl) {
-        expect(
-          tester.getCenter(find.byType(Badge)).dx,
-          lessThan(
-            tester
-                .getCenter(find.byKey(const ValueKey<String>('nav-icon-0')))
-                .dx,
-          ),
-        );
-      }
-    }
+    await _pump(tester, width: 400, repo: repo);
+    await tester.pumpAndSettle();
+    expect(_pane(), findsNothing);
+    final Finder row = find.byKey(
+      const ValueKey<String>('project-row-project-1'),
+    );
+    expect(row, findsOneWidget);
+    expect(tester.getSize(row).width, isNot(Sizes.listPane));
+    await tester.tap(find.text('Alpha'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey<String>('route-project')), findsOneWidget);
   });
 }
 
@@ -1022,65 +939,4 @@ bool _railInverted(WidgetTester tester) {
       colors.onSurface == AppColors.outdoor.onSurface &&
       colors.outline == AppColors.outdoor.outline;
   return Theme.of(context).brightness == Brightness.light && !outdoor;
-}
-
-Finder _chromeFor(WidgetTester tester, double width) {
-  if (width < 600) {
-    return find.byKey(const ValueKey<String>('nav-bar'));
-  }
-  return find.byKey(const ValueKey<String>('nav-rail'));
-}
-
-Future<void> _expectCountAtSizes(
-  WidgetTester tester,
-  FakeProjectRepository repo,
-  String label,
-) async {
-  for (final ({double width, double height}) size
-      in <({double width, double height})>[
-        (width: 400, height: 800),
-        (width: 800, height: 400),
-        (width: 800, height: 1200),
-        (width: 1200, height: 800),
-      ]) {
-    await _pump(tester, width: size.width, height: size.height, repo: repo);
-    await tester.pumpAndSettle();
-    expect(_chromeFor(tester, size.width), findsOneWidget);
-    expect(_badgeLabel(tester), label);
-    expect(find.byType(Badge), findsOneWidget);
-  }
-}
-
-String _badgeLabel(WidgetTester tester) {
-  final Badge badge = tester.widget<Badge>(find.byType(Badge));
-  final Text label = badge.label! as Text;
-  return label.data!;
-}
-
-void _expectBadgeContrast(WidgetTester tester, {bool inverted = false}) {
-  final Badge badge = tester.widget<Badge>(find.byType(Badge));
-  final Color fill = badge.backgroundColor!;
-  final Color ink = badge.textColor!;
-  final AppColors expected = inverted
-      ? AppColors.dark
-      : tester.element(find.byType(NavShell)).colors;
-  expect(fill, expected.primary);
-  expect(ink, expected.onPrimary);
-  expect(_contrast(ink, fill), greaterThanOrEqualTo(4.5));
-}
-
-void _expectAnnouncesCount(WidgetTester tester, int count) {
-  final Semantics semantics = tester.widget<Semantics>(
-    find.byKey(const ValueKey<String>('nav-count-live')),
-  );
-  expect(semantics.properties.label, Copy.navProjectsCount(count));
-  expect(semantics.properties.liveRegion, isTrue);
-}
-
-double _contrast(Color a, Color b) {
-  final double left = a.computeLuminance();
-  final double right = b.computeLuminance();
-  final double lighter = left > right ? left : right;
-  final double darker = left > right ? right : left;
-  return (lighter + 0.05) / (darker + 0.05);
 }

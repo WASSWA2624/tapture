@@ -126,6 +126,10 @@ class StatusLine extends ConsumerWidget {
                           ),
                         ),
                         ...?chrome?.actions,
+                        if (chrome != null &&
+                            chrome.actions.isNotEmpty &&
+                            chrome.overflow.isNotEmpty)
+                          const SizedBox(width: Space.x2),
                         if (chrome != null && chrome.overflow.isNotEmpty)
                           AppOverflowMenu(
                             key: const ValueKey<String>('app-page-overflow'),

@@ -55,7 +55,7 @@ void main() {
     expect(find.byType(AppEmptyState), findsOneWidget);
     expect(find.text(Copy.projectsEmptyHeadline), findsOneWidget);
     expect(find.text(Copy.projectsEmptyMessage), findsOneWidget);
-    expect(find.text(Copy.projectsCreate), findsNWidgets(2));
+    expect(find.text(Copy.projectsCreate), findsOneWidget);
     expect(find.byType(AppPrimaryAction), findsOneWidget);
     expect(find.text(Copy.projectsImport), findsNothing);
 
@@ -162,7 +162,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(AppPrimaryAction), findsOneWidget);
-      expect(find.text(Copy.projectsCreate), findsWidgets);
+      expect(find.text(Copy.projectsCreate), findsOneWidget);
 
       await tester.tap(find.byType(AppPrimaryAction));
       await tester.pumpAndSettle();
@@ -170,43 +170,38 @@ void main() {
     }
   });
 
-  testWidgets(
-    'the title bar offers create and Show archived at 400 and 800 dp',
-    (WidgetTester tester) async {
-      for (final double width in <double>[400, 800]) {
-        final FakeProjectRepository repo = FakeProjectRepository();
-        addTearDown(repo.dispose);
-        _ok(await repo.create(aProject(name: 'Alpha')));
-        _ok(await repo.setStatus('project-1', ProjectStatus.archived));
-        _bindSize(tester, width);
-        await _pump(tester, repo: repo);
-        await tester.pumpAndSettle();
+  testWidgets('the title bar offers Show archived at 400 and 800 dp', (
+    WidgetTester tester,
+  ) async {
+    for (final double width in <double>[400, 800]) {
+      final FakeProjectRepository repo = FakeProjectRepository();
+      addTearDown(repo.dispose);
+      _ok(await repo.create(aProject(name: 'Alpha')));
+      _ok(await repo.setStatus('project-1', ProjectStatus.archived));
+      _bindSize(tester, width);
+      await _pump(tester, repo: repo);
+      await tester.pumpAndSettle();
 
-        expect(find.byType(Checkbox), findsNothing);
-        expect(find.byType(AppSwitchTile), findsNothing);
-        expect(find.text('Alpha'), findsNothing);
-        expect(find.byKey(ProjectListActions.createKey), findsOneWidget);
-        expect(find.byKey(ProjectListActions.createKey), meetsTapTarget());
-        expect(
-          find.byKey(ProjectListActions.createKey),
-          hasSemanticLabel(Copy.projectsCreate),
-        );
-        expect(find.byTooltip(Copy.projectsCreate), findsOneWidget);
-        expect(
-          find.byKey(const ValueKey<String>('app-page-overflow')),
-          meetsTapTarget(),
-        );
-        expect(
-          find.byKey(const ValueKey<String>('app-page-overflow')),
-          hasSemanticLabel(Copy.overflowMenu),
-        );
+      expect(find.byType(Checkbox), findsNothing);
+      expect(find.byType(AppSwitchTile), findsNothing);
+      expect(find.text('Alpha'), findsNothing);
+      expect(find.byKey(ProjectListActions.createKey), findsNothing);
+      expect(find.byType(AppPrimaryAction), findsOneWidget);
+      expect(find.text(Copy.projectsCreate), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('app-page-overflow')),
+        meetsTapTarget(),
+      );
+      expect(
+        find.byKey(const ValueKey<String>('app-page-overflow')),
+        hasSemanticLabel(Copy.overflowMenu),
+      );
 
-        await tester.tap(find.byKey(ProjectListActions.createKey));
-        await tester.pumpAndSettle();
-        expect(find.text('create'), findsOneWidget);
-      }
-    },
-  );
+      await tester.tap(find.byType(AppPrimaryAction));
+      await tester.pumpAndSettle();
+      expect(find.text('create'), findsOneWidget);
+    }
+  });
 
   testWidgets('Show archived lives in the more menu and filters the list', (
     WidgetTester tester,
@@ -246,9 +241,14 @@ void main() {
       await _pump(tester, repo: repo);
       await tester.pumpAndSettle();
 
-      expect(find.byType(AppPrimaryAction), findsOneWidget);
-      expect(find.text(Copy.projectsCreate), findsWidgets);
-      expect(find.text(Copy.projectsEmptyHeadline), findsOneWidget);
+      if (width < 1024) {
+        expect(find.byType(AppPrimaryAction), findsOneWidget);
+        expect(find.text(Copy.projectsCreate), findsOneWidget);
+        expect(find.text(Copy.projectsEmptyHeadline), findsOneWidget);
+      } else {
+        expect(find.byType(AppPrimaryAction), findsNothing);
+        expect(find.text(Copy.projectsCreate), findsNothing);
+      }
     }
   });
 

@@ -70,11 +70,7 @@ class _Chrome extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  StatusLine(),
-                  OfflineBanner(),
-                  _NavCountLive(),
-                ],
+                children: <Widget>[StatusLine(), OfflineBanner()],
               ),
             ),
             Expanded(
@@ -115,13 +111,13 @@ class _Chrome extends ConsumerWidget {
   }
 }
 
-class _Bar extends ConsumerWidget {
+class _Bar extends StatelessWidget {
   const _Bar({required this.shell});
 
   final StatefulNavigationShell shell;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return RepaintBoundary(
       key: const ValueKey<String>('nav-bar'),
       child: DecoratedBox(
@@ -146,7 +142,7 @@ class _Bar extends ConsumerWidget {
                   inverted: false,
                 ),
                 label: _destinations[index].label,
-                tooltip: _destinationTooltip(ref, _destinations[index]),
+                tooltip: _destinations[index].label,
               ),
           ],
         ),
@@ -155,14 +151,14 @@ class _Bar extends ConsumerWidget {
   }
 }
 
-class _Rail extends ConsumerWidget {
+class _Rail extends StatelessWidget {
   const _Rail({required this.shell, required this.inverted});
 
   final StatefulNavigationShell shell;
   final bool inverted;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final AppColors colors = context.colors;
     final Color railInk = inverted ? colors.surface : colors.onSurface;
     final Color selected = inverted ? AppColors.dark.primary : colors.primary;
@@ -188,28 +184,12 @@ class _Rail extends ConsumerWidget {
                 selected: true,
                 inverted: inverted,
               ),
-              label: Semantics(
-                label: _destinationTooltip(ref, _destinations[index]),
-                excludeSemantics: true,
-                child: Text(_destinations[index].label),
-              ),
+              label: Text(_destinations[index].label),
             ),
         ],
       ),
     );
   }
-}
-
-String _destinationTooltip(WidgetRef ref, _Destination destination) {
-  final Provider<int>? count = destination.count;
-  if (count == null) {
-    return destination.label;
-  }
-  final int n = ref.watch(count);
-  if (n <= 0) {
-    return destination.label;
-  }
-  return '${destination.label}, ${Copy.navProjectsCount(n)}';
 }
 
 class _Pane extends ConsumerWidget {
@@ -225,6 +205,7 @@ class _Pane extends ConsumerWidget {
       key: const ValueKey<String>('nav-pane'),
       child: Material(
         color: context.colors.surface,
+        clipBehavior: Clip.hardEdge,
         child: DecoratedBox(
           decoration: BoxDecoration(
             border: BorderDirectional(
@@ -248,7 +229,11 @@ class _Pane extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     if (projects) ...<Widget>[
-                      ProjectListActions.paneToolbar(context, ref),
+                      ProjectListActions.paneToolbar(
+                        context,
+                        ref,
+                        showCreate: _paneHasRows(ref),
+                      ),
                       const SizedBox(height: Space.x2),
                     ],
                     AppSearchField(
@@ -280,26 +265,14 @@ class _Pane extends ConsumerWidget {
   }
 }
 
-/// Announces the Projects count when it changes (FE-A11Y-07). Lives in
-/// the chrome, not inside the bar or rail, so MergeSemantics cannot
-/// swallow the live region.
-class _NavCountLive extends ConsumerWidget {
-  const _NavCountLive();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final int count = ref.watch(projectNavCountProvider);
-    return Semantics(
-      key: const ValueKey<String>('nav-count-live'),
-      liveRegion: count > 0,
-      container: true,
-      label: count > 0 ? Copy.navProjectsCount(count) : '',
-      child: const SizedBox.shrink(),
-    );
-  }
+bool _paneHasRows(WidgetRef ref) {
+  return switch (ref.watch(projectListFilteredProvider)) {
+    AsyncData(:final value) => value.isNotEmpty,
+    _ => false,
+  };
 }
 
-class _NavIcon extends ConsumerWidget {
+class _NavIcon extends StatelessWidget {
   const _NavIcon({
     required this.index,
     required this.selected,
@@ -311,46 +284,18 @@ class _NavIcon extends ConsumerWidget {
   final bool inverted;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final _Destination destination = _destinations[index];
     final IconData icon = selected
         ? destination.selectedIcon
         : destination.icon;
     final AppColors colors = context.colors;
     final Color accent = inverted ? AppColors.dark.primary : colors.primary;
-    final Widget mark = Icon(
+    return Icon(
       icon,
       key: ValueKey<String>('nav-icon-$index'),
       size: destination.dominant ? Space.x8 : Space.x6,
       color: selected ? accent : (inverted ? colors.surface : colors.onSurface),
-    );
-    final Provider<int>? countListenable = destination.count;
-    if (countListenable == null) {
-      return mark;
-    }
-    final int count = ref.watch(countListenable);
-    if (count <= 0) {
-      return mark;
-    }
-    final AppColors palette = inverted ? AppColors.dark : colors;
-    return Semantics(
-      container: true,
-      liveRegion: true,
-      label: Copy.navProjectsCount(count),
-      excludeSemantics: true,
-      child: Badge(
-        alignment: AlignmentDirectional.topEnd,
-        backgroundColor: palette.primary,
-        textColor: palette.onPrimary,
-        largeSize: Space.x4,
-        padding: const EdgeInsets.symmetric(horizontal: Space.x1),
-        label: Text(
-          Copy.navProjectsCountBadge(count),
-          maxLines: 1,
-          textScaler: TextScaler.noScaling,
-        ),
-        child: mark,
-      ),
     );
   }
 }
@@ -362,7 +307,6 @@ class _Destination {
     required this.label,
     this.dominant = false,
     this.hasList = false,
-    this.count,
   });
 
   final IconData icon;
@@ -370,9 +314,6 @@ class _Destination {
   final String label;
   final bool dominant;
   final bool hasList;
-
-  /// Live count this destination shows on its icon. Null means no badge.
-  final Provider<int>? count;
 }
 
 bool _darkDesktopRail(BuildContext context) {
@@ -385,12 +326,11 @@ bool _darkDesktopRail(BuildContext context) {
 }
 
 final List<_Destination> _destinations = <_Destination>[
-  _Destination(
+  const _Destination(
     icon: Icons.folder_outlined,
     selectedIcon: Icons.folder,
     label: Copy.navProjects,
     hasList: true,
-    count: projectNavCountProvider,
   ),
   const _Destination(
     icon: Icons.photo_camera_outlined,

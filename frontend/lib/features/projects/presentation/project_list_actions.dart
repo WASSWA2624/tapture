@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
-import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 
 import 'project_list_filter.dart';
@@ -27,17 +26,10 @@ abstract final class ProjectListActions {
     context.go(_createLocation);
   }
 
-  /// Icon-only create for [AppPage.actions].
-  static List<Widget> barActions(BuildContext context) {
-    return <Widget>[
-      AppIconButton(
-        key: createKey,
-        icon: Icons.add,
-        semanticLabel: Copy.projectsCreate,
-        tooltip: Copy.projectsCreate,
-        onPressed: () => create(context),
-      ),
-    ];
+  /// Icon-only create for [AppPage.actions]. Empty: the footer or pane
+  /// holds the one create control (FE-SIMP-01).
+  static List<Widget> barActions(BuildContext _) {
+    return const <Widget>[];
   }
 
   /// Labelled Show archived row. The check marks when the filter is on.
@@ -56,18 +48,23 @@ abstract final class ProjectListActions {
   }
 
   /// Filled create plus the more menu, for the expanded pane header.
-  static Widget paneToolbar(BuildContext context, WidgetRef ref) {
+  static Widget paneToolbar(
+    BuildContext context,
+    WidgetRef ref, {
+    bool showCreate = true,
+  }) {
     return Wrap(
       spacing: Space.x2,
       runSpacing: Space.x2,
       crossAxisAlignment: WrapCrossAlignment.center,
       alignment: WrapAlignment.spaceBetween,
       children: <Widget>[
-        AppButton(
-          key: createKey,
-          label: Copy.projectsCreate,
-          onPressed: () => create(context),
-        ),
+        if (showCreate)
+          AppButton(
+            key: createKey,
+            label: Copy.projectsCreate,
+            onPressed: () => create(context),
+          ),
         AppOverflowMenu(key: overflowKey, items: overflow(ref)),
       ],
     );

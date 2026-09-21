@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
@@ -141,6 +142,61 @@ void main() {
     await tester.tap(find.byType(AppIconButton));
     await tester.pumpAndSettle();
     expect(find.text('open'), findsOneWidget);
+  });
+
+  testWidgets(
+    'an action and an overflow menu are separated by Space.x2 at 400 and 1200 dp',
+    (WidgetTester tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      for (final Size size in <Size>[
+        const Size(400, 800),
+        const Size(1200, 800),
+      ]) {
+        await _pumpPage(
+          tester,
+          size: size,
+          actions: const <Widget>[
+            AppIconButton(
+              icon: Icons.search,
+              semanticLabel: Copy.search,
+              tooltip: Copy.search,
+              onPressed: _ignorePress,
+            ),
+          ],
+          overflow: const <AppOverflowAction>[
+            AppOverflowAction(label: Copy.navTemplates, onTap: _ignorePress),
+          ],
+        );
+        expect(
+          tester
+                  .getTopLeft(
+                    find.byKey(const ValueKey<String>('app-page-overflow')),
+                  )
+                  .dx -
+              tester.getTopRight(find.byIcon(Icons.search)).dx,
+          greaterThanOrEqualTo(Space.x2),
+        );
+        expect(
+          find.byKey(const ValueKey<String>('app-page-overflow')),
+          meetsTapTarget(),
+        );
+      }
+    },
+  );
+
+  testWidgets('an overflow-only page has no leading action gap', (
+    WidgetTester tester,
+  ) async {
+    await _pumpPage(
+      tester,
+      overflow: const <AppOverflowAction>[
+        AppOverflowAction(label: Copy.navTemplates, onTap: _ignorePress),
+      ],
+    );
+    final AppBar bar = tester.widget<AppBar>(find.byType(AppBar));
+    expect(bar.actions!.whereType<SizedBox>(), isEmpty);
+    expect(find.byIcon(Icons.more_vert), findsOneWidget);
   });
 
   testWidgets('rotation keeps the body', (WidgetTester tester) async {

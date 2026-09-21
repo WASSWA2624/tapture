@@ -68,48 +68,51 @@ class AppListTile extends StatelessWidget {
           horizontal: Space.x4,
           vertical: dense ? Space.x1 : Space.x3,
         ),
-        child: Row(
-          children: <Widget>[
-            if (selected) ...<Widget>[
-              Icon(Icons.check, color: colors.primary, size: Space.x6),
-              const SizedBox(width: Space.x3),
-            ],
-            if (leading != null) ...<Widget>[
-              _LeadingWell(colors: colors, child: leading!),
-              const SizedBox(width: Space.x3),
-            ],
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: (dense ? AppText.label : AppText.bodyStrong)
-                        .copyWith(color: foreground),
-                  ),
-                  if (subtitle != null) ...<Widget>[
-                    const SizedBox(height: Space.x0),
+        child: SizedBox(
+          width: double.infinity,
+          child: Row(
+            children: <Widget>[
+              if (selected) ...<Widget>[
+                Icon(Icons.check, color: colors.primary, size: Space.x6),
+                const SizedBox(width: Space.x3),
+              ],
+              if (leading != null) ...<Widget>[
+                _LeadingWell(colors: colors, child: leading!),
+                const SizedBox(width: Space.x3),
+              ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
                     Text(
-                      subtitle!,
+                      title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: AppText.caption.copyWith(color: foreground),
+                      style: (dense ? AppText.label : AppText.bodyStrong)
+                          .copyWith(color: foreground),
                     ),
+                    if (subtitle != null) ...<Widget>[
+                      const SizedBox(height: Space.x0),
+                      Text(
+                        subtitle!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppText.caption.copyWith(color: foreground),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-            if (status != null) ...<Widget>[
-              const SizedBox(width: Space.x2),
-              status!,
+              if (status != null) ...<Widget>[
+                const SizedBox(width: Space.x2),
+                status!,
+              ],
+              if (trailing != null) ...<Widget>[
+                const SizedBox(width: Space.x2),
+                trailing!,
+              ],
             ],
-            if (trailing != null) ...<Widget>[
-              const SizedBox(width: Space.x2),
-              trailing!,
-            ],
-          ],
+          ),
         ),
       ),
     );
@@ -126,6 +129,7 @@ class AppListTile extends StatelessWidget {
       onLongPress: onLongPress,
       child: Material(
         color: selected ? colors.surfaceVariant : colors.surface,
+        clipBehavior: Clip.hardEdge,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[

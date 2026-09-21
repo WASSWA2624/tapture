@@ -8,6 +8,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/project_repository.dart';
@@ -84,6 +85,7 @@ class ProjectListView extends ConsumerWidget {
 }
 
 Widget _empty(BuildContext context, {required bool searching}) {
+  final bool expanded = context.sizeClass == SizeClass.expanded;
   return AppEmptyState(
     icon: Icons.folder_open_outlined,
     headline: searching
@@ -92,8 +94,8 @@ Widget _empty(BuildContext context, {required bool searching}) {
     message: searching
         ? Copy.projectsNoMatchMessage
         : Copy.projectsEmptyMessage,
-    actionLabel: Copy.projectsCreate,
-    onAction: () => context.go(_createLocation),
+    actionLabel: expanded ? Copy.projectsCreate : null,
+    onAction: expanded ? () => context.go(_createLocation) : null,
   );
 }
 
