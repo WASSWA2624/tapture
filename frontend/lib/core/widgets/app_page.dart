@@ -7,6 +7,7 @@ import 'app_icon_button.dart';
 import 'app_overflow_menu.dart';
 import 'responsive/breakpoints.dart';
 import 'responsive/content_constraint.dart';
+import 'shell_header_scope.dart';
 
 /// The single page frame every screen composes: app bar, body, optional
 /// footer, safe-area and keyboard insets, and scrolling (FE-RESP-06,
@@ -75,6 +76,7 @@ class AppPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool shellOwns = ShellHeaderScope.ownsHeaderOf(context);
     final EdgeInsets padding = _paddingFor(context, inset: inset);
     final Widget content = scrollable
         ? _scrollingBody(context, padding)
@@ -91,12 +93,12 @@ class AppPage extends StatelessWidget {
           inverted: invertedBar,
         ),
     ];
-    return Scaffold(
+    final Widget page = Scaffold(
       backgroundColor: inset
           ? context.colors.background
           : context.colors.surface,
       resizeToAvoidBottomInset: true,
-      appBar: showAppBar
+      appBar: showAppBar && !shellOwns
           ? AppBar(
               automaticallyImplyLeading: leading == null,
               leading: leading == null ? null : Center(child: leading),
@@ -133,6 +135,15 @@ class AppPage extends StatelessWidget {
             ),
         ],
       ),
+    );
+    if (!shellOwns) {
+      return page;
+    }
+    return _PageHeaderRegistration(
+      title: title,
+      actions: actions,
+      overflow: overflow,
+      child: page,
     );
   }
 }
@@ -220,4 +231,64 @@ EdgeInsets _paddingFor(BuildContext context, {required bool inset}) {
     expanded: Space.x5,
   );
   return EdgeInsets.symmetric(horizontal: horizontal, vertical: Space.x2);
+}
+
+class _PageHeaderRegistration extends StatefulWidget {
+  const _PageHeaderRegistration({
+    required this.title,
+    required this.actions,
+    required this.overflow,
+    required this.child,
+  });
+
+  final String title;
+  final List<Widget> actions;
+  final List<AppOverflowAction> overflow;
+  final Widget child;
+
+  @override
+  State<_PageHeaderRegistration> createState() =>
+      _PageHeaderRegistrationState();
+}
+
+class _PageHeaderRegistrationState extends State<_PageHeaderRegistration> {
+  @override
+  void initState() {
+    super.initState();
+    _schedule();
+  }
+
+  @override
+  void didUpdateWidget(_PageHeaderRegistration oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.title != widget.title ||
+        !identical(oldWidget.actions, widget.actions) ||
+        !identical(oldWidget.overflow, widget.overflow)) {
+      _schedule();
+    }
+  }
+
+  void _schedule() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      ShellHeaderScope.publish(
+        context,
+        owner: this,
+        title: widget.title,
+        actions: widget.actions,
+        overflow: widget.overflow,
+      );
+    });
+  }
+
+  @override
+  void deactivate() {
+    ShellHeaderScope.release(context, this);
+    super.deactivate();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

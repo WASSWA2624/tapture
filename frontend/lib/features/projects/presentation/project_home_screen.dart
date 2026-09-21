@@ -13,6 +13,7 @@ import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
+import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/project_repository.dart';
@@ -37,6 +38,9 @@ class ProjectHomeScreen extends ConsumerWidget {
       key: const ValueKey<String>('route-project'),
       title: details?.name ?? Copy.navProjects,
       showAppBar: false,
+      overflow: view == null
+          ? const <AppOverflowAction>[]
+          : _projectHomeMenu(context, ref, view),
       scrollable: false,
       footer: view == null
           ? null
@@ -131,19 +135,21 @@ class _HomeBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ProjectHomeCounts counts = view.counts;
+    final bool shellOwns = ShellHeaderScope.ownsHeaderOf(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: Space.x4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expanded(child: Text(view.project.name, style: AppText.title)),
-              AppOverflowMenu(items: _menu(context, ref)),
-            ],
-          ),
-          const SizedBox(height: Space.x1),
+          if (!shellOwns)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(child: Text(view.project.name, style: AppText.title)),
+                AppOverflowMenu(items: _projectHomeMenu(context, ref, view)),
+              ],
+            ),
+          if (!shellOwns) const SizedBox(height: Space.x1),
           Text(view.context, style: AppText.caption),
           const SizedBox(height: Space.x4),
           ..._countRows(context, counts),
@@ -200,57 +206,61 @@ class _HomeBody extends ConsumerWidget {
       ],
     ];
   }
+}
 
-  List<AppOverflowAction> _menu(BuildContext context, WidgetRef ref) {
-    final Project project = view.project;
-    final AppOverflowAction? open = projectOpenExternallyMenuItem(
-      context,
-      ref,
-      project,
-    );
-    return <AppOverflowAction>[
-      AppOverflowAction(
-        label: Copy.projectAllProjects,
-        icon: Icons.folder_open_outlined,
-        onTap: () => context.go(_projectsRoot),
+List<AppOverflowAction> _projectHomeMenu(
+  BuildContext context,
+  WidgetRef ref,
+  ProjectHomeView view,
+) {
+  final Project project = view.project;
+  final AppOverflowAction? open = projectOpenExternallyMenuItem(
+    context,
+    ref,
+    project,
+  );
+  return <AppOverflowAction>[
+    AppOverflowAction(
+      label: Copy.projectAllProjects,
+      icon: Icons.folder_open_outlined,
+      onTap: () => context.go(_projectsRoot),
+    ),
+    AppOverflowAction(
+      label: Copy.projectNew,
+      onTap: () => context.go(_createLocation),
+    ),
+    AppOverflowAction(
+      label: Copy.projectsDuplicate,
+      onTap: () => ProjectDuplicateAction.open(
+        context,
+        sourceId: project.id,
+        sourceName: project.name,
       ),
-      AppOverflowAction(
-        label: Copy.projectNew,
-        onTap: () => context.go(_createLocation),
-      ),
-      AppOverflowAction(
-        label: Copy.projectsDuplicate,
-        onTap: () => ProjectDuplicateAction.open(
-          context,
-          sourceId: project.id,
-          sourceName: project.name,
-        ),
-      ),
-      AppOverflowAction(
-        label: Copy.projectEditTitle,
-        icon: Icons.edit_outlined,
-        onTap: () => context.go(_edit(project.id)),
-      ),
-      AppOverflowAction(
-        label: Copy.projectSettingsTitle,
-        icon: Icons.tune,
-        onTap: () => context.go(_settings(project.id)),
-      ),
-      ?open,
-      AppOverflowAction(
-        label: project.status == ProjectStatus.archived
-            ? Copy.projectUnarchive
-            : Copy.projectArchive,
-        icon: Icons.inventory_2_outlined,
-        onTap: () => unawaited(_archiveThenList(context, ref, project)),
-      ),
-      AppOverflowAction(
-        label: Copy.projectDelete,
-        icon: Icons.delete_outline,
-        onTap: () => unawaited(_deleteThenList(context, ref, project)),
-      ),
-    ];
-  }
+    ),
+    AppOverflowAction(
+      label: Copy.projectEditTitle,
+      icon: Icons.edit_outlined,
+      onTap: () => context.go(_edit(project.id)),
+    ),
+    AppOverflowAction(
+      label: Copy.projectSettingsTitle,
+      icon: Icons.tune,
+      onTap: () => context.go(_settings(project.id)),
+    ),
+    ?open,
+    AppOverflowAction(
+      label: project.status == ProjectStatus.archived
+          ? Copy.projectUnarchive
+          : Copy.projectArchive,
+      icon: Icons.inventory_2_outlined,
+      onTap: () => unawaited(_archiveThenList(context, ref, project)),
+    ),
+    AppOverflowAction(
+      label: Copy.projectDelete,
+      icon: Icons.delete_outline,
+      onTap: () => unawaited(_deleteThenList(context, ref, project)),
+    ),
+  ];
 }
 
 class _CountCard extends StatelessWidget {

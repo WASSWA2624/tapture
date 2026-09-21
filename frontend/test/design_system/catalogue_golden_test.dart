@@ -53,6 +53,7 @@ import 'package:tapture/core/widgets/forms/keep_focused_visible.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/responsive/responsive_builder.dart';
+import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
@@ -367,6 +368,11 @@ Widget _sample(String name, TextEditingController field) {
         compact: (BuildContext context) {
           return const Text(Copy.galleryCompact);
         },
+      );
+    case 'shell_header_scope':
+      return const ShellHeaderScope(
+        ownsHeader: true,
+        child: Text(Copy.settingsStorageTitle),
       );
     case 'surface_levels':
       return const SurfaceLevels();

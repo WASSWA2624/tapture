@@ -57,6 +57,7 @@ import 'package:tapture/core/widgets/forms/keep_focused_visible.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/responsive/responsive_builder.dart';
+import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
@@ -444,6 +445,11 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       const AppPrimaryAction(label: Copy.save),
       const SizedBox(height: Space.x3),
       const AppPrimaryAction(label: Copy.save, busy: true, onPressed: _noop),
+      const SizedBox(height: Space.x3),
+      const ShellHeaderScope(
+        ownsHeader: true,
+        child: Text(Copy.settingsStorageTitle, style: AppText.bodyStrong),
+      ),
       const SizedBox(height: Space.x6),
     ];
   }

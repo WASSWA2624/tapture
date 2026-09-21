@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/env.dart';
+import 'package:tapture/app/shell_title.dart';
 import 'package:tapture/app/theme/theme_controller.dart';
 import 'package:tapture/app/widgets/status_line.dart';
-import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/network/network.dart';
 import 'package:tapture/features/feedback/feedback.dart';
 import 'package:tapture/features/feedback/presentation/feedback_overlay.dart';
@@ -34,7 +34,7 @@ FeedbackOrigin _origin(BuildContext context, WidgetRef ref) {
       ? '${state.uri.path}?${state.uri.query}'
       : path;
   return FeedbackOrigin(
-    screen: _screenName(path),
+    screen: ShellTitle.screen(ref, state.uri),
     route: route,
     routeName: _routeName(path),
     connectivity: _connectivity(ref),
@@ -42,58 +42,6 @@ FeedbackOrigin _origin(BuildContext context, WidgetRef ref) {
     environment: Env.isDev ? 'development' : 'production',
     projectId: ref.watch(openProjectIdProvider),
   );
-}
-
-String _screenName(String path) {
-  if (path == AppRoutes.projects || path == '/') {
-    return Copy.navProjects;
-  }
-  if (path == AppRoutes.records) {
-    return Copy.navRecords;
-  }
-  if (path == AppRoutes.more) {
-    return Copy.navMore;
-  }
-  if (path == AppRoutes.lock) {
-    return Copy.appLockTitle;
-  }
-  if (path == AppRoutes.templates) {
-    return Copy.navTemplates;
-  }
-  if (path == AppRoutes.queue) {
-    return Copy.navQueue;
-  }
-  if (path == AppRoutes.settingsOperator) {
-    return Copy.operatorProfileTitle;
-  }
-  if (path == AppRoutes.settingsCapture) {
-    return Copy.settingsCamera;
-  }
-  if (path == AppRoutes.settingsAppearance) {
-    return Copy.settingsAppearanceTitle;
-  }
-  if (path == AppRoutes.settingsStorage) {
-    return Copy.settingsStorageTitle;
-  }
-  if (path == AppRoutes.settingsSecurity) {
-    return Copy.appLockTitle;
-  }
-  if (path == AppRoutes.settingsAbout) {
-    return Copy.settingsAboutTitle;
-  }
-  if (path.startsWith('${AppRoutes.projects}/') && path.endsWith('/capture')) {
-    return Copy.navCapture;
-  }
-  if (path == '/capture') {
-    return Copy.navCapture;
-  }
-  if (path.startsWith('${AppRoutes.projects}/')) {
-    return Copy.navProjects;
-  }
-  if (path.startsWith('${AppRoutes.records}/')) {
-    return Copy.navRecords;
-  }
-  return FeedbackOrigin.unknown.screen;
 }
 
 String _routeName(String path) {

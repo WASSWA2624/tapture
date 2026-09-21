@@ -4,23 +4,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/shell_title.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/network/network.dart';
 import 'package:tapture/core/widgets/app_brand_lockup.dart';
+import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
+import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/features/projects/presentation/current_project.dart';
 import 'package:tapture/features/settings/presentation/offline_switch.dart';
 
 import '../router.dart';
 
-/// Permanent one-line strip: where the operator is, and what is queued.
+/// Permanent one-line strip.
 ///
-/// Visible chrome is the wordmark plus an icon-only overflow control.
-/// Labelled commands live in that menu. Counts are derived, never cached
-/// (FE-STATE-06).
+/// On a branch root the chrome is the wordmark plus the status menu.
+/// Everywhere else it is one row: back, the screen title, and that page's
+/// actions (FE-CONS-10). Counts are derived, never cached (FE-STATE-06).
 class StatusLine extends ConsumerWidget {
   /// Creates the status line.
   const StatusLine({super.key});
@@ -42,6 +46,20 @@ class StatusLine extends ConsumerWidget {
     final Color bar = inverted
         ? colors.primary
         : (compact ? colors.surfaceVariant : colors.surface);
+    final Color ink = inverted ? colors.onPrimary : colors.onSurface;
+    final Uri uri = GoRouterState.of(context).uri;
+    final String? routeTitle = ShellTitle.header(ref, uri);
+    final ({
+      String title,
+      List<Widget> actions,
+      List<AppOverflowAction> overflow,
+    })?
+    chrome = ShellHeaderScope.chromeOf(context);
+    final String? title = routeTitle == null
+        ? null
+        : (chrome != null && chrome.title.isNotEmpty
+              ? chrome.title
+              : routeTitle);
     return Material(
       color: bar,
       child: DecoratedBox(
@@ -55,49 +73,68 @@ class StatusLine extends ConsumerWidget {
                   ),
                 ),
         ),
-        child: SizedBox(
-          width: double.infinity,
-          height: Sizes.minTapTarget + Space.x2,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            minHeight: Sizes.minTapTarget + Space.x2,
+          ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: Space.x3),
-            child: Row(
-              children: <Widget>[
-                AppBrandLockup(inverted: inverted),
-                const Spacer(),
-                AppOverflowMenu(
-                  key: const ValueKey<String>('status-overflow'),
-                  inverted: inverted,
-                  items: <AppOverflowAction>[
-                    AppOverflowAction(
-                      key: const ValueKey<String>('status-project'),
-                      icon: Icons.folder_outlined,
-                      label: _whereLabel(projectId, projectLabel, contextLabel),
-                      onTap: () {
-                        context.go(_projectLocation(projectId));
-                      },
+            child: title == null
+                ? Row(
+                    children: <Widget>[
+                      AppBrandLockup(inverted: inverted),
+                      const Spacer(),
+                      AppOverflowMenu(
+                        key: const ValueKey<String>('status-overflow'),
+                        inverted: inverted,
+                        items: _statusItems(
+                          context,
+                          projectId: projectId,
+                          projectLabel: projectLabel,
+                          contextLabel: contextLabel,
+                          templateLabel: templateLabel,
+                          network: network,
+                          byChoice: byChoice,
+                          unprocessed: unprocessed,
+                        ),
+                      ),
+                    ],
+                  )
+                : IconTheme(
+                    data: IconThemeData(color: ink),
+                    child: Row(
+                      children: <Widget>[
+                        AppIconButton(
+                          key: const ValueKey<String>('shell-back'),
+                          icon: Icons.arrow_back,
+                          semanticLabel: MaterialLocalizations.of(
+                            context,
+                          ).backButtonTooltip,
+                          tooltip: MaterialLocalizations.of(
+                            context,
+                          ).backButtonTooltip,
+                          outlined: false,
+                          onPressed: () => _back(context),
+                        ),
+                        const SizedBox(width: Space.x2),
+                        Expanded(
+                          child: Text(
+                            title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppText.bodyStrong.copyWith(color: ink),
+                          ),
+                        ),
+                        ...?chrome?.actions,
+                        if (chrome != null && chrome.overflow.isNotEmpty)
+                          AppOverflowMenu(
+                            key: const ValueKey<String>('app-page-overflow'),
+                            inverted: inverted,
+                            items: chrome.overflow,
+                          ),
+                      ],
                     ),
-                    AppOverflowAction(
-                      key: const ValueKey<String>('status-template'),
-                      icon: Icons.article_outlined,
-                      label: templateLabel,
-                      onTap: () => context.go(AppRoutes.templates),
-                    ),
-                    AppOverflowAction(
-                      key: const ValueKey<String>('status-network'),
-                      icon: _networkIcon(network, byChoice),
-                      label: _networkLabel(network, byChoice),
-                      onTap: () => context.go(AppRoutes.more),
-                    ),
-                    AppOverflowAction(
-                      key: const ValueKey<String>('status-unprocessed'),
-                      icon: Icons.pending_outlined,
-                      label: Copy.unprocessedCount(unprocessed),
-                      onTap: () => context.go(AppRoutes.queue),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
           ),
         ),
       ),
@@ -170,6 +207,60 @@ Override networkOnlineOverride() {
     ref.onDispose(service.dispose);
     return service;
   });
+}
+
+List<AppOverflowAction> _statusItems(
+  BuildContext context, {
+  required String? projectId,
+  required String projectLabel,
+  required String contextLabel,
+  required String templateLabel,
+  required NetworkState network,
+  required bool byChoice,
+  required int unprocessed,
+}) {
+  return <AppOverflowAction>[
+    AppOverflowAction(
+      key: const ValueKey<String>('status-project'),
+      icon: Icons.folder_outlined,
+      label: _whereLabel(projectId, projectLabel, contextLabel),
+      onTap: () {
+        context.go(_projectLocation(projectId));
+      },
+    ),
+    AppOverflowAction(
+      key: const ValueKey<String>('status-template'),
+      icon: Icons.article_outlined,
+      label: templateLabel,
+      onTap: () => context.go(AppRoutes.templates),
+    ),
+    AppOverflowAction(
+      key: const ValueKey<String>('status-network'),
+      icon: _networkIcon(network, byChoice),
+      label: _networkLabel(network, byChoice),
+      onTap: () => context.go(AppRoutes.more),
+    ),
+    AppOverflowAction(
+      key: const ValueKey<String>('status-unprocessed'),
+      icon: Icons.pending_outlined,
+      label: Copy.unprocessedCount(unprocessed),
+      onTap: () => context.go(AppRoutes.queue),
+    ),
+  ];
+}
+
+void _back(BuildContext context) {
+  final GoRouter router = GoRouter.of(context);
+  if (router.canPop()) {
+    router.pop();
+    return;
+  }
+  final Uri uri = GoRouterState.of(context).uri;
+  if (uri.queryParameters.containsKey(AppRoutes.filterQuery)) {
+    context.go(uri.path);
+    return;
+  }
+  context.go(ShellTitle.parentOf(uri.path));
 }
 
 String _whereLabel(String? projectId, String project, String context) {

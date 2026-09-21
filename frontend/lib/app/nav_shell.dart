@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/feedback_host.dart';
+import 'package:tapture/app/shell_title.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
@@ -10,6 +11,7 @@ import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/responsive/responsive_builder.dart';
+import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/projects/projects.dart';
 
@@ -40,7 +42,7 @@ class NavShell extends StatelessWidget {
   }
 }
 
-class _Chrome extends StatelessWidget {
+class _Chrome extends ConsumerWidget {
   const _Chrome({required this.shell, required this.rail, required this.pane});
 
   final StatefulNavigationShell shell;
@@ -48,62 +50,67 @@ class _Chrome extends StatelessWidget {
   final bool pane;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool ownsHeader =
+        ShellTitle.header(ref, GoRouterState.of(context).uri) != null;
     final bool showPane = pane && _destinations[shell.currentIndex].hasList;
     final BorderSide hairline = BorderSide(
       color: context.colors.outline,
       width: Space.x0 / 2,
     );
-    return Scaffold(
-      backgroundColor: context.colors.background,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          const SafeArea(
-            bottom: false,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                StatusLine(),
-                OfflineBanner(),
-                _NavCountLive(),
-              ],
-            ),
-          ),
-          Expanded(
-            child: SafeArea(
-              top: false,
-              child: Row(
+    return ShellHeaderScope(
+      ownsHeader: ownsHeader,
+      child: Scaffold(
+        backgroundColor: context.colors.background,
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            const SafeArea(
+              bottom: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  if (rail)
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        border: showPane
-                            ? null
-                            : BorderDirectional(end: hairline),
-                      ),
-                      child: _Rail(
-                        shell: shell,
-                        inverted: _darkDesktopRail(context),
-                      ),
-                    ),
-                  if (showPane)
-                    SizedBox(
-                      width: Sizes.listPane,
-                      child: _Pane(index: shell.currentIndex),
-                    ),
-                  Expanded(
-                    key: const ValueKey<String>('nav-body-slot'),
-                    child: shell,
-                  ),
+                  StatusLine(),
+                  OfflineBanner(),
+                  _NavCountLive(),
                 ],
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: SafeArea(
+                top: false,
+                child: Row(
+                  children: <Widget>[
+                    if (rail)
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          border: showPane
+                              ? null
+                              : BorderDirectional(end: hairline),
+                        ),
+                        child: _Rail(
+                          shell: shell,
+                          inverted: _darkDesktopRail(context),
+                        ),
+                      ),
+                    if (showPane)
+                      SizedBox(
+                        width: Sizes.listPane,
+                        child: _Pane(index: shell.currentIndex),
+                      ),
+                    Expanded(
+                      key: const ValueKey<String>('nav-body-slot'),
+                      child: shell,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        bottomNavigationBar: rail ? null : _Bar(shell: shell),
       ),
-      bottomNavigationBar: rail ? null : _Bar(shell: shell),
     );
   }
 }
