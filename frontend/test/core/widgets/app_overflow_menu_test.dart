@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/outdoor_theme.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
@@ -12,7 +13,7 @@ void main() {
   testWidgets('the control is a 48dp labelled icon with no visible text', (
     WidgetTester tester,
   ) async {
-    await _pump(tester, _outlined());
+    await _pump(tester, _defaultMenu());
 
     expect(find.byType(AppOverflowMenu), meetsTapTarget());
     expect(find.byType(AppOverflowMenu), hasSemanticLabel(Copy.overflowMenu));
@@ -22,20 +23,43 @@ void main() {
     await expectNoA11yIssues(tester);
   });
 
-  testWidgets('the default control paints a border', (
+  testWidgets('the default control paints no side', (
     WidgetTester tester,
   ) async {
-    await _pump(tester, _outlined());
+    await _pump(tester, _defaultMenu());
 
     final IconButton button = tester.widget<IconButton>(
       find.byType(IconButton),
     );
-    expect(button.style, isNull);
-    final BorderSide? side = IconButtonTheme.of(
-      tester.element(find.byType(IconButton)),
-    ).style?.side?.resolve(<WidgetState>{});
-    expect(side, isNotNull);
-    expect(side, isNot(BorderSide.none));
+    expect(button.style?.side?.resolve(<WidgetState>{}), BorderSide.none);
+    expect(find.byType(AppOverflowMenu), meetsTapTarget());
+  });
+
+  testWidgets('an outlined control paints the theme outline', (
+    WidgetTester tester,
+  ) async {
+    final List<({ThemeData theme, double width})> modes =
+        <({ThemeData theme, double width})>[
+          (
+            theme: buildTheme(brightness: Brightness.light),
+            width: Space.x0 / 2,
+          ),
+          (theme: buildTheme(brightness: Brightness.dark), width: Space.x0 / 2),
+          (theme: buildOutdoorTheme(Brightness.light), width: Space.x0),
+        ];
+    for (final ({ThemeData theme, double width}) mode in modes) {
+      await _pump(tester, _outlined(), theme: mode.theme);
+      final IconButton button = tester.widget<IconButton>(
+        find.byType(IconButton),
+      );
+      expect(button.style, isNull);
+      final BorderSide? side = IconButtonTheme.of(
+        tester.element(find.byType(IconButton)),
+      ).style?.side?.resolve(<WidgetState>{});
+      expect(side, isNotNull);
+      expect(side, isNot(BorderSide.none));
+      expect(side!.width, mode.width);
+    }
   });
 
   testWidgets('a borderless control paints no side', (
@@ -266,9 +290,19 @@ Future<void> _expectOpensAndSelects(
   expect(find.text(Copy.save), findsNothing);
 }
 
+AppOverflowMenu _defaultMenu() {
+  return const AppOverflowMenu(
+    key: ValueKey<String>('app-overflow'),
+    items: <AppOverflowAction>[
+      AppOverflowAction(label: Copy.save, onTap: _ignore),
+    ],
+  );
+}
+
 AppOverflowMenu _outlined() {
   return const AppOverflowMenu(
     key: ValueKey<String>('app-overflow'),
+    outlined: true,
     items: <AppOverflowAction>[
       AppOverflowAction(label: Copy.save, onTap: _ignore),
     ],
@@ -298,6 +332,7 @@ Future<void> _pump(
   });
   await tester.pumpWidget(
     MaterialApp(
+      key: UniqueKey(),
       theme: theme ?? buildTheme(brightness: Brightness.light),
       home: Scaffold(body: Center(child: child)),
     ),

@@ -16,7 +16,7 @@ class AppOverflowMenu extends StatelessWidget {
     super.key,
     required this.items,
     this.inverted = false,
-    this.outlined = true,
+    this.outlined = false,
   });
 
   /// Labelled commands shown when the control is opened.
@@ -25,8 +25,8 @@ class AppOverflowMenu extends StatelessWidget {
   /// When true, the icon sits on a primary fill (status line, branded bar).
   final bool inverted;
 
-  /// When false, the control has no outline, for one that sits inside a
-  /// list row. The widget style wins over the theme's.
+  /// When true, the control draws the theme outline. The default is bare,
+  /// on a title bar and in a list row. The widget style wins over the theme's.
   final bool outlined;
 
   @override

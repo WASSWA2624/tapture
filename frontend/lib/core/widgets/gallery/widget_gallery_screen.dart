@@ -464,25 +464,27 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         children: <Widget>[
           const AppOverflowMenu(
             key: ValueKey<String>('app-overflow'),
+            outlined: true,
             items: items,
           ),
           _overflowFill(
             key: const ValueKey<String>('app-overflow-hover'),
             fill: fill,
-            child: const AppOverflowMenu(items: items),
+            child: const AppOverflowMenu(outlined: true, items: items),
           ),
           _overflowFill(
             key: const ValueKey<String>('app-overflow-focus'),
             fill: fill,
-            child: const AppOverflowMenu(items: items),
+            child: const AppOverflowMenu(outlined: true, items: items),
           ),
           _overflowFill(
             key: const ValueKey<String>('app-overflow-pressed'),
             fill: fill,
-            child: const AppOverflowMenu(items: items),
+            child: const AppOverflowMenu(outlined: true, items: items),
           ),
           const AppOverflowMenu(
             key: ValueKey<String>('app-overflow-disabled'),
+            outlined: true,
             items: <AppOverflowAction>[],
           ),
           const AppOverflowMenu(

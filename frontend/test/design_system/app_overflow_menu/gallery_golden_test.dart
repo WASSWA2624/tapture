@@ -82,13 +82,13 @@ Future<void> _pumpGallery(
       theme: theme,
       home: AppPage(
         title: 'Overflow',
-        body: states ? _states(theme) : _outlinedOnly(),
+        body: states ? _states(theme) : _defaultMenu(),
       ),
     ),
   );
 }
 
-Widget _outlinedOnly() {
+Widget _defaultMenu() {
   return const Wrap(
     spacing: Space.x2,
     runSpacing: Space.x2,
@@ -132,11 +132,11 @@ Widget _states(ThemeData theme) {
     spacing: Space.x2,
     runSpacing: Space.x2,
     children: <Widget>[
-      const AppOverflowMenu(items: items),
-      filled(const AppOverflowMenu(items: items)),
-      filled(const AppOverflowMenu(items: items)),
-      filled(const AppOverflowMenu(items: items)),
-      const AppOverflowMenu(items: <AppOverflowAction>[]),
+      const AppOverflowMenu(outlined: true, items: items),
+      filled(const AppOverflowMenu(outlined: true, items: items)),
+      filled(const AppOverflowMenu(outlined: true, items: items)),
+      filled(const AppOverflowMenu(outlined: true, items: items)),
+      const AppOverflowMenu(outlined: true, items: <AppOverflowAction>[]),
       const AppOverflowMenu(outlined: false, items: items),
       filled(const AppOverflowMenu(outlined: false, items: items)),
       filled(const AppOverflowMenu(outlined: false, items: items)),
