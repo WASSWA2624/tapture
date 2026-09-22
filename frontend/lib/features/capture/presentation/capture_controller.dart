@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/text_store.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
@@ -18,7 +17,7 @@ import 'package:tapture/features/processing/domain/processing_repository.dart';
 /// Default photo repository stub — [main] / tests override.
 final Provider<PhotoRepository> photoRepositoryProvider =
     Provider<PhotoRepository>((Ref _) {
-      return _EmptyPhotoRepository();
+      return _MemoryPhotoRepository();
     });
 
 /// Session + photo persistence. Tests override with a memory store.
@@ -332,32 +331,32 @@ final class CaptureController extends Notifier<CaptureSession> {
   }
 }
 
-final class _EmptyPhotoRepository implements PhotoRepository {
-  @override
-  Stream<List<PhotoAsset>> watchByRecord(String recordId) =>
-      Stream<List<PhotoAsset>>.value(const <PhotoAsset>[]);
+final class _MemoryPhotoRepository implements PhotoRepository {
+  final Map<String, PhotoAsset> _rows = <String, PhotoAsset>{};
 
   @override
-  Future<Result<PhotoAsset?>> byId(String id) async =>
-      const Success<PhotoAsset?>(null);
-
-  @override
-  Future<Result<PhotoAsset>> save(PhotoAsset photo) async {
-    return const FailureResult<PhotoAsset>(
-      StorageFailure(
-        message: 'Photo storage is not ready.',
-        recoveryAction: 'Open a project and try again.',
-      ),
+  Stream<List<PhotoAsset>> watchByRecord(String recordId) {
+    return Stream<List<PhotoAsset>>.value(
+      _rows.values
+          .where((PhotoAsset row) => row.recordId == recordId)
+          .toList(growable: false),
     );
   }
 
   @override
+  Future<Result<PhotoAsset?>> byId(String id) async {
+    return Success<PhotoAsset?>(_rows[id]);
+  }
+
+  @override
+  Future<Result<PhotoAsset>> save(PhotoAsset photo) async {
+    _rows[photo.id] = photo;
+    return Success<PhotoAsset>(photo);
+  }
+
+  @override
   Future<Result<void>> delete(String id, {required String reason}) async {
-    return const FailureResult<void>(
-      StorageFailure(
-        message: 'Photo storage is not ready.',
-        recoveryAction: 'Open a project and try again.',
-      ),
-    );
+    _rows.remove(id);
+    return const Success<void>(null);
   }
 }

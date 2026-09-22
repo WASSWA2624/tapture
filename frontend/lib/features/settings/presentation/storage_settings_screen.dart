@@ -6,8 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/core/db/app_database.dart';
-import 'package:tapture/core/device/device_identity.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/cache_cleanup.dart';
@@ -15,8 +13,6 @@ import 'package:tapture/core/files/folder_picker.dart';
 import 'package:tapture/core/files/storage_guard.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/files/volume_stats.dart';
-import 'package:tapture/core/ids/uuid_service.dart';
-import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
@@ -26,6 +22,7 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/setting_keys.dart';
 import '../settings.dart' show SettingsStore;
+import 'offline_switch.dart';
 
 // The notifier is private so this file holds one public class (FE-STR-06).
 // ignore_for_file: library_private_types_in_public_api
@@ -96,17 +93,6 @@ class StorageSettingsScreen extends ConsumerWidget {
                   unawaited(notifier.clearCache(context));
                 },
               ),
-              const AppSectionHeader(title: Copy.settingsProjectsHeader),
-              for (final _ProjectUse project in view.projects)
-                AppListTile(
-                  title: project.name,
-                  subtitle: Copy.settingsProjectUse(
-                    photos: Copy.fileSize(project.photosBytes),
-                    documents: Copy.fileSize(project.documentsBytes),
-                    audio: Copy.fileSize(project.audioBytes),
-                    exports: Copy.fileSize(project.exportsBytes),
-                  ),
-                ),
               const AppSectionHeader(title: Copy.settingsRetentionHeader),
               AppListTile(
                 title: Copy.settingsRetention,
@@ -243,7 +229,6 @@ class _StorageSettings extends AsyncNotifier<_StorageView> {
   final bool _pending;
   final bool _empty;
   final _StorageView? _snapshot;
-  SettingsStore? _openedStore;
 
   @override
   Future<_StorageView> build() {
@@ -392,7 +377,7 @@ class _StorageSettings extends AsyncNotifier<_StorageView> {
             throw failure;
           case Success<VolumeStats>(value: final VolumeStats stats):
             return (
-              projects: _projectUse(value),
+              projects: const <_ProjectUse>[],
               headroom: StorageGuard.classify(stats.freeBytes),
               volume: stats,
               rootPath: value.path,
@@ -429,46 +414,8 @@ class _StorageSettings extends AsyncNotifier<_StorageView> {
     if (injected != null) {
       return injected;
     }
-    final SettingsStore? opened = _openedStore;
-    if (opened != null) {
-      return opened;
-    }
-    const SystemClock clock = SystemClock();
-    return _openedStore = await SettingsStore.open(
-      db: AppDatabase.open(),
-      deviceId: await deviceId(clock: clock, ids: UuidV7Service(clock)),
-      clock: clock,
-    );
+    return ref.read(offlineStoreProvider);
   }
-}
-
-List<_ProjectUse> _projectUse(Directory root) {
-  final Directory projects = Directory('${root.path}/projects');
-  if (!projects.existsSync()) {
-    return const <_ProjectUse>[];
-  }
-  final List<_ProjectUse> used = <_ProjectUse>[];
-  for (final FileSystemEntity entity in projects.listSync(followLinks: false)) {
-    if (entity is! Directory) {
-      continue;
-    }
-    used.add((
-      name: _folderName(entity),
-      photosBytes: _sum(Directory('${entity.path}/photos')),
-      documentsBytes: _sum(Directory('${entity.path}/documents')),
-      audioBytes: _sum(Directory('${entity.path}/audio')),
-      exportsBytes: _sum(Directory('${entity.path}/exports')),
-    ));
-  }
-  used.sort((_ProjectUse a, _ProjectUse b) => a.name.compareTo(b.name));
-  return used;
-}
-
-String _folderName(Directory directory) {
-  final List<String> parts = directory.uri.pathSegments
-      .where((String part) => part.isNotEmpty)
-      .toList();
-  return parts.isEmpty ? directory.path : parts.last;
 }
 
 int _sum(Directory directory) {

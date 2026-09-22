@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
+import 'package:tapture/features/capture/domain/caption_apply.dart';
+import 'package:tapture/features/capture/presentation/caption_scope_selector.dart';
 
 /// Edit one photo caption.
 final class PhotoCaptionSheet extends StatefulWidget {
@@ -10,6 +13,8 @@ final class PhotoCaptionSheet extends StatefulWidget {
     required this.initial,
     required this.onSave,
     this.failureMessage,
+    this.selectedCount = 0,
+    this.allCount = 1,
     super.key,
   });
 
@@ -17,10 +22,16 @@ final class PhotoCaptionSheet extends StatefulWidget {
   final String initial;
 
   /// Persist; return false on failure.
-  final Future<bool> Function(String text) onSave;
+  final Future<bool> Function(String text, CaptionScope scope) onSave;
 
   /// Optional failure banner.
   final String? failureMessage;
+
+  /// Photos in the current selection.
+  final int selectedCount;
+
+  /// Photos in the session.
+  final int allCount;
 
   @override
   State<PhotoCaptionSheet> createState() => _PhotoCaptionSheetState();
@@ -29,6 +40,7 @@ final class PhotoCaptionSheet extends StatefulWidget {
 class _PhotoCaptionSheetState extends State<PhotoCaptionSheet> {
   late final TextEditingController _controller;
   String? _error;
+  CaptionScope _scope = CaptionScope.thisPhoto;
 
   @override
   void initState() {
@@ -46,11 +58,18 @@ class _PhotoCaptionSheetState extends State<PhotoCaptionSheet> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(Space.x4),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           const Text(Copy.capturePhotoCaption),
+          CaptionScopeSelector(
+            scope: _scope,
+            thisCount: 1,
+            selectedCount: widget.selectedCount,
+            allCount: widget.allCount,
+            onChanged: (CaptionScope scope) => setState(() => _scope = scope),
+          ),
           AppTextField(
             controller: _controller,
             label: Copy.capturePhotoCaption,
@@ -59,9 +78,9 @@ class _PhotoCaptionSheetState extends State<PhotoCaptionSheet> {
           AppButton(
             label: Copy.captureSaved,
             onPressed: () async {
-              final bool ok = await widget.onSave(_controller.text);
+              final bool ok = await widget.onSave(_controller.text, _scope);
               if (!ok) {
-                setState(() => _error = 'write failed');
+                setState(() => _error = Copy.captureSaveFailed);
               } else if (context.mounted) {
                 Navigator.of(context).maybePop();
               }

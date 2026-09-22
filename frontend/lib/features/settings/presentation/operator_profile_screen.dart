@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
+import 'package:tapture/core/db/database_provider.dart';
 import 'package:tapture/core/db/tables/device_profile.dart';
 import 'package:tapture/core/device/device_identity.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -321,7 +322,15 @@ class _OperatorProfile extends AsyncNotifier<_OperatorProfileView> {
     });
   }
 
-  AppDatabase _database() => _db ??= AppDatabase.open();
+  AppDatabase _database() {
+    final AppDatabase? existing = _db;
+    if (existing != null) {
+      return existing;
+    }
+    final AppDatabase opened = ref.read(appDatabaseProvider);
+    _db = opened;
+    return opened;
+  }
 
   Future<String> _deviceId() async {
     final String? existing = _device;

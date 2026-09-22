@@ -193,8 +193,6 @@ void main() {
       }
     }
 
-    await expectOpens(label: Copy.projectAllProjects, path: AppRoutes.projects);
-    await expectOpens(label: Copy.projectNew, path: AppRoutes.projectCreate);
     await expectOpens(
       label: Copy.projectsDuplicate,
       path: AppRoutes.projectCreate,

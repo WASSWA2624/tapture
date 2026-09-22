@@ -25,6 +25,8 @@ void main() {
 
     expect(find.text(Copy.operatorProfileTitle), findsOneWidget);
     expect(find.text(Copy.navCapture), findsOneWidget);
+    expect(find.text(Copy.navTemplates), findsOneWidget);
+    expect(find.text(Copy.navQueue), findsOneWidget);
     expect(find.text(Copy.settingsAiTitle), findsOneWidget);
     expect(find.text(Copy.settingsLanguageTitle), findsOneWidget);
     expect(find.text(Copy.settingsAppearanceTitle), findsOneWidget);

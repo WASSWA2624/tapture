@@ -163,6 +163,15 @@ abstract final class Copy {
   /// Fallback type name when a photo has none.
   static const String photo = 'Photo';
 
+  /// Crop action on the photo viewer.
+  static const String photoCrop = 'Crop';
+
+  /// Clears a derived crop or typed copy.
+  static const String photoRevert = 'Revert';
+
+  /// Types words onto a derived copy of a photo.
+  static const String photoTypeOn = 'Type on this photo';
+
   /// Semantic name of a thumb: type, missing, caption and selection.
   static String photoThumbLabel({
     required String type,
@@ -814,6 +823,18 @@ abstract final class Copy {
   /// Primary action that opens the blank-template form.
   static const String templatesCreate = 'Create a blank template';
 
+  /// How a project chooses a template when capture starts.
+  static const String templateChoiceLabel = 'Template choice';
+
+  /// Use the only template, and ask when there are several.
+  static const String templateChoiceAuto = 'Auto';
+
+  /// Suggest a template and let the operator confirm.
+  static const String templateChoiceSuggest = 'Suggest';
+
+  /// Always ask which template to use.
+  static const String templateChoiceManual = 'Manual';
+
   /// Title of the blank-template form.
   static const String templatesCreateTitle = 'New template';
 
@@ -1090,6 +1111,32 @@ abstract final class Copy {
 
   /// REQUIRED badge on a field row.
   static const String fieldRequired = 'Required';
+
+  /// Field filled by a calculation.
+  static const String fieldCalculated = 'Calculated';
+
+  /// Field the detection profile can fill from a photo.
+  static const String fieldFromPhotos = 'From photos';
+
+  /// Field-list subtitle: type, then any of required, calculated, from photos.
+  static String fieldRowSubtitle({
+    required String typeLabel,
+    required bool requiredField,
+    required bool calculated,
+    required bool fromPhotos,
+  }) {
+    final List<String> parts = <String>[typeLabel];
+    if (requiredField) {
+      parts.add(fieldRequired);
+    }
+    if (calculated) {
+      parts.add(fieldCalculated);
+    }
+    if (fromPhotos) {
+      parts.add(fieldFromPhotos);
+    }
+    return parts.join(' · ');
+  }
 
   /// RECOMMENDED badge on a field row.
   static const String fieldRecommended = 'Recommended';
@@ -1919,6 +1966,15 @@ abstract final class Copy {
   /// Add photo to tray.
   static const String captureAddPhoto = 'Add photo';
 
+  /// Sheet title for adding a photo.
+  static const String captureAddSheetTitle = 'Add a photo';
+
+  /// Camera action on the add-photo sheet.
+  static const String captureTakePhoto = 'Take a photo';
+
+  /// Library action on the add-photo sheet.
+  static const String captureChoosePhoto = 'Choose from this device';
+
   /// Quality blur advisory.
   static const String captureQualityBlur = 'This photo looks blurry.';
 
@@ -2065,7 +2121,15 @@ abstract final class Copy {
   static const String settingsAboutTitle = 'About';
 
   /// About tile supporting line.
-  static const String settingsAboutSubtitle = 'Version, licences and the plan.';
+  static const String settingsAboutSubtitle = 'Version and licences.';
+
+  /// Templates row under Settings.
+  static const String settingsTemplatesSubtitle =
+      'Create, import and edit this project\'s templates.';
+
+  /// Unprocessed row under Settings.
+  static const String settingsQueueSubtitle =
+      'Records waiting to be processed.';
 
   /// Camera default row.
   static const String settingsCamera = 'Camera';
@@ -2076,6 +2140,9 @@ abstract final class Copy {
 
   /// Label for the photo camera default.
   static const String settingsCameraPhoto = 'Photo';
+
+  /// Document camera default.
+  static const String settingsCameraDocument = 'Document';
 
   /// Auto-filled dates row.
   static const String settingsAutoFillDates = 'Fill dates automatically';
@@ -2125,6 +2192,9 @@ abstract final class Copy {
 
   /// Naming pattern row.
   static const String settingsNamingPattern = 'File names';
+
+  /// Sheet title when editing the naming pattern.
+  static const String settingsNamingEdit = 'File name pattern';
 
   /// Effect of the naming pattern.
   static const String settingsNamingPatternEffect =
@@ -2284,20 +2354,6 @@ abstract final class Copy {
   /// Effect of the licences row.
   static const String settingsLicencesEffect =
       'Open-source licences used in this app.';
-
-  /// Plan link row.
-  static const String settingsPlan = 'The plan';
-
-  /// Specification link row.
-  static const String settingsSpecification = 'The specification';
-
-  /// Public plan URL shown on About.
-  static const String settingsPlanUrl =
-      'https://github.com/WASSWA2624/tapture/tree/main/dev-plan';
-
-  /// Public specification URL shown on About.
-  static const String settingsSpecificationUrl =
-      'https://github.com/WASSWA2624/tapture';
 
   /// Empty settings headline.
   static const String settingsEmptyHeadline = 'No settings yet';

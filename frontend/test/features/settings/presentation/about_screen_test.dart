@@ -10,15 +10,10 @@ import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/settings/presentation/about_screen.dart';
 
 void main() {
-  testWidgets('version, build, licences and the two links are shown', (
+  testWidgets('version, build and licences are shown', (
     WidgetTester tester,
   ) async {
-    final List<String> opened = <String>[];
-    await _pump(
-      tester,
-      load: () async => (version: '1.0.0', build: '1'),
-      openUrl: opened.add,
-    );
+    await _pump(tester, load: () async => (version: '1.0.0', build: '1'));
     await tester.pumpAndSettle();
 
     expect(find.text(Copy.settingsVersion), findsOneWidget);
@@ -26,23 +21,8 @@ void main() {
     expect(find.text(Copy.settingsBuild), findsOneWidget);
     expect(find.text('1'), findsOneWidget);
     expect(find.text(Copy.settingsLicences), findsOneWidget);
-    expect(find.text(Copy.settingsPlan), findsOneWidget);
-    expect(find.text(Copy.settingsSpecification), findsOneWidget);
-
-    await tester.tap(find.text(Copy.settingsPlan));
-    await tester.pumpAndSettle();
-    expect(opened, <String>[Copy.settingsPlanUrl]);
-
-    await tester.tap(find.text(Copy.settingsSpecification));
-    await tester.pumpAndSettle();
-    expect(opened, <String>[
-      Copy.settingsPlanUrl,
-      Copy.settingsSpecificationUrl,
-    ]);
-
-    await tester.tap(find.text(Copy.settingsLicences));
-    await tester.pumpAndSettle();
-    expect(find.byType(LicensePage), findsOneWidget);
+    expect(find.text('The plan'), findsNothing);
+    expect(find.text('The specification'), findsNothing);
   });
 
   testWidgets('loading renders through AsyncValueView', (

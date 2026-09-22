@@ -56,6 +56,21 @@ void main() {
     expect(settings.refineColumns, isFalse);
   });
 
+  test(
+    'a missing template choice stays null and an unknown value is unset',
+    () {
+      expect(ProjectSettings.decode('{}').templateChoice, isNull);
+      expect(
+        ProjectSettings.decode('{"templateChoice": "sideways"}').templateChoice,
+        isNull,
+      );
+      expect(
+        ProjectSettings.decode('{"templateChoice": "manual"}').templateChoice,
+        'manual',
+      );
+    },
+  );
+
   test('an unknown folder strategy is unset', () {
     expect(
       ProjectSettings.decode('{"folderStrategy": "../etc"}').folderStrategy,

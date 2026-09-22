@@ -8,6 +8,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_card.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
@@ -152,6 +153,17 @@ class _HomeBody extends ConsumerWidget {
             ),
           if (!shellOwns) const SizedBox(height: Space.x1),
           Text(view.context, style: AppText.caption),
+          const SizedBox(height: Space.x2),
+          AppListTile(
+            title: Copy.contextHierarchyTitle,
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.go(_context(view.project.id)),
+          ),
+          AppListTile(
+            title: Copy.navTemplates,
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.go(_templatesLocation),
+          ),
           const SizedBox(height: Space.x4),
           ..._countRows(context, counts),
         ],
@@ -222,16 +234,8 @@ List<AppOverflowAction> _projectHomeMenu(
   );
   return <AppOverflowAction>[
     AppOverflowAction(
-      label: Copy.projectAllProjects,
-      icon: Icons.folder_open_outlined,
-      onTap: () => context.go(_projectsRoot),
-    ),
-    AppOverflowAction(
-      label: Copy.projectNew,
-      onTap: () => context.go(_createLocation),
-    ),
-    AppOverflowAction(
       label: Copy.projectsDuplicate,
+      icon: Icons.copy_outlined,
       onTap: () => ProjectDuplicateAction.open(
         context,
         sourceId: project.id,
@@ -345,6 +349,14 @@ String _capture(String id) {
   return '$_projectsRoot/${Uri.encodeComponent(id)}/$_captureSegment';
 }
 
+/// Must match the project context route. This file cannot import `router.dart`.
+String _context(String id) {
+  return '$_projectsRoot/${Uri.encodeComponent(id)}/$_contextSegment';
+}
+
+/// Must match [AppRoutes.templates].
+const String _templatesLocation = '/more/templates';
+
 /// Must match [AppRoutes.projectEdit].
 String _edit(String id) {
   return '$_projectsRoot/${Uri.encodeComponent(id)}/$_editSegment';
@@ -388,11 +400,10 @@ const String _projectsRoot = '/projects';
 const String _recordsSegment = 'records';
 const String _queueSegment = 'queue';
 const String _exportsSegment = 'exports';
-const String _newSegment = 'new';
 const String _editSegment = 'edit';
 const String _settingsSegment = 'settings';
 const String _captureSegment = 'capture';
-const String _createLocation = '$_projectsRoot/$_newSegment';
+const String _contextSegment = 'context';
 const String _filterQuery = 'filter';
 const String _reviewFilter = 'needsReview';
 const String _processFilter = 'queued';

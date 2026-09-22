@@ -55,7 +55,10 @@ class ContextBar extends ConsumerWidget {
       final ContextLevel level = ordered[i];
       final String name = level.label.isEmpty ? level.fieldKey : level.label;
       final String value = shown[i];
-      if (i > 0) {
+      if (value.isEmpty) {
+        continue;
+      }
+      if (i > 0 && children.isNotEmpty) {
         children.add(const Icon(Icons.chevron_right, size: Space.x4));
       }
       children.add(
@@ -71,6 +74,9 @@ class ContextBar extends ConsumerWidget {
       );
     }
     for (final MapEntry<String, String> pin in state.pinned.entries) {
+      if (pin.value.isEmpty) {
+        continue;
+      }
       children.add(
         AppChip(
           label: '${pin.value} · ${Copy.contextPinMarker}',

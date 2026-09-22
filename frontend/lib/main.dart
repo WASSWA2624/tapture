@@ -9,6 +9,7 @@ import 'app/provider_observer.dart' hide ProviderObserver;
 import 'app/theme/settings_text_store.dart';
 import 'core/ai/stt_service.dart';
 import 'core/db/app_database.dart';
+import 'core/db/database_provider.dart';
 import 'core/device/device_identity.dart';
 import 'core/device/platform_facts.dart';
 import 'core/files/download_service.dart';
@@ -142,6 +143,7 @@ Future<void> _run() async {
           ids: ids,
         );
       }),
+      appDatabaseProvider.overrideWith((Ref _) => db),
     ]);
   }
   runApp(

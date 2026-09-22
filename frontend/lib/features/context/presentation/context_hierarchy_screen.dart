@@ -20,6 +20,7 @@ import 'package:tapture/features/templates/templates.dart'
 import '../context.dart' show contextRepositoryProvider;
 import '../domain/context_state.dart';
 import 'context_providers.dart';
+import 'pinned_fields_sheet.dart';
 
 /// Chooses and orders a project's context levels from template field keys.
 class ContextHierarchyScreen extends ConsumerStatefulWidget {
@@ -97,6 +98,12 @@ class _ContextHierarchyScreenState
       ),
       body: Column(
         children: <Widget>[
+          AppListTile(
+            title: Copy.contextPinnedTitle,
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () =>
+                showPinnedFieldsSheet(context: context, projectId: projectId),
+          ),
           Expanded(
             child: _levels.isEmpty
                 ? const AppEmptyState(

@@ -15,7 +15,7 @@ import 'package:tapture/features/settings/presentation/offline_switch.dart';
 import '../../support/factories.dart';
 
 void main() {
-  testWidgets('every segment is a link and navigates through AppRoutes', (
+  testWidgets('templates and unprocessed open from settings', (
     WidgetTester tester,
   ) async {
     final StreamController<NetworkState> radio = StreamController<NetworkState>(
@@ -24,119 +24,28 @@ void main() {
     addTearDown(radio.close);
     radio.add(NetworkState.online);
 
-    final ProviderContainer container = await _pump(
-      tester,
-      radio: radio,
-      projectLabel: 'Alpha',
-      contextLabel: 'Ward 1',
-      templateLabel: 'Asset',
-      unprocessed: 3,
-    );
-    container.read(openProjectIdProvider.notifier).open('p1');
+    final ProviderContainer container = await _pump(tester, radio: radio);
     await tester.pumpAndSettle();
 
     expect(find.byType(StatusLine), findsOneWidget);
-    expect(find.text(Copy.appName), findsOneWidget);
-    expect(
-      find.descendant(
-        of: find.byType(StatusLine),
-        matching: find.byIcon(Icons.more_vert),
-      ),
-      findsOneWidget,
-    );
-    expect(find.text('Alpha · Ward 1'), findsNothing);
-    expect(find.text(Copy.networkOnline), findsNothing);
+    expect(find.text(Copy.navProjects), findsWidgets);
+    expect(find.byType(AppBrandLockup), findsNothing);
+    expect(find.byKey(const ValueKey<String>('status-overflow')), findsNothing);
 
-    await _openOverflow(tester);
-    expect(find.text('Alpha · Ward 1'), findsOneWidget);
-    expect(find.text('Asset'), findsOneWidget);
-    expect(find.text(Copy.networkOnline), findsOneWidget);
-    expect(find.text(Copy.unprocessedCount(3)), findsOneWidget);
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey<String>('status-project')),
-        matching: find.byIcon(Icons.folder_outlined),
-      ),
-      findsOneWidget,
-    );
-    expect(find.byIcon(Icons.article_outlined), findsOneWidget);
-    expect(find.byIcon(Icons.wifi), findsOneWidget);
-    expect(find.byIcon(Icons.pending_outlined), findsOneWidget);
-
-    await tester.tap(find.byKey(const ValueKey<String>('status-project')));
+    container.read(routerProvider).go(AppRoutes.more);
     await tester.pumpAndSettle();
-    expect(
-      container.read(routerProvider).state.uri.path,
-      AppRoutes.project('p1'),
-    );
-    await _backToRoot(tester);
-    expect(container.read(routerProvider).state.uri.path, AppRoutes.projects);
-
-    await _openOverflow(tester);
-    await tester.tap(find.byKey(const ValueKey<String>('status-template')));
+    await tester.tap(find.text(Copy.navTemplates));
     await tester.pumpAndSettle();
     expect(container.read(routerProvider).state.uri.path, AppRoutes.templates);
-    await _backToRoot(tester);
-    expect(container.read(routerProvider).state.uri.path, AppRoutes.more);
 
-    await _openOverflow(tester);
-    await tester.tap(find.byKey(const ValueKey<String>('status-network')));
+    container.read(routerProvider).go(AppRoutes.more);
     await tester.pumpAndSettle();
-    expect(container.read(routerProvider).state.uri.path, AppRoutes.more);
-
-    await _openOverflow(tester);
-    await tester.tap(find.byKey(const ValueKey<String>('status-unprocessed')));
+    await tester.tap(find.text(Copy.navQueue));
     await tester.pumpAndSettle();
     expect(container.read(routerProvider).state.uri.path, AppRoutes.queue);
   });
 
-  testWidgets('network labels distinguish radio from a chosen override', (
-    WidgetTester tester,
-  ) async {
-    final StreamController<NetworkState> radio = StreamController<NetworkState>(
-      sync: true,
-    );
-    addTearDown(radio.close);
-    radio.add(NetworkState.online);
-
-    await _pump(tester, radio: radio);
-
-    await _openOverflow(tester);
-    expect(find.text(Copy.networkOnline), findsOneWidget);
-    await _closeOverflow(tester);
-
-    radio.add(NetworkState.metered);
-    await tester.pump();
-    await _openOverflow(tester);
-    expect(find.text(Copy.networkMetered), findsOneWidget);
-    expect(find.byIcon(Icons.signal_cellular_alt), findsOneWidget);
-    await _closeOverflow(tester);
-
-    radio.add(NetworkState.offline);
-    await tester.pump();
-    await _openOverflow(tester);
-    expect(find.text(Copy.networkOffline), findsOneWidget);
-    expect(find.byIcon(Icons.cloud_off), findsWidgets);
-  });
-
-  testWidgets('offline by choice is labelled differently from the radio', (
-    WidgetTester tester,
-  ) async {
-    final StreamController<NetworkState> radio = StreamController<NetworkState>(
-      sync: true,
-    );
-    addTearDown(radio.close);
-    radio.add(NetworkState.online);
-
-    await _pump(tester, radio: radio, byChoice: true);
-
-    await _openOverflow(tester);
-    expect(find.text(Copy.networkOfflineByChoice), findsOneWidget);
-    expect(find.byIcon(Icons.cloud_off), findsWidgets);
-    expect(find.text(Copy.networkOnline), findsNothing);
-  });
-
-  testWidgets('roots keep the wordmark and nested routes show one back row', (
+  testWidgets('roots name the screen and nested routes show one back row', (
     WidgetTester tester,
   ) async {
     final StreamController<NetworkState> radio = StreamController<NetworkState>(
@@ -152,12 +61,16 @@ void main() {
     container.read(openProjectIdProvider.notifier).open('p1');
     await tester.pumpAndSettle();
 
-    expect(find.byType(AppBrandLockup), findsOneWidget);
-    expect(find.byKey(const ValueKey<String>('shell-back')), findsNothing);
     expect(
-      find.byKey(const ValueKey<String>('status-overflow')),
+      find.descendant(
+        of: find.byType(StatusLine),
+        matching: find.text(Copy.navProjects),
+      ),
       findsOneWidget,
     );
+    expect(find.byType(AppBrandLockup), findsNothing);
+    expect(find.byKey(const ValueKey<String>('shell-back')), findsNothing);
+    expect(find.byKey(const ValueKey<String>('status-overflow')), findsNothing);
 
     container.read(routerProvider).go(AppRoutes.settingsStorage);
     await tester.pumpAndSettle();
@@ -176,7 +89,14 @@ void main() {
     await tester.tap(find.byKey(const ValueKey<String>('shell-back')));
     await tester.pumpAndSettle();
     expect(container.read(routerProvider).state.uri.path, AppRoutes.more);
-    expect(find.byType(AppBrandLockup), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(StatusLine),
+        matching: find.text(Copy.navMore),
+      ),
+      findsOneWidget,
+    );
+    expect(find.byType(AppBrandLockup), findsNothing);
 
     container.read(routerProvider).go(AppRoutes.recordsFiltered('needsReview'));
     await tester.pumpAndSettle();
@@ -191,7 +111,14 @@ void main() {
     await tester.tap(find.byKey(const ValueKey<String>('shell-back')));
     await tester.pumpAndSettle();
     expect(container.read(routerProvider).state.uri.path, AppRoutes.records);
-    expect(find.byType(AppBrandLockup), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(StatusLine),
+        matching: find.text(Copy.navRecords),
+      ),
+      findsOneWidget,
+    );
+    expect(find.byType(AppBrandLockup), findsNothing);
 
     container.read(routerProvider).go(AppRoutes.project('p1'));
     await tester.pumpAndSettle();
@@ -214,7 +141,7 @@ void main() {
     expect(
       find.descendant(
         of: find.byType(StatusLine),
-        matching: find.text(Copy.navCapture),
+        matching: find.text('Alpha'),
       ),
       findsOneWidget,
     );
@@ -293,21 +220,6 @@ Future<ProviderContainer> _pump(
   await tester.pump();
   await tester.pumpAndSettle();
   return ProviderScope.containerOf(tester.element(find.byType(TaptureApp)));
-}
-
-Future<void> _backToRoot(WidgetTester tester) async {
-  await tester.tap(find.byKey(const ValueKey<String>('shell-back')));
-  await tester.pumpAndSettle();
-}
-
-Future<void> _openOverflow(WidgetTester tester) async {
-  await tester.tap(find.byKey(const ValueKey<String>('status-overflow')));
-  await tester.pumpAndSettle();
-}
-
-Future<void> _closeOverflow(WidgetTester tester) async {
-  await tester.tapAt(const Offset(8, 8));
-  await tester.pumpAndSettle();
 }
 
 Override _connectivityOverride(StreamController<NetworkState> radio) {

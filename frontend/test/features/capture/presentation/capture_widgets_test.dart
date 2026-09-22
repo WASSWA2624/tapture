@@ -86,7 +86,6 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text(Copy.captureTitle), findsOneWidget);
     expect(find.text(Copy.captureSaveRaw), findsOneWidget);
     expect(find.text(Copy.captureSaveAndAnalyse), findsOneWidget);
   });
@@ -284,7 +283,7 @@ void main() {
         wrap(
           PhotoCropScreen(
             photo: draft('a'),
-            onCropped: (_) {},
+            onCropped: (PhotoDraft _, Uint8List? _) {},
             onRevert: (_) {},
           ),
         ),
@@ -306,7 +305,7 @@ void main() {
         wrap(
           PhotoCaptionSheet(
             initial: 'existing',
-            onSave: (String _) async => true,
+            onSave: (String _, CaptionScope _) async => true,
           ),
         ),
       );

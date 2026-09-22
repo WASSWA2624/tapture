@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:go_router/go_router.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/device/device_identity.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
@@ -14,7 +15,7 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 // The notifier is private so this file holds one public class (FE-STR-06).
 // ignore_for_file: library_private_types_in_public_api
 
-/// Version, build, licences, and links to the plan and the specification.
+/// Version, build and licences.
 class AboutScreen extends ConsumerWidget {
   /// Creates the About screen.
   const AboutScreen({super.key});
@@ -37,7 +38,6 @@ class AboutScreen extends ConsumerWidget {
           );
         },
         data: (_AboutView view) {
-          final _About notifier = ref.read(aboutProvider.notifier);
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -48,25 +48,7 @@ class AboutScreen extends ConsumerWidget {
                 title: Copy.settingsLicences,
                 subtitle: Copy.settingsLicencesEffect,
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  showLicensePage(
-                    context: context,
-                    applicationName: Copy.appName,
-                    applicationVersion: view.version,
-                  );
-                },
-              ),
-              AppListTile(
-                title: Copy.settingsPlan,
-                subtitle: Copy.settingsPlanUrl,
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => notifier.openUrl(Copy.settingsPlanUrl),
-              ),
-              AppListTile(
-                title: Copy.settingsSpecification,
-                subtitle: Copy.settingsSpecificationUrl,
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => notifier.openUrl(Copy.settingsSpecificationUrl),
+                onTap: () => context.go(_licencesRoute),
               ),
             ],
           );
@@ -144,6 +126,10 @@ class _About extends AsyncNotifier<_AboutView> {
     _openUrl?.call(url);
   }
 }
+
+/// Must match [AppRoutes.settingsLicences]. This file cannot import
+/// `router.dart`.
+const String _licencesRoute = '/more/about/licences';
 
 Object _asError(Object error) {
   if (error is Exception || error is Error) {

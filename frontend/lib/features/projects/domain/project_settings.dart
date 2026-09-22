@@ -18,6 +18,7 @@ final class ProjectSettings {
     this.confidenceHigh,
     this.confidenceMedium,
     this.refineColumns,
+    this.templateChoice,
   });
 
   /// Every switch unset, so [resolve] returns the app defaults.
@@ -52,6 +53,7 @@ final class ProjectSettings {
       confidenceHigh: _number(map[_confidenceHigh]),
       confidenceMedium: _number(map[_confidenceMedium]),
       refineColumns: _bool(map[_refineColumns]) ?? _bool(map[_refinedColumns]),
+      templateChoice: _readTemplateChoice(map[_templateChoice]),
     );
   }
 
@@ -79,6 +81,10 @@ final class ProjectSettings {
   /// Exports include refined columns. Null inherits the built-in default.
   final bool? refineColumns;
 
+  /// How capture picks a template: `auto`, `suggest`, `manual`, or null
+  /// for the same behaviour as `auto`.
+  final String? templateChoice;
+
   /// The validated object written onto the row. Unset keys are omitted so
   /// a later read can still fall back to the app store.
   Map<String, Object?> toJson() {
@@ -90,6 +96,7 @@ final class ProjectSettings {
       if (confidenceHigh != null) _confidenceHigh: confidenceHigh,
       if (confidenceMedium != null) _confidenceMedium: confidenceMedium,
       if (refineColumns != null) _refineColumns: refineColumns,
+      if (templateChoice != null) _templateChoice: templateChoice,
     };
   }
 
@@ -106,6 +113,7 @@ final class ProjectSettings {
     double? confidenceHigh,
     double? confidenceMedium,
     bool? refineColumns,
+    String? templateChoice,
     bool clearAiEnabled = false,
     bool clearDoNotSendImages = false,
     bool clearGpsEnabled = false,
@@ -113,6 +121,7 @@ final class ProjectSettings {
     bool clearConfidenceHigh = false,
     bool clearConfidenceMedium = false,
     bool clearRefineColumns = false,
+    bool clearTemplateChoice = false,
   }) {
     return ProjectSettings(
       aiEnabled: clearAiEnabled ? null : (aiEnabled ?? this.aiEnabled),
@@ -132,6 +141,9 @@ final class ProjectSettings {
       refineColumns: clearRefineColumns
           ? null
           : (refineColumns ?? this.refineColumns),
+      templateChoice: clearTemplateChoice
+          ? null
+          : (templateChoice ?? this.templateChoice),
     );
   }
 
@@ -170,6 +182,7 @@ final class ProjectSettings {
     confidenceHigh,
     confidenceMedium,
     refineColumns,
+    templateChoice,
   );
 
   @override
@@ -182,7 +195,8 @@ final class ProjectSettings {
             other.folderStrategy == folderStrategy &&
             other.confidenceHigh == confidenceHigh &&
             other.confidenceMedium == confidenceMedium &&
-            other.refineColumns == refineColumns);
+            other.refineColumns == refineColumns &&
+            other.templateChoice == templateChoice);
   }
 }
 
@@ -230,6 +244,9 @@ const String _confidenceHigh = 'confidenceHigh';
 const String _confidenceMedium = 'confidenceMedium';
 const String _refineColumns = 'refineColumns';
 const String _refinedColumns = 'refinedColumns';
+const String _templateChoice = 'templateChoice';
+
+const Set<String> _templateChoices = <String>{'auto', 'suggest', 'manual'};
 
 const Set<String> _folderStrategies = <String>{
   'byContext',
@@ -246,6 +263,13 @@ double? _number(Object? raw) {
   }
   if (raw is num) {
     return raw.toDouble();
+  }
+  return null;
+}
+
+String? _readTemplateChoice(Object? raw) {
+  if (raw is String && _templateChoices.contains(raw)) {
+    return raw;
   }
   return null;
 }

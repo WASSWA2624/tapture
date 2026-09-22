@@ -51,7 +51,9 @@ final class CaptionScopeSelector extends StatelessWidget {
                 ? Icons.radio_button_checked
                 : Icons.radio_button_off,
           ),
-          onTap: () => onChanged(CaptionScope.selected),
+          onTap: selectedCount == 0
+              ? null
+              : () => onChanged(CaptionScope.selected),
         ),
         ListTile(
           title: Text(Copy.captionScopeAll(allCount)),

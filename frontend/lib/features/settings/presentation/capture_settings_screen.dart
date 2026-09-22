@@ -5,21 +5,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/core/db/app_database.dart';
-import 'package:tapture/core/device/device_identity.dart';
 import 'package:tapture/core/files/photo_path_builder.dart';
-import 'package:tapture/core/ids/uuid_service.dart';
-import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
+import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/setting_key.dart';
 import '../domain/setting_keys.dart';
 import '../settings.dart' show SettingsStore;
+import 'offline_switch.dart';
 
 // The notifier is private so this file holds one public class (FE-STR-06).
 // ignore_for_file: library_private_types_in_public_api
@@ -52,7 +52,6 @@ class CaptureSettingsScreen extends ConsumerWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              const AppSectionHeader(title: Copy.navCapture),
               AppListTile(
                 title: Copy.settingsCamera,
                 subtitle: Copy.settingsCameraSubtitle(
@@ -60,31 +59,27 @@ class CaptureSettingsScreen extends ConsumerWidget {
                 ),
                 onTap: () {
                   unawaited(
-                    notifier.write(SettingKeys.cameraMode, view.cameraMode),
-                  );
-                },
-              ),
-              AppListTile(
-                title: Copy.settingsAutoFillDates,
-                subtitle: Copy.settingsAutoFillDatesEffect,
-                selected: view.autoFillDates,
-                onTap: () {
-                  unawaited(
                     notifier.write(
-                      SettingKeys.autoFillDates,
-                      !view.autoFillDates,
+                      SettingKeys.cameraMode,
+                      _nextCamera(view.cameraMode),
                     ),
                   );
                 },
               ),
-              AppListTile(
+              AppSwitchTile(
+                title: Copy.settingsAutoFillDates,
+                description: Copy.settingsAutoFillDatesEffect,
+                value: view.autoFillDates,
+                onChanged: (bool value) {
+                  unawaited(notifier.write(SettingKeys.autoFillDates, value));
+                },
+              ),
+              AppSwitchTile(
                 title: Copy.settingsGps,
-                subtitle: Copy.settingsGpsWhyOff,
-                selected: view.gpsEnabled,
-                onTap: () {
-                  unawaited(
-                    notifier.write(SettingKeys.gpsEnabled, !view.gpsEnabled),
-                  );
+                description: Copy.settingsGpsWhyOff,
+                value: view.gpsEnabled,
+                onChanged: (bool value) {
+                  unawaited(notifier.write(SettingKeys.gpsEnabled, value));
                 },
               ),
               AppListTile(
@@ -119,12 +114,7 @@ class CaptureSettingsScreen extends ConsumerWidget {
                 title: Copy.settingsNamingPattern,
                 subtitle: Copy.settingsNamingSubtitle(view.namingPattern),
                 onTap: () {
-                  unawaited(
-                    notifier.write(
-                      SettingKeys.namingPattern,
-                      view.namingPattern,
-                    ),
-                  );
+                  unawaited(_editNaming(context, notifier, view.namingPattern));
                 },
               ),
               const AppSectionHeader(title: Copy.contextHierarchyTitle),
@@ -247,7 +237,6 @@ class _CaptureSettings extends AsyncNotifier<_CaptureView> {
   final bool _missing;
   final Object? _failWith;
   final bool _pending;
-  SettingsStore? _opened;
 
   @override
   Future<_CaptureView> build() async {
@@ -288,16 +277,7 @@ class _CaptureSettings extends AsyncNotifier<_CaptureView> {
     if (injected != null) {
       return injected;
     }
-    final SettingsStore? opened = _opened;
-    if (opened != null) {
-      return opened;
-    }
-    const SystemClock clock = SystemClock();
-    return _opened = await SettingsStore.open(
-      db: AppDatabase.open(),
-      deviceId: await deviceId(clock: clock, ids: UuidV7Service(clock)),
-      clock: clock,
-    );
+    return ref.read(offlineStoreProvider);
   }
 
   _CaptureView _snapshot(SettingsStore store) {
@@ -325,9 +305,49 @@ Object _asError(Object error) {
 }
 
 String _cameraLabel(String mode) {
-  return mode == SettingKeys.cameraMode.defaultValue
-      ? Copy.settingsCameraPhoto
-      : mode;
+  return switch (mode) {
+    'document' => Copy.settingsCameraDocument,
+    _ => Copy.settingsCameraPhoto,
+  };
+}
+
+String _nextCamera(String mode) {
+  return mode == 'document' ? 'photo' : 'document';
+}
+
+Future<void> _editNaming(
+  BuildContext context,
+  _CaptureSettings notifier,
+  String current,
+) async {
+  final TextEditingController controller = TextEditingController(text: current);
+  await showAppSheet<void>(
+    context,
+    title: Copy.settingsNamingEdit,
+    builder: (BuildContext sheetContext) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          AppTextField(
+            label: Copy.settingsNamingPattern,
+            controller: controller,
+            dictation: false,
+          ),
+          AppButton(
+            label: Copy.save,
+            onPressed: () {
+              unawaited(
+                notifier.write(SettingKeys.namingPattern, controller.text),
+              );
+              Navigator.of(sheetContext).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+  controller.dispose();
 }
 
 String _qualityLabel(int quality) {

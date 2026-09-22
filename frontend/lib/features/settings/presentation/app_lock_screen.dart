@@ -231,11 +231,13 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
           ),
         ],
         const SizedBox(height: Space.x6),
-        Text(
-          view.enabled ? Copy.appLockSetEffect : Copy.appLockOff,
-          style: AppText.body.copyWith(color: context.colors.onSurface),
-        ),
-        const SizedBox(height: Space.x3),
+        if (view.enabled) ...<Widget>[
+          Text(
+            Copy.appLockSetEffect,
+            style: AppText.body.copyWith(color: context.colors.onSurface),
+          ),
+          const SizedBox(height: Space.x3),
+        ],
         Text(
           Copy.appLockRecovery,
           style: AppText.body.copyWith(color: context.colors.onSurface),

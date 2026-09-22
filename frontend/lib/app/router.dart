@@ -328,6 +328,9 @@ abstract final class AppRoutes {
 
   /// About under Settings.
   static const String settingsAbout = '$more/about';
+
+  /// Open-source licences under About.
+  static const String settingsLicences = '$settingsAbout/licences';
 }
 
 /// The process-wide router. Kept alive: the shell watches it on every frame
@@ -633,6 +636,14 @@ List<RouteBase> get _routes {
                   builder: (BuildContext _, GoRouterState _) {
                     return const AboutScreen();
                   },
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'licences',
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const LicencesScreen();
+                      },
+                    ),
+                  ],
                 ),
                 GoRoute(
                   path: 'templates',

@@ -119,6 +119,8 @@ const String _appearanceRoute = '/more/appearance';
 const String _storageRoute = '/more/storage';
 const String _securityRoute = '/more/security';
 const String _aboutRoute = '/more/about';
+const String _templatesRoute = '/more/templates';
+const String _queueRoute = '/more/queue';
 
 const List<_Section> _defaultSections = <_Section>[
   (
@@ -130,6 +132,16 @@ const List<_Section> _defaultSections = <_Section>[
     title: Copy.navCapture,
     subtitle: Copy.settingsCaptureSubtitle,
     route: _captureRoute,
+  ),
+  (
+    title: Copy.navTemplates,
+    subtitle: Copy.settingsTemplatesSubtitle,
+    route: _templatesRoute,
+  ),
+  (
+    title: Copy.navQueue,
+    subtitle: Copy.settingsQueueSubtitle,
+    route: _queueRoute,
   ),
   (title: Copy.settingsAiTitle, subtitle: Copy.settingsAiSubtitle, route: null),
   (

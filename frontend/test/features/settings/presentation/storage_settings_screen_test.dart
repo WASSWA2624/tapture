@@ -96,7 +96,8 @@ void main() {
       find.textContaining(Copy.settingsCacheSize(Copy.fileSize(0))),
       findsNothing,
     );
-    expect(find.text('alpha'), findsOneWidget);
+    expect(find.text('alpha'), findsNothing);
+    expect(find.text(Copy.settingsProjectsHeader), findsNothing);
   });
 
   testWidgets('an unwritable root still shows retention', (
@@ -165,8 +166,8 @@ void main() {
       await tester.pump();
       await tester.pump();
 
-      expect(find.text('alpha'), findsOneWidget);
-      expect(find.textContaining(Copy.fileSize(100)), findsWidgets);
+      expect(find.text('alpha'), findsNothing);
+      expect(find.textContaining(Copy.fileSize(100)), findsNothing);
       expect(find.textContaining(Copy.fileSize(40)), findsOneWidget);
       expect(original.existsSync(), isTrue);
       expect(cached.existsSync(), isTrue);

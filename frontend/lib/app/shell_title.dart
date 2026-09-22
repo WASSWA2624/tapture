@@ -7,8 +7,8 @@ import 'router.dart';
 
 /// Route titles for the shell header and for feedback's screen name.
 ///
-/// A branch root returns null from [header] so the status line keeps the
-/// wordmark. Every other route names the screen (FE-CONS-02).
+/// Every route names the screen, including the four branch roots. The status
+/// line draws a back control only when [isRoot] is false (FE-CONS-02).
 abstract final class ShellTitle {
   /// Capture branch. Matches the private path on the router.
   static const String capture = '/capture';
@@ -27,11 +27,8 @@ abstract final class ShellTitle {
     return !uri.queryParameters.containsKey(AppRoutes.filterQuery);
   }
 
-  /// Header text, or null when [uri] is a branch root.
+  /// Header text for [uri], including branch roots.
   static String? header(WidgetRef ref, Uri uri) {
-    if (isRoot(uri)) {
-      return null;
-    }
     return screen(ref, uri);
   }
 
@@ -67,7 +64,7 @@ abstract final class ShellTitle {
       return Copy.operatorProfileTitle;
     }
     if (path == AppRoutes.settingsCapture) {
-      return Copy.settingsCamera;
+      return Copy.navCapture;
     }
     if (path == AppRoutes.settingsAppearance) {
       return Copy.settingsAppearanceTitle;
@@ -81,7 +78,10 @@ abstract final class ShellTitle {
     if (path == AppRoutes.settingsAbout) {
       return Copy.settingsAboutTitle;
     }
-    if (path == capture || path.endsWith('/capture')) {
+    if (path == AppRoutes.settingsLicences) {
+      return Copy.settingsLicences;
+    }
+    if (path == capture) {
       return Copy.navCapture;
     }
     if (path.startsWith('${AppRoutes.projects}/')) {

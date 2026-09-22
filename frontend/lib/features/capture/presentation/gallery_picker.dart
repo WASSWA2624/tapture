@@ -11,11 +11,17 @@ import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 /// Multi-select gallery import into the capture session.
 final class GalleryPicker extends StatelessWidget {
   /// Creates a picker.
+  /// Library selection cap shared with the capture add sheet.
+  static const int defaultLimit = 20;
+
+  /// Long-edge scale shared with the capture add sheet.
+  static const int defaultLongEdge = 2048;
+
   const GalleryPicker({
     required this.picker,
     required this.onImported,
-    this.limit = 20,
-    this.longEdge = 2048,
+    this.limit = defaultLimit,
+    this.longEdge = defaultLongEdge,
     this.maxBytes = 25 * 1024 * 1024,
     super.key,
   });

@@ -159,6 +159,20 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
             errorText: view.mediumError,
             dictation: false,
           ),
+          AppChoiceField<String?>(
+            label: Copy.templateChoiceLabel,
+            value: view.draft.templateChoice,
+            options: const <Choice<String?>>[
+              Choice<String?>(null, Copy.templateChoiceAuto),
+              Choice<String?>('suggest', Copy.templateChoiceSuggest),
+              Choice<String?>('manual', Copy.templateChoiceManual),
+            ],
+            onChanged: (String? value) {
+              ref
+                  .read(_projectSettingsProvider.notifier)
+                  .setTemplateChoice(value);
+            },
+          ),
           AppChoiceField<bool?>(
             label:
                 '${Copy.projectRefineColumns} · ${Copy.projectAppDefault(_onOff(app.refineColumns))}',
@@ -278,6 +292,16 @@ class _ProjectSettings extends Notifier<_ProjectSettingsView> {
       state.draft.copyWith(
         folderStrategy: value,
         clearFolderStrategy: value == null,
+      ),
+    );
+  }
+
+  /// Sets or clears how capture chooses a template.
+  void setTemplateChoice(String? value) {
+    _replace(
+      state.draft.copyWith(
+        templateChoice: value,
+        clearTemplateChoice: value == null,
       ),
     );
   }

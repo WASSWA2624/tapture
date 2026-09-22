@@ -198,9 +198,7 @@ void main() {
     final List<ContextData> defs = await (db.select(
       db.context,
     )..where(($ContextTable tbl) => tbl.projectId.equals(created.id))).get();
-    expect(defs, hasLength(1));
-    expect(defs.single.fieldKey, 'site');
-    expect(defs.single.label, 'Site');
+    expect(defs, isEmpty);
     final Directory tree = _okDir(
       await folders.resolve(_driftProject(created)),
     );

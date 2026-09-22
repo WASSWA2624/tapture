@@ -154,7 +154,12 @@ class _FieldRow extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return AppListTile(
       title: field.label,
-      subtitle: Copy.fieldTypeLabel(field.type.name),
+      subtitle: Copy.fieldRowSubtitle(
+        typeLabel: Copy.fieldTypeLabel(field.type.name),
+        requiredField: field.requiredness == Requiredness.required,
+        calculated: field.type == FieldType.computed,
+        fromPhotos: _mentioned(template.detection, field.fieldKey),
+      ),
       status: _pill(field.requiredness),
       onTap: () => _openEdit(context, template.id, field.fieldKey),
       trailing: Row(
@@ -423,6 +428,21 @@ String _aliasesLocation(String id) {
 
 String _checklistLocation(String id) {
   return '$_templatesRoot/${Uri.encodeComponent(id)}/$_checklistSegment';
+}
+
+bool _mentioned(Map<String, Object?> detection, String fieldKey) {
+  if (detection.containsKey(fieldKey)) {
+    return true;
+  }
+  for (final Object? value in detection.values) {
+    if (value == fieldKey) {
+      return true;
+    }
+    if (value is List<Object?> && value.contains(fieldKey)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 String _detectionLocation(String id) {

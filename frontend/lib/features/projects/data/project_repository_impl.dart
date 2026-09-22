@@ -153,7 +153,6 @@ final class ProjectRepositoryImpl implements ProjectRepository {
           );
         case Success<Project>(:final Project value):
           if (source == null) {
-            await _insertDefaultContext(value.id);
           } else {
             await _copyStructure(from: source.id, to: value.id);
           }
@@ -562,23 +561,6 @@ final class ProjectRepositoryImpl implements ProjectRepository {
     return (_db.select(_db.projects)
           ..where((sqlite.$ProjectsTable tbl) => tbl.id.equals(id)))
         .getSingleOrNull();
-  }
-
-  Future<void> _insertDefaultContext(String projectId) async {
-    final DateTime now = _clock.nowUtc();
-    await _db
-        .into(_db.context)
-        .insert(
-          sqlite.ContextCompanion.insert(
-            projectId: projectId,
-            level: 1,
-            fieldKey: 'site',
-            label: 'Site',
-            createdAt: now,
-            updatedAt: now,
-            updatedByDevice: _deviceId,
-          ),
-        );
   }
 
   Future<void> _copyStructure({
