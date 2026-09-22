@@ -690,7 +690,118 @@ abstract final class Copy {
   /// Pinned-template destination the status line opens.
   static const String navTemplates = 'Templates';
 
-  /// Headline when the open project has no templates.
+  /// Project datasets destination.
+  static const String navDatasets = 'Datasets';
+
+  /// Headline when a project has no reference datasets.
+  static const String datasetsEmptyHeadline = 'No datasets yet';
+
+  /// Body when the dataset list is empty.
+  static const String datasetsEmptyMessage =
+      'Import a CSV, spreadsheet or JSON table to prefill capture fields.';
+
+  /// Empty-state / primary action that starts an import.
+  static const String datasetsImport = 'Import dataset';
+
+  /// Title of the key-column confirmation screen.
+  static const String datasetsKeyTitle = 'Choose the key column';
+
+  /// Explains the key-column choice.
+  static const String datasetsKeyMessage =
+      'The key uniquely identifies each row for lookup.';
+
+  /// Confirms saving despite duplicate keys.
+  static const String datasetsAllowDuplicates = 'Save with duplicates';
+
+  /// Saves the import after a unique key is chosen.
+  static const String datasetsSaveImport = 'Save dataset';
+
+  /// Duplicate-key warning with count.
+  static String datasetsDuplicateCount(int n) {
+    return Intl.plural(
+      n,
+      one: '1 duplicate key value',
+      other: '$n duplicate key values',
+    );
+  }
+
+  /// Sample colliding values.
+  static String datasetsCollidingValues(List<String> values) {
+    return 'Examples: ${values.join(', ')}';
+  }
+
+  /// List subtitle: rows · source · date.
+  static String datasetListSubtitle({
+    required int rows,
+    required String source,
+    required String importedAt,
+  }) {
+    return '${recordsCount(rows)} · $source · $importedAt';
+  }
+
+  /// Dataset source label.
+  static String datasetSourceLabel(String source) {
+    return switch (source) {
+      'csv' => 'CSV',
+      'xlsx' => 'Spreadsheet',
+      'json' => 'JSON',
+      'device' => 'On device',
+      _ => source,
+    };
+  }
+
+  /// Browser search hint.
+  static const String datasetsSearchHint = 'Search rows';
+
+  /// Choose visible columns on a narrow screen.
+  static const String datasetsColumns = 'Columns';
+
+  /// Row edit title.
+  static const String datasetsEditRow = 'Edit row';
+
+  /// Save row edits.
+  static const String datasetsSaveRow = 'Save row';
+
+  /// Add-row sheet title.
+  static const String datasetsAddRow = 'Add row';
+
+  /// Lookup picker title.
+  static const String datasetsPickMatch = 'Choose a match';
+
+  /// Lookup binding screen title.
+  static const String datasetsLookupBinding = 'Lookup binding';
+
+  /// Save lookup binding.
+  static const String datasetsSaveBinding = 'Save binding';
+
+  /// No datasets available for binding.
+  static const String datasetsBindingEmptyHeadline =
+      'No datasets in this project';
+
+  /// Binding empty body.
+  static const String datasetsBindingEmptyMessage =
+      'Import a dataset before binding this field.';
+
+  /// Fuzzy matching switch.
+  static const String datasetsFuzzyEnabled = 'Allow fuzzy matches';
+
+  /// No-match behaviour label.
+  static const String datasetsOnNoMatch = 'When nothing matches';
+
+  /// Mark a row added on device in the browser.
+  static const String datasetsAddedOnDevice = 'Added on device';
+
+  /// Export dataset action.
+  static const String datasetsExport = 'Export';
+
+  /// Headline when the dataset browser has no rows.
+  static const String datasetsBrowserEmptyHeadline = 'No rows';
+
+  /// Body when the dataset browser has no rows.
+  static const String datasetsBrowserEmptyMessage =
+      'This dataset has no rows to show.';
+
+  /// Headline when the template list is empty.
   static const String templatesEmptyHeadline = 'No templates yet';
 
   /// Body when the template list is empty. The next action is the library.

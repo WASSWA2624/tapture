@@ -28,6 +28,7 @@ import 'features/projects/data/project_repository_impl.dart';
 import 'features/projects/presentation/current_project.dart';
 import 'features/projects/presentation/project_open_externally_action.dart'
     show projectOpenableFileLookupProvider;
+import 'features/reference/data/reference_repository_impl.dart';
 import 'features/settings/presentation/offline_switch.dart';
 import 'features/settings/settings.dart';
 import 'features/templates/data/template_repository_impl.dart';
@@ -118,6 +119,14 @@ Future<void> _run() async {
       }),
       templateRepositoryProvider.overrideWith((Ref _) {
         return TemplateRepositoryImpl(
+          db: db,
+          clock: clock,
+          deviceId: id,
+          ids: ids,
+        );
+      }),
+      referenceRepositoryProvider.overrideWith((Ref _) {
+        return ReferenceRepositoryImpl(
           db: db,
           clock: clock,
           deviceId: id,

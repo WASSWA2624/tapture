@@ -1,8 +1,8 @@
 # Tapture — development tracker
 
-**42 of 60 tasks complete (70.0%)** · last updated 2026-09-22
+**43 of 60 tasks complete (71.7%)** · last updated 2026-09-22
 
-`█████████████████████████░░░░░░░░░░░`
+`██████████████████████████░░░░░░░░░░░░`
 
 On 2026-09-22 completed phases 01–09 became tasks 001–009, remaining phases became 010–025, and leftover
 field-feedback extras became 026–060. Old numbers are in [RETIRED.md](dev-plan/RETIRED.md).
@@ -20,7 +20,7 @@ field-feedback extras became 026–060. Old numbers are in [RETIRED.md](dev-plan
 | 07 — Account and settings | 1 | 1 | `██████████████` 100% |
 | 08 — Projects | 1 | 1 | `██████████████` 100% |
 | 09 — Templates | 1 | 1 | `██████████████` 100% |
-| 10 — Reference data | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
+| 10 — Reference data | 1 | 1 | `██████████████` 100% |
 | 11 — Context | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 12 — Capture | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 13 — Processing | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
@@ -36,7 +36,7 @@ field-feedback extras became 026–060. Old numbers are in [RETIRED.md](dev-plan
 | 23 — Hardening | 33 | 36 | `█████████████░` 92% |
 | 24 — The minimal backend | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **42** | **60** | `█████████████████████████░░░░░░░░░░░` 70.0% |
+| **Total** | **43** | **60** | `██████████████████████████░░░░░░░░░░░░` 71.7% |
 
 ## Completed
 
@@ -51,6 +51,7 @@ field-feedback extras became 026–060. Old numbers are in [RETIRED.md](dev-plan
 | 007 — Account and settings | 2026-09-17 | Operator profile, settings store, settings shell, app lock, offline switch. |
 | 008 — Projects | 2026-09-22 | Model, list, create, home, details, archive, plus pinning, dictation, list actions and home-card work. |
 | 009 — Templates | 2026-09-17 | Model, registry, shipped library, editors, requiredness, versioning, JSON and spreadsheet import, detection profile. |
+| 010 — Reference data | 2026-09-22 | Dataset/row models, CSV/XLSX/JSON import, key screen, browser, row edit/add, lookup binding/match/prefill/unlink, export. |
 
 Task numbers in this table are the original atomic numbers from before the 2026-09-22 merge. [RETIRED.md](dev-plan/RETIRED.md) says which live task absorbed each one.
 
@@ -243,6 +244,8 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 097 | Contract takes feature `FieldDef`; core cannot import features. | Open — `FieldEditor.field` is `FieldEditorField`; `fieldEditorField` maps the template type |
 | 097 | Contract forbids extra public types; the registry and audit need a port. | Open — `FieldEditorBindings`, `fieldEditorBindingsProvider`, `ValueSource` and `FieldAudit` are the port and the audit row |
 | 097 | `FieldValue` is a records concept. | Open — lives in `core/widgets/fields/` until the records feature owns it, same pattern as `PhotoAsset` |
+| 010 | Contract omits `duplicatesAllowed`, `projectId` and `sourceFile` on `ReferenceDataset`. | Open — extras so import confirmation and re-import matching work; packed into `sourceFile` rather than a schema bump |
+| 010 | Files list omits `lookup_binding.dart` and `reference_row.dart`. | Open — both are required by the Contract; named beside the other domain types |
 
 ## Checklist
 
@@ -302,9 +305,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 10 — Reference data
 
-*0 of 1 complete.*
+*1 of 1 complete.*
 
-- [ ] [010 — Reference data: datasets, lookups and prefill](dev-plan/10-reference-data/010-reference-data.md)
+- [x] [010 — Reference data: datasets, lookups and prefill](dev-plan/10-reference-data/010-reference-data.md)
 
 ### 11 — Context
 

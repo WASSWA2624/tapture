@@ -23,6 +23,11 @@ import 'package:tapture/features/projects/presentation/project_edit_screen.dart'
 import 'package:tapture/features/projects/presentation/project_home_screen.dart';
 import 'package:tapture/features/projects/presentation/project_list_screen.dart';
 import 'package:tapture/features/projects/presentation/project_settings_screen.dart';
+import 'package:tapture/features/reference/data/dataset_csv_import.dart';
+import 'package:tapture/features/reference/presentation/dataset_browser_screen.dart';
+import 'package:tapture/features/reference/presentation/dataset_key_screen.dart';
+import 'package:tapture/features/reference/presentation/dataset_list_screen.dart';
+import 'package:tapture/features/reference/presentation/dataset_row_edit_screen.dart';
 import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
 import 'package:tapture/features/settings/presentation/appearance_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/capture_settings_screen.dart';
@@ -34,6 +39,7 @@ import 'package:tapture/features/templates/presentation/detection_profile_screen
 import 'package:tapture/features/templates/presentation/field_add_sheet.dart';
 import 'package:tapture/features/templates/presentation/field_list_screen.dart';
 import 'package:tapture/features/templates/presentation/identity_fields_screen.dart';
+import 'package:tapture/features/templates/presentation/lookup_binding_screen.dart';
 import 'package:tapture/features/templates/presentation/output_mapping_screen.dart';
 import 'package:tapture/features/templates/presentation/required_columns_screen.dart';
 import 'package:tapture/features/templates/presentation/row_aliases_screen.dart';
@@ -127,6 +133,30 @@ abstract final class AppRoutes {
 
   /// Field list for [id]. Task 094 owns the screen.
   static String template(String id) => '$templates/${Uri.encodeComponent(id)}';
+
+  /// Lookup binding for [fieldKey] on [id].
+  static String templateLookup(String id, String fieldKey) =>
+      '${templateField(id, fieldKey)}/lookup';
+
+  /// Datasets for [projectId].
+  static String projectDatasets(String projectId) =>
+      '${project(projectId)}/datasets';
+
+  /// Dataset import for [projectId].
+  static String projectDatasetImport(String projectId) =>
+      '${projectDatasets(projectId)}/import';
+
+  /// Dataset browser for [datasetId] in [projectId].
+  static String projectDataset(String projectId, String datasetId) =>
+      '${projectDatasets(projectId)}/${Uri.encodeComponent(datasetId)}';
+
+  /// Row editor for [rowId] in [datasetId] / [projectId].
+  static String projectDatasetRow(
+    String projectId,
+    String datasetId,
+    String rowId,
+  ) =>
+      '${projectDataset(projectId, datasetId)}/rows/${Uri.encodeComponent(rowId)}';
 
   /// JSON export for [id]. Task 100 owns the screen.
   static String templateExport(String id) => '${template(id)}/export';
@@ -442,6 +472,49 @@ List<RouteBase> get _routes {
                         return const _RoutePage(name: 'exports');
                       },
                     ),
+                    GoRoute(
+                      path: 'datasets',
+                      metadata: _projectScoped,
+                      builder: (BuildContext context, GoRouterState state) {
+                        return DatasetListScreen(
+                          projectId: state.pathParameters['projectId'],
+                        );
+                      },
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: 'import',
+                          metadata: _projectScoped,
+                          builder: (BuildContext context, GoRouterState state) {
+                            final Object? extra = state.extra;
+                            return DatasetKeyScreen(
+                              draft: extra is DatasetImportDraft ? extra : null,
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: ':datasetId',
+                          metadata: _projectScoped,
+                          builder: (BuildContext context, GoRouterState state) {
+                            return DatasetBrowserScreen(
+                              datasetId: state.pathParameters['datasetId']!,
+                              projectId: state.pathParameters['projectId'],
+                            );
+                          },
+                          routes: <RouteBase>[
+                            GoRoute(
+                              path: 'rows/:rowId',
+                              metadata: _projectScoped,
+                              builder:
+                                  (BuildContext context, GoRouterState state) {
+                                    return DatasetRowEditScreen(
+                                      rowId: state.pathParameters['rowId']!,
+                                    );
+                                  },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ],
@@ -647,6 +720,18 @@ List<RouteBase> get _routes {
                               fieldKey: state.pathParameters['fieldKey'],
                             );
                           },
+                          routes: <RouteBase>[
+                            GoRoute(
+                              path: 'lookup',
+                              builder: (BuildContext _, GoRouterState state) {
+                                return LookupBindingScreen(
+                                  templateId:
+                                      state.pathParameters['templateId']!,
+                                  fieldKey: state.pathParameters['fieldKey']!,
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -799,6 +884,7 @@ String _titleFor(String name) {
     'records' || 'record' => Copy.navRecords,
     'more' => Copy.navMore,
     'templates' => Copy.navTemplates,
+    'datasets' => Copy.navDatasets,
     'template-library' => Copy.templatesPickLibrary,
     'template-fields' => Copy.templateFieldsTitle,
     'template-export' => Copy.templatesExport,
@@ -821,6 +907,7 @@ IconData _iconFor(String name) {
     'records' || 'record' => Icons.list_alt_outlined,
     'more' => Icons.settings_outlined,
     'templates' => Icons.article_outlined,
+    'datasets' => Icons.table_chart_outlined,
     'template-library' => Icons.article_outlined,
     'template-fields' => Icons.view_list_outlined,
     'template-export' => Icons.ios_share_outlined,
