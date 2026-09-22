@@ -2,7 +2,6 @@
 
 Imported tables that prefill records and remove repeat typing.
 
-Task 105 (1). One prompt for the whole phase; it absorbed the eight that held 105–112, and the numbers it gave up
-are listed in [RETIRED.md](../RETIRED.md).
+Task 010 (1). One prompt for the whole phase; old numbers are in [RETIRED.md](../RETIRED.md).
 
-- [ ] [105 — Reference data: datasets, lookups and prefill](105-reference-data.md)
+- [ ] [010 — Reference data: datasets, lookups and prefill](010-reference-data.md)

@@ -1,24 +1,14 @@
 # 06 — Application shell
 
-Navigation, the always-visible status line, and the frame every feature plugs into.
+Navigation, routing and the always-visible status line.
 
-Tasks 072–334 (11). Each file is a standalone implementation prompt.
+Task 006 (1). One prompt for the completed phase; the atomics it absorbed are listed in [RETIRED.md](../RETIRED.md).
 
-- [x] [072 — Router, route table and guards](072-router-setup.md)
-- [x] [073 — Adaptive navigation shell](073-nav-shell.md)
-- [x] [074 — First-run flow](074-first-run.md)
-- [x] [075 — Global status line and overflow menu](075-status-line.md)
-- [x] [076 — Global error and crash recovery screen](076-global-error-page.md)
-- [x] [317 — Fix navigation icons and the Capture tab state](317-fix-navigation-icons-and-capture-state.md)
-- [x] [324 — Fix the project home count navigation](324-fix-count-card-navigation.md)
-- [x] [325 — Show the project list in the expanded list pane](325-show-projects-in-list-pane.md)
-- [x] [328 — Show the project count on the Projects destination](328-show-project-count-on-destination.md)
-- [x] [333 — Shell back and screen title](333-shell-back-and-title.md)
-- [x] [334 — Resolve projects shell feedback](334-resolve-projects-shell-feedback.md)
+- [x] [006 — Application shell: navigation, the status line and the frame every feature plugs into](006-application-shell.md)
 
 ## As built
 
-Reproduce 072–076 in order against the design-system catalogue (phase 03) and foundation services (phase 02). Chrome is a messaging-client shell: compact header uses the light primary fill (`#075E54`) with `onPrimary` ink; dark uses `surfaceVariant`; medium/expanded keep a surface rail (dark-rail treatment on light desktop). Destination icons are folder / camera / list / settings. Capture stays visually dominant by size.
+The numbers below are the original atomics; they now live in task 006. Reproduce 072–076 in order against the design-system catalogue (phase 03) and foundation services (phase 02). Chrome is a messaging-client shell: compact header uses the light primary fill (`#075E54`) with `onPrimary` ink; dark uses `surfaceVariant`; medium/expanded keep a surface rail (dark-rail treatment on light desktop). Destination icons are folder / camera / list / settings. Capture stays visually dominant by size.
 
 The **app title bar is `StatusLine`**, not a page `AppBar`. Shell routes set `AppPage.showAppBar: false`. Visible title-bar controls are icon-only (wordmark, optional `AppIconButton`s). Labelled commands sit in `AppOverflowMenu` (vertical three-dots, extreme right). `AppPage.overflow` appends the same control on screens that still show an app bar (gallery, first-run, error page).
 

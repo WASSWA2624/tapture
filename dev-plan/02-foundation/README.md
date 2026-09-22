@@ -2,23 +2,13 @@
 
 The empty app that boots, logs, fails safely, and the small services every later feature injects.
 
-Tasks 019–029 (11). Each file is a standalone implementation prompt.
+Task 002 (1). One prompt for the completed phase; the atomics it absorbed are listed in [RETIRED.md](../RETIRED.md).
 
-- [x] [019 — Application bootstrap, flavours and lifecycle](019-app-bootstrap.md)
-- [x] [020 — Shared constants](020-app-constants.md)
-- [x] [021 — Result type, failure taxonomy and error boundary](021-result-and-failures.md)
-- [x] [022 — Logger, diagnostics export and provider observer](022-logger-service.md)
-- [x] [023 — Clock, identifiers and device identity](023-clock-service.md)
-- [x] [024 — Hashing service and isolate runner](024-hashing-service.md)
-- [x] [025 — Connectivity service](025-connectivity-service.md)
-- [x] [026 — Runtime permissions service](026-permissions-service.md)
-- [x] [027 — Secure storage service](027-secure-storage-service.md)
-- [x] [028 — Serialisation conventions](028-json-codec-setup.md)
-- [x] [029 — AI service interface](029-ai-service-interface.md)
+- [x] [002 — Foundation services](002-foundation-services.md)
 
 ## As built
 
-Implement 019–029 in order. After 019 the app is a guarded `ProviderScope` + `MaterialApp.router`. Later phases fill the router and theme; do not invent a second root widget.
+The numbers below are the original atomics; they now live in task 002. Implement 019–029 in order. After 019 the app is a guarded `ProviderScope` + `MaterialApp.router`. Later phases fill the router and theme; do not invent a second root widget.
 
 | Task | Public surface to reproduce |
 | :--- | :--- |

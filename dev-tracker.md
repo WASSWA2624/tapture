@@ -1,25 +1,25 @@
 # Tapture — development tracker
 
-**156 of 174 tasks complete (89.7%)** · last updated 2026-09-22
+**42 of 60 tasks complete (70.0%)** · last updated 2026-09-22
 
-`████████████████████████████████████░░░░`
+`█████████████████████████░░░░░░░░░░░`
 
-On 2026-09-22 the 177 unstarted tasks numbered 105–281 became sixteen phase tasks, one per remaining phase. The
-totals below count the plan as it now stands; [RETIRED.md](dev-plan/RETIRED.md) says which numbers were given up.
+On 2026-09-22 completed phases 01–09 became tasks 001–009, remaining phases became 010–025, and leftover
+field-feedback extras became 026–060. Old numbers are in [RETIRED.md](dev-plan/RETIRED.md).
 
 ## Phase progress
 
 | Phase | Done | Total | Progress |
 | :--- | ---: | ---: | :--- |
-| 01 — Project setup and guardrails | 18 | 18 | `██████████████` 100% |
-| 02 — Foundation services | 11 | 11 | `██████████████` 100% |
-| 03 — Design system | 22 | 22 | `██████████████` 100% |
-| 04 — Local database | 16 | 16 | `██████████████` 100% |
-| 05 — File storage | 10 | 10 | `██████████████` 100% |
-| 06 — Application shell | 11 | 11 | `██████████████` 100% |
-| 07 — Account and settings | 5 | 5 | `██████████████` 100% |
-| 08 — Projects | 13 | 13 | `██████████████` 100% |
-| 09 — Templates | 17 | 17 | `██████████████` 100% |
+| 01 — Project setup and guardrails | 1 | 1 | `██████████████` 100% |
+| 02 — Foundation services | 1 | 1 | `██████████████` 100% |
+| 03 — Design system | 1 | 1 | `██████████████` 100% |
+| 04 — Local database | 1 | 1 | `██████████████` 100% |
+| 05 — File storage | 1 | 1 | `██████████████` 100% |
+| 06 — Application shell | 1 | 1 | `██████████████` 100% |
+| 07 — Account and settings | 1 | 1 | `██████████████` 100% |
+| 08 — Projects | 1 | 1 | `██████████████` 100% |
+| 09 — Templates | 1 | 1 | `██████████████` 100% |
 | 10 — Reference data | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 11 — Context | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 12 — Capture | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
@@ -36,120 +36,28 @@ totals below count the plan as it now stands; [RETIRED.md](dev-plan/RETIRED.md) 
 | 23 — Hardening | 33 | 36 | `█████████████░` 92% |
 | 24 — The minimal backend | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **156** | **174** | `█████████████░` 89.7% |
+| **Total** | **42** | **60** | `█████████████████████████░░░░░░░░░░░` 70.0% |
 
 ## Completed
 
 | Task | Closed | What landed |
 | :--- | :--- | :--- |
-| 001 — Create the Flutter project | 2026-09-09 | App id `com.tapture.app`, label Tapture, demo code removed, `test/smoke_test.dart` green. |
-| 002 — Repository hygiene files | 2026-09-09 | `.gitignore` + `.editorconfig`, guarded by `tool/check_repo_hygiene.dart` and 9 tests. |
-| 003 — Strict analyzer configuration | 2026-09-09 | `strict-casts`/`-inference`/`-raw-types` on, all 171 enabled rules and diagnostics promoted to error, `public_member_api_docs` scoped to `lib/core/`; guarded by `tool/check_analyzer_config.dart`, 14 config tests and 29 analyzer fixtures. |
-| 004 — Create the folder skeleton | 2026-09-09 | 99 directories under `lib/` — `app/`, 28 shared subsystems, 17 features × 3 layers — each owning a barrel; canonical list in `tool/paths.dart`, guarded by `tool/check_structure.dart` and 15 tests. |
-| 005 — Dependency allowlist checker | 2026-09-09 | `tool/allowlist.yaml` approves 3 packages with pinned version, purpose and introducing task; `tool/check_dependencies.dart` reads additions and version drift as errors and removals as warnings, guarded by 12 tests. |
-| 006 — Plan integrity checker | 2026-09-09 | `tool/check_plan.dart` validates every task file — heading against filename, unique and contiguous numbers, unique slugs, required sections, a tickable Definition of done, and dependency links that resolve and point lower. A hole in the numbering passes only where `dev-plan/RETIRED.md` retires it, and a retired number no file may carry again; guarded by 23 tests. |
-| 010 — Layering enforcement test | 2026-09-09 | `test/architecture/import_graph.dart` builds the graph from every directive under `lib/` and reads it against all four clauses of FE-STR-04 plus FE-STR-08; a clean and a violating fixture under `test/architecture/fixtures/` prove both directions. Guarded by 20 tests. |
-| 011 — Naming and file-layout checker | 2026-09-09 | `tool/check_naming.dart` reads every hand-written file under `lib/` and reports a file name that is not snake_case, a first public type that is not the one the file is named for, a second public class sharing a file, a provider that is not lowerCamelCase ending in `Provider`, and a type built out of a banned word — matched a whole camel-case word at a time, so `ReferenceDataset` passes where `RecordData` does not, and read from declarations only, so Flutter's `ThemeData` is never flagged. Guarded by 42 tests. |
-| 012 — Canonical domain names | 2026-09-17 | `lib/core/naming/domain_names.dart` holds the twelve specification type names; `test/architecture/naming_test.dart` fails a declared synonym with the canonical replacement. Whole identifiers only, so `ReferenceDataset` passes and `RecordData` does not; uses of Flutter's `ThemeData` are ignored. Guarded by 9 tests. |
-| 013 — Design-token and responsive boundary tests | 2026-09-17 | `test/architecture/tokens_test.dart` fails a feature that invents `Color`, `Colors.*`, `EdgeInsets.all(n)`, `BorderRadius.circular(n)`, `Duration(` or `TextStyle(` and names the token to use instead; `app/theme/` and `core/widgets/` keep those literals. `test/architecture/responsive_test.dart` fails a feature that compares `MediaQuery` width or hardcodes a width at or above 600, naming `context.sizeClass` / `SizeClass.expanded`; only `core/widgets/responsive/` may measure the window. Guarded by 14 tests over allowed and forbidden fixtures. |
-| 014 — State and error-handling convention tests | 2026-09-17 | `test/architecture/state_test.dart` fails a widget that calls a repository, a provider declared outside the feature its name belongs to, `setState` outside `core/widgets/` and animation code, and a controller with no intent method. `test/architecture/errors_test.dart` fails a repository method that is not `Result`/`Future<Result>`, a `Failure` with no `message`, and a `throw` of a non-`Failure` under `domain/` or `data/`. Guarded by 18 tests over compliant and non-compliant fixtures. Did not add Riverpod — the task names only the two suites. |
-| 015 — Logging discipline and secret scan | 2026-09-17 | `tool/check_logging.dart` bans `print`/`debugPrint` outside `tool/` and `test/`, requires a level and a tag, and fails a log line that interpolates a key, secret, token, password, credential, caption, transcript or value. `tool/check_secrets.dart` scans `lib/`, `android/`, `ios/` and `assets/` against named patterns in `tool/secret_patterns.yaml` and never prints the match. Guarded by 37 tests. |
-| 016 — Test presence checker | 2026-09-17 | `tool/check_tests.dart` reports every `domain/`, `data/` and `core/widgets/` file, plus presentation screens, that owes a test and has none; barrels, generated files and integration-covered screens are exempt. `--strict` fails the run and names the missing `test/…_test.dart` path. `verify.dart` calls the strict run. Guarded by 13 tests. |
-| 017 — Accessibility test matchers | 2026-09-17 | `test/support/a11y_matchers.dart` provides `hasSemanticLabel`, `meetsTapTarget` (48dp) and `expectNoA11yIssues`, which runs the framework guidelines and asserts 200 percent text scale does not clip in either orientation. Failures name the widget and the measured value. Guarded by 7 tests. |
-| 018 — Network boundary and raw-data safety tests | 2026-09-17 | `test/architecture/network_test.dart` fails an HTTP import outside `core/ai/`, `core/cloud/` and `core/backend/`, and a widget or `domain/` file that names a network client. `test/architecture/data_safety_test.dart` fails a write to `valueRaw`/`textRaw`/`transcriptRaw` outside a repository create method, a hard row delete, and a `File.delete` outside the purge job. Guarded by 18 tests over allowed and forbidden fixtures. Did not add `lib/core/backend/` — the task names only the two suites. |
-| 019 — Application bootstrap, flavours and lifecycle | 2026-09-17 | Guarded `main()` installs `FlutterError`/`runZonedGuarded` handlers, `ProviderScope`, a `MaterialApp.router` placeholder and `LifecycleObserver` before the first frame. `Env` reads `FLAVOR` / `FLUTTER_APP_FLAVOR` (default prod) with a test override. Android `dev`/`prod` flavours get distinct application ids and labels. `flutter_riverpod` ^3.4.3 pinned on the allowlist so `ConsumerWidget` exists. Guarded by 3 new suites. |
-| 020 — Shared constants | 2026-09-17 | `AppConstants` holds page size 50, image long edge 1600, and every later-phase duration, ceiling, threshold and secure-storage key name, grouped by area as const records (`lists`, `images`, `secrets`, …). `test/core/app_constants_test.dart` asserts ranges and unique key names. |
-| 021 — Result type, failure taxonomy and error boundary | 2026-09-17 | Sealed `Failure` (seven variants, each with message and recovery action) and `Result<T>` (`map`/`flatMap`/`fold`/`getOrElse`/`capture`) in `core/errors/` with no Flutter import. `ErrorBoundary` replaces a throwing child with a retry panel. Variants live in `part` files so sealed and one-class-per-file both hold. Guarded by 8 tests. |
-| 022 — Logger, diagnostics export and provider observer | 2026-09-17 | `Logger` with levels, tags, a bounded redacting buffer and rotating-file persist (`persist: true`). `exportLog` writes a dated, device-named file. `AppProviderObserver` logs one error per provider failure and rebuilds above the threshold, installed only in the dev flavour. Guarded by 14 tests. |
-| 023 — Clock, identifiers and device identity | 2026-09-17 | `Clock` (`SystemClock` / `FixedClock`), `IdService` / `UuidV7Service` (time-ordered, sequence fake for tests), and `deviceId` / `deviceDescriptor`. `DateTime.now` is documented as legal only in `SystemClock`. Device id is minted once and read back from memory or a file. Guarded by 10 tests. |
-| 024 — Hashing service and isolate runner | 2026-09-17 | `sha256OfFile` streams 64KiB chunks on `runIsolate`; `sha256OfString` is the sync digest. `CancellationToken` kills the worker and returns `CancelledFailure`. `crypto` ^3.0.7 pinned on the allowlist. Guarded by 8 tests. |
-| 025 — Connectivity service | 2026-09-17 | `watch()` folds the radio and the manual override; override on is always `offline`. `metered` is distinct from `online`. Plugin reached only here; tests use `ConnectivityService.fake`. `connectivity_plus` ^7.3.1 pinned on the allowlist. Guarded by 3 tests. |
-| 026 — Runtime permissions service | 2026-09-17 | `request`/`status` wrap camera, microphone, location and storage. A denial is `PermissionFailure` with a recovery action; permanent denial opens settings instead of prompting again. Location is not requested while GPS is off. `permission_handler` ^12.0.3 pinned on the allowlist. Guarded by 13 tests. |
-| 027 — Secure storage service | 2026-09-17 | Typed `putSecret`/`readSecret`/`deleteAll` over a closed `SecretKey` enum mapped to `AppConstants.secrets`. Fake backing store survives a simulated restart; debug asserts keep values out of preferences and the database. `flutter_secure_storage` ^9.2.4 pinned on the allowlist. Guarded by 3 tests. |
-| 028 — Serialisation conventions | 2026-09-17 | `build.yaml` pins json_serializable to explicit `@JsonKey` wire names (`field_rename: none`). `UtcDateTimeConverter`, `JsonMapConverter` and `EnumWireConverter` round-trip UTC dates, maps (null → empty) and enums; an unknown wire name throws. `json_annotation` ^4.9.0, `json_serializable` ^6.9.0 and `build_runner` ^2.4.13 pinned on the allowlist. Guarded by 3 tests. |
-| 029 — AI service interface | 2026-09-17 | `AiService` with typed requests/results for `readText`, `extractFields`, `refineText` and `transcribe`, each returning `Result`. `AiService.unavailable()` is the disabled stand-in: `ProviderFailure` plus a recovery action on every method, no key on the interface. Quoted OCR, transcripts and labels live on the request as data. Guarded by 7 tests. |
-| 030 — Design tokens: colour, type, spacing and elevation | 2026-09-17 | Light, dark and outdoor palettes on `context.colors`, type ramp, 4-point space scale and tone-plus-outline elevation. Swatch, type-ramp and surface-level gallery pages with goldens. Contrast is asserted, not eyeballed. Guarded by token-set, contrast, elevation and golden tests. |
-| 031 — Material 3 themes and the theme mode controller | 2026-09-17 | `buildTheme` / `buildOutdoorTheme` assemble ColorScheme, TextTheme and component themes from tokens. `ThemeModeController` persists `AppThemeMode` through `TextStore` (memory fake + file) and restores before the first frame. `TaptureApp` resolves the active `ThemeData`. Guarded by round-trip, first-frame, geometry and three-mode goldens. |
-| 032 — Breakpoints, responsive builder and readable width | 2026-09-17 | `SizeClass` owns 600/1024. `context.responsive` / `ResponsiveBuilder` fall back to the next smaller class. `ContentConstraint` centres a 720dp readable column. Guarded by edge-resolution, fallback, two-pane, resize-keeps-input and three-mode goldens. |
-| 033 — Page scaffold | 2026-09-17 | `AppPage` is the one `Scaffold`: themed app bar, optional subtitle, action slot, scrolling body, optional footer, size-class padding, `ContentConstraint`, safe-area and keyboard insets, and pull-to-refresh only when `onRefresh` is given. Guarded by refresh presence, 200 percent scroll in both orientations, rotation, and 9 goldens. |
-| 034 — Buttons, icon buttons and the primary action | 2026-09-17 | `AppButton` (four variants, busy swallows taps), `AppIconButton` (required label and tooltip) and `AppPrimaryAction` (full-width, glove-tall, optional caption) are the only buttons features may compose. Guarded by busy-tap, 48dp, 200 percent text, and goldens per variant and state in three modes. |
-| 035 — Text, number, date and search fields | 2026-09-17 | `AppTextField` is the base input; `AppNumberField` rejects letters and flags out-of-range in the shared error style; `AppDateField` formats through `intl` against a `Clock`; `AppSearchField` debounces at `AppConstants.interaction.debounce`. Guarded by clear/error, non-numeric rejection, frozen-clock modes, fake-async debounce, and 12 goldens. |
-| 036 — Choice, multi-choice and boolean fields | 2026-09-17 | `Choice` is the shared option; `AppChoiceField` is segmented under four options and a searchable sheet at four or more; `AppMultiChoiceField` shows selected values as chips and offers select-all/clear in the sheet; `AppSwitchTile` (and `.checkbox`) is the full-width boolean. Guarded by the four-option boundary, 200-option search, whole-tile toggle, and 9 goldens. |
-| 037 — Chip and chip row | 2026-09-17 | `AppChip` is plain, selectable (tick plus tint) and dismissible from one widget; a chip with no callback is not a tap target. `AppChipRow` wraps or scrolls without clipping a label. Multi-choice now composes these. Guarded by tap/dismiss, wrap versus scroll, 200 percent ellipsis, and 3 goldens. |
-| 038 — Card, list tile and section header | 2026-09-17 | `AppCard` takes surface treatment from `Elevation.surface` and is tappable only with `onTap`. `AppListTile` is the one row for projects, records, templates and datasets — dense or comfortable, selected with a tick, status slot, trailing, tap opens and long-press selects. `AppSectionHeader` uses the section type role. Guarded by tap/long-press, selection+status not colour alone, 200 percent, and 9 goldens. |
-| 039 — Status pill and badge | 2026-09-17 | `AppStatusPill` and `StatusStyle.of` map every `RecordStatus` to colour, icon and label; `.badge` fits list rows. Screens cannot map status to colour themselves. Guarded by an exhaustive style test, icon-and-label widget tests, 200 percent, and 3 goldens of every status. |
-| 040 — Empty, error, loading and async value view | 2026-09-17 | `AppEmptyState`, `AppErrorState`, `AppSkeleton` and `AsyncValueView` are the four non-data states. Failures render from a typed `Failure`; screens hand the provider to `AsyncValueView` and write no switch of their own. Guarded by a widget test per failure subtype, loading/error/empty/data, 200 percent, and 3 goldens. |
-| 041 — Dialog, sheet, snackbar and banner | 2026-09-17 | `showAppConfirm` / `showAppAlert`, `showAppSheet` (side panel when expanded), `showAppSnack` (queued, optional undo) and `AppBanner` are the one interrupt API. Choice fields now open through the sheet. Guarded by confirm/cancel, undo, snack queue, compact vs expanded sheet, 200 percent, and 3 goldens. |
-| 042 — Step progress list | 2026-09-17 | `AppProgressSteps` renders done, running, waiting and failed with an icon plus text so colour is never the only signal. A state change is announced and does not move the steps below it. Guarded by a position-and-semantics widget test, 200 percent, and 3 goldens of every state plus a mixed list. |
-| 043 — Photo thumbnail | 2026-09-17 | `AppPhotoThumb` is the one square every photo renders through: type badge and caption overlays, selection tick plus border, missing-file placeholder, 1:1 `BoxFit.cover`, cached thumb path never the original. `PhotoAsset` / `PhotoType` live in a part file until capture owns them. Guarded by never-decode and missing-file widget tests, 200 percent, and 3 goldens of badge, caption, selected, unselected and error. |
-| 044 — Form scaffold, validation display and focus behaviour | 2026-09-17 | `AppForm` spaces fields, lists every invalid field at the top, pins a busy submit bar, and prompts on a dirty pop. `FocusActions` dismisses the keyboard and advances in visual order; `KeepFocusedVisible` keeps the focused field above the inset. Guarded by unsaved-guard, double-submit, focus-order and keyboard-inset widget tests, 200 percent, and 3 goldens with and without the error summary. |
-| 045 — Haptics service | 2026-09-17 | `Haptics` is the one caller of `HapticFeedback`: shutter (heavy), save (medium), warning (light), error (vibrate) and selection (click). `Haptics.fake` records names for tests. Disabled haptics suppress all five; reduced motion skips selection so capture and save still confirm by touch. Guarded by fire-once, disabled, and reduced-motion unit tests. |
-| 046 — User-facing copy helper | 2026-09-17 | `Copy` is the one catalogue of visible strings, keyed by meaning, with ICU plurals for counts. Catalogue widgets read from it; template labels stay user data. Guarded by 0/1/2 plural tests and a synonym scan against the naming checker. |
-| 047 — Widget gallery screen | 2026-09-17 | `WidgetGalleryScreen` at `/_gallery` lists every catalogue widget by family, with theme, width and text-scale switchers. Debug router only. Guarded by an enumeration of `core/widgets/` and goldens of the index in light, dark and outdoor. |
-| 048 — Golden test baselines for the catalogue | 2026-09-17 | `expectGolden` pins Ahem, disables animation, and compares light, dark and outdoor under `test/design_system/goldens/`. Every catalogue widget plus the gallery index has a baseline; a one-pixel fixture fails and names the widget and mode. Guarded by an enumeration of `core/widgets/` and the CI golden gate. |
-| 049 — Drift database bootstrap and migration strategy | 2026-09-17 | `AppDatabase` opens a lazy WAL file in application support (or `memory()` for tests), `kSchemaVersion` is 1, and `appMigration` walks numbered named steps. Destructive steps throw `StorageFailure` until `acknowledgeExport`. Drift 2.31 / sqlite3 2.9.4 so native-asset hooks do not prefix `dart run`. Guarded by in-memory close, file reopen, v1-to-head column/row compare, and a missing-step/test check. |
-| 050 — Shared columns, DAO base and transaction helper | 2026-09-17 | `MergeColumns` supplies id (UUIDv7 text), timestamps, device and rev. `BaseDao` watches, pages, upserts with a rev/`updatedAt` stamp, and soft-deletes through a tombstone hook. `runInTransaction` joins an open write instead of nesting. Sqlite uniqueness and busy map to `StorageFailure`. Guarded by rev-bump, skip-helper, watch/get/page, uniqueness mapping, and nested rollback tests. |
-| 051 — Tombstones, audit log and device profile tables | 2026-09-17 | Schema v2 adds `tombstones` (unique on entity type plus id), append-only `audit_log` with a history index, and a single `device_profile` row keyed `local`. `writeTombstone` is the `softDelete` hook; `appendAudit` and `ensureDeviceProfile` run in the caller's transaction. Guarded by delete-plus-tombstone atomicity, previous/new audit values, and idempotent first-launch tests. |
-| 052 — Projects and context tables | 2026-09-17 | Schema v3 adds `projects` (indexed on status plus `updatedAt`, settings JSON validated on write) and context definitions, state and presets. Setting a higher context level deletes lower state rows in one transaction. Guarded by paged status list/index, malformed-settings refusal, cascade-clear and preset round-trip tests. |
-| 053 — Templates, template fields and template rows tables | 2026-09-17 | Schema v4 adds `templates` (nullable `projectId` for shipped rows, version bump on header edit), `template_fields` unique on template plus field key, and `template_rows` with alias lookup in Dart. JSON columns are validated on write. Guarded by round-trip, uniqueness, sort-order, shipped-coexist and alias tests. |
-| 054 — Records and record fields tables | 2026-09-17 | Schema v5 adds `records` (`RecordRow`, indexed on project+status, identity hash, capturedAt, template) and `record_fields` unique on record plus field key. `valueRaw` is append-only; refinement and approval write beside it and `appendAudit` in the same transaction. Guarded by paged list/index, identityHash lookup, raw-untouched, uniqueness, and v5 column tests. |
-| 055 — Photos, attachments and captions tables | 2026-09-17 | Schema v6 adds `photos` and `attachments` unique on project plus sha256, and `captions` indexed by owner. Unfiled photos keep a null `recordId`; applying one caption writes one row per photo; `textRaw` is append-only. Guarded by hash uniqueness, document/audio variants, thirty-row apply, raw immutability, and v6 column tests. |
-| 056 — Reference dataset tables | 2026-09-17 | Schema v7 adds `reference_datasets` and `reference_rows` unique on dataset plus key, with `keyNormalised` folded on write. Re-importing the same source file updates the dataset and matching rows in place. Guarded by insert, keyed/normalised lookup, in-place re-import, 10k lookup under 300ms, and v7 column tests. |
-| 057 — Processing jobs, results and field evidence tables | 2026-09-17 | Schema v8 adds `processing_jobs` (indexed on status+queuedAt), append-only `processing_results`, and `field_evidence` indexed by record field. Claim is compare-and-swap on queued; retry increments attempts and keeps earlier results; deleting a field writes a tombstone so evidence is not orphaned. Guarded by queue/index, retry+immutability, three source types, tombstone, and v8 column tests. |
-| 058 — Duplicates and variances tables | 2026-09-17 | Schema v9 adds `duplicates` (unique ordered record pair; indexed on projectId+status) and `variances` (unique recordId+fieldKey, plus projectId so the same index shape serves the review list). Detection upserts the existing pair and never writes a resolution; a person records who/when; source records stay intact. Guarded by order-independent uniqueness, queue+index, resolution, register-versus-found round-trip, unique index, and v9 column tests. |
-| 059 — Meeting tables | 2026-09-17 | Schema v10 adds `meetings` (raw transcript written once, refined minutes beside it), `attendees` (captured name kept when a staff match is accepted), and `meeting_actions` indexed on meetingId+status. Delete is one transaction that tombstones the header and every child row without a hard delete. Guarded by round-trip+cascade tombstones, transcript immutability, staff-match name retention, and v10 column tests. |
-| 060 — Exports table | 2026-09-17 | Schema v11 adds `exports` indexed on projectId+createdAt. Completing an export inserts one row with a per-project version; re-export is a new row and never rewrites path or hash; an abandoned or incomplete run writes none. History lists newest first through the index. Guarded by version increment, history+index, failed-export absence, and v11 column tests. |
-| 061 — Merge session, conflict and version vector tables | 2026-09-17 | Schema v12 adds `merge_sessions`, `merge_conflicts` (indexed on sessionId+resolution) and `version_vectors` unique on entity+device. `compareVectors` reports dominates/dominated/concurrent/equal; resolving a conflict records who/when and bumps the local vector. Sessions keep the undo snapshot path across restart. Guarded by session+queue, resolution+vector bump, unique triple, four relations, classify-from-one-read, and v12 column tests. |
-| 062 — Repository interfaces and test factories | 2026-09-17 | Eight domain ports return domain types and `Result` (watch lists stay `Stream`). Hand-written fakes honour the same failure contract; `aProject`/`aRecord`/`seededDatabase` make a valid graph in one line. Guarded by one fake suite per interface and a record-DAO read of the seeded graph. |
-| 063 — Database integrity check | 2026-09-17 | Read-only `runIntegrityCheck` reports orphaned fields, missing photo/attachment files, jobs and evidence on gone records, deletes without tombstones, and `PRAGMA foreign_key_check`. Pages at list size; file stats run off the UI thread. Guarded by one-finding-per-problem, clean-empty, twice-unchanged, and row-count tests. |
-| 064 — Optional database encryption | 2026-09-17 | `DatabaseEncryption` copies `tapture.sqlite` to HMAC-SHA-256-CTR ciphertext with the key only in secure storage. Enable is resumable, verifies per-table counts before removing the plain file, and disable needs typed confirmation. `AppDatabase.open(encryptionKey:)` decrypts through the same factory; a lost key is a `StorageFailure`, never a wipe. Guarded by no-key / with-key open, count round-trip, interrupted-enable, and lost-key tests. |
-| 065 — Storage root resolution | 2026-09-17 | `StorageRoot` creates visible `Tapture/` and disposable `Tapture/.cache` under the documents directory, probes writability with a marker file, and memoises a successful resolve. Unwritable or missing locations return `StorageFailure` with the path and a recovery action; a storage denial is `PermissionFailure`. Guarded by temp-dir idempotent create, blocked-path / not-writable failure, and denial tests. |
-| 066 — Project folder tree, name sanitiser and photo path builder | 2026-09-17 | `sanitiseSegment` refuses traversal, absolute paths, drive prefixes, device names and empty results; display names keep letters/digits/hyphens. `ProjectFolders` creates the eight-folder tree under `Tapture/projects/<name>__<id>` from stored `folderName` so a rename does not move files. `buildPhotoPath` covers byContext (spec path plus `_unfiled` gaps), byTemplate, byCaptureDate and flat. Guarded by hostile-input, temp-dir idempotent/rename, and strategy tests. |
-| 067 — Atomic file writer and context relocation | 2026-09-17 | `FileWriter` streams to `<target>.part`, hashes in the same pass, flushes and renames so the target is absent or complete. Stale `.part` files are swept on the next write to that directory and never resumed. `FileRelocation` moves a record's photos (including `_unfiled` promotion) then updates `relativePath` in one transaction, rolling files back if the write fails. Guarded by interrupted-write, full-disk, hash-equality, unfiled, facility-rename, failed-move and failed-transaction tests. |
-| 068 — Derived image cache: thumbnails, compressed copies and cleanup | 2026-09-17 | `ThumbnailCache` keys `<sha256>_<edge>` under `.cache/thumbs/`, decodes at most `concurrentDecodes` originals, and serves a second request from disk. `CompressedCopy` writes a long-edge copy through `FileWriter` into `.cache/upload/` without changing the original hash. `CacheCleanup` prunes by age then by size, oldest first, and never leaves `.cache`. Guarded by decode-count, hash-and-size, and fake-clock prune tests. |
-| 069 — Storage headroom guard | 2026-09-17 | `StorageGuard` maps free bytes to `ample` / `low` / `critical` from `AppConstants.storage`, polls on resume and `beginSession` (not per shutter), warns once per low session while capture continues, and refuses a new capture at critical with export and cache cleanup on the `StorageFailure`. An in-flight `completeSave` still finishes. Guarded by a fake volume across both thresholds, one-warning, refusal, in-flight, and resume-versus-shutter tests. |
-| 070 — Orphan file scanner | 2026-09-17 | `OrphanScanner` walks a project tree in pages, skips `.cache` and `.part`, and reports files with no row and rows with no file plus reclaimable bytes. Adoption inserts through `upsertPhoto` / `upsertAttachment` with hash and merge columns; `flagMissing` writes an audit flag and leaves the row intact. A cancelled scan returns `CancelledFailure` and changes nothing. Guarded by stray/missing/.cache, cancel, and adopt+flag tests. |
-| 071 — Imported file validation | 2026-09-17 | `FileValidation` is the one gate outside files pass: extension allow-list, a 64-byte magic sniff, per-kind size ceilings, then a ZIP central-directory walk for xlsx and bundles. Refusals quote the basename as data. Guarded by one passing case per kind plus mismatched xlsx, oversized image, empty file, traversal zip, symlink entry, and zip-bomb declaration. |
-| 072 — Router, route table and guards | 2026-09-17 | `routerProvider` installs GoRouter with `AppRoutes` helpers and a single `appGuards()` redirect chain. Project-scoped routes carry a metadata flag; a capture deep link with no open project diverts to `/projects?from=` and resumes when `OpenProjectId` is set. Unknown paths render `AppErrorState` with a way back. Guarded by a full route-table resolution plus diversion/resumption tests. |
-| 073 — Adaptive navigation shell | 2026-09-17 | `NavShell` wraps four `StatefulShellRoute` branches (Projects, Capture, Records, More) selected with `ResponsiveBuilder`: bar under 600dp, rail from 600, rail plus list pane from 1024. Capture is larger and primary-toned in every layout. Each branch keeps its stack and in-progress input across a destination switch and a size-class change. Guarded by 400/800/1200 widget tests plus stack-and-field preservation. |
-| 074 — First-run flow | 2026-09-17 | One skippable screen asks only for an operator name, then start-a-project or skip through to `/capture`. Completion is one `TextStore.firstRun` flag; `_firstRun` is the first `appGuards()` entry so 267 can prepend sign-in. Guarded by skip, template, and second-launch widget tests. |
-| 075 — Global status line and overflow menu | 2026-09-18 | `StatusLine` is the title bar: wordmark plus a trailing ⋮ (`AppOverflowMenu`). Labelled commands (project+context, template, network, unprocessed) live in that menu and navigate through `AppRoutes`. Visible `AppPage.actions` stay icon-only; `AppPage.overflow` appends the same control. `OfflineBanner` uses `AppBanner` on the transition into offline, dismisses until the next spell, and never dialogs. Guarded by open-menu-first status tests, overflow widget tests, and an online→offline→online banner test. |
-| 076 — Global error and crash recovery screen | 2026-09-17 | `GlobalErrorPage` is the `ErrorBoundary` fallback around `MaterialApp.router`. Restart remounts the failed subtree under the existing `ProviderScope`. Export writes the redacted log to a shareable file. Recycle bin is offered; nothing on the screen deletes or resets work. Guarded by a throwing-subtree widget test for the three actions, unsaved-state restart, and a clean export. |
-| 077 — Operator profile | 2026-09-18 | `OperatorProfile` is the local identity on the single `device_profile` row. Schema v13 adds nullable `accountId` so enrolment can fill it later. `OperatorProfileScreen` is an `AppForm` of name, initials and optional contact — no credential. Initials default from the name. Guarded by validation/save/unsaved-guard widget tests and an in-memory v12→v13 migration that reads `accountId` as null. |
-| 078 — Settings store | 2026-09-18 | `SettingKey` / `SettingKeys` declare every app-wide preference beside its default. `SettingsStore` persists a versioned JSON map on the device-profile row, migrates a v0 map once, and emits only after a committed write. The same suite runs against `SettingsStore.open` and `SettingsStore.fake`. Guarded by defaults, round-trip, change-event, failed-write and migration unit tests. |
-| 079 — Settings shell and its section screens | 2026-09-18 | `/more` lists the eight specification sections as tiles. Capture, storage and About are routed now; AI, Language, Files and Security keep their tile until those phases. Capture rows read and write `SettingsStore`. Storage shows per-project use, headroom and a cache clear that leaves originals. About shows version, build, licences and the plan/spec links. Guarded by loading/empty/failure widget tests on all four screens plus a cache-clear test. |
-| 080 — App lock: PIN and biometric unlock | 2026-09-18 | Optional PIN lock on launch and resume. Salted hash and escalating backoff live in `SecureStorage`; the PIN never reaches the database, preferences or logs. Biometric path is an interface plus fake (`local_auth` is a later allowlist task); failure stays on the PIN. One guard covers every route including deep links. Recovery copy states nobody can reset the PIN and offers no wipe. Guarded by hashing, restart-backoff, biometric-fallback and set/change/remove widget tests. |
-| 081 — Manual offline mode switch | 2026-09-18 | One settings switch writes `SettingKeys.offlineByChoice`. `ConnectivityService` folds that flag and reports offline; features still read `NetworkState` only. `OutboundQueue` holds work while offline and drains on release, retrying nothing while the switch is on. The status line labels offline-by-choice separately from the radio. Guarded by a recording-boundary widget test and a writer-only assertion. |
-| 082 — Project domain model and repository | 2026-09-19 | Immutable `Project` / `ProjectStatus` / `ProjectSettings`, Drift mapper, `ProjectRepositoryImpl`, barrel `projectRepositoryProvider`, and the in-memory fake later screens test against. Organisation/dates map onto `client`/`startedAt`/`completedAt`; description lives in settings JSON. Unknown or missing settings load as defaults. Guarded by a row→domain→row mapper test and the same create/watch/status suite on the in-memory database and the fake. |
-| 083 — Project list and the current project | 2026-09-19 | Landing `ProjectListScreen` with record/unprocessed counts and last-worked time from one `watchList` query. `CurrentProject` persists `SettingKeys.openProjectId`, restores on launch, clears an unresolvable id, and is the source `openProjectIdProvider` aliases. Empty state offers Create and Import; diverted deep links resume after a row is opened. Guarded by four AsyncValueView widget tests, a CurrentProject restore/clear/resume unit test, and a measured <2s landing budget. |
-| 084 — Create and duplicate a project | 2026-09-19 | One `createReady` transaction writes the project row, folder tree (via `ProjectFolders`) and a default Site context — or copies templates, context definitions, project-scoped reference and settings under a new id and folder, never records or photos. A failed folder write discards the partial tree and rolls the row back. `ProjectCreateScreen` plus `ProjectDuplicateAction` share that path; success opens `CurrentProject`. Guarded by rollback, duplication, validation and failure tests. |
-| 085 — Project home screen | 2026-09-19 | Open-project home reads `currentProjectDetailsProvider` (no route id), shows pinned context, derived Review/Process/Export/Share counts as tappable `AppCard`s, and one footer `Continue capturing` in the lower third. Counts come from `watchHome` and route through `AppRoutes` filtered lists. Guarded by four AsyncValueView widget tests plus a navigation test for each count filter. |
-| 086 — Project details and per-project settings | 2026-09-19 | Two `AppForm` screens over the same row: details write name, description, organisation, dates and status without touching `folderName`; settings persist nullable overrides on the project row and resolve unset fields to the app store. AI off and do-not-send-images on refuse provider calls and image egress. Guarded by populated/dirty/failure widget tests, a rename-leaves-folderName unit test, and override-then-fallback resolution. |
-| 087 — Archive, unarchive and delete a project | 2026-09-19 | Archive hides a project behind Show archived and from default exports without touching records or files. Delete confirms once through `showAppConfirm` with typed name, counts and Export first, then writes one tombstone per owned entity and moves the folder into `.recycle`. Guarded by archive/unarchive/filter widget tests, typed-name/cancel/export-first delete tests, and a tombstone-plus-recycle unit test that leaves the file on disk. |
-| 088 — Template domain model and repository | 2026-09-20 | Immutable `TemplateDef` / `FieldDef` / `TemplateRow` and three-value `Requiredness`, Drift mapper, `TemplateRepositoryImpl`, barrel `templateRepositoryProvider`, and the in-memory fake later screens test against. Table-only columns stay on the model; attributes the table has no column for (`helpText`, `requiredWhen`, `hidden`, `group`, identity flag, recommended, auto-fill kind, `templateKey`) live in JSON so a round-trip drops nothing. Guarded by a row→domain→row mapper test and the same save/watch/delete suite on the in-memory database and the fake. |
-| 089 — Field type registry | 2026-09-20 | One `FieldTypeRegistry` entry per §12.1 type: named catalogue editor (or signature / GPS / computed), validator, normaliser and storage-and-export form. Presentation supplies the widget builder; domain imports no Flutter. Adding a type is one switch case. Guarded by a completeness test that fails if any of the 19 types or any of the four behaviours is missing. |
-| 090 — Shipped template asset format and atomicity checker | 2026-09-20 | `_schema.json` names the asset shape and the 19 registry types. `check_templates.dart` refuses packed keys (`make_model`, `address`), money without a `_currency` companion, refined without raw, and the rest of §13.1, with file and line. Broken fixtures live under `test/tool/fixtures/` so they cannot fail the default `assets/templates/` scan. Wired as the `templates` verify gate. |
-| 091 — Author the shipped template library | 2026-09-20 | `_groups.json` holds the four §13.3 groups. Twenty-three `{template_key}.json` assets transcribe §13.5; the four equipment children set `derives_from` and reuse parent keys. Labels are l10n keys. `TemplateAssets` names every path. Guarded by a parse/schema/identity suite; `check_templates.dart` is green on all 23. |
-| 092 — Template list, blank create and duplicate | 2026-09-20 | Project templates list as `AppListTile` rows with field and record counts. Blank create asks only for a name and opens the field-list route. Duplicate copies fields, rows and aliases; records stay on the original. Delete is offered only when no record uses the template. Guarded by empty/failure list and create widget tests plus a duplication test that copies no records. |
-| 093 — Shipped template loader and library picker | 2026-09-20 | Runtime loader validates each packed asset against `_schema.json`, resolves §13.3 groups and `derives_from`, and copies a version-1 project-owned `TemplateDef` without mutating the asset. `ShippedPickerScreen` lists §13.4 kinds, previews resolved field labels, and allows renaming on add. Guarded by in-memory loader tests plus empty/failure picker widget tests; `FakeShippedTemplateLoader` is the later-test fake. |
-| 094 — Field list editor, reorder and delete | 2026-09-20 | Field list is the only place fields are managed: `AppListTile` rows with type and `AppStatusPill` requiredness, keyboard move-up/down plus drag reorder, and a shared-dialog delete that names the value count then retires values. Reorder writes list order only — `outputColumn` and stored values stay put. Guarded by empty/failure/reorder widget tests and an in-memory delete that leaves values and exports them as retired. |
-| 095 — Add and edit a field, with Advanced, validation and options | 2026-09-20 | Three-question add/edit (`Label`, `Type`, `Required?`) defaults every other §12.2 attribute and keeps Advanced collapsed. Field keys are unique snake_case with the unit appended when measured. Two-fact labels warn once with Keep anyway. `required_when` is checked against the field list as typed. Hide is not a delete: values stay and unhide restores them to capture/export. Validation has ready-made serial/asset-tag/registration patterns plus a live test box; option rename updates the label only. Any save bumps the template version. Guarded by key/`required_when`/hide/rename unit tests and empty/failure widget tests of the sheet and both editors. |
-| 096 — Required columns screen | 2026-09-20 | One screen re-scopes a whole template: label, three-radio requiredness, Hide, groups with §13.3 inherited groups collapsed, and the shipped default beside a moved value. `RequirednessController.set` / `setHidden` / `commit` writes every edit as one `TemplateRepository.save`, which is the existing version bump. REQUIRED never refuses capture — incomplete saves land in `needsReview`; older records keep their status. Guarded by a 40→8 one-version unit test, an in-memory record that stays captured, and radio/hide/empty/failure widget tests including 200 percent text. |
-| 097 — Field editor widget | 2026-09-20 | One `FieldEditor` in `core/widgets/` edits any value through the catalogue widget the type registry names. It never switches on the type: `fieldEditorBindingsProvider` is the registry port, overridden with `templateFieldEditorBindings`. An edit sets source MANUAL, marks verified, and appends an audit row with the previous value — including a change back to the original. `FieldValue` lives in core until records own it. Guarded by text/choice/date widget tests plus a change-back audit test. |
-| 098 — Identity fields and output column mapping | 2026-09-20 | Two field-list screens edit the template-level identity set and each field's output column. Identity is a multi-select over existing fields and rewrites `identityFieldKeys` plus `FieldDef.identity` through one `TemplateRepository.save`. Built and shipped templates auto-assign unique headers from labels; imported workbooks keep their letters and never invent missing ones. `duplicateOutputColumn` refuses a second claim on the same letter. Guarded by identity empty/failure/save widget tests and a duplicate-column unit test plus output empty/failure/save widget tests. |
-| 100 — Export and import a template as JSON | 2026-09-20 | `TemplateJson` stamps `schema_version` 1 and carries every §12.2 attribute, identity keys, predefined rows and row aliases. Decode validates shape, types and unique field keys before any write, rejects an unknown schema with a plain message, and always inserts a new project-owned template at version 1. `TemplateImportAction` is empty with no payload, shows `AppErrorState` on a failed decode (including schema 2), and persists only after a successful decode. Guarded by a round-trip encode-and-import test over every attribute and empty/failure/rejected-version widget tests. |
-| 101 — Read a spreadsheet and infer its shape | 2026-09-20 | `WorkbookReader` opens XLSX or CSV off the UI thread via the isolate runner, reporting sheet names, used range, merged cells and rows. Password-protected and corrupt files fail with distinct copy. `HeaderDetection` scores title blocks below unique label rows. `TypeInference` proposes registry type names, units and option lists as editable suggestions. Guarded by a twenty-sheet isolate open, title-block and CSV mapping, corrupt and password fixtures, and mixed-column inference tests. |
-| 102 — Confirm the column mapping and create the template | 2026-09-20 | `XlsxMappingScreen` shows one `AppListTile` per spreadsheet column — source header on the left, proposed field, type and rule on the right — each editable and skippable. Nothing is written until confirm. `XlsxTemplateImport` then saves the template with sheet name, header row and column letters, and copies the chosen workbook byte-identically into the project `templates/` folder once. Guarded by empty, failure and skip widget tests plus a before-and-after SHA-256 comparison of the original and the stored copy. |
-| 103 — Predefined rows, aliases and the capture checklist | 2026-09-20 | `PredefinedRowsImport` maps identifier and label columns onto checklist rows, keeps the original spreadsheet line for write-back, and matches local names such as "BP machine" to "Blood Pressure Machine". `RowAliasesScreen` edits per-row aliases and can overlay a chosen column. `ChecklistScreen` is a virtualised list grouped by room, with `AppStatusPill` found/missing and "Found X of Y" per group; tapping a row starts capture. Guarded by in-memory and fake repository tests plus empty/failure widget tests of both screens. |
-| 104 — Detection profile editor | 2026-09-20 | `DetectionProfileScreen` edits object classes, keywords, identifier patterns, linked datasets and negative keywords on `TemplateDef.detection`. Identifier patterns are the validation patterns fields already declare. A shipped template gets kind, identity labels and field patterns as defaults; a blank template keeps an empty profile that matches nothing. A negative keyword excludes a profile the positives would have matched. Guarded by empty/failure widget tests and a negative-keyword unit test. |
-| 009 — Git hook installer | 2026-09-09 | `tool/hooks/pre-commit` runs the gate in fast mode when Dart is staged; `tool/hooks/commit-msg` requires a three-digit task number; `tool/install_hooks.dart` copies both, normalises line endings and replaces rather than accumulates. Guarded by 28 tests. |
-| 008 — The verify command | 2026-09-09 | `tool/verify.dart` runs nine gates in order — format, analyzer, dependencies, structure, plan, guardrail tests, unit and widget tests, then goldens and integration — as one table with one exit code; `--fast` sets the last two aside. Green in 79s; guarded by 16 tests. |
-| 007 — Task scaffolding tool | 2026-09-09 | `tool/new_task.dart` takes the next free number, renders `tool/task_template.md`, refuses to overwrite a file or reuse a slug, and lists the task in the phase README and `INDEX.md`; guarded by 17 tests, one of which runs task 006's checker over the generated tree. |
+| 001 — Project setup and guardrails | 2026-09-17 | Flutter app, hygiene, strict analyzer, folder skeleton, allowlist, plan checker, scaffolder, verify, hooks, and the architecture suites. |
+| 002 — Foundation services | 2026-09-17 | Bootstrap, constants, Result/Failure, logger, clock, hashing, connectivity, permissions, secure storage, codecs, AI port. |
+| 003 — Design system | 2026-09-22 | Tokens, themes, catalogue widgets, gallery, goldens, plus later button padding, requiredness-in-label and borderless overflow. |
+| 004 — Local database | 2026-09-17 | Drift tables, mixins, repositories, integrity check and optional encryption. |
+| 005 — File storage | 2026-09-22 | Storage root, project folders, writer, cache, guard, orphan scanner, validation, share_plus and storage volume. |
+| 006 — Application shell | 2026-09-22 | Router, adaptive nav, first-run, status line, error page, plus later shell and list-pane feedback. |
+| 007 — Account and settings | 2026-09-17 | Operator profile, settings store, settings shell, app lock, offline switch. |
+| 008 — Projects | 2026-09-22 | Model, list, create, home, details, archive, plus pinning, dictation, list actions and home-card work. |
+| 009 — Templates | 2026-09-17 | Model, registry, shipped library, editors, requiredness, versioning, JSON and spreadsheet import, detection profile. |
+
+Task numbers in this table are the original atomic numbers from before the 2026-09-22 merge. [RETIRED.md](dev-plan/RETIRED.md) says which live task absorbed each one.
 
 ## Carried decisions
 
 Things a finished task surfaced that are not yet resolved. Each needs a numbered task file
-(`dart run tool/new_task.dart`, available since task 007) rather than a note here — FE-FLOW-08.
+(`dart run tool/new_task.dart`, available since task 001, which absorbed the old scaffolder) rather than a note here — FE-FLOW-08.
 
 | Raised by | Question | Status |
 | :--- | :--- | :--- |
@@ -338,252 +246,187 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ## Checklist
 
-The phase lists below cover tasks 001–120. The feedback-driven tasks numbered 282–335 are closed and are listed by
-phase in [INDEX.md](dev-plan/INDEX.md), which is the authoritative list.
-
 ### 01 — Project setup and guardrails
 
-*18 of 18 complete.*
+*1 of 1 complete.*
 
-- [x] [001 — Create the Flutter project](dev-plan/01-orchestration/001-flutter-project-init.md)
-- [x] [002 — Repository hygiene files](dev-plan/01-orchestration/002-repo-hygiene.md)
-- [x] [003 — Strict analyzer configuration](dev-plan/01-orchestration/003-strict-lints.md)
-- [x] [004 — Create the folder skeleton](dev-plan/01-orchestration/004-folder-scaffold.md)
-- [x] [005 — Dependency allowlist checker](dev-plan/01-orchestration/005-dependency-allowlist.md)
-- [x] [006 — Plan integrity checker](dev-plan/01-orchestration/006-plan-integrity-checker.md)
-- [x] [007 — Task scaffolding tool](dev-plan/01-orchestration/007-task-scaffolder.md)
-- [x] [008 — The verify command](dev-plan/01-orchestration/008-verify-command.md)
-- [x] [009 — Git hook installer](dev-plan/01-orchestration/009-git-hooks.md)
-- [x] [010 — Layering enforcement test](dev-plan/01-orchestration/010-layering-test.md)
-- [x] [011 — Naming and file-layout checker](dev-plan/01-orchestration/011-naming-checker.md)
-- [x] [012 — Canonical domain names](dev-plan/01-orchestration/012-domain-names.md)
-- [x] [013 — Design-token and responsive boundary tests](dev-plan/01-orchestration/013-design-token-test.md)
-- [x] [014 — State and error-handling convention tests](dev-plan/01-orchestration/014-riverpod-test.md)
-- [x] [015 — Logging discipline and secret scan](dev-plan/01-orchestration/015-logging-checker.md)
-- [x] [016 — Test presence checker](dev-plan/01-orchestration/016-test-presence-checker.md)
-- [x] [017 — Accessibility test matchers](dev-plan/01-orchestration/017-accessibility-matchers.md)
-- [x] [018 — Network boundary and raw-data safety tests](dev-plan/01-orchestration/018-network-test.md)
+- [x] [001 — Project setup and guardrails](dev-plan/01-orchestration/001-project-setup.md)
 
 ### 02 — Foundation services
 
-*11 of 11 complete.*
+*1 of 1 complete.*
 
-- [x] [019 — Application bootstrap, flavours and lifecycle](dev-plan/02-foundation/019-app-bootstrap.md)
-- [x] [020 — Shared constants](dev-plan/02-foundation/020-app-constants.md)
-- [x] [021 — Result type, failure taxonomy and error boundary](dev-plan/02-foundation/021-result-and-failures.md)
-- [x] [022 — Logger, diagnostics export and provider observer](dev-plan/02-foundation/022-logger-service.md)
-- [x] [023 — Clock, identifiers and device identity](dev-plan/02-foundation/023-clock-service.md)
-- [x] [024 — Hashing service and isolate runner](dev-plan/02-foundation/024-hashing-service.md)
-- [x] [025 — Connectivity service](dev-plan/02-foundation/025-connectivity-service.md)
-- [x] [026 — Runtime permissions service](dev-plan/02-foundation/026-permissions-service.md)
-- [x] [027 — Secure storage service](dev-plan/02-foundation/027-secure-storage-service.md)
-- [x] [028 — Serialisation conventions](dev-plan/02-foundation/028-json-codec-setup.md)
-- [x] [029 — AI service interface](dev-plan/02-foundation/029-ai-service-interface.md)
+- [x] [002 — Foundation services](dev-plan/02-foundation/002-foundation-services.md)
 
 ### 03 — Design system
 
-*19 of 19 complete.*
+*1 of 1 complete.*
 
-- [x] [030 — Design tokens: colour, type, spacing and elevation](dev-plan/03-design-system/030-color-tokens.md)
-- [x] [031 — Material 3 themes and the theme mode controller](dev-plan/03-design-system/031-theme-assembly.md)
-- [x] [032 — Breakpoints, responsive builder and readable width](dev-plan/03-design-system/032-breakpoints.md)
-- [x] [033 — Page scaffold](dev-plan/03-design-system/033-app-page.md)
-- [x] [034 — Buttons, icon buttons and the primary action](dev-plan/03-design-system/034-app-button.md)
-- [x] [035 — Text, number, date and search fields](dev-plan/03-design-system/035-app-text-field.md)
-- [x] [036 — Choice, multi-choice and boolean fields](dev-plan/03-design-system/036-app-choice-field.md)
-- [x] [037 — Chip and chip row](dev-plan/03-design-system/037-app-chip.md)
-- [x] [038 — Card, list tile and section header](dev-plan/03-design-system/038-app-card.md)
-- [x] [039 — Status pill and badge](dev-plan/03-design-system/039-app-status-pill.md)
-- [x] [040 — Empty, error and loading states, and the async value view](dev-plan/03-design-system/040-app-empty-state.md)
-- [x] [041 — Dialog, sheet, snackbar and banner services](dev-plan/03-design-system/041-app-dialog-service.md)
-- [x] [042 — Step progress list](dev-plan/03-design-system/042-app-progress-steps.md)
-- [x] [043 — Photo thumbnail](dev-plan/03-design-system/043-app-photo-thumb.md)
-- [x] [044 — Form scaffold, validation display and focus behaviour](dev-plan/03-design-system/044-app-form-scaffold.md)
-- [x] [045 — Haptics service](dev-plan/03-design-system/045-haptics-service.md)
-- [x] [046 — User-facing copy helper](dev-plan/03-design-system/046-copy-helper.md)
-- [x] [047 — Widget gallery screen](dev-plan/03-design-system/047-widget-gallery.md)
-- [x] [048 — Golden test baselines for the catalogue](dev-plan/03-design-system/048-golden-baselines.md)
+- [x] [003 — Design system: tokens, themes and the whole widget vocabulary](dev-plan/03-design-system/003-design-system.md)
 
 ### 04 — Local database
 
-*16 of 16 complete.*
+*1 of 1 complete.*
 
-- [x] [049 — Drift database bootstrap and migration strategy](dev-plan/04-data-layer/049-drift-setup.md)
-- [x] [050 — Shared columns, DAO base and transaction helper](dev-plan/04-data-layer/050-column-mixins.md)
-- [x] [051 — Tombstones, audit log and device profile tables](dev-plan/04-data-layer/051-tombstones-table.md)
-- [x] [052 — Projects and context tables](dev-plan/04-data-layer/052-projects-table.md)
-- [x] [053 — Templates, template fields and template rows tables](dev-plan/04-data-layer/053-templates-table.md)
-- [x] [054 — Records and record fields tables](dev-plan/04-data-layer/054-records-table.md)
-- [x] [055 — Photos, attachments and captions tables](dev-plan/04-data-layer/055-photos-table.md)
-- [x] [056 — Reference dataset tables](dev-plan/04-data-layer/056-reference-tables.md)
-- [x] [057 — Processing jobs, results and field evidence tables](dev-plan/04-data-layer/057-jobs-table.md)
-- [x] [058 — Duplicates and variances tables](dev-plan/04-data-layer/058-duplicates-table.md)
-- [x] [059 — Meeting tables](dev-plan/04-data-layer/059-meetings-tables.md)
-- [x] [060 — Exports table](dev-plan/04-data-layer/060-exports-table.md)
-- [x] [061 — Merge session, conflict and version vector tables](dev-plan/04-data-layer/061-merge-tables.md)
-- [x] [062 — Repository interfaces and test factories](dev-plan/04-data-layer/062-repository-interfaces.md)
-- [x] [063 — Database integrity check](dev-plan/04-data-layer/063-db-integrity-check.md)
-- [x] [064 — Optional database encryption](dev-plan/04-data-layer/064-db-encryption.md)
+- [x] [004 — Local database: every table, with merge columns from the first migration](dev-plan/04-data-layer/004-local-database.md)
 
 ### 05 — File storage
 
-*7 of 7 complete.*
+*1 of 1 complete.*
 
-- [x] [065 — Storage root resolution](dev-plan/05-file-storage/065-storage-root.md)
-- [x] [066 — Project folder tree, name sanitiser and photo path builder](dev-plan/05-file-storage/066-project-folder-service.md)
-- [x] [067 — Atomic file writer and context relocation](dev-plan/05-file-storage/067-file-writer.md)
-- [x] [068 — Derived image cache: thumbnails, compressed copies and cleanup](dev-plan/05-file-storage/068-thumbnail-cache.md)
-- [x] [069 — Storage headroom guard](dev-plan/05-file-storage/069-storage-guard.md)
-- [x] [070 — Orphan file scanner](dev-plan/05-file-storage/070-orphan-scanner.md)
-- [x] [071 — Imported file validation](dev-plan/05-file-storage/071-file-validation.md)
+- [x] [005 — File storage: the organised folder tree and every service that writes into it](dev-plan/05-file-storage/005-file-storage.md)
 
 ### 06 — Application shell
 
-*5 of 5 complete.*
+*1 of 1 complete.*
 
-- [x] [072 — Router, route table and guards](dev-plan/06-app-shell/072-router-setup.md)
-- [x] [073 — Adaptive navigation shell](dev-plan/06-app-shell/073-nav-shell.md)
-- [x] [074 — First-run flow](dev-plan/06-app-shell/074-first-run.md)
-- [x] [075 — Global status line and overflow menu](dev-plan/06-app-shell/075-status-line.md)
-- [x] [076 — Global error and crash recovery screen](dev-plan/06-app-shell/076-global-error-page.md)
+- [x] [006 — Application shell: navigation, the status line and the frame every feature plugs into](dev-plan/06-app-shell/006-application-shell.md)
 
 ### 07 — Account and settings
 
-*5 of 5 complete.*
+*1 of 1 complete.*
 
-- [x] [077 — Operator profile](dev-plan/07-account-and-settings/077-operator-profile.md)
-- [x] [078 — Settings store](dev-plan/07-account-and-settings/078-settings-store.md)
-- [x] [079 — Settings shell and its section screens](dev-plan/07-account-and-settings/079-settings-shell.md)
-- [x] [080 — App lock: PIN and biometric unlock](dev-plan/07-account-and-settings/080-app-lock-pin.md)
-- [x] [081 — Manual offline mode switch](dev-plan/07-account-and-settings/081-offline-switch.md)
+- [x] [007 — Account and settings: local identity, the app lock and the switches later features read](dev-plan/07-account-and-settings/007-account-and-settings.md)
 
 ### 08 — Projects
 
-*6 of 6 complete.*
+*1 of 1 complete.*
 
-- [x] [082 — Project domain model and repository](dev-plan/08-projects/082-project-model.md)
-- [x] [083 — Project list and the current project](dev-plan/08-projects/083-project-list.md)
-- [x] [084 — Create and duplicate a project](dev-plan/08-projects/084-project-create.md)
-- [x] [085 — Project home screen](dev-plan/08-projects/085-project-home.md)
-- [x] [086 — Project details and per-project settings](dev-plan/08-projects/086-project-edit.md)
-- [x] [087 — Archive, unarchive and delete a project](dev-plan/08-projects/087-project-archive.md)
+- [x] [008 — Projects: the container that owns everything else](dev-plan/08-projects/008-projects.md)
 
 ### 09 — Templates
 
-*17 of 17 complete.*
+*1 of 1 complete.*
 
-- [x] [088 — Template domain model and repository](dev-plan/09-templates/088-template-model.md)
-- [x] [089 — Field type registry](dev-plan/09-templates/089-field-type-registry.md)
-- [x] [090 — Shipped template asset format and atomicity checker](dev-plan/09-templates/090-shipped-templates-assets.md)
-- [x] [091 — Author the shipped template library](dev-plan/09-templates/091-shipped-template-library.md)
-- [x] [092 — Template list, blank create and duplicate](dev-plan/09-templates/092-template-list.md)
-- [x] [093 — Shipped template loader and library picker](dev-plan/09-templates/093-shipped-template-loader.md)
-- [x] [094 — Field list editor, reorder and delete](dev-plan/09-templates/094-field-list-editor.md)
-- [x] [095 — Add and edit a field, with Advanced, validation and options](dev-plan/09-templates/095-field-add-basic.md)
-- [x] [096 — Required columns screen](dev-plan/09-templates/096-required-columns-screen.md)
-- [x] [097 — Field editor widget](dev-plan/09-templates/097-field-editor-inline.md)
-- [x] [098 — Identity fields and output column mapping](dev-plan/09-templates/098-identity-fields.md)
-- [x] [099 — Template versioning and record migration](dev-plan/09-templates/099-template-versioning.md)
-- [x] [100 — Export and import a template as JSON](dev-plan/09-templates/100-template-export-json.md)
-- [x] [101 — Read a spreadsheet and infer its shape](dev-plan/09-templates/101-xlsx-read-workbook.md)
-- [x] [102 — Confirm the column mapping and create the template](dev-plan/09-templates/102-xlsx-mapping-screen.md)
-- [x] [103 — Predefined rows, aliases and the capture checklist](dev-plan/09-templates/103-predefined-rows-import.md)
-- [x] [104 — Detection profile editor](dev-plan/09-templates/104-template-detection-profile.md)
+- [x] [009 — Templates: record shapes with atomic columns, and requiredness the user owns](dev-plan/09-templates/009-templates.md)
 
 ### 10 — Reference data
 
 *0 of 1 complete.*
 
-- [ ] [105 — Reference data: datasets, lookups and prefill](dev-plan/10-reference-data/105-reference-data.md)
+- [ ] [010 — Reference data: datasets, lookups and prefill](dev-plan/10-reference-data/010-reference-data.md)
 
 ### 11 — Context
 
 *0 of 1 complete.*
 
-- [ ] [106 — Context: hierarchy, bar and inheritance](dev-plan/11-context/106-context.md)
+- [ ] [011 — Context: hierarchy, bar and inheritance](dev-plan/11-context/011-context.md)
 
 ### 12 — Capture
 
 *0 of 1 complete.*
 
-- [ ] [107 — Capture: evidence in, saved before anything else](dev-plan/12-capture/107-capture.md)
+- [ ] [012 — Capture: evidence in, saved before anything else](dev-plan/12-capture/012-capture.md)
 
 ### 13 — Processing
 
 *0 of 1 complete.*
 
-- [ ] [108 — Processing: on-device first, online only when it earns its place](dev-plan/13-processing/108-processing.md)
+- [ ] [013 — Processing: on-device first, online only when it earns its place](dev-plan/13-processing/013-processing.md)
 
 ### 14 — Records
 
 *0 of 1 complete.*
 
-- [ ] [109 — Records: find, read and change what was captured](dev-plan/14-records/109-records.md)
+- [ ] [014 — Records: find, read and change what was captured](dev-plan/14-records/014-records.md)
 
 ### 15 — Data quality
 
 *0 of 1 complete.*
 
-- [ ] [110 — Data quality: validation, duplicates, conflicts and variance](dev-plan/15-data-quality/110-data-quality.md)
+- [ ] [015 — Data quality: validation, duplicates, conflicts and variance](dev-plan/15-data-quality/015-data-quality.md)
 
 ### 16 — Review
 
 *0 of 1 complete.*
 
-- [ ] [111 — Review: turning proposals into approved data](dev-plan/16-review/111-review.md)
+- [ ] [016 — Review: turning proposals into approved data](dev-plan/16-review/016-review.md)
 
 ### 17 — Meetings
 
 *0 of 1 complete.*
 
-- [ ] [112 — Meetings: minutes, attendance and actions](dev-plan/17-meetings/112-meetings.md)
+- [ ] [017 — Meetings: minutes, attendance and actions](dev-plan/17-meetings/017-meetings.md)
 
 ### 18 — Export
 
 *0 of 1 complete.*
 
-- [ ] [113 — Export: XLSX, CSV, JSON, PDF and ZIP, all produced on device](dev-plan/18-export/113-export.md)
+- [ ] [018 — Export: XLSX, CSV, JSON, PDF and ZIP, all produced on device](dev-plan/18-export/018-export.md)
 
 ### 19 — Bundles and merge
 
 *0 of 1 complete.*
 
-- [ ] [114 — Bundles and merge: a project leaves whole and rejoins safely](dev-plan/19-bundles-and-merge/114-bundles-and-merge.md)
+- [ ] [019 — Bundles and merge: a project leaves whole and rejoins safely](dev-plan/19-bundles-and-merge/019-bundles-and-merge.md)
 
 ### 20 — Data import
 
 *0 of 1 complete.*
 
-- [ ] [115 — Data import: continue an inventory someone else started](dev-plan/20-data-import/115-data-import.md)
+- [ ] [020 — Data import: continue an inventory someone else started](dev-plan/20-data-import/020-data-import.md)
 
 ### 21 — Cloud upload
 
 *0 of 1 complete.*
 
-- [ ] [116 — Cloud upload: a destination the user chooses, never a sync channel](dev-plan/21-cloud-upload/116-cloud-upload.md)
+- [ ] [021 — Cloud upload: a destination the user chooses, never a sync channel](dev-plan/21-cloud-upload/021-cloud-upload.md)
 
 ### 22 — Privacy and security
 
 *0 of 1 complete.*
 
-- [ ] [117 — Privacy and security: what leaves this device, and what never does](dev-plan/22-privacy-and-security/117-privacy-and-security.md)
+- [ ] [022 — Privacy and security: what leaves this device, and what never does](dev-plan/22-privacy-and-security/022-privacy-and-security.md)
 
 ### 23 — Hardening
 
-*33 of 36 complete. The 33 closed tasks are 282–332; see [INDEX.md](dev-plan/INDEX.md).*
+*33 of 36 complete.*
 
-- [ ] [118 — Hardening: fast, legible, reachable and unbreakable in the field](dev-plan/23-hardening/118-hardening.md)
-- [ ] [285 — Enable AppDatabase on web](dev-plan/23-hardening/285-enable-app-database-on-web.md)
-- [ ] [286 — Fix storage settings on web](dev-plan/23-hardening/286-fix-storage-settings-on-web.md)
+- [ ] [023 — Hardening: fast, legible, reachable and unbreakable in the field](dev-plan/23-hardening/023-hardening.md)
+- [x] [026 — In-app feedback: floating button, capture, download and delete](dev-plan/23-hardening/026-in-app-feedback.md)
+- [x] [027 — Feedback screens: compact layout, dictation and reopen safety](dev-plan/23-hardening/027-feedback-dictation-and-layout.md)
+- [x] [028 — Feedback archive: ship the prompts generator](dev-plan/23-hardening/028-feedback-prompts-generator.md)
+- [ ] [029 — Enable AppDatabase on web](dev-plan/23-hardening/029-enable-app-database-on-web.md)
+- [ ] [030 — Fix storage settings on web](dev-plan/23-hardening/030-fix-storage-settings-on-web.md)
+- [x] [031 — Dock feedback panel beside app](dev-plan/23-hardening/031-dock-feedback-panel-beside-app.md)
+- [x] [032 — Rename More nav to Settings](dev-plan/23-hardening/032-rename-more-nav-to-settings.md)
+- [x] [033 — Fix feedback search remount](dev-plan/23-hardening/033-fix-feedback-search-remount.md)
+- [x] [034 — Fix feedback camera browse](dev-plan/23-hardening/034-fix-feedback-camera-browse.md)
+- [x] [035 — Mark required optional fields](dev-plan/23-hardening/035-mark-required-optional-fields.md)
+- [x] [036 — Add email phone fields](dev-plan/23-hardening/036-add-email-phone-fields.md)
+- [x] [037 — Add feedback close control](dev-plan/23-hardening/037-add-feedback-close-control.md)
+- [x] [038 — Split operator contact fields](dev-plan/23-hardening/038-split-operator-contact-fields.md)
+- [x] [039 — Include feedback UI screenshot](dev-plan/23-hardening/039-include-feedback-ui-screenshot.md)
+- [x] [040 — Add other window screenshot](dev-plan/23-hardening/040-add-other-window-screenshot.md)
+- [x] [041 — Warn before closing the tab with a draft](dev-plan/23-hardening/041-warn-before-closing-tab-with-draft.md)
+- [x] [042 — Confirm desktop exit with a draft](dev-plan/23-hardening/042-confirm-desktop-exit-with-draft.md)
+- [x] [043 — Align the feedback shot controls](dev-plan/23-hardening/043-align-feedback-shot-controls.md)
+- [x] [044 — Soften input placeholder text](dev-plan/23-hardening/044-soften-input-placeholder-text.md)
+- [x] [045 — Number feedback rows with their message](dev-plan/23-hardening/045-number-feedback-rows-with-message.md)
+- [x] [046 — Add a window share session to screen capture](dev-plan/23-hardening/046-add-window-share-session-api.md)
+- [x] [047 — Add repeat external window screenshots](dev-plan/23-hardening/047-add-repeat-external-window-screenshots.md)
+- [x] [048 — Fix the storage root on Android](dev-plan/23-hardening/048-fix-storage-root-on-android.md)
+- [x] [049 — Save downloads to a public Tapture folder](dev-plan/23-hardening/049-save-downloads-to-public-tapture-folder.md)
+- [x] [050 — Keep the feedback bar above the keyboard](dev-plan/23-hardening/050-keep-feedback-bar-above-keyboard.md)
+- [x] [051 — Move the storage root to public Documents](dev-plan/23-hardening/051-move-storage-root-to-public-documents.md)
+- [x] [052 — Unify the confirmation dialog design](dev-plan/23-hardening/052-unify-confirmation-dialog-design.md)
+- [x] [053 — Add screenshot help for other screens](dev-plan/23-hardening/053-add-screenshot-help-for-other-screens.md)
+- [x] [054 — Persist the theme mode in the settings store](dev-plan/23-hardening/054-persist-theme-mode-in-settings-store.md)
+- [x] [055 — Add the Appearance settings screen](dev-plan/23-hardening/055-add-appearance-settings-screen.md)
+- [x] [056 — Show the feedback download location](dev-plan/23-hardening/056-show-feedback-download-location.md)
+- [x] [057 — Add a Save to a folder option](dev-plan/23-hardening/057-add-save-to-folder-option.md)
+- [x] [058 — Show a collapse icon on the feedback form](dev-plan/23-hardening/058-show-collapse-icon-on-feedback-form.md)
+- [x] [059 — Show a single feedback image as a thumbnail](dev-plan/23-hardening/059-show-single-feedback-image-as-thumbnail.md)
+- [x] [060 — Borderless overflow menus](dev-plan/23-hardening/060-borderless-overflow-menus.md)
 
 ### 24 — The minimal backend
 
 *0 of 1 complete.*
 
-- [ ] [119 — The minimal backend, and the app that runs on it](dev-plan/24-backend/119-minimal-backend.md)
+- [ ] [024 — The minimal backend, and the app that runs on it](dev-plan/24-backend/024-minimal-backend.md)
 
 ### 25 — Testing and release
 
 *0 of 1 complete.*
 
-- [ ] [120 — Testing and release: the suites, the pipeline and the gate over both artefacts](dev-plan/25-testing-and-release/120-testing-and-release.md)
+- [ ] [025 — Testing and release: the suites, the pipeline and the gate over both artefacts](dev-plan/25-testing-and-release/025-testing-and-release.md)

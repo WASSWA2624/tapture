@@ -2,7 +2,6 @@
 
 A meeting is a record with structure: minutes, attendance and actions.
 
-Task 112 (1). One prompt for the whole phase; it absorbed the seven that held 186–192, and the numbers it gave up
-are listed in [RETIRED.md](../RETIRED.md).
+Task 017 (1). One prompt for the whole phase; old numbers are in [RETIRED.md](../RETIRED.md).
 
-- [ ] [112 — Meetings: minutes, attendance and actions](112-meetings.md)
+- [ ] [017 — Meetings: minutes, attendance and actions](017-meetings.md)

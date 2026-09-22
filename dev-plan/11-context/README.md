@@ -2,7 +2,6 @@
 
 Set a value once, and it applies to every record until changed.
 
-Task 106 (1). One prompt for the whole phase; it absorbed the seven that held 113–119, and the numbers it gave up
-are listed in [RETIRED.md](../RETIRED.md).
+Task 011 (1). One prompt for the whole phase; old numbers are in [RETIRED.md](../RETIRED.md).
 
-- [ ] [106 — Context: hierarchy, bar and inheritance](106-context.md)
+- [ ] [011 — Context: hierarchy, bar and inheritance](011-context.md)

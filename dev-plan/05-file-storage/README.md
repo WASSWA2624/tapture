@@ -1,23 +1,14 @@
 # 05 — File storage
 
-The organised folder tree on the device, and every service that writes into it.
+The organised folder tree and every service that writes into it.
 
-Tasks 065–335 (10). Each file is a standalone implementation prompt.
+Task 005 (1). One prompt for the completed phase; the atomics it absorbed are listed in [RETIRED.md](../RETIRED.md).
 
-- [x] [065 — Storage root resolution](065-storage-root.md)
-- [x] [066 — Project folder tree, name sanitiser and photo path builder](066-project-folder-service.md)
-- [x] [067 — Atomic file writer and context relocation](067-file-writer.md)
-- [x] [068 — Derived image cache: thumbnails, compressed copies and cleanup](068-thumbnail-cache.md)
-- [x] [069 — Storage headroom guard](069-storage-guard.md)
-- [x] [070 — Orphan file scanner](070-orphan-scanner.md)
-- [x] [071 — Imported file validation](071-file-validation.md)
-- [x] [330 — Add share_plus for opening files externally](330-add-share-plus.md)
-- [x] [331 — Open a project's files in an external app](331-open-project-files-externally.md)
-- [x] [335 — Show storage volume totals and set the root](335-show-storage-volume-and-root.md)
+- [x] [005 — File storage: the organised folder tree and every service that writes into it](005-file-storage.md)
 
 ## As built
 
-Reproduce by implementing 065–071 in order. The tree that must exist at the end:
+The numbers below are the original atomics; they now live in task 005. Reproduce by implementing 065–071 in order. The tree that must exist at the end:
 
 | Task | Public surface to reproduce |
 | :--- | :--- |

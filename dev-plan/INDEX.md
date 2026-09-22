@@ -1,305 +1,192 @@
 # Tapture — task index
 
-174 implementation prompts across 25 phases. Work top to bottom.
+60 implementation prompts across 25 phases. Work top to bottom.
 
-Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task. Phases 10 to 25 are one task
-each; the numbers they absorbed are listed in [RETIRED.md](RETIRED.md).
+Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task. Phases 01 to 25 are one
+task each except phase 23, which still holds the leftover field-feedback extras. Old numbers are listed in
+[RETIRED.md](RETIRED.md).
 
 ## 01 — Project setup and guardrails
 
 *The repository, and the executable guardrails that enforce every architectural rule. Policies here are code — lints, checkers and tests — not prose.*
 
-- [x] [001 — Create the Flutter project](01-orchestration/001-flutter-project-init.md)
-- [x] [002 — Repository hygiene files](01-orchestration/002-repo-hygiene.md)
-- [x] [003 — Strict analyzer configuration](01-orchestration/003-strict-lints.md)
-- [x] [004 — Create the folder skeleton](01-orchestration/004-folder-scaffold.md)
-- [x] [005 — Dependency allowlist checker](01-orchestration/005-dependency-allowlist.md)
-- [x] [006 — Plan integrity checker](01-orchestration/006-plan-integrity-checker.md)
-- [x] [007 — Task scaffolding tool](01-orchestration/007-task-scaffolder.md)
-- [x] [008 — The verify command](01-orchestration/008-verify-command.md)
-- [x] [009 — Git hook installer](01-orchestration/009-git-hooks.md)
-- [x] [010 — Layering enforcement test](01-orchestration/010-layering-test.md)
-- [x] [011 — Naming and file-layout checker](01-orchestration/011-naming-checker.md)
-- [x] [012 — Canonical domain names](01-orchestration/012-domain-names.md)
-- [x] [013 — Design-token and responsive boundary tests](01-orchestration/013-design-token-test.md)
-- [x] [014 — State and error-handling convention tests](01-orchestration/014-riverpod-test.md)
-- [x] [015 — Logging discipline and secret scan](01-orchestration/015-logging-checker.md)
-- [x] [016 — Test presence checker](01-orchestration/016-test-presence-checker.md)
-- [x] [017 — Accessibility test matchers](01-orchestration/017-accessibility-matchers.md)
-- [x] [018 — Network boundary and raw-data safety tests](01-orchestration/018-network-test.md)
+- [x] [001 — Project setup and guardrails](01-orchestration/001-project-setup.md)
 
 ## 02 — Foundation services
 
 *The empty app that boots, logs, fails safely, and the small services every later feature injects.*
 
-- [x] [019 — Application bootstrap, flavours and lifecycle](02-foundation/019-app-bootstrap.md)
-- [x] [020 — Shared constants](02-foundation/020-app-constants.md)
-- [x] [021 — Result type, failure taxonomy and error boundary](02-foundation/021-result-and-failures.md)
-- [x] [022 — Logger, diagnostics export and provider observer](02-foundation/022-logger-service.md)
-- [x] [023 — Clock, identifiers and device identity](02-foundation/023-clock-service.md)
-- [x] [024 — Hashing service and isolate runner](02-foundation/024-hashing-service.md)
-- [x] [025 — Connectivity service](02-foundation/025-connectivity-service.md)
-- [x] [026 — Runtime permissions service](02-foundation/026-permissions-service.md)
-- [x] [027 — Secure storage service](02-foundation/027-secure-storage-service.md)
-- [x] [028 — Serialisation conventions](02-foundation/028-json-codec-setup.md)
-- [x] [029 — AI service interface](02-foundation/029-ai-service-interface.md)
+- [x] [002 — Foundation services](02-foundation/002-foundation-services.md)
 
 ## 03 — Design system
 
 *Built before any feature. Every later screen is assembled from these parts and never invents its own.*
 
-- [x] [030 — Design tokens: colour, type, spacing and elevation](03-design-system/030-color-tokens.md)
-- [x] [031 — Material 3 themes and the theme mode controller](03-design-system/031-theme-assembly.md)
-- [x] [032 — Breakpoints, responsive builder and readable width](03-design-system/032-breakpoints.md)
-- [x] [033 — Page scaffold](03-design-system/033-app-page.md)
-- [x] [034 — Buttons, icon buttons and the primary action](03-design-system/034-app-button.md)
-- [x] [035 — Text, number, date and search fields](03-design-system/035-app-text-field.md)
-- [x] [036 — Choice, multi-choice and boolean fields](03-design-system/036-app-choice-field.md)
-- [x] [037 — Chip and chip row](03-design-system/037-app-chip.md)
-- [x] [038 — Card, list tile and section header](03-design-system/038-app-card.md)
-- [x] [039 — Status pill and badge](03-design-system/039-app-status-pill.md)
-- [x] [040 — Empty, error and loading states, and the async value view](03-design-system/040-app-empty-state.md)
-- [x] [041 — Dialog, sheet, snackbar and banner services](03-design-system/041-app-dialog-service.md)
-- [x] [042 — Step progress list](03-design-system/042-app-progress-steps.md)
-- [x] [043 — Photo thumbnail](03-design-system/043-app-photo-thumb.md)
-- [x] [044 — Form scaffold, validation display and focus behaviour](03-design-system/044-app-form-scaffold.md)
-- [x] [045 — Haptics service](03-design-system/045-haptics-service.md)
-- [x] [046 — User-facing copy helper](03-design-system/046-copy-helper.md)
-- [x] [047 — Widget gallery screen](03-design-system/047-widget-gallery.md)
-- [x] [048 — Golden test baselines for the catalogue](03-design-system/048-golden-baselines.md)
-- [x] [318 — Widen button horizontal padding](03-design-system/318-widen-button-horizontal-padding.md)
-- [x] [319 — Move requiredness into field labels](03-design-system/319-move-requiredness-into-field-labels.md)
-- [x] [326 — Add a borderless overflow control](03-design-system/326-add-borderless-overflow-control.md)
+- [x] [003 — Design system: tokens, themes and the whole widget vocabulary](03-design-system/003-design-system.md)
 
 ## 04 — Local database
 
-*Every table, with the merge columns present from the first migration.*
+*Every table the app will ever need, with merge columns from the first migration.*
 
-- [x] [049 — Drift database bootstrap and migration strategy](04-data-layer/049-drift-setup.md)
-- [x] [050 — Shared columns, DAO base and transaction helper](04-data-layer/050-column-mixins.md)
-- [x] [051 — Tombstones, audit log and device profile tables](04-data-layer/051-tombstones-table.md)
-- [x] [052 — Projects and context tables](04-data-layer/052-projects-table.md)
-- [x] [053 — Templates, template fields and template rows tables](04-data-layer/053-templates-table.md)
-- [x] [054 — Records and record fields tables](04-data-layer/054-records-table.md)
-- [x] [055 — Photos, attachments and captions tables](04-data-layer/055-photos-table.md)
-- [x] [056 — Reference dataset tables](04-data-layer/056-reference-tables.md)
-- [x] [057 — Processing jobs, results and field evidence tables](04-data-layer/057-jobs-table.md)
-- [x] [058 — Duplicates and variances tables](04-data-layer/058-duplicates-table.md)
-- [x] [059 — Meeting tables](04-data-layer/059-meetings-tables.md)
-- [x] [060 — Exports table](04-data-layer/060-exports-table.md)
-- [x] [061 — Merge session, conflict and version vector tables](04-data-layer/061-merge-tables.md)
-- [x] [062 — Repository interfaces and test factories](04-data-layer/062-repository-interfaces.md)
-- [x] [063 — Database integrity check](04-data-layer/063-db-integrity-check.md)
-- [x] [064 — Optional database encryption](04-data-layer/064-db-encryption.md)
+- [x] [004 — Local database: every table, with merge columns from the first migration](04-data-layer/004-local-database.md)
 
 ## 05 — File storage
 
-*The organised folder tree on the device, and every service that writes into it.*
+*The organised folder tree and every service that writes into it.*
 
-- [x] [065 — Storage root resolution](05-file-storage/065-storage-root.md)
-- [x] [066 — Project folder tree, name sanitiser and photo path builder](05-file-storage/066-project-folder-service.md)
-- [x] [067 — Atomic file writer and context relocation](05-file-storage/067-file-writer.md)
-- [x] [068 — Derived image cache: thumbnails, compressed copies and cleanup](05-file-storage/068-thumbnail-cache.md)
-- [x] [069 — Storage headroom guard](05-file-storage/069-storage-guard.md)
-- [x] [070 — Orphan file scanner](05-file-storage/070-orphan-scanner.md)
-- [x] [071 — Imported file validation](05-file-storage/071-file-validation.md)
-- [x] [330 — Add share_plus for opening files externally](05-file-storage/330-add-share-plus.md)
-- [x] [331 — Open a project's files in an external app](05-file-storage/331-open-project-files-externally.md)
-- [x] [335 — Show storage volume totals and set the root](05-file-storage/335-show-storage-volume-and-root.md)
+- [x] [005 — File storage: the organised folder tree and every service that writes into it](05-file-storage/005-file-storage.md)
 
 ## 06 — Application shell
 
-*Navigation, the always-visible status line, and the frame every feature plugs into.*
+*Navigation, routing and the always-visible status line.*
 
-- [x] [072 — Router, route table and guards](06-app-shell/072-router-setup.md)
-- [x] [073 — Adaptive navigation shell](06-app-shell/073-nav-shell.md)
-- [x] [074 — First-run flow](06-app-shell/074-first-run.md)
-- [x] [075 — Global status line and overflow menu](06-app-shell/075-status-line.md)
-- [x] [076 — Global error and crash recovery screen](06-app-shell/076-global-error-page.md)
-- [x] [317 — Fix navigation icons and the Capture tab state](06-app-shell/317-fix-navigation-icons-and-capture-state.md)
-- [x] [324 — Fix the project home count navigation](06-app-shell/324-fix-count-card-navigation.md)
-- [x] [325 — Show the project list in the expanded list pane](06-app-shell/325-show-projects-in-list-pane.md)
-- [x] [328 — Show the project count on the Projects destination](06-app-shell/328-show-project-count-on-destination.md)
-- [x] [333 — Shell back and screen title](06-app-shell/333-shell-back-and-title.md)
-- [x] [334 — Resolve projects shell feedback](06-app-shell/334-resolve-projects-shell-feedback.md)
+- [x] [006 — Application shell: navigation, the status line and the frame every feature plugs into](06-app-shell/006-application-shell.md)
 
 ## 07 — Account and settings
 
 *The local identity that later becomes an account, the app lock, and the switches every later feature reads.*
 
-- [x] [077 — Operator profile](07-account-and-settings/077-operator-profile.md)
-- [x] [078 — Settings store](07-account-and-settings/078-settings-store.md)
-- [x] [079 — Settings shell and its section screens](07-account-and-settings/079-settings-shell.md)
-- [x] [080 — App lock: PIN and biometric unlock](07-account-and-settings/080-app-lock-pin.md)
-- [x] [081 — Manual offline mode switch](07-account-and-settings/081-offline-switch.md)
+- [x] [007 — Account and settings: local identity, the app lock and the switches later features read](07-account-and-settings/007-account-and-settings.md)
 
 ## 08 — Projects
 
 *Create, open and manage the container that owns everything else.*
 
-- [x] [082 — Project domain model and repository](08-projects/082-project-model.md)
-- [x] [083 — Project list and the current project](08-projects/083-project-list.md)
-- [x] [084 — Create and duplicate a project](08-projects/084-project-create.md)
-- [x] [085 — Project home screen](08-projects/085-project-home.md)
-- [x] [086 — Project details and per-project settings](08-projects/086-project-edit.md)
-- [x] [087 — Archive, unarchive and delete a project](08-projects/087-project-archive.md)
-- [x] [314 — Add project management actions](08-projects/314-add-project-management-actions.md)
-- [x] [315 — Hide the unbuilt project import button](08-projects/315-hide-unbuilt-project-import-button.md)
-- [x] [320 — Use a checkbox for Show archived](08-projects/320-use-checkbox-for-show-archived.md)
-- [x] [321 — Enable dictation on project fields](08-projects/321-enable-dictation-on-project-fields.md)
-- [x] [323 — Redesign the project home count cards](08-projects/323-redesign-project-home-count-cards.md)
-- [x] [327 — Add project pinning](08-projects/327-add-project-pinning.md)
-- [x] [329 — Add project list actions and numbering](08-projects/329-add-project-list-actions.md)
+- [x] [008 — Projects: the container that owns everything else](08-projects/008-projects.md)
 
 ## 09 — Templates
 
 *The definition of every record shape: shipped, built in the app, or read from a spreadsheet. Columns are atomic (§13.1) and requiredness belongs to the user (§13.2) — both are enforced here, not assumed.*
 
-- [x] [088 — Template domain model and repository](09-templates/088-template-model.md)
-- [x] [089 — Field type registry](09-templates/089-field-type-registry.md)
-- [x] [090 — Shipped template asset format and atomicity checker](09-templates/090-shipped-templates-assets.md)
-- [x] [091 — Author the shipped template library](09-templates/091-shipped-template-library.md)
-- [x] [092 — Template list, blank create and duplicate](09-templates/092-template-list.md)
-- [x] [093 — Shipped template loader and library picker](09-templates/093-shipped-template-loader.md)
-- [x] [094 — Field list editor, reorder and delete](09-templates/094-field-list-editor.md)
-- [x] [095 — Add and edit a field, with Advanced, validation and options](09-templates/095-field-add-basic.md)
-- [x] [096 — Required columns screen](09-templates/096-required-columns-screen.md)
-- [x] [097 — Field editor widget](09-templates/097-field-editor-inline.md)
-- [x] [098 — Identity fields and output column mapping](09-templates/098-identity-fields.md)
-- [x] [099 — Template versioning and record migration](09-templates/099-template-versioning.md)
-- [x] [100 — Export and import a template as JSON](09-templates/100-template-export-json.md)
-- [x] [101 — Read a spreadsheet and infer its shape](09-templates/101-xlsx-read-workbook.md)
-- [x] [102 — Confirm the column mapping and create the template](09-templates/102-xlsx-mapping-screen.md)
-- [x] [103 — Predefined rows, aliases and the capture checklist](09-templates/103-predefined-rows-import.md)
-- [x] [104 — Detection profile editor](09-templates/104-template-detection-profile.md)
+- [x] [009 — Templates: record shapes with atomic columns, and requiredness the user owns](09-templates/009-templates.md)
 
 ## 10 — Reference data
 
 *Imported tables that prefill records and remove repeat typing.*
 
-- [ ] [105 — Reference data: datasets, lookups and prefill](10-reference-data/105-reference-data.md)
+- [ ] [010 — Reference data: datasets, lookups and prefill](10-reference-data/010-reference-data.md)
 
 ## 11 — Context
 
 *Set a value once, and it applies to every record until changed.*
 
-- [ ] [106 — Context: hierarchy, bar and inheritance](11-context/106-context.md)
+- [ ] [011 — Context: hierarchy, bar and inheritance](11-context/011-context.md)
 
 ## 12 — Capture
 
 *The heart of the app: evidence in, with as little typing as possible, always saved before anything else happens.*
 
-- [ ] [107 — Capture: evidence in, saved before anything else](12-capture/107-capture.md)
+- [ ] [012 — Capture: evidence in, saved before anything else](12-capture/012-capture.md)
 
 ## 13 — Processing
 
 *On-device first, online only when it earns its place, always resumable and always optional.*
 
-- [ ] [108 — Processing: on-device first, online only when it earns its place](13-processing/108-processing.md)
+- [ ] [013 — Processing: on-device first, online only when it earns its place](13-processing/013-processing.md)
 
 ## 14 — Records
 
 *Find, read and change what has been captured, at any time after capture.*
 
-- [ ] [109 — Records: find, read and change what was captured](14-records/109-records.md)
+- [ ] [014 — Records: find, read and change what was captured](14-records/014-records.md)
 
 ## 15 — Data quality
 
 *The checks that make the output trustworthy, each with a human in the loop.*
 
-- [ ] [110 — Data quality: validation, duplicates, conflicts and variance](15-data-quality/110-data-quality.md)
+- [ ] [015 — Data quality: validation, duplicates, conflicts and variance](15-data-quality/015-data-quality.md)
 
 ## 16 — Review
 
 *Where a person turns proposals into data. Fast for the common case, thorough when needed.*
 
-- [ ] [111 — Review: turning proposals into approved data](16-review/111-review.md)
+- [ ] [016 — Review: turning proposals into approved data](16-review/016-review.md)
 
 ## 17 — Meetings
 
 *A meeting is a record with structure: minutes, attendance and actions.*
 
-- [ ] [112 — Meetings: minutes, attendance and actions](17-meetings/112-meetings.md)
+- [ ] [017 — Meetings: minutes, attendance and actions](17-meetings/017-meetings.md)
 
 ## 18 — Export
 
 *Five formats, all produced on the device, all reproducible and all recorded.*
 
-- [ ] [113 — Export: XLSX, CSV, JSON, PDF and ZIP, all produced on device](18-export/113-export.md)
+- [ ] [018 — Export: XLSX, CSV, JSON, PDF and ZIP, all produced on device](18-export/018-export.md)
 
 ## 19 — Bundles and merge
 
 *Collaboration that never touches the backend: a project leaves whole, by hand, and rejoins safely.*
 
-- [ ] [114 — Bundles and merge: a project leaves whole and rejoins safely](19-bundles-and-merge/114-bundles-and-merge.md)
+- [ ] [019 — Bundles and merge: a project leaves whole and rejoins safely](19-bundles-and-merge/019-bundles-and-merge.md)
 
 ## 20 — Data import
 
 *Continue an inventory someone else started, as records or as a register to verify against.*
 
-- [ ] [115 — Data import: continue an inventory someone else started](20-data-import/115-data-import.md)
+- [ ] [020 — Data import: continue an inventory someone else started](20-data-import/020-data-import.md)
 
 ## 21 — Cloud upload
 
 *A destination for files the user chooses to send. Never automatic, never a sync channel.*
 
-- [ ] [116 — Cloud upload: a destination the user chooses, never a sync channel](21-cloud-upload/116-cloud-upload.md)
+- [ ] [021 — Cloud upload: a destination the user chooses, never a sync channel](21-cloud-upload/021-cloud-upload.md)
 
 ## 22 — Privacy and security
 
 *The controls that decide what leaves the device and what is visible in it.*
 
-- [ ] [117 — Privacy and security: what leaves this device, and what never does](22-privacy-and-security/117-privacy-and-security.md)
+- [ ] [022 — Privacy and security: what leaves this device, and what never does](22-privacy-and-security/022-privacy-and-security.md)
 
 ## 23 — Hardening
 
 *Making the finished app fast, legible, reachable and unbreakable in the field.*
 
-- [ ] [118 — Hardening: fast, legible, reachable and unbreakable in the field](23-hardening/118-hardening.md)
-- [x] [282 — In-app feedback: floating button, capture, download and delete](23-hardening/282-in-app-feedback.md)
-- [x] [283 — Feedback screens: compact layout, dictation and reopen safety](23-hardening/283-feedback-dictation-and-layout.md)
-- [x] [284 — Feedback archive: ship the prompts generator](23-hardening/284-feedback-prompts-generator.md)
-- [ ] [285 — Enable AppDatabase on web](23-hardening/285-enable-app-database-on-web.md)
-- [ ] [286 — Fix storage settings on web](23-hardening/286-fix-storage-settings-on-web.md)
-- [x] [287 — Dock feedback panel beside app](23-hardening/287-dock-feedback-panel-beside-app.md)
-- [x] [288 — Rename More nav to Settings](23-hardening/288-rename-more-nav-to-settings.md)
-- [x] [289 — Fix feedback search remount](23-hardening/289-fix-feedback-search-remount.md)
-- [x] [290 — Fix feedback camera browse](23-hardening/290-fix-feedback-camera-browse.md)
-- [x] [291 — Mark required optional fields](23-hardening/291-mark-required-optional-fields.md)
-- [x] [292 — Add email phone fields](23-hardening/292-add-email-phone-fields.md)
-- [x] [293 — Add feedback close control](23-hardening/293-add-feedback-close-control.md)
-- [x] [294 — Split operator contact fields](23-hardening/294-split-operator-contact-fields.md)
-- [x] [295 — Include feedback UI screenshot](23-hardening/295-include-feedback-ui-screenshot.md)
-- [x] [296 — Add other window screenshot](23-hardening/296-add-other-window-screenshot.md)
-- [x] [297 — Warn before closing the tab with a draft](23-hardening/297-warn-before-closing-tab-with-draft.md)
-- [x] [298 — Confirm desktop exit with a draft](23-hardening/298-confirm-desktop-exit-with-draft.md)
-- [x] [299 — Align the feedback shot controls](23-hardening/299-align-feedback-shot-controls.md)
-- [x] [300 — Soften input placeholder text](23-hardening/300-soften-input-placeholder-text.md)
-- [x] [301 — Number feedback rows with their message](23-hardening/301-number-feedback-rows-with-message.md)
-- [x] [302 — Add a window share session to screen capture](23-hardening/302-add-window-share-session-api.md)
-- [x] [303 — Add repeat external window screenshots](23-hardening/303-add-repeat-external-window-screenshots.md)
-- [x] [304 — Fix the storage root on Android](23-hardening/304-fix-storage-root-on-android.md)
-- [x] [305 — Save downloads to a public Tapture folder](23-hardening/305-save-downloads-to-public-tapture-folder.md)
-- [x] [306 — Keep the feedback bar above the keyboard](23-hardening/306-keep-feedback-bar-above-keyboard.md)
-- [x] [307 — Move the storage root to public Documents](23-hardening/307-move-storage-root-to-public-documents.md)
-- [x] [308 — Unify the confirmation dialog design](23-hardening/308-unify-confirmation-dialog-design.md)
-- [x] [309 — Add screenshot help for other screens](23-hardening/309-add-screenshot-help-for-other-screens.md)
-- [x] [310 — Persist the theme mode in the settings store](23-hardening/310-persist-theme-mode-in-settings-store.md)
-- [x] [311 — Add the Appearance settings screen](23-hardening/311-add-appearance-settings-screen.md)
-- [x] [312 — Show the feedback download location](23-hardening/312-show-feedback-download-location.md)
-- [x] [313 — Add a Save to a folder option](23-hardening/313-add-save-to-folder-option.md)
-- [x] [316 — Show a collapse icon on the feedback form](23-hardening/316-show-collapse-icon-on-feedback-form.md)
-- [x] [322 — Show a single feedback image as a thumbnail](23-hardening/322-show-single-feedback-image-as-thumbnail.md)
-- [x] [332 — Borderless overflow menus](23-hardening/332-borderless-overflow-menus.md)
+- [ ] [023 — Hardening: fast, legible, reachable and unbreakable in the field](23-hardening/023-hardening.md)
+- [x] [026 — In-app feedback: floating button, capture, download and delete](23-hardening/026-in-app-feedback.md)
+- [x] [027 — Feedback screens: compact layout, dictation and reopen safety](23-hardening/027-feedback-dictation-and-layout.md)
+- [x] [028 — Feedback archive: ship the prompts generator](23-hardening/028-feedback-prompts-generator.md)
+- [ ] [029 — Enable AppDatabase on web](23-hardening/029-enable-app-database-on-web.md)
+- [ ] [030 — Fix storage settings on web](23-hardening/030-fix-storage-settings-on-web.md)
+- [x] [031 — Dock feedback panel beside app](23-hardening/031-dock-feedback-panel-beside-app.md)
+- [x] [032 — Rename More nav to Settings](23-hardening/032-rename-more-nav-to-settings.md)
+- [x] [033 — Fix feedback search remount](23-hardening/033-fix-feedback-search-remount.md)
+- [x] [034 — Fix feedback camera browse](23-hardening/034-fix-feedback-camera-browse.md)
+- [x] [035 — Mark required optional fields](23-hardening/035-mark-required-optional-fields.md)
+- [x] [036 — Add email phone fields](23-hardening/036-add-email-phone-fields.md)
+- [x] [037 — Add feedback close control](23-hardening/037-add-feedback-close-control.md)
+- [x] [038 — Split operator contact fields](23-hardening/038-split-operator-contact-fields.md)
+- [x] [039 — Include feedback UI screenshot](23-hardening/039-include-feedback-ui-screenshot.md)
+- [x] [040 — Add other window screenshot](23-hardening/040-add-other-window-screenshot.md)
+- [x] [041 — Warn before closing the tab with a draft](23-hardening/041-warn-before-closing-tab-with-draft.md)
+- [x] [042 — Confirm desktop exit with a draft](23-hardening/042-confirm-desktop-exit-with-draft.md)
+- [x] [043 — Align the feedback shot controls](23-hardening/043-align-feedback-shot-controls.md)
+- [x] [044 — Soften input placeholder text](23-hardening/044-soften-input-placeholder-text.md)
+- [x] [045 — Number feedback rows with their message](23-hardening/045-number-feedback-rows-with-message.md)
+- [x] [046 — Add a window share session to screen capture](23-hardening/046-add-window-share-session-api.md)
+- [x] [047 — Add repeat external window screenshots](23-hardening/047-add-repeat-external-window-screenshots.md)
+- [x] [048 — Fix the storage root on Android](23-hardening/048-fix-storage-root-on-android.md)
+- [x] [049 — Save downloads to a public Tapture folder](23-hardening/049-save-downloads-to-public-tapture-folder.md)
+- [x] [050 — Keep the feedback bar above the keyboard](23-hardening/050-keep-feedback-bar-above-keyboard.md)
+- [x] [051 — Move the storage root to public Documents](23-hardening/051-move-storage-root-to-public-documents.md)
+- [x] [052 — Unify the confirmation dialog design](23-hardening/052-unify-confirmation-dialog-design.md)
+- [x] [053 — Add screenshot help for other screens](23-hardening/053-add-screenshot-help-for-other-screens.md)
+- [x] [054 — Persist the theme mode in the settings store](23-hardening/054-persist-theme-mode-in-settings-store.md)
+- [x] [055 — Add the Appearance settings screen](23-hardening/055-add-appearance-settings-screen.md)
+- [x] [056 — Show the feedback download location](23-hardening/056-show-feedback-download-location.md)
+- [x] [057 — Add a Save to a folder option](23-hardening/057-add-save-to-folder-option.md)
+- [x] [058 — Show a collapse icon on the feedback form](23-hardening/058-show-collapse-icon-on-feedback-form.md)
+- [x] [059 — Show a single feedback image as a thumbnail](23-hardening/059-show-single-feedback-image-as-thumbnail.md)
+- [x] [060 — Borderless overflow menus](23-hardening/060-borderless-overflow-menus.md)
 
 ## 24 — The minimal backend
 
 *The minimal backend of specification Part XI. It is **required**: accounts, authentication, roles, AI functionality and provider-key custody — the five things a single device cannot supply for itself, and nothing more. The change relay (§72) is the one optional capability inside this phase; every other task here is part of the MVP. Required to exist, never required to be reachable (§70.4).*
 
-- [ ] [119 — The minimal backend, and the app that runs on it](24-backend/119-minimal-backend.md)
+- [ ] [024 — The minimal backend, and the app that runs on it](24-backend/024-minimal-backend.md)
 
 ## 25 — Testing and release
 
 *The suites, the pipeline and the gate that makes a build shippable. A release is two artefacts now, the app and the backend it requires, and neither ships alone.*
 
-- [ ] [120 — Testing and release: the suites, the pipeline and the gate over both artefacts](25-testing-and-release/120-testing-and-release.md)
+- [ ] [025 — Testing and release: the suites, the pipeline and the gate over both artefacts](25-testing-and-release/025-testing-and-release.md)
