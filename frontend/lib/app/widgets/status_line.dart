@@ -15,6 +15,8 @@ import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/shell_header_scope.dart';
+import 'package:tapture/features/context/domain/context_state.dart';
+import 'package:tapture/features/context/presentation/context_providers.dart';
 import 'package:tapture/features/projects/presentation/current_project.dart';
 import 'package:tapture/features/settings/presentation/offline_switch.dart';
 
@@ -186,9 +188,10 @@ final Provider<String> statusProjectLabelProvider = Provider<String>((Ref ref) {
   return ref.watch(currentProjectDetailsProvider)?.name ?? id;
 });
 
-/// Pinned context label. Task 115 replaces this stub.
-final Provider<String> statusContextProvider = Provider<String>((Ref _) {
-  return Copy.statusNoContext;
+/// Pinned context label from the open project's [ContextState].
+final Provider<String> statusContextProvider = Provider<String>((Ref ref) {
+  final AsyncValue<ContextState> value = ref.watch(openProjectContextProvider);
+  return contextStatusLabel(value.asData?.value ?? const ContextState());
 });
 
 /// Pinned template. Task 141 replaces this stub.

@@ -12,6 +12,30 @@ abstract final class SettingKeys {
     false,
   );
 
+  /// Clear the lowest context level after idle. Off by default.
+  static const SettingKey<bool> contextAutoClearEnabled = SettingKey<bool>(
+    'context.autoClearEnabled',
+    false,
+  );
+
+  /// Idle seconds before auto-clear. Ignored while auto-clear is off.
+  static const SettingKey<int> contextAutoClearSeconds = SettingKey<int>(
+    'context.autoClearSeconds',
+    300,
+  );
+
+  /// Ask to confirm context after movement. Off by default.
+  static const SettingKey<bool> contextMovementPromptEnabled = SettingKey<bool>(
+    'context.movementPromptEnabled',
+    false,
+  );
+
+  /// Metres travelled before the movement prompt. Ignored while off.
+  static const SettingKey<int> contextMovementMetres = SettingKey<int>(
+    'context.movementMetres',
+    100,
+  );
+
   /// Stamp dates and times without asking.
   static const SettingKey<bool> autoFillDates = SettingKey<bool>(
     'capture.autoFillDates',

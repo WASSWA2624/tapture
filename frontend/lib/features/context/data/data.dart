@@ -1,2 +1,3 @@
-/// The context feature's data layer: repository implementations and data sources.
-library;
+export 'context_mapper.dart';
+export 'context_persistence.dart';
+export 'context_repository_impl.dart';

@@ -1,8 +1,8 @@
 # Tapture — development tracker
 
-**43 of 60 tasks complete (71.7%)** · last updated 2026-09-22
+**44 of 60 tasks complete (73.3%)** · last updated 2026-09-22
 
-`██████████████████████████░░░░░░░░░░░░`
+`███████████████████████████░░░░░░░░░░░`
 
 On 2026-09-22 completed phases 01–09 became tasks 001–009, remaining phases became 010–025, and leftover
 field-feedback extras became 026–060. Old numbers are in [RETIRED.md](dev-plan/RETIRED.md).
@@ -21,7 +21,7 @@ field-feedback extras became 026–060. Old numbers are in [RETIRED.md](dev-plan
 | 08 — Projects | 1 | 1 | `██████████████` 100% |
 | 09 — Templates | 1 | 1 | `██████████████` 100% |
 | 10 — Reference data | 1 | 1 | `██████████████` 100% |
-| 11 — Context | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
+| 11 — Context | 1 | 1 | `██████████████` 100% |
 | 12 — Capture | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 13 — Processing | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 14 — Records | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
@@ -36,7 +36,7 @@ field-feedback extras became 026–060. Old numbers are in [RETIRED.md](dev-plan
 | 23 — Hardening | 33 | 36 | `█████████████░` 92% |
 | 24 — The minimal backend | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **43** | **60** | `██████████████████████████░░░░░░░░░░░░` 71.7% |
+| **Total** | **44** | **60** | `███████████████████████████░░░░░░░░░░░` 73.3% |
 
 ## Completed
 
@@ -52,6 +52,7 @@ field-feedback extras became 026–060. Old numbers are in [RETIRED.md](dev-plan
 | 008 — Projects | 2026-09-22 | Model, list, create, home, details, archive, plus pinning, dictation, list actions and home-card work. |
 | 009 — Templates | 2026-09-17 | Model, registry, shipped library, editors, requiredness, versioning, JSON and spreadsheet import, detection profile. |
 | 010 — Reference data | 2026-09-22 | Dataset/row models, CSV/XLSX/JSON import, key screen, browser, row edit/add, lookup binding/match/prefill/unlink, export. |
+| 011 — Context | 2026-09-22 | Hierarchy, bar, picker/pins, cascade, application/override/folder-link, presets, auto-clear and movement settings. |
 
 Task numbers in this table are the original atomic numbers from before the 2026-09-22 merge. [RETIRED.md](dev-plan/RETIRED.md) says which live task absorbed each one.
 
@@ -311,9 +312,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 11 — Context
 
-*0 of 1 complete.*
+*1 of 1 complete.*
 
-- [ ] [011 — Context: hierarchy, bar and inheritance](dev-plan/11-context/011-context.md)
+- [x] [011 — Context: hierarchy, bar and inheritance](dev-plan/11-context/011-context.md)
 
 ### 12 — Capture
 

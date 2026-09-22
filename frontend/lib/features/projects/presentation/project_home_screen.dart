@@ -15,6 +15,8 @@ import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
+import 'package:tapture/features/context/domain/context_state.dart';
+import 'package:tapture/features/context/presentation/context_providers.dart';
 
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
@@ -76,11 +78,10 @@ typedef ProjectHomeView = ({
   ProjectHomeCounts counts,
 });
 
-/// Pinned context label on the home header. Defaults to the status-line
-/// stub; 115 replaces the source. This file cannot import the status line
-/// — that file imports the router.
-final Provider<String> projectHomeContextProvider = Provider<String>((Ref _) {
-  return Copy.statusNoContext;
+/// Pinned context label on the home header from the open project context.
+final Provider<String> projectHomeContextProvider = Provider<String>((Ref ref) {
+  final AsyncValue<ContextState> value = ref.watch(openProjectContextProvider);
+  return contextStatusLabel(value.asData?.value ?? const ContextState());
 });
 
 /// Pending Review, Process, Export and Share counts for the open project.

@@ -1567,6 +1567,95 @@ abstract final class Copy {
   /// Status line when no context is pinned.
   static const String statusNoContext = 'No context';
 
+  /// Context hierarchy screen title.
+  static const String contextHierarchyTitle = 'Context levels';
+
+  /// Empty hierarchy.
+  static const String contextHierarchyEmptyHeadline = 'No context levels';
+
+  /// Empty hierarchy body.
+  static const String contextHierarchyEmptyMessage =
+      'Add field keys from a template to build a hierarchy, or leave none.';
+
+  /// Add a level.
+  static const String contextAddLevel = 'Add level';
+
+  /// Save hierarchy.
+  static const String contextSaveHierarchy = 'Save levels';
+
+  /// Context picker sheet title prefix.
+  static String contextPickerTitle(String label) => 'Set $label';
+
+  /// Recent values section.
+  static const String contextRecents = 'Recent';
+
+  /// Dataset search section.
+  static const String contextDatasetSearch = 'From dataset';
+
+  /// Free-text confirm.
+  static const String contextUseValue = 'Use this value';
+
+  /// Pin fields sheet.
+  static const String contextPinnedTitle = 'Pinned fields';
+
+  /// Pin empty.
+  static const String contextPinnedEmptyHeadline = 'No stickable fields';
+
+  /// Pin empty body.
+  static const String contextPinnedEmptyMessage =
+      'Mark fields as stickable on a template to pin them here.';
+
+  /// Cascade confirm title.
+  static const String contextCascadeTitle = 'Clear lower levels?';
+
+  /// Cascade confirm body naming levels that will clear.
+  static String contextCascadeMessage(List<String> named) {
+    return 'Changing this level clears: ${named.join(', ')}.';
+  }
+
+  /// Cascade confirm action.
+  static const String contextCascadeConfirm = 'Clear and continue';
+
+  /// Preset list title.
+  static const String contextPresetsTitle = 'Context presets';
+
+  /// Preset empty.
+  static const String contextPresetsEmptyHeadline = 'No presets yet';
+
+  /// Preset empty body — next action is apply/save.
+  static const String contextPresetsEmptyMessage =
+      'Save the current context as a preset to restore it in one tap.';
+
+  /// Save preset.
+  static const String contextPresetSave = 'Save preset';
+
+  /// Apply preset.
+  static const String contextPresetApply = 'Apply preset';
+
+  /// Duplicate preset name.
+  static const String contextPresetOverwriteTitle = 'Replace preset?';
+
+  /// Duplicate preset body.
+  static const String contextPresetOverwriteMessage =
+      'A preset with that name already exists. Replace it?';
+
+  /// Auto-clear undo.
+  static const String contextAutoClearUndo = 'Undo';
+
+  /// Auto-clear toast.
+  static String contextAutoClearMessage(String label) =>
+      'Cleared $label after idle.';
+
+  /// Movement prompt title.
+  static const String contextMovementTitle = 'Confirm context';
+
+  /// Movement prompt body.
+  static const String contextMovementMessage =
+      'You have moved. Is the current context still correct?';
+
+  /// Pin chip marker.
+  static const String contextPinMarker = 'Pinned';
+
   /// Status line when no template is pinned.
   static const String statusNoTemplate = 'No template';
 

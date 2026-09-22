@@ -17,6 +17,8 @@ import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
+import 'package:tapture/features/context/presentation/context_hierarchy_screen.dart';
+import 'package:tapture/features/context/presentation/context_preset_list.dart';
 import 'package:tapture/features/projects/presentation/current_project.dart';
 import 'package:tapture/features/projects/presentation/project_create_screen.dart';
 import 'package:tapture/features/projects/presentation/project_edit_screen.dart';
@@ -141,6 +143,14 @@ abstract final class AppRoutes {
   /// Datasets for [projectId].
   static String projectDatasets(String projectId) =>
       '${project(projectId)}/datasets';
+
+  /// Context hierarchy editor for [projectId].
+  static String projectContext(String projectId) =>
+      '${project(projectId)}/context';
+
+  /// Context presets for [projectId].
+  static String projectContextPresets(String projectId) =>
+      '${projectContext(projectId)}/presets';
 
   /// Dataset import for [projectId].
   static String projectDatasetImport(String projectId) =>
@@ -471,6 +481,26 @@ List<RouteBase> get _routes {
                       builder: (BuildContext _, GoRouterState _) {
                         return const _RoutePage(name: 'exports');
                       },
+                    ),
+                    GoRoute(
+                      path: 'context',
+                      metadata: _projectScoped,
+                      builder: (BuildContext context, GoRouterState state) {
+                        return ContextHierarchyScreen(
+                          projectId: state.pathParameters['projectId'],
+                        );
+                      },
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: 'presets',
+                          metadata: _projectScoped,
+                          builder: (BuildContext context, GoRouterState state) {
+                            return ContextPresetList(
+                              projectId: state.pathParameters['projectId'],
+                            );
+                          },
+                        ),
+                      ],
                     ),
                     GoRoute(
                       path: 'datasets',

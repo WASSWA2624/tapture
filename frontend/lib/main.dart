@@ -21,6 +21,7 @@ import 'core/logging/logger.dart';
 import 'core/security/secure_storage.dart';
 import 'core/time/clock.dart';
 import 'core/widgets/fields/field_editor.dart';
+import 'features/context/data/context_repository_impl.dart';
 import 'features/feedback/feedback.dart';
 import 'features/feedback/presentation/feedback_providers.dart';
 import 'features/projects/data/project_openable_file_lookup_factory.dart';
@@ -127,6 +128,14 @@ Future<void> _run() async {
       }),
       referenceRepositoryProvider.overrideWith((Ref _) {
         return ReferenceRepositoryImpl(
+          db: db,
+          clock: clock,
+          deviceId: id,
+          ids: ids,
+        );
+      }),
+      contextRepositoryProvider.overrideWith((Ref _) {
+        return ContextRepositoryImpl(
           db: db,
           clock: clock,
           deviceId: id,
