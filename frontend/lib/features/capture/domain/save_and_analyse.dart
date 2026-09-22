@@ -17,7 +17,12 @@ abstract final class SaveAndAnalyse {
     required String jobId,
     required String recordId,
   }) {
-    return (id: jobId, recordId: recordId, stage: 'queued', attemptCount: 0);
+    return ProcessingJob(
+      id: jobId,
+      recordId: recordId,
+      stage: '',
+      attemptCount: 0,
+    );
   }
 
   /// Persists via [persist] then enqueues via [enqueue]. On enqueue failure

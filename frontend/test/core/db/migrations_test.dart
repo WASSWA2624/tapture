@@ -31,7 +31,7 @@ void main() {
   });
 
   test(
-    'upgrade from a seeded version 1 file through version 2 and version 3 and version 4 and version 5 and version 6 and version 7 and version 8 and version 9 and version 10 and version 11 and version 12 and version 13 and version 14 to head preserves rows and columns',
+    'upgrade from a seeded version 1 file through version 2 and version 3 and version 4 and version 5 and version 6 and version 7 and version 8 and version 9 and version 10 and version 11 and version 12 and version 13 and version 14 and version 15 to head preserves rows and columns',
     () async {
       final Directory directory = Directory.systemTemp.createTempSync(
         'tapture_migrate_',
@@ -145,6 +145,21 @@ void main() {
       addTearDown(upgraded.close);
       await upgraded.customSelect('SELECT 1').get();
       await _expectVersion14Projects(upgraded);
+    },
+  );
+
+  test(
+    'migrateToV15 is not a destructive step and a second run is a no-op',
+    () async {
+      expect(kDestructiveSteps.contains(15), isFalse);
+      final AppDatabase db = AppDatabase.memory();
+      addTearDown(db.close);
+      await db.customSelect('SELECT 1').get();
+      await migrateToV15(Migrator(db), db);
+      await migrateToV15(Migrator(db), db);
+      final Set<String> columns = (await _columnSets(db))['processing_jobs']!;
+      expect(columns, contains('lease_expires_at'));
+      expect((await _columnSets(db)).containsKey('ocr_cache'), isTrue);
     },
   );
 

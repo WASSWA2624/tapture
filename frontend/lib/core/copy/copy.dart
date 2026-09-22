@@ -2811,4 +2811,143 @@ abstract final class Copy {
       other: 'Wait $seconds seconds before trying again.',
     );
   }
+
+  /// Queue screen title.
+  static const String queueTitle = 'Process';
+
+  /// Unprocessed count label.
+  static const String queueUnprocessed = 'Unprocessed';
+
+  /// Queued count label.
+  static const String queueQueued = 'Queued';
+
+  /// Failed count label.
+  static const String queueFailed = 'Failed';
+
+  /// Process every waiting record.
+  static const String queueProcessAll = 'Process all';
+
+  /// Process the records in one group.
+  static const String queueProcessSelected = 'Process selected';
+
+  /// Empty queue title.
+  static const String queueEmptyHeadline = 'Nothing waiting';
+
+  /// Empty queue explanation.
+  static const String queueEmptyMessage =
+      'Captured records appear here when they are ready to process.';
+
+  /// Failures list title.
+  static const String queueFailedTitle = 'Failed jobs';
+
+  /// Empty failures title.
+  static const String queueFailedEmptyHeadline = 'No failed jobs';
+
+  /// Empty failures explanation.
+  static const String queueFailedEmptyMessage =
+      'Jobs that stop are listed here with the reason.';
+
+  /// Retry one failed job.
+  static const String queueRetry = 'Retry';
+
+  /// Stop the batch that is running.
+  static const String queueCancel = 'Cancel';
+
+  /// End-of-run summary.
+  static String queueSummary(int succeeded, int failed) {
+    return '$succeeded succeeded, $failed failed';
+  }
+
+  /// Asks before the first online call of a session.
+  static const String egressTitle = 'Send for analysis?';
+
+  /// Confirms the preview.
+  static const String egressSend = 'Send';
+
+  /// Declines the preview and stays offline.
+  static const String egressDecline = 'Stay offline';
+
+  /// Nothing would leave the device.
+  static const String egressEmptyHeadline = 'Nothing to send';
+
+  /// Why the preview is empty.
+  static const String egressEmptyMessage =
+      'This record has no images that would leave the device.';
+
+  /// What the preview says will be included.
+  static String egressBody({required int images, required String size}) {
+    return '$images images, about $size. Captions and field names are included.';
+  }
+
+  /// Device-held key screen title.
+  static const String apiKeyTitle = 'Provider key';
+
+  /// States that device custody is the exception.
+  static const String apiKeyCustody =
+      'This key lives on this device only. The usual arrangement is for '
+      "the organisation's backend to hold it.";
+
+  /// Key field label.
+  static const String apiKeyLabel = 'Provider key';
+
+  /// Saves the key into secure storage.
+  static const String apiKeySave = 'Save key';
+
+  /// Removes the key and clears the selection.
+  static const String apiKeyRemove = 'Remove key';
+
+  /// Runs the smallest connection test.
+  static const String apiKeyTest = 'Test connection';
+
+  /// Shown once the key is stored and hidden.
+  static const String apiKeySaved = 'Saved on this device';
+
+  /// Test connection succeeded.
+  static const String apiKeySuccess = 'Connection succeeded.';
+
+  /// The key was rejected.
+  static const String apiKeyAuthFailed = 'The key was rejected.';
+
+  /// The test could not reach the network.
+  static const String apiKeyNetworkFailed = 'The network is not available.';
+
+  /// Template question.
+  static const String templateChoiceTitle = 'What is this?';
+
+  /// Pins the choice to the current place.
+  static const String templateChoicePin =
+      'Use this template for the rest of this location';
+
+  /// No templates to offer.
+  static const String templateChoiceEmptyHeadline = 'No templates';
+
+  /// Why the choice sheet is empty.
+  static const String templateChoiceEmptyMessage =
+      'Add a template before choosing one.';
+
+  /// The third choice when the shortlist is not enough.
+  static const String templateChoiceOther = 'Something else';
+
+  /// Preparing images.
+  static const String processPreparing = 'Preparing images';
+
+  /// On-device reading.
+  static const String processReading = 'Reading text on device';
+
+  /// Template detection.
+  static const String processDetecting = 'Identifying template';
+
+  /// Online extraction.
+  static const String processExtracting = 'Extracting fields';
+
+  /// Validation.
+  static const String processChecking = 'Checking values';
+
+  /// Local notification title. Counts only.
+  static const String processingNotificationTitle = 'Processing finished';
+
+  /// Local notification body. Counts only.
+  static String processingNotificationBody(int succeeded, int failed) {
+    return '$succeeded succeeded, $failed failed';
+  }
 }

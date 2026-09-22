@@ -25,6 +25,7 @@ import 'core/widgets/fields/field_editor.dart';
 import 'features/context/data/context_repository_impl.dart';
 import 'features/feedback/feedback.dart';
 import 'features/feedback/presentation/feedback_providers.dart';
+import 'features/processing/data/processing_repository_impl.dart';
 import 'features/projects/data/project_openable_file_lookup_factory.dart';
 import 'features/projects/data/project_repository_impl.dart';
 import 'features/projects/presentation/current_project.dart';
@@ -117,6 +118,15 @@ Future<void> _run() async {
           clock: clock,
           deviceId: id,
           ids: ids,
+        );
+      }),
+      processingRepositoryProvider.overrideWith((Ref ref) {
+        return ProcessingRepositoryImpl(
+          db: db,
+          clock: clock,
+          deviceId: id,
+          ids: ids,
+          settings: ref.watch(projectSettingsStoreProvider),
         );
       }),
       templateRepositoryProvider.overrideWith((Ref _) {

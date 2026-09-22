@@ -103,3 +103,11 @@ packages:
     version: ^6.0.0
     purpose: The shared lint set analysis_options.yaml layers its rules onto.
     task: "003"
+  image:
+    version: ^4.3.0
+    purpose: Pure-Dart decode, resize, orientation and contrast for on-device preparation and plate reading (FE-PERF-02). MIT. Replaces a native image pipeline the test VM cannot run, and is the recognition package task 013 adds before OCR.
+    task: "013"
+  flutter_local_notifications:
+    version: ^18.0.1
+    purpose: One local notification when a processing batch finishes. BSD-3-Clause. Replaces a hand-rolled notification channel. No push and no remote service.
+    task: "013"

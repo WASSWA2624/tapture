@@ -51,6 +51,18 @@ class Processing extends Table with MergeColumns {
 
   /// Model name, when an online stage ran.
   TextColumn get model => text().nullable()();
+
+  /// When a claim stops being owned by the runner that took it.
+  ///
+  /// A later claim releases a running job whose lease is already past, so a
+  /// killed runner does not lose the job.
+  DateTimeColumn get leaseExpiresAt => dateTime().nullable()();
+
+  /// Why the online stage was not called, when it was skipped.
+  TextColumn get skipReason => text().nullable()();
+
+  /// Rejection reasons JSON. An array of strings, stored as text.
+  TextColumn get rejections => text().nullable()();
 }
 
 /// Lifecycle of a [Processing] job.

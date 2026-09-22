@@ -20,6 +20,7 @@ import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/capture/capture.dart';
 import 'package:tapture/features/context/presentation/context_hierarchy_screen.dart';
 import 'package:tapture/features/context/presentation/context_preset_list.dart';
+import 'package:tapture/features/processing/presentation/queue_screen.dart';
 import 'package:tapture/features/projects/presentation/current_project.dart';
 import 'package:tapture/features/projects/presentation/project_create_screen.dart';
 import 'package:tapture/features/projects/presentation/project_edit_screen.dart';
@@ -31,6 +32,7 @@ import 'package:tapture/features/reference/presentation/dataset_browser_screen.d
 import 'package:tapture/features/reference/presentation/dataset_key_screen.dart';
 import 'package:tapture/features/reference/presentation/dataset_list_screen.dart';
 import 'package:tapture/features/reference/presentation/dataset_row_edit_screen.dart';
+import 'package:tapture/features/settings/presentation/api_key_screen.dart';
 import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
 import 'package:tapture/features/settings/presentation/appearance_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/capture_settings_screen.dart';
@@ -475,8 +477,10 @@ List<RouteBase> get _routes {
                     GoRoute(
                       path: 'queue',
                       metadata: _projectScoped,
-                      builder: (BuildContext _, GoRouterState _) {
-                        return const _RoutePage(name: 'queue');
+                      builder: (BuildContext _, GoRouterState state) {
+                        return QueueScreen(
+                          projectId: state.pathParameters['projectId'],
+                        );
                       },
                     ),
                     GoRoute(
@@ -629,6 +633,12 @@ List<RouteBase> get _routes {
                   path: 'security',
                   builder: (BuildContext _, GoRouterState _) {
                     return const AppLockScreen.manage();
+                  },
+                ),
+                GoRoute(
+                  path: 'provider-key',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const ApiKeyScreen();
                   },
                 ),
                 GoRoute(
@@ -785,7 +795,7 @@ List<RouteBase> get _routes {
                 GoRoute(
                   path: 'queue',
                   builder: (BuildContext _, GoRouterState _) {
-                    return const _RoutePage(name: 'queue');
+                    return const QueueScreen();
                   },
                 ),
                 GoRoute(

@@ -266,107 +266,107 @@ abstract interface class OcrService {
 
 ### The queue and the runner
 
-- [ ] Killing the app mid-job leaves the job claimable again once the lease expires, not lost.
-- [ ] Two concurrent claims never return the same job.
-- [ ] Cancelling mid-run leaves the record intact and the job resumable from the next stage.
-- [ ] A resumed job skips stages already marked complete.
-- [ ] A provider outage backs off instead of burning battery; a permanent failure stops without a second attempt.
-- [ ] Tests: unit tests over stage ordering and lease expiry.
-- [ ] Tests: repository tests for `processing_repository_impl.dart` against an in-memory database, covering the
+- [x] Killing the app mid-job leaves the job claimable again once the lease expires, not lost.
+- [x] Two concurrent claims never return the same job.
+- [x] Cancelling mid-run leaves the record intact and the job resumable from the next stage.
+- [x] A resumed job skips stages already marked complete.
+- [x] A provider outage backs off instead of burning battery; a permanent failure stops without a second attempt.
+- [x] Tests: unit tests over stage ordering and lease expiry.
+- [x] Tests: repository tests for `processing_repository_impl.dart` against an in-memory database, covering the
       round-trip mapper, plus the fake later tests use.
-- [ ] Tests: unit tests over resume, cancellation and both failure classes, with no Flutter binding.
+- [x] Tests: unit tests over resume, cancellation and both failure classes, with no Flutter binding.
 
 ### Reading the image on the device
 
-- [ ] Originals are byte-identical after preprocessing.
-- [ ] A rating-plate photo yields readable text, blocks and bounding boxes offline.
-- [ ] Reprocessing a record reuses stored OCR text and performs no recognition and no upload.
-- [ ] A resized or recompressed copy of a photo matches; an unrelated photo does not.
-- [ ] A record can be identified with no online call at all.
-- [ ] Tests: unit tests hashing an original before and after preprocessing.
-- [ ] Tests: recognition test against a fixture image with known text, with the network disabled.
-- [ ] Tests: repository tests for `ocr_cache.dart` against an in-memory database, plus the fake later tests use.
-- [ ] Tests: unit tests of the distance function over resized, recompressed and unrelated images.
-- [ ] Tests: unit tests over realistic plate text covering one candidate, several competing candidates and none.
+- [x] Originals are byte-identical after preprocessing.
+- [x] A rating-plate photo yields readable text, blocks and bounding boxes offline.
+- [x] Reprocessing a record reuses stored OCR text and performs no recognition and no upload.
+- [x] A resized or recompressed copy of a photo matches; an unrelated photo does not.
+- [x] A record can be identified with no online call at all.
+- [x] Tests: unit tests hashing an original before and after preprocessing.
+- [x] Tests: recognition test against a fixture image with known text, with the network disabled.
+- [x] Tests: repository tests for `ocr_cache.dart` against an in-memory database, plus the fake later tests use.
+- [x] Tests: unit tests of the distance function over resized, recompressed and unrelated images.
+- [x] Tests: unit tests over realistic plate text covering one candidate, several competing candidates and none.
 
 ### Providers, keys and the egress preview
 
-- [ ] Switching provider requires no change outside settings.
-- [ ] A registry entry can declare that its key is held by the backend, and no caller behaves differently.
-- [ ] A user can decline the preview and carry on working offline.
-- [ ] A key is unreadable after saving and removable in one action.
-- [ ] The screen never presents device custody as the recommended arrangement.
-- [ ] Test connection tells authentication failure and network failure apart.
-- [ ] Tests: unit tests over selection per project and per operation, including a keyless entry.
-- [ ] Tests: widget test of `egress_preview_dialog.dart` covering its empty and failure states.
-- [ ] Tests: test asserting the key never appears in the database or an export.
-- [ ] Tests: widget test of `provider_test_action.dart`, including its empty and failure states.
+- [x] Switching provider requires no change outside settings.
+- [x] A registry entry can declare that its key is held by the backend, and no caller behaves differently.
+- [x] A user can decline the preview and carry on working offline.
+- [x] A key is unreadable after saving and removable in one action.
+- [x] The screen never presents device custody as the recommended arrangement.
+- [x] Test connection tells authentication failure and network failure apart.
+- [x] Tests: unit tests over selection per project and per operation, including a keyless entry.
+- [x] Tests: widget test of `egress_preview_dialog.dart` covering its empty and failure states.
+- [x] Tests: test asserting the key never appears in the database or an export.
+- [x] Tests: widget test of `provider_test_action.dart`, including its empty and failure states.
 
 ### The online call
 
-- [ ] A five-photo record produces exactly one extraction call.
-- [ ] The request matches the specification example in shape.
-- [ ] A malformed or hostile response never corrupts a record.
-- [ ] A failed job leaves the raw response stored for inspection.
-- [ ] A record can be reprocessed from stored output with no new call.
-- [ ] A verified field survives reprocessing untouched.
-- [ ] Thresholds are configurable per project and yield the same band everywhere they are read.
-- [ ] Tests: golden test of a serialised request.
-- [ ] Tests: unit tests of batching below, at and above the cap, with no Flutter binding.
-- [ ] Tests: unit tests over valid, partial, hostile and unparseable responses, including the single repair attempt,
+- [x] A five-photo record produces exactly one extraction call.
+- [x] The request matches the specification example in shape.
+- [x] A malformed or hostile response never corrupts a record.
+- [x] A failed job leaves the raw response stored for inspection.
+- [x] A record can be reprocessed from stored output with no new call.
+- [x] A verified field survives reprocessing untouched.
+- [x] Thresholds are configurable per project and yield the same band everywhere they are read.
+- [x] Tests: golden test of a serialised request.
+- [x] Tests: unit tests of batching below, at and above the cap, with no Flutter binding.
+- [x] Tests: unit tests over valid, partial, hostile and unparseable responses, including the single repair attempt,
       with no Flutter binding.
-- [ ] Tests: repository tests for `response_store.dart` against an in-memory database, plus the fake later tests use.
-- [ ] Tests: unit tests that verified and manual values are preserved, that banding follows the configured
+- [x] Tests: repository tests for `response_store.dart` against an in-memory database, plus the fake later tests use.
+- [x] Tests: unit tests that verified and manual values are preserved, that banding follows the configured
       thresholds, and that a review-required value forces NEEDS_REVIEW, with no Flutter binding.
 
 ### Choosing the template, normalising the value, matching the row
 
-- [ ] A pinned template short-circuits detection entirely.
-- [ ] No detection call is made when local scoring is confident.
-- [ ] The question is asked once per room, not once per item.
-- [ ] "Gauge damaged and requires repair" maps to Faulty while the sentence remains.
-- [ ] Leading zeros in asset numbers are preserved, and the original phrasing survives in the raw value.
-- [ ] "Sphygmomanometer" reaches "Blood Pressure Machine" without a model call.
-- [ ] Every match records its strategy and score, and a weak match becomes no match.
-- [ ] Tests: unit tests over the full decision table and the inconclusive path, with no Flutter binding.
-- [ ] Tests: widget test of `template_choice_sheet.dart`, including its empty and failure states.
-- [ ] Tests: unit tests over the specification examples for units, choices and dates, including ambiguous dates,
+- [x] A pinned template short-circuits detection entirely.
+- [x] No detection call is made when local scoring is confident.
+- [x] The question is asked once per room, not once per item.
+- [x] "Gauge damaged and requires repair" maps to Faulty while the sentence remains.
+- [x] Leading zeros in asset numbers are preserved, and the original phrasing survives in the raw value.
+- [x] "Sphygmomanometer" reaches "Blood Pressure Machine" without a model call.
+- [x] Every match records its strategy and score, and a weak match becomes no match.
+- [x] Tests: unit tests over the full decision table and the inconclusive path, with no Flutter binding.
+- [x] Tests: widget test of `template_choice_sheet.dart`, including its empty and failure states.
+- [x] Tests: unit tests over the specification examples for units, choices and dates, including ambiguous dates,
       zero-prefixed identifiers and text matching no option.
-- [ ] Tests: unit tests for each matching strategy in order, plus the no-match path, with no Flutter binding.
+- [x] Tests: unit tests for each matching strategy in order, plus the no-match path, with no Flutter binding.
 
 ### Provenance, refinement and the no-invention gate
 
-- [ ] Every extracted value can be traced to a source in the review screen.
-- [ ] Raw and refined captions are both retrievable and both exportable.
-- [ ] A missing purchase year stays "Not detected" rather than becoming a guess.
-- [ ] Tests: unit tests that each applied value writes at least one evidence row and a complete provenance stamp, and
+- [x] Every extracted value can be traced to a source in the review screen.
+- [x] Raw and refined captions are both retrievable and both exportable.
+- [x] A missing purchase year stays "Not detected" rather than becoming a guess.
+- [x] Tests: unit tests that each applied value writes at least one evidence row and a complete provenance stamp, and
       that a value with no locatable region still links to its photo, with no Flutter binding.
-- [ ] Tests: unit tests asserting the raw caption row is unchanged and that a refinement introducing a new fact is
+- [x] Tests: unit tests asserting the raw caption row is unchanged and that a refinement introducing a new fact is
       rejected.
-- [ ] Tests: unit tests over fabricated responses — unsupported value, pattern violation and off-list option — each
+- [x] Tests: unit tests over fabricated responses — unsupported value, pattern violation and off-list option — each
       asserting the rejection reason, with no Flutter binding.
 
 ### Skipping online work and capping what it costs
 
-- [ ] A scanned known asset completes with no online call.
-- [ ] A user can always see how many calls have been made today.
-- [ ] Reaching the cap stops online work with a clear message and leaves the queue intact.
-- [ ] Tests: unit tests proving zero calls on the fully matched path, and counter and cap behaviour below, at and
+- [x] A scanned known asset completes with no online call.
+- [x] A user can always see how many calls have been made today.
+- [x] Reaching the cap stops online work with a clear message and leaves the queue intact.
+- [x] Tests: unit tests proving zero calls on the fully matched path, and counter and cap behaviour below, at and
       above the limit, with no Flutter binding.
 
 ### The screens and the unattended paths
 
-- [ ] A user can process one facility at a time.
-- [ ] Interrupting a batch keeps everything already processed, and a failed job never damages the raw record.
-- [ ] With both unattended settings off, nothing processes without a tap.
-- [ ] Opportunistic OCR stops on resume, uses no network, and leaves battery use negligible.
-- [ ] A refused notification permission never stops or delays processing.
-- [ ] Tests: widget tests of grouping and counts in `queue_screen.dart`.
-- [ ] Tests: widget tests of progress, cancellation and the end-of-run summary in `process_actions.dart`.
-- [ ] Tests: widget test of `failed_jobs_screen.dart`, including its empty and failure states.
-- [ ] Tests: unit tests over the connectivity trigger with the metered restriction and the cap, and over the
+- [x] A user can process one facility at a time.
+- [x] Interrupting a batch keeps everything already processed, and a failed job never damages the raw record.
+- [x] With both unattended settings off, nothing processes without a tap.
+- [x] Opportunistic OCR stops on resume, uses no network, and leaves battery use negligible.
+- [x] A refused notification permission never stops or delays processing.
+- [x] Tests: widget tests of grouping and counts in `queue_screen.dart`.
+- [x] Tests: widget tests of progress, cancellation and the end-of-run summary in `process_actions.dart`.
+- [x] Tests: widget test of `failed_jobs_screen.dart`, including its empty and failure states.
+- [x] Tests: unit tests over the connectivity trigger with the metered restriction and the cap, and over the
       charging-and-idle gate with a resume interrupt, with no Flutter binding.
-- [ ] Tests: tests for `notifications.dart` against a fake notification platform asserting one notification per
+- [x] Tests: tests for `notifications.dart` against a fake notification platform asserting one notification per
       batch, its counts and its tap route, plus the fake later tests use.
 
 ## Out of scope

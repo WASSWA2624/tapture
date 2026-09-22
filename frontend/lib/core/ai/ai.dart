@@ -2,5 +2,8 @@
 library;
 
 export 'ai_service.dart';
+export 'ocr_block.dart';
+export 'ocr_result.dart';
+export 'ocr_service.dart';
 export 'stt_result.dart';
 export 'stt_service.dart';

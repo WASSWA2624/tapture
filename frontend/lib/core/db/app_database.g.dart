@@ -13629,6 +13629,40 @@ class $ProcessingTable extends Processing
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _leaseExpiresAtMeta = const VerificationMeta(
+    'leaseExpiresAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> leaseExpiresAt =
+      GeneratedColumn<DateTime>(
+        'lease_expires_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _skipReasonMeta = const VerificationMeta(
+    'skipReason',
+  );
+  @override
+  late final GeneratedColumn<String> skipReason = GeneratedColumn<String>(
+    'skip_reason',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rejectionsMeta = const VerificationMeta(
+    'rejections',
+  );
+  @override
+  late final GeneratedColumn<String> rejections = GeneratedColumn<String>(
+    'rejections',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -13646,6 +13680,9 @@ class $ProcessingTable extends Processing
     finishedAt,
     provider,
     model,
+    leaseExpiresAt,
+    skipReason,
+    rejections,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -13755,6 +13792,27 @@ class $ProcessingTable extends Processing
         model.isAcceptableOrUnknown(data['model']!, _modelMeta),
       );
     }
+    if (data.containsKey('lease_expires_at')) {
+      context.handle(
+        _leaseExpiresAtMeta,
+        leaseExpiresAt.isAcceptableOrUnknown(
+          data['lease_expires_at']!,
+          _leaseExpiresAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('skip_reason')) {
+      context.handle(
+        _skipReasonMeta,
+        skipReason.isAcceptableOrUnknown(data['skip_reason']!, _skipReasonMeta),
+      );
+    }
+    if (data.containsKey('rejections')) {
+      context.handle(
+        _rejectionsMeta,
+        rejections.isAcceptableOrUnknown(data['rejections']!, _rejectionsMeta),
+      );
+    }
     return context;
   }
 
@@ -13826,6 +13884,18 @@ class $ProcessingTable extends Processing
         DriftSqlType.string,
         data['${effectivePrefix}model'],
       ),
+      leaseExpiresAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}lease_expires_at'],
+      ),
+      skipReason: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}skip_reason'],
+      ),
+      rejections: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rejections'],
+      ),
     );
   }
 
@@ -13886,6 +13956,18 @@ class ProcessingJobRow extends DataClass
 
   /// Model name, when an online stage ran.
   final String? model;
+
+  /// When a claim stops being owned by the runner that took it.
+  ///
+  /// A later claim releases a running job whose lease is already past, so a
+  /// killed runner does not lose the job.
+  final DateTime? leaseExpiresAt;
+
+  /// Why the online stage was not called, when it was skipped.
+  final String? skipReason;
+
+  /// Rejection reasons JSON. An array of strings, stored as text.
+  final String? rejections;
   const ProcessingJobRow({
     required this.id,
     required this.createdAt,
@@ -13902,6 +13984,9 @@ class ProcessingJobRow extends DataClass
     this.finishedAt,
     this.provider,
     this.model,
+    this.leaseExpiresAt,
+    this.skipReason,
+    this.rejections,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -13935,6 +14020,15 @@ class ProcessingJobRow extends DataClass
     if (!nullToAbsent || model != null) {
       map['model'] = Variable<String>(model);
     }
+    if (!nullToAbsent || leaseExpiresAt != null) {
+      map['lease_expires_at'] = Variable<DateTime>(leaseExpiresAt);
+    }
+    if (!nullToAbsent || skipReason != null) {
+      map['skip_reason'] = Variable<String>(skipReason);
+    }
+    if (!nullToAbsent || rejections != null) {
+      map['rejections'] = Variable<String>(rejections);
+    }
     return map;
   }
 
@@ -13965,6 +14059,15 @@ class ProcessingJobRow extends DataClass
       model: model == null && nullToAbsent
           ? const Value.absent()
           : Value(model),
+      leaseExpiresAt: leaseExpiresAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(leaseExpiresAt),
+      skipReason: skipReason == null && nullToAbsent
+          ? const Value.absent()
+          : Value(skipReason),
+      rejections: rejections == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rejections),
     );
   }
 
@@ -13991,6 +14094,9 @@ class ProcessingJobRow extends DataClass
       finishedAt: serializer.fromJson<DateTime?>(json['finishedAt']),
       provider: serializer.fromJson<String?>(json['provider']),
       model: serializer.fromJson<String?>(json['model']),
+      leaseExpiresAt: serializer.fromJson<DateTime?>(json['leaseExpiresAt']),
+      skipReason: serializer.fromJson<String?>(json['skipReason']),
+      rejections: serializer.fromJson<String?>(json['rejections']),
     );
   }
   @override
@@ -14014,6 +14120,9 @@ class ProcessingJobRow extends DataClass
       'finishedAt': serializer.toJson<DateTime?>(finishedAt),
       'provider': serializer.toJson<String?>(provider),
       'model': serializer.toJson<String?>(model),
+      'leaseExpiresAt': serializer.toJson<DateTime?>(leaseExpiresAt),
+      'skipReason': serializer.toJson<String?>(skipReason),
+      'rejections': serializer.toJson<String?>(rejections),
     };
   }
 
@@ -14033,6 +14142,9 @@ class ProcessingJobRow extends DataClass
     Value<DateTime?> finishedAt = const Value.absent(),
     Value<String?> provider = const Value.absent(),
     Value<String?> model = const Value.absent(),
+    Value<DateTime?> leaseExpiresAt = const Value.absent(),
+    Value<String?> skipReason = const Value.absent(),
+    Value<String?> rejections = const Value.absent(),
   }) => ProcessingJobRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -14049,6 +14161,11 @@ class ProcessingJobRow extends DataClass
     finishedAt: finishedAt.present ? finishedAt.value : this.finishedAt,
     provider: provider.present ? provider.value : this.provider,
     model: model.present ? model.value : this.model,
+    leaseExpiresAt: leaseExpiresAt.present
+        ? leaseExpiresAt.value
+        : this.leaseExpiresAt,
+    skipReason: skipReason.present ? skipReason.value : this.skipReason,
+    rejections: rejections.present ? rejections.value : this.rejections,
   );
   ProcessingJobRow copyWithCompanion(ProcessingCompanion data) {
     return ProcessingJobRow(
@@ -14071,6 +14188,15 @@ class ProcessingJobRow extends DataClass
           : this.finishedAt,
       provider: data.provider.present ? data.provider.value : this.provider,
       model: data.model.present ? data.model.value : this.model,
+      leaseExpiresAt: data.leaseExpiresAt.present
+          ? data.leaseExpiresAt.value
+          : this.leaseExpiresAt,
+      skipReason: data.skipReason.present
+          ? data.skipReason.value
+          : this.skipReason,
+      rejections: data.rejections.present
+          ? data.rejections.value
+          : this.rejections,
     );
   }
 
@@ -14091,7 +14217,10 @@ class ProcessingJobRow extends DataClass
           ..write('startedAt: $startedAt, ')
           ..write('finishedAt: $finishedAt, ')
           ..write('provider: $provider, ')
-          ..write('model: $model')
+          ..write('model: $model, ')
+          ..write('leaseExpiresAt: $leaseExpiresAt, ')
+          ..write('skipReason: $skipReason, ')
+          ..write('rejections: $rejections')
           ..write(')'))
         .toString();
   }
@@ -14113,6 +14242,9 @@ class ProcessingJobRow extends DataClass
     finishedAt,
     provider,
     model,
+    leaseExpiresAt,
+    skipReason,
+    rejections,
   );
   @override
   bool operator ==(Object other) =>
@@ -14132,7 +14264,10 @@ class ProcessingJobRow extends DataClass
           other.startedAt == this.startedAt &&
           other.finishedAt == this.finishedAt &&
           other.provider == this.provider &&
-          other.model == this.model);
+          other.model == this.model &&
+          other.leaseExpiresAt == this.leaseExpiresAt &&
+          other.skipReason == this.skipReason &&
+          other.rejections == this.rejections);
 }
 
 class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
@@ -14151,6 +14286,9 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
   final Value<DateTime?> finishedAt;
   final Value<String?> provider;
   final Value<String?> model;
+  final Value<DateTime?> leaseExpiresAt;
+  final Value<String?> skipReason;
+  final Value<String?> rejections;
   final Value<int> rowid;
   const ProcessingCompanion({
     this.id = const Value.absent(),
@@ -14168,6 +14306,9 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
     this.finishedAt = const Value.absent(),
     this.provider = const Value.absent(),
     this.model = const Value.absent(),
+    this.leaseExpiresAt = const Value.absent(),
+    this.skipReason = const Value.absent(),
+    this.rejections = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ProcessingCompanion.insert({
@@ -14186,6 +14327,9 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
     this.finishedAt = const Value.absent(),
     this.provider = const Value.absent(),
     this.model = const Value.absent(),
+    this.leaseExpiresAt = const Value.absent(),
+    this.skipReason = const Value.absent(),
+    this.rejections = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : createdAt = Value(createdAt),
        updatedAt = Value(updatedAt),
@@ -14210,6 +14354,9 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
     Expression<DateTime>? finishedAt,
     Expression<String>? provider,
     Expression<String>? model,
+    Expression<DateTime>? leaseExpiresAt,
+    Expression<String>? skipReason,
+    Expression<String>? rejections,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -14228,6 +14375,9 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
       if (finishedAt != null) 'finished_at': finishedAt,
       if (provider != null) 'provider': provider,
       if (model != null) 'model': model,
+      if (leaseExpiresAt != null) 'lease_expires_at': leaseExpiresAt,
+      if (skipReason != null) 'skip_reason': skipReason,
+      if (rejections != null) 'rejections': rejections,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -14248,6 +14398,9 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
     Value<DateTime?>? finishedAt,
     Value<String?>? provider,
     Value<String?>? model,
+    Value<DateTime?>? leaseExpiresAt,
+    Value<String?>? skipReason,
+    Value<String?>? rejections,
     Value<int>? rowid,
   }) {
     return ProcessingCompanion(
@@ -14266,6 +14419,9 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
       finishedAt: finishedAt ?? this.finishedAt,
       provider: provider ?? this.provider,
       model: model ?? this.model,
+      leaseExpiresAt: leaseExpiresAt ?? this.leaseExpiresAt,
+      skipReason: skipReason ?? this.skipReason,
+      rejections: rejections ?? this.rejections,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -14320,6 +14476,15 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
     if (model.present) {
       map['model'] = Variable<String>(model.value);
     }
+    if (leaseExpiresAt.present) {
+      map['lease_expires_at'] = Variable<DateTime>(leaseExpiresAt.value);
+    }
+    if (skipReason.present) {
+      map['skip_reason'] = Variable<String>(skipReason.value);
+    }
+    if (rejections.present) {
+      map['rejections'] = Variable<String>(rejections.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -14344,6 +14509,9 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
           ..write('finishedAt: $finishedAt, ')
           ..write('provider: $provider, ')
           ..write('model: $model, ')
+          ..write('leaseExpiresAt: $leaseExpiresAt, ')
+          ..write('skipReason: $skipReason, ')
+          ..write('rejections: $rejections, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -14988,6 +15156,600 @@ class ProcessingResultsCompanion extends UpdateCompanion<ProcessingResult> {
           ..write('rawResponse: $rawResponse, ')
           ..write('parsedOk: $parsedOk, ')
           ..write('tokensOrCost: $tokensOrCost, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $OcrCacheEntriesTable extends OcrCacheEntries
+    with TableInfo<$OcrCacheEntriesTable, OcrCacheEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $OcrCacheEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _contentHashMeta = const VerificationMeta(
+    'contentHash',
+  );
+  @override
+  late final GeneratedColumn<String> contentHash = GeneratedColumn<String>(
+    'content_hash',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _perceptualHashMeta = const VerificationMeta(
+    'perceptualHash',
+  );
+  @override
+  late final GeneratedColumn<String> perceptualHash = GeneratedColumn<String>(
+    'perceptual_hash',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recognisedTextMeta = const VerificationMeta(
+    'recognisedText',
+  );
+  @override
+  late final GeneratedColumn<String> recognisedText = GeneratedColumn<String>(
+    'recognised_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _blocksJsonMeta = const VerificationMeta(
+    'blocksJson',
+  );
+  @override
+  late final GeneratedColumn<String> blocksJson = GeneratedColumn<String>(
+    'blocks_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    contentHash,
+    perceptualHash,
+    recognisedText,
+    blocksJson,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'ocr_cache';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<OcrCacheEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('content_hash')) {
+      context.handle(
+        _contentHashMeta,
+        contentHash.isAcceptableOrUnknown(
+          data['content_hash']!,
+          _contentHashMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_contentHashMeta);
+    }
+    if (data.containsKey('perceptual_hash')) {
+      context.handle(
+        _perceptualHashMeta,
+        perceptualHash.isAcceptableOrUnknown(
+          data['perceptual_hash']!,
+          _perceptualHashMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_perceptualHashMeta);
+    }
+    if (data.containsKey('recognised_text')) {
+      context.handle(
+        _recognisedTextMeta,
+        recognisedText.isAcceptableOrUnknown(
+          data['recognised_text']!,
+          _recognisedTextMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_recognisedTextMeta);
+    }
+    if (data.containsKey('blocks_json')) {
+      context.handle(
+        _blocksJsonMeta,
+        blocksJson.isAcceptableOrUnknown(data['blocks_json']!, _blocksJsonMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_blocksJsonMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  OcrCacheEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return OcrCacheEntry(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      contentHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}content_hash'],
+      )!,
+      perceptualHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}perceptual_hash'],
+      )!,
+      recognisedText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recognised_text'],
+      )!,
+      blocksJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}blocks_json'],
+      )!,
+    );
+  }
+
+  @override
+  $OcrCacheEntriesTable createAlias(String alias) {
+    return $OcrCacheEntriesTable(attachedDatabase, alias);
+  }
+}
+
+class OcrCacheEntry extends DataClass implements Insertable<OcrCacheEntry> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// SHA-256 of the image bytes this row was read from.
+  final String contentHash;
+
+  /// Difference hash, stored as hex, for near-duplicate lookup.
+  final String perceptualHash;
+
+  /// Recognised text. Stored as data, never executed.
+  final String recognisedText;
+
+  /// Blocks and bounding boxes as a JSON array.
+  final String blocksJson;
+  const OcrCacheEntry({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.contentHash,
+    required this.perceptualHash,
+    required this.recognisedText,
+    required this.blocksJson,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['content_hash'] = Variable<String>(contentHash);
+    map['perceptual_hash'] = Variable<String>(perceptualHash);
+    map['recognised_text'] = Variable<String>(recognisedText);
+    map['blocks_json'] = Variable<String>(blocksJson);
+    return map;
+  }
+
+  OcrCacheEntriesCompanion toCompanion(bool nullToAbsent) {
+    return OcrCacheEntriesCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      contentHash: Value(contentHash),
+      perceptualHash: Value(perceptualHash),
+      recognisedText: Value(recognisedText),
+      blocksJson: Value(blocksJson),
+    );
+  }
+
+  factory OcrCacheEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return OcrCacheEntry(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      contentHash: serializer.fromJson<String>(json['contentHash']),
+      perceptualHash: serializer.fromJson<String>(json['perceptualHash']),
+      recognisedText: serializer.fromJson<String>(json['recognisedText']),
+      blocksJson: serializer.fromJson<String>(json['blocksJson']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'contentHash': serializer.toJson<String>(contentHash),
+      'perceptualHash': serializer.toJson<String>(perceptualHash),
+      'recognisedText': serializer.toJson<String>(recognisedText),
+      'blocksJson': serializer.toJson<String>(blocksJson),
+    };
+  }
+
+  OcrCacheEntry copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? contentHash,
+    String? perceptualHash,
+    String? recognisedText,
+    String? blocksJson,
+  }) => OcrCacheEntry(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    contentHash: contentHash ?? this.contentHash,
+    perceptualHash: perceptualHash ?? this.perceptualHash,
+    recognisedText: recognisedText ?? this.recognisedText,
+    blocksJson: blocksJson ?? this.blocksJson,
+  );
+  OcrCacheEntry copyWithCompanion(OcrCacheEntriesCompanion data) {
+    return OcrCacheEntry(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      contentHash: data.contentHash.present
+          ? data.contentHash.value
+          : this.contentHash,
+      perceptualHash: data.perceptualHash.present
+          ? data.perceptualHash.value
+          : this.perceptualHash,
+      recognisedText: data.recognisedText.present
+          ? data.recognisedText.value
+          : this.recognisedText,
+      blocksJson: data.blocksJson.present
+          ? data.blocksJson.value
+          : this.blocksJson,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OcrCacheEntry(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('contentHash: $contentHash, ')
+          ..write('perceptualHash: $perceptualHash, ')
+          ..write('recognisedText: $recognisedText, ')
+          ..write('blocksJson: $blocksJson')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    contentHash,
+    perceptualHash,
+    recognisedText,
+    blocksJson,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is OcrCacheEntry &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.contentHash == this.contentHash &&
+          other.perceptualHash == this.perceptualHash &&
+          other.recognisedText == this.recognisedText &&
+          other.blocksJson == this.blocksJson);
+}
+
+class OcrCacheEntriesCompanion extends UpdateCompanion<OcrCacheEntry> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> contentHash;
+  final Value<String> perceptualHash;
+  final Value<String> recognisedText;
+  final Value<String> blocksJson;
+  final Value<int> rowid;
+  const OcrCacheEntriesCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.contentHash = const Value.absent(),
+    this.perceptualHash = const Value.absent(),
+    this.recognisedText = const Value.absent(),
+    this.blocksJson = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  OcrCacheEntriesCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String contentHash,
+    required String perceptualHash,
+    required String recognisedText,
+    required String blocksJson,
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       contentHash = Value(contentHash),
+       perceptualHash = Value(perceptualHash),
+       recognisedText = Value(recognisedText),
+       blocksJson = Value(blocksJson);
+  static Insertable<OcrCacheEntry> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? contentHash,
+    Expression<String>? perceptualHash,
+    Expression<String>? recognisedText,
+    Expression<String>? blocksJson,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (contentHash != null) 'content_hash': contentHash,
+      if (perceptualHash != null) 'perceptual_hash': perceptualHash,
+      if (recognisedText != null) 'recognised_text': recognisedText,
+      if (blocksJson != null) 'blocks_json': blocksJson,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  OcrCacheEntriesCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? contentHash,
+    Value<String>? perceptualHash,
+    Value<String>? recognisedText,
+    Value<String>? blocksJson,
+    Value<int>? rowid,
+  }) {
+    return OcrCacheEntriesCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      contentHash: contentHash ?? this.contentHash,
+      perceptualHash: perceptualHash ?? this.perceptualHash,
+      recognisedText: recognisedText ?? this.recognisedText,
+      blocksJson: blocksJson ?? this.blocksJson,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (contentHash.present) {
+      map['content_hash'] = Variable<String>(contentHash.value);
+    }
+    if (perceptualHash.present) {
+      map['perceptual_hash'] = Variable<String>(perceptualHash.value);
+    }
+    if (recognisedText.present) {
+      map['recognised_text'] = Variable<String>(recognisedText.value);
+    }
+    if (blocksJson.present) {
+      map['blocks_json'] = Variable<String>(blocksJson.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OcrCacheEntriesCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('contentHash: $contentHash, ')
+          ..write('perceptualHash: $perceptualHash, ')
+          ..write('recognisedText: $recognisedText, ')
+          ..write('blocksJson: $blocksJson, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -22636,6 +23398,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ProcessingTable processing = $ProcessingTable(this);
   late final $ProcessingResultsTable processingResults =
       $ProcessingResultsTable(this);
+  late final $OcrCacheEntriesTable ocrCacheEntries = $OcrCacheEntriesTable(
+    this,
+  );
   late final $FieldEvidenceTable fieldEvidence = $FieldEvidenceTable(this);
   late final $DuplicatesTable duplicates = $DuplicatesTable(this);
   late final $VariancesTable variances = $VariancesTable(this);
@@ -22694,6 +23459,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'processing_jobs_by_status',
     'CREATE INDEX processing_jobs_by_status ON processing_jobs (status, queued_at)',
   );
+  late final Index ocrCacheByHash = Index(
+    'ocr_cache_by_hash',
+    'CREATE INDEX ocr_cache_by_hash ON ocr_cache (content_hash)',
+  );
   late final Index fieldEvidenceByField = Index(
     'field_evidence_by_field',
     'CREATE INDEX field_evidence_by_field ON field_evidence (record_field_id)',
@@ -22750,6 +23519,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     referenceRows,
     processing,
     processingResults,
+    ocrCacheEntries,
     fieldEvidence,
     duplicates,
     variances,
@@ -22772,6 +23542,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     referenceRowsByKey,
     referenceRowsByNormalised,
     processingJobsByStatus,
+    ocrCacheByHash,
     fieldEvidenceByField,
     duplicatesByPair,
     duplicatesByProjectStatus,

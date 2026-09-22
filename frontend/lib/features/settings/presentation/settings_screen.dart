@@ -121,6 +121,7 @@ const String _securityRoute = '/more/security';
 const String _aboutRoute = '/more/about';
 const String _templatesRoute = '/more/templates';
 const String _queueRoute = '/more/queue';
+const String _providerRoute = '/more/provider-key';
 
 const List<_Section> _defaultSections = <_Section>[
   (
@@ -143,7 +144,11 @@ const List<_Section> _defaultSections = <_Section>[
     subtitle: Copy.settingsQueueSubtitle,
     route: _queueRoute,
   ),
-  (title: Copy.settingsAiTitle, subtitle: Copy.settingsAiSubtitle, route: null),
+  (
+    title: Copy.settingsAiTitle,
+    subtitle: Copy.settingsAiSubtitle,
+    route: _providerRoute,
+  ),
   (
     title: Copy.settingsLanguageTitle,
     subtitle: Copy.settingsLanguageSubtitle,

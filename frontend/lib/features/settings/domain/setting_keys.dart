@@ -168,6 +168,30 @@ abstract final class SettingKeys {
     AppConstants.confidence.medium,
   );
 
+  /// How many jobs a runner may hold at once.
+  static final SettingKey<int> aiConcurrency = SettingKey<int>(
+    'ai.concurrency',
+    AppConstants.processing.concurrency,
+  );
+
+  /// Online extraction requests allowed for a project today.
+  static final SettingKey<int> aiDailyRequestCap = SettingKey<int>(
+    'ai.dailyRequestCap',
+    AppConstants.processing.dailyRequestCap,
+  );
+
+  /// On-device reading while charging and idle. Off until switched on.
+  static const SettingKey<bool> aiOpportunisticOcr = SettingKey<bool>(
+    'ai.opportunisticOcr',
+    false,
+  );
+
+  /// Selected provider id. `backend` is the keyless organisation proxy.
+  static const SettingKey<String> aiProvider = SettingKey<String>(
+    'ai.provider',
+    'backend',
+  );
+
   /// UI language.
   static const SettingKey<String> appLanguage = SettingKey<String>(
     'language.app',
@@ -215,6 +239,10 @@ abstract final class SettingKeys {
     aiRefineCaptions.name,
     confidenceHigh.name,
     confidenceMedium.name,
+    aiConcurrency.name,
+    aiDailyRequestCap.name,
+    aiOpportunisticOcr.name,
+    aiProvider.name,
     appLanguage.name,
     voiceLanguage.name,
     themeMode.name,

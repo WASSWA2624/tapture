@@ -173,9 +173,34 @@ abstract final class AppConstants {
     archiveUncompressedMaxBytes: 500 * _mib,
   );
 
-  /// Caps for extraction requests and perceptual matching.
-  static const ({int extractionImageCap, int perceptualHashDistance})
-  processing = (extractionImageCap: 8, perceptualHashDistance: 10);
+  /// Caps, backoff and detection cutoffs for processing.
+  ///
+  /// A project may override the concurrency cap, the daily request cap and
+  /// the confidence bands through the settings store. These are the defaults.
+  static const ({
+    int extractionImageCap,
+    int perceptualHashDistance,
+    int concurrency,
+    int dailyRequestCap,
+    int maxAttempts,
+    int backoffBaseMs,
+    int backoffCapMs,
+    double detectionConfident,
+    double detectionGap,
+    double fuzzyMatch,
+  })
+  processing = (
+    extractionImageCap: 8,
+    perceptualHashDistance: 10,
+    concurrency: 2,
+    dailyRequestCap: 200,
+    maxAttempts: 5,
+    backoffBaseMs: 1000,
+    backoffCapMs: 30000,
+    detectionConfident: 0.75,
+    detectionGap: 0.1,
+    fuzzyMatch: 0.82,
+  );
 
   /// Streaming reads for hashing and other heavy file jobs (FE-PERF-07).
   static const ({int chunkBytes}) hashing = (chunkBytes: 64 * 1024);

@@ -30,6 +30,7 @@ kUpgradeSteps = <int, _UpgradeStep>{
   12: migrateToV12,
   13: migrateToV13,
   14: migrateToV14,
+  15: migrateToV15,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -197,6 +198,43 @@ Future<void> migrateToV14(Migrator migrator, AppDatabase db) async {
     await migrator.addColumn(db.projects, db.projects.pinnedAt);
   }
   await ensureProjectsPinIndex(db);
+}
+
+/// Schema version 15: job lease, skip reason, rejections, and the OCR cache.
+Future<void> migrateToV15(Migrator migrator, AppDatabase db) async {
+  final List<QueryRow> jobs = await db
+      .customSelect(
+        "SELECT name FROM sqlite_master WHERE type = 'table' "
+        "AND name = 'processing_jobs'",
+      )
+      .get();
+  if (jobs.isNotEmpty) {
+    final List<QueryRow> info = await db
+        .customSelect('PRAGMA table_info("processing_jobs")')
+        .get();
+    final Set<String> columns = <String>{
+      for (final QueryRow row in info) row.read<String>('name'),
+    };
+    if (!columns.contains('lease_expires_at')) {
+      await migrator.addColumn(db.processing, db.processing.leaseExpiresAt);
+    }
+    if (!columns.contains('skip_reason')) {
+      await migrator.addColumn(db.processing, db.processing.skipReason);
+    }
+    if (!columns.contains('rejections')) {
+      await migrator.addColumn(db.processing, db.processing.rejections);
+    }
+  }
+  final List<QueryRow> cache = await db
+      .customSelect(
+        "SELECT name FROM sqlite_master WHERE type = 'table' "
+        "AND name = 'ocr_cache'",
+      )
+      .get();
+  if (cache.isEmpty) {
+    await migrator.createTable(db.ocrCacheEntries);
+    await migrator.createIndex(db.ocrCacheByHash);
+  }
 }
 
 /// Expression index that serves pinned-first, then newest (FE-PERF-03).

@@ -17,7 +17,7 @@ void main() {
   });
 
   test('save then byId round-trips a job', () async {
-    const ProcessingJob job = (
+    const ProcessingJob job = ProcessingJob(
       id: 'job-1',
       recordId: 'record-1',
       stage: 'prepare',
@@ -29,7 +29,7 @@ void main() {
   });
 
   test('save without a record is a ValidationFailure', () async {
-    const ProcessingJob job = (
+    const ProcessingJob job = ProcessingJob(
       id: 'job-1',
       recordId: '',
       stage: 'prepare',
