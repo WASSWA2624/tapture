@@ -4,4 +4,4 @@ The heart of the app: evidence in, with as little typing as possible, always sav
 
 Task 012 (1). One prompt for the whole phase; old numbers are in [RETIRED.md](../RETIRED.md).
 
-- [ ] [012 — Capture: evidence in, saved before anything else](012-capture.md)
+- [x] [012 — Capture: evidence in, saved before anything else](012-capture.md)

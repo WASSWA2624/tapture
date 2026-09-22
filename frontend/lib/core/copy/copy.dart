@@ -1656,6 +1656,248 @@ abstract final class Copy {
   /// Pin chip marker.
   static const String contextPinMarker = 'Pinned';
 
+  /// Capture screen title.
+  static const String captureTitle = 'Capture';
+
+  /// Primary save that also enqueues analysis.
+  static const String captureSaveAndAnalyse = 'Save and analyse';
+
+  /// Raw save with no processing.
+  static const String captureSaveRaw = 'Save raw';
+
+  /// Empty tray headline.
+  static const String captureNoPhotosHeadline = 'No photos yet';
+
+  /// Empty tray body — evidence is the only requirement.
+  static const String captureNoPhotosMessage =
+      'Add a photo, import a file, or type a caption to start.';
+
+  /// More fields expander.
+  static const String captureMoreFields = 'More fields';
+
+  /// Camera permission reason before the system prompt.
+  static const String captureCameraReason =
+      'Tapture needs the camera to photograph equipment and documents.';
+
+  /// Open system settings after a permanent camera refusal.
+  static const String captureOpenCameraSettings = 'Open settings';
+
+  /// Keep a photo despite a quality warning.
+  static const String captureKeepPhoto = 'Keep';
+
+  /// Retake after a quality warning.
+  static const String captureRetakePhoto = 'Retake';
+
+  /// Document mode found no page boundary.
+  static const String captureNoPageBoundary =
+      'No page edge found. Captured as a normal photo.';
+
+  /// Flash control semantic label.
+  static const String captureFlash = 'Flash';
+
+  /// Grid control semantic label.
+  static const String captureGrid = 'Grid';
+
+  /// Focus indicator semantic label.
+  static const String captureFocus = 'Focus';
+
+  /// Zoom control semantic label.
+  static const String captureZoom = 'Zoom';
+
+  /// Shutter semantic label.
+  static const String captureShutter = 'Shutter';
+
+  /// Gallery import action.
+  static const String captureImportGallery = 'Import photos';
+
+  /// Document import action.
+  static const String captureImportDocument = 'Import document';
+
+  /// Rejected import names the reason.
+  static String captureImportRejected(String reason) => reason;
+
+  /// Try another file recovery.
+  static const String tryAnotherFile = 'Try another file';
+
+  /// PDF bytes were not a valid document.
+  static const String pdfInvalid = 'That PDF could not be read.';
+
+  /// Requested page is outside the document.
+  static const String pdfPageMissing = 'That page is not in the document.';
+
+  /// Barcode scanner unavailable on this build.
+  static const String barcodeUnavailable =
+      'Barcode scanning is not available on this device.';
+
+  /// Confirm a decoded barcode.
+  static const String barcodeConfirm = 'Use this code';
+
+  /// Scan again after a decode.
+  static const String barcodeRescan = 'Scan again';
+
+  /// No code in the region yet.
+  static const String barcodeNoCode = 'Point at a barcode';
+
+  /// Unreadable code.
+  static const String barcodeUnreadable = 'That code could not be read.';
+
+  /// Continuous mode running count.
+  static String barcodeScanCount(int n) => 'Scanned $n';
+
+  /// Undo last continuous scan.
+  static const String barcodeUndoLast = 'Undo last';
+
+  /// Identifier matched a project record.
+  static const String identifierMatchRecord = 'Open record';
+
+  /// Identifier matched a reference row.
+  static const String identifierMatchReference = 'Use reference';
+
+  /// Identifier matched nothing — start a new record.
+  static const String identifierNewRecord = 'New record';
+
+  /// Several records share the identifier.
+  static const String identifierDuplicates = 'Several matches';
+
+  /// Record caption field label.
+  static const String captureRecordCaption = 'Caption';
+
+  /// Photo caption sheet title.
+  static const String capturePhotoCaption = 'Photo caption';
+
+  /// Caption scope: this photo.
+  static String captionScopeThis(int n) => 'This photo ($n)';
+
+  /// Caption scope: selected photos.
+  static String captionScopeSelected(int n) => 'Selected photos ($n)';
+
+  /// Caption scope: all photos.
+  static const String captionScopeAllPrefix = 'All photos';
+
+  /// Caption scope all with count.
+  static String captionScopeAll(int n) => 'All photos ($n)';
+
+  /// Append caption mode.
+  static const String captionAppend = 'Append';
+
+  /// Replace caption mode.
+  static const String captionReplace = 'Replace';
+
+  /// Microphone permission reason.
+  static const String captureMicReason =
+      'Tapture needs the microphone for spoken notes on an explicit tap.';
+
+  /// Voice input listening state.
+  static const String captureListening = 'Listening…';
+
+  /// Audio recorder start.
+  static const String captureRecordAudio = 'Record audio';
+
+  /// Audio recorder pause.
+  static const String capturePauseAudio = 'Pause';
+
+  /// Audio recorder stop.
+  static const String captureStopAudio = 'Stop';
+
+  /// Audio recorder unavailable.
+  static const String audioRecorderUnavailable =
+      'Audio recording is not available on this device.';
+
+  /// Delete photo confirm title.
+  static const String captureDeletePhotoTitle = 'Delete this photo?';
+
+  /// Delete photo confirm body.
+  static const String captureDeletePhotoMessage =
+      'It leaves the tray now. The file stays until the retention purge so '
+      'you can undo.';
+
+  /// Undo delete snack.
+  static const String captureUndoDelete = 'Undo';
+
+  /// Photo deleted snack.
+  static const String capturePhotoDeleted = 'Photo deleted';
+
+  /// Move photos action.
+  static const String captureMovePhotos = 'Move';
+
+  /// Recovery prompt title.
+  static const String captureRecoveryTitle = 'Resume capture?';
+
+  /// Recovery prompt with photo count.
+  static String captureRecoveryMessage(int photos) {
+    return Intl.plural(
+      photos,
+      zero: 'An interrupted session has no photos yet.',
+      one: 'An interrupted session has 1 photo.',
+      other: 'An interrupted session has $photos photos.',
+    );
+  }
+
+  /// Resume interrupted session.
+  static const String captureResume = 'Resume';
+
+  /// Discard interrupted session.
+  static const String captureDiscard = 'Discard';
+
+  /// Discard confirm title.
+  static const String captureDiscardTitle = 'Discard session?';
+
+  /// Discard confirm body.
+  static const String captureDiscardMessage =
+      'Photos are tombstoned and stay recoverable until the retention purge.';
+
+  /// Rapid mode title.
+  static const String captureRapidMode = 'Rapid mode';
+
+  /// Storage warning dismiss.
+  static const String captureStorageDismiss = 'Dismiss';
+
+  /// Storage stop offers export.
+  static const String captureStorageExport = 'Export';
+
+  /// Template picker title.
+  static const String capturePickTemplate = 'Template';
+
+  /// Pin template for this session.
+  static const String capturePinSession = 'Pin for session';
+
+  /// Pin template for this context level.
+  static const String capturePinContext = 'Pin for context';
+
+  /// Multi-select count.
+  static String captureSelectedCount(int n) => 'Selected $n';
+
+  /// Select all photos.
+  static const String captureSelectAll = 'Select all';
+
+  /// Clear photo selection.
+  static const String captureClearSelection = 'Clear';
+
+  /// Add photo to tray.
+  static const String captureAddPhoto = 'Add photo';
+
+  /// Quality blur advisory.
+  static const String captureQualityBlur = 'This photo looks blurry.';
+
+  /// Quality dark advisory.
+  static const String captureQualityDark = 'This photo looks dark.';
+
+  /// Quality overexposed advisory.
+  static const String captureQualityBright = 'This photo looks overexposed.';
+
+  /// Quality small-text advisory.
+  static const String captureQualitySmallText =
+      'Small text may be hard to read.';
+
+  /// Saved announcement for screen readers.
+  static const String captureSaved = 'Saved';
+
+  /// Saving announcement.
+  static const String captureSaving = 'Saving';
+
+  /// Save failed announcement.
+  static const String captureSaveFailed = 'Save failed';
+
   /// Status line when no template is pinned.
   static const String statusNoTemplate = 'No template';
 

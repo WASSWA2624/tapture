@@ -1,2 +1,33 @@
 /// The capture feature's presentation layer: screens, controllers and widgets.
 library;
+
+export 'audio_recorder.dart';
+export 'barcode_continuous_mode.dart';
+export 'barcode_scanner_screen.dart';
+export 'camera_controls.dart';
+export 'camera_permission_gate.dart';
+export 'camera_view.dart';
+export 'caption_scope_selector.dart';
+export 'capture_controller.dart';
+export 'capture_recovery_prompt.dart';
+export 'capture_screen.dart';
+export 'capture_storage_guard.dart';
+export 'document_mode.dart';
+export 'document_picker.dart';
+export 'gallery_picker.dart';
+export 'inline_fields_section.dart';
+export 'mic_permission_gate.dart';
+export 'photo_caption_sheet.dart';
+export 'photo_crop_screen.dart';
+export 'photo_delete_action.dart';
+export 'photo_move_action.dart';
+export 'photo_multi_select.dart';
+export 'photo_reorder.dart';
+export 'photo_retake_action.dart';
+export 'photo_tray.dart';
+export 'photo_type_sheet.dart';
+export 'photo_viewer_screen.dart';
+export 'rapid_mode_screen.dart';
+export 'record_caption_field.dart';
+export 'template_picker_sheet.dart';
+export 'voice_input_button.dart';

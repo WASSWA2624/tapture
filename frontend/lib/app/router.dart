@@ -17,6 +17,7 @@ import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
+import 'package:tapture/features/capture/capture.dart';
 import 'package:tapture/features/context/presentation/context_hierarchy_screen.dart';
 import 'package:tapture/features/context/presentation/context_preset_list.dart';
 import 'package:tapture/features/projects/presentation/current_project.dart';
@@ -555,15 +556,18 @@ List<RouteBase> get _routes {
           routes: <RouteBase>[
             GoRoute(
               path: _captureTab,
-              builder: (BuildContext _, GoRouterState _) {
-                return const _RoutePage(name: 'capture');
+              builder: (BuildContext _, GoRouterState state) {
+                final String? projectId = state.pathParameters['projectId'];
+                return CaptureScreen(projectId: projectId ?? '');
               },
             ),
             GoRoute(
               path: '${AppRoutes.projects}/:projectId/capture',
               metadata: _projectScoped,
-              builder: (BuildContext _, GoRouterState _) {
-                return const _RoutePage(name: 'capture');
+              builder: (BuildContext _, GoRouterState state) {
+                return CaptureScreen(
+                  projectId: state.pathParameters['projectId'] ?? '',
+                );
               },
             ),
           ],

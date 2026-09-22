@@ -78,6 +78,18 @@ abstract final class SettingKeys {
   /// Composition grid overlay.
   static const SettingKey<bool> grid = SettingKey<bool>('capture.grid', false);
 
+  /// Last used photo type for rapid tagging.
+  static const SettingKey<String> lastPhotoType = SettingKey<String>(
+    'capture.lastPhotoType',
+    'other',
+  );
+
+  /// Template pinned for the current capture session.
+  static const SettingKey<String?> pinnedTemplateId = SettingKey<String?>(
+    'capture.pinnedTemplateId',
+    null,
+  );
+
   /// Recycle-bin and tombstone retention, in days.
   static final SettingKey<int> retentionDays = SettingKey<int>(
     'storage.retentionDays',
@@ -184,6 +196,8 @@ abstract final class SettingKeys {
     cameraMode.name,
     flash.name,
     grid.name,
+    lastPhotoType.name,
+    pinnedTemplateId.name,
     retentionDays.name,
     offlineByChoice.name,
     openProjectId.name,
