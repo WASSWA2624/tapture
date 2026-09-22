@@ -118,6 +118,29 @@ abstract final class AppConstants {
     criticalBytes: 100 * _mib,
   );
 
+  /// Context bar, recents and the two optional idle and movement settings.
+  /// Both switches stay off until the operator turns them on (FE-SIMP-12).
+  static const ({
+    int idleSeconds,
+    int movementMetres,
+    int recentCap,
+    int valuePreview,
+    int barLines,
+    Duration checkEvery,
+    List<int> idleChoices,
+    List<int> distanceChoices,
+  })
+  context = (
+    idleSeconds: 300,
+    movementMetres: 100,
+    recentCap: 12,
+    valuePreview: 18,
+    barLines: 2,
+    checkEvery: Duration(seconds: 30),
+    idleChoices: <int>[300, 900, 1800],
+    distanceChoices: <int>[50, 100, 250],
+  );
+
   /// Path sanitiser and photo-folder defaults.
   static const ({
     int maxSegmentLength,

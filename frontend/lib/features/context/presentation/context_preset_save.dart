@@ -11,7 +11,6 @@ import 'package:tapture/core/widgets/fields/app_text_field.dart';
 
 import '../context.dart' show contextRepositoryProvider;
 import '../domain/context_state.dart';
-import 'context_providers.dart';
 
 /// Saves the current context as a named preset.
 class ContextPresetSave extends ConsumerStatefulWidget {
@@ -62,9 +61,20 @@ class _ContextPresetSaveState extends ConsumerState<ContextPresetSave> {
   }
 
   Future<void> _save({bool overwrite = false}) async {
-    final ContextState state =
-        ref.read(projectContextProvider(widget.projectId)).asData?.value ??
-        const ContextState();
+    final Result<ContextState> loaded = await ref
+        .read(contextRepositoryProvider)
+        .load(widget.projectId);
+    if (!mounted) {
+      return;
+    }
+    final ContextState state;
+    switch (loaded) {
+      case FailureResult<ContextState>(:final Failure failure):
+        setState(() => _error = failure);
+        return;
+      case Success<ContextState>(:final ContextState value):
+        state = value;
+    }
     setState(() => _busy = true);
     final Result<ContextPreset> result = await ref
         .read(contextRepositoryProvider)
@@ -83,6 +93,7 @@ class _ContextPresetSaveState extends ConsumerState<ContextPresetSave> {
         if (!overwrite &&
             failure.message.contains('already exists') &&
             mounted) {
+          setState(() => _busy = false);
           final bool ok = await showAppConfirm(
             context,
             title: Copy.contextPresetOverwriteTitle,

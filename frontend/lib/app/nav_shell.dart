@@ -14,6 +14,7 @@ import 'package:tapture/core/widgets/responsive/responsive_builder.dart';
 import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/context/presentation/context_bar.dart';
+import 'package:tapture/features/context/presentation/context_maintenance.dart';
 import 'package:tapture/features/projects/projects.dart';
 
 /// The four-destination frame: bar on compact, rail on medium, rail plus a
@@ -71,7 +72,12 @@ class _Chrome extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[StatusLine(), ContextBar(), OfflineBanner()],
+                children: <Widget>[
+                  StatusLine(),
+                  ContextBar(),
+                  ContextMaintenance(),
+                  OfflineBanner(),
+                ],
               ),
             ),
             Expanded(

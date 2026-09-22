@@ -19,9 +19,9 @@ abstract final class SettingKeys {
   );
 
   /// Idle seconds before auto-clear. Ignored while auto-clear is off.
-  static const SettingKey<int> contextAutoClearSeconds = SettingKey<int>(
+  static final SettingKey<int> contextAutoClearSeconds = SettingKey<int>(
     'context.autoClearSeconds',
-    300,
+    AppConstants.context.idleSeconds,
   );
 
   /// Ask to confirm context after movement. Off by default.
@@ -31,9 +31,9 @@ abstract final class SettingKeys {
   );
 
   /// Metres travelled before the movement prompt. Ignored while off.
-  static const SettingKey<int> contextMovementMetres = SettingKey<int>(
+  static final SettingKey<int> contextMovementMetres = SettingKey<int>(
     'context.movementMetres',
-    100,
+    AppConstants.context.movementMetres,
   );
 
   /// Stamp dates and times without asking.
@@ -189,6 +189,10 @@ abstract final class SettingKeys {
   /// Wire names of every declared key, so a raw string cannot sneak in.
   static List<String> get names => <String>[
     gpsEnabled.name,
+    contextAutoClearEnabled.name,
+    contextAutoClearSeconds.name,
+    contextMovementPromptEnabled.name,
+    contextMovementMetres.name,
     autoFillDates.name,
     photoQuality.name,
     folderStrategy.name,

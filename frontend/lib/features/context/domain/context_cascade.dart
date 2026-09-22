@@ -40,4 +40,15 @@ abstract final class ContextCascade {
     }
     return state.copyWith(values: next);
   }
+
+  /// Labels of filled levels that [affected] will clear, each with its value.
+  static List<String> named(
+    List<({ContextLevel level, String value})> clearing,
+  ) {
+    return <String>[
+      for (final ({ContextLevel level, String value}) item in clearing)
+        if (item.value.isNotEmpty)
+          '${item.level.label.isEmpty ? item.level.fieldKey : item.level.label} (${item.value})',
+    ];
+  }
 }

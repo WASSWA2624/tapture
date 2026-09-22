@@ -55,6 +55,7 @@ class _PinnedFieldsSheetState extends ConsumerState<PinnedFieldsSheet> {
   List<FieldDef> _fields = const <FieldDef>[];
   Failure? _error;
   bool _busy = false;
+  bool _ready = false;
 
   @override
   void initState() {
@@ -80,6 +81,9 @@ class _PinnedFieldsSheetState extends ConsumerState<PinnedFieldsSheet> {
         onRetry: () => setState(() => _error = null),
       );
     }
+    if (!_ready) {
+      return const SizedBox.shrink();
+    }
     if (_fields.isEmpty) {
       return const AppEmptyState(
         icon: Icons.push_pin_outlined,
@@ -87,60 +91,70 @@ class _PinnedFieldsSheetState extends ConsumerState<PinnedFieldsSheet> {
         message: Copy.contextPinnedEmptyMessage,
       );
     }
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          for (final FieldDef field in _fields)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: AppTextField(
-                label: field.label,
-                controller: _controllers[field.fieldKey]!,
-              ),
+    return ListView(
+      shrinkWrap: true,
+      children: <Widget>[
+        for (final FieldDef field in _fields)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: AppTextField(
+              label: field.label,
+              controller: _controllers[field.fieldKey]!,
             ),
-          AppButton(
-            label: Copy.ok,
-            busy: _busy,
-            onPressed: _busy ? null : () => unawaited(_save()),
           ),
-        ],
-      ),
+        AppButton(
+          label: Copy.ok,
+          busy: _busy,
+          onPressed: _busy ? null : () => unawaited(_save()),
+        ),
+      ],
     );
   }
 
   Future<void> _load() async {
-    final ContextState state =
-        ref.read(projectContextProvider(widget.projectId)).asData?.value ??
-        const ContextState();
-    final Set<String> levelKeys = <String>{
-      for (final ContextLevel level in state.levels) level.fieldKey,
-    };
-    final List<TemplateDef> templates = await ref
-        .read(templateRepositoryProvider)
-        .watchByProject(widget.projectId)
-        .first;
-    final List<FieldDef> stickable = <FieldDef>[];
-    final Set<String> seen = <String>{};
-    for (final TemplateDef template in templates) {
-      for (final FieldDef field in template.fields) {
-        if (field.stickable &&
-            !levelKeys.contains(field.fieldKey) &&
-            seen.add(field.fieldKey)) {
-          stickable.add(field);
+    try {
+      final ContextState state =
+          ref.read(projectContextProvider(widget.projectId)).asData?.value ??
+          const ContextState();
+      final Set<String> levelKeys = <String>{
+        for (final ContextLevel level in state.levels) level.fieldKey,
+      };
+      final List<TemplateDef> templates = await ref
+          .read(templateRepositoryProvider)
+          .watchByProject(widget.projectId)
+          .first;
+      final List<FieldDef> stickable = <FieldDef>[];
+      final Set<String> seen = <String>{};
+      for (final TemplateDef template in templates) {
+        for (final FieldDef field in template.fields) {
+          if (field.stickable &&
+              !levelKeys.contains(field.fieldKey) &&
+              seen.add(field.fieldKey)) {
+            stickable.add(field);
+          }
         }
       }
+      for (final FieldDef field in stickable) {
+        _controllers[field.fieldKey] = TextEditingController(
+          text: state.pinned[field.fieldKey] ?? '',
+        );
+      }
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _fields = stickable;
+        _ready = true;
+      });
+    } on Object catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _ready = true;
+        _error = Failure.from(error);
+      });
     }
-    for (final FieldDef field in stickable) {
-      _controllers[field.fieldKey] = TextEditingController(
-        text: state.pinned[field.fieldKey] ?? '',
-      );
-    }
-    if (!mounted) {
-      return;
-    }
-    setState(() => _fields = stickable);
   }
 
   Future<void> _save() async {
@@ -163,7 +177,7 @@ class _PinnedFieldsSheetState extends ConsumerState<PinnedFieldsSheet> {
           _error = failure;
         });
       case Success<ContextState>():
-        Navigator.of(context).pop();
+        Navigator.of(context).maybePop();
     }
   }
 }

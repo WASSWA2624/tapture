@@ -14,6 +14,7 @@ import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/setting_key.dart';
@@ -126,6 +127,60 @@ class CaptureSettingsScreen extends ConsumerWidget {
                   );
                 },
               ),
+              const AppSectionHeader(title: Copy.contextHierarchyTitle),
+              AppSwitchTile(
+                title: Copy.settingsContextAutoClear,
+                description: Copy.settingsContextAutoClearEffect,
+                value: view.autoClear,
+                onChanged: (bool value) {
+                  unawaited(
+                    notifier.write(SettingKeys.contextAutoClearEnabled, value),
+                  );
+                },
+              ),
+              AppListTile(
+                title: Copy.settingsContextIdleSubtitle(view.idleSeconds ~/ 60),
+                onTap: () {
+                  unawaited(
+                    notifier.write(
+                      SettingKeys.contextAutoClearSeconds,
+                      _cycle(
+                        view.idleSeconds,
+                        AppConstants.context.idleChoices,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              AppSwitchTile(
+                title: Copy.settingsContextMovement,
+                description: Copy.settingsContextMovementEffect,
+                value: view.movementPrompt,
+                onChanged: (bool value) {
+                  unawaited(
+                    notifier.write(
+                      SettingKeys.contextMovementPromptEnabled,
+                      value,
+                    ),
+                  );
+                },
+              ),
+              AppListTile(
+                title: Copy.settingsContextDistanceSubtitle(
+                  view.movementMetres,
+                ),
+                onTap: () {
+                  unawaited(
+                    notifier.write(
+                      SettingKeys.contextMovementMetres,
+                      _cycle(
+                        view.movementMetres,
+                        AppConstants.context.distanceChoices,
+                      ),
+                    ),
+                  );
+                },
+              ),
             ],
           );
         },
@@ -168,6 +223,10 @@ typedef _CaptureView = ({
   int photoQuality,
   String folderStrategy,
   String namingPattern,
+  bool autoClear,
+  int idleSeconds,
+  bool movementPrompt,
+  int movementMetres,
 });
 
 class _CaptureSettings extends AsyncNotifier<_CaptureView> {
@@ -208,6 +267,10 @@ class _CaptureSettings extends AsyncNotifier<_CaptureView> {
         photoQuality: SettingKeys.photoQuality.defaultValue,
         folderStrategy: SettingKeys.folderStrategy.defaultValue,
         namingPattern: SettingKeys.namingPattern.defaultValue,
+        autoClear: SettingKeys.contextAutoClearEnabled.defaultValue,
+        idleSeconds: SettingKeys.contextAutoClearSeconds.defaultValue,
+        movementPrompt: SettingKeys.contextMovementPromptEnabled.defaultValue,
+        movementMetres: SettingKeys.contextMovementMetres.defaultValue,
       );
     }
     return _snapshot(await _store());
@@ -246,6 +309,10 @@ class _CaptureSettings extends AsyncNotifier<_CaptureView> {
       photoQuality: store.read(SettingKeys.photoQuality),
       folderStrategy: store.read(SettingKeys.folderStrategy),
       namingPattern: store.read(SettingKeys.namingPattern),
+      autoClear: store.read(SettingKeys.contextAutoClearEnabled),
+      idleSeconds: store.read(SettingKeys.contextAutoClearSeconds),
+      movementPrompt: store.read(SettingKeys.contextMovementPromptEnabled),
+      movementMetres: store.read(SettingKeys.contextMovementMetres),
     );
   }
 }
@@ -292,4 +359,9 @@ String _nextStrategy(String strategy) {
       .toList();
   final int index = names.indexOf(strategy);
   return names[(index + 1) % names.length];
+}
+
+int _cycle(int current, List<int> choices) {
+  final int index = choices.indexOf(current);
+  return choices[(index + 1) % choices.length];
 }

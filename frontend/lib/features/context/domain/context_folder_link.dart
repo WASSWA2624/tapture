@@ -32,14 +32,13 @@ abstract final class ContextFolderLink {
         );
         return <String>[
           for (final ({int order, String value}) row in rows)
-            sanitiseSegment(row.value),
+            _segment(row.value),
         ];
       }
       final Object? values = snapshot['values'];
       if (values is Map) {
         return <String>[
-          for (final Object? value in values.values)
-            sanitiseSegment(value?.toString() ?? ''),
+          for (final Object? value in values.values) _segment('${value ?? ''}'),
         ];
       }
     }
@@ -48,10 +47,18 @@ abstract final class ContextFolderLink {
         ..sort((ContextLevel a, ContextLevel b) => a.order.compareTo(b.order));
       return <String>[
         for (final ContextLevel level in ordered)
-          sanitiseSegment(state.values[level.fieldKey] ?? ''),
+          _segment(state.values[level.fieldKey] ?? ''),
       ];
     }
     return const <String>[];
+  }
+
+  static String _segment(String value) {
+    final String trimmed = value.trim();
+    if (trimmed.isEmpty) {
+      return '';
+    }
+    return sanitiseSegment(trimmed);
   }
 
   /// Relative photo folder from a record snapshot under [strategy].

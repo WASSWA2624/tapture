@@ -7,6 +7,18 @@ import 'package:tapture/features/context/domain/context_state.dart';
 
 /// In-memory [ContextRepository] for widget tests.
 final class FakeContextRepository implements ContextRepository {
+  /// When set, [saveHierarchy] returns this instead of writing.
+  Failure? hierarchyFailure;
+
+  /// When set, [setLevelValue] returns this instead of writing.
+  Failure? valueFailure;
+
+  /// When set, [savePinned] returns this instead of writing.
+  Failure? pinnedFailure;
+
+  /// When set, [savePreset] returns this instead of writing.
+  Failure? presetFailure;
+
   final Map<String, ContextState> _states = <String, ContextState>{};
   final Map<String, List<ContextPreset>> _presets =
       <String, List<ContextPreset>>{};
@@ -34,6 +46,10 @@ final class FakeContextRepository implements ContextRepository {
     String projectId,
     List<ContextLevel> levels,
   ) async {
+    final Failure? forced = hierarchyFailure;
+    if (forced != null) {
+      return FailureResult<ContextState>(forced);
+    }
     final ContextState current = _states[projectId] ?? const ContextState();
     final ContextState next = current.copyWith(
       levels: <ContextLevel>[
@@ -52,6 +68,10 @@ final class FakeContextRepository implements ContextRepository {
     required String value,
     bool clearBelow = true,
   }) async {
+    final Failure? forced = valueFailure;
+    if (forced != null) {
+      return FailureResult<ContextState>(forced);
+    }
     final ContextState current = _states[projectId] ?? const ContextState();
     final Map<String, String> values = Map<String, String>.of(current.values);
     values[fieldKey] = value;
@@ -83,6 +103,10 @@ final class FakeContextRepository implements ContextRepository {
     String projectId,
     Map<String, String> pinned,
   ) async {
+    final Failure? forced = pinnedFailure;
+    if (forced != null) {
+      return FailureResult<ContextState>(forced);
+    }
     final ContextState current = _states[projectId] ?? const ContextState();
     final ContextState next = current.copyWith(pinned: pinned);
     _states[projectId] = next;
@@ -125,6 +149,10 @@ final class FakeContextRepository implements ContextRepository {
     required Map<String, String> pinned,
     bool overwrite = false,
   }) async {
+    final Failure? forced = presetFailure;
+    if (forced != null) {
+      return FailureResult<ContextPreset>(forced);
+    }
     final List<ContextPreset> list = List<ContextPreset>.of(
       _presets[projectId] ?? const <ContextPreset>[],
     );
@@ -184,13 +212,10 @@ final class FakeContextRepository implements ContextRepository {
     }
   }
 
-  Stream<T> _watch<T>(T Function() snapshot) {
-    return Stream<T>.multi((MultiStreamController<T> listener) {
-      listener.add(snapshot());
-      final StreamSubscription<void> sub = _changes.stream.listen((_) {
-        listener.add(snapshot());
-      });
-      listener.onCancel = sub.cancel;
-    });
+  Stream<T> _watch<T>(T Function() snapshot) async* {
+    yield snapshot();
+    await for (final void _ in _changes.stream) {
+      yield snapshot();
+    }
   }
 }

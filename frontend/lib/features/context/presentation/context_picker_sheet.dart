@@ -21,7 +21,6 @@ import 'package:tapture/features/reference/reference.dart'
 import '../context.dart' show contextRepositoryProvider;
 import '../domain/context_cascade.dart';
 import '../domain/context_state.dart';
-import 'context_providers.dart';
 
 /// Opens the level picker sheet.
 Future<void> showContextPickerSheet({
@@ -104,52 +103,42 @@ class _ContextPickerSheetState extends ConsumerState<ContextPickerSheet> {
         onRetry: () => setState(() => _error = null),
       );
     }
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          if (_recents.isEmpty &&
-              (widget.level.datasetId == null ||
-                  widget.level.datasetId!.isEmpty))
-            const AppEmptyState(
-              icon: Icons.history,
-              headline: Copy.contextRecents,
-              message: Copy.contextHierarchyEmptyMessage,
-            ),
-          if (_recents.isNotEmpty) ...<Widget>[
-            const Text(Copy.contextRecents),
-            for (final String recent in _recents)
-              AppListTile(
-                title: recent,
-                onTap: () => unawaited(_choose(recent)),
-              ),
-          ],
-          if (widget.level.datasetId != null &&
-              widget.level.datasetId!.isNotEmpty) ...<Widget>[
-            const Text(Copy.contextDatasetSearch),
-            AppSearchField(
-              hint: Copy.contextDatasetSearch,
-              onChanged: (String query) => unawaited(_search(query)),
-            ),
-            for (final ReferenceRow row in _matches)
-              AppListTile(
-                title: row.key,
-                onTap: () => unawaited(_choose(row.key)),
-              ),
-          ],
-          AppTextField(label: Copy.contextUseValue, controller: _text),
-          const SizedBox(height: 8),
-          AppButton(
-            label: Copy.contextUseValue,
-            busy: _busy,
-            onPressed: _busy
-                ? null
-                : () => unawaited(_choose(_text.text.trim())),
+    return ListView(
+      shrinkWrap: true,
+      children: <Widget>[
+        if (_recents.isEmpty &&
+            (widget.level.datasetId == null || widget.level.datasetId!.isEmpty))
+          const AppEmptyState(
+            icon: Icons.history,
+            headline: Copy.contextRecents,
+            message: Copy.contextHierarchyEmptyMessage,
           ),
+        if (_recents.isNotEmpty) ...<Widget>[
+          const Text(Copy.contextRecents),
+          for (final String recent in _recents)
+            AppListTile(title: recent, onTap: () => unawaited(_choose(recent))),
         ],
-      ),
+        if (widget.level.datasetId != null &&
+            widget.level.datasetId!.isNotEmpty) ...<Widget>[
+          const Text(Copy.contextDatasetSearch),
+          AppSearchField(
+            hint: Copy.contextDatasetSearch,
+            onChanged: (String query) => unawaited(_search(query)),
+          ),
+          for (final ReferenceRow row in _matches)
+            AppListTile(
+              title: row.key,
+              onTap: () => unawaited(_choose(row.key)),
+            ),
+        ],
+        AppTextField(label: Copy.contextUseValue, controller: _text),
+        const SizedBox(height: 8),
+        AppButton(
+          label: Copy.contextUseValue,
+          busy: _busy,
+          onPressed: _busy ? null : () => unawaited(_choose(_text.text.trim())),
+        ),
+      ],
     );
   }
 
@@ -200,12 +189,19 @@ class _ContextPickerSheetState extends ConsumerState<ContextPickerSheet> {
     if (value.isEmpty) {
       return;
     }
-    final ContextState? state = ref
-        .read(projectContextProvider(widget.projectId))
-        .asData
-        ?.value;
-    if (state == null) {
+    final Result<ContextState> loaded = await ref
+        .read(contextRepositoryProvider)
+        .load(widget.projectId);
+    if (!mounted) {
       return;
+    }
+    final ContextState state;
+    switch (loaded) {
+      case FailureResult<ContextState>(:final Failure failure):
+        setState(() => _error = failure);
+        return;
+      case Success<ContextState>(:final ContextState value):
+        state = value;
     }
     final List<({ContextLevel level, String value})> below =
         ContextCascade.affected(
@@ -221,10 +217,13 @@ class _ContextPickerSheetState extends ConsumerState<ContextPickerSheet> {
       final bool ok = await showAppConfirm(
         context,
         title: Copy.contextCascadeTitle,
-        message: Copy.contextCascadeMessage(<String>[
-          for (final ({ContextLevel level, String value}) item in named)
-            '${item.level.label.isEmpty ? item.level.fieldKey : item.level.label}: ${item.value}',
-        ]),
+        message: Copy.contextCascadeMessage(
+          levelLabel: widget.level.label.isEmpty
+              ? widget.level.fieldKey
+              : widget.level.label,
+          newValue: value,
+          named: ContextCascade.named(named),
+        ),
         confirmLabel: Copy.contextCascadeConfirm,
       );
       if (!ok) {
@@ -250,7 +249,7 @@ class _ContextPickerSheetState extends ConsumerState<ContextPickerSheet> {
           _error = failure;
         });
       case Success<ContextState>():
-        Navigator.of(context).pop();
+        Navigator.of(context).maybePop();
     }
   }
 }

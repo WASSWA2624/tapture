@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
@@ -32,15 +35,32 @@ class ContextBar extends ConsumerWidget {
     final List<ContextLevel> ordered = List<ContextLevel>.of(state.levels)
       ..sort((ContextLevel a, ContextLevel b) => a.order.compareTo(b.order));
     final bool narrow = context.sizeClass == SizeClass.compact;
-    final List<AppChip> chips = <AppChip>[
+    final List<String> shown = _truncateMiddle(<String>[
       for (final ContextLevel level in ordered)
+        state.values[level.fieldKey] ?? '',
+    ], narrow: narrow);
+    final double scale = MediaQuery.textScalerOf(context).scale(1);
+    final double textLine =
+        (AppText.label.fontSize ?? Space.x4) *
+            (AppText.label.height ?? 1) *
+            scale +
+        Space.x2;
+    final double line = textLine < Sizes.minTapTarget
+        ? Sizes.minTapTarget
+        : textLine;
+    final double maxHeight =
+        line * AppConstants.context.barLines + Space.x1 + Space.x2;
+    final List<Widget> children = <Widget>[];
+    for (int i = 0; i < ordered.length; i++) {
+      final ContextLevel level = ordered[i];
+      final String name = level.label.isEmpty ? level.fieldKey : level.label;
+      final String value = shown[i];
+      if (i > 0) {
+        children.add(const Icon(Icons.chevron_right, size: Space.x4));
+      }
+      children.add(
         AppChip(
-          label: _label(
-            level.label.isEmpty ? level.fieldKey : level.label,
-            state.values[level.fieldKey] ?? '',
-            narrow: narrow,
-            longest: true,
-          ),
+          label: value.isEmpty ? name : '$name: $value',
           onTap: () => showContextPickerSheet(
             context: context,
             projectId: projectId,
@@ -48,47 +68,62 @@ class ContextBar extends ConsumerWidget {
             currentValue: state.values[level.fieldKey] ?? '',
           ),
         ),
-      for (final MapEntry<String, String> pin in state.pinned.entries)
+      );
+    }
+    for (final MapEntry<String, String> pin in state.pinned.entries) {
+      children.add(
         AppChip(
           label: '${pin.value} · ${Copy.contextPinMarker}',
           icon: Icons.push_pin_outlined,
           onTap: () =>
               showPinnedFieldsSheet(context: context, projectId: projectId),
         ),
-    ];
-    if (chips.isEmpty) {
+      );
+    }
+    if (children.isEmpty) {
       return const SizedBox.shrink();
     }
     return Material(
-      color: Theme.of(context).colorScheme.surface,
+      color: context.colors.surface,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxHeight: 96),
+        constraints: BoxConstraints(maxHeight: maxHeight),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: Space.x3,
             vertical: Space.x1,
           ),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: AppChipRow(chips: chips, scrollable: true),
+          child: ClipRect(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Wrap(
+                spacing: Space.x1,
+                runSpacing: Space.x1,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: children,
+              ),
+            ),
           ),
         ),
       ),
     );
   }
+}
 
-  String _label(
-    String name,
-    String value, {
-    required bool narrow,
-    required bool longest,
-  }) {
-    if (value.isEmpty) {
-      return name;
-    }
-    if (!narrow || value.length <= 18) {
-      return '$name: $value';
-    }
-    return '$name: ${value.substring(0, 16)}…';
+/// Shortens the longest middle value first on a narrow window.
+List<String> _truncateMiddle(List<String> values, {required bool narrow}) {
+  if (!narrow || values.length < 3) {
+    return values;
   }
+  final List<String> next = List<String>.of(values);
+  int longest = 1;
+  for (int i = 2; i < next.length - 1; i++) {
+    if (next[i].length > next[longest].length) {
+      longest = i;
+    }
+  }
+  final int cap = AppConstants.context.valuePreview;
+  if (next[longest].length > cap) {
+    next[longest] = '${next[longest].substring(0, cap - 1)}…';
+  }
+  return next;
 }

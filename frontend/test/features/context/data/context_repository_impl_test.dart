@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/app_database.dart' hide ContextPreset;
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -29,84 +32,140 @@ void main() {
     await db.close();
   });
 
-  test('mapper round-trips levels with datasetId', () {
+  test('mapper round-trips ContextLevel, ContextState and ContextPreset', () {
     const ContextLevel level = ContextLevel(
-      fieldKey: 'site',
-      order: 0,
-      label: 'Site',
+      fieldKey: 'facility',
+      order: 1,
+      label: 'Facility',
       datasetId: 'ds-1',
     );
-    final String encoded = ContextMapper.encodeLabel(level);
-    expect(encoded, contains('ds-1'));
+    final DateTime at = DateTime.utc(2026, 9, 22, 8);
+    final sqlite.ContextData definition = sqlite.ContextData(
+      id: 'def-1',
+      createdAt: at,
+      updatedAt: at,
+      updatedByDevice: 'device-a',
+      rev: 1,
+      projectId: 'proj-1',
+      level: 2,
+      fieldKey: level.fieldKey,
+      label: ContextMapper.encodeLabel(level),
+    );
+    final sqlite.ContextStateRow value = sqlite.ContextStateRow(
+      id: 'st-1',
+      createdAt: at,
+      updatedAt: at,
+      updatedByDevice: 'device-a',
+      rev: 1,
+      projectId: 'proj-1',
+      level: 2,
+      value: 'Kasubi HC IV',
+      setAt: at,
+    );
+    final sqlite.ContextStateRow pins = sqlite.ContextStateRow(
+      id: 'st-0',
+      createdAt: at,
+      updatedAt: at,
+      updatedByDevice: 'device-a',
+      rev: 1,
+      projectId: 'proj-1',
+      level: 0,
+      value: jsonEncode(<String, String>{'surveyor': 'Sam'}),
+      setAt: at,
+    );
+    final ContextState state = ContextMapper.fromRows(
+      definitions: <sqlite.ContextData>[definition],
+      states: <sqlite.ContextStateRow>[value, pins],
+      pinned: ContextMapper.pinsFromStateRows(<sqlite.ContextStateRow>[
+        value,
+        pins,
+      ]),
+    );
+    expect(state.levels.single.fieldKey, 'facility');
+    expect(state.levels.single.order, 1);
+    expect(state.levels.single.datasetId, 'ds-1');
+    expect(state.levels.single.label, 'Facility');
+    expect(state.values['facility'], 'Kasubi HC IV');
+    expect(state.pinned['surveyor'], 'Sam');
+    final String again = ContextMapper.encodeLabel(state.levels.single);
+    expect(again, ContextMapper.encodeLabel(level));
+
+    const ContextPreset preset = ContextPreset(
+      id: 'pre-1',
+      name: 'Theatre',
+      values: <String, String>{'facility': 'Kasubi HC IV'},
+      pinned: <String, String>{'surveyor': 'Sam'},
+    );
+    final sqlite.ContextPreset row = sqlite.ContextPreset(
+      id: preset.id,
+      createdAt: at,
+      updatedAt: at,
+      updatedByDevice: 'device-a',
+      rev: 1,
+      name: preset.name,
+      projectId: 'proj-1',
+      values: ContextMapper.encodePresetPayload(
+        values: preset.values,
+        pinned: preset.pinned,
+      ),
+    );
+    final ContextPreset back = ContextMapper.presetFromRow(row);
+    expect(back.id, preset.id);
+    expect(back.name, preset.name);
+    expect(back.values, preset.values);
+    expect(back.pinned, preset.pinned);
   });
 
-  test(
-    'empty project loads empty state and writes no definition rows',
-    () async {
-      final ContextState state = _ok(await repo.load('proj-1'));
-      expect(state.isEmpty, isTrue);
-      expect(await db.select(db.context).get(), isEmpty);
-    },
-  );
+  test('empty project loads empty state and writes no rows', () async {
+    final ContextState state = _ok(await repo.load('proj-1'));
+    expect(state.isEmpty, isTrue);
+    expect(await db.select(db.context).get(), isEmpty);
+    expect(await db.select(db.contextState).get(), isEmpty);
+    _ok(await repo.saveHierarchy('proj-1', const <ContextLevel>[]));
+    expect(await db.select(db.context).get(), isEmpty);
+    expect(await db.select(db.contextState).get(), isEmpty);
+  });
 
-  test('hierarchy and values survive simulated restart', () async {
+  test('hierarchy and values survive a simulated restart', () async {
     _ok(
       await repo.saveHierarchy('proj-1', const <ContextLevel>[
         ContextLevel(fieldKey: 'district', order: 0, label: 'District'),
         ContextLevel(fieldKey: 'facility', order: 1, label: 'Facility'),
+        ContextLevel(fieldKey: 'dept', order: 2, label: 'Department'),
       ]),
     );
     _ok(
       await repo.setLevelValue(
         projectId: 'proj-1',
         fieldKey: 'district',
-        value: 'North',
+        value: 'Kampala',
       ),
     );
     _ok(
       await repo.setLevelValue(
         projectId: 'proj-1',
         fieldKey: 'facility',
-        value: 'Clinic',
+        value: 'Kasubi HC IV',
       ),
-    );
-    await db.close();
-    // Re-open in memory is a new DB — simulate by loading same connection
-    // before close: use a second repo on a fresh memory with copied writes
-    // already in first db before close. Instead reopen same factory:
-    db = AppDatabase.memory();
-    // Fresh DB is empty — persistence is in-process for memory. Assert load
-    // on the original connection before close by recreating repo pattern:
-    db = AppDatabase.memory();
-    ids = UuidV7Service.sequence(FixedClock(t0));
-    repo = ContextRepositoryImpl(
-      db: db,
-      clock: FixedClock(t0),
-      deviceId: 'device-a',
-      ids: ids,
-    );
-    _ok(
-      await repo.saveHierarchy('proj-1', const <ContextLevel>[
-        ContextLevel(fieldKey: 'district', order: 0, label: 'District'),
-        ContextLevel(fieldKey: 'facility', order: 1, label: 'Facility'),
-      ]),
     );
     _ok(
       await repo.setLevelValue(
         projectId: 'proj-1',
-        fieldKey: 'district',
-        value: 'North',
+        fieldKey: 'dept',
+        value: 'Theatre',
       ),
     );
-    final ContextRepositoryImpl reloaded = ContextRepositoryImpl(
+    final ContextRepositoryImpl restarted = ContextRepositoryImpl(
       db: db,
       clock: FixedClock(t0),
       deviceId: 'device-a',
       ids: ids,
     );
-    final ContextState state = _ok(await reloaded.load('proj-1'));
-    expect(state.values['district'], 'North');
-    expect(state.levels, hasLength(2));
+    final ContextState state = _ok(await restarted.load('proj-1'));
+    expect(state.values['district'], 'Kampala');
+    expect(state.values['facility'], 'Kasubi HC IV');
+    expect(state.values['dept'], 'Theatre');
+    expect(state.levels, hasLength(3));
   });
 
   test(

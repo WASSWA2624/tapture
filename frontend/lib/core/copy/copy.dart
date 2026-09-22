@@ -1608,9 +1608,25 @@ abstract final class Copy {
   /// Cascade confirm title.
   static const String contextCascadeTitle = 'Clear lower levels?';
 
-  /// Cascade confirm body naming levels that will clear.
-  static String contextCascadeMessage(List<String> named) {
-    return 'Changing this level clears: ${named.join(', ')}.';
+  /// Cascade confirm body in the specification's wording.
+  ///
+  /// [named] is each lower level and its current value. Level names and
+  /// values are operator data, not catalogue keys (FE-L10N-07).
+  static String contextCascadeMessage({
+    required String levelLabel,
+    required String newValue,
+    required List<String> named,
+  }) {
+    return 'Change $levelLabel to $newValue? ${_and(named)} will be cleared.';
+  }
+
+  static String _and(List<String> named) {
+    return switch (named.length) {
+      0 => '',
+      1 => named.single,
+      2 => '${named[0]} and ${named[1]}',
+      _ => '${named.sublist(0, named.length - 1).join(', ')} and ${named.last}',
+    };
   }
 
   /// Cascade confirm action.
@@ -1622,9 +1638,9 @@ abstract final class Copy {
   /// Preset empty.
   static const String contextPresetsEmptyHeadline = 'No presets yet';
 
-  /// Preset empty body — next action is apply/save.
+  /// Preset empty body — next action is to apply a preset.
   static const String contextPresetsEmptyMessage =
-      'Save the current context as a preset to restore it in one tap.';
+      'Save the current context, then apply the preset in one tap.';
 
   /// Save preset.
   static const String contextPresetSave = 'Save preset';
@@ -1655,6 +1671,33 @@ abstract final class Copy {
 
   /// Pin chip marker.
   static const String contextPinMarker = 'Pinned';
+
+  /// Remove one hierarchy level.
+  static const String contextRemoveLevel = 'Remove level';
+
+  /// Idle auto-clear switch. Off until the operator turns it on.
+  static const String settingsContextAutoClear =
+      'Clear the lowest level when idle';
+
+  /// Why auto-clear stays off.
+  static const String settingsContextAutoClearEffect =
+      'Off until you turn it on. Clears only the lowest level, and you can undo.';
+
+  /// Idle interval row.
+  static String settingsContextIdleSubtitle(int minutes) =>
+      'After $minutes minutes with no change.';
+
+  /// Movement confirmation switch. Off until the operator turns it on.
+  static const String settingsContextMovement =
+      'Confirm context after movement';
+
+  /// Why the movement prompt stays off, and that it does not edit context.
+  static const String settingsContextMovementEffect =
+      'Off until you turn it on. Asks you to confirm. It does not change context. Needs GPS and location already allowed.';
+
+  /// Distance row.
+  static String settingsContextDistanceSubtitle(int metres) =>
+      'After $metres metres.';
 
   /// Capture screen title.
   static const String captureTitle = 'Capture';

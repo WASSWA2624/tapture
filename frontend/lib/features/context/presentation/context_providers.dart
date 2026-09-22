@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/permissions/permissions_service.dart';
+import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/projects/projects.dart';
+import 'package:tapture/features/settings/settings.dart';
 
 import '../context.dart' show contextRepositoryProvider;
 import '../domain/context_state.dart';
@@ -40,3 +43,18 @@ String contextStatusLabel(ContextState state) {
   }
   return parts.join(' · ');
 }
+
+/// Clock for idle and movement checks. Tests override this.
+final Provider<Clock> contextClockProvider = Provider<Clock>((Ref _) {
+  return const SystemClock();
+});
+
+/// Location permission reads. Constructed with GPS from settings so a
+/// request is refused while GPS is off (FE-SEC-07).
+final Provider<PermissionsService> contextPermissionsProvider =
+    Provider<PermissionsService>((Ref ref) {
+      final SettingsStore store = ref.watch(projectSettingsStoreProvider);
+      return PermissionsService(
+        gpsEnabled: () => store.read(SettingKeys.gpsEnabled),
+      );
+    });

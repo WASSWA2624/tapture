@@ -1,30 +1,30 @@
 /// Per-record override of a context-prefilled field.
+///
+/// The raw value stays. The correction is a refined value beside it
+/// (FE-SEC-08). Project context and other records are never inputs here.
 abstract final class ContextOverride {
-  /// Marks [fieldKey] overridden on this record only.
-  ///
-  /// Returns the record field map with [newValue] and an override flag set.
-  /// Project context and sibling records are never touched here.
-  static Map<String, Object?> mark({
-    required Map<String, Object?> recordFields,
+  /// Plan for one field. [rawValue] is the captured CONTEXT value.
+  static ({
+    String fieldKey,
+    String rawValue,
+    String refinedValue,
+    bool overridden,
+  })
+  plan({
     required String fieldKey,
+    required String rawValue,
     required String newValue,
-    required String previousValue,
   }) {
-    final Map<String, Object?> next = Map<String, Object?>.of(recordFields);
-    next[fieldKey] = <String, Object?>{
-      'value': newValue,
-      'source': 'manual',
-      'overridden': true,
-      'previousValue': previousValue,
-    };
-    return next;
+    return (
+      fieldKey: fieldKey,
+      rawValue: rawValue,
+      refinedValue: newValue,
+      overridden: newValue != rawValue,
+    );
   }
 
-  /// Whether [field] is marked overridden.
-  static bool isOverridden(Object? field) {
-    if (field is Map) {
-      return field['overridden'] == true;
-    }
-    return false;
+  /// Whether a stored field has a refined value beside its raw one.
+  static bool isOverridden({required String? rawValue, String? refinedValue}) {
+    return refinedValue != null && refinedValue != rawValue;
   }
 }

@@ -9,6 +9,7 @@ import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/domain/field_def.dart';
@@ -125,6 +126,7 @@ class _ContextHierarchyScreenState
                             : level.label,
                         subtitle: level.fieldKey,
                         trailing: IconButton(
+                          tooltip: Copy.contextRemoveLevel,
                           icon: const Icon(Icons.delete_outline),
                           onPressed: () {
                             setState(() {
@@ -174,16 +176,17 @@ class _ContextHierarchyScreenState
     if (available.isEmpty || !mounted) {
       return;
     }
-    final FieldDef? picked = await showDialog<FieldDef>(
-      context: context,
+    final FieldDef? picked = await showAppSheet<FieldDef>(
+      context,
+      title: Copy.contextAddLevel,
       builder: (BuildContext context) {
-        return SimpleDialog(
-          title: const Text(Copy.contextAddLevel),
+        return ListView(
           children: <Widget>[
             for (final FieldDef field in available)
-              SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, field),
-                child: Text(field.label),
+              AppListTile(
+                title: field.label,
+                subtitle: field.fieldKey,
+                onTap: () => Navigator.pop(context, field),
               ),
           ],
         );

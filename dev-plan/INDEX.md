@@ -70,7 +70,7 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 
 *Set a value once, and it applies to every record until changed.*
 
-- [ ] [011 — Context: hierarchy, bar and inheritance](11-context/011-context.md)
+- [x] [011 — Context: hierarchy, bar and inheritance](11-context/011-context.md)
 
 ## 12 — Capture
 

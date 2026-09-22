@@ -1,3 +1,5 @@
+import 'package:tapture/core/constants/app_constants.dart';
+
 /// Stores recent context values outside Drift so pickers stay fast.
 abstract interface class ContextPersistence {
   /// Remembers [value] for [fieldKey] in [projectId], newest first.
@@ -18,7 +20,7 @@ abstract interface class ContextPersistence {
 final class MemoryContextPersistence implements ContextPersistence {
   final Map<String, List<String>> _rows = <String, List<String>>{};
 
-  static const int _cap = 12;
+  static final int _cap = AppConstants.context.recentCap;
 
   @override
   Future<void> rememberRecent({

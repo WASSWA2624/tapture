@@ -34,10 +34,15 @@ final class ContextRepositoryImpl implements ContextRepository {
   final String _deviceId;
   final IdService _ids;
   final ContextPersistence _persistence;
+  final Map<String, ContextState> _cache = <String, ContextState>{};
 
   @override
-  Stream<ContextState> watch(String projectId) {
-    return _changes(projectId).asyncMap((_) => _load(projectId));
+  Stream<ContextState> watch(String projectId) async* {
+    final ContextState? cached = _cache[projectId];
+    if (cached != null) {
+      yield cached;
+    }
+    yield* _changes(projectId).asyncMap((_) => _load(projectId));
   }
 
   @override
@@ -305,11 +310,13 @@ final class ContextRepositoryImpl implements ContextRepository {
                   tbl.projectId.equals(projectId),
             ))
             .get();
-    return ContextMapper.fromRows(
+    final ContextState state = ContextMapper.fromRows(
       definitions: definitions,
       states: states,
       pinned: ContextMapper.pinsFromStateRows(states),
     );
+    _cache[projectId] = state;
+    return state;
   }
 
   Future<void> _writeValues(
@@ -323,19 +330,21 @@ final class ContextRepositoryImpl implements ContextRepository {
         ))
         .go();
     final DateTime now = _clock.nowUtc();
-    await _db
-        .into(_db.contextState)
-        .insert(
-          sqlite.ContextStateCompanion.insert(
-            projectId: projectId,
-            level: 0,
-            value: jsonEncode(pinned),
-            setAt: now,
-            createdAt: now,
-            updatedAt: now,
-            updatedByDevice: _deviceId,
-          ),
-        );
+    if (pinned.isNotEmpty) {
+      await _db
+          .into(_db.contextState)
+          .insert(
+            sqlite.ContextStateCompanion.insert(
+              projectId: projectId,
+              level: 0,
+              value: jsonEncode(pinned),
+              setAt: now,
+              createdAt: now,
+              updatedAt: now,
+              updatedByDevice: _deviceId,
+            ),
+          );
+    }
     for (final ContextLevel level in levels) {
       final String? value = values[level.fieldKey];
       if (value == null || value.isEmpty) {

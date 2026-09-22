@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/files/photo_path_builder.dart';
+import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/context/domain/context_application.dart';
 import 'package:tapture/features/context/domain/context_auto_clear.dart';
 import 'package:tapture/features/context/domain/context_cascade.dart';
@@ -9,115 +10,279 @@ import 'package:tapture/features/context/domain/context_override.dart';
 import 'package:tapture/features/context/domain/context_state.dart';
 
 void main() {
-  group('cascade', () {
-    const ContextState three = ContextState(
-      levels: <ContextLevel>[
-        ContextLevel(fieldKey: 'district', order: 0, label: 'District'),
-        ContextLevel(fieldKey: 'facility', order: 1, label: 'Facility'),
-        ContextLevel(fieldKey: 'dept', order: 2, label: 'Department'),
-      ],
-      values: <String, String>{
-        'district': 'North',
-        'facility': 'Clinic',
-        'dept': 'Pharmacy',
-      },
-    );
+  const ContextState three = ContextState(
+    levels: <ContextLevel>[
+      ContextLevel(fieldKey: 'district', order: 0, label: 'district'),
+      ContextLevel(fieldKey: 'facility', order: 1, label: 'Facility'),
+      ContextLevel(fieldKey: 'dept', order: 2, label: 'Department'),
+    ],
+    values: <String, String>{
+      'district': 'Kampala',
+      'facility': 'Kasubi HC IV',
+      'dept': 'Theatre',
+    },
+    pinned: <String, String>{'surveyor': 'Sam'},
+  );
 
-    test('changing root clears lower filled levels', () {
+  group('cascade clearing', () {
+    test('a hierarchy with no levels clears nothing', () {
+      expect(
+        ContextCascade.affected(
+          state: const ContextState(),
+          changedFieldKey: 'district',
+        ),
+        isEmpty,
+      );
+    });
+
+    test('a one-level hierarchy has nothing beneath the change', () {
+      const ContextState one = ContextState(
+        levels: <ContextLevel>[
+          ContextLevel(fieldKey: 'site', order: 0, label: 'Site'),
+        ],
+        values: <String, String>{'site': 'A'},
+      );
+      expect(
+        ContextCascade.affected(state: one, changedFieldKey: 'site'),
+        isEmpty,
+      );
+      final ContextState next = ContextCascade.apply(
+        state: one,
+        changedFieldKey: 'site',
+        newValue: 'B',
+      );
+      expect(next.values['site'], 'B');
+    });
+
+    test('changing the root names facility and department and clears them', () {
       final List<({ContextLevel level, String value})> affected =
           ContextCascade.affected(state: three, changedFieldKey: 'district');
-      expect(affected.length, 2);
+      expect(ContextCascade.named(affected), <String>[
+        'Facility (Kasubi HC IV)',
+        'Department (Theatre)',
+      ]);
       final ContextState next = ContextCascade.apply(
         state: three,
         changedFieldKey: 'district',
-        newValue: 'South',
+        newValue: 'Wakiso',
       );
-      expect(next.values['district'], 'South');
+      expect(next.values['district'], 'Wakiso');
       expect(next.values.containsKey('facility'), isFalse);
       expect(next.values.containsKey('dept'), isFalse);
+      expect(next.pinned['surveyor'], 'Sam');
+    });
+
+    test('changing the lowest level clears nothing', () {
+      expect(
+        ContextCascade.affected(state: three, changedFieldKey: 'dept'),
+        isEmpty,
+      );
+      final ContextState next = ContextCascade.apply(
+        state: three,
+        changedFieldKey: 'dept',
+        newValue: 'Laboratory',
+      );
+      expect(next.values['facility'], 'Kasubi HC IV');
+      expect(next.values['dept'], 'Laboratory');
     });
   });
 
-  test('application writes CONTEXT fields and snapshot', () {
-    const ContextState state = ContextState(
-      levels: <ContextLevel>[
-        ContextLevel(fieldKey: 'site', order: 0, label: 'Site'),
-      ],
-      values: <String, String>{'site': 'A'},
-      pinned: <String, String>{'surveyor': 'Sam'},
-    );
-    final ({Map<String, String> fields, Map<String, Object?> snapshot}) result =
-        ContextApplication.apply(state);
-    expect(result.fields['site'], 'A');
-    expect(result.fields['surveyor'], 'Sam');
-    expect(result.snapshot['values'], isA<Map<String, String>>());
-  });
-
-  test('override leaves project context untouched', () {
-    final Map<String, Object?> record = ContextOverride.mark(
-      recordFields: <String, Object?>{'dept': 'Pharmacy'},
-      fieldKey: 'dept',
-      newValue: 'Lab',
-      previousValue: 'Pharmacy',
-    );
-    expect(ContextOverride.isOverridden(record['dept']), isTrue);
-    expect((record['dept']! as Map<String, Object?>)['value'], 'Lab');
-  });
-
-  test('folder link builds photo path from snapshot', () {
-    final String path = ContextFolderLink.photoFolder(
-      strategy: PhotoFolderStrategy.byContext,
-      snapshot: const <String, Object?>{
-        'levels': <Object>[
-          <String, Object?>{'fieldKey': 'site', 'order': 0, 'value': 'A'},
-          <String, Object?>{'fieldKey': 'room', 'order': 1, 'value': '1'},
-        ],
-      },
-    );
-    expect(path, contains('A'));
-    expect(path, contains('1'));
-  });
-
-  test('movement prompt distance gate', () {
+  test('a new record carries each value with source CONTEXT', () {
+    final ({
+      List<({String fieldKey, String value, String source})> fields,
+      Map<String, Object?> snapshot,
+    })
+    result = ContextApplication.apply(three);
     expect(
-      ContextMovementPrompt.shouldPrompt(
-        enabled: true,
-        gpsEnabled: true,
-        locationGranted: true,
-        distanceMetres: 50,
-        thresholdMetres: 100,
+      result.fields.map(
+        (({String fieldKey, String value, String source}) field) =>
+            field.source,
       ),
-      isFalse,
+      everyElement(ContextApplication.source),
     );
     expect(
-      ContextMovementPrompt.shouldPrompt(
-        enabled: true,
-        gpsEnabled: true,
-        locationGranted: true,
-        distanceMetres: 120,
-        thresholdMetres: 100,
+      result.fields.map(
+        (({String fieldKey, String value, String source}) field) =>
+            (field.fieldKey, field.value),
       ),
-      isTrue,
-    );
-    expect(
-      ContextMovementPrompt.shouldPrompt(
-        enabled: false,
-        gpsEnabled: true,
-        locationGranted: true,
-        distanceMetres: 500,
-        thresholdMetres: 100,
-      ),
-      isFalse,
-    );
-  });
-
-  test('auto-clear picks lowest filled level', () {
-    expect(
-      ContextAutoClear.lowestFieldKey(const <({String fieldKey, int order})>[
-        (fieldKey: 'a', order: 0),
-        (fieldKey: 'b', order: 1),
+      containsAll(<(String, String)>[
+        ('district', 'Kampala'),
+        ('facility', 'Kasubi HC IV'),
+        ('dept', 'Theatre'),
+        ('surveyor', 'Sam'),
       ]),
-      'b',
     );
+    expect(result.snapshot['values'], three.values);
+  });
+
+  test(
+    'an override keeps the raw value and writes the correction beside it',
+    () {
+      final ({
+        String fieldKey,
+        String rawValue,
+        String refinedValue,
+        bool overridden,
+      })
+      planned = ContextOverride.plan(
+        fieldKey: 'dept',
+        rawValue: 'Theatre',
+        newValue: 'Laboratory',
+      );
+      expect(planned.rawValue, 'Theatre');
+      expect(planned.refinedValue, 'Laboratory');
+      expect(
+        ContextOverride.isOverridden(
+          rawValue: planned.rawValue,
+          refinedValue: planned.refinedValue,
+        ),
+        isTrue,
+      );
+    },
+  );
+
+  test('the photo folder follows the record snapshot for three levels', () {
+    final ({
+      List<({String fieldKey, String value, String source})> fields,
+      Map<String, Object?> snapshot,
+    })
+    applied = ContextApplication.apply(three);
+    expect(
+      ContextFolderLink.photoFolder(
+        strategy: PhotoFolderStrategy.byContext,
+        snapshot: applied.snapshot,
+      ),
+      'photos/Kampala/Kasubi-HC-IV/Theatre',
+    );
+  });
+
+  group('auto-clear with a fake clock', () {
+    final DateTime start = DateTime.utc(2026, 9, 22, 8);
+    final FixedClock early = FixedClock(start.add(const Duration(minutes: 4)));
+    final FixedClock due = FixedClock(start.add(const Duration(minutes: 5)));
+
+    test('stays off when the setting is off', () {
+      expect(
+        ContextAutoClear.shouldClear(
+          enabled: false,
+          idleInterval: const Duration(minutes: 5),
+          lastActivity: start,
+          now: due.nowUtc(),
+          alreadyFiredThisPeriod: false,
+        ),
+        isFalse,
+      );
+    });
+
+    test('fires once the idle interval has passed', () {
+      expect(
+        ContextAutoClear.shouldClear(
+          enabled: true,
+          idleInterval: const Duration(minutes: 5),
+          lastActivity: start,
+          now: early.nowUtc(),
+          alreadyFiredThisPeriod: false,
+        ),
+        isFalse,
+      );
+      expect(
+        ContextAutoClear.shouldClear(
+          enabled: true,
+          idleInterval: const Duration(minutes: 5),
+          lastActivity: start,
+          now: due.nowUtc(),
+          alreadyFiredThisPeriod: false,
+        ),
+        isTrue,
+      );
+    });
+
+    test('does not fire again in the same idle period', () {
+      expect(
+        ContextAutoClear.shouldClear(
+          enabled: true,
+          idleInterval: const Duration(minutes: 5),
+          lastActivity: start,
+          now: due.nowUtc(),
+          alreadyFiredThisPeriod: true,
+        ),
+        isFalse,
+      );
+    });
+
+    test('undo restores the cleared lowest value exactly', () {
+      final ({ContextState next, String? fieldKey, String? value}) cleared =
+          ContextAutoClear.clearLowest(three);
+      expect(cleared.fieldKey, 'dept');
+      expect(cleared.value, 'Theatre');
+      expect(cleared.next.values.containsKey('facility'), isTrue);
+      expect(cleared.next.values.containsKey('dept'), isFalse);
+      final ContextState restored = ContextAutoClear.restore(
+        state: cleared.next,
+        fieldKey: cleared.fieldKey!,
+        value: cleared.value!,
+      );
+      expect(restored.values['dept'], 'Theatre');
+      expect(restored.values['district'], 'Kampala');
+    });
+  });
+
+  group('movement prompt with a fake location source', () {
+    int reads = 0;
+    ({double latitude, double longitude})? fix;
+
+    ({double latitude, double longitude})? read() {
+      reads += 1;
+      return fix;
+    }
+
+    setUp(() {
+      reads = 0;
+      fix = (latitude: 0.002, longitude: 0);
+    });
+
+    test('off never reads a fix', () {
+      final ({bool prompt, bool readFix}) decision =
+          ContextMovementPrompt.evaluate(
+            enabled: false,
+            gpsEnabled: true,
+            locationGranted: true,
+            thresholdMetres: 100,
+            readFix: read,
+            origin: (latitude: 0, longitude: 0),
+          );
+      expect(decision.readFix, isFalse);
+      expect(decision.prompt, isFalse);
+      expect(reads, 0);
+    });
+
+    test('permission denied never reads a fix', () {
+      final ({bool prompt, bool readFix}) decision =
+          ContextMovementPrompt.evaluate(
+            enabled: true,
+            gpsEnabled: true,
+            locationGranted: false,
+            thresholdMetres: 100,
+            readFix: read,
+            origin: (latitude: 0, longitude: 0),
+          );
+      expect(decision.prompt, isFalse);
+      expect(reads, 0);
+    });
+
+    test('a fix past the threshold asks and does not describe a write', () {
+      final ({bool prompt, bool readFix}) decision =
+          ContextMovementPrompt.evaluate(
+            enabled: true,
+            gpsEnabled: true,
+            locationGranted: true,
+            thresholdMetres: 100,
+            readFix: read,
+            origin: (latitude: 0, longitude: 0),
+          );
+      expect(reads, 1);
+      expect(decision.readFix, isTrue);
+      expect(decision.prompt, isTrue);
+    });
   });
 }
