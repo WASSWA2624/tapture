@@ -104,9 +104,23 @@ def gradle_env() -> dict[str, str]:
     if scratch:
         info(f"AF_UNIX socket dir -> {scratch}")
         option = f"-Djdk.net.unixdomain.tmpdir={scratch}"
-        existing = env.get("JAVA_TOOL_OPTIONS", "")
-        if option not in existing:
-            env["JAVA_TOOL_OPTIONS"] = f"{existing} {option}".strip()
+
+        # Gradle's launcher consumes GRADLE_OPTS without Java's noisy
+        # "Picked up JAVA_TOOL_OPTIONS" banner. Remove only our option from
+        # JAVA_TOOL_OPTIONS in case an earlier shell configuration put it there;
+        # unrelated caller-provided JVM options remain untouched.
+        java_tool_options = env.get("JAVA_TOOL_OPTIONS", "")
+        java_tool_options = re.sub(
+            rf"(?<!\S){re.escape(option)}(?!\S)", "", java_tool_options
+        ).strip()
+        if java_tool_options:
+            env["JAVA_TOOL_OPTIONS"] = java_tool_options
+        else:
+            env.pop("JAVA_TOOL_OPTIONS", None)
+
+        gradle_options = env.get("GRADLE_OPTS", "")
+        if option not in gradle_options:
+            env["GRADLE_OPTS"] = f"{gradle_options} {option}".strip()
     return env
 
 
