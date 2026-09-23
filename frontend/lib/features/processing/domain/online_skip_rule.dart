@@ -11,7 +11,7 @@ final class OnlineSkipRule {
         if (field.requiredField) field,
     ];
     if (required.isEmpty) {
-      return null;
+      return 'No required fields need online extraction.';
     }
     for (final SkipField field in required) {
       if (field.value == null || field.value!.trim().isEmpty) {

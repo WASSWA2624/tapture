@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/security/secure_storage.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
+import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/settings/settings.dart';
 
 import 'provider_test_action.dart';
@@ -35,6 +37,7 @@ class _ApiKeyScreenState extends State<ApiKeyScreen> {
   final TextEditingController _key = TextEditingController();
   bool _saved = false;
   ProviderTestView _test = ProviderTestView.empty;
+  Failure? _failure;
 
   SecureStorage get _storage => widget.storage ?? SecureStorage();
 
@@ -54,14 +57,19 @@ class _ApiKeyScreenState extends State<ApiKeyScreen> {
     final Result<String?> stored = await _storage.readSecret(
       SecretKey.providerCredential,
     );
-    final String? value = stored.fold((_) => null, (String? secret) => secret);
     if (!mounted) {
       return;
     }
-    setState(() {
-      _saved = value != null && value.isNotEmpty;
-      _key.text = '';
-    });
+    switch (stored) {
+      case FailureResult<String?>(:final Failure failure):
+        setState(() => _failure = failure);
+      case Success<String?>(:final String? value):
+        setState(() {
+          _failure = null;
+          _saved = value != null && value.isNotEmpty;
+          _key.text = '';
+        });
+    }
   }
 
   Future<void> _save() async {
@@ -69,23 +77,69 @@ class _ApiKeyScreenState extends State<ApiKeyScreen> {
     if (value.isEmpty) {
       return;
     }
-    await _storage.putSecret(SecretKey.providerCredential, value);
-    await widget.settings?.write(SettingKeys.aiProvider, 'device');
+    final Result<void> stored = await _storage.putSecret(
+      SecretKey.providerCredential,
+      value,
+    );
+    if (stored case FailureResult<void>(:final Failure failure)) {
+      if (mounted) {
+        setState(() => _failure = failure);
+      }
+      return;
+    }
+    final SettingsStore? settings = widget.settings;
+    if (settings != null) {
+      final Result<void> selected = await settings.write(
+        SettingKeys.aiProvider,
+        'device',
+      );
+      if (selected case FailureResult<void>(:final Failure failure)) {
+        await _storage.deleteSecret(SecretKey.providerCredential);
+        if (mounted) {
+          setState(() => _failure = failure);
+        }
+        return;
+      }
+    }
     _key.text = '';
     if (!mounted) {
       return;
     }
-    setState(() => _saved = true);
+    setState(() {
+      _failure = null;
+      _saved = true;
+    });
   }
 
   Future<void> _remove() async {
-    await _storage.deleteSecret(SecretKey.providerCredential);
-    await widget.settings?.write(SettingKeys.aiProvider, 'backend');
+    final SettingsStore? settings = widget.settings;
+    if (settings != null) {
+      final Result<void> selected = await settings.write(
+        SettingKeys.aiProvider,
+        'backend',
+      );
+      if (selected case FailureResult<void>(:final Failure failure)) {
+        if (mounted) {
+          setState(() => _failure = failure);
+        }
+        return;
+      }
+    }
+    final Result<void> removed = await _storage.deleteSecret(
+      SecretKey.providerCredential,
+    );
+    if (removed case FailureResult<void>(:final Failure failure)) {
+      if (mounted) {
+        setState(() => _failure = failure);
+      }
+      return;
+    }
     if (!mounted) {
       return;
     }
     setState(() {
       _saved = false;
+      _failure = null;
       _key.clear();
     });
   }
@@ -98,6 +152,8 @@ class _ApiKeyScreenState extends State<ApiKeyScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           const Text(Copy.apiKeyCustody),
+          if (_failure case final Failure failure)
+            AppErrorState(failure: failure, onRetry: _load),
           AppTextField(
             label: Copy.apiKeyLabel,
             controller: _key,

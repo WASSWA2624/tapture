@@ -1,7 +1,9 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' show Rect;
 
+import 'package:flutter/foundation.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart'
+    as ml;
 import 'package:image/image.dart' as img;
 import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -27,6 +29,16 @@ final class _OnDeviceOcr implements OcrService {
 
   @override
   Future<OcrResult> recognise(String imagePath) async {
+    final File file = File(imagePath);
+    if (!await file.exists()) {
+      throw const ValidationFailure(
+        message: 'That photo is not on this device.',
+        recoveryAction: 'Capture the photo again, then try again.',
+      );
+    }
+    if (Platform.isAndroid || Platform.isIOS) {
+      return _recogniseNative(imagePath);
+    }
     final Result<Map<String, Object?>> result = await runIsolate(
       _recognisePath,
       imagePath,
@@ -35,6 +47,49 @@ final class _OnDeviceOcr implements OcrService {
       throw failure;
     }, _decodePayload);
   }
+}
+
+Future<OcrResult> _recogniseNative(String imagePath) async {
+  final ml.TextRecognizer recognizer = ml.TextRecognizer(
+    script: ml.TextRecognitionScript.latin,
+  );
+  try {
+    final ml.RecognizedText recognised = await recognizer.processImage(
+      ml.InputImage.fromFilePath(imagePath),
+    );
+    return OcrResult(
+      text: recognised.text,
+      blocks: <OcrBlock>[
+        for (final ml.TextBlock block in recognised.blocks)
+          for (final ml.TextLine line in block.lines)
+            OcrBlock(
+              text: line.text,
+              bounds: line.boundingBox,
+              confidence: _lineConfidence(line),
+            ),
+      ],
+    );
+  } on Object {
+    throw const ValidationFailure(
+      message: 'That photo could not be read on this device.',
+      recoveryAction: 'Use another photo or enter the value by hand.',
+    );
+  } finally {
+    await recognizer.close();
+  }
+}
+
+double _lineConfidence(ml.TextLine line) {
+  final List<double> scores = <double>[
+    if (line.confidence case final double score) score,
+    for (final ml.TextElement element in line.elements)
+      if (element.confidence case final double score) score,
+  ];
+  if (scores.isEmpty) {
+    return 0;
+  }
+  return scores.reduce((double left, double right) => left + right) /
+      scores.length;
 }
 
 Future<Map<String, Object?>> _recognisePath(String path) async {

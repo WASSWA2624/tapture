@@ -17,11 +17,10 @@ final class ResponseParser {
         matchedRow: null,
       );
     }
-    final Map<String, Object?> body = Map<String, Object?>.from(decoded);
     final Map<String, FieldSchema> known = <String, FieldSchema>{
       for (final FieldSchema field in schema) field.key: field,
     };
-    final Object? fieldsRaw = body['fields'];
+    final Object? fieldsRaw = decoded['fields'];
     if (fieldsRaw is! Map) {
       return (
         ok: false,
@@ -47,7 +46,7 @@ final class ResponseParser {
       }
       fields[key] = field;
     }
-    final Object? matched = body['matched_row'];
+    final Object? matched = decoded['matched_row'];
     return (
       ok: true,
       error: null,
@@ -95,9 +94,13 @@ ParsedField? _field(String key, Object? raw, FieldSchema schema) {
     return (key: key, value: null, confidence: 0, evidence: const <String>[]);
   }
   if (raw is String || raw is num || raw is bool) {
+    final ({bool valid, String? value}) coerced = _coerce(raw, schema);
+    if (!coerced.valid) {
+      return null;
+    }
     return (
       key: key,
-      value: _coerce(raw, schema),
+      value: coerced.value,
       confidence: 1,
       evidence: const <String>[],
     );
@@ -105,47 +108,75 @@ ParsedField? _field(String key, Object? raw, FieldSchema schema) {
   if (raw is! Map) {
     return null;
   }
-  final Map<String, Object?> object = Map<String, Object?>.from(raw);
-  if (!object.containsKey('value')) {
+  if (!raw.containsKey('value')) {
     return null;
   }
-  final Object? value = object['value'];
+  final Object? value = raw['value'];
   if (value != null && value is! String && value is! num && value is! bool) {
     return null;
   }
-  final Object? confidence = object['confidence'];
+  final Object? confidence = raw['confidence'];
+  if (confidence != null && confidence is! num) {
+    return null;
+  }
   final double score = confidence is num ? confidence.toDouble() : 0;
-  final Object? evidence = object['evidence'];
+  if (!score.isFinite || score < 0 || score > 1) {
+    return null;
+  }
+  final Object? evidence = raw['evidence'];
   final List<String> links = <String>[];
-  if (evidence is List) {
+  if (evidence != null && evidence is! List) {
+    return null;
+  }
+  if (evidence is List<Object?>) {
     for (final Object? item in evidence) {
-      if (item is String) {
-        links.add(item);
+      if (item is! String) {
+        return null;
       }
+      links.add(item);
     }
   }
-  return (
-    key: key,
-    value: value == null ? null : _coerce(value, schema),
-    confidence: score,
-    evidence: links,
-  );
+  if (value == null) {
+    return (key: key, value: null, confidence: score, evidence: links);
+  }
+  final ({bool valid, String? value}) coerced = _coerce(value, schema);
+  if (!coerced.valid) {
+    return null;
+  }
+  return (key: key, value: coerced.value, confidence: score, evidence: links);
 }
 
-String? _coerce(Object value, FieldSchema schema) {
-  if (value is bool) {
-    return value ? 'true' : 'false';
-  }
-  final String text = value.toString();
-  if (schema.type == 'number' || schema.type == 'decimal') {
+({bool valid, String? value}) _coerce(Object value, FieldSchema schema) {
+  final String type = schema.type.toLowerCase();
+  final String text = value.toString().trim();
+  if (type == 'number' || type == 'decimal') {
+    if (value is bool || text.isEmpty) {
+      return (valid: false, value: null);
+    }
     final double? number = double.tryParse(text);
-    if (number == null) {
-      return null;
+    if (number == null || !number.isFinite) {
+      return (valid: false, value: null);
     }
-    if (schema.type == 'number' && number == number.roundToDouble()) {
-      return number.round().toString();
+    if (type == 'number') {
+      if (number != number.roundToDouble()) {
+        return (valid: false, value: null);
+      }
+      return (valid: true, value: number.round().toString());
     }
-    return text;
+    return (valid: true, value: text);
   }
-  return text;
+  if (type == 'boolean' || type == 'bool') {
+    if (value is bool) {
+      return (valid: true, value: value ? 'true' : 'false');
+    }
+    final String folded = text.toLowerCase();
+    if (folded != 'true' && folded != 'false') {
+      return (valid: false, value: null);
+    }
+    return (valid: true, value: folded);
+  }
+  if (value is bool && type != 'text' && type != 'string') {
+    return (valid: false, value: null);
+  }
+  return (valid: true, value: text);
 }

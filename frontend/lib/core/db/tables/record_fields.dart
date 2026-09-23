@@ -33,8 +33,23 @@ class RecordFields extends Table with MergeColumns {
   /// Confidence of a proposed refinement, when one exists.
   RealColumn get confidence => real().nullable()();
 
+  /// Shared confidence band at the time this proposal was written.
+  TextColumn get confidenceBand => text().nullable()();
+
   /// Where this value came from (typed, lookup, extraction).
   TextColumn get source => text()();
+
+  /// Extraction method, such as local OCR or provider extraction.
+  TextColumn get method => text().nullable()();
+
+  /// Provider id when an online service proposed the value.
+  TextColumn get provider => text().nullable()();
+
+  /// Provider model when one was involved.
+  TextColumn get model => text().nullable()();
+
+  /// Prompt or local-rule version that produced the proposal.
+  TextColumn get promptVersion => text().nullable()();
 
   /// Whether an operator has verified the final value.
   BoolColumn get verified => boolean().withDefault(const Constant(false))();
@@ -59,6 +74,7 @@ Future<Result<RecordField>> insertRecordField(
   required String deviceId,
   required IdService ids,
   String? operator,
+  String? auditReason,
 }) {
   return _writeRecordField(
     db,
@@ -67,6 +83,7 @@ Future<Result<RecordField>> insertRecordField(
     deviceId: deviceId,
     ids: ids,
     operator: operator,
+    auditReason: auditReason,
     allowRaw: true,
   );
 }
@@ -135,6 +152,7 @@ Future<Result<RecordField>> _writeRecordField(
   required String deviceId,
   required IdService ids,
   String? operator,
+  String? auditReason,
   required bool allowRaw,
 }) async {
   try {
@@ -184,6 +202,7 @@ Future<Result<RecordField>> _writeRecordField(
             clock: clock,
             device: deviceId,
             operator: operator,
+            reason: auditReason,
           );
           return written;
       }

@@ -9,10 +9,10 @@ import 'provenance.dart';
 /// empty, sets the record to needs review.
 final class ProposalApplication {
   /// Status written when a person must look.
-  static const String needsReviewStatus = 'needsReview';
+  static const String needsReviewStatus = 'NEEDS_REVIEW';
 
   /// Status written when every applied value is above review.
-  static const String extractedStatus = 'extracted';
+  static const String extractedStatus = 'EXTRACTED';
 
   /// Decides writes, skips and the record status.
   static ApplicationPlan apply({
@@ -27,27 +27,32 @@ final class ProposalApplication {
     };
     final List<ProposalWrite> writes = <ProposalWrite>[];
     final List<String> skips = <String>[];
-    final Set<String> filled = <String>{};
+    final Set<String> filled = <String>{
+      for (final ExistingValue value in existing)
+        if (value.capturedValue != null &&
+            value.capturedValue!.trim().isNotEmpty)
+          value.fieldKey,
+    };
     var review = false;
     for (final ProposedValue proposal in proposals) {
       final ExistingValue? prior = current[proposal.fieldKey];
       if (prior != null && prior.verified) {
         skips.add('${proposal.fieldKey} is already verified.');
-        if (prior.valueRaw != null && prior.valueRaw!.isNotEmpty) {
+        if (prior.capturedValue != null && prior.capturedValue!.isNotEmpty) {
           filled.add(proposal.fieldKey);
         }
         continue;
       }
       if (prior != null && _manual(prior.source)) {
         skips.add('${proposal.fieldKey} was entered by hand.');
-        if (prior.valueRaw != null && prior.valueRaw!.isNotEmpty) {
+        if (prior.capturedValue != null && prior.capturedValue!.isNotEmpty) {
           filled.add(proposal.fieldKey);
         }
         continue;
       }
       if (prior != null &&
-          prior.valueRaw != null &&
-          prior.valueRaw!.isNotEmpty) {
+          prior.capturedValue != null &&
+          prior.capturedValue!.isNotEmpty) {
         skips.add('${proposal.fieldKey} already has a captured value.');
         filled.add(proposal.fieldKey);
         continue;
@@ -91,7 +96,7 @@ final class ProposalApplication {
 /// A value already stored on the record.
 typedef ExistingValue = ({
   String fieldKey,
-  String? valueRaw,
+  String? capturedValue,
   bool verified,
   String source,
 });

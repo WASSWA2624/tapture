@@ -9,7 +9,8 @@ final class RequestBatching {
   static List<List<String>> split(List<String> paths, {int? cap}) {
     final int limit = cap ?? AppConstants.processing.extractionImageCap;
     if (paths.isEmpty) {
-      return const <List<String>>[];
+      // OCR, captions and context can still require one text-only request.
+      return const <List<String>>[<String>[]];
     }
     final int size = limit < 1 ? 1 : limit;
     final List<List<String>> batches = <List<String>>[];

@@ -7508,6 +7508,28 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _rowMatchStrategyMeta = const VerificationMeta(
+    'rowMatchStrategy',
+  );
+  @override
+  late final GeneratedColumn<String> rowMatchStrategy = GeneratedColumn<String>(
+    'row_match_strategy',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rowMatchScoreMeta = const VerificationMeta(
+    'rowMatchScore',
+  );
+  @override
+  late final GeneratedColumn<double> rowMatchScore = GeneratedColumn<double>(
+    'row_match_score',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
   late final GeneratedColumn<String> status = GeneratedColumn<String>(
@@ -7631,6 +7653,8 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
     projectId,
     templateId,
     templateRowId,
+    rowMatchStrategy,
+    rowMatchScore,
     status,
     processingMode,
     contextJson,
@@ -7713,6 +7737,24 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
         templateRowId.isAcceptableOrUnknown(
           data['template_row_id']!,
           _templateRowIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('row_match_strategy')) {
+      context.handle(
+        _rowMatchStrategyMeta,
+        rowMatchStrategy.isAcceptableOrUnknown(
+          data['row_match_strategy']!,
+          _rowMatchStrategyMeta,
+        ),
+      );
+    }
+    if (data.containsKey('row_match_score')) {
+      context.handle(
+        _rowMatchScoreMeta,
+        rowMatchScore.isAcceptableOrUnknown(
+          data['row_match_score']!,
+          _rowMatchScoreMeta,
         ),
       );
     }
@@ -7846,6 +7888,14 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
         DriftSqlType.string,
         data['${effectivePrefix}template_row_id'],
       ),
+      rowMatchStrategy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}row_match_strategy'],
+      ),
+      rowMatchScore: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}row_match_score'],
+      ),
       status: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}status'],
@@ -7924,6 +7974,12 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
   /// Predefined checklist row, when the capture was against one.
   final String? templateRowId;
 
+  /// How processing resolved [templateRowId], when it proposed one.
+  final String? rowMatchStrategy;
+
+  /// Confidence reported by the row matching strategy.
+  final double? rowMatchScore;
+
   /// Lifecycle status. Stored as text so this table does not import Flutter.
   final String status;
 
@@ -7965,6 +8021,8 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     required this.projectId,
     required this.templateId,
     this.templateRowId,
+    this.rowMatchStrategy,
+    this.rowMatchScore,
     required this.status,
     required this.processingMode,
     required this.contextJson,
@@ -7989,6 +8047,12 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     map['template_id'] = Variable<String>(templateId);
     if (!nullToAbsent || templateRowId != null) {
       map['template_row_id'] = Variable<String>(templateRowId);
+    }
+    if (!nullToAbsent || rowMatchStrategy != null) {
+      map['row_match_strategy'] = Variable<String>(rowMatchStrategy);
+    }
+    if (!nullToAbsent || rowMatchScore != null) {
+      map['row_match_score'] = Variable<double>(rowMatchScore);
     }
     map['status'] = Variable<String>(status);
     map['processing_mode'] = Variable<String>(processingMode);
@@ -8024,6 +8088,12 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       templateRowId: templateRowId == null && nullToAbsent
           ? const Value.absent()
           : Value(templateRowId),
+      rowMatchStrategy: rowMatchStrategy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rowMatchStrategy),
+      rowMatchScore: rowMatchScore == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rowMatchScore),
       status: Value(status),
       processingMode: Value(processingMode),
       contextJson: Value(contextJson),
@@ -8060,6 +8130,8 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       projectId: serializer.fromJson<String>(json['projectId']),
       templateId: serializer.fromJson<String>(json['templateId']),
       templateRowId: serializer.fromJson<String?>(json['templateRowId']),
+      rowMatchStrategy: serializer.fromJson<String?>(json['rowMatchStrategy']),
+      rowMatchScore: serializer.fromJson<double?>(json['rowMatchScore']),
       status: serializer.fromJson<String>(json['status']),
       processingMode: serializer.fromJson<String>(json['processingMode']),
       contextJson: serializer.fromJson<String>(json['contextJson']),
@@ -8085,6 +8157,8 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       'projectId': serializer.toJson<String>(projectId),
       'templateId': serializer.toJson<String>(templateId),
       'templateRowId': serializer.toJson<String?>(templateRowId),
+      'rowMatchStrategy': serializer.toJson<String?>(rowMatchStrategy),
+      'rowMatchScore': serializer.toJson<double?>(rowMatchScore),
       'status': serializer.toJson<String>(status),
       'processingMode': serializer.toJson<String>(processingMode),
       'contextJson': serializer.toJson<String>(contextJson),
@@ -8108,6 +8182,8 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     String? projectId,
     String? templateId,
     Value<String?> templateRowId = const Value.absent(),
+    Value<String?> rowMatchStrategy = const Value.absent(),
+    Value<double?> rowMatchScore = const Value.absent(),
     String? status,
     String? processingMode,
     String? contextJson,
@@ -8130,6 +8206,12 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     templateRowId: templateRowId.present
         ? templateRowId.value
         : this.templateRowId,
+    rowMatchStrategy: rowMatchStrategy.present
+        ? rowMatchStrategy.value
+        : this.rowMatchStrategy,
+    rowMatchScore: rowMatchScore.present
+        ? rowMatchScore.value
+        : this.rowMatchScore,
     status: status ?? this.status,
     processingMode: processingMode ?? this.processingMode,
     contextJson: contextJson ?? this.contextJson,
@@ -8158,6 +8240,12 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       templateRowId: data.templateRowId.present
           ? data.templateRowId.value
           : this.templateRowId,
+      rowMatchStrategy: data.rowMatchStrategy.present
+          ? data.rowMatchStrategy.value
+          : this.rowMatchStrategy,
+      rowMatchScore: data.rowMatchScore.present
+          ? data.rowMatchScore.value
+          : this.rowMatchScore,
       status: data.status.present ? data.status.value : this.status,
       processingMode: data.processingMode.present
           ? data.processingMode.value
@@ -8197,6 +8285,8 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
           ..write('projectId: $projectId, ')
           ..write('templateId: $templateId, ')
           ..write('templateRowId: $templateRowId, ')
+          ..write('rowMatchStrategy: $rowMatchStrategy, ')
+          ..write('rowMatchScore: $rowMatchScore, ')
           ..write('status: $status, ')
           ..write('processingMode: $processingMode, ')
           ..write('contextJson: $contextJson, ')
@@ -8213,7 +8303,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     createdAt,
     updatedAt,
@@ -8222,6 +8312,8 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     projectId,
     templateId,
     templateRowId,
+    rowMatchStrategy,
+    rowMatchScore,
     status,
     processingMode,
     contextJson,
@@ -8233,7 +8325,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     gpsLon,
     approvedAt,
     approvedBy,
-  );
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -8246,6 +8338,8 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
           other.projectId == this.projectId &&
           other.templateId == this.templateId &&
           other.templateRowId == this.templateRowId &&
+          other.rowMatchStrategy == this.rowMatchStrategy &&
+          other.rowMatchScore == this.rowMatchScore &&
           other.status == this.status &&
           other.processingMode == this.processingMode &&
           other.contextJson == this.contextJson &&
@@ -8268,6 +8362,8 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
   final Value<String> projectId;
   final Value<String> templateId;
   final Value<String?> templateRowId;
+  final Value<String?> rowMatchStrategy;
+  final Value<double?> rowMatchScore;
   final Value<String> status;
   final Value<String> processingMode;
   final Value<String> contextJson;
@@ -8289,6 +8385,8 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     this.projectId = const Value.absent(),
     this.templateId = const Value.absent(),
     this.templateRowId = const Value.absent(),
+    this.rowMatchStrategy = const Value.absent(),
+    this.rowMatchScore = const Value.absent(),
     this.status = const Value.absent(),
     this.processingMode = const Value.absent(),
     this.contextJson = const Value.absent(),
@@ -8311,6 +8409,8 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     required String projectId,
     required String templateId,
     this.templateRowId = const Value.absent(),
+    this.rowMatchStrategy = const Value.absent(),
+    this.rowMatchScore = const Value.absent(),
     required String status,
     required String processingMode,
     required String contextJson,
@@ -8344,6 +8444,8 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     Expression<String>? projectId,
     Expression<String>? templateId,
     Expression<String>? templateRowId,
+    Expression<String>? rowMatchStrategy,
+    Expression<double>? rowMatchScore,
     Expression<String>? status,
     Expression<String>? processingMode,
     Expression<String>? contextJson,
@@ -8366,6 +8468,8 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
       if (projectId != null) 'project_id': projectId,
       if (templateId != null) 'template_id': templateId,
       if (templateRowId != null) 'template_row_id': templateRowId,
+      if (rowMatchStrategy != null) 'row_match_strategy': rowMatchStrategy,
+      if (rowMatchScore != null) 'row_match_score': rowMatchScore,
       if (status != null) 'status': status,
       if (processingMode != null) 'processing_mode': processingMode,
       if (contextJson != null) 'context_json': contextJson,
@@ -8390,6 +8494,8 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     Value<String>? projectId,
     Value<String>? templateId,
     Value<String?>? templateRowId,
+    Value<String?>? rowMatchStrategy,
+    Value<double?>? rowMatchScore,
     Value<String>? status,
     Value<String>? processingMode,
     Value<String>? contextJson,
@@ -8412,6 +8518,8 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
       projectId: projectId ?? this.projectId,
       templateId: templateId ?? this.templateId,
       templateRowId: templateRowId ?? this.templateRowId,
+      rowMatchStrategy: rowMatchStrategy ?? this.rowMatchStrategy,
+      rowMatchScore: rowMatchScore ?? this.rowMatchScore,
       status: status ?? this.status,
       processingMode: processingMode ?? this.processingMode,
       contextJson: contextJson ?? this.contextJson,
@@ -8453,6 +8561,12 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     }
     if (templateRowId.present) {
       map['template_row_id'] = Variable<String>(templateRowId.value);
+    }
+    if (rowMatchStrategy.present) {
+      map['row_match_strategy'] = Variable<String>(rowMatchStrategy.value);
+    }
+    if (rowMatchScore.present) {
+      map['row_match_score'] = Variable<double>(rowMatchScore.value);
     }
     if (status.present) {
       map['status'] = Variable<String>(status.value);
@@ -8504,6 +8618,8 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
           ..write('projectId: $projectId, ')
           ..write('templateId: $templateId, ')
           ..write('templateRowId: $templateRowId, ')
+          ..write('rowMatchStrategy: $rowMatchStrategy, ')
+          ..write('rowMatchScore: $rowMatchScore, ')
           ..write('status: $status, ')
           ..write('processingMode: $processingMode, ')
           ..write('contextJson: $contextJson, ')
@@ -8646,6 +8762,17 @@ class $RecordFieldsTable extends RecordFields
     type: DriftSqlType.double,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _confidenceBandMeta = const VerificationMeta(
+    'confidenceBand',
+  );
+  @override
+  late final GeneratedColumn<String> confidenceBand = GeneratedColumn<String>(
+    'confidence_band',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _sourceMeta = const VerificationMeta('source');
   @override
   late final GeneratedColumn<String> source = GeneratedColumn<String>(
@@ -8654,6 +8781,46 @@ class $RecordFieldsTable extends RecordFields
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _methodMeta = const VerificationMeta('method');
+  @override
+  late final GeneratedColumn<String> method = GeneratedColumn<String>(
+    'method',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _providerMeta = const VerificationMeta(
+    'provider',
+  );
+  @override
+  late final GeneratedColumn<String> provider = GeneratedColumn<String>(
+    'provider',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _modelMeta = const VerificationMeta('model');
+  @override
+  late final GeneratedColumn<String> model = GeneratedColumn<String>(
+    'model',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _promptVersionMeta = const VerificationMeta(
+    'promptVersion',
+  );
+  @override
+  late final GeneratedColumn<String> promptVersion = GeneratedColumn<String>(
+    'prompt_version',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _verifiedMeta = const VerificationMeta(
     'verified',
@@ -8705,7 +8872,12 @@ class $RecordFieldsTable extends RecordFields
     valueRefined,
     valueFinal,
     confidence,
+    confidenceBand,
     source,
+    method,
+    provider,
+    model,
+    promptVersion,
     verified,
     verifiedBy,
     verifiedAt,
@@ -8801,6 +8973,15 @@ class $RecordFieldsTable extends RecordFields
         confidence.isAcceptableOrUnknown(data['confidence']!, _confidenceMeta),
       );
     }
+    if (data.containsKey('confidence_band')) {
+      context.handle(
+        _confidenceBandMeta,
+        confidenceBand.isAcceptableOrUnknown(
+          data['confidence_band']!,
+          _confidenceBandMeta,
+        ),
+      );
+    }
     if (data.containsKey('source')) {
       context.handle(
         _sourceMeta,
@@ -8808,6 +8989,33 @@ class $RecordFieldsTable extends RecordFields
       );
     } else if (isInserting) {
       context.missing(_sourceMeta);
+    }
+    if (data.containsKey('method')) {
+      context.handle(
+        _methodMeta,
+        method.isAcceptableOrUnknown(data['method']!, _methodMeta),
+      );
+    }
+    if (data.containsKey('provider')) {
+      context.handle(
+        _providerMeta,
+        provider.isAcceptableOrUnknown(data['provider']!, _providerMeta),
+      );
+    }
+    if (data.containsKey('model')) {
+      context.handle(
+        _modelMeta,
+        model.isAcceptableOrUnknown(data['model']!, _modelMeta),
+      );
+    }
+    if (data.containsKey('prompt_version')) {
+      context.handle(
+        _promptVersionMeta,
+        promptVersion.isAcceptableOrUnknown(
+          data['prompt_version']!,
+          _promptVersionMeta,
+        ),
+      );
     }
     if (data.containsKey('verified')) {
       context.handle(
@@ -8884,10 +9092,30 @@ class $RecordFieldsTable extends RecordFields
         DriftSqlType.double,
         data['${effectivePrefix}confidence'],
       ),
+      confidenceBand: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}confidence_band'],
+      ),
       source: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}source'],
       )!,
+      method: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}method'],
+      ),
+      provider: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}provider'],
+      ),
+      model: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}model'],
+      ),
+      promptVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}prompt_version'],
+      ),
       verified: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}verified'],
@@ -8943,8 +9171,23 @@ class RecordField extends DataClass implements Insertable<RecordField> {
   /// Confidence of a proposed refinement, when one exists.
   final double? confidence;
 
+  /// Shared confidence band at the time this proposal was written.
+  final String? confidenceBand;
+
   /// Where this value came from (typed, lookup, extraction).
   final String source;
+
+  /// Extraction method, such as local OCR or provider extraction.
+  final String? method;
+
+  /// Provider id when an online service proposed the value.
+  final String? provider;
+
+  /// Provider model when one was involved.
+  final String? model;
+
+  /// Prompt or local-rule version that produced the proposal.
+  final String? promptVersion;
 
   /// Whether an operator has verified the final value.
   final bool verified;
@@ -8966,7 +9209,12 @@ class RecordField extends DataClass implements Insertable<RecordField> {
     this.valueRefined,
     this.valueFinal,
     this.confidence,
+    this.confidenceBand,
     required this.source,
+    this.method,
+    this.provider,
+    this.model,
+    this.promptVersion,
     required this.verified,
     this.verifiedBy,
     this.verifiedAt,
@@ -8993,7 +9241,22 @@ class RecordField extends DataClass implements Insertable<RecordField> {
     if (!nullToAbsent || confidence != null) {
       map['confidence'] = Variable<double>(confidence);
     }
+    if (!nullToAbsent || confidenceBand != null) {
+      map['confidence_band'] = Variable<String>(confidenceBand);
+    }
     map['source'] = Variable<String>(source);
+    if (!nullToAbsent || method != null) {
+      map['method'] = Variable<String>(method);
+    }
+    if (!nullToAbsent || provider != null) {
+      map['provider'] = Variable<String>(provider);
+    }
+    if (!nullToAbsent || model != null) {
+      map['model'] = Variable<String>(model);
+    }
+    if (!nullToAbsent || promptVersion != null) {
+      map['prompt_version'] = Variable<String>(promptVersion);
+    }
     map['verified'] = Variable<bool>(verified);
     if (!nullToAbsent || verifiedBy != null) {
       map['verified_by'] = Variable<String>(verifiedBy);
@@ -9025,7 +9288,22 @@ class RecordField extends DataClass implements Insertable<RecordField> {
       confidence: confidence == null && nullToAbsent
           ? const Value.absent()
           : Value(confidence),
+      confidenceBand: confidenceBand == null && nullToAbsent
+          ? const Value.absent()
+          : Value(confidenceBand),
       source: Value(source),
+      method: method == null && nullToAbsent
+          ? const Value.absent()
+          : Value(method),
+      provider: provider == null && nullToAbsent
+          ? const Value.absent()
+          : Value(provider),
+      model: model == null && nullToAbsent
+          ? const Value.absent()
+          : Value(model),
+      promptVersion: promptVersion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(promptVersion),
       verified: Value(verified),
       verifiedBy: verifiedBy == null && nullToAbsent
           ? const Value.absent()
@@ -9053,7 +9331,12 @@ class RecordField extends DataClass implements Insertable<RecordField> {
       valueRefined: serializer.fromJson<String?>(json['valueRefined']),
       valueFinal: serializer.fromJson<String?>(json['valueFinal']),
       confidence: serializer.fromJson<double?>(json['confidence']),
+      confidenceBand: serializer.fromJson<String?>(json['confidenceBand']),
       source: serializer.fromJson<String>(json['source']),
+      method: serializer.fromJson<String?>(json['method']),
+      provider: serializer.fromJson<String?>(json['provider']),
+      model: serializer.fromJson<String?>(json['model']),
+      promptVersion: serializer.fromJson<String?>(json['promptVersion']),
       verified: serializer.fromJson<bool>(json['verified']),
       verifiedBy: serializer.fromJson<String?>(json['verifiedBy']),
       verifiedAt: serializer.fromJson<DateTime?>(json['verifiedAt']),
@@ -9074,7 +9357,12 @@ class RecordField extends DataClass implements Insertable<RecordField> {
       'valueRefined': serializer.toJson<String?>(valueRefined),
       'valueFinal': serializer.toJson<String?>(valueFinal),
       'confidence': serializer.toJson<double?>(confidence),
+      'confidenceBand': serializer.toJson<String?>(confidenceBand),
       'source': serializer.toJson<String>(source),
+      'method': serializer.toJson<String?>(method),
+      'provider': serializer.toJson<String?>(provider),
+      'model': serializer.toJson<String?>(model),
+      'promptVersion': serializer.toJson<String?>(promptVersion),
       'verified': serializer.toJson<bool>(verified),
       'verifiedBy': serializer.toJson<String?>(verifiedBy),
       'verifiedAt': serializer.toJson<DateTime?>(verifiedAt),
@@ -9093,7 +9381,12 @@ class RecordField extends DataClass implements Insertable<RecordField> {
     Value<String?> valueRefined = const Value.absent(),
     Value<String?> valueFinal = const Value.absent(),
     Value<double?> confidence = const Value.absent(),
+    Value<String?> confidenceBand = const Value.absent(),
     String? source,
+    Value<String?> method = const Value.absent(),
+    Value<String?> provider = const Value.absent(),
+    Value<String?> model = const Value.absent(),
+    Value<String?> promptVersion = const Value.absent(),
     bool? verified,
     Value<String?> verifiedBy = const Value.absent(),
     Value<DateTime?> verifiedAt = const Value.absent(),
@@ -9109,7 +9402,16 @@ class RecordField extends DataClass implements Insertable<RecordField> {
     valueRefined: valueRefined.present ? valueRefined.value : this.valueRefined,
     valueFinal: valueFinal.present ? valueFinal.value : this.valueFinal,
     confidence: confidence.present ? confidence.value : this.confidence,
+    confidenceBand: confidenceBand.present
+        ? confidenceBand.value
+        : this.confidenceBand,
     source: source ?? this.source,
+    method: method.present ? method.value : this.method,
+    provider: provider.present ? provider.value : this.provider,
+    model: model.present ? model.value : this.model,
+    promptVersion: promptVersion.present
+        ? promptVersion.value
+        : this.promptVersion,
     verified: verified ?? this.verified,
     verifiedBy: verifiedBy.present ? verifiedBy.value : this.verifiedBy,
     verifiedAt: verifiedAt.present ? verifiedAt.value : this.verifiedAt,
@@ -9135,7 +9437,16 @@ class RecordField extends DataClass implements Insertable<RecordField> {
       confidence: data.confidence.present
           ? data.confidence.value
           : this.confidence,
+      confidenceBand: data.confidenceBand.present
+          ? data.confidenceBand.value
+          : this.confidenceBand,
       source: data.source.present ? data.source.value : this.source,
+      method: data.method.present ? data.method.value : this.method,
+      provider: data.provider.present ? data.provider.value : this.provider,
+      model: data.model.present ? data.model.value : this.model,
+      promptVersion: data.promptVersion.present
+          ? data.promptVersion.value
+          : this.promptVersion,
       verified: data.verified.present ? data.verified.value : this.verified,
       verifiedBy: data.verifiedBy.present
           ? data.verifiedBy.value
@@ -9160,7 +9471,12 @@ class RecordField extends DataClass implements Insertable<RecordField> {
           ..write('valueRefined: $valueRefined, ')
           ..write('valueFinal: $valueFinal, ')
           ..write('confidence: $confidence, ')
+          ..write('confidenceBand: $confidenceBand, ')
           ..write('source: $source, ')
+          ..write('method: $method, ')
+          ..write('provider: $provider, ')
+          ..write('model: $model, ')
+          ..write('promptVersion: $promptVersion, ')
           ..write('verified: $verified, ')
           ..write('verifiedBy: $verifiedBy, ')
           ..write('verifiedAt: $verifiedAt')
@@ -9181,7 +9497,12 @@ class RecordField extends DataClass implements Insertable<RecordField> {
     valueRefined,
     valueFinal,
     confidence,
+    confidenceBand,
     source,
+    method,
+    provider,
+    model,
+    promptVersion,
     verified,
     verifiedBy,
     verifiedAt,
@@ -9201,7 +9522,12 @@ class RecordField extends DataClass implements Insertable<RecordField> {
           other.valueRefined == this.valueRefined &&
           other.valueFinal == this.valueFinal &&
           other.confidence == this.confidence &&
+          other.confidenceBand == this.confidenceBand &&
           other.source == this.source &&
+          other.method == this.method &&
+          other.provider == this.provider &&
+          other.model == this.model &&
+          other.promptVersion == this.promptVersion &&
           other.verified == this.verified &&
           other.verifiedBy == this.verifiedBy &&
           other.verifiedAt == this.verifiedAt);
@@ -9219,7 +9545,12 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
   final Value<String?> valueRefined;
   final Value<String?> valueFinal;
   final Value<double?> confidence;
+  final Value<String?> confidenceBand;
   final Value<String> source;
+  final Value<String?> method;
+  final Value<String?> provider;
+  final Value<String?> model;
+  final Value<String?> promptVersion;
   final Value<bool> verified;
   final Value<String?> verifiedBy;
   final Value<DateTime?> verifiedAt;
@@ -9236,7 +9567,12 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
     this.valueRefined = const Value.absent(),
     this.valueFinal = const Value.absent(),
     this.confidence = const Value.absent(),
+    this.confidenceBand = const Value.absent(),
     this.source = const Value.absent(),
+    this.method = const Value.absent(),
+    this.provider = const Value.absent(),
+    this.model = const Value.absent(),
+    this.promptVersion = const Value.absent(),
     this.verified = const Value.absent(),
     this.verifiedBy = const Value.absent(),
     this.verifiedAt = const Value.absent(),
@@ -9254,7 +9590,12 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
     this.valueRefined = const Value.absent(),
     this.valueFinal = const Value.absent(),
     this.confidence = const Value.absent(),
+    this.confidenceBand = const Value.absent(),
     required String source,
+    this.method = const Value.absent(),
+    this.provider = const Value.absent(),
+    this.model = const Value.absent(),
+    this.promptVersion = const Value.absent(),
     this.verified = const Value.absent(),
     this.verifiedBy = const Value.absent(),
     this.verifiedAt = const Value.absent(),
@@ -9277,7 +9618,12 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
     Expression<String>? valueRefined,
     Expression<String>? valueFinal,
     Expression<double>? confidence,
+    Expression<String>? confidenceBand,
     Expression<String>? source,
+    Expression<String>? method,
+    Expression<String>? provider,
+    Expression<String>? model,
+    Expression<String>? promptVersion,
     Expression<bool>? verified,
     Expression<String>? verifiedBy,
     Expression<DateTime>? verifiedAt,
@@ -9295,7 +9641,12 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
       if (valueRefined != null) 'value_refined': valueRefined,
       if (valueFinal != null) 'value_final': valueFinal,
       if (confidence != null) 'confidence': confidence,
+      if (confidenceBand != null) 'confidence_band': confidenceBand,
       if (source != null) 'source': source,
+      if (method != null) 'method': method,
+      if (provider != null) 'provider': provider,
+      if (model != null) 'model': model,
+      if (promptVersion != null) 'prompt_version': promptVersion,
       if (verified != null) 'verified': verified,
       if (verifiedBy != null) 'verified_by': verifiedBy,
       if (verifiedAt != null) 'verified_at': verifiedAt,
@@ -9315,7 +9666,12 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
     Value<String?>? valueRefined,
     Value<String?>? valueFinal,
     Value<double?>? confidence,
+    Value<String?>? confidenceBand,
     Value<String>? source,
+    Value<String?>? method,
+    Value<String?>? provider,
+    Value<String?>? model,
+    Value<String?>? promptVersion,
     Value<bool>? verified,
     Value<String?>? verifiedBy,
     Value<DateTime?>? verifiedAt,
@@ -9333,7 +9689,12 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
       valueRefined: valueRefined ?? this.valueRefined,
       valueFinal: valueFinal ?? this.valueFinal,
       confidence: confidence ?? this.confidence,
+      confidenceBand: confidenceBand ?? this.confidenceBand,
       source: source ?? this.source,
+      method: method ?? this.method,
+      provider: provider ?? this.provider,
+      model: model ?? this.model,
+      promptVersion: promptVersion ?? this.promptVersion,
       verified: verified ?? this.verified,
       verifiedBy: verifiedBy ?? this.verifiedBy,
       verifiedAt: verifiedAt ?? this.verifiedAt,
@@ -9377,8 +9738,23 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
     if (confidence.present) {
       map['confidence'] = Variable<double>(confidence.value);
     }
+    if (confidenceBand.present) {
+      map['confidence_band'] = Variable<String>(confidenceBand.value);
+    }
     if (source.present) {
       map['source'] = Variable<String>(source.value);
+    }
+    if (method.present) {
+      map['method'] = Variable<String>(method.value);
+    }
+    if (provider.present) {
+      map['provider'] = Variable<String>(provider.value);
+    }
+    if (model.present) {
+      map['model'] = Variable<String>(model.value);
+    }
+    if (promptVersion.present) {
+      map['prompt_version'] = Variable<String>(promptVersion.value);
     }
     if (verified.present) {
       map['verified'] = Variable<bool>(verified.value);
@@ -9409,7 +9785,12 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
           ..write('valueRefined: $valueRefined, ')
           ..write('valueFinal: $valueFinal, ')
           ..write('confidence: $confidence, ')
+          ..write('confidenceBand: $confidenceBand, ')
           ..write('source: $source, ')
+          ..write('method: $method, ')
+          ..write('provider: $provider, ')
+          ..write('model: $model, ')
+          ..write('promptVersion: $promptVersion, ')
           ..write('verified: $verified, ')
           ..write('verifiedBy: $verifiedBy, ')
           ..write('verifiedAt: $verifiedAt, ')

@@ -2824,6 +2824,11 @@ abstract final class Copy {
   /// Failed count label.
   static const String queueFailed = 'Failed';
 
+  /// Today's online request and image totals against the project cap.
+  static String queueUsage(int requests, int images, int cap) {
+    return '$requests of $cap online requests today · $images images sent';
+  }
+
   /// Process every waiting record.
   static const String queueProcessAll = 'Process all';
 
@@ -2876,7 +2881,8 @@ abstract final class Copy {
 
   /// What the preview says will be included.
   static String egressBody({required int images, required String size}) {
-    return '$images images, about $size. Captions and field names are included.';
+    return '$images compressed images, about $size. Captions, field names, '
+        'on-device text, context and predefined row labels are included.';
   }
 
   /// Device-held key screen title.

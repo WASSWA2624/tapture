@@ -13,7 +13,11 @@ abstract interface class JobQueue {
   /// An expired lease is released inside the same transaction, so a job
   /// killed mid-run becomes claimable again. The concurrency cap is read
   /// from the settings store by the implementation.
-  Future<ProcessingJob?> claim(Duration lease);
+  Future<ProcessingJob?> claim(
+    Duration lease, {
+    String? projectId,
+    String? groupLabel,
+  });
 
   /// Marks [jobId] finished.
   Future<void> complete(String jobId);

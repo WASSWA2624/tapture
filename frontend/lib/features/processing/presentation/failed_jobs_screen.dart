@@ -9,6 +9,7 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 
 import '../processing.dart';
+import 'processing_controller.dart';
 import 'queue_providers.dart';
 
 /// Failed jobs, each with the reason the classifier stored, and one retry.
@@ -22,6 +23,15 @@ class FailedJobsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<QueueSnapshot> value = ref.watch(queueSnapshotProvider);
+    Future<void> retry(String jobId) async {
+      final Future<void> Function(String jobId)? callback = onRetry;
+      if (callback != null) {
+        await callback(jobId);
+        return;
+      }
+      await ref.read(processingControllerProvider.notifier).retry(jobId);
+    }
+
     return AppPage(
       title: Copy.queueFailedTitle,
       scrollable: false,
@@ -51,11 +61,11 @@ class FailedJobsScreen extends ConsumerWidget {
                       message: reason,
                       recoveryAction: Copy.queueRetry,
                     ),
-                    onRetry: () => onRetry?.call(job.id),
+                    onRetry: () => retry(job.id),
                   ),
                   AppButton(
                     label: Copy.queueRetry,
-                    onPressed: () => onRetry?.call(job.id),
+                    onPressed: () => retry(job.id),
                   ),
                 ],
               );

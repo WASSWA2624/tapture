@@ -50,7 +50,7 @@ final class JobRetry {
     var millis = base;
     for (var i = 0; i < shift; i++) {
       if (millis >= cap) {
-        return Duration(milliseconds: cap);
+        return AppConstants.processingBackoff(cap);
       }
       millis = millis * 2;
     }
@@ -60,7 +60,7 @@ final class JobRetry {
     if (millis < base) {
       millis = base;
     }
-    return Duration(milliseconds: millis);
+    return AppConstants.processingBackoff(millis);
   }
 
   /// Whether [error] may be tried again before the attempt cap.

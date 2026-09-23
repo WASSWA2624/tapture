@@ -23,6 +23,9 @@ abstract interface class AiService {
   /// Every method returns [ProviderFailure] with a recovery action.
   const factory AiService.unavailable() = _UnavailableAiService;
 
+  /// Whether this implementation can make calls in the current build.
+  bool get isAvailable;
+
   /// Reads text from images.
   Future<Result<ReadTextResult>> readText(ReadTextRequest request);
 
@@ -45,6 +48,9 @@ final class _UnavailableAiService implements AiService {
     message: 'AI is not available.',
     recoveryAction: 'Continue capturing. Analysis can wait.',
   );
+
+  @override
+  bool get isAvailable => false;
 
   @override
   Future<Result<ReadTextResult>> readText(ReadTextRequest request) {

@@ -7,6 +7,7 @@ import 'package:tapture/features/processing/data/processing_repository_impl.dart
 import 'package:tapture/features/processing/domain/processing_repository.dart';
 import 'package:tapture/features/settings/settings.dart';
 
+import '../../../support/factories.dart';
 import '../../../support/fakes/fake_processing_repository.dart';
 
 void main() {
@@ -57,11 +58,14 @@ void main() {
     final ProcessingRepositoryImpl store = repo(FixedClock(t0));
     await store.enqueue('record-a');
     await store.enqueue('record-b');
-    final List<ProcessingJob?> claimed =
-        await Future.wait(<Future<ProcessingJob?>>[
+    final List<Result<ProcessingJob?>> results =
+        await Future.wait(<Future<Result<ProcessingJob?>>>[
           store.claim(const Duration(minutes: 1)),
           store.claim(const Duration(minutes: 1)),
         ]);
+    final List<ProcessingJob?> claimed = <ProcessingJob?>[
+      for (final Result<ProcessingJob?> result in results) _ok(result),
+    ];
     final Set<String> ids = claimed
         .whereType<ProcessingJob>()
         .map((ProcessingJob job) => job.id)
@@ -71,9 +75,9 @@ void main() {
 
   test('an expired lease can be claimed again', () async {
     final ProcessingRepositoryImpl first = repo(FixedClock(t0));
-    final String id = await first.enqueue('record-1');
-    final ProcessingJob? claimed = await first.claim(
-      const Duration(minutes: 1),
+    final String id = _ok(await first.enqueue('record-1'));
+    final ProcessingJob? claimed = _ok(
+      await first.claim(const Duration(minutes: 1)),
     );
     expect(claimed?.id, id);
     expect(claimed?.status, JobStatus.running);
@@ -81,9 +85,47 @@ void main() {
     final ProcessingRepositoryImpl later = repo(
       FixedClock(t0.add(const Duration(minutes: 2))),
     );
-    final ProcessingJob? again = await later.claim(const Duration(minutes: 1));
+    final ProcessingJob? again = _ok(
+      await later.claim(const Duration(minutes: 1)),
+    );
     expect(again?.id, id);
     expect(again?.status, JobStatus.running);
+  });
+
+  test('process all queues raw-saved records exactly once', () async {
+    await db.close();
+    db = await seededDatabase(records: 2);
+    final ProcessingRepositoryImpl store = repo(FixedClock(t0));
+
+    final QueueSnapshot before = await store.watchQueue().first;
+    expect(before.unprocessed, 2);
+    expect(before.queued, 0);
+    expect(before.groups.single.records, 2);
+
+    expect(_ok(await store.enqueuePending()), 2);
+    expect(_ok(await store.enqueuePending()), 0);
+
+    final QueueSnapshot after = await store.watchQueue().first;
+    expect(after.unprocessed, 0);
+    expect(after.queued, 2);
+    expect(await store.watchAll().first, hasLength(2));
+  });
+
+  test('a failed job is not also counted as unprocessed', () async {
+    await db.close();
+    db = await seededDatabase(records: 1);
+    final ProcessingRepositoryImpl store = repo(FixedClock(t0));
+    _ok(await store.enqueuePending());
+    final ProcessingJob job = _ok(
+      await store.claim(const Duration(minutes: 1)),
+    )!;
+
+    _ok(await store.fail(job.id, 'Missing template.', permanent: true));
+
+    final QueueSnapshot snapshot = await store.watchQueue().first;
+    expect(snapshot.failed, 1);
+    expect(snapshot.unprocessed, 0);
+    expect(snapshot.groups, isEmpty);
   });
 
   test('the fake the later tests use round-trips a job', () async {

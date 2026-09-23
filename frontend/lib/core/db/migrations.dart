@@ -31,6 +31,7 @@ kUpgradeSteps = <int, _UpgradeStep>{
   13: migrateToV13,
   14: migrateToV14,
   15: migrateToV15,
+  16: migrateToV16,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -234,6 +235,53 @@ Future<void> migrateToV15(Migrator migrator, AppDatabase db) async {
   if (cache.isEmpty) {
     await migrator.createTable(db.ocrCacheEntries);
     await migrator.createIndex(db.ocrCacheByHash);
+  }
+}
+
+/// Schema version 16: processing provenance on each proposed field value.
+Future<void> migrateToV16(Migrator migrator, AppDatabase db) async {
+  final List<QueryRow> tables = await db
+      .customSelect(
+        "SELECT name FROM sqlite_master WHERE type = 'table' "
+        "AND name = 'record_fields'",
+      )
+      .get();
+  if (tables.isEmpty) {
+    return;
+  }
+  final List<QueryRow> info = await db
+      .customSelect('PRAGMA table_info("record_fields")')
+      .get();
+  final Set<String> columns = <String>{
+    for (final QueryRow row in info) row.read<String>('name'),
+  };
+  if (!columns.contains('confidence_band')) {
+    await migrator.addColumn(db.recordFields, db.recordFields.confidenceBand);
+  }
+  if (!columns.contains('method')) {
+    await migrator.addColumn(db.recordFields, db.recordFields.method);
+  }
+  if (!columns.contains('provider')) {
+    await migrator.addColumn(db.recordFields, db.recordFields.provider);
+  }
+  if (!columns.contains('model')) {
+    await migrator.addColumn(db.recordFields, db.recordFields.model);
+  }
+  if (!columns.contains('prompt_version')) {
+    await migrator.addColumn(db.recordFields, db.recordFields.promptVersion);
+  }
+  final List<QueryRow> recordInfo = await db
+      .customSelect('PRAGMA table_info("records")')
+      .get();
+  final Set<String> recordColumns = <String>{
+    for (final QueryRow row in recordInfo) row.read<String>('name'),
+  };
+  if (recordColumns.isNotEmpty &&
+      !recordColumns.contains('row_match_strategy')) {
+    await migrator.addColumn(db.records, db.records.rowMatchStrategy);
+  }
+  if (recordColumns.isNotEmpty && !recordColumns.contains('row_match_score')) {
+    await migrator.addColumn(db.records, db.records.rowMatchScore);
   }
 }
 

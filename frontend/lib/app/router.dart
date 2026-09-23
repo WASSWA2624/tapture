@@ -638,7 +638,7 @@ List<RouteBase> get _routes {
                 GoRoute(
                   path: 'provider-key',
                   builder: (BuildContext _, GoRouterState _) {
-                    return const ApiKeyScreen();
+                    return const _ApiKeyRoute();
                   },
                 ),
                 GoRoute(
@@ -822,6 +822,15 @@ List<RouteBase> get _routes {
     );
   }
   return routes;
+}
+
+class _ApiKeyRoute extends ConsumerWidget {
+  const _ApiKeyRoute();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ApiKeyScreen(settings: ref.watch(projectSettingsStoreProvider));
+  }
 }
 
 String? _legacyLocation(GoRouterState state) {

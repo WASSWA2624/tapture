@@ -117,6 +117,9 @@ void main() {
 
   test('batching stays one call below and at the cap and splits above it', () {
     final int cap = AppConstants.processing.extractionImageCap;
+    expect(RequestBatching.split(const <String>[]), <List<String>>[
+      <String>[],
+    ]);
     final List<String> five = <String>['a', 'b', 'c', 'd', 'e'];
     expect(RequestBatching.split(five), hasLength(1));
     expect(
@@ -172,6 +175,12 @@ void main() {
     );
     expect(request.toService().imagePaths, <String>['<image 1>']);
     expect(request.toService().ocrText, 'SN458923');
+    expect(request.toService().predefinedRows, <String>['Autoclave']);
+    expect(request.toService().rules, ExtractionRequest.defaultRules);
+    expect(
+      request.toService().fieldSchema.first,
+      containsPair('required', true),
+    );
   });
 
   test('parser keeps a valid field, drops unknown keys, and repairs once', () {
@@ -252,7 +261,7 @@ void main() {
       existing: const <ExistingValue>[
         (
           fieldKey: 'serial',
-          valueRaw: 'kept',
+          capturedValue: 'kept',
           verified: true,
           source: 'MANUAL',
         ),
@@ -563,6 +572,9 @@ final class _Scripted implements AiService {
   _Scripted(this.result);
 
   final Result<ReadTextResult> result;
+
+  @override
+  bool get isAvailable => true;
 
   @override
   Future<Result<ReadTextResult>> readText(ReadTextRequest request) async {

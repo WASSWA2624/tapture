@@ -15,6 +15,10 @@ final class ExtractFieldsRequest {
     required this.captions,
     required this.imagePaths,
     this.context = const <String, String>{},
+    this.fieldSchema = const <Map<String, Object?>>[],
+    this.predefinedRows = const <String>[],
+    this.rules = const <String>[],
+    this.repairError,
   });
 
   /// The template's display name, quoted as data.
@@ -37,4 +41,16 @@ final class ExtractFieldsRequest {
 
   /// Context values that apply to the record (district, facility, …).
   final Map<String, String> context;
+
+  /// Template field definitions, kept as structured data.
+  final List<Map<String, Object?>> fieldSchema;
+
+  /// Locally known row labels the provider may select from.
+  final List<String> predefinedRows;
+
+  /// Evidence and JSON constraints, carried as data rather than interpolated.
+  final List<String> rules;
+
+  /// Parse failure from the one permitted repair call, quoted as data.
+  final String? repairError;
 }

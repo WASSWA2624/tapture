@@ -185,6 +185,8 @@ abstract final class AppConstants {
     int maxAttempts,
     int backoffBaseMs,
     int backoffCapMs,
+    Duration jobLease,
+    Duration dayWindow,
     double detectionConfident,
     double detectionGap,
     double fuzzyMatch,
@@ -197,10 +199,17 @@ abstract final class AppConstants {
     maxAttempts: 5,
     backoffBaseMs: 1000,
     backoffCapMs: 30000,
+    jobLease: Duration(minutes: 5),
+    dayWindow: Duration(days: 1),
     detectionConfident: 0.75,
     detectionGap: 0.1,
     fuzzyMatch: 0.82,
   );
+
+  /// Builds a processing retry delay from the configured millisecond value.
+  static Duration processingBackoff(int milliseconds) {
+    return Duration(milliseconds: milliseconds);
+  }
 
   /// Streaming reads for hashing and other heavy file jobs (FE-PERF-07).
   static const ({int chunkBytes}) hashing = (chunkBytes: 64 * 1024);

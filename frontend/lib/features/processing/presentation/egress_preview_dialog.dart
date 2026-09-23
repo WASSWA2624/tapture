@@ -32,7 +32,7 @@ class EgressPreviewDialog extends StatelessWidget {
     if (failure != null) {
       return AppErrorState(failure: failure);
     }
-    if (imageCount == 0) {
+    if (imageCount == 0 && payloadBytes == 0) {
       return const AppEmptyState(
         icon: Icons.cloud_off_outlined,
         headline: Copy.egressEmptyHeadline,
@@ -50,7 +50,7 @@ Future<bool> showEgressPreview(
   required int payloadBytes,
   Failure? failure,
 }) {
-  if (failure != null || imageCount == 0) {
+  if (failure != null || (imageCount == 0 && payloadBytes == 0)) {
     return showAppAlert(
       context,
       title: Copy.egressTitle,

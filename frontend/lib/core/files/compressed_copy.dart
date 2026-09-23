@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui' as ui;
 
+import 'package:image/image.dart' as img;
 import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -175,54 +175,31 @@ Future<Uint8List> _resizeUpload(List<Object> job) async {
     throw StateError('quality');
   }
   IsolateRunner.reportProgress(0);
-  final ui.ImmutableBuffer buffer = await ui.ImmutableBuffer.fromFilePath(path);
-  try {
-    IsolateRunner.reportProgress(0.3);
-    final ui.ImageDescriptor descriptor = await ui.ImageDescriptor.encoded(
-      buffer,
-    );
-    try {
-      final int width = descriptor.width;
-      final int height = descriptor.height;
-      final int longest = width > height ? width : height;
-      var targetW = width;
-      var targetH = height;
-      if (longest > longEdge) {
-        final double scale = longEdge / longest;
-        targetW = (width * scale).round();
-        targetH = (height * scale).round();
-        if (targetW < 1) {
-          targetW = 1;
-        }
-        if (targetH < 1) {
-          targetH = 1;
-        }
-      }
-      final ui.Codec codec = await descriptor.instantiateCodec(
-        targetWidth: targetW,
-        targetHeight: targetH,
-      );
-      try {
-        final ui.FrameInfo frame = await codec.getNextFrame();
-        IsolateRunner.reportProgress(0.8);
-        final ByteData? png = await frame.image.toByteData(
-          format: ui.ImageByteFormat.png,
-        );
-        frame.image.dispose();
-        if (png == null) {
-          throw StateError('encode');
-        }
-        IsolateRunner.reportProgress(1);
-        return png.buffer.asUint8List();
-      } finally {
-        codec.dispose();
-      }
-    } finally {
-      descriptor.dispose();
-    }
-  } finally {
-    buffer.dispose();
+  final Uint8List bytes = await File(path).readAsBytes();
+  IsolateRunner.reportProgress(0.3);
+  final img.Image? decoded = img.decodeImage(bytes);
+  if (decoded == null) {
+    throw StateError('decode');
   }
+  img.Image output = img.bakeOrientation(decoded);
+  final int longest = output.width > output.height
+      ? output.width
+      : output.height;
+  if (longest > longEdge) {
+    final double scale = longEdge / longest;
+    output = img.copyResize(
+      output,
+      width: (output.width * scale).round().clamp(1, output.width),
+      height: (output.height * scale).round().clamp(1, output.height),
+      interpolation: img.Interpolation.linear,
+    );
+  }
+  IsolateRunner.reportProgress(0.8);
+  final Uint8List encoded = Uint8List.fromList(
+    img.encodeJpg(output, quality: quality),
+  );
+  IsolateRunner.reportProgress(1);
+  return encoded;
 }
 
 const String _cache = '.cache';

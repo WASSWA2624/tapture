@@ -7,7 +7,10 @@ import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../processing.dart';
+import 'egress_preview_dialog.dart';
 import 'process_actions.dart';
+import 'processing_batch_state.dart';
+import 'processing_controller.dart';
 import 'queue_providers.dart';
 
 /// The queue: counts from queries, grouped by context.
@@ -20,7 +23,11 @@ class QueueScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<QueueSnapshot> value = ref.watch(queueSnapshotProvider);
+    final String? projectId = this.projectId;
+    final AsyncValue<QueueSnapshot> value = projectId == null
+        ? ref.watch(queueSnapshotProvider)
+        : ref.watch(queueSnapshotForProjectProvider(projectId));
+    final ProcessingBatchState batch = ref.watch(processingControllerProvider);
     return AppPage(
       title: Copy.queueTitle,
       scrollable: false,
@@ -46,21 +53,93 @@ class QueueScreen extends ConsumerWidget {
               Text('${Copy.queueUnprocessed} ${snapshot.unprocessed}'),
               Text('${Copy.queueQueued} ${snapshot.queued}'),
               Text('${Copy.queueFailed} ${snapshot.failed}'),
+              Text(
+                Copy.queueUsage(
+                  snapshot.requestsToday,
+                  snapshot.imagesToday,
+                  snapshot.requestCap,
+                ),
+              ),
               ProcessActions(
-                steps: const <ProgressStep>[],
+                steps: batch.steps,
+                running: batch.isRunning,
+                succeeded: batch.succeeded,
+                failed: batch.failed,
                 onProcessAll: snapshot.queued == 0 && snapshot.unprocessed == 0
                     ? null
-                    : () {},
+                    : () => ref
+                          .read(processingControllerProvider.notifier)
+                          .process(
+                            projectId: projectId,
+                            confirmOnline: (ProcessingJob job) async {
+                              final summary = await ref.read(
+                                processingEgressSummaryProvider,
+                              )(job);
+                              if (summary.imageCount == 0 &&
+                                  summary.payloadBytes == 0) {
+                                return true;
+                              }
+                              if (!context.mounted) {
+                                return false;
+                              }
+                              return showEgressPreview(
+                                context,
+                                imageCount: summary.imageCount,
+                                payloadBytes: summary.payloadBytes,
+                              );
+                            },
+                          ),
+                onCancel: batch.isRunning
+                    ? ref.read(processingControllerProvider.notifier).cancel
+                    : null,
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: snapshot.groups.length,
+                  itemCount: snapshot.failures.length + snapshot.groups.length,
                   itemBuilder: (BuildContext context, int index) {
-                    final QueueGroup group = snapshot.groups[index];
+                    if (index < snapshot.failures.length) {
+                      final ProcessingJob job = snapshot.failures[index];
+                      return AppListTile(
+                        leading: const Icon(Icons.error_outline),
+                        title: '${Copy.queueRetry}: ${job.recordId}',
+                        subtitle: job.lastError ?? Copy.queueFailed,
+                        onTap: batch.isRunning
+                            ? null
+                            : () => ref
+                                  .read(processingControllerProvider.notifier)
+                                  .retry(job.id),
+                      );
+                    }
+                    final QueueGroup group =
+                        snapshot.groups[index - snapshot.failures.length];
                     return AppListTile(
                       title: group.label,
                       subtitle: Copy.recordsCount(group.records),
-                      onTap: () {},
+                      onTap: batch.isRunning
+                          ? null
+                          : () => ref
+                                .read(processingControllerProvider.notifier)
+                                .process(
+                                  projectId: projectId,
+                                  groupLabel: group.label,
+                                  confirmOnline: (ProcessingJob job) async {
+                                    final summary = await ref.read(
+                                      processingEgressSummaryProvider,
+                                    )(job);
+                                    if (summary.imageCount == 0 &&
+                                        summary.payloadBytes == 0) {
+                                      return true;
+                                    }
+                                    if (!context.mounted) {
+                                      return false;
+                                    }
+                                    return showEgressPreview(
+                                      context,
+                                      imageCount: summary.imageCount,
+                                      payloadBytes: summary.payloadBytes,
+                                    );
+                                  },
+                                ),
                     );
                   },
                 ),

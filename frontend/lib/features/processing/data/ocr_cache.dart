@@ -4,6 +4,7 @@ import 'dart:ui' show Rect;
 import 'package:drift/drift.dart';
 import 'package:tapture/core/ai/ocr_block.dart';
 import 'package:tapture/core/ai/ocr_result.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/tables/ocr_cache_entries.dart';
@@ -46,10 +47,20 @@ final class OcrCache {
       final List<OcrCacheEntry> rows = await _db
           .select(_db.ocrCacheEntries)
           .get();
+      OcrCacheEntry? nearest;
+      var nearestDistance = AppConstants.processing.perceptualHashDistance + 1;
       for (final OcrCacheEntry row in rows) {
-        if (PerceptualHash.matches(perceptualHash, row.perceptualHash)) {
-          return Success<OcrResult?>(_decode(row));
+        final int distance = PerceptualHash.distance(
+          perceptualHash,
+          row.perceptualHash,
+        );
+        if (distance < nearestDistance) {
+          nearest = row;
+          nearestDistance = distance;
         }
+      }
+      if (nearest != null) {
+        return Success<OcrResult?>(_decode(nearest));
       }
       return const Success<OcrResult?>(null);
     } on Object catch (error) {

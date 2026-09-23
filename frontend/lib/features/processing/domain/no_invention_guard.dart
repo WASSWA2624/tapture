@@ -23,7 +23,8 @@ final class NoInventionGuard {
     }
     if (pattern != null && pattern.isNotEmpty) {
       try {
-        if (!RegExp(pattern).hasMatch(value)) {
+        final RegExpMatch? match = RegExp(pattern).firstMatch(value);
+        if (match == null || match.start != 0 || match.end != value.length) {
           return (
             value: null,
             rejection: (
@@ -44,7 +45,8 @@ final class NoInventionGuard {
     }
     if (options.isNotEmpty &&
         !options.any(
-          (String option) => option.toLowerCase() == value.toLowerCase(),
+          (String option) =>
+              option.trim().toLowerCase() == value.trim().toLowerCase(),
         )) {
       return (
         value: null,

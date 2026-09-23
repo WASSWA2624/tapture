@@ -9,14 +9,12 @@ final class EvidenceLinking {
     String? regionJson,
     String? snippet,
     double? confidence,
-    bool fromLocalText = false,
   }) {
     if ((photoId == null || photoId.isEmpty) &&
         (snippet == null || snippet.isEmpty)) {
       return const <EvidenceDraft>[];
     }
-    final String sourceType =
-        fromLocalText && (regionJson == null || regionJson.isEmpty)
+    final String sourceType = photoId == null || photoId.isEmpty
         ? 'transcript'
         : 'photo';
     return <EvidenceDraft>[

@@ -105,7 +105,11 @@ packages:
     task: "003"
   image:
     version: ^4.3.0
-    purpose: Pure-Dart decode, resize, orientation and contrast for on-device preparation and plate reading (FE-PERF-02). MIT. Replaces a native image pipeline the test VM cannot run, and is the recognition package task 013 adds before OCR.
+    purpose: Pure-Dart decode, resize, orientation and contrast for off-thread preparation and the deterministic desktop/test OCR fallback (FE-PERF-02). MIT. Replaces a native image pipeline the test VM cannot run.
+    task: "013"
+  google_mlkit_text_recognition:
+    version: ^0.17.1
+    purpose: Native on-device Latin-script OCR on Android and iOS, including text blocks and bounding boxes. MIT. Replaces the synthetic fixed-font recogniser that could not read field photographs.
     task: "013"
   flutter_local_notifications:
     version: ^18.0.1

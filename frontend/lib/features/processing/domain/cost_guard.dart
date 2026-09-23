@@ -1,3 +1,5 @@
+import 'package:tapture/core/constants/app_constants.dart';
+
 /// Today's online usage against the project's daily cap.
 ///
 /// Reaching the cap blocks further online work and leaves the job queued.
@@ -31,7 +33,7 @@ final class CostGuard {
       now.year,
       now.month,
       now.day,
-    ).add(const Duration(days: 1));
+    ).add(AppConstants.processing.dayWindow);
   }
 
   /// Message naming the cap and when it resets.

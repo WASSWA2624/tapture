@@ -77,6 +77,11 @@ final class ExtractionRequest {
       captions: caption.isEmpty ? const <String>[] : <String>[caption],
       imagePaths: images,
       context: context,
+      fieldSchema: <Map<String, Object?>>[
+        for (final ExtractionField field in fields) field.toJson(),
+      ],
+      predefinedRows: predefinedRows,
+      rules: rules,
     );
   }
 

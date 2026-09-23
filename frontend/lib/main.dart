@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'app/app.dart';
 import 'app/provider_observer.dart' hide ProviderObserver;
 import 'app/theme/settings_text_store.dart';
+import 'core/ai/ocr_service.dart';
+import 'core/ai/provider_registry.dart';
 import 'core/ai/stt_service.dart';
 import 'core/db/app_database.dart';
 import 'core/db/database_provider.dart';
@@ -25,7 +27,11 @@ import 'core/widgets/fields/field_editor.dart';
 import 'features/context/data/context_repository_impl.dart';
 import 'features/feedback/feedback.dart';
 import 'features/feedback/presentation/feedback_providers.dart';
+import 'features/processing/data/notifications.dart';
 import 'features/processing/data/processing_repository_impl.dart';
+import 'features/processing/data/processing_stage_worker.dart';
+import 'features/processing/presentation/processing_controller.dart';
+import 'features/processing/presentation/queue_providers.dart';
 import 'features/projects/data/project_openable_file_lookup_factory.dart';
 import 'features/projects/data/project_repository_impl.dart';
 import 'features/projects/presentation/current_project.dart';
@@ -66,17 +72,15 @@ Future<void> _run() async {
   // corrupt the store. Suites never open it at all (FE-TEST-03).
   final AppDatabase? database = _runningUnderTest ? null : AppDatabase.open();
   final SettingsStore offlineStore = await _openOfflineStore(database);
+  final StorageRoot storageRoot = StorageRoot(
+    preferredPath: () async => offlineStore.read(SettingKeys.storageRootPath),
+  );
   const SystemClock clock = SystemClock();
   final List<Override> overrides = <Override>[
     appLockProvider.overrideWith((Ref ref) => lock),
     offlineStoreProvider.overrideWith((Ref _) => offlineStore),
     projectSettingsStoreProvider.overrideWith((Ref _) => offlineStore),
-    storageRootProvider.overrideWith((Ref _) {
-      return StorageRoot(
-        preferredPath: () async =>
-            offlineStore.read(SettingKeys.storageRootPath),
-      );
-    }),
+    storageRootProvider.overrideWith((Ref _) => storageRoot),
     themeModeProvider.overrideWith(
       () => ThemeModeController.withStore(SettingsTextStore(offlineStore)),
     ),
@@ -90,6 +94,16 @@ Future<void> _run() async {
     final PlatformFacts facts = await platformFacts(clock: clock);
     final DeviceDescriptor device = await deviceDescriptor();
     final AppDatabase db = database!;
+    final ProcessingStageWorker processingWorker = ProcessingStageWorker(
+      db: db,
+      clock: clock,
+      deviceId: id,
+      ids: ids,
+      storageRoot: storageRoot,
+      ocr: OcrService(),
+      providers: ProviderRegistry.keyless(),
+      settings: offlineStore,
+    );
     overrides.addAll(<Override>[
       feedbackClockProvider.overrideWith((Ref _) => clock),
       feedbackDeviceIdProvider.overrideWith((Ref _) => id),
@@ -129,6 +143,23 @@ Future<void> _run() async {
           settings: ref.watch(projectSettingsStoreProvider),
         );
       }),
+      processingNotificationsProvider.overrideWith((Ref ref) {
+        final Notifications notifications = Notifications.plugin(
+          onTap: (String route) => ref.read(routerProvider).go(route),
+        );
+        return (int succeeded, int failed) {
+          return notifications.reportBatch(
+            succeeded: succeeded,
+            failed: failed,
+          );
+        };
+      }),
+      processingStageWorkProvider.overrideWith(
+        (Ref _) => processingWorker.perform,
+      ),
+      processingEgressSummaryProvider.overrideWith(
+        (Ref _) => processingWorker.egressSummary,
+      ),
       templateRepositoryProvider.overrideWith((Ref _) {
         return TemplateRepositoryImpl(
           db: db,

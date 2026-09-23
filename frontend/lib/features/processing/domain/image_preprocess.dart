@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:image/image.dart' as img;
+import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/errors/result.dart';
 
 /// Derived pixels for extraction. The original bytes are never rewritten.
 ///
@@ -16,12 +18,46 @@ final class ImagePreprocess {
     img.Image current = img.bakeOrientation(decoded);
     current = _resize(current, longEdge ?? AppConstants.images.longEdge);
     current = _deskew(current);
+    current = _opaqueOnWhite(current);
     current = _contrast(current);
     current = _cropToDocument(current);
     return Uint8List.fromList(
       img.encodeJpg(current, quality: AppConstants.images.quality),
     );
   }
+
+  /// Builds the derived bytes away from the UI isolate.
+  static Future<Result<Uint8List>> prepareOffThread(
+    Uint8List original, {
+    int? longEdge,
+  }) {
+    return runIsolate(_prepareJob, <Object?>[
+      original,
+      longEdge ?? AppConstants.images.longEdge,
+    ]);
+  }
+}
+
+img.Image _opaqueOnWhite(img.Image source) {
+  if (!source.hasAlpha) {
+    return source;
+  }
+  final img.Image background = img.Image(
+    width: source.width,
+    height: source.height,
+    numChannels: 3,
+  );
+  img.fill(background, color: img.ColorRgb8(255, 255, 255));
+  return img.compositeImage(background, source);
+}
+
+Future<Uint8List> _prepareJob(List<Object?> job) async {
+  IsolateRunner.reportProgress(0);
+  final Uint8List bytes = job[0]! as Uint8List;
+  final int longEdge = job[1]! as int;
+  final Uint8List prepared = ImagePreprocess.prepare(bytes, longEdge: longEdge);
+  IsolateRunner.reportProgress(1);
+  return prepared;
 }
 
 img.Image _resize(img.Image source, int longEdge) {
@@ -93,9 +129,14 @@ img.Image _deskew(img.Image source) {
   final int upright = _projection(source);
   var best = source;
   var bestScore = upright;
+  // Small compression artefacts can otherwise look like a better baseline
+  // and rotate an already-upright plate. Require a decisive improvement.
   final int margin = upright ~/ 5 + 1;
+  final img.Image rotatable = source.hasAlpha
+      ? source
+      : source.convert(numChannels: 4);
   for (final double degrees in const <double>[-2, -1, 1, 2]) {
-    final img.Image rotated = img.copyRotate(source, angle: degrees);
+    final img.Image rotated = img.copyRotate(rotatable, angle: degrees);
     final int score = _projection(rotated);
     if (score > bestScore + margin) {
       bestScore = score;
@@ -125,6 +166,9 @@ int _projection(img.Image source) {
 }
 
 bool _ink(img.Pixel pixel) {
+  if (pixel.length >= 4 && pixel.aNormalized < 0.5) {
+    return false;
+  }
   final num luma = img.getLuminance(pixel);
   return luma < 180;
 }

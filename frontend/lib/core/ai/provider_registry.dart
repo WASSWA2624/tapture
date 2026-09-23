@@ -11,7 +11,15 @@ final class ProviderRegistry {
   ProviderRegistry({
     required this._entries,
     Map<String, Map<AiOperation, String>>? selection,
-  }) : _selection = selection ?? const <String, Map<AiOperation, String>>{};
+  }) : _selection = selection ?? const <String, Map<AiOperation, String>>{} {
+    if (!_entries.containsKey(backendId)) {
+      throw ArgumentError.value(
+        _entries.keys,
+        'entries',
+        'The keyless backend provider is required.',
+      );
+    }
+  }
 
   /// Id of the keyless organisation proxy.
   static const String backendId = 'backend';
@@ -36,11 +44,8 @@ final class ProviderRegistry {
     required String projectId,
     required AiOperation operation,
   }) {
-    final String id =
-        _selection[projectId]?[operation] ??
-        _selection[projectId]?.values.firstOrNull ??
-        backendId;
-    return (_entries[id] ?? _entries[backendId])!.service;
+    final String id = _selection[projectId]?[operation] ?? backendId;
+    return (_entries[id] ?? _entries[backendId]!).service;
   }
 
   /// Whether [id] keeps its key on the backend. Missing entries do.
@@ -91,5 +96,12 @@ ProviderTestOutcome _outcome(Failure failure) {
   if (failure is NetworkFailure) {
     return ProviderTestOutcome.network;
   }
-  return ProviderTestOutcome.authentication;
+  final String message = failure.message.toLowerCase();
+  if (message.contains('auth') ||
+      message.contains('credential') ||
+      message.contains('401') ||
+      message.contains('403')) {
+    return ProviderTestOutcome.authentication;
+  }
+  return ProviderTestOutcome.network;
 }

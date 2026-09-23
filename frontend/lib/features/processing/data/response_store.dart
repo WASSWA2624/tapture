@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/processing.dart';
+import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
@@ -58,6 +59,30 @@ final class ResponseStore {
   /// Stored responses for [jobId], oldest first.
   Future<Result<List<ProcessingResult>>> forJob(String jobId) {
     return listProcessingResults(_db, jobId: jobId);
+  }
+
+  /// Updates parse metadata without changing the append-only request or raw
+  /// response columns.
+  Future<Result<void>> markParsed(String id) async {
+    try {
+      final int changed =
+          await (_db.update(
+            _db.processingResults,
+          )..where(($ProcessingResultsTable tbl) => tbl.id.equals(id))).write(
+            const ProcessingResultsCompanion(parsedOk: Value<bool>(true)),
+          );
+      if (changed == 0) {
+        return const FailureResult<void>(
+          StorageFailure(
+            message: 'That provider response is no longer on this device.',
+            recoveryAction: 'Run processing again.',
+          ),
+        );
+      }
+      return const Success<void>(null);
+    } on Object catch (error) {
+      return FailureResult<void>(storageFailureFrom(error));
+    }
   }
 }
 

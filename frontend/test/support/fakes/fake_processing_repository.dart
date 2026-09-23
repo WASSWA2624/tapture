@@ -40,7 +40,7 @@ final class FakeProcessingRepository implements ProcessingRepository {
   }
 
   @override
-  Stream<QueueSnapshot> watchQueue() {
+  Stream<QueueSnapshot> watchQueue({String? projectId}) {
     return Stream<QueueSnapshot>.multi((
       MultiStreamController<QueueSnapshot> listener,
     ) {
@@ -52,6 +52,14 @@ final class FakeProcessingRepository implements ProcessingRepository {
       });
       listener.onCancel = sub.cancel;
     });
+  }
+
+  @override
+  Future<Result<int>> enqueuePending({
+    String? projectId,
+    String? groupLabel,
+  }) async {
+    return const Success<int>(0);
   }
 
   @override
@@ -90,22 +98,24 @@ final class FakeProcessingRepository implements ProcessingRepository {
   }
 
   @override
-  Future<String> enqueue(String recordId) async {
+  Future<Result<String>> enqueue(String recordId) async {
     for (final ProcessingJob job in _rows.values) {
-      if (job.recordId == recordId && job.status != JobStatus.completed) {
-        return job.id;
+      if (job.recordId == recordId) {
+        return Success<String>(job.id);
       }
     }
     final Result<ProcessingJob> saved = await save(
       ProcessingJob(id: '', recordId: recordId),
     );
-    return saved.fold((Failure failure) => throw failure, (ProcessingJob job) {
-      return job.id;
-    });
+    return saved.map((ProcessingJob job) => job.id);
   }
 
   @override
-  Future<ProcessingJob?> claim(Duration lease) async {
+  Future<Result<ProcessingJob?>> claim(
+    Duration lease, {
+    String? projectId,
+    String? groupLabel,
+  }) async {
     final DateTime now = DateTime.now().toUtc();
     for (final ProcessingJob job in _rows.values.toList()) {
       final DateTime? expiry = job.leaseExpiresAt;
@@ -122,7 +132,7 @@ final class FakeProcessingRepository implements ProcessingRepository {
         .where((ProcessingJob job) => job.status == JobStatus.running)
         .length;
     if (running >= concurrency) {
-      return null;
+      return const Success<ProcessingJob?>(null);
     }
     final List<ProcessingJob> ready =
         _rows.values.where((ProcessingJob job) {
@@ -136,7 +146,7 @@ final class FakeProcessingRepository implements ProcessingRepository {
               (a.queuedAt ?? now).compareTo(b.queuedAt ?? now),
         );
     if (ready.isEmpty) {
-      return null;
+      return const Success<ProcessingJob?>(null);
     }
     final ProcessingJob next = ready.first;
     final ProcessingJob claimed = next.copyWith(
@@ -146,14 +156,14 @@ final class FakeProcessingRepository implements ProcessingRepository {
     );
     _rows[next.id] = claimed;
     _emit();
-    return claimed;
+    return Success<ProcessingJob?>(claimed);
   }
 
   @override
-  Future<void> complete(String jobId) async {
+  Future<Result<void>> complete(String jobId) async {
     final ProcessingJob? job = _rows[jobId];
     if (job == null) {
-      return;
+      return const FailureResult<void>(_missingJob);
     }
     _rows[jobId] = job.copyWith(
       status: JobStatus.completed,
@@ -161,17 +171,18 @@ final class FakeProcessingRepository implements ProcessingRepository {
       clearLease: true,
     );
     _emit();
+    return const Success<void>(null);
   }
 
   @override
-  Future<void> fail(
+  Future<Result<void>> fail(
     String jobId,
     String reason, {
     required bool permanent,
   }) async {
     final ProcessingJob? job = _rows[jobId];
     if (job == null) {
-      return;
+      return const FailureResult<void>(_missingJob);
     }
     final int attempts = job.attemptCount + 1;
     final bool stop =
@@ -189,6 +200,7 @@ final class FakeProcessingRepository implements ProcessingRepository {
       clearFinished: !stop,
     );
     _emit();
+    return const Success<void>(null);
   }
 
   @override
@@ -215,7 +227,29 @@ final class FakeProcessingRepository implements ProcessingRepository {
   }
 
   @override
-  Future<Result<({int requests, int images})>> usageOn(DateTime day) async {
+  Future<Result<void>> retry(String id) async {
+    final ProcessingJob? job = _rows[id];
+    if (job == null) {
+      return const FailureResult<void>(_missing);
+    }
+    _rows[id] = job.copyWith(
+      status: JobStatus.queued,
+      attemptCount: 0,
+      permanent: false,
+      clearError: true,
+      clearLease: true,
+      clearStarted: true,
+      clearFinished: true,
+    );
+    _emit();
+    return const Success<void>(null);
+  }
+
+  @override
+  Future<Result<({int requests, int images})>> usageOn(
+    DateTime day, {
+    String? projectId,
+  }) async {
     final DateTime start = DateTime.utc(day.year, day.month, day.day);
     final DateTime end = start.add(const Duration(days: 1));
     var requests = 0;
@@ -255,6 +289,12 @@ final class FakeProcessingRepository implements ProcessingRepository {
       unprocessed: queued,
       queued: queued,
       failed: failed,
+      requestsToday: _usage.length,
+      imagesToday: _usage.fold<int>(
+        0,
+        (int total, ({DateTime at, int images}) row) => total + row.images,
+      ),
+      requestCap: AppConstants.processing.dailyRequestCap,
       groups: <QueueGroup>[
         for (final MapEntry<String, int> entry in groups.entries)
           (label: entry.key, records: entry.value),

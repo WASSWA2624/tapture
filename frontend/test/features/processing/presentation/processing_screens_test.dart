@@ -88,6 +88,9 @@ void main() {
       unprocessed: 38,
       queued: 12,
       failed: 2,
+      requestsToday: 3,
+      imagesToday: 8,
+      requestCap: 20,
       groups: <QueueGroup>[
         (label: 'Kasubi HC IV / Theatre', records: 12),
         (label: 'Mulago / Ward 4A', records: 17),
@@ -109,6 +112,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.textContaining('38'), findsOneWidget);
+    expect(find.text(Copy.queueUsage(3, 8, 20)), findsOneWidget);
     expect(find.text('Kasubi HC IV / Theatre'), findsOneWidget);
     expect(find.text('Mulago / Ward 4A'), findsOneWidget);
   });
@@ -170,11 +174,16 @@ void main() {
     expect(find.byType(AppEmptyState), findsOneWidget);
   });
 
-  testWidgets('failed jobs show the stored reason', (WidgetTester tester) async {
+  testWidgets('failed jobs show the stored reason', (
+    WidgetTester tester,
+  ) async {
     const QueueSnapshot failed = (
       unprocessed: 0,
       queued: 0,
       failed: 1,
+      requestsToday: 0,
+      imagesToday: 0,
+      requestCap: 20,
       groups: <QueueGroup>[],
       failures: <ProcessingJob>[
         ProcessingJob(

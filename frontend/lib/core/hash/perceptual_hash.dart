@@ -30,14 +30,18 @@ final class PerceptualHash {
       return AppConstants.processing.perceptualHashDistance + 1;
     }
     var bits = 0;
-    for (var i = 0; i < left.length; i++) {
-      final int a = int.parse(left[i], radix: 16);
-      final int b = int.parse(right[i], radix: 16);
-      var xor = a ^ b;
-      while (xor != 0) {
-        bits += xor & 1;
-        xor >>= 1;
+    try {
+      for (var i = 0; i < left.length; i++) {
+        final int a = int.parse(left[i], radix: 16);
+        final int b = int.parse(right[i], radix: 16);
+        var xor = a ^ b;
+        while (xor != 0) {
+          bits += xor & 1;
+          xor >>= 1;
+        }
       }
+    } on FormatException {
+      return AppConstants.processing.perceptualHashDistance + 1;
     }
     return bits;
   }

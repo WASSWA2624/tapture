@@ -30,6 +30,12 @@ class Records extends Table with MergeColumns {
   /// Predefined checklist row, when the capture was against one.
   TextColumn get templateRowId => text().nullable()();
 
+  /// How processing resolved [templateRowId], when it proposed one.
+  TextColumn get rowMatchStrategy => text().nullable()();
+
+  /// Confidence reported by the row matching strategy.
+  RealColumn get rowMatchScore => real().nullable()();
+
   /// Lifecycle status. Stored as text so this table does not import Flutter.
   TextColumn get status => text()();
 

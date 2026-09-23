@@ -7,24 +7,54 @@ import 'package:tapture/core/copy/copy.dart';
 /// A refused permission returns without sending and without delaying work.
 final class Notifications {
   /// Creates a sender. Tests pass functions so the plugin is never opened.
-  Notifications({
-    required this._requestPermission,
-    required this._show,
-  });
+  Notifications({required this._requestPermission, required this._show});
+
+  /// A no-op boundary for tests and hosts without local notifications.
+  factory Notifications.silent() {
+    return Notifications(
+      requestPermission: () async => false,
+      show:
+          ({
+            required String title,
+            required String body,
+            required String route,
+          }) async {},
+    );
+  }
 
   /// The plugin-backed sender. Asks for permission on first use.
-  factory Notifications.plugin() {
+  factory Notifications.plugin({void Function(String route)? onTap}) {
     final FlutterLocalNotificationsPlugin plugin =
         FlutterLocalNotificationsPlugin();
     var ready = false;
+    bool? permissionGranted;
     return Notifications(
       requestPermission: () async {
+        final bool? existing = permissionGranted;
+        if (existing != null) {
+          return existing;
+        }
         if (!ready) {
           await plugin.initialize(
             const InitializationSettings(
               android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-              iOS: DarwinInitializationSettings(),
+              iOS: DarwinInitializationSettings(
+                requestAlertPermission: false,
+                requestSoundPermission: false,
+                requestBadgePermission: false,
+              ),
+              macOS: DarwinInitializationSettings(
+                requestAlertPermission: false,
+                requestSoundPermission: false,
+                requestBadgePermission: false,
+              ),
             ),
+            onDidReceiveNotificationResponse: (NotificationResponse response) {
+              final String? route = response.payload;
+              if (route != null && route.isNotEmpty) {
+                onTap?.call(route);
+              }
+            },
           );
           ready = true;
         }
@@ -33,7 +63,18 @@ final class Notifications {
               AndroidFlutterLocalNotificationsPlugin
             >()
             ?.requestNotificationsPermission();
-        return android ?? true;
+        final bool? ios = await plugin
+            .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin
+            >()
+            ?.requestPermissions(alert: true, badge: true, sound: true);
+        final bool? macos = await plugin
+            .resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin
+            >()
+            ?.requestPermissions(alert: true, badge: true, sound: true);
+        permissionGranted = android ?? ios ?? macos ?? true;
+        return permissionGranted!;
       },
       show:
           ({
@@ -51,6 +92,7 @@ final class Notifications {
                   'Processing',
                   channelDescription: 'When a processing batch finishes',
                 ),
+                iOS: DarwinNotificationDetails(),
               ),
               payload: route,
             );
