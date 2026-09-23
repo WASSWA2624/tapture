@@ -12,7 +12,7 @@ import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/domain/photo_repository.dart';
 import 'package:tapture/features/capture/domain/save_and_analyse.dart';
 import 'package:tapture/features/capture/domain/save_raw.dart';
-import 'package:tapture/features/processing/domain/processing_repository.dart';
+import 'package:tapture/features/processing/processing.dart';
 
 /// Default photo repository stub — [main] / tests override.
 final Provider<PhotoRepository> photoRepositoryProvider =

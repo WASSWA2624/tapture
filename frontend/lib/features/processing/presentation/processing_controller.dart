@@ -56,14 +56,17 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
     var failed = 0;
     var onlineConfirmed = false;
     while (!_isCancelled) {
-      final ProcessingJob? job =
-          (await repository.claim(
-            AppConstants.processing.jobLease,
-            projectId: projectId,
-            groupLabel: groupLabel,
-          )).fold((Failure failure) => throw failure, (ProcessingJob? value) {
-            return value;
-          });
+      final Result<ProcessingJob?> claimed = await repository.claim(
+        AppConstants.processing.jobLease,
+        projectId: projectId,
+        groupLabel: groupLabel,
+      );
+      if (claimed case FailureResult<ProcessingJob?>(:final Failure failure)) {
+        failed++;
+        _append(Copy.queueTitle, StepState.failed, failure.message);
+        break;
+      }
+      final ProcessingJob? job = (claimed as Success<ProcessingJob?>).value;
       if (job == null) {
         break;
       }
@@ -123,13 +126,17 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
           error,
           attempt: job.attemptCount + 1,
         );
-        (await repository.fail(
+        final Result<void> recorded = await repository.fail(
           job.id,
           retry.reason,
           permanent: retry.permanent,
-        )).fold((Failure failure) => throw failure, (_) {});
+        );
         failed++;
-        _replace(job.recordId, StepState.failed, retry.reason);
+        final String reason = recorded.fold(
+          (Failure failure) => failure.message,
+          (_) => retry.reason,
+        );
+        _replace(job.recordId, StepState.failed, reason);
       }
     }
     state = state.copyWith(

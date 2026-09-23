@@ -117,9 +117,7 @@ void main() {
 
   test('batching stays one call below and at the cap and splits above it', () {
     final int cap = AppConstants.processing.extractionImageCap;
-    expect(RequestBatching.split(const <String>[]), <List<String>>[
-      <String>[],
-    ]);
+    expect(RequestBatching.split(const <String>[]), <List<String>>[<String>[]]);
     final List<String> five = <String>['a', 'b', 'c', 'd', 'e'];
     expect(RequestBatching.split(five), hasLength(1));
     expect(
@@ -463,6 +461,7 @@ void main() {
         ]),
         isNull,
       );
+      expect(OnlineSkipRule.reason(const <SkipField>[]), isNotNull);
 
       final DateTime now = DateTime.utc(2026, 9, 23, 15);
       final CostGuard under = CostGuard(

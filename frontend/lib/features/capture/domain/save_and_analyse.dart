@@ -1,6 +1,6 @@
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/features/processing/domain/processing_repository.dart';
+import 'package:tapture/features/processing/processing.dart';
 
 import 'capture_session.dart';
 
