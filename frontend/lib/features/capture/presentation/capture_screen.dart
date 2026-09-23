@@ -5,6 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/core/audio/audio_recorder_service.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -18,9 +19,13 @@ import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/photo_markup.dart';
+import 'package:tapture/features/capture/data/capture_record_writer.dart';
+import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
+import 'package:tapture/features/capture/domain/save_and_analyse.dart';
+import 'package:tapture/features/capture/presentation/audio_recorder.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
 import 'package:tapture/features/capture/presentation/capture_recovery_prompt.dart';
 import 'package:tapture/features/capture/presentation/gallery_picker.dart';
@@ -31,6 +36,9 @@ import 'package:tapture/features/capture/presentation/photo_tray.dart';
 import 'package:tapture/features/capture/presentation/photo_viewer_screen.dart';
 import 'package:tapture/features/capture/presentation/record_caption_field.dart';
 import 'package:tapture/features/capture/presentation/template_picker_sheet.dart';
+import 'package:tapture/features/context/domain/context_state.dart';
+import 'package:tapture/features/context/presentation/context_providers.dart';
+import 'package:tapture/features/processing/processing.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/templates.dart';
 
@@ -90,7 +98,9 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   bool _restored = false;
   bool _askingTemplate = true;
   bool _onStage = true;
+  bool _saving = false;
   final IdService _ids = UuidV7Service(const SystemClock());
+  late String _audioId = _ids.newId();
 
   @override
   void initState() {
@@ -123,6 +133,20 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     final CaptureController controller = ref.read(
       captureControllerProvider(widget.projectId).notifier,
     );
+    final ContextState? activeContext = widget.projectId.isEmpty
+        ? null
+        : ref.watch(projectContextProvider(widget.projectId)).asData?.value;
+    if (activeContext != null) {
+      final Map<String, String> snapshot = <String, String>{
+        ...activeContext.values,
+        ...activeContext.pinned,
+      };
+      if (!_sameContext(session.contextSnapshot, snapshot)) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) unawaited(controller.setContext(snapshot));
+        });
+      }
+    }
     final List<TemplateDef> templates =
         ref.watch(captureTemplatesProvider).asData?.value ??
         const <TemplateDef>[];
@@ -148,6 +172,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
         : (project?.name ?? Copy.navProjects);
     final Widget? banner = widget.headroom;
     return AppPage(
+      key: const ValueKey<String>('route-capture'),
       title: title,
       showAppBar: false,
       scrollable: true,
@@ -157,14 +182,17 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             child: AppButton(
               label: Copy.captureSaveRaw,
               variant: AppButtonVariant.secondary,
-              onPressed: widget.onSaveRaw,
+              busy: _saving,
+              onPressed: widget.onSaveRaw ?? () => unawaited(_save(false)),
             ),
           ),
           const SizedBox(width: Space.x2),
           Expanded(
             child: AppButton(
               label: Copy.captureSaveAndAnalyse,
-              onPressed: widget.onSaveAndAnalyse,
+              busy: _saving,
+              onPressed:
+                  widget.onSaveAndAnalyse ?? () => unawaited(_save(true)),
             ),
           ),
         ],
@@ -199,6 +227,18 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             },
             onTap: (PhotoDraft photo) => _openViewer(session, photo),
           ),
+          if (project != null) ...<Widget>[
+            const SizedBox(height: Space.x3),
+            AudioRecorder(
+              recorder: ref.watch(audioRecorderServiceProvider),
+              relativePath:
+                  'projects/${project.folderName}/audio/$_audioId.wav',
+              onCompleted: (AudioRecording recording) =>
+                  unawaited(_audioStopped(recording)),
+            ),
+            if (session.audio.isNotEmpty)
+              Text(Copy.captureAudioCount(session.audio.length)),
+          ],
           const SizedBox(height: Space.x3),
           RecordCaptionField(
             value: session.recordCaption,
@@ -322,15 +362,21 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     final PhotoDraft draft = PhotoDraft(
       id: id,
       projectId: widget.projectId,
+      captureSessionId: ref
+          .read(captureControllerProvider(widget.projectId))
+          .id,
+      originalFilename: '$id.jpg',
+      storedFilename: '$id.jpg',
       relativePath: 'photos/$id.jpg',
       sha256: sha256.convert(bytes).toString(),
       fileSize: bytes.length,
       mimeType: 'image/jpeg',
+      capturedAt: const SystemClock().nowUtc(),
       derivedFrom: derivedFrom,
     );
     final Result<void> saved = await ref
         .read(captureControllerProvider(widget.projectId).notifier)
-        .addPhoto(draft);
+        .addPhoto(draft, bytes: bytes);
     if (!mounted) {
       return;
     }
@@ -403,6 +449,79 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
         );
       },
     );
+  }
+
+  Future<void> _audioStopped(AudioRecording recording) async {
+    final CaptureSession session = ref.read(
+      captureControllerProvider(widget.projectId),
+    );
+    final _AudioScope? scope = await showAppSheet<_AudioScope>(
+      context,
+      title: Copy.captureAudioScopeTitle,
+      builder: (BuildContext sheetContext) {
+        return ListView(
+          children: <Widget>[
+            if (session.photos.isNotEmpty)
+              AppListTile(
+                title: Copy.captureAudioCurrentPhoto,
+                onTap: () =>
+                    Navigator.pop(sheetContext, _AudioScope.currentPhoto),
+              ),
+            if (_selected.isNotEmpty)
+              AppListTile(
+                title: Copy.captureAudioSelectedPhotos(_selected.length),
+                onTap: () =>
+                    Navigator.pop(sheetContext, _AudioScope.selectedPhotos),
+              ),
+            AppListTile(
+              title: Copy.captureAudioAllPhotos(session.photos.length),
+              onTap: () => Navigator.pop(sheetContext, _AudioScope.allPhotos),
+            ),
+          ],
+        );
+      },
+    );
+    if (!mounted) {
+      return;
+    }
+    // Dismissing the optional photo-scope chooser must not orphan a file that
+    // has already been flushed. It remains record-level evidence.
+    final List<String> photoIds = switch (scope) {
+      null => const <String>[],
+      _AudioScope.currentPhoto =>
+        session.photos.isEmpty
+            ? const <String>[]
+            : <String>[session.photos.last.id],
+      _AudioScope.selectedPhotos => _selected.toList(growable: false),
+      _AudioScope.allPhotos => <String>[
+        for (final PhotoDraft photo in session.photos) photo.id,
+      ],
+    };
+    final int audioSegment = recording.relativePath.indexOf('audio/');
+    final String projectPath = audioSegment < 0
+        ? 'audio/$_audioId.wav'
+        : recording.relativePath.substring(audioSegment);
+    final Result<void> saved = await ref
+        .read(captureControllerProvider(widget.projectId).notifier)
+        .addAudio(
+          AudioDraft(
+            id: _audioId,
+            projectId: widget.projectId,
+            relativePath: projectPath,
+            mimeType: recording.mimeType,
+            fileSize: recording.byteLength,
+            sha256: recording.sha256,
+            durationMs: recording.duration.inMilliseconds,
+            photoIds: photoIds,
+          ),
+        );
+    if (!mounted) return;
+    switch (saved) {
+      case FailureResult<void>(:final Failure failure):
+        showAppSnack(context, failure.message, tone: SnackTone.error);
+      case Success<void>():
+        setState(() => _audioId = _ids.newId());
+    }
   }
 
   Future<void> _crop(BuildContext routeContext, PhotoDraft photo) async {
@@ -489,7 +608,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     _restored = true;
     final Result<CaptureSession?> loaded = await ref
         .read(capturePersistenceProvider)
-        .loadSession();
+        .loadSession(widget.projectId);
     if (!mounted) {
       return;
     }
@@ -547,8 +666,68 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     await ref.read(capturePersistenceProvider).saveSession(session);
   }
 
+  Future<void> _save(bool process) async {
+    if (_saving || !mounted) {
+      return;
+    }
+    final CaptureRecordWriter? writer = ref.read(captureRecordWriterProvider);
+    if (writer == null) {
+      showAppSnack(context, Copy.captureSaveFailed, tone: SnackTone.error);
+      return;
+    }
+    setState(() => _saving = true);
+    final CaptureController controller = ref.read(
+      captureControllerProvider(widget.projectId).notifier,
+    );
+    final Result<Object> result;
+    if (process) {
+      result = await controller.saveAndAnalyse(
+        persist: writer.persist,
+        enqueue: (String recordId) async {
+          final Result<String> queued = await ref
+              .read(processingRepositoryProvider)
+              .enqueue(recordId);
+          return queued.map(
+            (String jobId) =>
+                SaveAndAnalyse.jobFor(jobId: jobId, recordId: recordId),
+          );
+        },
+      );
+    } else {
+      result = await controller.saveRaw(writer.persist);
+    }
+    if (!mounted) {
+      return;
+    }
+    setState(() => _saving = false);
+    switch (result) {
+      case FailureResult<Object>(:final Failure failure):
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          undoLabel: Copy.queueRetry,
+          onUndo: () => unawaited(_save(process)),
+        );
+      case Success<Object>(:final Object value):
+        if (value is SaveAndAnalyseResult && value.enqueueFailed) {
+          showAppSnack(
+            context,
+            Copy.captureEnqueueFailed,
+            tone: SnackTone.error,
+            undoLabel: Copy.queueRetry,
+            onUndo: () => unawaited(_save(true)),
+          );
+          return;
+        }
+        _bytes.clear();
+        _selected.clear();
+        showAppSnack(context, Copy.captureSaved, tone: SnackTone.success);
+    }
+  }
+
   bool _hasContent(CaptureSession session) {
-    if (session.photos.isNotEmpty) {
+    if (session.photos.isNotEmpty || session.audio.isNotEmpty) {
       return true;
     }
     if (session.values.isNotEmpty) {
@@ -574,4 +753,14 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     });
     return onStage;
   }
+}
+
+enum _AudioScope { currentPhoto, selectedPhotos, allPhotos }
+
+bool _sameContext(Map<String, String> left, Map<String, String> right) {
+  if (left.length != right.length) return false;
+  for (final MapEntry<String, String> entry in left.entries) {
+    if (right[entry.key] != entry.value) return false;
+  }
+  return true;
 }

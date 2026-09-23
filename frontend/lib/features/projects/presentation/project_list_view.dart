@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
@@ -16,6 +18,7 @@ import '../projects.dart' show projectRepositoryProvider;
 import 'current_project.dart';
 import 'project_archive_action.dart';
 import 'project_delete_action.dart';
+import 'project_list_criteria.dart';
 import 'project_list_filter.dart';
 import 'project_open_externally_action.dart';
 import 'project_rename_action.dart';
@@ -31,9 +34,7 @@ class ProjectListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final String query = filtered
-        ? ref.watch(projectListSearchQueryProvider)
-        : '';
+    final ProjectListCriteria criteria = ref.watch(projectListCriteriaProvider);
     final AsyncValue<List<ProjectListRow>> value = ref.watch(
       filtered ? projectListFilteredProvider : projectListProvider,
     );
@@ -41,7 +42,7 @@ class ProjectListView extends ConsumerWidget {
       value: value,
       isEmpty: (List<ProjectListRow> rows) => rows.isEmpty,
       empty: () => SingleChildScrollView(
-        child: _empty(context, searching: filtered && query.trim().isNotEmpty),
+        child: _empty(context, searching: filtered && criteria.isActive),
       ),
       onRetry: () => ref.invalidate(projectListProvider),
       data: (List<ProjectListRow> rows) {
@@ -70,9 +71,24 @@ class ProjectListView extends ConsumerWidget {
                       rows[index].lastWorkedAt,
                     ),
                   ),
-                  trailing: AppOverflowMenu(
-                    outlined: false,
-                    items: _rowActions(context, ref, rows[index].project),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      if (rows[index].project.pinnedAt != null) ...<Widget>[
+                        Semantics(
+                          container: true,
+                          label: Copy.pinnedProject,
+                          child: const ExcludeSemantics(
+                            child: Icon(Icons.push_pin, size: Space.x5),
+                          ),
+                        ),
+                        const SizedBox(width: Space.x2),
+                      ],
+                      AppOverflowMenu(
+                        outlined: false,
+                        items: _rowActions(context, ref, rows[index].project),
+                      ),
+                    ],
                   ),
                   onTap: () => _openRow(context, ref, rows[index].project.id),
                 ),
@@ -153,13 +169,9 @@ List<AppOverflowAction> _rowActions(
 
 /// Must match [AppRoutes.project]. This file cannot import `router.dart`
 /// — the router imports the screen.
-String _projectHome(String id) {
-  return '$_projectsRoot/${Uri.encodeComponent(id)}';
-}
+String _projectHome(String id) => RoutePaths.project(id);
 
 /// Must match [AppRoutes.projects], [AppRoutes.projectCreate] and
 /// [AppRoutes.fromQuery].
-const String _projectsRoot = '/projects';
-const String _newSegment = 'new';
-const String _createLocation = '$_projectsRoot/$_newSegment';
-const String _fromQuery = 'from';
+const String _createLocation = RoutePaths.projectCreate;
+const String _fromQuery = RoutePaths.fromQuery;

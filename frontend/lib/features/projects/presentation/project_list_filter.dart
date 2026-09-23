@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/project_repository.dart';
 import 'current_project.dart';
+import 'project_list_criteria.dart';
 
 /// Whether the landing list includes archived projects.
 final class ProjectListFilter extends Notifier<bool> {
@@ -12,7 +13,22 @@ final class ProjectListFilter extends Notifier<bool> {
   bool build() => false;
 
   /// Shows or hides archived projects on the landing list.
-  void set(bool value) => state = value;
+  void set(bool value) {
+    state = value;
+    final ProjectListCriteria criteria = ref.read(projectListCriteriaProvider);
+    ref
+        .read(projectListCriteriaProvider.notifier)
+        .set(
+          criteria.copyWith(
+            statuses: value
+                ? const <ProjectStatus>{
+                    ProjectStatus.active,
+                    ProjectStatus.archived,
+                  }
+                : const <ProjectStatus>{ProjectStatus.active},
+          ),
+        );
+  }
 }
 
 /// Filter the landing list reads. Off by default so archived rows stay
@@ -32,25 +48,50 @@ projectListSearchQueryProvider =
       retry: (int _, Object _) => null,
     );
 
-/// [projectListProvider] narrowed to a case-insensitive, accent-folded
-/// match on the project name.
-final Provider<AsyncValue<List<ProjectListRow>>> projectListFilteredProvider =
-    Provider<AsyncValue<List<ProjectListRow>>>((Ref ref) {
-      final String query = ref.watch(projectListSearchQueryProvider);
-      final AsyncValue<List<ProjectListRow>> list = ref.watch(
-        projectListProvider,
-      );
-      final String needle = _foldProjectSearch(query.trim());
-      if (needle.isEmpty) {
-        return list;
-      }
-      return list.whenData((List<ProjectListRow> rows) {
-        return <ProjectListRow>[
-          for (final ProjectListRow row in rows)
-            if (_foldProjectSearch(row.project.name).contains(needle)) row,
-        ];
-      });
-    });
+/// [projectListProvider] narrowed by the shared criteria in one linear pass.
+final Provider<AsyncValue<List<ProjectListRow>>>
+projectListFilteredProvider = Provider<AsyncValue<List<ProjectListRow>>>((
+  Ref ref,
+) {
+  final ProjectListCriteria criteria = ref.watch(projectListCriteriaProvider);
+  final String legacyQuery = ref.watch(projectListSearchQueryProvider);
+  final AsyncValue<List<ProjectListRow>> list = ref.watch(projectListProvider);
+  final String query = criteria.query.isEmpty ? legacyQuery : criteria.query;
+  final String needle = _foldProjectSearch(query.trim());
+  return list.whenData((List<ProjectListRow> rows) {
+    return <ProjectListRow>[
+      for (final ProjectListRow row in rows)
+        if (_matches(row.project, criteria, needle)) row,
+    ];
+  });
+});
+
+bool _matches(Project project, ProjectListCriteria criteria, String needle) {
+  if (criteria.statuses.isNotEmpty &&
+      !criteria.statuses.contains(project.status)) {
+    return false;
+  }
+  final bool pinned = project.pinnedAt != null;
+  if (criteria.pin == ProjectPinFilter.pinned && !pinned) {
+    return false;
+  }
+  if (criteria.pin == ProjectPinFilter.unpinned && pinned) {
+    return false;
+  }
+  final String organisation = project.organisation?.trim() ?? '';
+  if (criteria.organisations.isNotEmpty &&
+      !criteria.organisations.contains(organisation)) {
+    return false;
+  }
+  if (needle.isEmpty) {
+    return true;
+  }
+  return <String>[
+    project.name,
+    project.description ?? '',
+    organisation,
+  ].any((String value) => _foldProjectSearch(value).contains(needle));
+}
 
 /// Case-folds [input] and strips common Latin diacritics so "Café"
 /// matches "cafe" without a new package.
@@ -74,7 +115,10 @@ class _ProjectListSearchQuery extends Notifier<String> {
   String build() => '';
 
   /// Replaces the query. The field owns debounce; this stores the last emit.
-  void set(String value) => state = value;
+  void set(String value) {
+    state = value;
+    ref.read(projectListCriteriaProvider.notifier).setQuery(value);
+  }
 }
 
 int _baseLetter(int rune) {

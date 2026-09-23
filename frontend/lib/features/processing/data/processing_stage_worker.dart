@@ -9,6 +9,8 @@ import 'package:tapture/core/ai/ocr_service.dart';
 import 'package:tapture/core/ai/provider_registry.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/db/app_database.dart';
+import 'package:tapture/core/db/tables/attachment_owners.dart';
+import 'package:tapture/core/db/tables/attachments.dart';
 import 'package:tapture/core/db/tables/audit_log.dart';
 import 'package:tapture/core/db/tables/field_evidence.dart';
 import 'package:tapture/core/db/tables/processing.dart'
@@ -157,12 +159,7 @@ final class ProcessingStageWorker {
             null ||
         _settings.read(SettingKeys.offlineByChoice) ||
         !settings.aiEnabled ||
-        !_providers
-            .resolve(
-              projectId: bundle.record.projectId,
-              operation: AiOperation.extractFields,
-            )
-            .isAvailable) {
+        !_selection(AiOperation.extractFields).provider.service.isAvailable) {
       return (imageCount: 0, payloadBytes: 0);
     }
     final List<String> images = settings.doNotSendImages
@@ -291,10 +288,9 @@ final class ProcessingStageWorker {
         .map((Caption row) => row.textRaw)
         .where((String value) => value.trim().isNotEmpty)
         .join('\n');
-    final AiService service = _providers.resolve(
-      projectId: bundle.record.projectId,
-      operation: AiOperation.extractFields,
-    );
+    final List<String> transcripts = await _transcripts(job, bundle);
+    final selection = _selection(AiOperation.extractFields);
+    final AiService service = selection.provider.service;
     if (!service.isAvailable) {
       await _setSkip(
         job.id,
@@ -317,6 +313,7 @@ final class ProcessingStageWorker {
         caption: caption,
         ocrText: ocrText,
         images: batch,
+        transcripts: transcripts,
       );
       await _requestOnce(
         job: job,
@@ -324,6 +321,8 @@ final class ProcessingStageWorker {
         service: service,
         request: request,
         batchKey: batchKey,
+        providerId: selection.provider.id,
+        modelId: selection.model.id,
       );
     }
     if (_settings.read(SettingKeys.aiRefineCaptions)) {
@@ -345,6 +344,8 @@ final class ProcessingStageWorker {
     required AiService service,
     required ExtractionRequest request,
     required String batchKey,
+    required String providerId,
+    required String modelId,
   }) async {
     var repairs = 0;
     String? repairError;
@@ -405,8 +406,8 @@ final class ProcessingStageWorker {
           for (final String path in request.images) _basename(path),
         ],
         'fieldCount': request.fields.length,
-        'provider': extracted.provider,
-        'model': extracted.model,
+        'provider': providerId,
+        'model': modelId,
         'promptVersion': extracted.promptVersion,
       });
       final ProcessingResult stored = _value(
@@ -425,11 +426,7 @@ final class ProcessingStageWorker {
       );
       if (parsed.ok) {
         _value(await _responses.markParsed(stored.id));
-        await _setProvider(
-          job.id,
-          provider: extracted.provider,
-          model: extracted.model,
-        );
+        await _setProvider(job.id, provider: providerId, model: modelId);
         return;
       }
       if (!ResponseRepair.mayRetry(repairsUsed: repairs)) {
@@ -795,6 +792,16 @@ final class ProcessingStageWorker {
         recoveryAction: 'Restore it, then retry processing.',
       );
     }
+    final List<AttachmentOwner> audioOwners =
+        await (_db.select(_db.attachmentOwners)..where(
+              ($AttachmentOwnersTable table) =>
+                  table.ownerType.equalsValue(AttachmentOwnerType.record) &
+                  table.ownerId.equals(record.id),
+            ))
+            .get();
+    final List<String> attachmentIds = <String>[
+      for (final AttachmentOwner owner in audioOwners) owner.attachmentId,
+    ];
     return _Bundle(
       record: record,
       project: project,
@@ -836,6 +843,14 @@ final class ProcessingStageWorker {
                     ),
               ))
               .get(),
+      audio: attachmentIds.isEmpty
+          ? const <Attachment>[]
+          : await (_db.select(_db.attachments)..where(
+                  ($AttachmentsTable table) =>
+                      table.id.isIn(attachmentIds) &
+                      table.kind.equalsValue(AttachmentKind.audio),
+                ))
+                .get(),
       existing:
           await (_db.select(_db.recordFields)..where(
                 ($RecordFieldsTable table) => table.recordId.equals(record.id),
@@ -844,9 +859,74 @@ final class ProcessingStageWorker {
     );
   }
 
+  Future<List<String>> _transcripts(ProcessingJob job, _Bundle bundle) async {
+    if (bundle.audio.isEmpty) {
+      return const <String>[];
+    }
+    final selection = _selection(AiOperation.transcribe);
+    final AiService service = selection.provider.service;
+    if (!service.isAvailable) {
+      return const <String>[];
+    }
+    final List<ProcessingResult> existing = _value(
+      await _responses.forJob(job.id),
+    );
+    final Directory directory = _value(await _folders.resolve(bundle.project));
+    final List<String> transcripts = <String>[];
+    for (final Attachment audio in bundle.audio) {
+      ProcessingResult? stored;
+      for (final ProcessingResult response in existing) {
+        if (response.parsedOk &&
+            _summaryValue(response.requestSummary, 'kind') == 'transcript' &&
+            _summaryValue(response.requestSummary, 'attachmentId') ==
+                audio.id) {
+          stored = response;
+          break;
+        }
+      }
+      if (stored != null) {
+        transcripts.add(stored.rawResponse);
+        continue;
+      }
+      await _requireBudget(job.id, bundle.record.projectId);
+      final TranscribeResult transcribed = _value(
+        await service.transcribe(
+          TranscribeRequest(
+            clipPath: '${directory.path}/${audio.relativePath}',
+            languageCode: _settings.read(SettingKeys.voiceLanguage),
+          ),
+        ),
+      );
+      _value(
+        await _responses.save(
+          jobId: job.id,
+          requestSummary: jsonEncode(<String, Object?>{
+            'kind': 'transcript',
+            'attachmentId': audio.id,
+            'provider': selection.provider.id,
+            'model': selection.model.id,
+          }),
+          rawResponse: transcribed.text,
+          parsedOk: true,
+        ),
+      );
+      transcripts.add(transcribed.text);
+    }
+    return transcripts;
+  }
+
   Future<String> _sourcePath(_Bundle bundle, Photo photo) async {
     final Directory directory = _value(await _folders.resolve(bundle.project));
     return '${directory.path}/${photo.relativePath}';
+  }
+
+  ({ProviderDescriptor provider, ModelDescriptor model, bool fellBack})
+  _selection(AiOperation operation) {
+    return _providers.validateSelection(
+      providerId: _settings.read(SettingKeys.aiProvider),
+      modelId: _settings.read(SettingKeys.aiModel),
+      operation: operation,
+    );
   }
 
   Future<String> _preparedPath(_Bundle bundle, Photo photo) async {
@@ -1056,6 +1136,7 @@ final class _Bundle {
     required this.rows,
     required this.photos,
     required this.captions,
+    required this.audio,
     required this.existing,
   });
 
@@ -1066,6 +1147,7 @@ final class _Bundle {
   final List<TemplateRow> rows;
   final List<Photo> photos;
   final List<Caption> captions;
+  final List<Attachment> audio;
   final List<RecordField> existing;
 }
 

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
@@ -18,6 +19,7 @@ import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/context/domain/context_state.dart';
 import 'package:tapture/features/context/presentation/context_providers.dart';
+import 'package:tapture/features/templates/templates.dart';
 
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
@@ -59,11 +61,12 @@ class ProjectHomeScreen extends ConsumerWidget {
           headline: Copy.homeEmptyHeadline,
           message: Copy.homeEmptyMessage,
           actionLabel: Copy.navProjects,
-          onAction: () => context.go(_projectsRoot),
+          onAction: () => context.go(RoutePaths.projects),
         ),
         onRetry: () {
           ref.invalidate(projectListProvider);
           ref.invalidate(projectHomeCountsProvider);
+          ref.invalidate(projectHomeAssociationsProvider);
         },
         data: (ProjectHomeView? loaded) => _HomeBody(view: loaded!),
       ),
@@ -78,6 +81,53 @@ typedef ProjectHomeView = ({
   String context,
   ProjectHomeCounts counts,
 });
+
+/// Live project-owned context and template associations.
+typedef ProjectHomeAssociations = ({int contextLevels, int templates});
+
+final projectHomeTemplatesProvider =
+    StreamProvider.family<List<TemplateDef>, String>((
+      Ref ref,
+      String projectId,
+    ) {
+      return ref.watch(templateRepositoryProvider).watchByProject(projectId);
+    }, retry: (int _, Object _) => null);
+
+/// Combines association totals without storing duplicate counters.
+final Provider<AsyncValue<ProjectHomeAssociations>>
+projectHomeAssociationsProvider = Provider<AsyncValue<ProjectHomeAssociations>>(
+  (Ref ref) {
+    final String? projectId = ref.watch(currentProjectProvider);
+    if (projectId == null) {
+      return const AsyncData<ProjectHomeAssociations>((
+        contextLevels: 0,
+        templates: 0,
+      ));
+    }
+    final AsyncValue<ContextState> context = ref.watch(
+      projectContextProvider(projectId),
+    );
+    final AsyncValue<List<TemplateDef>> templates = ref.watch(
+      projectHomeTemplatesProvider(projectId),
+    );
+    return context.when(
+      data: (ContextState loadedContext) {
+        return templates.when(
+          data: (List<TemplateDef> loadedTemplates) {
+            return AsyncData<ProjectHomeAssociations>((
+              contextLevels: loadedContext.levels.length,
+              templates: loadedTemplates.length,
+            ));
+          },
+          error: AsyncError<ProjectHomeAssociations>.new,
+          loading: () => const AsyncLoading<ProjectHomeAssociations>(),
+        );
+      },
+      error: AsyncError<ProjectHomeAssociations>.new,
+      loading: () => const AsyncLoading<ProjectHomeAssociations>(),
+    );
+  },
+);
 
 /// Pinned context label on the home header from the open project context.
 final Provider<String> projectHomeContextProvider = Provider<String>((Ref ref) {
@@ -137,6 +187,9 @@ class _HomeBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ProjectHomeCounts counts = view.counts;
+    final AsyncValue<ProjectHomeAssociations> associations = ref.watch(
+      projectHomeAssociationsProvider,
+    );
     final bool shellOwns = ShellHeaderScope.ownsHeaderOf(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: Space.x4),
@@ -156,14 +209,37 @@ class _HomeBody extends ConsumerWidget {
           const SizedBox(height: Space.x2),
           AppListTile(
             title: Copy.contextHierarchyTitle,
+            subtitle: associations.when(
+              data: (ProjectHomeAssociations value) =>
+                  Copy.projectContextLevelCount(value.contextLevels),
+              error: (Object _, StackTrace _) =>
+                  Copy.projectAssociationCountUnavailable,
+              loading: () => Copy.loading,
+            ),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.go(_context(view.project.id)),
+            onTap: () => unawaited(context.push(_context(view.project.id))),
           ),
           AppListTile(
             title: Copy.navTemplates,
+            subtitle: associations.when(
+              data: (ProjectHomeAssociations value) =>
+                  Copy.projectTemplateCount(value.templates),
+              error: (Object _, StackTrace _) =>
+                  Copy.projectAssociationCountUnavailable,
+              loading: () => Copy.loading,
+            ),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.go(_templatesLocation),
+            onTap: () => unawaited(context.push(_templates(view.project.id))),
           ),
+          if (associations.hasError)
+            TextButton(
+              onPressed: () {
+                ref.invalidate(projectContextProvider(view.project.id));
+                ref.invalidate(projectHomeTemplatesProvider(view.project.id));
+                ref.invalidate(projectHomeAssociationsProvider);
+              },
+              child: const Text(Copy.projectAssociationRetry),
+            ),
           const SizedBox(height: Space.x4),
           ..._countRows(context, counts),
         ],
@@ -326,7 +402,7 @@ Future<void> _archiveThenList(
 ) async {
   await ProjectArchiveAction.apply(ref, project);
   if (context.mounted) {
-    context.go(_projectsRoot);
+    context.go(RoutePaths.projects);
   }
 }
 
@@ -340,52 +416,54 @@ Future<void> _deleteThenList(
     return;
   }
   if (ref.read(currentProjectProvider) != project.id) {
-    context.go(_projectsRoot);
+    context.go(RoutePaths.projects);
   }
 }
 
 /// Must match [AppRoutes.capture]. This file cannot import `router.dart`.
 String _capture(String id) {
-  return '$_projectsRoot/${Uri.encodeComponent(id)}/$_captureSegment';
+  return RoutePaths.projectCapture(id);
 }
 
 /// Must match the project context route. This file cannot import `router.dart`.
 String _context(String id) {
-  return '$_projectsRoot/${Uri.encodeComponent(id)}/$_contextSegment';
+  return RoutePaths.projectContext(id);
 }
 
-/// Must match [AppRoutes.templates].
-const String _templatesLocation = '/more/templates';
+/// Must match [AppRoutes.projectTemplates].
+String _templates(String id) {
+  return RoutePaths.projectTemplates(id);
+}
 
 /// Must match [AppRoutes.projectEdit].
 String _edit(String id) {
-  return '$_projectsRoot/${Uri.encodeComponent(id)}/$_editSegment';
+  return RoutePaths.projectEdit(id);
 }
 
 /// Must match [AppRoutes.projectSettings].
 String _settings(String id) {
-  return '$_projectsRoot/${Uri.encodeComponent(id)}/$_settingsSegment';
+  return RoutePaths.projectSettings(id);
 }
 
 String _filtered(String root, String filter) {
   return Uri(
     path: root,
-    queryParameters: <String, String>{_filterQuery: filter},
+    queryParameters: <String, String>{RoutePaths.filterQuery: filter},
   ).toString();
 }
 
 /// Must match [AppRoutes.projectRecords], [AppRoutes.projectQueue] and
 /// [AppRoutes.projectExports]. This file cannot import `router.dart`.
 String _recordsRoot(String id) {
-  return '$_projectsRoot/${Uri.encodeComponent(id)}/$_recordsSegment';
+  return RoutePaths.projectRecords(id);
 }
 
 String _queueRoot(String id) {
-  return '$_projectsRoot/${Uri.encodeComponent(id)}/$_queueSegment';
+  return RoutePaths.projectQueue(id);
 }
 
 String _exportsRoot(String id) {
-  return '$_projectsRoot/${Uri.encodeComponent(id)}/$_exportsSegment';
+  return RoutePaths.projectExports(id);
 }
 
 String _reviewList(String id) => _filtered(_recordsRoot(id), _reviewFilter);
@@ -396,15 +474,6 @@ String _exportList(String id) => _filtered(_recordsRoot(id), _exportFilter);
 
 String _shareList(String id) => _filtered(_exportsRoot(id), _shareFilter);
 
-const String _projectsRoot = '/projects';
-const String _recordsSegment = 'records';
-const String _queueSegment = 'queue';
-const String _exportsSegment = 'exports';
-const String _editSegment = 'edit';
-const String _settingsSegment = 'settings';
-const String _captureSegment = 'capture';
-const String _contextSegment = 'context';
-const String _filterQuery = 'filter';
 const String _reviewFilter = 'needsReview';
 const String _processFilter = 'queued';
 const String _exportFilter = 'approved';

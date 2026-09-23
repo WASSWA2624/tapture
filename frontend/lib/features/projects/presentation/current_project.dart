@@ -5,6 +5,7 @@ import 'package:tapture/features/settings/settings.dart';
 
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
+import 'project_list_criteria.dart';
 import 'project_list_filter.dart';
 
 /// The single open-project id. Persists the choice, restores it on the
@@ -119,9 +120,16 @@ final NotifierProvider<CurrentProject, String?> openProjectIdProvider =
 final StreamProvider<List<ProjectListRow>> projectListProvider =
     StreamProvider<List<ProjectListRow>>((Ref ref) {
       final bool includeArchived = ref.watch(projectListShowArchivedProvider);
+      final ProjectListCriteria criteria = ref.watch(
+        projectListCriteriaProvider,
+      );
       return ref
           .watch(projectRepositoryProvider)
-          .watchList(includeArchived: includeArchived);
+          .watchList(
+            includeArchived:
+                includeArchived ||
+                criteria.statuses.contains(ProjectStatus.archived),
+          );
     }, retry: (int _, Object _) => null);
 
 /// How many active projects the Projects destination opens onto.

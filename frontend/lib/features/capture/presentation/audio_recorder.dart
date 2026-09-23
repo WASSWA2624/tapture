@@ -15,6 +15,7 @@ final class AudioRecorder extends StatefulWidget {
     required this.recorder,
     required this.relativePath,
     this.onStopped,
+    this.onCompleted,
     super.key,
   });
 
@@ -27,11 +28,15 @@ final class AudioRecorder extends StatefulWidget {
   /// Finished duration.
   final ValueChanged<Duration>? onStopped;
 
+  /// Durable file metadata after stop.
+  final ValueChanged<AudioRecording>? onCompleted;
+
   @override
   State<AudioRecorder> createState() => _AudioRecorderState();
 }
 
-class _AudioRecorderState extends State<AudioRecorder> {
+class _AudioRecorderState extends State<AudioRecorder>
+    with WidgetsBindingObserver {
   AudioRecorderState _state = const AudioRecorderState(
     phase: AudioRecorderPhase.idle,
   );
@@ -40,6 +45,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _sub = widget.recorder.state.listen((AudioRecorderState next) {
       if (mounted) {
         setState(() => _state = next);
@@ -49,8 +55,22 @@ class _AudioRecorderState extends State<AudioRecorder> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _sub?.cancel();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (_state.phase != AudioRecorderPhase.recording) {
+      return;
+    }
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached ||
+        state == AppLifecycleState.hidden) {
+      unawaited(widget.recorder.pause());
+    }
   }
 
   Future<void> _start() async {
@@ -66,11 +86,15 @@ class _AudioRecorderState extends State<AudioRecorder> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Text('${_state.phase.name} ${_state.elapsed.inSeconds}s'),
+        Text(
+          Copy.audioRecorderStatus(_state.phase.name, _state.elapsed.inSeconds),
+        ),
         LinearProgressIndicator(value: _state.level.clamp(0.0, 1.0)),
         Row(
           children: <Widget>[
-            if (_state.phase == AudioRecorderPhase.idle)
+            if (_state.phase == AudioRecorderPhase.idle ||
+                _state.phase == AudioRecorderPhase.failed ||
+                _state.phase == AudioRecorderPhase.completed)
               AppButton(label: Copy.captureRecordAudio, onPressed: _start),
             if (_state.phase == AudioRecorderPhase.recording)
               AppButton(
@@ -82,18 +106,29 @@ class _AudioRecorderState extends State<AudioRecorder> {
                 label: Copy.captureRecordAudio,
                 onPressed: () => widget.recorder.resume(),
               ),
-            if (_state.phase != AudioRecorderPhase.idle)
+            if (_state.phase == AudioRecorderPhase.recording ||
+                _state.phase == AudioRecorderPhase.paused)
               AppButton(
                 label: Copy.captureStopAudio,
                 onPressed: () async {
                   final Result<Duration> stopped = await widget.recorder.stop();
-                  stopped.fold((Failure failure) {
-                    showAppSnack(
-                      context,
-                      failure.message,
-                      tone: SnackTone.error,
-                    );
-                  }, (Duration elapsed) => widget.onStopped?.call(elapsed));
+                  stopped.fold(
+                    (Failure failure) {
+                      showAppSnack(
+                        context,
+                        failure.message,
+                        tone: SnackTone.error,
+                      );
+                    },
+                    (Duration elapsed) {
+                      widget.onStopped?.call(elapsed);
+                      final AudioRecording? completed =
+                          widget.recorder.completed;
+                      if (completed != null) {
+                        widget.onCompleted?.call(completed);
+                      }
+                    },
+                  );
                 },
               ),
           ],

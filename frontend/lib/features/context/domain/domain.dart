@@ -6,3 +6,4 @@ export 'context_movement_prompt.dart';
 export 'context_override.dart';
 export 'context_repository.dart';
 export 'context_state.dart';
+export 'template_context_proposal.dart';

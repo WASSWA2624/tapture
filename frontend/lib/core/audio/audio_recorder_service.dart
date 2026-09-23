@@ -32,6 +32,9 @@ abstract interface class AudioRecorderService {
   /// Live recorder status.
   Stream<AudioRecorderState> get state;
 
+  /// Metadata from the last fully flushed recording.
+  AudioRecording? get completed;
+
   /// Starts writing to [relativePath] under the storage root.
   Future<Result<void>> start(String relativePath);
 
@@ -62,6 +65,9 @@ final class _UnavailableAudioRecorder implements AudioRecorderService {
   Stream<AudioRecorderState> get state => Stream<AudioRecorderState>.value(
     const AudioRecorderState(phase: AudioRecorderPhase.idle),
   );
+
+  @override
+  AudioRecording? get completed => null;
 
   @override
   Future<Result<void>> start(String relativePath) async {
@@ -99,6 +105,10 @@ final class _FakeAudioRecorder implements AudioRecorderService {
   Timer? _timer;
   final List<List<int>> _chunks = <List<int>>[];
   String? _path;
+  AudioRecording? _completed;
+
+  @override
+  AudioRecording? get completed => _completed;
 
   @override
   Stream<AudioRecorderState> get state => _controller.stream;
@@ -118,6 +128,7 @@ final class _FakeAudioRecorder implements AudioRecorderService {
       return FailureResult<void>(failure);
     }
     _path = relativePath;
+    _completed = null;
     _chunks.clear();
     _elapsed = Duration.zero;
     _phase = AudioRecorderPhase.recording;
@@ -171,10 +182,53 @@ final class _FakeAudioRecorder implements AudioRecorderService {
         _emit();
         return FailureResult<Duration>(fail);
       }
+      final WrittenFile file = (written as Success<WrittenFile>).value;
+      _completed = AudioRecording(
+        relativePath: file.relativePath,
+        sha256: file.sha256,
+        byteLength: file.byteLength,
+        duration: elapsed,
+        mimeType: 'audio/wav',
+      );
+    } else if (path != null) {
+      _completed = AudioRecording(
+        relativePath: path,
+        sha256: '',
+        byteLength: _chunks.fold<int>(0, (int n, List<int> c) => n + c.length),
+        duration: elapsed,
+        mimeType: 'audio/wav',
+      );
     }
     _phase = AudioRecorderPhase.idle;
     _level = 0;
     _emit();
     return Success<Duration>(elapsed);
   }
+}
+
+/// Metadata published only after a recorder file has been flushed and hashed.
+final class AudioRecording {
+  /// Creates completed recording metadata.
+  const AudioRecording({
+    required this.relativePath,
+    required this.sha256,
+    required this.byteLength,
+    required this.duration,
+    required this.mimeType,
+  });
+
+  /// Path relative to the storage root.
+  final String relativePath;
+
+  /// Content hash.
+  final String sha256;
+
+  /// Durable byte count.
+  final int byteLength;
+
+  /// Recorded duration.
+  final Duration duration;
+
+  /// Encoded media type.
+  final String mimeType;
 }

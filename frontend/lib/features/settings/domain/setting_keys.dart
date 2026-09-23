@@ -192,6 +192,12 @@ abstract final class SettingKeys {
     'backend',
   );
 
+  /// Selected provider model. Validated against the current registry.
+  static const SettingKey<String> aiModel = SettingKey<String>(
+    'ai.model',
+    'default',
+  );
+
   /// UI language.
   static const SettingKey<String> appLanguage = SettingKey<String>(
     'language.app',
@@ -243,6 +249,7 @@ abstract final class SettingKeys {
     aiDailyRequestCap.name,
     aiOpportunisticOcr.name,
     aiProvider.name,
+    aiModel.name,
     appLanguage.name,
     voiceLanguage.name,
     themeMode.name,

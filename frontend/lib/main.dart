@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -10,11 +11,14 @@ import 'app/theme/settings_text_store.dart';
 import 'core/ai/ocr_service.dart';
 import 'core/ai/provider_registry.dart';
 import 'core/ai/stt_service.dart';
+import 'core/audio/audio_recorder_plugin.dart';
+import 'core/audio/audio_recorder_service.dart';
 import 'core/db/app_database.dart';
 import 'core/db/database_provider.dart';
 import 'core/device/device_identity.dart';
 import 'core/device/platform_facts.dart';
 import 'core/files/download_service.dart';
+import 'core/files/file_writer.dart';
 import 'core/files/photo_picker.dart';
 import 'core/files/screen_capture.dart';
 import 'core/files/storage_root.dart';
@@ -24,6 +28,7 @@ import 'core/logging/logger.dart';
 import 'core/security/secure_storage.dart';
 import 'core/time/clock.dart';
 import 'core/widgets/fields/field_editor.dart';
+import 'features/capture/capture.dart';
 import 'features/context/data/context_repository_impl.dart';
 import 'features/feedback/feedback.dart';
 import 'features/feedback/presentation/feedback_providers.dart';
@@ -94,6 +99,15 @@ Future<void> _run() async {
     final PlatformFacts facts = await platformFacts(clock: clock);
     final DeviceDescriptor device = await deviceDescriptor();
     final AppDatabase db = database!;
+    final FileWriter evidenceWriter = FileWriter(storageRoot: storageRoot);
+    final DriftPhotoRepository capturePhotos = DriftPhotoRepository(
+      db: db,
+      writer: evidenceWriter,
+      clock: clock,
+      deviceId: id,
+      ids: ids,
+    );
+    final ProviderRegistry providerRegistry = ProviderRegistry.keyless();
     final ProcessingStageWorker processingWorker = ProcessingStageWorker(
       db: db,
       clock: clock,
@@ -101,11 +115,12 @@ Future<void> _run() async {
       ids: ids,
       storageRoot: storageRoot,
       ocr: OcrService(),
-      providers: ProviderRegistry.keyless(),
+      providers: providerRegistry,
       settings: offlineStore,
     );
     overrides.addAll(<Override>[
       feedbackClockProvider.overrideWith((Ref _) => clock),
+      providerRegistryProvider.overrideWith((Ref _) => providerRegistry),
       feedbackDeviceIdProvider.overrideWith((Ref _) => id),
       feedbackPlatformFactsProvider.overrideWith((Ref _) => facts),
       feedbackDeviceProvider.overrideWith((Ref _) => device),
@@ -133,6 +148,29 @@ Future<void> _run() async {
           deviceId: id,
           ids: ids,
         );
+      }),
+      photoRepositoryProvider.overrideWith((Ref _) => capturePhotos),
+      capturePersistenceProvider.overrideWith((Ref _) {
+        return DriftCapturePersistence(
+          db: db,
+          photos: capturePhotos,
+          clock: clock,
+          deviceId: id,
+          ids: ids,
+        );
+      }),
+      captureRecordWriterProvider.overrideWith((Ref _) {
+        return CaptureRecordWriter(
+          db: db,
+          clock: clock,
+          deviceId: id,
+          ids: ids,
+        );
+      }),
+      audioRecorderServiceProvider.overrideWith((Ref _) {
+        return kIsWeb
+            ? const AudioRecorderService.unavailable()
+            : PluginAudioRecorder(writer: evidenceWriter);
       }),
       processingRepositoryProvider.overrideWith((Ref ref) {
         return ProcessingRepositoryImpl(

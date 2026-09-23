@@ -18,6 +18,10 @@ import 'package:tapture/core/files/compressed_copy.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/features/capture/data/capture_record_writer.dart';
+import 'package:tapture/features/capture/domain/audio_draft.dart';
+import 'package:tapture/features/capture/domain/capture_session.dart'
+    as capture;
 import 'package:tapture/features/processing/data/ocr_cache.dart';
 import 'package:tapture/features/processing/data/processing_repository_impl.dart';
 import 'package:tapture/features/processing/data/processing_stage_worker.dart';
@@ -197,8 +201,8 @@ void main() {
       expect(proposal.valueRaw, 'ABC123');
       expect(proposal.valueFinal, isNull);
       expect(proposal.confidenceBand, 'high');
-      expect(proposal.provider, 'test-provider');
-      expect(proposal.model, 'test-model');
+      expect(proposal.provider, ProviderRegistry.backendId);
+      expect(proposal.model, 'default');
       expect(proposal.promptVersion, 'test-prompt-v1');
       final FieldEvidenceRow evidence = await db
           .select(db.fieldEvidence)
@@ -270,6 +274,116 @@ void main() {
     expect(audit.reason, contains('"method":"alias"'));
     expect(audit.reason, contains('"score":0.98'));
   });
+
+  test(
+    'record audio is transcribed once and reused as extraction evidence',
+    () async {
+      final AppDatabase db = await seededDatabase();
+      addTearDown(db.close);
+      final Directory documents = Directory.systemTemp.createTempSync(
+        'tapture_processing_audio_',
+      );
+      addTearDown(() {
+        if (documents.existsSync()) {
+          documents.deleteSync(recursive: true);
+        }
+      });
+      final DateTime now = DateTime.utc(2026, 9, 23, 8);
+      final FixedClock clock = FixedClock(now);
+      final UuidV7Service ids = UuidV7Service.sequence(clock);
+      final Project project = await db.select(db.projects).getSingle();
+      final Template template = await db.select(db.templates).getSingle();
+      _ok(
+        await upsertTemplateField(
+          db,
+          row: TemplateFieldsCompanion(
+            templateId: Value<String>(template.id),
+            fieldKey: const Value<String>('serial'),
+            label: const Value<String>('Serial number'),
+            type: const Value<String>('text'),
+            isRequired: const Value<bool>(true),
+            sortOrder: const Value<int>(0),
+          ),
+          clock: clock,
+          deviceId: 'device-a',
+          ids: ids,
+        ),
+      );
+      final CaptureRecordWriter writer = CaptureRecordWriter(
+        db: db,
+        clock: clock,
+        deviceId: 'device-a',
+        ids: ids,
+      );
+      final String recordId = _ok(
+        await writer.persist(
+          capture.CaptureSession(
+            id: 'audio-session',
+            projectId: project.id,
+            templateId: template.id,
+            contextSnapshot: const <String, String>{},
+            audio: <AudioDraft>[
+              AudioDraft(
+                id: 'audio-1',
+                projectId: project.id,
+                relativePath: 'audio/clip.wav',
+                mimeType: 'audio/wav',
+                fileSize: 4,
+                sha256: 'audio-sha',
+                durationMs: 1000,
+              ),
+            ],
+          ),
+        ),
+      );
+      final File original = File(
+        '${documents.path}/Tapture/projects/seeded-project/audio/clip.wav',
+      );
+      await original.parent.create(recursive: true);
+      const List<int> originalBytes = <int>[1, 2, 3, 4];
+      await original.writeAsBytes(originalBytes);
+
+      final SettingsStore settings = SettingsStore.fake();
+      final _AudioExtractionService service = _AudioExtractionService();
+      final ProcessingRepositoryImpl repository = ProcessingRepositoryImpl(
+        db: db,
+        clock: clock,
+        deviceId: 'device-a',
+        ids: ids,
+        settings: settings,
+      );
+      final String jobId = _ok(await repository.enqueue(recordId));
+      final ProcessingJob job = ProcessingJob(id: jobId, recordId: recordId);
+      final ProcessingStageWorker worker = ProcessingStageWorker(
+        db: db,
+        clock: clock,
+        deviceId: 'device-a',
+        ids: ids,
+        storageRoot: StorageRoot.fake(documentsDirectory: documents),
+        ocr: OcrService(),
+        providers: ProviderRegistry.keyless(proxy: service),
+        settings: settings,
+      );
+
+      await worker.perform(JobStage.online, job);
+      await worker.perform(JobStage.online, job);
+
+      expect(service.transcribeCalls, 1);
+      expect(service.extractCalls, 1);
+      expect(service.lastExtraction?.transcripts, <String>[
+        'spoken serial SN-1',
+      ]);
+      expect(await original.readAsBytes(), originalBytes);
+      final List<ProcessingResult> evidence = await db
+          .select(db.processingResults)
+          .get();
+      expect(evidence, hasLength(2));
+      expect(
+        evidence.any((row) => row.rawResponse == 'spoken serial SN-1'),
+        isTrue,
+      );
+    },
+  );
 
   test('high-confidence local identity skips the provider call', () async {
     final AppDatabase db = await seededDatabase(records: 1);
@@ -490,6 +604,52 @@ final class _ExtractionService implements AiService {
   @override
   Future<Result<TranscribeResult>> transcribe(TranscribeRequest request) async {
     return const FailureResult<TranscribeResult>(ProviderFailure());
+  }
+}
+
+final class _AudioExtractionService implements AiService {
+  int transcribeCalls = 0;
+  int extractCalls = 0;
+  ExtractFieldsRequest? lastExtraction;
+
+  @override
+  bool get isAvailable => true;
+
+  @override
+  Future<Result<ReadTextResult>> readText(ReadTextRequest request) async {
+    return const Success<ReadTextResult>(ReadTextResult(text: ''));
+  }
+
+  @override
+  Future<Result<ExtractFieldsResult>> extractFields(
+    ExtractFieldsRequest request,
+  ) async {
+    extractCalls += 1;
+    lastExtraction = request;
+    return const Success<ExtractFieldsResult>(
+      ExtractFieldsResult(
+        fields: <String, String?>{'serial': 'SN-1'},
+        rawResponse:
+            '{"fields":{"serial":{"value":"SN-1","confidence":0.9,'
+            '"evidence":["spoken serial SN-1"]}}}',
+        provider: ProviderRegistry.backendId,
+        model: 'default',
+        promptVersion: 'test-v1',
+      ),
+    );
+  }
+
+  @override
+  Future<Result<RefineTextResult>> refineText(RefineTextRequest request) async {
+    return Success<RefineTextResult>(RefineTextResult(text: request.raw));
+  }
+
+  @override
+  Future<Result<TranscribeResult>> transcribe(TranscribeRequest request) async {
+    transcribeCalls += 1;
+    return const Success<TranscribeResult>(
+      TranscribeResult(text: 'spoken serial SN-1'),
+    );
   }
 }
 

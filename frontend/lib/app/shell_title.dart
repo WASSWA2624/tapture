@@ -55,37 +55,51 @@ abstract final class ShellTitle {
       return Copy.appLockTitle;
     }
     if (path == AppRoutes.templates) {
-      return Copy.navTemplates;
+      return '${Copy.navMore} › ${Copy.navTemplates}';
     }
     if (path == AppRoutes.queue) {
-      return Copy.navQueue;
+      return '${Copy.navMore} › ${Copy.navQueue}';
     }
     if (path == AppRoutes.settingsOperator) {
-      return Copy.operatorProfileTitle;
+      return '${Copy.navMore} › ${Copy.operatorProfileTitle}';
     }
     if (path == AppRoutes.settingsCapture) {
-      return Copy.navCapture;
+      return '${Copy.navMore} › ${Copy.navCapture}';
+    }
+    if (path == AppRoutes.settingsAi ||
+        path == '${AppRoutes.more}/provider-key') {
+      return '${Copy.navMore} › ${Copy.settingsAiTitle}';
     }
     if (path == AppRoutes.settingsAppearance) {
-      return Copy.settingsAppearanceTitle;
+      return '${Copy.navMore} › ${Copy.settingsAppearanceTitle}';
     }
     if (path == AppRoutes.settingsStorage) {
-      return Copy.settingsStorageTitle;
+      return '${Copy.navMore} › ${Copy.settingsStorageTitle}';
     }
     if (path == AppRoutes.settingsSecurity) {
-      return Copy.appLockTitle;
+      return '${Copy.navMore} › ${Copy.appLockTitle}';
     }
     if (path == AppRoutes.settingsAbout) {
-      return Copy.settingsAboutTitle;
+      return '${Copy.navMore} › ${Copy.settingsAboutTitle}';
     }
     if (path == AppRoutes.settingsLicences) {
-      return Copy.settingsLicences;
+      return '${Copy.navMore} › ${Copy.settingsLicences}';
     }
     if (path == capture) {
       return Copy.navCapture;
     }
     if (path.startsWith('${AppRoutes.projects}/')) {
-      return ref.watch(currentProjectDetailsProvider)?.name ?? Copy.navProjects;
+      final String project =
+          ref.watch(currentProjectDetailsProvider)?.name ?? Copy.navProjects;
+      final List<String> segments = uri.pathSegments;
+      final String leaf = segments.length < 3
+          ? ''
+          : _projectLeaf(segments.skip(2).toList(growable: false));
+      return <String>[
+        Copy.navProjects,
+        project,
+        if (leaf.isNotEmpty) leaf,
+      ].join(' › ');
     }
     return FeedbackOrigin.unknown.screen;
   }
@@ -102,4 +116,22 @@ abstract final class ShellTitle {
     parts.removeLast();
     return '/${parts.join('/')}';
   }
+}
+
+String _projectLeaf(List<String> segments) {
+  if (segments.isEmpty) {
+    return '';
+  }
+  return switch (segments.first) {
+    'capture' => Copy.navCapture,
+    'context' => Copy.contextHierarchyTitle,
+    'templates' => Copy.navTemplates,
+    'records' => Copy.navRecords,
+    'queue' => Copy.navQueue,
+    'exports' => Copy.homeExport,
+    'datasets' => Copy.navDatasets,
+    'edit' => Copy.projectEditTitle,
+    'settings' => Copy.projectSettingsTitle,
+    _ => '',
+  };
 }

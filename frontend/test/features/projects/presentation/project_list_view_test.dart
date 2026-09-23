@@ -92,11 +92,17 @@ void main() {
       repo.stored.singleWhere((Project p) => p.id == 'project-2').pinnedAt,
       isNotNull,
     );
+    expect(find.byIcon(Icons.push_pin), findsOneWidget);
+    expect(find.bySemanticsLabel(Copy.pinnedProject), findsOneWidget);
 
     await tester.tap(_rowMenu('project-2'));
     await tester.pumpAndSettle();
     expect(find.text(Copy.projectUnpin), findsOneWidget);
     expect(find.text(Copy.projectPin), findsNothing);
+    await tester.tap(find.text(Copy.projectUnpin));
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.push_pin), findsNothing);
+    expect(find.bySemanticsLabel(Copy.pinnedProject), findsNothing);
   });
 
   testWidgets('long-press on a row does not open the menu', (

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -117,9 +118,8 @@ class _LookupBindingScreenState extends ConsumerState<LookupBindingScreen> {
               actionLabel: Copy.datasetsImport,
               onAction: projectId == null
                   ? null
-                  : () => context.go(
-                      '/projects/${Uri.encodeComponent(projectId)}/datasets/import',
-                    ),
+                  : () =>
+                        context.go(RoutePaths.projectDatasetImport(projectId)),
             ),
             data: (List<ReferenceDataset> rows) {
               final ReferenceDataset? selected = _selected(rows);
@@ -341,15 +341,13 @@ class _LookupBindingScreenState extends ConsumerState<LookupBindingScreen> {
   }
 }
 
-final _templateProvider = FutureProvider.autoDispose.family<TemplateDef?, String>((
-  Ref ref,
-  String id,
-) async {
-  final Result<TemplateDef?> result = await ref
-      .watch(templateRepositoryProvider)
-      .byId(id);
-  return switch (result) {
-    Success<TemplateDef?>(:final TemplateDef? value) => value,
-    FailureResult<TemplateDef?>() => null,
-  };
-}, retry: (int _, Object _) => null);
+final _templateProvider = FutureProvider.autoDispose
+    .family<TemplateDef?, String>((Ref ref, String id) async {
+      final Result<TemplateDef?> result = await ref
+          .watch(templateRepositoryProvider)
+          .byId(id);
+      return switch (result) {
+        Success<TemplateDef?>(:final TemplateDef? value) => value,
+        FailureResult<TemplateDef?>() => null,
+      };
+    }, retry: (int _, Object _) => null);

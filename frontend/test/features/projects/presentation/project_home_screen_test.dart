@@ -95,6 +95,66 @@ void main() {
     expect(action.dy, greaterThan(screen.height * 2 / 3));
   });
 
+  testWidgets('association rows render zero, singular, and plural counts', (
+    WidgetTester tester,
+  ) async {
+    for (final ({int levels, int templates}) counts
+        in <({int levels, int templates})>[
+          (levels: 0, templates: 0),
+          (levels: 1, templates: 1),
+          (levels: 3, templates: 4),
+        ]) {
+      await _pumpPopulated(
+        tester,
+        overrides: <Override>[
+          projectHomeAssociationsProvider.overrideWith(
+            (Ref _) => AsyncData<ProjectHomeAssociations>((
+              contextLevels: counts.levels,
+              templates: counts.templates,
+            )),
+          ),
+        ],
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text(Copy.projectContextLevelCount(counts.levels)),
+        findsOneWidget,
+      );
+      expect(
+        find.text(Copy.projectTemplateCount(counts.templates)),
+        findsOneWidget,
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
+    }
+  });
+
+  testWidgets('association failure stays visible and retryable', (
+    WidgetTester tester,
+  ) async {
+    await _pumpPopulated(
+      tester,
+      overrides: <Override>[
+        projectHomeAssociationsProvider.overrideWith(
+          (Ref _) => const AsyncError<ProjectHomeAssociations>(
+            StorageFailure(
+              message: 'Associations unavailable.',
+              recoveryAction: 'Retry.',
+            ),
+            StackTrace.empty,
+          ),
+        ),
+      ],
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(Copy.projectAssociationCountUnavailable),
+      findsNWidgets(2),
+    );
+    expect(find.text(Copy.projectAssociationRetry), findsOneWidget);
+  });
+
   testWidgets('a failed load renders through AsyncValueView', (
     WidgetTester tester,
   ) async {

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart' hide Router;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/nav_shell.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -32,7 +33,7 @@ import 'package:tapture/features/reference/presentation/dataset_browser_screen.d
 import 'package:tapture/features/reference/presentation/dataset_key_screen.dart';
 import 'package:tapture/features/reference/presentation/dataset_list_screen.dart';
 import 'package:tapture/features/reference/presentation/dataset_row_edit_screen.dart';
-import 'package:tapture/features/settings/presentation/api_key_screen.dart';
+import 'package:tapture/features/settings/presentation/ai_provider_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
 import 'package:tapture/features/settings/presentation/appearance_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/capture_settings_screen.dart';
@@ -69,20 +70,20 @@ typedef Router = GoRouter;
 abstract final class AppRoutes {
   /// The project picker. A project-scoped deep link with no project open
   /// lands here, carrying the intended location as [fromQuery].
-  static const String projects = '/projects';
+  static const String projects = RoutePaths.projects;
 
   /// Query key for the location a diverted deep link should resume at.
-  static const String fromQuery = 'from';
+  static const String fromQuery = RoutePaths.fromQuery;
 
   /// App-lock unlock gate. Covers launch, resume and deep links.
   static const String lock = '/lock';
 
   /// One project's home.
-  static String project(String id) => '$projects/${Uri.encodeComponent(id)}';
+  static String project(String id) => RoutePaths.project(id);
 
   /// Create or duplicate a project. Listed before [project] so `new` is
   /// not captured as an id.
-  static const String projectCreate = '$projects/new';
+  static const String projectCreate = RoutePaths.projectCreate;
 
   /// Query key for the project whose structure is being copied.
   static const String sourceQuery = 'source';
@@ -102,27 +103,29 @@ abstract final class AppRoutes {
   }
 
   /// Capture for [projectId].
-  static String capture(String projectId) => '${project(projectId)}/capture';
+  static String capture(String projectId) =>
+      RoutePaths.projectCapture(projectId);
 
   /// Details form for [projectId].
-  static String projectEdit(String projectId) => '${project(projectId)}/edit';
+  static String projectEdit(String projectId) =>
+      RoutePaths.projectEdit(projectId);
 
   /// Per-project settings for [projectId].
   static String projectSettings(String projectId) =>
-      '${project(projectId)}/settings';
+      RoutePaths.projectSettings(projectId);
 
   /// One record, opened directly from a deep link.
-  static String record(String id) => '/records/${Uri.encodeComponent(id)}';
+  static String record(String id) => RoutePaths.record(id);
 
   /// The records list.
-  static const String records = '/records';
+  static const String records = RoutePaths.records;
 
   /// Settings tab of the four-destination shell.
-  static const String more = '/more';
+  static const String more = RoutePaths.more;
 
   /// Pinned-template destination the status line opens. Nested under
   /// [more] so Settings stays in the branch stack.
-  static const String templates = '$more/templates';
+  static const String templates = RoutePaths.templates;
 
   /// Blank-template form. Listed before [template] so `new` is not an id.
   static const String templateCreate = '$templates/new';
@@ -145,11 +148,15 @@ abstract final class AppRoutes {
 
   /// Datasets for [projectId].
   static String projectDatasets(String projectId) =>
-      '${project(projectId)}/datasets';
+      RoutePaths.projectDatasets(projectId);
 
   /// Context hierarchy editor for [projectId].
   static String projectContext(String projectId) =>
-      '${project(projectId)}/context';
+      RoutePaths.projectContext(projectId);
+
+  /// Templates attached to [projectId], preserving the project branch stack.
+  static String projectTemplates(String projectId) =>
+      RoutePaths.projectTemplates(projectId);
 
   /// Context presets for [projectId].
   static String projectContextPresets(String projectId) =>
@@ -157,19 +164,18 @@ abstract final class AppRoutes {
 
   /// Dataset import for [projectId].
   static String projectDatasetImport(String projectId) =>
-      '${projectDatasets(projectId)}/import';
+      RoutePaths.projectDatasetImport(projectId);
 
   /// Dataset browser for [datasetId] in [projectId].
   static String projectDataset(String projectId, String datasetId) =>
-      '${projectDatasets(projectId)}/${Uri.encodeComponent(datasetId)}';
+      RoutePaths.projectDataset(projectId, datasetId);
 
   /// Row editor for [rowId] in [datasetId] / [projectId].
   static String projectDatasetRow(
     String projectId,
     String datasetId,
     String rowId,
-  ) =>
-      '${projectDataset(projectId, datasetId)}/rows/${Uri.encodeComponent(rowId)}';
+  ) => RoutePaths.projectDatasetRow(projectId, datasetId, rowId);
 
   /// JSON export for [id]. Task 100 owns the screen.
   static String templateExport(String id) => '${template(id)}/export';
@@ -225,24 +231,25 @@ abstract final class AppRoutes {
 
   /// Unprocessed-queue destination the status line opens. Nested under
   /// [more] so Settings stays in the branch stack. Task 159 owns the screen.
-  static const String queue = '$more/queue';
+  static const String queue = RoutePaths.queue;
 
   /// Export history. Nested under [more]. Task 207 owns the screen.
-  static const String exports = '$more/exports';
+  static const String exports = RoutePaths.exports;
 
   /// Records list for [projectId].
   static String projectRecords(String projectId) =>
-      '${project(projectId)}/records';
+      RoutePaths.projectRecords(projectId);
 
   /// Unprocessed queue for [projectId].
-  static String projectQueue(String projectId) => '${project(projectId)}/queue';
+  static String projectQueue(String projectId) =>
+      RoutePaths.projectQueue(projectId);
 
   /// Export history for [projectId].
   static String projectExports(String projectId) =>
-      '${project(projectId)}/exports';
+      RoutePaths.projectExports(projectId);
 
   /// Query key for a filtered list opened from a home count.
-  static const String filterQuery = 'filter';
+  static const String filterQuery = RoutePaths.filterQuery;
 
   /// Review list filter: records that need a person.
   static const String reviewFilter = 'needsReview';
@@ -305,34 +312,34 @@ abstract final class AppRoutes {
   }
 
   /// Operator profile under Settings.
-  static const String settingsOperator = '$more/operator';
+  static const String settingsOperator = RoutePaths.settingsOperator;
 
   /// Capture defaults under Settings.
-  static const String settingsCapture = '$more/capture';
+  static const String settingsCapture = RoutePaths.settingsCapture;
 
   /// AI section. The screen arrives in a later phase.
-  static const String settingsAi = '$more/ai';
+  static const String settingsAi = RoutePaths.settingsAi;
 
   /// Language section. The screen arrives in a later phase.
-  static const String settingsLanguage = '$more/language';
+  static const String settingsLanguage = RoutePaths.settingsLanguage;
 
   /// Appearance under Settings: system, light, dark or outdoor.
-  static const String settingsAppearance = '$more/appearance';
+  static const String settingsAppearance = RoutePaths.settingsAppearance;
 
   /// Storage usage under Settings.
-  static const String settingsStorage = '$more/storage';
+  static const String settingsStorage = RoutePaths.settingsStorage;
 
   /// Files section (specification "Data"). The screen arrives later.
-  static const String settingsFiles = '$more/files';
+  static const String settingsFiles = RoutePaths.settingsFiles;
 
   /// App lock under Settings.
-  static const String settingsSecurity = '$more/security';
+  static const String settingsSecurity = RoutePaths.settingsSecurity;
 
   /// About under Settings.
-  static const String settingsAbout = '$more/about';
+  static const String settingsAbout = RoutePaths.settingsAbout;
 
   /// Open-source licences under About.
-  static const String settingsLicences = '$settingsAbout/licences';
+  static const String settingsLicences = RoutePaths.settingsLicences;
 }
 
 /// The process-wide router. Kept alive: the shell watches it on every frame
@@ -511,6 +518,13 @@ List<RouteBase> get _routes {
                       ],
                     ),
                     GoRoute(
+                      path: 'templates',
+                      metadata: _projectScoped,
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const TemplateListScreen();
+                      },
+                    ),
+                    GoRoute(
                       path: 'datasets',
                       metadata: _projectScoped,
                       builder: (BuildContext context, GoRouterState state) {
@@ -636,10 +650,15 @@ List<RouteBase> get _routes {
                   },
                 ),
                 GoRoute(
-                  path: 'provider-key',
+                  path: 'ai',
                   builder: (BuildContext _, GoRouterState _) {
-                    return const _ApiKeyRoute();
+                    return const _AiProviderRoute();
                   },
+                ),
+                GoRoute(
+                  path: 'provider-key',
+                  redirect: (BuildContext _, GoRouterState _) =>
+                      AppRoutes.settingsAi,
                 ),
                 GoRoute(
                   path: 'about',
@@ -824,12 +843,14 @@ List<RouteBase> get _routes {
   return routes;
 }
 
-class _ApiKeyRoute extends ConsumerWidget {
-  const _ApiKeyRoute();
+class _AiProviderRoute extends ConsumerWidget {
+  const _AiProviderRoute();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ApiKeyScreen(settings: ref.watch(projectSettingsStoreProvider));
+    return AiProviderSettingsScreen(
+      settings: ref.watch(projectSettingsStoreProvider),
+    );
   }
 }
 

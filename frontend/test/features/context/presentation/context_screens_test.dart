@@ -72,17 +72,29 @@ void main() {
   testWidgets('hierarchy shows zero levels and a repository write failure', (
     WidgetTester tester,
   ) async {
+    final FakeTemplateRepository templates = FakeTemplateRepository();
+    addTearDown(templates.dispose);
     await tester.pumpWidget(
-      wrap(const ContextHierarchyScreen(projectId: 'p1')),
+      wrap(
+        const ContextHierarchyScreen(projectId: 'p1'),
+        extra: <Override>[
+          templateRepositoryProvider.overrideWith((Ref _) => templates),
+        ],
+      ),
     );
     await tester.pumpAndSettle();
-    expect(find.text(Copy.contextHierarchyEmptyHeadline), findsOneWidget);
+    expect(find.text(Copy.contextNoTemplatesHeadline), findsOneWidget);
 
     await repo.saveHierarchy('p1', const <ContextLevel>[
       ContextLevel(fieldKey: 'a', order: 0, label: 'A'),
     ]);
     await tester.pumpWidget(
-      wrap(const ContextHierarchyScreen(projectId: 'p1')),
+      wrap(
+        const ContextHierarchyScreen(projectId: 'p1'),
+        extra: <Override>[
+          templateRepositoryProvider.overrideWith((Ref _) => templates),
+        ],
+      ),
     );
     await tester.pumpAndSettle();
     repo.hierarchyFailure = const StorageFailure(

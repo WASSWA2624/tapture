@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/ai/ai_service.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -7,11 +8,17 @@ import 'package:tapture/core/errors/result.dart';
 /// An entry records where its key lives. It never holds the key. The default
 /// entry is the organisation's backend proxy, which holds none.
 final class ProviderRegistry {
-  /// Creates a registry. [entries] must include [backendId].
+  /// Creates a registry from typed [descriptors]. [entries] remains as a
+  /// compatibility seam for small domain tests.
   ProviderRegistry({
-    required this._entries,
+    Map<String, RegistryEntry>? entries,
+    List<ProviderDescriptor>? descriptors,
     Map<String, Map<AiOperation, String>>? selection,
-  }) : _selection = selection ?? const <String, Map<AiOperation, String>>{} {
+  }) : _entries = Map<String, RegistryEntry>.unmodifiable(
+         entries ?? _entriesFrom(descriptors ?? const []),
+       ),
+       _catalog = _catalogFrom(entries, descriptors),
+       _selection = _freezeSelection(selection) {
     if (!_entries.containsKey(backendId)) {
       throw ArgumentError.value(
         _entries.keys,
@@ -19,23 +26,73 @@ final class ProviderRegistry {
         'The keyless backend provider is required.',
       );
     }
+    final Set<String> ids = <String>{};
+    for (final ProviderDescriptor descriptor in _catalog) {
+      if (!ids.add(descriptor.id)) {
+        throw ArgumentError.value(descriptor.id, 'descriptors', 'Duplicate id');
+      }
+      final Set<String> models = <String>{};
+      for (final ModelDescriptor model in descriptor.models) {
+        if (!models.add(model.id)) {
+          throw ArgumentError.value(model.id, 'models', 'Duplicate model id');
+        }
+      }
+      for (final AiOperation operation in descriptor.operations) {
+        if (!descriptor.models.any(
+          (ModelDescriptor model) => model.operations.contains(operation),
+        )) {
+          throw ArgumentError.value(
+            operation,
+            'models',
+            'Every provider operation needs a model',
+          );
+        }
+      }
+      if (descriptor.keyCustody == ProviderKeyCustody.backend &&
+          descriptor.deviceKeyAllowed) {
+        throw ArgumentError.value(
+          descriptor.id,
+          'deviceKeyAllowed',
+          'Backend-held providers cannot accept a device credential',
+        );
+      }
+    }
   }
 
   /// Id of the keyless organisation proxy.
   static const String backendId = 'backend';
 
   final Map<String, RegistryEntry> _entries;
+  final List<ProviderDescriptor> _catalog;
   final Map<String, Map<AiOperation, String>> _selection;
 
   /// A registry whose only entry is the keyless proxy.
   factory ProviderRegistry.keyless({AiService? proxy}) {
     final AiService service = proxy ?? const AiService.unavailable();
     return ProviderRegistry(
-      entries: <String, RegistryEntry>{
-        backendId: (id: backendId, keyHeldByBackend: true, service: service),
-      },
+      descriptors: <ProviderDescriptor>[
+        ProviderDescriptor(
+          id: backendId,
+          label: 'Organisation backend',
+          operations: AiOperation.values.toSet(),
+          keyCustody: ProviderKeyCustody.backend,
+          deviceKeyAllowed: false,
+          available: service.isAvailable,
+          service: service,
+          models: <ModelDescriptor>[
+            ModelDescriptor(
+              id: 'default',
+              label: 'Organisation default',
+              operations: AiOperation.values.toSet(),
+            ),
+          ],
+        ),
+      ],
     );
   }
+
+  /// Ordered, immutable presentation catalogue.
+  List<ProviderDescriptor> get catalog => _catalog;
 
   /// The implementation for [projectId] and [operation].
   ///
@@ -43,9 +100,48 @@ final class ProviderRegistry {
   AiService resolve({
     required String projectId,
     required AiOperation operation,
+    String? providerId,
   }) {
-    final String id = _selection[projectId]?[operation] ?? backendId;
+    final String id =
+        providerId ?? _selection[projectId]?[operation] ?? backendId;
     return (_entries[id] ?? _entries[backendId]!).service;
+  }
+
+  /// Returns a valid provider/model choice, falling back to the backend
+  /// without erasing the unavailable saved ids held by SettingsStore.
+  ({ProviderDescriptor provider, ModelDescriptor model, bool fellBack})
+  validateSelection({
+    required String providerId,
+    required String modelId,
+    required AiOperation operation,
+  }) {
+    ProviderDescriptor provider = _catalog.firstWhere(
+      (ProviderDescriptor value) => value.id == providerId,
+      orElse: () => _catalog.firstWhere(
+        (ProviderDescriptor value) => value.id == backendId,
+      ),
+    );
+    bool fellBack =
+        provider.id != providerId ||
+        !provider.operations.contains(operation) ||
+        !provider.available;
+    if (fellBack) {
+      provider = _catalog.firstWhere(
+        (ProviderDescriptor value) => value.id == backendId,
+      );
+    }
+    final List<ModelDescriptor> models = provider.models
+        .where((ModelDescriptor value) => value.operations.contains(operation))
+        .toList(growable: false);
+    if (models.isEmpty) {
+      throw ArgumentError.value(operation, 'operation', 'No supported model');
+    }
+    final ModelDescriptor model = models.firstWhere(
+      (ModelDescriptor value) => value.id == modelId,
+      orElse: () => models.first,
+    );
+    fellBack = fellBack || model.id != modelId;
+    return (provider: provider, model: model, fellBack: fellBack);
   }
 
   /// Whether [id] keeps its key on the backend. Missing entries do.
@@ -55,12 +151,20 @@ final class ProviderRegistry {
 
   /// Smallest call the test action may make. Reports the three outcomes.
   Future<ProviderTestOutcome> testConnection(AiService service) async {
+    if (!service.isAvailable) {
+      return ProviderTestOutcome.unavailable;
+    }
     final Result<ReadTextResult> result = await service.readText(
       const ReadTextRequest(imagePaths: <String>[]),
     );
     return result.fold(_outcome, (_) => ProviderTestOutcome.success);
   }
 }
+
+/// Application provider/model catalogue. Bootstrap replaces the unavailable
+/// keyless stand-in with the same registry used by processing.
+final Provider<ProviderRegistry> providerRegistryProvider =
+    Provider<ProviderRegistry>((Ref _) => ProviderRegistry.keyless());
 
 /// Which operation a project is selecting a provider for.
 enum AiOperation {
@@ -77,6 +181,107 @@ enum AiOperation {
   transcribe,
 }
 
+/// Where credentials for a provider are held.
+enum ProviderKeyCustody {
+  /// Organisation backend holds the credential.
+  backend,
+
+  /// The credential is held in this device's secure storage.
+  device,
+}
+
+/// One model exposed by a provider for selected operations.
+final class ModelDescriptor {
+  /// Creates model metadata.
+  factory ModelDescriptor({
+    required String id,
+    required String label,
+    required Set<AiOperation> operations,
+  }) {
+    return ModelDescriptor._(
+      id: id,
+      label: label,
+      operations: Set<AiOperation>.unmodifiable(operations),
+    );
+  }
+
+  const ModelDescriptor._({
+    required this.id,
+    required this.label,
+    required this.operations,
+  });
+
+  /// Stable wire id.
+  final String id;
+
+  /// Operator-facing name.
+  final String label;
+
+  /// Operations supported by this model.
+  final Set<AiOperation> operations;
+}
+
+/// Registry-owned provider presentation and resolution metadata.
+final class ProviderDescriptor {
+  /// Creates a provider descriptor.
+  factory ProviderDescriptor({
+    required String id,
+    required String label,
+    required Set<AiOperation> operations,
+    required ProviderKeyCustody keyCustody,
+    required bool deviceKeyAllowed,
+    required bool available,
+    required AiService service,
+    required List<ModelDescriptor> models,
+  }) {
+    return ProviderDescriptor._(
+      id: id,
+      label: label,
+      operations: Set<AiOperation>.unmodifiable(operations),
+      keyCustody: keyCustody,
+      deviceKeyAllowed: deviceKeyAllowed,
+      available: available,
+      service: service,
+      models: List<ModelDescriptor>.unmodifiable(models),
+    );
+  }
+
+  const ProviderDescriptor._({
+    required this.id,
+    required this.label,
+    required this.operations,
+    required this.keyCustody,
+    required this.deviceKeyAllowed,
+    required this.available,
+    required this.service,
+    required this.models,
+  });
+
+  /// Stable wire id.
+  final String id;
+
+  /// Operator-facing name.
+  final String label;
+
+  /// Supported operations.
+  final Set<AiOperation> operations;
+
+  /// Credential custody boundary.
+  final ProviderKeyCustody keyCustody;
+
+  /// Whether administrators explicitly permit a device-held key.
+  final bool deviceKeyAllowed;
+
+  /// Whether this descriptor can currently resolve work.
+  final bool available;
+
+  /// Service implementation. Credentials are not stored here.
+  final AiService service;
+
+  /// Ordered model catalogue.
+  final List<ModelDescriptor> models;
+}
+
 /// Where an entry's key lives, and the service it resolves to.
 typedef RegistryEntry = ({String id, bool keyHeldByBackend, AiService service});
 
@@ -90,6 +295,12 @@ enum ProviderTestOutcome {
 
   /// The network failed.
   network,
+
+  /// The descriptor is registered but not currently available.
+  unavailable,
+
+  /// Provider or model selection is invalid.
+  validation,
 }
 
 ProviderTestOutcome _outcome(Failure failure) {
@@ -104,4 +315,60 @@ ProviderTestOutcome _outcome(Failure failure) {
     return ProviderTestOutcome.authentication;
   }
   return ProviderTestOutcome.network;
+}
+
+Map<String, RegistryEntry> _entriesFrom(List<ProviderDescriptor> descriptors) {
+  return <String, RegistryEntry>{
+    for (final ProviderDescriptor descriptor in descriptors)
+      descriptor.id: (
+        id: descriptor.id,
+        keyHeldByBackend: descriptor.keyCustody == ProviderKeyCustody.backend,
+        service: descriptor.service,
+      ),
+  };
+}
+
+List<ProviderDescriptor> _catalogFrom(
+  Map<String, RegistryEntry>? entries,
+  List<ProviderDescriptor>? descriptors,
+) {
+  if (descriptors != null) {
+    return List<ProviderDescriptor>.unmodifiable(descriptors);
+  }
+  return List<ProviderDescriptor>.unmodifiable(<ProviderDescriptor>[
+    for (final RegistryEntry entry in entries?.values ?? const [])
+      ProviderDescriptor(
+        id: entry.id,
+        label: entry.id,
+        operations: AiOperation.values.toSet(),
+        keyCustody: entry.keyHeldByBackend
+            ? ProviderKeyCustody.backend
+            : ProviderKeyCustody.device,
+        deviceKeyAllowed: !entry.keyHeldByBackend,
+        available: entry.service.isAvailable,
+        service: entry.service,
+        models: <ModelDescriptor>[
+          ModelDescriptor(
+            id: 'default',
+            label: 'Default',
+            operations: AiOperation.values.toSet(),
+          ),
+        ],
+      ),
+  ]);
+}
+
+Map<String, Map<AiOperation, String>> _freezeSelection(
+  Map<String, Map<AiOperation, String>>? selection,
+) {
+  if (selection == null) {
+    return const <String, Map<AiOperation, String>>{};
+  }
+  return Map<String, Map<AiOperation, String>>.unmodifiable(
+    <String, Map<AiOperation, String>>{
+      for (final MapEntry<String, Map<AiOperation, String>> entry
+          in selection.entries)
+        entry.key: Map<AiOperation, String>.unmodifiable(entry.value),
+    },
+  );
 }

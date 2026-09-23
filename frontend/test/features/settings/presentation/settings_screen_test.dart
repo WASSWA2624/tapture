@@ -10,6 +10,7 @@ import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/theme_controller.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/files/files.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
@@ -17,7 +18,7 @@ import 'package:tapture/features/settings/presentation/appearance_settings_scree
 import 'package:tapture/features/settings/presentation/settings_screen.dart';
 
 void main() {
-  testWidgets('the root lists every section as one tile', (
+  testWidgets('the root lists exactly seven destinations in four groups', (
     WidgetTester tester,
   ) async {
     await _pump(tester);
@@ -25,15 +26,22 @@ void main() {
 
     expect(find.text(Copy.operatorProfileTitle), findsOneWidget);
     expect(find.text(Copy.navCapture), findsOneWidget);
-    expect(find.text(Copy.navTemplates), findsOneWidget);
-    expect(find.text(Copy.navQueue), findsOneWidget);
     expect(find.text(Copy.settingsAiTitle), findsOneWidget);
-    expect(find.text(Copy.settingsLanguageTitle), findsOneWidget);
     expect(find.text(Copy.settingsAppearanceTitle), findsOneWidget);
     expect(find.text(Copy.settingsStorageTitle), findsOneWidget);
-    expect(find.text(Copy.settingsFilesTitle), findsOneWidget);
     expect(find.text(Copy.settingsSecurityTitle), findsOneWidget);
-    expect(find.text(Copy.settingsAboutTitle), findsOneWidget);
+    expect(find.text(Copy.settingsAboutTitle), findsWidgets);
+    expect(find.byType(AppListTile), findsNWidgets(7));
+
+    expect(find.text(Copy.navTemplates), findsNothing);
+    expect(find.text(Copy.navQueue), findsNothing);
+    expect(find.text(Copy.settingsLanguageTitle), findsNothing);
+    expect(find.text(Copy.settingsFilesTitle), findsNothing);
+
+    expect(find.text(Copy.settingsGroupProfileCapture), findsOneWidget);
+    expect(find.text(Copy.settingsGroupIntelligenceAppearance), findsOneWidget);
+    expect(find.text(Copy.settingsGroupStorageSecurity), findsOneWidget);
+    expect(find.text(Copy.settingsGroupAbout), findsWidgets);
   });
 
   testWidgets('loading renders through AsyncValueView', (
@@ -81,7 +89,7 @@ void main() {
     expect(find.byType(AppErrorState), findsOneWidget);
   });
 
-  testWidgets('Appearance follows Language and opens the screen', (
+  testWidgets('Appearance follows AI and opens the screen', (
     WidgetTester tester,
   ) async {
     final GoRouter router = GoRouter(
@@ -120,7 +128,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(
-      tester.getTopLeft(find.text(Copy.settingsLanguageTitle)).dy,
+      tester.getTopLeft(find.text(Copy.settingsAiTitle)).dy,
       lessThan(tester.getTopLeft(find.text(Copy.settingsAppearanceTitle)).dy),
     );
     expect(

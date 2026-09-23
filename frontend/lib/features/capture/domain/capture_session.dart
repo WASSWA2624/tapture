@@ -1,3 +1,4 @@
+import 'audio_draft.dart';
 import 'photo_draft.dart';
 
 /// In-progress capture: evidence, captions and typed values for one record.
@@ -13,6 +14,7 @@ final class CaptureSession {
     this.projectId = '',
     this.recordId,
     this.photos = const <PhotoDraft>[],
+    this.audio = const <AudioDraft>[],
     this.captions = const <String, String>{},
     this.values = const <String, Object?>{},
     this.isDirty = false,
@@ -36,6 +38,9 @@ final class CaptureSession {
   /// Photos in tray order.
   final List<PhotoDraft> photos;
 
+  /// Durable audio evidence waiting to be linked to the record.
+  final List<AudioDraft> audio;
+
   /// Caption text keyed by photo id, plus `''` or `record` for the record
   /// caption.
   final Map<String, String> captions;
@@ -50,7 +55,7 @@ final class CaptureSession {
   String get recordCaption => captions[''] ?? captions['record'] ?? '';
 
   /// Whether at least one photo or document is present.
-  bool get hasEvidence => photos.isNotEmpty;
+  bool get hasEvidence => photos.isNotEmpty || audio.isNotEmpty;
 
   /// JSON for interrupted-session recovery.
   Map<String, Object?> toJson() {
@@ -62,6 +67,9 @@ final class CaptureSession {
       'recordId': recordId,
       'photos': <Map<String, Object?>>[
         for (final PhotoDraft photo in photos) photo.toJson(),
+      ],
+      'audio': <Map<String, Object?>>[
+        for (final AudioDraft clip in audio) clip.toJson(),
       ],
       'captions': captions,
       'values': values,
@@ -83,6 +91,11 @@ final class CaptureSession {
       }
     }
     final Object? captionsRaw = json['captions'];
+    final List<AudioDraft> audio = <AudioDraft>[
+      for (final Object? row
+          in json['audio'] as List<Object?>? ?? const <Object?>[])
+        if (row is Map) AudioDraft.fromJson(Map<String, Object?>.from(row)),
+    ];
     final Map<String, String> captions = <String, String>{};
     if (captionsRaw is Map) {
       captionsRaw.forEach((Object? key, Object? value) {
@@ -116,6 +129,7 @@ final class CaptureSession {
       contextSnapshot: context,
       recordId: json['recordId'] as String?,
       photos: photos,
+      audio: audio,
       captions: captions,
       values: values,
       isDirty: json['isDirty'] as bool? ?? false,
@@ -131,6 +145,7 @@ final class CaptureSession {
     String? recordId,
     bool clearRecordId = false,
     List<PhotoDraft>? photos,
+    List<AudioDraft>? audio,
     Map<String, String>? captions,
     Map<String, Object?>? values,
     bool? isDirty,
@@ -142,6 +157,7 @@ final class CaptureSession {
       contextSnapshot: contextSnapshot ?? this.contextSnapshot,
       recordId: clearRecordId ? null : (recordId ?? this.recordId),
       photos: photos ?? this.photos,
+      audio: audio ?? this.audio,
       captions: captions ?? this.captions,
       values: values ?? this.values,
       isDirty: isDirty ?? this.isDirty,

@@ -1,6 +1,6 @@
 # Tapture — task index
 
-61 implementation prompts across 25 phases. Work top to bottom.
+62 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task. Phases 01 to 25 are one
 task each except phase 23, which still holds the leftover field-feedback extras. Old numbers are listed in
@@ -179,6 +179,7 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 - [x] [059 — Show a single feedback image as a thumbnail](23-hardening/059-show-single-feedback-image-as-thumbnail.md)
 - [x] [060 — Borderless overflow menus](23-hardening/060-borderless-overflow-menus.md)
 - [x] [061 — Resolve shell, settings and capture feedback](23-hardening/061-resolve-shell-capture-feedback.md)
+- [ ] [062 — Resolve feedback archive 23092026-1635](23-hardening/062-resolve-feedback-23092026.md)
 
 ## 24 — The minimal backend
 

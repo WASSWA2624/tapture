@@ -1,9 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/text_store.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/capture/data/photo_repository_impl.dart';
+import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
 import 'package:tapture/features/capture/domain/capture_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_reset.dart';
@@ -67,8 +70,11 @@ final class CaptureController extends Notifier<CaptureSession> {
   }
 
   /// Adds [photo] after durable write.
-  Future<Result<void>> addPhoto(PhotoDraft photo) async {
-    final Result<PhotoDraft> saved = await _persistence.savePhoto(photo);
+  Future<Result<void>> addPhoto(PhotoDraft photo, {Uint8List? bytes}) async {
+    final Result<PhotoDraft> saved = await _persistence.savePhoto(
+      photo,
+      bytes: bytes,
+    );
     return saved.fold(FailureResult<void>.new, (PhotoDraft stored) async {
       final CaptureSession next = state.copyWith(
         photos: <PhotoDraft>[...state.photos, stored],
@@ -79,6 +85,20 @@ final class CaptureController extends Notifier<CaptureSession> {
         state = next;
         return const Success<void>(null);
       });
+    });
+  }
+
+  /// Adds an already-flushed audio clip and persists recovery state before it
+  /// appears in the capture session.
+  Future<Result<void>> addAudio(AudioDraft clip) async {
+    final CaptureSession next = state.copyWith(
+      audio: <AudioDraft>[...state.audio, clip],
+      isDirty: true,
+    );
+    final Result<void> saved = await _persistence.saveSession(next);
+    return saved.fold(FailureResult<void>.new, (_) {
+      state = next;
+      return const Success<void>(null);
     });
   }
 
@@ -278,13 +298,18 @@ final class CaptureController extends Notifier<CaptureSession> {
   Future<Result<String>> saveRaw(
     Future<Result<String>> Function(CaptureSession session) persist,
   ) async {
+    final String? committedId = state.recordId;
+    if (committedId != null) {
+      final Result<void> completed = await _completeSave(committedId);
+      return completed.map((_) => committedId);
+    }
     final Result<String> saved = await SaveRaw.run(
       session: state,
       persist: persist,
     );
     return saved.fold(FailureResult<String>.new, (String recordId) async {
-      await _afterSave(recordId);
-      return Success<String>(recordId);
+      final Result<void> completed = await _completeSave(recordId);
+      return completed.map((_) => recordId);
     });
   }
 
@@ -301,18 +326,50 @@ final class CaptureController extends Notifier<CaptureSession> {
     return saved.fold(FailureResult<SaveAndAnalyseResult>.new, (
       SaveAndAnalyseResult result,
     ) async {
-      await _afterSave(result.recordId);
-      return Success<SaveAndAnalyseResult>(result);
+      if (result.enqueueFailed) {
+        final CaptureSession committed = state.copyWith(
+          recordId: result.recordId,
+          isDirty: false,
+        );
+        // The raw record transaction is already durable. Keep that fact in
+        // memory even if checkpointing the resumable session fails, so Retry
+        // never attempts another raw write in this process.
+        state = committed;
+        final Result<void> persisted = await _persistence.saveSession(
+          committed,
+        );
+        return persisted.fold(
+          FailureResult<SaveAndAnalyseResult>.new,
+          (_) => Success<SaveAndAnalyseResult>(result),
+        );
+      }
+      final Result<void> completed = await _completeSave(result.recordId);
+      return completed.map((_) => result);
     });
   }
 
-  Future<void> _afterSave(String recordId) async {
+  Future<Result<void>> _completeSave(String recordId) async {
+    final CaptureSession committed = state.copyWith(
+      recordId: recordId,
+      isDirty: false,
+    );
+    // The record transaction has committed at this point. Reflect it locally
+    // before checkpoint/cleanup so a retry cannot duplicate raw evidence.
+    state = committed;
+    final Result<void> checkpoint = await _persistence.saveSession(committed);
+    if (checkpoint case FailureResult<void>()) {
+      return checkpoint;
+    }
+    final Result<void> cleared = await _persistence.clearSession(projectId);
+    if (cleared case FailureResult<void>()) {
+      return cleared;
+    }
     final CaptureSession next = CaptureReset.next(
-      previous: state.copyWith(recordId: recordId, isDirty: false),
+      previous: committed,
       ids: _ids,
     );
-    await _persistence.clearSession();
     state = next;
+    return const Success<void>(null);
   }
 
   /// Discards the interrupted session after confirm.
@@ -320,7 +377,7 @@ final class CaptureController extends Notifier<CaptureSession> {
     for (final PhotoDraft photo in state.photos) {
       await _persistence.deletePhoto(photo.id, reason: 'session-discard');
     }
-    await _persistence.clearSession();
+    await _persistence.clearSession(projectId);
     state = CaptureSession(
       id: _ids.newId(),
       projectId: projectId,

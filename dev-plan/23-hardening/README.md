@@ -41,3 +41,4 @@ Task 023, then 026–061 (37). Task 023 is one prompt for the hardening pass; 02
 - [x] [059 — Show a single feedback image as a thumbnail](059-show-single-feedback-image-as-thumbnail.md)
 - [x] [060 — Borderless overflow menus](060-borderless-overflow-menus.md)
 - [x] [061 — Resolve shell, settings and capture feedback](061-resolve-shell-capture-feedback.md)
+- [ ] [062 — Resolve feedback archive 23092026-1635](062-resolve-feedback-23092026.md)

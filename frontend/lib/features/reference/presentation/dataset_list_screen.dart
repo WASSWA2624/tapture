@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
@@ -83,10 +84,9 @@ final datasetListProvider = StreamProvider.autoDispose
     }, retry: (int _, Object _) => null);
 
 String _importLocation(String projectId) {
-  return '/projects/${Uri.encodeComponent(projectId)}/datasets/import';
+  return RoutePaths.projectDatasetImport(projectId);
 }
 
 String _browserLocation(String projectId, String datasetId) {
-  return '/projects/${Uri.encodeComponent(projectId)}/datasets/'
-      '${Uri.encodeComponent(datasetId)}';
+  return RoutePaths.projectDataset(projectId, datasetId);
 }

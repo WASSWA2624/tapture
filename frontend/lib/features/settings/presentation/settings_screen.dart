@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
@@ -47,18 +48,21 @@ class SettingsScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               const OfflineSwitch(),
-              const AppSectionHeader(title: Copy.settingsTitle),
-              for (final _Section section in sections)
+              for (int index = 0; index < sections.length; index++) ...<Widget>[
+                if (index == 0 ||
+                    sections[index - 1].group != sections[index].group)
+                  AppSectionHeader(title: sections[index].group),
                 AppListTile(
-                  title: section.title,
-                  subtitle: section.subtitle,
-                  trailing: section.route == null
+                  title: sections[index].title,
+                  subtitle: sections[index].subtitle,
+                  trailing: sections[index].route == null
                       ? null
                       : const Icon(Icons.chevron_right),
-                  onTap: section.route == null
+                  onTap: sections[index].route == null
                       ? null
-                      : () => context.go(section.route!),
+                      : () => context.go(sections[index].route!),
                 ),
+              ],
             ],
           );
         },
@@ -83,6 +87,7 @@ Override settingsScreenOverride({
               title: section.title,
               subtitle: section.subtitle,
               route: section.route,
+              group: Copy.settingsGroupAbout,
             ),
           )
           .toList();
@@ -102,7 +107,12 @@ final FutureProvider<List<_Section>> settingsSectionsProvider =
       retry: (int _, Object _) => null,
     );
 
-typedef _Section = ({String title, String subtitle, String? route});
+typedef _Section = ({
+  String title,
+  String subtitle,
+  String? route,
+  String group,
+});
 
 Object _asError(Object error) {
   if (error is Exception || error is Error) {
@@ -111,72 +121,47 @@ Object _asError(Object error) {
   return Exception(error.toString());
 }
 
-/// Must match [AppRoutes] settings paths. This file cannot import
-/// `router.dart` — the router imports the settings barrel.
-const String _operatorRoute = '/more/operator';
-const String _captureRoute = '/more/capture';
-const String _appearanceRoute = '/more/appearance';
-const String _storageRoute = '/more/storage';
-const String _securityRoute = '/more/security';
-const String _aboutRoute = '/more/about';
-const String _templatesRoute = '/more/templates';
-const String _queueRoute = '/more/queue';
-const String _providerRoute = '/more/provider-key';
-
 const List<_Section> _defaultSections = <_Section>[
   (
     title: Copy.operatorProfileTitle,
     subtitle: Copy.settingsOperatorSubtitle,
-    route: _operatorRoute,
+    route: RoutePaths.settingsOperator,
+    group: Copy.settingsGroupProfileCapture,
   ),
   (
     title: Copy.navCapture,
     subtitle: Copy.settingsCaptureSubtitle,
-    route: _captureRoute,
-  ),
-  (
-    title: Copy.navTemplates,
-    subtitle: Copy.settingsTemplatesSubtitle,
-    route: _templatesRoute,
-  ),
-  (
-    title: Copy.navQueue,
-    subtitle: Copy.settingsQueueSubtitle,
-    route: _queueRoute,
+    route: RoutePaths.settingsCapture,
+    group: Copy.settingsGroupProfileCapture,
   ),
   (
     title: Copy.settingsAiTitle,
     subtitle: Copy.settingsAiSubtitle,
-    route: _providerRoute,
-  ),
-  (
-    title: Copy.settingsLanguageTitle,
-    subtitle: Copy.settingsLanguageSubtitle,
-    route: null,
+    route: RoutePaths.settingsAi,
+    group: Copy.settingsGroupIntelligenceAppearance,
   ),
   (
     title: Copy.settingsAppearanceTitle,
     subtitle: Copy.settingsAppearanceSubtitle,
-    route: _appearanceRoute,
+    route: RoutePaths.settingsAppearance,
+    group: Copy.settingsGroupIntelligenceAppearance,
   ),
   (
     title: Copy.settingsStorageTitle,
     subtitle: Copy.settingsStorageSubtitle,
-    route: _storageRoute,
-  ),
-  (
-    title: Copy.settingsFilesTitle,
-    subtitle: Copy.settingsFilesSubtitle,
-    route: null,
+    route: RoutePaths.settingsStorage,
+    group: Copy.settingsGroupStorageSecurity,
   ),
   (
     title: Copy.settingsSecurityTitle,
     subtitle: Copy.settingsSecuritySubtitle,
-    route: _securityRoute,
+    route: RoutePaths.settingsSecurity,
+    group: Copy.settingsGroupStorageSecurity,
   ),
   (
     title: Copy.settingsAboutTitle,
     subtitle: Copy.settingsAboutSubtitle,
-    route: _aboutRoute,
+    route: RoutePaths.settingsAbout,
+    group: Copy.settingsGroupAbout,
   ),
 ];

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/shell_destination.dart';
 import 'package:tapture/app/shell_title.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
@@ -42,6 +43,7 @@ class StatusLine extends ConsumerWidget {
     final Color ink = inverted ? colors.onPrimary : colors.onSurface;
     final Uri uri = GoRouterState.of(context).uri;
     final bool root = ShellTitle.isRoot(uri);
+    final ShellDestination? destination = shellDestinationFor(uri);
     final String fallback = ShellTitle.screen(ref, uri);
     final ({
       String title,
@@ -92,6 +94,12 @@ class StatusLine extends ConsumerWidget {
                       onPressed: () => _back(context),
                     ),
                   if (!root) const SizedBox(width: Space.x2),
+                  if (root && destination != null) ...<Widget>[
+                    ExcludeSemantics(
+                      child: Icon(destination.icon, size: Space.x6),
+                    ),
+                    const SizedBox(width: Space.x2),
+                  ],
                   Expanded(
                     child: Text(
                       title,

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:tapture/core/errors/result.dart';
 
 import 'capture_session.dart';
@@ -10,7 +12,7 @@ abstract interface class CapturePersistence {
   PhotoRepository get photos;
 
   /// Persists [photo] before the session emits.
-  Future<Result<PhotoDraft>> savePhoto(PhotoDraft photo);
+  Future<Result<PhotoDraft>> savePhoto(PhotoDraft photo, {Uint8List? bytes});
 
   /// Tombstones [photoId].
   Future<Result<void>> deletePhoto(String photoId, {required String reason});
@@ -19,8 +21,8 @@ abstract interface class CapturePersistence {
   Future<Result<void>> saveSession(CaptureSession session);
 
   /// Loads an interrupted session, or null when none.
-  Future<Result<CaptureSession?>> loadSession();
+  Future<Result<CaptureSession?>> loadSession(String projectId);
 
   /// Clears interrupted session storage.
-  Future<Result<void>> clearSession();
+  Future<Result<void>> clearSession(String projectId);
 }

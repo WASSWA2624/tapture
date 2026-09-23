@@ -35,6 +35,10 @@ packages:
     version: ^12.0.3
     purpose: Runtime camera, microphone, location and storage requests. Reached only through permissions_service (FE-STR-11). Replaces a hand-rolled permission channel.
     task: "026"
+  record:
+    version: ^7.1.1
+    purpose: Streams microphone evidence through AudioRecorderService into the atomic project FileWriter. BSD-3-Clause. Replaces the unavailable production recorder stand-in.
+    task: "062"
   share_plus:
     version: ^12.0.2
     purpose: System share/open chooser for a file copy on Android and iOS, reached only through DownloadService.openExternally (FE-STR-11). BSD-3-Clause. Replaces adding open_file or url_launcher for the same hand-off.

@@ -32,6 +32,8 @@ kUpgradeSteps = <int, _UpgradeStep>{
   14: migrateToV14,
   15: migrateToV15,
   16: migrateToV16,
+  17: migrateToV17,
+  18: migrateToV18,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -283,6 +285,17 @@ Future<void> migrateToV16(Migrator migrator, AppDatabase db) async {
   if (recordColumns.isNotEmpty && !recordColumns.contains('row_match_score')) {
     await migrator.addColumn(db.records, db.records.rowMatchScore);
   }
+}
+
+/// Schema version 17: project-scoped interrupted capture sessions.
+Future<void> migrateToV17(Migrator migrator, AppDatabase db) async {
+  await migrator.createTable(db.captureSessions);
+}
+
+/// Schema version 18: record and photo ownership for project attachments.
+Future<void> migrateToV18(Migrator migrator, AppDatabase db) async {
+  await migrator.createTable(db.attachmentOwners);
+  await migrator.createIndex(db.attachmentOwnersByOwner);
 }
 
 /// Expression index that serves pinned-first, then newest (FE-PERF-03).

@@ -1,9 +1,11 @@
 /// The capture feature's domain layer: models, repository interfaces and pure logic.
 library;
 
+export 'audio_draft.dart';
 export 'auto_fields.dart';
 export 'caption_apply.dart';
 export 'capture_persistence.dart';
+export 'capture_photo_repository.dart';
 export 'capture_reset.dart';
 export 'capture_session.dart';
 export 'gps_capture.dart';

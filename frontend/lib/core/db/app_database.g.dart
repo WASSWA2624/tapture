@@ -11786,6 +11786,599 @@ class AttachmentsCompanion extends UpdateCompanion<Attachment> {
   }
 }
 
+class $AttachmentOwnersTable extends AttachmentOwners
+    with TableInfo<$AttachmentOwnersTable, AttachmentOwner> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AttachmentOwnersTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _attachmentIdMeta = const VerificationMeta(
+    'attachmentId',
+  );
+  @override
+  late final GeneratedColumn<String> attachmentId = GeneratedColumn<String>(
+    'attachment_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<AttachmentOwnerType, String>
+  ownerType =
+      GeneratedColumn<String>(
+        'owner_type',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<AttachmentOwnerType>(
+        $AttachmentOwnersTable.$converterownerType,
+      );
+  static const VerificationMeta _ownerIdMeta = const VerificationMeta(
+    'ownerId',
+  );
+  @override
+  late final GeneratedColumn<String> ownerId = GeneratedColumn<String>(
+    'owner_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sortOrderMeta = const VerificationMeta(
+    'sortOrder',
+  );
+  @override
+  late final GeneratedColumn<int> sortOrder = GeneratedColumn<int>(
+    'sort_order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    attachmentId,
+    ownerType,
+    ownerId,
+    sortOrder,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'attachment_owners';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AttachmentOwner> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('attachment_id')) {
+      context.handle(
+        _attachmentIdMeta,
+        attachmentId.isAcceptableOrUnknown(
+          data['attachment_id']!,
+          _attachmentIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_attachmentIdMeta);
+    }
+    if (data.containsKey('owner_id')) {
+      context.handle(
+        _ownerIdMeta,
+        ownerId.isAcceptableOrUnknown(data['owner_id']!, _ownerIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ownerIdMeta);
+    }
+    if (data.containsKey('sort_order')) {
+      context.handle(
+        _sortOrderMeta,
+        sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {attachmentId, ownerType, ownerId},
+  ];
+  @override
+  AttachmentOwner map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AttachmentOwner(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      attachmentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}attachment_id'],
+      )!,
+      ownerType: $AttachmentOwnersTable.$converterownerType.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}owner_type'],
+        )!,
+      ),
+      ownerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_id'],
+      )!,
+      sortOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_order'],
+      )!,
+    );
+  }
+
+  @override
+  $AttachmentOwnersTable createAlias(String alias) {
+    return $AttachmentOwnersTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<AttachmentOwnerType, String, String>
+  $converterownerType = const EnumNameConverter<AttachmentOwnerType>(
+    AttachmentOwnerType.values,
+  );
+}
+
+class AttachmentOwner extends DataClass implements Insertable<AttachmentOwner> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Attachment being linked.
+  final String attachmentId;
+
+  /// `record` or `photo`.
+  final AttachmentOwnerType ownerType;
+
+  /// Record or photo id, according to [ownerType].
+  final String ownerId;
+
+  /// Stable order within one owner.
+  final int sortOrder;
+  const AttachmentOwner({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.attachmentId,
+    required this.ownerType,
+    required this.ownerId,
+    required this.sortOrder,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['attachment_id'] = Variable<String>(attachmentId);
+    {
+      map['owner_type'] = Variable<String>(
+        $AttachmentOwnersTable.$converterownerType.toSql(ownerType),
+      );
+    }
+    map['owner_id'] = Variable<String>(ownerId);
+    map['sort_order'] = Variable<int>(sortOrder);
+    return map;
+  }
+
+  AttachmentOwnersCompanion toCompanion(bool nullToAbsent) {
+    return AttachmentOwnersCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      attachmentId: Value(attachmentId),
+      ownerType: Value(ownerType),
+      ownerId: Value(ownerId),
+      sortOrder: Value(sortOrder),
+    );
+  }
+
+  factory AttachmentOwner.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AttachmentOwner(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      attachmentId: serializer.fromJson<String>(json['attachmentId']),
+      ownerType: $AttachmentOwnersTable.$converterownerType.fromJson(
+        serializer.fromJson<String>(json['ownerType']),
+      ),
+      ownerId: serializer.fromJson<String>(json['ownerId']),
+      sortOrder: serializer.fromJson<int>(json['sortOrder']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'attachmentId': serializer.toJson<String>(attachmentId),
+      'ownerType': serializer.toJson<String>(
+        $AttachmentOwnersTable.$converterownerType.toJson(ownerType),
+      ),
+      'ownerId': serializer.toJson<String>(ownerId),
+      'sortOrder': serializer.toJson<int>(sortOrder),
+    };
+  }
+
+  AttachmentOwner copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? attachmentId,
+    AttachmentOwnerType? ownerType,
+    String? ownerId,
+    int? sortOrder,
+  }) => AttachmentOwner(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    attachmentId: attachmentId ?? this.attachmentId,
+    ownerType: ownerType ?? this.ownerType,
+    ownerId: ownerId ?? this.ownerId,
+    sortOrder: sortOrder ?? this.sortOrder,
+  );
+  AttachmentOwner copyWithCompanion(AttachmentOwnersCompanion data) {
+    return AttachmentOwner(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      attachmentId: data.attachmentId.present
+          ? data.attachmentId.value
+          : this.attachmentId,
+      ownerType: data.ownerType.present ? data.ownerType.value : this.ownerType,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
+      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AttachmentOwner(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('attachmentId: $attachmentId, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('sortOrder: $sortOrder')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    attachmentId,
+    ownerType,
+    ownerId,
+    sortOrder,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AttachmentOwner &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.attachmentId == this.attachmentId &&
+          other.ownerType == this.ownerType &&
+          other.ownerId == this.ownerId &&
+          other.sortOrder == this.sortOrder);
+}
+
+class AttachmentOwnersCompanion extends UpdateCompanion<AttachmentOwner> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> attachmentId;
+  final Value<AttachmentOwnerType> ownerType;
+  final Value<String> ownerId;
+  final Value<int> sortOrder;
+  final Value<int> rowid;
+  const AttachmentOwnersCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.attachmentId = const Value.absent(),
+    this.ownerType = const Value.absent(),
+    this.ownerId = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AttachmentOwnersCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String attachmentId,
+    required AttachmentOwnerType ownerType,
+    required String ownerId,
+    this.sortOrder = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       attachmentId = Value(attachmentId),
+       ownerType = Value(ownerType),
+       ownerId = Value(ownerId);
+  static Insertable<AttachmentOwner> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? attachmentId,
+    Expression<String>? ownerType,
+    Expression<String>? ownerId,
+    Expression<int>? sortOrder,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (attachmentId != null) 'attachment_id': attachmentId,
+      if (ownerType != null) 'owner_type': ownerType,
+      if (ownerId != null) 'owner_id': ownerId,
+      if (sortOrder != null) 'sort_order': sortOrder,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AttachmentOwnersCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? attachmentId,
+    Value<AttachmentOwnerType>? ownerType,
+    Value<String>? ownerId,
+    Value<int>? sortOrder,
+    Value<int>? rowid,
+  }) {
+    return AttachmentOwnersCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      attachmentId: attachmentId ?? this.attachmentId,
+      ownerType: ownerType ?? this.ownerType,
+      ownerId: ownerId ?? this.ownerId,
+      sortOrder: sortOrder ?? this.sortOrder,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (attachmentId.present) {
+      map['attachment_id'] = Variable<String>(attachmentId.value);
+    }
+    if (ownerType.present) {
+      map['owner_type'] = Variable<String>(
+        $AttachmentOwnersTable.$converterownerType.toSql(ownerType.value),
+      );
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<String>(ownerId.value);
+    }
+    if (sortOrder.present) {
+      map['sort_order'] = Variable<int>(sortOrder.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AttachmentOwnersCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('attachmentId: $attachmentId, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $CaptionsTable extends Captions with TableInfo<$CaptionsTable, Caption> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -12475,6 +13068,488 @@ class CaptionsCompanion extends UpdateCompanion<Caption> {
           ..write('textRefined: $textRefined, ')
           ..write('inputMode: $inputMode, ')
           ..write('refinedAt: $refinedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CaptureSessionsTable extends CaptureSessions
+    with TableInfo<$CaptureSessionsTable, CaptureSession> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CaptureSessionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _projectIdMeta = const VerificationMeta(
+    'projectId',
+  );
+  @override
+  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
+    'project_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
+    'payloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
+    'payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    projectId,
+    payloadJson,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'capture_sessions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CaptureSession> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('project_id')) {
+      context.handle(
+        _projectIdMeta,
+        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_projectIdMeta);
+    }
+    if (data.containsKey('payload_json')) {
+      context.handle(
+        _payloadJsonMeta,
+        payloadJson.isAcceptableOrUnknown(
+          data['payload_json']!,
+          _payloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadJsonMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CaptureSession map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CaptureSession(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      projectId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}project_id'],
+      )!,
+      payloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload_json'],
+      )!,
+    );
+  }
+
+  @override
+  $CaptureSessionsTable createAlias(String alias) {
+    return $CaptureSessionsTable(attachedDatabase, alias);
+  }
+}
+
+class CaptureSession extends DataClass implements Insertable<CaptureSession> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Project whose unfinished capture this row restores.
+  final String projectId;
+
+  /// Serialised capture session object.
+  final String payloadJson;
+  const CaptureSession({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.projectId,
+    required this.payloadJson,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['project_id'] = Variable<String>(projectId);
+    map['payload_json'] = Variable<String>(payloadJson);
+    return map;
+  }
+
+  CaptureSessionsCompanion toCompanion(bool nullToAbsent) {
+    return CaptureSessionsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      projectId: Value(projectId),
+      payloadJson: Value(payloadJson),
+    );
+  }
+
+  factory CaptureSession.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CaptureSession(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      projectId: serializer.fromJson<String>(json['projectId']),
+      payloadJson: serializer.fromJson<String>(json['payloadJson']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'projectId': serializer.toJson<String>(projectId),
+      'payloadJson': serializer.toJson<String>(payloadJson),
+    };
+  }
+
+  CaptureSession copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? projectId,
+    String? payloadJson,
+  }) => CaptureSession(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    projectId: projectId ?? this.projectId,
+    payloadJson: payloadJson ?? this.payloadJson,
+  );
+  CaptureSession copyWithCompanion(CaptureSessionsCompanion data) {
+    return CaptureSession(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      payloadJson: data.payloadJson.present
+          ? data.payloadJson.value
+          : this.payloadJson,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CaptureSession(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('projectId: $projectId, ')
+          ..write('payloadJson: $payloadJson')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    projectId,
+    payloadJson,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CaptureSession &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.projectId == this.projectId &&
+          other.payloadJson == this.payloadJson);
+}
+
+class CaptureSessionsCompanion extends UpdateCompanion<CaptureSession> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> projectId;
+  final Value<String> payloadJson;
+  final Value<int> rowid;
+  const CaptureSessionsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.projectId = const Value.absent(),
+    this.payloadJson = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CaptureSessionsCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String projectId,
+    required String payloadJson,
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       projectId = Value(projectId),
+       payloadJson = Value(payloadJson);
+  static Insertable<CaptureSession> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? projectId,
+    Expression<String>? payloadJson,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (projectId != null) 'project_id': projectId,
+      if (payloadJson != null) 'payload_json': payloadJson,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CaptureSessionsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? projectId,
+    Value<String>? payloadJson,
+    Value<int>? rowid,
+  }) {
+    return CaptureSessionsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      projectId: projectId ?? this.projectId,
+      payloadJson: payloadJson ?? this.payloadJson,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (projectId.present) {
+      map['project_id'] = Variable<String>(projectId.value);
+    }
+    if (payloadJson.present) {
+      map['payload_json'] = Variable<String>(payloadJson.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CaptureSessionsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('projectId: $projectId, ')
+          ..write('payloadJson: $payloadJson, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -23773,7 +24848,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $RecordFieldsTable recordFields = $RecordFieldsTable(this);
   late final $PhotosTable photos = $PhotosTable(this);
   late final $AttachmentsTable attachments = $AttachmentsTable(this);
+  late final $AttachmentOwnersTable attachmentOwners = $AttachmentOwnersTable(
+    this,
+  );
   late final $CaptionsTable captions = $CaptionsTable(this);
+  late final $CaptureSessionsTable captureSessions = $CaptureSessionsTable(
+    this,
+  );
   late final $ReferenceTable reference = $ReferenceTable(this);
   late final $ReferenceRowsTable referenceRows = $ReferenceRowsTable(this);
   late final $ProcessingTable processing = $ProcessingTable(this);
@@ -23823,6 +24904,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final Index recordFieldsByFinal = Index(
     'record_fields_by_final',
     'CREATE INDEX record_fields_by_final ON record_fields (field_key, value_final)',
+  );
+  late final Index attachmentOwnersByOwner = Index(
+    'attachment_owners_by_owner',
+    'CREATE INDEX attachment_owners_by_owner ON attachment_owners (owner_type, owner_id)',
   );
   late final Index captionsByOwner = Index(
     'captions_by_owner',
@@ -23895,7 +24980,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     recordFields,
     photos,
     attachments,
+    attachmentOwners,
     captions,
+    captureSessions,
     reference,
     referenceRows,
     processing,
@@ -23919,6 +25006,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     recordsByCapturedAt,
     recordsByTemplate,
     recordFieldsByFinal,
+    attachmentOwnersByOwner,
     captionsByOwner,
     referenceRowsByKey,
     referenceRowsByNormalised,

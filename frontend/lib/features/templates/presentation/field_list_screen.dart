@@ -159,6 +159,8 @@ class _FieldRow extends ConsumerWidget {
         requiredField: field.requiredness == Requiredness.required,
         calculated: field.type == FieldType.computed,
         fromPhotos: _mentioned(template.detection, field.fieldKey),
+        pinnedContext: field.stickable,
+        contextLevel: field.contextLevel,
       ),
       status: _pill(field.requiredness),
       onTap: () => _openEdit(context, template.id, field.fieldKey),

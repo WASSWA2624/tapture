@@ -15,7 +15,7 @@ import 'package:tapture/features/settings/presentation/offline_switch.dart';
 import '../../support/factories.dart';
 
 void main() {
-  testWidgets('templates and unprocessed open from settings', (
+  testWidgets('operational routes remain directly linkable from settings', (
     WidgetTester tester,
   ) async {
     final StreamController<NetworkState> radio = StreamController<NetworkState>(
@@ -34,13 +34,14 @@ void main() {
 
     container.read(routerProvider).go(AppRoutes.more);
     await tester.pumpAndSettle();
-    await tester.tap(find.text(Copy.navTemplates));
+    expect(find.text(Copy.navTemplates), findsNothing);
+    expect(find.text(Copy.navQueue), findsNothing);
+
+    container.read(routerProvider).go(AppRoutes.templates);
     await tester.pumpAndSettle();
     expect(container.read(routerProvider).state.uri.path, AppRoutes.templates);
 
-    container.read(routerProvider).go(AppRoutes.more);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text(Copy.navQueue));
+    container.read(routerProvider).go(AppRoutes.queue);
     await tester.pumpAndSettle();
     expect(container.read(routerProvider).state.uri.path, AppRoutes.queue);
   });

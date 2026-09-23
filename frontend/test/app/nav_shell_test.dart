@@ -78,7 +78,7 @@ void main() {
     expect(find.byKey(const ValueKey<String>('nav-pane')), findsNothing);
     expect(find.text(Copy.navMore), findsWidgets);
     expect(find.text(Copy.operatorProfileTitle), findsOneWidget);
-    expect(find.text(Copy.settingsAboutTitle), findsOneWidget);
+    expect(find.text(Copy.settingsAboutTitle), findsWidgets);
   });
 
   testWidgets(
@@ -129,7 +129,7 @@ void main() {
   });
 
   testWidgets(
-    'the stack and a half-typed field survive a switch and a width change',
+    'top-level taps reset child routes and width changes keep root state',
     (WidgetTester tester) async {
       final GoRouter router = await _pump(tester, width: 400, projectId: 'p1');
 
@@ -155,15 +155,15 @@ void main() {
 
       await tester.tap(_shellLabel(tester, Copy.navProjects));
       await tester.pumpAndSettle();
-      expect(router.state.uri.path, AppRoutes.project('p1'));
+      expect(router.state.uri.path, AppRoutes.projects);
       expect(
-        find.byKey(const ValueKey<String>('route-project')),
+        find.byKey(const ValueKey<String>('route-projects')),
         findsOneWidget,
       );
 
       await tester.tap(_shellLabel(tester, Copy.navRecords));
       await tester.pumpAndSettle();
-      expect(router.state.uri.path, '/records');
+      expect(router.state.uri.path, AppRoutes.records);
       expect(
         find.byKey(const ValueKey<String>('route-records')),
         findsOneWidget,
@@ -172,13 +172,13 @@ void main() {
 
       await _setWidth(tester, 800);
       expect(find.byKey(const ValueKey<String>('nav-rail')), findsOneWidget);
-      expect(router.state.uri.path, '/records');
+      expect(router.state.uri.path, AppRoutes.records);
       expect(find.text('half typed'), findsOneWidget);
 
       await _setWidth(tester, 1200);
       expect(find.byKey(const ValueKey<String>('nav-rail')), findsOneWidget);
       expect(find.byKey(const ValueKey<String>('nav-pane')), findsOneWidget);
-      expect(router.state.uri.path, '/records');
+      expect(router.state.uri.path, AppRoutes.records);
       expect(find.text('half typed'), findsOneWidget);
     },
   );
@@ -309,7 +309,7 @@ void main() {
       findsNothing,
     );
 
-    await tester.tap(find.byTooltip(Copy.clearField(Copy.search)));
+    await tester.tap(find.byTooltip(Copy.clearField(Copy.projectSearchHint)));
     await tester.pump();
     await tester.pump(AppConstants.interaction.debounce);
     expect(
@@ -362,7 +362,10 @@ void main() {
       find.descendant(of: _pane(), matching: find.text('Alpha')),
       findsOneWidget,
     );
-    expect(find.byType(AppListTile), findsOneWidget);
+    expect(
+      find.descendant(of: _pane(), matching: find.byType(AppListTile)),
+      findsOneWidget,
+    );
     expect(find.text(Copy.continueCapturing), findsOneWidget);
     expect(
       find.descendant(of: _pane(), matching: find.text(Copy.projectsCreate)),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/shell_destination.dart';
 import 'package:tapture/app/shell_title.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
@@ -8,12 +9,12 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/app/widgets/offline_banner.dart';
 import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/responsive/responsive_builder.dart';
 import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/context/presentation/context_bar.dart';
 import 'package:tapture/features/context/presentation/context_maintenance.dart';
+import 'package:tapture/features/projects/presentation/project_list_toolbar.dart';
 import 'package:tapture/features/projects/projects.dart';
 
 /// The four-destination frame: bar on compact, rail on medium, rail plus a
@@ -52,7 +53,7 @@ class _Chrome extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final bool ownsHeader =
         ShellTitle.header(ref, GoRouterState.of(context).uri) != null;
-    final bool showPane = pane && _destinations[shell.currentIndex].hasList;
+    final bool showPane = pane && shellDestinations[shell.currentIndex].hasList;
     final BorderSide hairline = BorderSide(
       color: context.colors.outline,
       width: Space.x0 / 2,
@@ -134,10 +135,10 @@ class _Bar extends StatelessWidget {
         child: NavigationBar(
           selectedIndex: shell.currentIndex,
           onDestinationSelected: (int index) {
-            shell.goBranch(index, initialLocation: index == shell.currentIndex);
+            shell.goBranch(index, initialLocation: true);
           },
           destinations: <NavigationDestination>[
-            for (int index = 0; index < _destinations.length; index++)
+            for (int index = 0; index < shellDestinations.length; index++)
               NavigationDestination(
                 icon: _NavIcon(index: index, selected: false, inverted: false),
                 selectedIcon: _NavIcon(
@@ -145,8 +146,8 @@ class _Bar extends StatelessWidget {
                   selected: true,
                   inverted: false,
                 ),
-                label: _destinations[index].label,
-                tooltip: _destinations[index].label,
+                label: shellDestinations[index].label,
+                tooltip: shellDestinations[index].label,
               ),
           ],
         ),
@@ -174,13 +175,13 @@ class _Rail extends StatelessWidget {
             : colors.surfaceVariant,
         selectedIndex: shell.currentIndex,
         onDestinationSelected: (int index) {
-          shell.goBranch(index, initialLocation: index == shell.currentIndex);
+          shell.goBranch(index, initialLocation: true);
         },
         labelType: NavigationRailLabelType.all,
         selectedLabelTextStyle: AppText.caption.copyWith(color: selected),
         unselectedLabelTextStyle: AppText.caption.copyWith(color: railInk),
         destinations: <NavigationRailDestination>[
-          for (int index = 0; index < _destinations.length; index++)
+          for (int index = 0; index < shellDestinations.length; index++)
             NavigationRailDestination(
               icon: _NavIcon(index: index, selected: false, inverted: inverted),
               selectedIcon: _NavIcon(
@@ -188,7 +189,7 @@ class _Rail extends StatelessWidget {
                 selected: true,
                 inverted: inverted,
               ),
-              label: Text(_destinations[index].label),
+              label: Text(shellDestinations[index].label),
             ),
         ],
       ),
@@ -204,7 +205,6 @@ class _Pane extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool projects = index == 0;
-    final String query = ref.watch(projectListSearchQueryProvider);
     return RepaintBoundary(
       key: const ValueKey<String>('nav-pane'),
       child: Material(
@@ -240,15 +240,7 @@ class _Pane extends ConsumerWidget {
                       ),
                       const SizedBox(height: Space.x2),
                     ],
-                    AppSearchField(
-                      hint: Copy.search,
-                      text: projects ? query : null,
-                      onChanged: projects
-                          ? ref
-                                .read(projectListSearchQueryProvider.notifier)
-                                .set
-                          : (_) {},
-                    ),
+                    if (projects) const ProjectListToolbar(),
                   ],
                 ),
               ),
@@ -256,7 +248,7 @@ class _Pane extends ConsumerWidget {
                 child: projects
                     ? const ProjectListView(filtered: true)
                     : AppEmptyState(
-                        icon: _destinations[index].icon,
+                        icon: shellDestinations[index].icon,
                         headline: Copy.emptyHeadline,
                         message: Copy.emptyMessage,
                       ),
@@ -289,7 +281,7 @@ class _NavIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _Destination destination = _destinations[index];
+    final ShellDestination destination = shellDestinations[index];
     final IconData icon = selected
         ? destination.selectedIcon
         : destination.icon;
@@ -304,22 +296,6 @@ class _NavIcon extends StatelessWidget {
   }
 }
 
-class _Destination {
-  const _Destination({
-    required this.icon,
-    required this.selectedIcon,
-    required this.label,
-    this.dominant = false,
-    this.hasList = false,
-  });
-
-  final IconData icon;
-  final IconData selectedIcon;
-  final String label;
-  final bool dominant;
-  final bool hasList;
-}
-
 bool _darkDesktopRail(BuildContext context) {
   final AppColors colors = context.colors;
   final bool outdoor =
@@ -328,29 +304,3 @@ bool _darkDesktopRail(BuildContext context) {
       colors.outline == AppColors.outdoor.outline;
   return Theme.of(context).brightness == Brightness.light && !outdoor;
 }
-
-final List<_Destination> _destinations = <_Destination>[
-  const _Destination(
-    icon: Icons.folder_outlined,
-    selectedIcon: Icons.folder,
-    label: Copy.navProjects,
-    hasList: true,
-  ),
-  const _Destination(
-    icon: Icons.photo_camera_outlined,
-    selectedIcon: Icons.photo_camera,
-    label: Copy.navCapture,
-    dominant: true,
-  ),
-  const _Destination(
-    icon: Icons.list_alt_outlined,
-    selectedIcon: Icons.list_alt,
-    label: Copy.navRecords,
-    hasList: true,
-  ),
-  const _Destination(
-    icon: Icons.settings_outlined,
-    selectedIcon: Icons.settings,
-    label: Copy.navMore,
-  ),
-];

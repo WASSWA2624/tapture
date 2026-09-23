@@ -29,6 +29,7 @@ class QueueScreen extends ConsumerWidget {
         : ref.watch(queueSnapshotForProjectProvider(projectId));
     final ProcessingBatchState batch = ref.watch(processingControllerProvider);
     return AppPage(
+      key: const ValueKey<String>('route-queue'),
       title: Copy.queueTitle,
       scrollable: false,
       body: AsyncValueView<QueueSnapshot>(

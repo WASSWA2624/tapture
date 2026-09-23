@@ -25,8 +25,10 @@ abstract final class SaveAndAnalyse {
     );
   }
 
-  /// Persists via [persist] then enqueues via [enqueue]. On enqueue failure
-  /// returns success with [enqueueFailed] so the record is not lost.
+  /// Persists via [persist] then enqueues via [enqueue]. A session carrying a
+  /// [CaptureSession.recordId] has already committed its raw record, so retry
+  /// goes straight to enqueue instead of duplicating immutable evidence.
+  /// On enqueue failure returns the committed id with [enqueueFailed].
   static Future<Result<SaveAndAnalyseResult>> run({
     required CaptureSession session,
     required Future<Result<String>> Function(CaptureSession session) persist,
@@ -40,7 +42,10 @@ abstract final class SaveAndAnalyse {
         ),
       );
     }
-    final Result<String> saved = await persist(session);
+    final String? committedId = session.recordId;
+    final Result<String> saved = committedId == null
+        ? await persist(session)
+        : Success<String>(committedId);
     return saved.fold(FailureResult<SaveAndAnalyseResult>.new, (
       String recordId,
     ) async {

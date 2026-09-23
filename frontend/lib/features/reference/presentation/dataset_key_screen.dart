@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -157,10 +158,7 @@ class _DatasetKeyScreenState extends ConsumerState<DatasetKeyScreen> {
       case Success<ReferenceDataset>(:final ReferenceDataset value):
         final String? projectId = value.projectId;
         if (projectId != null && projectId.isNotEmpty) {
-          context.go(
-            '/projects/${Uri.encodeComponent(projectId)}/datasets/'
-            '${Uri.encodeComponent(value.id)}',
-          );
+          context.go(RoutePaths.projectDataset(projectId, value.id));
         } else {
           context.pop();
         }

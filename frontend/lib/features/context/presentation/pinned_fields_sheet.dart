@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -85,18 +88,22 @@ class _PinnedFieldsSheetState extends ConsumerState<PinnedFieldsSheet> {
       return const SizedBox.shrink();
     }
     if (_fields.isEmpty) {
-      return const AppEmptyState(
+      return AppEmptyState(
         icon: Icons.push_pin_outlined,
         headline: Copy.contextPinnedEmptyHeadline,
         message: Copy.contextPinnedEmptyMessage,
+        actionLabel: Copy.contextOpenTemplates,
+        onAction: () => context.push(_projectTemplates(widget.projectId)),
       );
     }
     return ListView(
       shrinkWrap: true,
       children: <Widget>[
+        const Text(Copy.contextPinnedRelevance),
+        const SizedBox(height: Space.x3),
         for (final FieldDef field in _fields)
           Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.only(bottom: Space.x2),
             child: AppTextField(
               label: field.label,
               controller: _controllers[field.fieldKey]!,
@@ -180,4 +187,8 @@ class _PinnedFieldsSheetState extends ConsumerState<PinnedFieldsSheet> {
         Navigator.of(context).maybePop();
     }
   }
+}
+
+String _projectTemplates(String projectId) {
+  return RoutePaths.projectTemplates(projectId);
 }

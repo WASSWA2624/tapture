@@ -29,10 +29,7 @@ abstract final class PhotoMarkup {
       Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble()),
       Paint(),
     );
-    final ui.Image image = await recorder.endRecording().toImage(
-      width,
-      height,
-    );
+    final ui.Image image = await recorder.endRecording().toImage(width, height);
     return _png(image);
   }
 
@@ -77,8 +74,6 @@ Rect _region(Rect full, Rect? fraction) {
 }
 
 Future<Uint8List> _png(ui.Image image) async {
-  final ByteData? data = await image.toByteData(
-    format: ui.ImageByteFormat.png,
-  );
+  final ByteData? data = await image.toByteData(format: ui.ImageByteFormat.png);
   return data?.buffer.asUint8List() ?? Uint8List(0);
 }

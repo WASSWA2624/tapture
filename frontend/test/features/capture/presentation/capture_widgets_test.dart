@@ -66,6 +66,38 @@ PhotoDraft draft(String id, {String type = 'other', int order = 0}) {
 }
 
 void main() {
+  testWidgets('recording pauses when the app is interrupted', (
+    WidgetTester tester,
+  ) async {
+    final AudioRecorderService recorder = AudioRecorderService.fake(
+      tick: const Duration(seconds: 1),
+    );
+    await tester.pumpWidget(
+      wrap(
+        AudioRecorder(
+          recorder: recorder,
+          relativePath: 'audio/interrupted.wav',
+        ),
+      ),
+    );
+
+    await tester.tap(find.text(Copy.captureRecordAudio));
+    await tester.pump();
+    expect(find.text(Copy.capturePauseAudio), findsOneWidget);
+
+    await tester.binding.handleAppLifecycleStateChanged(
+      AppLifecycleState.paused,
+    );
+    await tester.pump();
+    expect(find.text(Copy.audioRecorderStatus('paused', 0)), findsOneWidget);
+    expect(find.text(Copy.captureStopAudio), findsOneWidget);
+
+    await recorder.stop();
+    await tester.binding.handleAppLifecycleStateChanged(
+      AppLifecycleState.resumed,
+    );
+  });
+
   testWidgets('capture_screen compact medium evidence optional', (
     WidgetTester tester,
   ) async {

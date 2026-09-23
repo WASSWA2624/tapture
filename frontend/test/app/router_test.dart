@@ -101,6 +101,9 @@ void main() {
       if (path.endsWith('/app/route_guards.dart')) {
         continue;
       }
+      if (path.endsWith('/app/route_paths.dart')) {
+        continue;
+      }
       final String source = file.readAsStringSync();
       if (source.contains("'/projects/") ||
           source.contains('"/projects/') ||
@@ -208,7 +211,7 @@ void main() {
 
     await _go(tester, router, AppRoutes.more);
     expect(find.text(Copy.operatorProfileTitle), findsOneWidget);
-    expect(find.text(Copy.settingsAboutTitle), findsOneWidget);
+    expect(find.text(Copy.settingsAboutTitle), findsWidgets);
 
     await _go(tester, router, AppRoutes.settingsAppearance);
     expect(find.byType(AppearanceSettingsScreen), findsOneWidget);

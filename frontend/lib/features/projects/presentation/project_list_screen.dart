@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
@@ -12,6 +13,7 @@ import '../domain/project_repository.dart';
 import 'current_project.dart';
 import 'project_home_screen.dart';
 import 'project_list_actions.dart';
+import 'project_list_toolbar.dart';
 import 'project_list_view.dart';
 
 /// Landing list: every active project as one row with counts and
@@ -59,7 +61,17 @@ class ProjectListScreen extends ConsumerWidget {
               onPressed: () => context.go(_createLocation),
             )
           : null,
-      body: expanded ? const SizedBox.shrink() : const ProjectListView(),
+      body: expanded
+          ? const SizedBox.shrink()
+          : const Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.all(Space.x4),
+                  child: ProjectListToolbar(),
+                ),
+                Expanded(child: ProjectListView(filtered: true)),
+              ],
+            ),
     );
   }
 }

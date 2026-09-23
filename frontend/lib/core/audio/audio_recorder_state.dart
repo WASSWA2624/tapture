@@ -5,11 +5,23 @@ enum AudioRecorderPhase {
   /// Not recording.
   idle,
 
+  /// Waiting for microphone permission.
+  permission,
+
   /// Writing chunks.
   recording,
 
   /// Elapsed frozen; file still open.
   paused,
+
+  /// Recorder stopped; the project file is being flushed and hashed.
+  finalizing,
+
+  /// The last attempt failed and may be retried.
+  failed,
+
+  /// The file is durable and metadata is available.
+  completed,
 }
 
 /// Snapshot of the recorder for UI.

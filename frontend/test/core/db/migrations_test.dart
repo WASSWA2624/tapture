@@ -31,7 +31,7 @@ void main() {
   });
 
   test(
-    'upgrade from a seeded version 1 file through version 2 and version 3 and version 4 and version 5 and version 6 and version 7 and version 8 and version 9 and version 10 and version 11 and version 12 and version 13 and version 14 and version 15 and version 16 to head preserves rows and columns',
+    'upgrade from a seeded version 1 file through version 2 and version 3 and version 4 and version 5 and version 6 and version 7 and version 8 and version 9 and version 10 and version 11 and version 12 and version 13 and version 14 and version 15 and version 16 and version 17 and version 18 to head preserves rows and columns',
     () async {
       final Directory directory = Directory.systemTemp.createTempSync(
         'tapture_migrate_',
@@ -149,6 +149,81 @@ void main() {
   );
 
   test(
+    'version 17 creates project-scoped capture sessions without changing projects',
+    () async {
+      final AppDatabase db = AppDatabase.memory();
+      addTearDown(db.close);
+      await db.customSelect('SELECT 1').get();
+      await _insertProject(db);
+      await db.customStatement('DROP TABLE capture_sessions');
+
+      await migrateToV17(Migrator(db), db);
+      await db.customStatement(
+        'INSERT INTO capture_sessions '
+        '(id, created_at, updated_at, updated_by_device, rev, '
+        'project_id, payload_json) '
+        "VALUES ('session-1', 1, 1, 'device-1', 1, 'project-1', "
+        "'{\"id\":\"session-1\",\"projectId\":\"project-1\"}')",
+      );
+
+      expect(await _count(db, 'projects'), 1);
+      expect(await _count(db, 'capture_sessions'), 1);
+      final QueryRow row = await db
+          .customSelect(
+            "SELECT project_id, payload_json FROM capture_sessions "
+            "WHERE id = 'session-1'",
+          )
+          .getSingle();
+      expect(row.read<String>('project_id'), 'project-1');
+      expect(row.read<String>('payload_json'), contains('session-1'));
+    },
+  );
+
+  test(
+    'version 18 creates attachment owners and preserves version 17 capture and attachment rows',
+    () async {
+      final AppDatabase db = AppDatabase.memory();
+      addTearDown(db.close);
+      await db.customSelect('SELECT 1').get();
+      await _insertProject(db);
+      await db.customStatement(
+        'INSERT INTO capture_sessions '
+        '(id, created_at, updated_at, updated_by_device, rev, '
+        'project_id, payload_json) '
+        "VALUES ('session-1', 1, 1, 'device-1', 1, 'project-1', '{}')",
+      );
+      await db.customStatement(
+        'INSERT INTO attachments '
+        '(id, created_at, updated_at, updated_by_device, rev, project_id, '
+        'relative_path, mime_type, file_size, sha256, kind) '
+        "VALUES ('audio-1', 1, 1, 'device-1', 1, 'project-1', "
+        "'audio/one.wav', 'audio/wav', 4, 'hash-1', 'audio')",
+      );
+      await db.customStatement('DROP TABLE attachment_owners');
+
+      await migrateToV18(Migrator(db), db);
+      await db.customStatement(
+        'INSERT INTO attachment_owners '
+        '(id, created_at, updated_at, updated_by_device, rev, attachment_id, '
+        'owner_type, owner_id, sort_order) '
+        "VALUES ('owner-1', 1, 1, 'device-1', 1, 'audio-1', "
+        "'record', 'record-1', 0)",
+      );
+
+      expect(await _count(db, 'capture_sessions'), 1);
+      expect(await _count(db, 'attachments'), 1);
+      expect(await _count(db, 'attachment_owners'), 1);
+      final List<QueryRow> indexes = await db.customSelect(
+        "PRAGMA index_list('attachment_owners')",
+      ).get();
+      expect(
+        indexes.map((QueryRow row) => row.read<String>('name')),
+        contains('attachment_owners_by_owner'),
+      );
+    },
+  );
+
+  test(
     'migrateToV16 is not a destructive step and a second run is a no-op',
     () async {
       expect(kDestructiveSteps.contains(16), isFalse);
@@ -242,6 +317,23 @@ Future<Map<String, int>> _rowCounts(AppDatabase db) async {
     counts[table] = row.read<int>('c');
   }
   return counts;
+}
+
+Future<void> _insertProject(AppDatabase db) {
+  return db.customStatement(
+    'INSERT INTO projects '
+    '(id, created_at, updated_at, updated_by_device, rev, name, client, '
+    'status, folder_name, settings) '
+    "VALUES ('project-1', 1, 1, 'device-1', 1, 'Alpha', 'Acme', "
+    "'active', 'alpha', '{}')",
+  );
+}
+
+Future<int> _count(AppDatabase db, String table) async {
+  final QueryRow row = await db
+      .customSelect('SELECT COUNT(*) AS count FROM $table')
+      .getSingle();
+  return row.read<int>('count');
 }
 
 void _installVersion13Projects(Database database) {

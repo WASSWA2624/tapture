@@ -392,6 +392,65 @@ abstract final class Copy {
   static const String projectsNoMatchMessage =
       'Try a different name, or create a project.';
 
+  /// Search prompt for names, descriptions, and organisations.
+  static const String projectSearchHint = 'Search projects';
+
+  /// Secondary filter-sheet title.
+  static const String projectFiltersTitle = 'Project filters';
+
+  /// Filter action with an active-predicate count.
+  static String projectFilters(int active) {
+    return active == 0 ? 'Filters' : 'Filters ($active)';
+  }
+
+  /// Status filter heading.
+  static const String projectStatusFilter = 'Status';
+
+  /// Pin-state filter heading.
+  static const String projectPinFilter = 'Pinned state';
+
+  /// Human label for a pin filter wire name.
+  static String projectPinFilterLabel(String value) {
+    return switch (value) {
+      'pinned' => 'Pinned',
+      'unpinned' => 'Unpinned',
+      _ => 'All projects',
+    };
+  }
+
+  /// Commits project filter choices.
+  static const String projectApplyFilters = 'Apply filters';
+
+  /// Semantic status for a project that stays at the top of the list.
+  static const String pinnedProject = 'Pinned project';
+
+  /// Project-home context association count.
+  static String projectContextLevelCount(int count) {
+    return Intl.plural(
+      count,
+      zero: 'No context levels',
+      one: '1 context level',
+      other: '$count context levels',
+    );
+  }
+
+  /// Project-home template association count.
+  static String projectTemplateCount(int count) {
+    return Intl.plural(
+      count,
+      zero: 'No templates attached',
+      one: '1 template attached',
+      other: '$count templates attached',
+    );
+  }
+
+  /// Project-home association repositories could not be read.
+  static const String projectAssociationCountUnavailable =
+      'Association count unavailable';
+
+  /// Retries both context-level and template association counts.
+  static const String projectAssociationRetry = 'Retry association counts';
+
   /// Secondary empty-state action on the project list. Reserved for task 222
   /// once bundle import ships; the Projects empty state does not show it yet.
   static const String projectsImport = 'Import a project';
@@ -1124,6 +1183,8 @@ abstract final class Copy {
     required bool requiredField,
     required bool calculated,
     required bool fromPhotos,
+    bool pinnedContext = false,
+    int? contextLevel,
   }) {
     final List<String> parts = <String>[typeLabel];
     if (requiredField) {
@@ -1134,6 +1195,12 @@ abstract final class Copy {
     }
     if (fromPhotos) {
       parts.add(fieldFromPhotos);
+    }
+    if (contextLevel != null && contextLevel > 0) {
+      parts.add('Context level $contextLevel');
+    }
+    if (pinnedContext) {
+      parts.add('Pinned context');
     }
     return parts.join(' · ');
   }
@@ -1627,6 +1694,54 @@ abstract final class Copy {
   /// Add a level.
   static const String contextAddLevel = 'Add level';
 
+  /// One saved or proposed level and its stable field key.
+  static String contextLevelRow(int level, String fieldKey) =>
+      'Level $level · $fieldKey';
+
+  /// Accepts all unambiguous template-declared levels.
+  static const String contextUseTemplateLevels = 'Use template levels';
+
+  /// Template loading failure on context setup.
+  static const String contextTemplateFailureHeadline =
+      'Template levels could not load';
+
+  /// Recovery text after template-level loading fails.
+  static const String contextTemplateFailureMessage =
+      'Try again. Your saved context has not changed.';
+
+  /// No project template exists yet.
+  static const String contextNoTemplatesHeadline = 'No project templates';
+
+  /// Explains how a project gains fields that can become levels.
+  static const String contextNoTemplatesMessage =
+      'Attach or create a template before choosing context fields.';
+
+  /// Opens the contextual Templates route.
+  static const String contextOpenTemplates = 'Open Templates';
+
+  /// Templates exist but do not declare a hierarchy.
+  static const String contextNoDeclaredLevelsHeadline =
+      'No template levels declared';
+
+  /// Explains how to declare template levels.
+  static const String contextNoDeclaredLevelsMessage =
+      'Set a positive context level on template fields, or add levels manually.';
+
+  /// Every available field is already part of the hierarchy.
+  static const String contextNoEligibleFieldsHeadline = 'No fields available';
+
+  /// Explains why the manual picker has no remaining fields.
+  static const String contextNoEligibleFieldsMessage =
+      'Every template field is already used as a context level.';
+
+  /// Conflicting level metadata requires explicit correction.
+  static const String contextTemplateConflictHeadline =
+      'Template levels conflict';
+
+  /// Names template declaration conflicts without guessing through them.
+  static String contextTemplateConflictMessage(String conflicts) =>
+      'Resolve these declarations in Templates: $conflicts.';
+
   /// Save hierarchy.
   static const String contextSaveHierarchy = 'Save levels';
 
@@ -1646,11 +1761,15 @@ abstract final class Copy {
   static const String contextPinnedTitle = 'Pinned fields';
 
   /// Pin empty.
-  static const String contextPinnedEmptyHeadline = 'No stickable fields';
+  static const String contextPinnedEmptyHeadline = 'No pinnable context fields';
 
   /// Pin empty body.
   static const String contextPinnedEmptyMessage =
-      'Mark fields as stickable on a template to pin them here.';
+      'Mark fields as pinned context on a template to reuse them during capture.';
+
+  /// Why pinned context is useful.
+  static const String contextPinnedRelevance =
+      'Pinned context is reused on each new record until you change it.';
 
   /// Cascade confirm title.
   static const String contextCascadeTitle = 'Clear lower levels?';
@@ -1750,7 +1869,7 @@ abstract final class Copy {
   static const String captureTitle = 'Capture';
 
   /// Primary save that also enqueues analysis.
-  static const String captureSaveAndAnalyse = 'Save and analyse';
+  static const String captureSaveAndAnalyse = 'Save and process';
 
   /// Raw save with no processing.
   static const String captureSaveRaw = 'Save raw';
@@ -1893,6 +2012,48 @@ abstract final class Copy {
   static const String audioRecorderUnavailable =
       'Audio recording is not available on this device.';
 
+  /// Microphone permission failure and recovery.
+  static const String audioPermissionDenied =
+      'Microphone permission was not granted.';
+
+  /// Tells the operator how to grant microphone access.
+  static const String audioPermissionRecovery =
+      'Allow microphone access in system settings, then try again.';
+
+  /// Recorder phase and elapsed time.
+  static String audioRecorderStatus(String phase, int seconds) {
+    final String label = switch (phase) {
+      'permission' => 'Requesting microphone permission',
+      'recording' => 'Recording',
+      'paused' => 'Paused',
+      'finalizing' => 'Saving audio',
+      'failed' => 'Audio failed',
+      'completed' => 'Audio saved',
+      _ => 'Audio ready',
+    };
+    return '$label · ${seconds}s';
+  }
+
+  /// Audio evidence association sheet.
+  static const String captureAudioScopeTitle = 'Use audio with';
+
+  /// Associates the clip with the most recent/current photo.
+  static const String captureAudioCurrentPhoto = 'Current photo';
+
+  /// Associates the clip with the selected photos.
+  static String captureAudioSelectedPhotos(int count) =>
+      'Selected photos ($count)';
+
+  /// Associates the clip with every photo.
+  static String captureAudioAllPhotos(int count) => 'All photos ($count)';
+
+  /// Number of durable clips in this capture.
+  static String captureAudioCount(int count) => Intl.plural(
+    count,
+    one: '1 audio clip attached',
+    other: '$count audio clips attached',
+  );
+
   /// Delete photo confirm title.
   static const String captureDeletePhotoTitle = 'Delete this photo?';
 
@@ -1997,6 +2158,10 @@ abstract final class Copy {
   /// Save failed announcement.
   static const String captureSaveFailed = 'Save failed';
 
+  /// Raw evidence committed, but the local processing job did not enqueue.
+  static const String captureEnqueueFailed =
+      'The capture was saved, but processing could not be queued.';
+
   /// Status line when no template is pinned.
   static const String statusNoTemplate = 'No template';
 
@@ -2056,6 +2221,19 @@ abstract final class Copy {
 
   /// Settings root title.
   static const String settingsTitle = 'Settings';
+
+  /// Settings index group headings.
+  static const String settingsGroupProfileCapture = 'Profile and capture';
+
+  /// Settings for AI and visual appearance.
+  static const String settingsGroupIntelligenceAppearance =
+      'Intelligence and appearance';
+
+  /// Settings for durable storage and access protection.
+  static const String settingsGroupStorageSecurity = 'Storage and security';
+
+  /// Product information settings group.
+  static const String settingsGroupAbout = 'About';
 
   /// Operator tile supporting line.
   static const String settingsOperatorSubtitle =
@@ -2916,6 +3094,46 @@ abstract final class Copy {
 
   /// The test could not reach the network.
   static const String apiKeyNetworkFailed = 'The network is not available.';
+
+  /// Registry-driven AI controls.
+  static const String aiOperation = 'Operation';
+
+  /// Provider choice field.
+  static const String aiProvider = 'Provider';
+
+  /// Model choice field.
+  static const String aiModel = 'Model';
+
+  /// Operator-facing label for an AI operation id.
+  static String aiOperationLabel(String value) {
+    return switch (value) {
+      'readText' => 'Read text',
+      'extractFields' => 'Extract fields',
+      'refineText' => 'Refine text',
+      'transcribe' => 'Transcribe audio',
+      _ => value,
+    };
+  }
+
+  /// Credential custody and live availability explanation.
+  static String aiCustody(String custody, bool available) {
+    final String owner = custody == 'backend'
+        ? 'The organisation backend holds the provider key.'
+        : 'This provider uses a device-held credential when enabled by an administrator.';
+    return available ? owner : '$owner This provider is currently unavailable.';
+  }
+
+  /// Saved choice fallback explanation.
+  static const String aiSelectionFallback =
+      'The saved choice is unavailable. The organisation backend is selected for now.';
+
+  /// Provider test could not run because the descriptor is unavailable.
+  static const String aiProviderUnavailable =
+      'This provider is not available. Processing will remain queued.';
+
+  /// Provider and model do not support the selected operation.
+  static const String aiSelectionInvalid =
+      'Choose a provider and model that support this operation.';
 
   /// Template question.
   static const String templateChoiceTitle = 'What is this?';

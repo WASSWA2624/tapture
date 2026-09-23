@@ -15,6 +15,7 @@ final class ExtractionRequest {
     required this.caption,
     required this.ocrText,
     required this.images,
+    this.transcripts = const <String>[],
     this.rules = defaultRules,
   });
 
@@ -46,6 +47,9 @@ final class ExtractionRequest {
   /// Compressed image references, in capture order.
   final List<String> images;
 
+  /// Raw provider transcripts, stored and quoted as evidence.
+  final List<String> transcripts;
+
   /// Explicit rules, quoted as data.
   final List<String> rules;
 
@@ -61,6 +65,7 @@ final class ExtractionRequest {
       'caption': caption,
       'ocr_text': ocrText,
       'images': images,
+      'transcripts': transcripts,
       'rules': rules,
     };
   }
@@ -73,7 +78,7 @@ final class ExtractionRequest {
         for (final ExtractionField field in fields) field.key,
       ],
       ocrText: ocrText,
-      transcripts: const <String>[],
+      transcripts: transcripts,
       captions: caption.isEmpty ? const <String>[] : <String>[caption],
       imagePaths: images,
       context: context,

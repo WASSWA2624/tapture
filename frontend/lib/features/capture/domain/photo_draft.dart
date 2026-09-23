@@ -9,6 +9,8 @@ final class PhotoDraft {
     required this.relativePath,
     required this.sha256,
     this.recordId,
+    this.captureSessionId = '',
+    this.storedFilename = '',
     this.photoType = 'other',
     this.sortOrder = 0,
     this.originalFilename = '',
@@ -16,6 +18,9 @@ final class PhotoDraft {
     this.height = 0,
     this.fileSize = 0,
     this.mimeType = 'image/jpeg',
+    this.capturedAt,
+    this.gpsLat,
+    this.gpsLon,
     this.rotationDegrees = 0,
     this.processingState = 'ready',
     this.hasCaption = false,
@@ -31,6 +36,12 @@ final class PhotoDraft {
 
   /// Filed record, if any.
   final String? recordId;
+
+  /// Interrupted session that owns the unfiled evidence.
+  final String captureSessionId;
+
+  /// Filename generated for storage under the project tree.
+  final String storedFilename;
 
   /// Path relative to the project folder.
   final String relativePath;
@@ -58,6 +69,13 @@ final class PhotoDraft {
 
   /// MIME type.
   final String mimeType;
+
+  /// Capture time. Production writes it once with the original evidence.
+  final DateTime? capturedAt;
+
+  /// Optional capture coordinates.
+  final double? gpsLat;
+  final double? gpsLon;
 
   /// Display rotation metadata only; original file unchanged.
   final int rotationDegrees;
@@ -89,6 +107,8 @@ final class PhotoDraft {
       'id': id,
       'projectId': projectId,
       'recordId': recordId,
+      'captureSessionId': captureSessionId,
+      'storedFilename': storedFilename,
       'relativePath': relativePath,
       'sha256': sha256,
       'photoType': photoType,
@@ -98,6 +118,9 @@ final class PhotoDraft {
       'height': height,
       'fileSize': fileSize,
       'mimeType': mimeType,
+      'capturedAt': capturedAt?.toIso8601String(),
+      'gpsLat': gpsLat,
+      'gpsLon': gpsLon,
       'rotationDegrees': rotationDegrees,
       'processingState': processingState,
       'hasCaption': hasCaption,
@@ -112,6 +135,8 @@ final class PhotoDraft {
       id: json['id'] as String? ?? '',
       projectId: json['projectId'] as String? ?? '',
       recordId: json['recordId'] as String?,
+      captureSessionId: json['captureSessionId'] as String? ?? '',
+      storedFilename: json['storedFilename'] as String? ?? '',
       relativePath: json['relativePath'] as String? ?? '',
       sha256: json['sha256'] as String? ?? '',
       photoType: json['photoType'] as String? ?? 'other',
@@ -121,6 +146,9 @@ final class PhotoDraft {
       height: json['height'] as int? ?? 0,
       fileSize: json['fileSize'] as int? ?? 0,
       mimeType: json['mimeType'] as String? ?? 'image/jpeg',
+      capturedAt: DateTime.tryParse(json['capturedAt'] as String? ?? ''),
+      gpsLat: (json['gpsLat'] as num?)?.toDouble(),
+      gpsLon: (json['gpsLon'] as num?)?.toDouble(),
       rotationDegrees: json['rotationDegrees'] as int? ?? 0,
       processingState: json['processingState'] as String? ?? 'ready',
       hasCaption: json['hasCaption'] as bool? ?? false,
@@ -135,6 +163,8 @@ final class PhotoDraft {
     String? projectId,
     String? recordId,
     bool clearRecordId = false,
+    String? captureSessionId,
+    String? storedFilename,
     String? relativePath,
     String? sha256,
     String? photoType,
@@ -144,6 +174,9 @@ final class PhotoDraft {
     int? height,
     int? fileSize,
     String? mimeType,
+    DateTime? capturedAt,
+    double? gpsLat,
+    double? gpsLon,
     int? rotationDegrees,
     String? processingState,
     bool? hasCaption,
@@ -154,6 +187,8 @@ final class PhotoDraft {
       id: id ?? this.id,
       projectId: projectId ?? this.projectId,
       recordId: clearRecordId ? null : (recordId ?? this.recordId),
+      captureSessionId: captureSessionId ?? this.captureSessionId,
+      storedFilename: storedFilename ?? this.storedFilename,
       relativePath: relativePath ?? this.relativePath,
       sha256: sha256 ?? this.sha256,
       photoType: photoType ?? this.photoType,
@@ -163,6 +198,9 @@ final class PhotoDraft {
       height: height ?? this.height,
       fileSize: fileSize ?? this.fileSize,
       mimeType: mimeType ?? this.mimeType,
+      capturedAt: capturedAt ?? this.capturedAt,
+      gpsLat: gpsLat ?? this.gpsLat,
+      gpsLon: gpsLon ?? this.gpsLon,
       rotationDegrees: rotationDegrees ?? this.rotationDegrees,
       processingState: processingState ?? this.processingState,
       hasCaption: hasCaption ?? this.hasCaption,

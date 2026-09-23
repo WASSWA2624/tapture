@@ -2,6 +2,7 @@
 library;
 
 export 'about_screen.dart';
+export 'ai_provider_settings_screen.dart';
 export 'app_lock_screen.dart';
 export 'appearance_settings_screen.dart';
 export 'capture_settings_screen.dart';
