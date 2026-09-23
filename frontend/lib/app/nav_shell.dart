@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tapture/app/feedback_host.dart';
 import 'package:tapture/app/shell_title.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
@@ -28,18 +27,16 @@ class NavShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FeedbackHost(
-      child: ResponsiveBuilder(
-        compact: (BuildContext _) {
-          return _Chrome(shell: shell, rail: false, pane: false);
-        },
-        medium: (BuildContext _) {
-          return _Chrome(shell: shell, rail: true, pane: false);
-        },
-        expanded: (BuildContext _) {
-          return _Chrome(shell: shell, rail: true, pane: true);
-        },
-      ),
+    return ResponsiveBuilder(
+      compact: (BuildContext _) {
+        return _Chrome(shell: shell, rail: false, pane: false);
+      },
+      medium: (BuildContext _) {
+        return _Chrome(shell: shell, rail: true, pane: false);
+      },
+      expanded: (BuildContext _) {
+        return _Chrome(shell: shell, rail: true, pane: true);
+      },
     );
   }
 }

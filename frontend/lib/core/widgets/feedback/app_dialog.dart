@@ -206,9 +206,11 @@ Future<bool> showAppConfirm(
   String? typedLabel,
   String? alternativeLabel,
   VoidCallback? onAlternative,
+  bool useRootNavigator = true,
 }) async {
   final bool? result = await showDialog<bool>(
     context: context,
+    useRootNavigator: useRootNavigator,
     barrierDismissible: true,
     builder: (BuildContext dialogContext) {
       if (typedValue != null && typedValue.isNotEmpty) {

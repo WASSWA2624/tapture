@@ -14,5 +14,6 @@ Future<bool> confirmDiscardFeedbackDraft(
     message: Copy.feedbackDiscardDraftMessage(images),
     confirmLabel: Copy.discard,
     destructive: true,
+    useRootNavigator: false,
   );
 }

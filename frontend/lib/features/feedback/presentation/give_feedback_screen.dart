@@ -159,12 +159,9 @@ class _GiveFeedbackState extends ConsumerState<GiveFeedbackScreen> {
   }
 
   Future<void> _save() async {
-    // The form leaves the tree once the draft clears; the navigator's
-    // context outlives it for the confirmation.
-    final BuildContext root = Navigator.of(
-      context,
-      rootNavigator: true,
-    ).context;
+    // The form leaves the tree once the draft clears; the Feedback
+    // navigator's context outlives it for the confirmation.
+    final BuildContext root = Navigator.of(context).context;
     final Result<FeedbackEntry> result = await ref
         .read(giveFeedbackControllerProvider.notifier)
         .save();

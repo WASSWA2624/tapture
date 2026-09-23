@@ -75,6 +75,7 @@ Future<void> showAppOverflowActions(
   BuildContext context, {
   required Rect anchor,
   required List<AppOverflowAction> items,
+  bool useRootNavigator = true,
 }) async {
   final AppColors colors = context.colors;
   final RenderBox overlay =
@@ -82,7 +83,7 @@ Future<void> showAppOverflowActions(
           as RenderBox;
   final int? chosen = await showMenu<int>(
     context: context,
-    useRootNavigator: true,
+    useRootNavigator: useRootNavigator,
     position: RelativeRect.fromRect(anchor, Offset.zero & overlay.size),
     color: colors.surface,
     elevation: 0,

@@ -12,29 +12,58 @@ import 'package:tapture/features/settings/presentation/offline_switch.dart';
 
 import 'router.dart';
 
-/// Wraps the nav shell with the floating Feedback control and the origin
-/// the feature needs, so the feature never reads the router.
-class FeedbackHost extends ConsumerWidget {
+/// Wraps the root Navigator with the floating Feedback control and supplies
+/// route context without making the feature depend on the router.
+class FeedbackHost extends ConsumerStatefulWidget {
   /// Creates the host around [child].
   const FeedbackHost({super.key, required this.child});
 
-  /// The four-destination chrome.
+  /// The complete routed app, including its dialogs and popup routes.
   final Widget child;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return FeedbackOverlay(origin: _origin(context, ref), child: child);
+  ConsumerState<FeedbackHost> createState() => _FeedbackHostState();
+}
+
+class _FeedbackHostState extends ConsumerState<FeedbackHost> {
+  late final GoRouter _router;
+  late Uri _uri;
+
+  @override
+  void initState() {
+    super.initState();
+    _router = ref.read(routerProvider);
+    _uri = _router.routeInformationProvider.value.uri;
+    _router.routeInformationProvider.addListener(_routeChanged);
+  }
+
+  @override
+  void dispose() {
+    _router.routeInformationProvider.removeListener(_routeChanged);
+    super.dispose();
+  }
+
+  void _routeChanged() {
+    final Uri next = _router.routeInformationProvider.value.uri;
+    if (mounted && next != _uri) {
+      setState(() => _uri = next);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FeedbackOverlay(
+      origin: _origin(context, ref, _uri),
+      child: widget.child,
+    );
   }
 }
 
-FeedbackOrigin _origin(BuildContext context, WidgetRef ref) {
-  final GoRouterState state = GoRouterState.of(context);
-  final String path = state.uri.path;
-  final String route = state.uri.hasQuery
-      ? '${state.uri.path}?${state.uri.query}'
-      : path;
+FeedbackOrigin _origin(BuildContext context, WidgetRef ref, Uri uri) {
+  final String path = uri.path;
+  final String route = uri.hasQuery ? '${uri.path}?${uri.query}' : path;
   return FeedbackOrigin(
-    screen: ShellTitle.screen(ref, state.uri),
+    screen: ShellTitle.screen(ref, uri),
     route: route,
     routeName: _routeName(path),
     connectivity: _connectivity(ref),

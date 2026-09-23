@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 
-/// Opens [page] as a full screen on the root navigator, on every form factor.
-Future<T?> openFeedbackFlow<T>(BuildContext context, {required Widget page}) {
+/// Opens [page] as a full screen on the requested navigator, on every form
+/// factor. App entry points use the root; the always-on-top Feedback layer
+/// uses its own navigator so it never disturbs the screen being documented.
+Future<T?> openFeedbackFlow<T>(
+  BuildContext context, {
+  required Widget page,
+  bool useRootNavigator = true,
+}) {
   return Navigator.of(
     context,
-    rootNavigator: true,
+    rootNavigator: useRootNavigator,
   ).push<T>(MaterialPageRoute<T>(builder: (BuildContext _) => page));
 }

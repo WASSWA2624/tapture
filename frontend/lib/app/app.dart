@@ -11,6 +11,7 @@ import 'package:tapture/features/settings/presentation/offline_switch.dart';
 import 'package:tapture/features/settings/settings.dart';
 
 import 'env.dart';
+import 'feedback_host.dart';
 import 'router.dart' show AppRoutes, Router, routerProvider;
 import 'theme/app_theme.dart';
 import 'theme/theme_controller.dart';
@@ -57,15 +58,17 @@ class TaptureApp extends ConsumerWidget {
           service: speech,
           languageTag: voiceLanguage,
           onDeviceOnly: offline,
-          child: ErrorBoundary(
-            fallback: (Failure failure, VoidCallback retry) {
-              return GlobalErrorPage(
-                failure: failure,
-                onRestart: retry,
-                onOpenRecycleBin: () => router.go(AppRoutes.more),
-              );
-            },
-            child: child ?? const SizedBox.shrink(),
+          child: FeedbackHost(
+            child: ErrorBoundary(
+              fallback: (Failure failure, VoidCallback retry) {
+                return GlobalErrorPage(
+                  failure: failure,
+                  onRestart: retry,
+                  onOpenRecycleBin: () => router.go(AppRoutes.more),
+                );
+              },
+              child: child ?? const SizedBox.shrink(),
+            ),
           ),
         );
       },
