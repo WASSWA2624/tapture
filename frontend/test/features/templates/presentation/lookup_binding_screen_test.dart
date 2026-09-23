@@ -8,7 +8,9 @@ import 'package:tapture/features/reference/domain/lookup_binding.dart';
 import 'package:tapture/features/templates/presentation/lookup_binding_screen.dart';
 
 void main() {
-  testWidgets('lookup_binding_screen failure state', (WidgetTester tester) async {
+  testWidgets('lookup_binding_screen failure state', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(
@@ -56,9 +58,9 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      ProviderScope(
+      const ProviderScope(
         overrides: <Override>[],
-        child: const MaterialApp(
+        child: MaterialApp(
           home: LookupBindingScreen(templateId: 'missing', fieldKey: 'x'),
         ),
       ),

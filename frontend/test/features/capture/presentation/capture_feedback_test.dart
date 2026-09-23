@@ -13,7 +13,7 @@ import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/files/text_store.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
-import 'package:tapture/features/capture/data/photo_repository_impl.dart';
+import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';

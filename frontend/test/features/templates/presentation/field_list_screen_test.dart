@@ -156,7 +156,7 @@ void main() {
     );
     expect(find.text(Copy.fieldRequired), findsOneWidget);
     expect(find.text(Copy.fieldOptional), findsOneWidget);
-    expect(find.text(Copy.fieldTypeLabel('text')), findsNWidgets(2));
+    expect(find.textContaining(Copy.fieldTypeLabel('text')), findsNWidgets(2));
 
     await tester.tap(find.byTooltip(Copy.fieldMoveDown('Serial')));
     await tester.pumpAndSettle();

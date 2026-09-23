@@ -13,7 +13,7 @@ import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/files/storage_guard.dart';
 import 'package:tapture/core/files/text_store.dart';
 import 'package:tapture/core/permissions/permissions_service.dart';
-import 'package:tapture/features/capture/data/photo_repository_impl.dart';
+import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/presentation/audio_recorder.dart';

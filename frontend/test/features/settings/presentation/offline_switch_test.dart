@@ -178,8 +178,10 @@ List<String> _flagWritesInLib() {
       continue;
     }
     final String source = file.readAsStringSync();
-    if (source.contains('SettingKeys.offlineByChoice') &&
-        source.contains('.write(')) {
+    if (RegExp(
+      r'\.write\(\s*SettingKeys\.offlineByChoice',
+      multiLine: true,
+    ).hasMatch(source)) {
       writers.add(file.path.replaceAll(r'\', '/').split('frontend/').last);
     }
   }

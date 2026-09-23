@@ -6,6 +6,7 @@ import 'package:tapture/features/settings/settings.dart';
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
 import 'project_list_criteria.dart';
+import 'project_list_criteria_controller.dart';
 import 'project_list_filter.dart';
 
 /// The single open-project id. Persists the choice, restores it on the

@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/text_store.dart';
-import 'package:tapture/features/capture/data/photo_repository_impl.dart';
+import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/domain/save_and_analyse.dart';

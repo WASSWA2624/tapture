@@ -1,7 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/ai/ai_operation.dart';
 import 'package:tapture/core/ai/ai_service.dart';
+import 'package:tapture/core/ai/model_descriptor.dart';
+import 'package:tapture/core/ai/provider_descriptor.dart';
+import 'package:tapture/core/ai/provider_key_custody.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+
+export 'ai_operation.dart';
+export 'model_descriptor.dart';
+export 'provider_descriptor.dart';
+export 'provider_key_custody.dart';
 
 /// Chooses an [AiService] per project and per operation.
 ///
@@ -165,122 +174,6 @@ final class ProviderRegistry {
 /// keyless stand-in with the same registry used by processing.
 final Provider<ProviderRegistry> providerRegistryProvider =
     Provider<ProviderRegistry>((Ref _) => ProviderRegistry.keyless());
-
-/// Which operation a project is selecting a provider for.
-enum AiOperation {
-  /// Image text.
-  readText,
-
-  /// Field extraction.
-  extractFields,
-
-  /// Caption refinement.
-  refineText,
-
-  /// Speech.
-  transcribe,
-}
-
-/// Where credentials for a provider are held.
-enum ProviderKeyCustody {
-  /// Organisation backend holds the credential.
-  backend,
-
-  /// The credential is held in this device's secure storage.
-  device,
-}
-
-/// One model exposed by a provider for selected operations.
-final class ModelDescriptor {
-  /// Creates model metadata.
-  factory ModelDescriptor({
-    required String id,
-    required String label,
-    required Set<AiOperation> operations,
-  }) {
-    return ModelDescriptor._(
-      id: id,
-      label: label,
-      operations: Set<AiOperation>.unmodifiable(operations),
-    );
-  }
-
-  const ModelDescriptor._({
-    required this.id,
-    required this.label,
-    required this.operations,
-  });
-
-  /// Stable wire id.
-  final String id;
-
-  /// Operator-facing name.
-  final String label;
-
-  /// Operations supported by this model.
-  final Set<AiOperation> operations;
-}
-
-/// Registry-owned provider presentation and resolution metadata.
-final class ProviderDescriptor {
-  /// Creates a provider descriptor.
-  factory ProviderDescriptor({
-    required String id,
-    required String label,
-    required Set<AiOperation> operations,
-    required ProviderKeyCustody keyCustody,
-    required bool deviceKeyAllowed,
-    required bool available,
-    required AiService service,
-    required List<ModelDescriptor> models,
-  }) {
-    return ProviderDescriptor._(
-      id: id,
-      label: label,
-      operations: Set<AiOperation>.unmodifiable(operations),
-      keyCustody: keyCustody,
-      deviceKeyAllowed: deviceKeyAllowed,
-      available: available,
-      service: service,
-      models: List<ModelDescriptor>.unmodifiable(models),
-    );
-  }
-
-  const ProviderDescriptor._({
-    required this.id,
-    required this.label,
-    required this.operations,
-    required this.keyCustody,
-    required this.deviceKeyAllowed,
-    required this.available,
-    required this.service,
-    required this.models,
-  });
-
-  /// Stable wire id.
-  final String id;
-
-  /// Operator-facing name.
-  final String label;
-
-  /// Supported operations.
-  final Set<AiOperation> operations;
-
-  /// Credential custody boundary.
-  final ProviderKeyCustody keyCustody;
-
-  /// Whether administrators explicitly permit a device-held key.
-  final bool deviceKeyAllowed;
-
-  /// Whether this descriptor can currently resolve work.
-  final bool available;
-
-  /// Service implementation. Credentials are not stored here.
-  final AiService service;
-
-  /// Ordered model catalogue.
-  final List<ModelDescriptor> models;
-}
 
 /// Where an entry's key lives, and the service it resolves to.
 typedef RegistryEntry = ({String id, bool keyHeldByBackend, AiService service});

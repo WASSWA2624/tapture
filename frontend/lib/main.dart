@@ -170,7 +170,7 @@ Future<void> _run() async {
       audioRecorderServiceProvider.overrideWith((Ref _) {
         return kIsWeb
             ? const AudioRecorderService.unavailable()
-            : PluginAudioRecorder(writer: evidenceWriter);
+            : AudioRecorderPlugin(writer: evidenceWriter);
       }),
       processingRepositoryProvider.overrideWith((Ref ref) {
         return ProcessingRepositoryImpl(

@@ -16,6 +16,7 @@ export 'presentation/current_project.dart'
         projectSettingsStoreProvider;
 export 'presentation/project_list_actions.dart';
 export 'presentation/project_list_criteria.dart';
+export 'presentation/project_list_criteria_controller.dart';
 export 'presentation/project_list_filter.dart'
     show
         projectListFilteredProvider,

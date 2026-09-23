@@ -19,6 +19,7 @@ import 'current_project.dart';
 import 'project_archive_action.dart';
 import 'project_delete_action.dart';
 import 'project_list_criteria.dart';
+import 'project_list_criteria_controller.dart';
 import 'project_list_filter.dart';
 import 'project_open_externally_action.dart';
 import 'project_rename_action.dart';

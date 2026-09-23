@@ -1,21 +1,6 @@
 import 'package:tapture/features/templates/domain/field_def.dart';
 import 'package:tapture/features/templates/domain/template_def.dart';
 
-/// One template-declared hierarchy level.
-final class TemplateContextLevelProposal {
-  /// Creates a proposal for [field] at its one-based [level].
-  const TemplateContextLevelProposal({
-    required this.level,
-    required this.field,
-  });
-
-  /// One-based broad-to-narrow level number.
-  final int level;
-
-  /// Template field declaring the level.
-  final FieldDef field;
-}
-
 /// Stable hierarchy suggestions and any ambiguity that requires attention.
 final class TemplateContextProposal {
   /// Creates a proposal result.
@@ -86,7 +71,7 @@ final class TemplateContextProposal {
       keyAtLevel[level] = field.fieldKey;
       levelForKey[field.fieldKey] = level;
       if (seen.add(field.fieldKey)) {
-        levels.add(TemplateContextLevelProposal(level: level, field: field));
+        levels.add((level: level, field: field));
       }
     }
     return TemplateContextProposal(
@@ -104,3 +89,6 @@ final class TemplateContextProposal {
   /// Whether template declarations need correction before bulk use.
   bool get hasConflicts => conflicts.isNotEmpty;
 }
+
+/// One template-declared hierarchy level: one-based level and source field.
+typedef TemplateContextLevelProposal = ({int level, FieldDef field});

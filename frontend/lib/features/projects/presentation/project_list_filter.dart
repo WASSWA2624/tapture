@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/project_repository.dart';
 import 'current_project.dart';
 import 'project_list_criteria.dart';
+import 'project_list_criteria_controller.dart';
 
 /// Whether the landing list includes archived projects.
 final class ProjectListFilter extends Notifier<bool> {

@@ -1,7 +1,29 @@
 /// One durable audio clip awaiting record creation.
 final class AudioDraft {
   /// Creates a clip draft after the recorder has flushed its file.
-  const AudioDraft({
+  factory AudioDraft({
+    required String id,
+    required String projectId,
+    required String relativePath,
+    required String mimeType,
+    required int fileSize,
+    required String sha256,
+    required int durationMs,
+    List<String> photoIds = const <String>[],
+  }) {
+    return AudioDraft._(
+      id: id,
+      projectId: projectId,
+      relativePath: relativePath,
+      mimeType: mimeType,
+      fileSize: fileSize,
+      sha256: sha256,
+      durationMs: durationMs,
+      photoIds: List<String>.unmodifiable(photoIds),
+    );
+  }
+
+  const AudioDraft._({
     required this.id,
     required this.projectId,
     required this.relativePath,
@@ -9,7 +31,7 @@ final class AudioDraft {
     required this.fileSize,
     required this.sha256,
     required this.durationMs,
-    this.photoIds = const <String>[],
+    required this.photoIds,
   });
 
   /// Attachment id.

@@ -12,9 +12,9 @@ import 'audio_recorder_service.dart';
 
 /// Native microphone adapter. Plugin types stop in this core platform file;
 /// capture depends only on [AudioRecorderService].
-final class PluginAudioRecorder implements AudioRecorderService {
+final class AudioRecorderPlugin implements AudioRecorderService {
   /// Creates an adapter whose chunks land through [writer].
-  PluginAudioRecorder({required FileWriter writer}) : _writer = writer;
+  AudioRecorderPlugin({required FileWriter writer}) : _writer = writer;
 
   final FileWriter _writer;
   final record.AudioRecorder _recorder = record.AudioRecorder();

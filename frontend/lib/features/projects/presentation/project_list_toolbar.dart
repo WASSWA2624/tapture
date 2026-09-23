@@ -13,6 +13,7 @@ import 'package:tapture/core/widgets/fields/choice.dart';
 import '../domain/project_repository.dart';
 import 'current_project.dart';
 import 'project_list_criteria.dart';
+import 'project_list_criteria_controller.dart';
 
 /// One search and filter toolbar reused by all project-list layouts.
 final class ProjectListToolbar extends ConsumerWidget {

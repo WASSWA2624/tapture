@@ -5,7 +5,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/text_store.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
-import 'package:tapture/features/capture/data/photo_repository_impl.dart';
+import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
 import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
 import 'package:tapture/features/capture/domain/capture_persistence.dart';

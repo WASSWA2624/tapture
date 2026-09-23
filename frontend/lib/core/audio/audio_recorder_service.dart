@@ -7,6 +7,10 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/file_writer.dart';
 
+import 'audio_recording.dart';
+
+export 'audio_recording.dart';
+
 part 'audio_recorder_state.dart';
 
 /// Records walkthrough audio to a file via [FileWriter] chunks. Never
@@ -204,31 +208,4 @@ final class _FakeAudioRecorder implements AudioRecorderService {
     _emit();
     return Success<Duration>(elapsed);
   }
-}
-
-/// Metadata published only after a recorder file has been flushed and hashed.
-final class AudioRecording {
-  /// Creates completed recording metadata.
-  const AudioRecording({
-    required this.relativePath,
-    required this.sha256,
-    required this.byteLength,
-    required this.duration,
-    required this.mimeType,
-  });
-
-  /// Path relative to the storage root.
-  final String relativePath;
-
-  /// Content hash.
-  final String sha256;
-
-  /// Durable byte count.
-  final int byteLength;
-
-  /// Recorded duration.
-  final Duration duration;
-
-  /// Encoded media type.
-  final String mimeType;
 }
