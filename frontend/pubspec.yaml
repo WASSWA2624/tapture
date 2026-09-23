@@ -16,7 +16,9 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_riverpod: ^3.4.3
-  flutter_secure_storage: ^9.2.4
+  # Keep this migration-capable v10 release for at least one production cycle
+  # before moving to v11, which removes the legacy Android cipher migration.
+  flutter_secure_storage: ^10.3.4
   flutter_local_notifications: ^18.0.1
   go_router: ^17.5.0
   image: ^4.3.0
@@ -25,7 +27,7 @@ dependencies:
   json_annotation: ^4.9.0
   path_provider: ^2.1.5
   permission_handler: ^12.0.3
-  share_plus: ^12.0.2
+  share_plus: ^13.3.0
   speech_to_text: ^7.5.0
   sqlite3: ^2.9.4
   sqlite3_flutter_libs: ^0.5.42

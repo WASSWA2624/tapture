@@ -10,9 +10,7 @@ import 'package:tapture/core/errors/result.dart';
 abstract interface class SecureStorage {
   /// Wraps the platform Keystore / Keychain.
   factory SecureStorage() {
-    const FlutterSecureStorage plugin = FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
-    );
+    const FlutterSecureStorage plugin = FlutterSecureStorage();
     return _SecureStorage(
       write: (SecretKey key, String value) {
         return plugin.write(key: _name(key), value: value);
