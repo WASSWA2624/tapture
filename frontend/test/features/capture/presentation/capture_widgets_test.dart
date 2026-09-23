@@ -85,17 +85,13 @@ void main() {
     await tester.pump();
     expect(find.text(Copy.capturePauseAudio), findsOneWidget);
 
-    await tester.binding.handleAppLifecycleStateChanged(
-      AppLifecycleState.paused,
-    );
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
     await tester.pump();
     expect(find.text(Copy.audioRecorderStatus('paused', 0)), findsOneWidget);
     expect(find.text(Copy.captureStopAudio), findsOneWidget);
 
     await recorder.stop();
-    await tester.binding.handleAppLifecycleStateChanged(
-      AppLifecycleState.resumed,
-    );
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
   });
 
   testWidgets('capture_screen compact medium evidence optional', (

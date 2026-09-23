@@ -34,8 +34,7 @@ abstract final class RoutePaths {
   static const String projectCreate = '$projects/new';
   static String projectCapture(String projectId) =>
       '${project(projectId)}/capture';
-  static String projectEdit(String projectId) =>
-      '${project(projectId)}/edit';
+  static String projectEdit(String projectId) => '${project(projectId)}/edit';
   static String projectSettings(String projectId) =>
       '${project(projectId)}/settings';
   static String projectContext(String projectId) =>
@@ -44,8 +43,7 @@ abstract final class RoutePaths {
       '${project(projectId)}/templates';
   static String projectRecords(String projectId) =>
       '${project(projectId)}/records';
-  static String projectQueue(String projectId) =>
-      '${project(projectId)}/queue';
+  static String projectQueue(String projectId) => '${project(projectId)}/queue';
   static String projectExports(String projectId) =>
       '${project(projectId)}/exports';
 
