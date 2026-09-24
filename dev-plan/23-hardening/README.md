@@ -2,7 +2,7 @@
 
 Making the finished app fast, legible, reachable and unbreakable in the field.
 
-Task 023, then 026–063 (39). Task 023 is one prompt for the hardening pass; 026–063 are leftover field-feedback extras that still stand alone. Old numbers are in [RETIRED.md](../RETIRED.md).
+Task 023, then 026–064 (40). Task 023 is one prompt for the hardening pass; 026–063 are leftover field-feedback extras that still stand alone. Old numbers are in [RETIRED.md](../RETIRED.md).
 
 - [ ] [023 — Hardening: fast, legible, reachable and unbreakable in the field](023-hardening.md)
 - [x] [026 — In-app feedback: floating button, capture, download and delete](026-in-app-feedback.md)
@@ -43,3 +43,4 @@ Task 023, then 026–063 (39). Task 023 is one prompt for the hardening pass; 02
 - [x] [061 — Resolve shell, settings and capture feedback](061-resolve-shell-capture-feedback.md)
 - [ ] [062 — Resolve feedback archive 23092026-1635](062-resolve-feedback-23092026.md)
 - [ ] [063 — Resolve projects, capture and template feedback](063-resolve-feedback-23092026-2222.md)
+- [ ] [064 — Resolve projects and capture feedback](064-resolve-feedback-24092026.md)

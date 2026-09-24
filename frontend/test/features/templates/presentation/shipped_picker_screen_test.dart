@@ -147,7 +147,7 @@ void main() {
     expect(find.byType(AppListTile), findsOneWidget);
     expect(
       find.text(Copy.shippedTemplateName('generic_item')),
-      findsNWidgets(2),
+      findsNWidgets(3),
     );
     expect(find.text(Copy.fieldsCount(2)), findsOneWidget);
 
@@ -176,6 +176,64 @@ void main() {
     expect(loader.copies.single.projectId, 'project-1');
     expect(loader.copies.single.version, 1);
     expect(find.text('fields'), findsOneWidget);
+  });
+
+  testWidgets('search and kind filter the loaded library', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      overrides: <Override>[
+        shippedLibraryProvider.overrideWith(
+          (Ref _) async => const <TemplateDef>[
+            TemplateDef(
+              id: 'g',
+              templateKey: 'generic_item',
+              name: 'generic',
+              version: 1,
+              fields: <FieldDef>[],
+              identityFieldKeys: <String>[],
+              rows: <TemplateRow>[],
+              kind: 'generic',
+            ),
+            TemplateDef(
+              id: 'm',
+              templateKey: 'meter_reading',
+              name: 'meter',
+              version: 1,
+              fields: <FieldDef>[],
+              identityFieldKeys: <String>[],
+              rows: <TemplateRow>[],
+              kind: 'stock',
+            ),
+          ],
+        ),
+      ],
+    );
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(AppListTile, 'Generic'), findsOneWidget);
+    expect(find.widgetWithText(AppListTile, 'Meter reading'), findsOneWidget);
+
+    await tester.enterText(find.byType(EditableText), 'meter');
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.widgetWithText(AppListTile, 'Meter reading'), findsOneWidget);
+    expect(find.widgetWithText(AppListTile, 'Generic'), findsNothing);
+
+    await tester.enterText(find.byType(EditableText), '');
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(find.text('Stock / Store').first);
+    await tester.pump();
+    expect(find.widgetWithText(AppListTile, 'Meter reading'), findsOneWidget);
+    expect(find.widgetWithText(AppListTile, 'Generic'), findsNothing);
+
+    await tester.enterText(find.byType(EditableText), 'meter');
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.widgetWithText(AppListTile, 'Meter reading'), findsOneWidget);
+
+    await tester.enterText(find.byType(EditableText), 'no-such');
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text(Copy.shippedLibraryNoMatch('no-such')), findsOneWidget);
+    expect(find.byType(EditableText), findsOneWidget);
   });
 }
 

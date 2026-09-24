@@ -20,6 +20,7 @@ import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
 import 'package:tapture/features/capture/presentation/capture_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_crop_screen.dart';
+import 'package:tapture/features/capture/presentation/photo_tray.dart';
 import 'package:tapture/features/context/context.dart'
     show contextRepositoryProvider;
 import 'package:tapture/features/context/domain/context_state.dart';
@@ -283,6 +284,166 @@ void main() {
     expect(find.text('Computers'), findsOneWidget);
     expect(find.text('Furniture'), findsOneWidget);
   });
+
+  testWidgets(
+    'a selection is the default caption and none captions the latest',
+    (WidgetTester tester) async {
+      final FakePhotoRepository photos = FakePhotoRepository();
+      addTearDown(photos.dispose);
+      await tester.pumpWidget(
+        _scope(
+          const CaptureScreen(projectId: 'p1'),
+          extras: <Override>[
+            photoRepositoryProvider.overrideWith((Ref _) => photos),
+            capturePersistenceProvider.overrideWith(
+              (Ref ref) => CapturePersistenceImpl(
+                photos: photos,
+                store: TextStore.memory(),
+              ),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      final CaptureController controller = ProviderScope.containerOf(
+        tester.element(find.byType(CaptureScreen)),
+      ).read(captureControllerProvider('p1').notifier);
+      for (final String id in <String>['a', 'b', 'c']) {
+        await controller.addPhoto(_draft(id));
+      }
+      await tester.pumpAndSettle();
+      await tester.longPress(
+        find.byKey(const ValueKey<String>('photo-thumb-a')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.widgetWithText(AppButton, Copy.capturePhotoCaption),
+      );
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).last, 'one');
+      await tester.tap(find.text(Copy.captureSaved));
+      await tester.pumpAndSettle();
+      CaptureSession session = ProviderScope.containerOf(
+        tester.element(find.byType(CaptureScreen)),
+      ).read(captureControllerProvider('p1'));
+      expect(session.captions['a'], 'one');
+      expect(session.captions['c'], isNull);
+
+      await tester.longPress(
+        find.byKey(const ValueKey<String>('photo-thumb-a')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.widgetWithText(AppButton, Copy.capturePhotoCaption),
+      );
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).last, 'last');
+      await tester.tap(find.text(Copy.captureSaved));
+      await tester.pumpAndSettle();
+      session = ProviderScope.containerOf(
+        tester.element(find.byType(CaptureScreen)),
+      ).read(captureControllerProvider('p1'));
+      expect(session.captions['a'], 'one');
+      expect(session.captions['c'], 'last');
+    },
+  );
+
+  testWidgets('add photo is one sheet with both icon buttons', (
+    WidgetTester tester,
+  ) async {
+    for (final double width in <double>[360, 800, 1200]) {
+      tester.view.physicalSize = Size(width, 800);
+      tester.view.devicePixelRatio = 1;
+      final FakePhotoRepository photos = FakePhotoRepository();
+      await tester.pumpWidget(
+        _scope(
+          const CaptureScreen(projectId: 'p1'),
+          extras: <Override>[
+            photoRepositoryProvider.overrideWith((Ref _) => photos),
+            capturePersistenceProvider.overrideWith(
+              (Ref ref) => CapturePersistenceImpl(
+                photos: photos,
+                store: TextStore.memory(),
+              ),
+            ),
+            capturePhotoPickerProvider.overrideWith(
+              (Ref _) => const PhotoPicker.fake(canTakePhoto: true),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip(Copy.captureAddPhoto));
+      await tester.pumpAndSettle();
+      expect(find.text(Copy.captureAddSheetTitle), findsOneWidget);
+      expect(
+        find.widgetWithText(AppButton, Copy.captureTakePhoto),
+        findsOneWidget,
+      );
+      expect(
+        find.widgetWithText(AppButton, Copy.captureChoosePhoto),
+        findsOneWidget,
+      );
+      expect(
+        tester
+            .getSize(find.widgetWithText(AppButton, Copy.captureTakePhoto))
+            .height,
+        greaterThanOrEqualTo(48),
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
+      photos.dispose();
+    }
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+  });
+
+  testWidgets('the add control matches the thumbnail square', (
+    WidgetTester tester,
+  ) async {
+    final FakePhotoRepository photos = FakePhotoRepository();
+    addTearDown(photos.dispose);
+    await tester.pumpWidget(
+      _scope(
+        const CaptureScreen(projectId: 'p1'),
+        extras: <Override>[
+          photoRepositoryProvider.overrideWith((Ref _) => photos),
+          capturePersistenceProvider.overrideWith(
+            (Ref ref) => CapturePersistenceImpl(
+              photos: photos,
+              store: TextStore.memory(),
+            ),
+          ),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+    final CaptureController controller = ProviderScope.containerOf(
+      tester.element(find.byType(CaptureScreen)),
+    ).read(captureControllerProvider('p1').notifier);
+    await controller.addPhoto(_draft('a'));
+    await tester.pumpAndSettle();
+    expect(
+      tester.getSize(find.byTooltip(Copy.captureAddPhoto)),
+      tester.getSize(find.byKey(const ValueKey<String>('photo-thumb-a'))),
+    );
+  });
+
+  testWidgets(
+    'a failed thumbnail still shows the photo and a missing file does not',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: PhotoTray(
+            photos: <PhotoDraft>[_draft('gone')],
+            missingIds: const <String>{'gone'},
+            onAdd: () {},
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(find.text(Copy.missingPhoto), findsOneWidget);
+    },
+  );
 }
 
 Widget _scope(Widget child, {List<Override> extras = const <Override>[]}) {

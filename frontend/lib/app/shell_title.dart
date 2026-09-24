@@ -38,6 +38,9 @@ abstract final class ShellTitle {
     if (path == AppRoutes.projects || path == '/') {
       return Copy.navProjects;
     }
+    if (path == AppRoutes.projectFilters) {
+      return '${Copy.navProjects} › ${Copy.projectFiltersTitle}';
+    }
     if (path == AppRoutes.projectCreate) {
       final String? source = uri.queryParameters[AppRoutes.sourceQuery];
       if (source != null && source.isNotEmpty) {

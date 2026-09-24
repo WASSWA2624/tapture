@@ -225,7 +225,7 @@ class _Pane extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(
                   Space.x3,
-                  Space.x4,
+                  Space.x1,
                   Space.x3,
                   Space.x2,
                 ),

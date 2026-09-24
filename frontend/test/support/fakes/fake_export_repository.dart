@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:typed_data';
 
+import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/features/exports/domain/export_repository.dart';
@@ -61,6 +63,45 @@ final class FakeExportRepository implements ExportRepository {
     _rows.remove(id);
     _emit();
     return const Success<void>(null);
+  }
+
+  @override
+  Future<Result<ExportedWorkbook>> exportProject(
+    String projectId, {
+    required CancellationToken cancel,
+  }) async {
+    if (projectId.isEmpty) {
+      return const FailureResult<ExportedWorkbook>(
+        ValidationFailure(
+          message: 'An export needs a project.',
+          recoveryAction: 'Open a project and export again.',
+        ),
+      );
+    }
+    if (cancel.isCancelled) {
+      return const FailureResult<ExportedWorkbook>(CancelledFailure());
+    }
+    final int version =
+        _rows.values
+            .where((ExportEntry row) => row.projectId == projectId)
+            .length +
+        1;
+    final String id = 'export-${_next++}';
+    final ExportEntry stored = (
+      id: id,
+      projectId: projectId,
+      version: version,
+      status: 'complete',
+    );
+    _rows[id] = stored;
+    _emit();
+    return Success<ExportedWorkbook>((
+      id: id,
+      projectId: projectId,
+      version: version,
+      fileName: '$id.xlsx',
+      bytes: Uint8List(0),
+    ));
   }
 
   List<ExportEntry> _ownedBy(String projectId) {

@@ -66,7 +66,12 @@ class ProjectListScreen extends ConsumerWidget {
           : const Column(
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.all(Space.x4),
+                  padding: EdgeInsets.fromLTRB(
+                    Space.x4,
+                    Space.x1,
+                    Space.x4,
+                    Space.x2,
+                  ),
                   child: ProjectListToolbar(),
                 ),
                 Expanded(child: ProjectListView(filtered: true)),

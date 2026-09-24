@@ -75,6 +75,15 @@ final class _CapturePhotos implements CapturePhotoRepository {
   }
 
   @override
+  Future<Result<String>> cachedThumbnailForBytes(
+    PhotoDraft photo,
+    Uint8List bytes, {
+    required int edge,
+  }) async {
+    return const Success<String>('thumb');
+  }
+
+  @override
   Future<Result<void>> retireDerived(String id) async {
     return const Success<void>(null);
   }

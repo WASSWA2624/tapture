@@ -23,6 +23,7 @@ class AppSearchField extends StatefulWidget {
     this.onSubmitted,
     Duration? debounce,
     this.resultCount,
+    this.afterMic,
     this.enabled = true,
   }) : debounce = debounce ?? AppConstants.interaction.debounce;
 
@@ -46,6 +47,9 @@ class AppSearchField extends StatefulWidget {
 
   /// Optional hit count shown beside the field, formatted for the locale.
   final int? resultCount;
+
+  /// Control drawn immediately after the microphone. Null hides it.
+  final Widget? afterMic;
 
   /// When false, the field does not accept input.
   final bool enabled;
@@ -130,6 +134,7 @@ class _AppSearchFieldState extends State<AppSearchField> {
         prefix: ExcludeSemantics(
           child: Icon(Icons.search, color: colors.onSurface, size: Space.x6),
         ),
+        afterDictation: widget.afterMic,
         trailing: count == null
             ? null
             : Padding(

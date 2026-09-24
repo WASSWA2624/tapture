@@ -14,6 +14,13 @@ part 'written_file.dart';
 /// Suffix of an in-flight write. Never the name the app reads.
 const String _partSuffix = '.part';
 
+/// Removes a file that was never recorded. A missing file is left alone.
+Future<void> discardUnpublishedFile(File file) async {
+  if (await file.exists()) {
+    await file.delete();
+  }
+}
+
 /// Streams bytes into the storage tree, hashes them in the same pass, and
 /// publishes the file only after a rename.
 abstract interface class FileWriter {

@@ -21,6 +21,7 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/projects/domain/project_repository.dart';
+import 'package:tapture/features/projects/presentation/project_export_screen.dart';
 import 'package:tapture/features/projects/presentation/project_home_screen.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/settings/settings.dart';
@@ -268,6 +269,31 @@ void main() {
     await expectOpens(
       label: Copy.projectSettingsTitle,
       path: AppRoutes.projectSettings('project-1'),
+    );
+  });
+
+  testWidgets('association rows and destination cards share one inset', (
+    WidgetTester tester,
+  ) async {
+    await _pumpPopulated(tester);
+    final double tile = tester.getTopLeft(find.text(Copy.navTemplates)).dx;
+    final double card = tester
+        .getTopLeft(find.byKey(const ValueKey<String>('home-review')))
+        .dx;
+    expect(tile, closeTo(card, 1));
+  });
+
+  testWidgets('export from the home menu opens this project', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter router = await _pumpPopulated(tester);
+    await _chooseOverflow(tester, Copy.projectExport);
+    expect(router.state.uri.path, AppRoutes.projectExports('project-1'));
+    expect(
+      tester
+          .widget<ProjectExportScreen>(find.byType(ProjectExportScreen))
+          .projectId,
+      'project-1',
     );
   });
 
@@ -615,11 +641,9 @@ Future<GoRouter> _pump(
               ),
               GoRoute(
                 path: 'exports',
-                builder: (BuildContext _, GoRouterState _) {
-                  return const AppPage(
-                    title: Copy.navExports,
-                    compactBar: true,
-                    body: Text('exports'),
+                builder: (BuildContext _, GoRouterState state) {
+                  return ProjectExportScreen(
+                    projectId: state.pathParameters['projectId']!,
                   );
                 },
               ),

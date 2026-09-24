@@ -15,15 +15,19 @@ import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
+import 'package:tapture/core/widgets/fields/dictation_scope.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/projects/domain/project_repository.dart';
+import 'package:tapture/features/projects/presentation/project_export_screen.dart';
+import 'package:tapture/features/projects/presentation/project_filters_screen.dart';
 import 'package:tapture/features/projects/presentation/project_list_screen.dart';
 import 'package:tapture/features/projects/projects.dart';
 
 import '../../../support/a11y_matchers.dart';
 import '../../../support/factories.dart';
+import '../../../support/fakes/fake_stt_service.dart';
 import '../fakes/fake_project_repository.dart';
 
 void main() {
@@ -82,13 +86,7 @@ void main() {
     expect(find.byType(AppListTile), findsOneWidget);
     expect(find.text('Alpha'), findsOneWidget);
     expect(
-      find.text(
-        Copy.projectListSubtitle(
-          records: 2,
-          unprocessed: 1,
-          lastWorked: Copy.projectLastWorked(DateTime.utc(2026, 9, 17, 8)),
-        ),
-      ),
+      find.text(Copy.projectListSubtitle(records: 2, unprocessed: 1)),
       findsOneWidget,
     );
   });
@@ -355,6 +353,46 @@ void main() {
     expect(numberX, greaterThan(titleX));
     expect(titleX, greaterThan(menuX));
   });
+
+  testWidgets('export from the row menu opens that project', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(id: 'project-1', name: 'Alpha')));
+    await _pump(tester, repo: repo);
+    await tester.pumpAndSettle();
+    await tester.tap(_rowMenu('project-1'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.projectExport));
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<ProjectExportScreen>(find.byType(ProjectExportScreen))
+          .projectId,
+      'project-1',
+    );
+  });
+
+  testWidgets('the filter sits after the microphone and opens filters', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    await _pump(tester, repo: repo, speech: true);
+    await tester.pumpAndSettle();
+    final Finder mic = find.byKey(
+      const ValueKey<String>('app-text-field-dictate'),
+    );
+    final Finder filter = find.byTooltip(Copy.projectFilters(0));
+    expect(mic, findsOneWidget);
+    expect(filter, findsOneWidget);
+    expect(find.byIcon(Icons.close), findsNothing);
+    expect(tester.getCenter(filter).dx, greaterThan(tester.getCenter(mic).dx));
+    await tester.tap(filter);
+    await tester.pumpAndSettle();
+    expect(find.byType(ProjectFiltersScreen), findsOneWidget);
+  });
 }
 
 Future<void> _pump(
@@ -362,7 +400,9 @@ Future<void> _pump(
   FakeProjectRepository? repo,
   List<Override> overrides = const <Override>[],
   bool rtl = false,
+  bool speech = false,
 }) async {
+  final FakeSttService? stt = speech ? FakeSttService() : null;
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.projects,
     routes: <RouteBase>[
@@ -379,11 +419,25 @@ Future<void> _pump(
             },
           ),
           GoRoute(
+            path: 'filters',
+            builder: (BuildContext _, GoRouterState _) {
+              return const ProjectFiltersScreen();
+            },
+          ),
+          GoRoute(
             path: ':projectId',
             builder: (BuildContext _, GoRouterState _) {
               return const SizedBox.shrink();
             },
             routes: <RouteBase>[
+              GoRoute(
+                path: 'exports',
+                builder: (BuildContext _, GoRouterState state) {
+                  return ProjectExportScreen(
+                    projectId: state.pathParameters['projectId']!,
+                  );
+                },
+              ),
               GoRoute(
                 path: 'edit',
                 builder: (BuildContext _, GoRouterState _) {
@@ -408,14 +462,24 @@ Future<void> _pump(
       child: MaterialApp.router(
         theme: buildTheme(brightness: Brightness.light),
         routerConfig: router,
-        builder: rtl
-            ? (BuildContext _, Widget? child) {
-                return Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: child!,
-                );
-              }
-            : null,
+        builder: (BuildContext _, Widget? child) {
+          Widget wrapped = child ?? const SizedBox.shrink();
+          if (rtl) {
+            wrapped = Directionality(
+              textDirection: TextDirection.rtl,
+              child: wrapped,
+            );
+          }
+          final FakeSttService? speechService = stt;
+          if (speechService != null) {
+            wrapped = DictationScope(
+              service: speechService,
+              languageTag: 'en',
+              child: wrapped,
+            );
+          }
+          return wrapped;
+        },
       ),
     ),
   );

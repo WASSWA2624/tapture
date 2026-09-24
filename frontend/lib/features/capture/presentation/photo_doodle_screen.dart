@@ -92,10 +92,7 @@ class _PhotoDoodleScreenState extends State<PhotoDoodleScreen> {
                       ),
                       CustomPaint(
                         painter: _StrokePainter(
-                          strokes: <List<Offset>>[
-                            ..._strokes,
-                            ?_current,
-                          ],
+                          strokes: <List<Offset>>[..._strokes, ?_current],
                           color: colors.primary,
                         ),
                       ),

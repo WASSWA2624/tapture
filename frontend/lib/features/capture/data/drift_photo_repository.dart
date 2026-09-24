@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:drift/drift.dart' hide Uint8List;
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/photos.dart';
+import 'package:tapture/core/db/tables/tombstones.dart';
 import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -239,6 +240,60 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
   }
 
   @override
+  Future<Result<String>> cachedThumbnailForBytes(
+    PhotoDraft photo,
+    Uint8List bytes, {
+    required int edge,
+  }) async {
+    final StorageRoot? storageRoot = _storageRoot;
+    if (storageRoot == null || bytes.isEmpty) {
+      return const FailureResult<String>(
+        StorageFailure(
+          message: 'That photo could not be read from this device.',
+          recoveryAction: 'Capture the photo again, then try again.',
+        ),
+      );
+    }
+    final String relative = '.cache/capture-src/${photo.id}';
+    final Result<WrittenFile> written = await _writer.write(
+      Stream<List<int>>.value(bytes),
+      relative,
+    );
+    if (written is FailureResult<WrittenFile>) {
+      return FailureResult<String>(written.failure);
+    }
+    final Result<Directory> root = await storageRoot.resolve();
+    final Directory directory;
+    switch (root) {
+      case FailureResult<Directory>(:final Failure failure):
+        return FailureResult<String>(failure);
+      case Success<Directory>(:final Directory value):
+        directory = value;
+    }
+    final String sourcePath = '${directory.path}/$relative';
+    final ThumbnailCache? thumbs = _thumbs;
+    if (thumbs != null && photo.sha256.isNotEmpty) {
+      final Result<File> thumb = await thumbs.thumbnail(
+        photo.sha256,
+        sourcePath,
+        edge: edge,
+      );
+      if (thumb is Success<File>) {
+        return Success<String>(thumb.value.path);
+      }
+    }
+    final String thumbRelative = '.cache/thumbs/${photo.id}_$edge';
+    final Result<WrittenFile> fallback = await _writer.write(
+      Stream<List<int>>.value(bytes),
+      thumbRelative,
+    );
+    if (fallback is FailureResult<WrittenFile>) {
+      return FailureResult<String>(fallback.failure);
+    }
+    return Success<String>('${directory.path}/$thumbRelative');
+  }
+
+  @override
   Future<Result<void>> retireDerived(String id) async {
     try {
       final sqlite.Photo? row =
@@ -256,9 +311,14 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
           ),
         );
       }
-      await (_db.delete(
-        _db.photos,
-      )..where((sqlite.$PhotosTable table) => table.id.equals(id))).go();
+      await writeTombstone(
+        _db,
+        entityType: _db.photos.actualTableName,
+        entityId: id,
+        reason: 'Reverted to the original photo.',
+        clock: _clock,
+        deviceId: _deviceId,
+      );
       return const Success<void>(null);
     } on Object catch (error) {
       return FailureResult<void>(storageFailureFrom(error));

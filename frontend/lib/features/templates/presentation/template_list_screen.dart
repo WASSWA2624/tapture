@@ -100,9 +100,8 @@ class TemplateListScreen extends ConsumerWidget {
       AppOverflowAction(
         label: Copy.templatesExport,
         icon: Icons.ios_share_outlined,
-        onTap: () => context.go(
-          TemplateLocations.child(context, template.id, 'export'),
-        ),
+        onTap: () =>
+            context.go(TemplateLocations.child(context, template.id, 'export')),
       ),
       AppOverflowAction(
         label: Copy.templatesImport,

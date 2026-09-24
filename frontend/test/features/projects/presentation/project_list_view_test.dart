@@ -46,6 +46,7 @@ void main() {
 
       await tester.tap(menu);
       await tester.pumpAndSettle();
+      expect(find.text(Copy.projectExport), findsOneWidget);
       expect(find.text(Copy.projectRename), findsOneWidget);
       expect(find.text(Copy.projectPin), findsOneWidget);
       expect(find.text(Copy.projectOpenWith), findsNothing);

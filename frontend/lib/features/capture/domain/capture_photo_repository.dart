@@ -22,6 +22,13 @@ abstract interface class CapturePhotoRepository implements PhotoRepository {
     required int edge,
   });
 
+  /// Builds a thumbnail from [bytes] already held in the capture session.
+  Future<Result<String>> cachedThumbnailForBytes(
+    PhotoDraft photo,
+    Uint8List bytes, {
+    required int edge,
+  });
+
   /// Removes a derived row. Refuses an original and never unlinks its file.
   Future<Result<void>> retireDerived(String id);
 }

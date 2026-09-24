@@ -132,6 +132,8 @@ void main() {
     await addRecord('processing', 'hash-processing');
     await addRecord('approved', 'hash-approved');
     await addRecord('captured', 'hash-captured');
+    await addRecord('draft', 'hash-draft');
+    await addRecord('CAPTURED', 'hash-captured-upper');
     _ok(
       await upsertRecord(
         db,
@@ -170,7 +172,7 @@ void main() {
     );
     final ProjectHomeCounts counts = (await repo.watchHome('project-1').first);
     expect(counts.review, 1);
-    expect(counts.process, 2);
+    expect(counts.process, 5);
     expect(counts.toExport, 1);
     expect(counts.toShare, 1);
   });

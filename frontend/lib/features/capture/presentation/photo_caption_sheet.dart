@@ -15,6 +15,7 @@ final class PhotoCaptionSheet extends StatefulWidget {
     this.failureMessage,
     this.selectedCount = 0,
     this.allCount = 1,
+    this.initialScope = CaptionScope.thisPhoto,
     super.key,
   });
 
@@ -33,6 +34,9 @@ final class PhotoCaptionSheet extends StatefulWidget {
   /// Photos in the session.
   final int allCount;
 
+  /// Scope selected when the sheet opens.
+  final CaptionScope initialScope;
+
   @override
   State<PhotoCaptionSheet> createState() => _PhotoCaptionSheetState();
 }
@@ -47,6 +51,7 @@ class _PhotoCaptionSheetState extends State<PhotoCaptionSheet> {
     super.initState();
     _controller = TextEditingController(text: widget.initial);
     _error = widget.failureMessage;
+    _scope = widget.initialScope;
   }
 
   @override

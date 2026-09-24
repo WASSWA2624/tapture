@@ -68,13 +68,24 @@ class ProjectListView extends ConsumerWidget {
                   subtitle: Copy.projectListSubtitle(
                     records: rows[index].recordCount,
                     unprocessed: rows[index].unprocessedCount,
-                    lastWorked: Copy.projectLastWorked(
-                      rows[index].lastWorkedAt,
-                    ),
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
+                      if (rows[index].project.status ==
+                          ProjectStatus.archived) ...<Widget>[
+                        Semantics(
+                          container: true,
+                          label: Copy.projectStatusArchived,
+                          child: const ExcludeSemantics(
+                            child: Icon(
+                              Icons.inventory_2_outlined,
+                              size: Space.x5,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: Space.x2),
+                      ],
                       if (rows[index].project.pinnedAt != null) ...<Widget>[
                         Semantics(
                           container: true,
@@ -139,6 +150,11 @@ List<AppOverflowAction> _rowActions(
     project,
   );
   return <AppOverflowAction>[
+    AppOverflowAction(
+      label: Copy.projectExport,
+      icon: Icons.ios_share_outlined,
+      onTap: () => context.push(RoutePaths.projectExports(project.id)),
+    ),
     AppOverflowAction(
       label: Copy.projectRename,
       icon: Icons.edit_outlined,

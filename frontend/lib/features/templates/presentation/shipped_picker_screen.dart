@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
+import 'package:tapture/core/widgets/fields/choice.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/projects/projects.dart';
@@ -32,6 +36,8 @@ class ShippedPickerScreen extends ConsumerStatefulWidget {
 
 class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
   final TextEditingController _name = TextEditingController();
+  String _query = '';
+  final Set<String> _kinds = <String>{};
 
   @override
   void dispose() {
@@ -91,11 +97,53 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
   }
 
   Widget _library(List<TemplateDef> rows, Set<String> attached) {
+    final String query = _query.trim().toLowerCase();
+    final List<String> kinds = <String>{
+      for (final TemplateDef template in rows) template.kind,
+    }.toList()..sort();
+    final List<TemplateDef> shown = <TemplateDef>[
+      for (final TemplateDef template in rows)
+        if (_kinds.isEmpty || _kinds.contains(template.kind))
+          if (query.isEmpty ||
+              Copy.shippedTemplateName(
+                template.templateKey,
+              ).toLowerCase().contains(query) ||
+              Copy.shippedKindTitle(
+                template.kind,
+              ).toLowerCase().contains(query))
+            template,
+    ];
     String? lastKind;
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        for (final TemplateDef template in rows) ...<Widget>[
+        AppSearchField(
+          hint: Copy.shippedLibrarySearchHint,
+          onChanged: (String value) => setState(() => _query = value),
+        ),
+        const SizedBox(height: Space.x2),
+        AppCheckboxGroup<String>(
+          label: Copy.shippedKindFilter,
+          showLabel: false,
+          value: _kinds,
+          options: <Choice<String>>[
+            for (final String kind in kinds)
+              Choice<String>(kind, Copy.shippedKindTitle(kind)),
+          ],
+          onChanged: (Set<String> value) => setState(() {
+            _kinds
+              ..clear()
+              ..addAll(value);
+          }),
+        ),
+        if (shown.isEmpty)
+          AppEmptyState(
+            icon: Icons.search_off_outlined,
+            headline: Copy.shippedLibraryNoMatch(_query),
+            message: Copy.shippedLibraryNoMatchMessage,
+          ),
+        for (final TemplateDef template in shown) ...<Widget>[
           if (template.kind != lastKind)
             AppSectionHeader(
               title: Copy.shippedKindTitle(lastKind = template.kind),

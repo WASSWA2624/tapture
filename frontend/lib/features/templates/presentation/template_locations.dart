@@ -17,7 +17,9 @@ abstract final class TemplateLocations {
   }
 
   static String root(BuildContext context, {String? projectId}) {
-    return RoutePaths.templateRoot(projectId: projectId ?? projectIdOf(context));
+    return RoutePaths.templateRoot(
+      projectId: projectId ?? projectIdOf(context),
+    );
   }
 
   static String create(BuildContext context, {String? projectId}) {

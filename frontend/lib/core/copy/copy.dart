@@ -697,15 +697,59 @@ abstract final class Copy {
     'Dec',
   ];
 
-  /// Counts and last-worked time on one project list row.
+  /// Counts and unprocessed records on one project list row.
   static String projectListSubtitle({
     required int records,
     required int unprocessed,
-    required String lastWorked,
   }) {
-    return '${recordsCount(records)} · ${unprocessedCount(unprocessed)} · '
-        '$lastWorked';
+    return '${recordsCount(records)} · ${unprocessedCount(unprocessed)}';
   }
+
+  /// Position of one captured record on the project list.
+  static String projectRecordPosition(int position) => 'Record $position';
+
+  /// Photos filed on one captured record.
+  static String projectRecordPhotos(int count) => Intl.plural(
+    count,
+    zero: 'No photos',
+    one: '1 photo',
+    other: '$count photos',
+  );
+
+  /// Empty project records list.
+  static const String projectRecordsEmptyHeadline = 'No records here';
+
+  /// Explains an empty project records filter.
+  static const String projectRecordsEmptyMessage =
+      'Captured records for this filter appear here.';
+
+  /// Overflow command that writes a project export.
+  static const String projectExport = 'Export';
+
+  /// Title of the project export screen.
+  static const String projectExportTitle = 'Export project';
+
+  /// Empty export screen.
+  static const String projectExportEmptyHeadline = 'Nothing to export';
+
+  /// Explains that a project needs a record before export.
+  static const String projectExportEmptyMessage =
+      'Capture a record before exporting this project.';
+
+  /// Shares a finished export.
+  static const String projectExportShare = 'Share';
+
+  /// Confirms the export file is stored.
+  static const String projectExportWrote = 'Export saved';
+
+  /// Names the file that was stored.
+  static String projectExportSaved(String fileName) => 'Saved $fileName.';
+
+  /// Shown while the workbook is written.
+  static const String projectExportProgress = 'Writing the export';
+
+  /// Stops an export before a file is kept.
+  static const String projectExportCancel = 'Cancel';
 
   /// Primary action on the open-project home.
   static const String continueCapturing = 'Continue capturing';
@@ -1589,6 +1633,25 @@ abstract final class Copy {
   /// Visible association on a shipped template already copied in.
   static const String shippedAddedToProject = 'Added to this project';
 
+  /// Search hint on the shipped template library.
+  static const String shippedLibrarySearchHint = 'Search templates';
+
+  /// Empty result for the shipped library search.
+  static String shippedLibraryNoMatch(String query) {
+    final String shown = query.trim();
+    if (shown.isEmpty) {
+      return 'No templates match that kind.';
+    }
+    return 'No templates match "$shown".';
+  }
+
+  /// What to change when the shipped library filter matches nothing.
+  static const String shippedLibraryNoMatchMessage =
+      'Change the search or the kind filter.';
+
+  /// Kind filter on the shipped library.
+  static const String shippedKindFilter = 'Kind';
+
   /// Operator-facing name of a packed template, keyed by [templateKey].
   static String shippedTemplateName(String templateKey) {
     return switch (templateKey) {
@@ -1798,6 +1861,9 @@ abstract final class Copy {
   /// Pin empty body.
   static const String contextPinnedEmptyMessage =
       'Mark fields as pinned context on a template to reuse them during capture.';
+
+  /// Pin empty body when the project already has a template.
+  static const String contextMarkPinnable = 'Mark a field as pinnable';
 
   /// Why pinned context is useful.
   static const String contextPinnedRelevance =

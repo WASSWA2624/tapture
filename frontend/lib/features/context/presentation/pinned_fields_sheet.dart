@@ -85,12 +85,27 @@ class _PinnedFieldsSheetState extends ConsumerState<PinnedFieldsSheet> {
       return const SizedBox.shrink();
     }
     if (_fields.isEmpty) {
+      final bool hasTemplates =
+          (ref
+                      .watch(_attachedTemplatesProvider(widget.projectId))
+                      .asData
+                      ?.value ??
+                  const <TemplateDef>[])
+              .isNotEmpty;
       return AppEmptyState(
         icon: Icons.push_pin_outlined,
         headline: Copy.contextPinnedEmptyHeadline,
-        message: Copy.contextPinnedEmptyMessage,
-        actionLabel: Copy.contextOpenTemplates,
-        onAction: () => context.push(_projectTemplates(widget.projectId)),
+        message: hasTemplates
+            ? Copy.contextPinnedEmptyMessage
+            : Copy.contextNoTemplatesMessage,
+        actionLabel: hasTemplates
+            ? Copy.contextMarkPinnable
+            : Copy.contextOpenTemplates,
+        onAction: () => context.push(
+          hasTemplates
+              ? RoutePaths.projectTemplates(widget.projectId)
+              : RoutePaths.templateLibrary(projectId: widget.projectId),
+        ),
       );
     }
     return ListView(
@@ -186,6 +201,10 @@ class _PinnedFieldsSheetState extends ConsumerState<PinnedFieldsSheet> {
   }
 }
 
-String _projectTemplates(String projectId) {
-  return RoutePaths.templateLibrary(projectId: projectId);
-}
+final _attachedTemplatesProvider =
+    StreamProvider.family<List<TemplateDef>, String>((
+      Ref ref,
+      String projectId,
+    ) {
+      return ref.watch(templateRepositoryProvider).watchByProject(projectId);
+    }, retry: (int _, Object _) => null);

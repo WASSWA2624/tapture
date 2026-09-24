@@ -389,7 +389,6 @@ void _openEdit(BuildContext context, String templateId, String fieldKey) {
   );
 }
 
-
 bool _mentioned(Map<String, Object?> detection, String fieldKey) {
   if (detection.containsKey(fieldKey)) {
     return true;

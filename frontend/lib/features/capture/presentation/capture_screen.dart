@@ -267,8 +267,26 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             },
             onTap: (PhotoDraft photo) => _openViewer(session, photo),
           ),
+          if (_activePhotos(session).isNotEmpty)
+            AppButton(
+              label: Copy.capturePhotoCaption,
+              variant: AppButtonVariant.secondary,
+              onPressed: () {
+                final List<PhotoDraft> visible = _activePhotos(session);
+                final PhotoDraft target = _selected.isEmpty
+                    ? visible.last
+                    : visible.firstWhere(
+                        (PhotoDraft photo) => _selected.contains(photo.id),
+                        orElse: () => visible.last,
+                      );
+                unawaited(_caption(session, target));
+              },
+            ),
           if (project != null) ...<Widget>[
-            const AppSectionHeader(title: Copy.captureAudioSection, dense: true),
+            const AppSectionHeader(
+              title: Copy.captureAudioSection,
+              dense: true,
+            ),
             AudioRecorder(
               recorder: ref.watch(audioRecorderServiceProvider),
               relativePath:
@@ -345,18 +363,23 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       builder: (BuildContext sheetContext) {
         return Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             if (picker.canTakePhoto)
-              AppListTile(
-                title: Copy.captureTakePhoto,
-                onTap: () {
+              AppButton(
+                label: Copy.captureTakePhoto,
+                icon: Icons.photo_camera_outlined,
+                onPressed: () {
                   Navigator.of(sheetContext).pop();
                   unawaited(_take(picker));
                 },
               ),
-            AppListTile(
-              title: Copy.captureChoosePhoto,
-              onTap: () {
+            if (picker.canTakePhoto) const SizedBox(height: Space.x2),
+            AppButton(
+              label: Copy.captureChoosePhoto,
+              icon: Icons.photo_library_outlined,
+              variant: AppButtonVariant.secondary,
+              onPressed: () {
                 Navigator.of(sheetContext).pop();
                 unawaited(_choose(picker));
               },
@@ -516,6 +539,9 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
           initial: session.captions[photo.id] ?? '',
           selectedCount: _selected.length,
           allCount: session.photos.length,
+          initialScope: _selected.isEmpty
+              ? CaptionScope.thisPhoto
+              : CaptionScope.selected,
           onSave: (String text, CaptionScope scope) async {
             final List<String> ids = switch (scope) {
               CaptionScope.thisPhoto => <String>[photo.id],
@@ -775,14 +801,36 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     final Map<String, String> next = Map<String, String>.of(_thumbs);
     final Set<String> missing = Set<String>.of(_missing);
     for (final PhotoDraft photo in photos) {
-      final Result<String> thumb = await repository.cachedThumbnailPath(
+      Result<String> thumb = await repository.cachedThumbnailPath(
         photo,
         edge: AppConstants.images.thumbnailEdge,
       );
-      switch (thumb) {
-        case FailureResult<String>():
+      final Uint8List? held = _bytes[photo.id];
+      if (thumb is FailureResult<String> && held != null) {
+        thumb = await repository.cachedThumbnailForBytes(
+          photo,
+          held,
+          edge: AppConstants.images.thumbnailEdge,
+        );
+      }
+      if (thumb is FailureResult<String> && held == null) {
+        final Result<Uint8List> read = await repository.readBytes(photo);
+        if (read is Success<Uint8List>) {
+          _bytes[photo.id] = read.value;
+          thumb = await repository.cachedThumbnailForBytes(
+            photo,
+            read.value,
+            edge: AppConstants.images.thumbnailEdge,
+          );
+        } else {
           missing.add(photo.id);
           next.remove(photo.id);
+          continue;
+        }
+      }
+      switch (thumb) {
+        case FailureResult<String>():
+          missing.remove(photo.id);
         case Success<String>(:final String value):
           missing.remove(photo.id);
           next[photo.id] = value;

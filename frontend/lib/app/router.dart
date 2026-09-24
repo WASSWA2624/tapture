@@ -25,8 +25,11 @@ import 'package:tapture/features/processing/presentation/queue_screen.dart';
 import 'package:tapture/features/projects/presentation/current_project.dart';
 import 'package:tapture/features/projects/presentation/project_create_screen.dart';
 import 'package:tapture/features/projects/presentation/project_edit_screen.dart';
+import 'package:tapture/features/projects/presentation/project_export_screen.dart';
+import 'package:tapture/features/projects/presentation/project_filters_screen.dart';
 import 'package:tapture/features/projects/presentation/project_home_screen.dart';
 import 'package:tapture/features/projects/presentation/project_list_screen.dart';
+import 'package:tapture/features/projects/presentation/project_records_screen.dart';
 import 'package:tapture/features/projects/presentation/project_settings_screen.dart';
 import 'package:tapture/features/reference/data/dataset_csv_import.dart';
 import 'package:tapture/features/reference/presentation/dataset_browser_screen.dart';
@@ -84,6 +87,9 @@ abstract final class AppRoutes {
   /// Create or duplicate a project. Listed before [project] so `new` is
   /// not captured as an id.
   static const String projectCreate = RoutePaths.projectCreate;
+
+  /// Project filters. Listed before [project] so `filters` is not an id.
+  static const String projectFilters = RoutePaths.projectFilters;
 
   /// Query key for the project whose structure is being copied.
   static const String sourceQuery = 'source';
@@ -454,6 +460,12 @@ List<RouteBase> get _routes {
                   },
                 ),
                 GoRoute(
+                  path: 'filters',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const ProjectFiltersScreen();
+                  },
+                ),
+                GoRoute(
                   path: ':projectId',
                   metadata: _projectScoped,
                   builder: (BuildContext _, GoRouterState _) {
@@ -477,8 +489,10 @@ List<RouteBase> get _routes {
                     GoRoute(
                       path: 'records',
                       metadata: _projectScoped,
-                      builder: (BuildContext _, GoRouterState _) {
-                        return const _RoutePage(name: 'records');
+                      builder: (BuildContext _, GoRouterState state) {
+                        return ProjectRecordsScreen(
+                          projectId: state.pathParameters['projectId']!,
+                        );
                       },
                     ),
                     GoRoute(
@@ -493,8 +507,10 @@ List<RouteBase> get _routes {
                     GoRoute(
                       path: 'exports',
                       metadata: _projectScoped,
-                      builder: (BuildContext _, GoRouterState _) {
-                        return const _RoutePage(name: 'exports');
+                      builder: (BuildContext _, GoRouterState state) {
+                        return ProjectExportScreen(
+                          projectId: state.pathParameters['projectId']!,
+                        );
                       },
                     ),
                     GoRoute(
@@ -729,136 +745,131 @@ class _AiProviderRoute extends ConsumerWidget {
 
 List<RouteBase> _templateChildRoutes() {
   return <RouteBase>[
-                    GoRoute(
-                      path: 'new',
-                      builder: (BuildContext _, GoRouterState _) {
-                        return const TemplateCreateScreen();
-                      },
-                    ),
-                    GoRoute(
-                      path: 'library',
-                      builder: (BuildContext _, GoRouterState _) {
-                        return const ShippedPickerScreen();
-                      },
-                    ),
-                    GoRoute(
-                      path: 'import',
-                      builder: (BuildContext _, GoRouterState state) {
-                        return TemplateImportAction(payload: state.extra);
-                      },
-                    ),
-                    GoRoute(
-                      path: 'xlsx',
-                      builder: (BuildContext _, GoRouterState state) {
-                        return XlsxMappingScreen(
-                          path: state.extra is String
-                              ? state.extra as String
-                              : null,
-                        );
-                      },
-                    ),
-                    GoRoute(
-                      path: ':templateId',
-                      builder: (BuildContext _, GoRouterState state) {
-                        return FieldListScreen(
-                          templateId: state.pathParameters['templateId']!,
-                        );
-                      },
-                      routes: <RouteBase>[
-                        GoRoute(
-                          path: 'export',
-                          builder: (BuildContext _, GoRouterState _) {
-                            return const _RoutePage(name: 'template-export');
-                          },
-                        ),
-                        GoRoute(
-                          path: 'required',
-                          builder: (BuildContext _, GoRouterState state) {
-                            return RequiredColumnsScreen(
-                              templateId: state.pathParameters['templateId']!,
-                            );
-                          },
-                        ),
-                        GoRoute(
-                          path: 'identity',
-                          builder: (BuildContext _, GoRouterState state) {
-                            return IdentityFieldsScreen(
-                              templateId: state.pathParameters['templateId']!,
-                            );
-                          },
-                        ),
-                        GoRoute(
-                          path: 'output',
-                          builder: (BuildContext _, GoRouterState state) {
-                            return OutputMappingScreen(
-                              templateId: state.pathParameters['templateId']!,
-                            );
-                          },
-                        ),
-                        GoRoute(
-                          path: 'migrate',
-                          builder: (BuildContext _, GoRouterState state) {
-                            return TemplateMigrationScreen(
-                              templateId: state.pathParameters['templateId']!,
-                            );
-                          },
-                        ),
-                        GoRoute(
-                          path: 'aliases',
-                          builder: (BuildContext _, GoRouterState state) {
-                            return RowAliasesScreen(
-                              templateId: state.pathParameters['templateId']!,
-                            );
-                          },
-                        ),
-                        GoRoute(
-                          path: 'checklist',
-                          builder: (BuildContext _, GoRouterState state) {
-                            return ChecklistScreen(
-                              templateId: state.pathParameters['templateId']!,
-                            );
-                          },
-                        ),
-                        GoRoute(
-                          path: 'detection',
-                          builder: (BuildContext _, GoRouterState state) {
-                            return DetectionProfileScreen(
-                              templateId: state.pathParameters['templateId']!,
-                            );
-                          },
-                        ),
-                        GoRoute(
-                          path: 'fields/new',
-                          builder: (BuildContext _, GoRouterState state) {
-                            return FieldAddSheet(
-                              templateId: state.pathParameters['templateId']!,
-                            );
-                          },
-                        ),
-                        GoRoute(
-                          path: 'fields/:fieldKey',
-                          builder: (BuildContext _, GoRouterState state) {
-                            return FieldAddSheet(
-                              templateId: state.pathParameters['templateId']!,
-                              fieldKey: state.pathParameters['fieldKey'],
-                            );
-                          },
-                          routes: <RouteBase>[
-                            GoRoute(
-                              path: 'lookup',
-                              builder: (BuildContext _, GoRouterState state) {
-                                return LookupBindingScreen(
-                                  templateId:
-                                      state.pathParameters['templateId']!,
-                                  fieldKey: state.pathParameters['fieldKey']!,
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ];
+    GoRoute(
+      path: 'new',
+      builder: (BuildContext _, GoRouterState _) {
+        return const TemplateCreateScreen();
+      },
+    ),
+    GoRoute(
+      path: 'library',
+      builder: (BuildContext _, GoRouterState _) {
+        return const ShippedPickerScreen();
+      },
+    ),
+    GoRoute(
+      path: 'import',
+      builder: (BuildContext _, GoRouterState state) {
+        return TemplateImportAction(payload: state.extra);
+      },
+    ),
+    GoRoute(
+      path: 'xlsx',
+      builder: (BuildContext _, GoRouterState state) {
+        return XlsxMappingScreen(
+          path: state.extra is String ? state.extra as String : null,
+        );
+      },
+    ),
+    GoRoute(
+      path: ':templateId',
+      builder: (BuildContext _, GoRouterState state) {
+        return FieldListScreen(templateId: state.pathParameters['templateId']!);
+      },
+      routes: <RouteBase>[
+        GoRoute(
+          path: 'export',
+          builder: (BuildContext _, GoRouterState _) {
+            return const _RoutePage(name: 'template-export');
+          },
+        ),
+        GoRoute(
+          path: 'required',
+          builder: (BuildContext _, GoRouterState state) {
+            return RequiredColumnsScreen(
+              templateId: state.pathParameters['templateId']!,
+            );
+          },
+        ),
+        GoRoute(
+          path: 'identity',
+          builder: (BuildContext _, GoRouterState state) {
+            return IdentityFieldsScreen(
+              templateId: state.pathParameters['templateId']!,
+            );
+          },
+        ),
+        GoRoute(
+          path: 'output',
+          builder: (BuildContext _, GoRouterState state) {
+            return OutputMappingScreen(
+              templateId: state.pathParameters['templateId']!,
+            );
+          },
+        ),
+        GoRoute(
+          path: 'migrate',
+          builder: (BuildContext _, GoRouterState state) {
+            return TemplateMigrationScreen(
+              templateId: state.pathParameters['templateId']!,
+            );
+          },
+        ),
+        GoRoute(
+          path: 'aliases',
+          builder: (BuildContext _, GoRouterState state) {
+            return RowAliasesScreen(
+              templateId: state.pathParameters['templateId']!,
+            );
+          },
+        ),
+        GoRoute(
+          path: 'checklist',
+          builder: (BuildContext _, GoRouterState state) {
+            return ChecklistScreen(
+              templateId: state.pathParameters['templateId']!,
+            );
+          },
+        ),
+        GoRoute(
+          path: 'detection',
+          builder: (BuildContext _, GoRouterState state) {
+            return DetectionProfileScreen(
+              templateId: state.pathParameters['templateId']!,
+            );
+          },
+        ),
+        GoRoute(
+          path: 'fields/new',
+          builder: (BuildContext _, GoRouterState state) {
+            return FieldAddSheet(
+              templateId: state.pathParameters['templateId']!,
+            );
+          },
+        ),
+        GoRoute(
+          path: 'fields/:fieldKey',
+          builder: (BuildContext _, GoRouterState state) {
+            return FieldAddSheet(
+              templateId: state.pathParameters['templateId']!,
+              fieldKey: state.pathParameters['fieldKey'],
+            );
+          },
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'lookup',
+              builder: (BuildContext _, GoRouterState state) {
+                return LookupBindingScreen(
+                  templateId: state.pathParameters['templateId']!,
+                  fieldKey: state.pathParameters['fieldKey']!,
+                );
+              },
+            ),
+          ],
+        ),
+      ],
+    ),
+  ];
 }
 
 String? _legacyLocation(GoRouterState state) {

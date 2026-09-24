@@ -18,6 +18,7 @@ class AppBottomSheet extends StatelessWidget {
     required this.child,
     this.sidePanel = false,
     this.contentSized = false,
+    this.embedded = false,
   });
 
   /// Heading; also the semantic name of the sheet (FE-A11Y-02).
@@ -33,6 +34,10 @@ class AppBottomSheet extends StatelessWidget {
   /// needs more than the sheet cap.
   final bool contentSized;
 
+  /// When true, the presenting modal owns the surface, so this sheet does
+  /// not paint a second rounded container.
+  final bool embedded;
+
   @override
   Widget build(BuildContext context) {
     final AppColors colors = context.colors;
@@ -44,64 +49,68 @@ class AppBottomSheet extends StatelessWidget {
       final Border border => border.top,
       _ => BorderSide(color: colors.outline, width: Space.x0 / 2),
     };
+    final Widget body = SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(context).bottom,
+        ),
+        child: Column(
+          mainAxisSize: contentSized ? MainAxisSize.min : MainAxisSize.max,
+          children: <Widget>[
+            if (!sidePanel) const _SheetHandle(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                Space.x3,
+                Space.x2,
+                Space.x3,
+                Space.x2,
+              ),
+              child: Semantics(
+                header: true,
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    title,
+                    style: AppText.title.copyWith(color: colors.onSurface),
+                  ),
+                ),
+              ),
+            ),
+            Flexible(
+              fit: contentSized ? FlexFit.loose : FlexFit.tight,
+              child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  final double width = constraints.maxWidth < _readableWidth
+                      ? constraints.maxWidth
+                      : _readableWidth;
+                  return SizedBox(
+                    width: width,
+                    height: contentSized ? null : constraints.maxHeight,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: DefaultTextStyle(
+                        style: AppText.body.copyWith(color: colors.onSurface),
+                        child: contentSized
+                            ? SingleChildScrollView(child: child)
+                            : child,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (embedded) {
+      return body;
+    }
     return Material(
       color: surface.color,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: radius, side: outline),
-      child: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.viewInsetsOf(context).bottom,
-          ),
-          child: Column(
-            mainAxisSize: contentSized ? MainAxisSize.min : MainAxisSize.max,
-            children: <Widget>[
-              if (!sidePanel) const _SheetHandle(),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  Space.x3,
-                  Space.x2,
-                  Space.x3,
-                  Space.x2,
-                ),
-                child: Semantics(
-                  header: true,
-                  child: Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: Text(
-                      title,
-                      style: AppText.title.copyWith(color: colors.onSurface),
-                    ),
-                  ),
-                ),
-              ),
-              Flexible(
-                fit: contentSized ? FlexFit.loose : FlexFit.tight,
-                child: LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
-                    final double width = constraints.maxWidth < _readableWidth
-                        ? constraints.maxWidth
-                        : _readableWidth;
-                    return SizedBox(
-                      width: width,
-                      height: constraints.maxHeight,
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        child: DefaultTextStyle(
-                          style: AppText.body.copyWith(color: colors.onSurface),
-                          child: contentSized
-                              ? SingleChildScrollView(child: child)
-                              : child,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      child: body,
     );
   }
 }
@@ -152,6 +161,11 @@ Future<T?> showAppSheet<T>(
     isScrollControlled: true,
     useSafeArea: true,
     backgroundColor: context.colors.surface,
+    elevation: 0,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(Radii.lg)),
+    ),
+    clipBehavior: Clip.antiAlias,
     builder: (BuildContext sheetContext) {
       return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -164,6 +178,7 @@ Future<T?> showAppSheet<T>(
               child: AppBottomSheet(
                 title: title,
                 contentSized: contentSized,
+                embedded: true,
                 child: builder(sheetContext),
               ),
             ),

@@ -100,6 +100,57 @@ void main() {
       expect(original.readAsBytesSync(), <int>[1, 2, 3, 4]);
     },
   );
+
+  test('session bytes still produce a thumbnail when decoding fails', () async {
+    final AppDatabase db = await seededDatabase();
+    addTearDown(db.close);
+    final Directory root = await Directory.systemTemp.createTemp(
+      'tapture-drift-thumb-',
+    );
+    addTearDown(() => root.delete(recursive: true));
+    final FixedClock clock = FixedClock(DateTime.utc(2026, 9, 24, 8));
+    final Project project = await db.select(db.projects).getSingle();
+    final StorageRoot storage = StorageRoot.fake(documentsDirectory: root);
+    final DriftPhotoRepository repository = DriftPhotoRepository(
+      db: db,
+      writer: FileWriter(storageRoot: storage),
+      clock: clock,
+      deviceId: 'device-a',
+      ids: UuidV7Service.sequence(clock),
+      storageRoot: storage,
+      decodeThumbnail:
+          (String _, {required int longEdge, required int quality}) async =>
+              throw StateError('decode failed'),
+    );
+    final Uint8List bytes = Uint8List.fromList(<int>[1, 2, 3, 4]);
+    final PhotoDraft saved = _ok(
+      await repository.saveDraft(
+        PhotoDraft(
+          id: 'photo-1',
+          projectId: project.id,
+          captureSessionId: 'session-1',
+          originalFilename: 'IMG_0001.JPG',
+          storedFilename: 'photo-1.jpg',
+          relativePath: 'photos/photo-1.jpg',
+          sha256: '',
+          width: 2,
+          height: 2,
+        ),
+        bytes: bytes,
+      ),
+    );
+    final Directory resolved = _ok(await storage.resolve());
+    final File original = File(
+      '${resolved.path}/projects/${project.folderName}/photos/photo-1.jpg',
+    );
+    final String thumb = _ok(
+      await repository.cachedThumbnailForBytes(saved, bytes, edge: 32),
+    );
+    expect(File(thumb).existsSync(), isTrue);
+    expect(original.readAsBytesSync(), <int>[1, 2, 3, 4]);
+    original.deleteSync();
+    expect(await repository.readBytes(saved), isA<FailureResult<Uint8List>>());
+  });
 }
 
 T _ok<T>(Result<T> result) {

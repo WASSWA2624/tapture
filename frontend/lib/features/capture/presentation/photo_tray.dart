@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
@@ -73,39 +74,32 @@ final class PhotoTray extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             itemCount: photos.length + 1,
             itemBuilder: (BuildContext context, int index) {
+              const double edge = Space.x12 * 2;
               if (index == photos.length) {
-                return AppIconButton(
-                  icon: Icons.add_a_photo,
-                  tooltip: Copy.captureAddPhoto,
-                  semanticLabel: Copy.captureAddPhoto,
-                  onPressed: onAdd,
-                );
+                return _AddPhotoTarget(edge: edge, onPressed: onAdd);
               }
               final PhotoDraft photo = photos[index];
               final bool hasCaption =
                   photo.hasCaption || (captions[photo.id]?.isNotEmpty ?? false);
               final String? thumb = thumbPaths[photo.id];
               final bool missing = missingIds.contains(photo.id);
-              return Padding(
-                padding: const EdgeInsets.all(Space.x1),
-                child: RotatedBox(
-                  quarterTurns: _quarterTurns(photo.rotationDegrees),
-                  child: AppPhotoThumb(
-                    key: ValueKey<String>('photo-thumb-${photo.id}'),
-                    photo: PhotoAsset(
-                      sha256: photo.sha256,
-                      thumbPath: missing ? 'missing' : (thumb ?? ''),
-                      photoType: _photoType(photo.photoType),
-                      hasCaption: hasCaption,
-                    ),
-                    size: Space.x12 * 2,
-                    selected: selectedIds.contains(photo.id),
-                    statusLabel: photo.processingState == 'ready'
-                        ? null
-                        : Copy.capturePhotoProcessing,
-                    onTap: () => onTap?.call(photo),
-                    onLongPress: () => onLongPress?.call(photo),
+              return RotatedBox(
+                quarterTurns: _quarterTurns(photo.rotationDegrees),
+                child: AppPhotoThumb(
+                  key: ValueKey<String>('photo-thumb-${photo.id}'),
+                  photo: PhotoAsset(
+                    sha256: photo.sha256,
+                    thumbPath: missing ? 'missing' : (thumb ?? ''),
+                    photoType: _photoType(photo.photoType),
+                    hasCaption: hasCaption,
                   ),
+                  size: edge,
+                  selected: selectedIds.contains(photo.id),
+                  statusLabel: photo.processingState == 'ready'
+                      ? null
+                      : Copy.capturePhotoProcessing,
+                  onTap: () => onTap?.call(photo),
+                  onLongPress: () => onLongPress?.call(photo),
                 ),
               );
             },
@@ -127,4 +121,40 @@ PhotoType _photoType(String raw) {
     }
   }
   return PhotoType.other;
+}
+
+class _AddPhotoTarget extends StatelessWidget {
+  const _AddPhotoTarget({required this.edge, required this.onPressed});
+
+  final double edge;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppColors colors = context.colors;
+    return Semantics(
+      button: true,
+      label: Copy.captureAddPhoto,
+      child: Tooltip(
+        message: Copy.captureAddPhoto,
+        child: SizedBox(
+          width: edge,
+          height: edge,
+          child: Material(
+            color: colors.surfaceVariant,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(Radii.sm),
+              side: BorderSide(color: colors.outline, width: Space.x0 / 2),
+            ),
+            child: InkWell(
+              onTap: onPressed,
+              child: ExcludeSemantics(
+                child: Icon(Icons.add_a_photo, color: colors.onSurface),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

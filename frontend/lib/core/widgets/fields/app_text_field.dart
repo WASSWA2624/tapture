@@ -39,6 +39,7 @@ class AppTextField extends StatefulWidget {
     this.maxLength,
     this.prefix,
     this.trailing,
+    this.afterDictation,
     this.clearable = false,
     this.enabled = true,
     this.readOnly = false,
@@ -83,8 +84,11 @@ class AppTextField extends StatefulWidget {
   /// Leading slot (search icon, unit, and similar).
   final Widget? prefix;
 
-  /// Trailing slot for a microphone, scanner, or other action.
+  /// Trailing slot placed before the microphone.
   final Widget? trailing;
+
+  /// Trailing slot placed immediately after the microphone.
+  final Widget? afterDictation;
 
   /// When true, a labelled clear control appears once the field has text.
   final bool clearable;
@@ -283,6 +287,7 @@ class _AppTextFieldState extends State<AppTextField> {
     final bool showMic = _offersDictation;
     if (!showClear &&
         field.trailing == null &&
+        field.afterDictation == null &&
         !field.obscureText &&
         !showMic) {
       return null;
@@ -319,6 +324,7 @@ class _AppTextFieldState extends State<AppTextField> {
             outlined: false,
             onPressed: () => _toggleDictation(),
           ),
+        ?field.afterDictation,
         // Last, so the show / hide control is always the far end of the field.
         if (field.obscureText)
           AppIconButton(

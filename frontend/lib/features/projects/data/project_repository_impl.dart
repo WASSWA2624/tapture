@@ -271,7 +271,8 @@ final class ProjectRepositoryImpl implements ProjectRepository {
           '(SELECT COUNT(*) FROM records WHERE project_id = ? AND '
           "status = 'needsReview') AS review, "
           '(SELECT COUNT(*) FROM records WHERE project_id = ? AND '
-          "status IN ('queued', 'processing')) AS process, "
+          "status IN ('draft', 'captured', 'CAPTURED', 'queued', 'processing')) "
+          'AS process, '
           '(SELECT COUNT(*) FROM records WHERE project_id = ? AND '
           "status = 'approved') AS to_export, "
           '(SELECT COUNT(*) FROM exports WHERE project_id = ?) AS to_share',
@@ -285,6 +286,42 @@ final class ProjectRepositoryImpl implements ProjectRepository {
         )
         .watch()
         .map(_homeCounts);
+  }
+
+  @override
+  Stream<List<ProjectRecordRow>> watchRecords(
+    String projectId, {
+    required List<String> statuses,
+  }) {
+    if (statuses.isEmpty) {
+      return Stream<List<ProjectRecordRow>>.value(const <ProjectRecordRow>[]);
+    }
+    final String marks = List<String>.filled(statuses.length, '?').join(', ');
+    return _db
+        .customSelect(
+          'SELECT r.id AS id, r.status AS status, '
+          '(SELECT COUNT(*) FROM photos p WHERE p.record_id = r.id) '
+          'AS photo_count '
+          'FROM records r WHERE r.project_id = ? '
+          'AND r.status IN ($marks) '
+          'ORDER BY r.created_at, r.id',
+          variables: <Variable<Object>>[
+            Variable<String>(projectId),
+            for (final String status in statuses) Variable<String>(status),
+          ],
+          readsFrom: <TableInfo<dynamic, dynamic>>{_db.records, _db.photos},
+        )
+        .watch()
+        .map(
+          (List<QueryRow> rows) => <ProjectRecordRow>[
+            for (final QueryRow row in rows)
+              (
+                id: row.read<String>('id'),
+                status: row.read<String>('status'),
+                photoCount: row.read<int>('photo_count'),
+              ),
+          ],
+        );
   }
 
   @override
@@ -781,6 +818,14 @@ final class _EmptyProjectRepository implements ProjectRepository {
   @override
   Stream<ProjectHomeCounts> watchHome(String projectId) {
     return Stream<ProjectHomeCounts>.value(emptyProjectHomeCounts);
+  }
+
+  @override
+  Stream<List<ProjectRecordRow>> watchRecords(
+    String projectId, {
+    required List<String> statuses,
+  }) {
+    return Stream<List<ProjectRecordRow>>.value(const <ProjectRecordRow>[]);
   }
 
   @override

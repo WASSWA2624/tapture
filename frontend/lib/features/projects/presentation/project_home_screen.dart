@@ -191,7 +191,6 @@ class _HomeBody extends ConsumerWidget {
     );
     final bool shellOwns = ShellHeaderScope.ownsHeaderOf(context);
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: Space.x4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -240,7 +239,10 @@ class _HomeBody extends ConsumerWidget {
               child: const Text(Copy.projectAssociationRetry),
             ),
           const SizedBox(height: Space.x4),
-          ..._countRows(context, counts),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Space.x4),
+            child: Column(children: _countRows(context, counts)),
+          ),
         ],
       ),
     );
@@ -313,6 +315,11 @@ List<AppOverflowAction> _projectHomeMenu(
   );
   return <AppOverflowAction>[
     AppOverflowAction(
+      label: Copy.projectExport,
+      icon: Icons.ios_share_outlined,
+      onTap: () => context.push(RoutePaths.projectExports(project.id)),
+    ),
+    AppOverflowAction(
       label: Copy.projectsDuplicate,
       icon: Icons.copy_outlined,
       onTap: () => ProjectDuplicateAction.open(
@@ -368,8 +375,7 @@ class _CountCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCard(
       key: cardKey,
-      elevationLevel: 0,
-      padding: const EdgeInsets.all(Space.x2),
+      padding: const EdgeInsets.symmetric(vertical: Space.x2),
       onTap: onTap,
       child: Semantics(
         label: semanticLabel,
@@ -377,18 +383,24 @@ class _CountCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Icon(icon, size: Space.x5, color: context.colors.onSurface),
-            const SizedBox(height: Space.x1),
-            Text(
-              label,
-              style: AppText.caption,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+            Row(
+              children: <Widget>[
+                Icon(icon, size: Space.x5, color: context.colors.onSurface),
+                const SizedBox(width: Space.x1),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: AppText.caption,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
             Text(
               message,
               style: AppText.caption,
-              maxLines: 2,
+              maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
           ],

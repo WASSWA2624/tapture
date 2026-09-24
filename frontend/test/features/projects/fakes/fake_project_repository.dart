@@ -57,7 +57,15 @@ final class FakeProjectRepository implements ProjectRepository {
     _files[id] = files;
   }
 
-  /// Seeds the pending counts [watchHome] returns for [id].
+  final Map<String, List<ProjectRecordRow>> _records =
+      <String, List<ProjectRecordRow>>{};
+
+  /// Seeds rows [watchRecords] returns for [id].
+  void seedRecords(String id, List<ProjectRecordRow> rows) {
+    _records[id] = List<ProjectRecordRow>.of(rows);
+    _emit();
+  }
+
   void seedHomeCounts(
     String id, {
     int review = 0,
@@ -92,6 +100,24 @@ final class FakeProjectRepository implements ProjectRepository {
   @override
   Stream<ProjectHomeCounts> watchHome(String projectId) {
     return _watch(() => _home[projectId] ?? emptyProjectHomeCounts);
+  }
+
+  @override
+  Stream<List<ProjectRecordRow>> watchRecords(
+    String projectId, {
+    required List<String> statuses,
+  }) {
+    return _watch(() {
+      final List<ProjectRecordRow> rows =
+          _records[projectId] ?? const <ProjectRecordRow>[];
+      if (statuses.isEmpty) {
+        return const <ProjectRecordRow>[];
+      }
+      return <ProjectRecordRow>[
+        for (final ProjectRecordRow row in rows)
+          if (statuses.contains(row.status)) row,
+      ];
+    });
   }
 
   List<ProjectListRow> _listSnapshot(bool includeArchived) {

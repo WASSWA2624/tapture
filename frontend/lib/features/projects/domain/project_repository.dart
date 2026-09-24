@@ -51,6 +51,12 @@ abstract interface class ProjectRepository {
   /// Pending Review, Process, Export and Share counts for [projectId].
   /// Derived from live watches, never stored (FE-STATE-06).
   Stream<ProjectHomeCounts> watchHome(String projectId);
+
+  /// Records on [projectId] whose status is one of [statuses], oldest first.
+  Stream<List<ProjectRecordRow>> watchRecords(
+    String projectId, {
+    required List<String> statuses,
+  });
 }
 
 /// One landing-list row: the project plus the counts and last-worked
@@ -71,6 +77,9 @@ typedef ProjectHomeCounts = ({
   int toExport,
   int toShare,
 });
+
+/// One captured record shown on the project records list.
+typedef ProjectRecordRow = ({String id, String status, int photoCount});
 
 /// Empty home counts. Shared by the empty stand-in and tests.
 const ProjectHomeCounts emptyProjectHomeCounts = (

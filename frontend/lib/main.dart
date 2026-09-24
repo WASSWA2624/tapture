@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'app/app.dart';
 import 'app/provider_observer.dart' hide ProviderObserver;
 import 'app/theme/settings_text_store.dart';
+import 'app/widgets/status_line.dart';
 import 'core/ai/ocr_service.dart';
 import 'core/ai/provider_registry.dart';
 import 'core/ai/stt_service.dart';
@@ -25,11 +26,13 @@ import 'core/files/storage_root.dart';
 import 'core/ids/uuid_service.dart';
 import 'core/lifecycle/lifecycle.dart';
 import 'core/logging/logger.dart';
+import 'core/network/connectivity_service.dart';
 import 'core/security/secure_storage.dart';
 import 'core/time/clock.dart';
 import 'core/widgets/fields/field_editor.dart';
 import 'features/capture/capture.dart';
 import 'features/context/data/context_repository_impl.dart';
+import 'features/exports/data/export_repository_impl.dart';
 import 'features/feedback/feedback.dart';
 import 'features/feedback/presentation/feedback_providers.dart';
 import 'features/processing/data/notifications.dart';
@@ -40,6 +43,7 @@ import 'features/processing/presentation/queue_providers.dart';
 import 'features/projects/data/project_openable_file_lookup_factory.dart';
 import 'features/projects/data/project_repository_impl.dart';
 import 'features/projects/presentation/current_project.dart';
+import 'features/projects/presentation/project_export_screen.dart';
 import 'features/projects/presentation/project_open_externally_action.dart'
     show projectOpenableFileLookupProvider;
 import 'features/reference/data/reference_repository_impl.dart';
@@ -86,6 +90,10 @@ Future<void> _run() async {
     offlineStoreProvider.overrideWith((Ref _) => offlineStore),
     projectSettingsStoreProvider.overrideWith((Ref _) => offlineStore),
     storageRootProvider.overrideWith((Ref _) => storageRoot),
+    projectExportOfflineProvider.overrideWith((Ref ref) {
+      final AsyncValue<NetworkState> state = ref.watch(networkStateProvider);
+      return state.asData?.value == NetworkState.offline;
+    }),
     themeModeProvider.overrideWith(
       () => ThemeModeController.withStore(SettingsTextStore(offlineStore)),
     ),
@@ -145,6 +153,15 @@ Future<void> _run() async {
       projectRepositoryProvider.overrideWith((Ref _) {
         return ProjectRepositoryImpl(
           db: db,
+          clock: clock,
+          deviceId: id,
+          ids: ids,
+        );
+      }),
+      exportRepositoryProvider.overrideWith((Ref _) {
+        return ExportRepositoryImpl(
+          db: db,
+          storageRoot: storageRoot,
           clock: clock,
           deviceId: id,
           ids: ids,

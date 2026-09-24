@@ -314,11 +314,7 @@ List<String> get _values {
     Copy.projectSettingsEmptyMessage,
     Copy.projectCopyName('Alpha'),
     Copy.projectLastWorked(DateTime.utc(2026, 9, 17)),
-    Copy.projectListSubtitle(
-      records: 2,
-      unprocessed: 1,
-      lastWorked: Copy.projectLastWorked(DateTime.utc(2026, 9, 17)),
-    ),
+    Copy.projectListSubtitle(records: 2, unprocessed: 1),
     Copy.continueCapturing,
     Copy.homeReview,
     Copy.homeProcess,
