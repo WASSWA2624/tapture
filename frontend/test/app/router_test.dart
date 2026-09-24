@@ -289,6 +289,18 @@ void main() {
     expect(find.text(Copy.operatorProfileTitle), findsOneWidget);
   });
 
+  testWidgets('project template detail returns to that project', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter router = await _pump(tester, projectId: 'p1');
+    await _go(tester, router, '/projects/p1/templates/abc');
+    expect(router.state.uri.path, '/projects/p1/templates/abc');
+    expect(router.canPop(), isTrue);
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(router.state.uri.path, '/projects/p1/templates');
+  });
+
   testWidgets(
     'a project-scoped list path with no open project diverts and resumes',
     (WidgetTester tester) async {

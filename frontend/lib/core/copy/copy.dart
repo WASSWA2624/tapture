@@ -166,6 +166,29 @@ abstract final class Copy {
   /// Crop action on the photo viewer.
   static const String photoCrop = 'Crop';
 
+  /// Rotate the visible photo a quarter turn.
+  static const String photoRotate = 'Rotate';
+
+  /// Open freehand drawing.
+  static const String photoDraw = 'Draw';
+
+  /// Remove the latest stroke.
+  static const String photoUndoDraw = 'Undo drawing';
+
+  /// Remove every stroke.
+  static const String photoClearDraw = 'Clear drawing';
+
+  /// How many photos are in the tray.
+  static String capturePhotoCount(int count) => Intl.plural(
+    count,
+    zero: 'No photos',
+    one: '1 photo',
+    other: '$count photos',
+  );
+
+  /// Badge while a photo is still being prepared.
+  static const String capturePhotoProcessing = 'Processing';
+
   /// Clears a derived crop or typed copy.
   static const String photoRevert = 'Revert';
 
@@ -688,16 +711,16 @@ abstract final class Copy {
   static const String continueCapturing = 'Continue capturing';
 
   /// Review card on the project home.
-  static const String homeReview = 'Review';
+  static const String homeReview = 'Needs review';
 
   /// Process card on the project home.
-  static const String homeProcess = 'Process';
+  static const String homeProcess = 'Ready to process';
 
   /// Export card on the project home.
-  static const String homeExport = 'Export';
+  static const String homeExport = 'Ready to export';
 
   /// Share card on the project home.
-  static const String homeShare = 'Share';
+  static const String homeShare = 'Exports to share';
 
   /// Headline when the project home has no open project.
   static const String homeEmptyHeadline = 'No project open';
@@ -710,9 +733,9 @@ abstract final class Copy {
   static String homeReviewPending(int n) {
     return Intl.plural(
       n,
-      zero: '0 to review',
-      one: '1 to review',
-      other: '$n to review',
+      zero: 'Nothing needs review',
+      one: '1 record needs review',
+      other: '$n records need review',
     );
   }
 
@@ -720,9 +743,9 @@ abstract final class Copy {
   static String homeProcessPending(int n) {
     return Intl.plural(
       n,
-      zero: '0 to process',
-      one: '1 to process',
-      other: '$n to process',
+      zero: 'Nothing is ready to process',
+      one: '1 record is ready to process',
+      other: '$n records are ready to process',
     );
   }
 
@@ -730,9 +753,9 @@ abstract final class Copy {
   static String homeExportPending(int n) {
     return Intl.plural(
       n,
-      zero: '0 to export',
-      one: '1 to export',
-      other: '$n to export',
+      zero: 'Nothing is ready to export',
+      one: '1 record is ready to export',
+      other: '$n records are ready to export',
     );
   }
 
@@ -740,9 +763,9 @@ abstract final class Copy {
   static String homeSharePending(int n) {
     return Intl.plural(
       n,
-      zero: '0 to share',
-      one: '1 to share',
-      other: '$n to share',
+      zero: 'No exports to share',
+      one: '1 export to share',
+      other: '$n exports to share',
     );
   }
 
@@ -1557,6 +1580,15 @@ abstract final class Copy {
   /// Copies the previewed library entry into the open project.
   static const String templatesAdd = 'Add to this project';
 
+  /// Adds a shipped template that this project does not have yet.
+  static const String templatesAddToProject = 'Add to project';
+
+  /// Makes another editable copy of a template already on the project.
+  static const String templatesCustomCopy = 'Create a custom copy';
+
+  /// Visible association on a shipped template already copied in.
+  static const String shippedAddedToProject = 'Added to this project';
+
   /// Operator-facing name of a packed template, keyed by [templateKey].
   static String shippedTemplateName(String templateKey) {
     return switch (templateKey) {
@@ -1717,7 +1749,7 @@ abstract final class Copy {
       'Attach or create a template before choosing context fields.';
 
   /// Opens the contextual Templates route.
-  static const String contextOpenTemplates = 'Open Templates';
+  static const String contextOpenTemplates = 'Add templates';
 
   /// Templates exist but do not declare a hierarchy.
   static const String contextNoDeclaredLevelsHeadline =
@@ -1970,6 +2002,12 @@ abstract final class Copy {
 
   /// Record caption field label.
   static const String captureRecordCaption = 'Caption';
+
+  /// Photo group on the capture surface.
+  static const String capturePhotosSection = 'Photos';
+
+  /// Audio group on the capture surface.
+  static const String captureAudioSection = 'Audio';
 
   /// Photo caption sheet title.
   static const String capturePhotoCaption = 'Photo caption';
@@ -3004,8 +3042,35 @@ abstract final class Copy {
 
   /// Today's online request and image totals against the project cap.
   static String queueUsage(int requests, int images, int cap) {
-    return '$requests of $cap online requests today · $images images sent';
+    return '$requests of $cap online requests today, $images images sent';
   }
+
+  /// Unprocessed records, as a complete message.
+  static String queueUnprocessedCount(int count) => Intl.plural(
+    count,
+    zero: 'No unprocessed records',
+    one: '1 unprocessed record',
+    other: '$count unprocessed records',
+  );
+
+  /// Records waiting in the queue, as a complete message.
+  static String queueQueuedCount(int count) => Intl.plural(
+    count,
+    zero: 'No records queued',
+    one: '1 record queued',
+    other: '$count records queued',
+  );
+
+  /// Failed jobs, as a complete message.
+  static String queueFailedCount(int count) => Intl.plural(
+    count,
+    zero: 'No failed jobs',
+    one: '1 failed job',
+    other: '$count failed jobs',
+  );
+
+  /// Context groups in the queue.
+  static const String queueGroupsTitle = 'By context';
 
   /// Process every waiting record.
   static const String queueProcessAll = 'Process all';

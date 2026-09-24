@@ -34,6 +34,7 @@ kUpgradeSteps = <int, _UpgradeStep>{
   16: migrateToV16,
   17: migrateToV17,
   18: migrateToV18,
+  19: migrateToV19,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -296,6 +297,34 @@ Future<void> migrateToV17(Migrator migrator, AppDatabase db) async {
 Future<void> migrateToV18(Migrator migrator, AppDatabase db) async {
   await migrator.createTable(db.attachmentOwners);
   await migrator.createIndex(db.attachmentOwnersByOwner);
+}
+
+/// Schema version 19: derived-photo link and display rotation.
+///
+/// Existing rows stay originals: both columns are nullable and are not
+/// back-filled.
+Future<void> migrateToV19(Migrator migrator, AppDatabase db) async {
+  final List<QueryRow> tables = await db
+      .customSelect(
+        "SELECT name FROM sqlite_master WHERE type = 'table' "
+        "AND name = 'photos'",
+      )
+      .get();
+  if (tables.isEmpty) {
+    return;
+  }
+  final List<QueryRow> info = await db
+      .customSelect('PRAGMA table_info("photos")')
+      .get();
+  final Set<String> columns = <String>{
+    for (final QueryRow row in info) row.read<String>('name'),
+  };
+  if (!columns.contains('derived_from')) {
+    await migrator.addColumn(db.photos, db.photos.derivedFrom);
+  }
+  if (!columns.contains('rotation_degrees')) {
+    await migrator.addColumn(db.photos, db.photos.rotationDegrees);
+  }
 }
 
 /// Expression index that serves pinned-first, then newest (FE-PERF-03).

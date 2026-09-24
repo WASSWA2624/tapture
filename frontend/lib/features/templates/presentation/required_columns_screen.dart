@@ -21,6 +21,7 @@ import '../domain/field_def.dart';
 import '../domain/template_def.dart';
 import 'requiredness_controller.dart';
 import 'template_list_screen.dart' show templateListProvider;
+import 'template_locations.dart';
 
 /// Bulk requiredness and visibility for one template (§12.3, §13.2).
 class RequiredColumnsScreen extends ConsumerWidget {
@@ -171,7 +172,9 @@ class RequiredColumnsScreen extends ConsumerWidget {
           .read(requirednessControllerProvider(templateId).notifier)
           .commit();
       if (context.mounted) {
-        GoRouter.maybeOf(context)?.go(_fieldsLocation(templateId));
+        GoRouter.maybeOf(
+          context,
+        )?.go(TemplateLocations.detail(context, templateId));
       }
     } on Failure {
       return;
@@ -230,12 +233,6 @@ String _mark(Requiredness requiredness) {
     Requiredness.optional => Copy.fieldOptional,
   };
 }
-
-String _fieldsLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}';
-}
-
-const String _templatesRoot = '/more/templates';
 
 const Set<String> _inherited = <String>{
   'record_admin',

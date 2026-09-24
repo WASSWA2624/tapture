@@ -12,6 +12,7 @@ export 'capture_session.dart';
 export 'gps_capture.dart';
 export 'identifier_lookup.dart';
 export 'image_quality.dart';
+export 'photo_derivation.dart';
 export 'photo_draft.dart';
 export 'photo_repository.dart';
 export 'photo_rotate.dart';

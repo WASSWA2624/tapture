@@ -13,10 +13,12 @@ import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/projects/projects.dart';
+import 'package:tapture/features/templates/presentation/template_locations.dart';
 
 import '../domain/field_def.dart';
 import '../domain/template_def.dart';
 import '../templates.dart' show shippedTemplateLoaderProvider;
+import 'template_list_screen.dart';
 
 /// Picker for the shipped library: list by kind, preview fields, then copy.
 class ShippedPickerScreen extends ConsumerStatefulWidget {
@@ -74,13 +76,21 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
         empty: _empty,
         onRetry: () => ref.invalidate(shippedLibraryProvider),
         data: (List<TemplateDef> rows) {
-          return preview == null ? _library(rows) : _preview(preview, view);
+          final Set<String> attached = <String>{
+            for (final TemplateDef template
+                in ref.watch(templateListProvider).asData?.value ??
+                    const <TemplateDef>[])
+              template.templateKey,
+          };
+          return preview == null
+              ? _library(rows, attached)
+              : _preview(preview, view, attached.contains(preview.templateKey));
         },
       ),
     );
   }
 
-  Widget _library(List<TemplateDef> rows) {
+  Widget _library(List<TemplateDef> rows, Set<String> attached) {
     String? lastKind;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -93,7 +103,12 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
             ),
           AppListTile(
             title: Copy.shippedTemplateName(template.templateKey),
-            subtitle: Copy.fieldsCount(template.fields.length),
+            subtitle: attached.contains(template.templateKey)
+                ? Copy.shippedAddedToProject
+                : Copy.fieldsCount(template.fields.length),
+            trailing: attached.contains(template.templateKey)
+                ? const Icon(Icons.check_circle_outline)
+                : null,
             onTap: () => ref
                 .read(_shippedPickerProvider.notifier)
                 .preview(template.templateKey),
@@ -103,7 +118,11 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
     );
   }
 
-  Widget _preview(TemplateDef template, _ShippedPickerView view) {
+  Widget _preview(
+    TemplateDef template,
+    _ShippedPickerView view,
+    bool attached,
+  ) {
     return AppForm(
       guardUnsaved: true,
       errors: view.saveError == null
@@ -117,19 +136,27 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
           textInputAction: TextInputAction.done,
           errorText: view.nameError,
         ),
+        if (attached)
+          const AppListTile(
+            title: Copy.shippedAddedToProject,
+            leading: Icon(Icons.check_circle_outline),
+            dense: true,
+          ),
         for (final FieldDef field in template.fields)
           AppListTile(title: Copy.shippedLabel(field.label), dense: true),
       ],
-      submitLabel: Copy.templatesAdd,
+      submitLabel: attached
+          ? Copy.templatesCustomCopy
+          : Copy.templatesAddToProject,
       onSubmit: () async {
         final GoRouter? router = GoRouter.maybeOf(context);
         final TemplateDef? created = await ref
             .read(_shippedPickerProvider.notifier)
             .add(name: _name.text, source: template);
-        if (created == null || router == null) {
+        if (created == null || router == null || !mounted) {
           return;
         }
-        router.go(_fieldsLocation(created.id));
+        router.go(TemplateLocations.detail(context, created.id));
       },
     );
   }
@@ -242,8 +269,3 @@ class _ShippedPicker extends Notifier<_ShippedPickerView> {
 }
 
 /// Must match [AppRoutes.template]. This file cannot import `router.dart`.
-String _fieldsLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}';
-}
-
-const String _templatesRoot = '/more/templates';

@@ -8,6 +8,7 @@ import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/features/projects/projects.dart';
+import 'package:tapture/features/templates/presentation/template_locations.dart';
 
 import '../domain/field_def.dart';
 import '../domain/template_def.dart';
@@ -64,7 +65,7 @@ class _TemplateCreateScreenState extends ConsumerState<TemplateCreateScreen> {
           }
           final GoRouter? router = GoRouter.maybeOf(context);
           if (router != null) {
-            router.go(_fieldsLocation(created.id));
+            router.go(TemplateLocations.detail(context, created.id));
           }
         },
       ),
@@ -133,8 +134,3 @@ String _keyFor(String name) {
 }
 
 /// Must match [AppRoutes.template]. This file cannot import `router.dart`.
-String _fieldsLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}';
-}
-
-const String _templatesRoot = '/more/templates';

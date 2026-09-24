@@ -4,6 +4,7 @@ import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/outdoor_theme.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_photo_thumb.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
@@ -96,6 +97,12 @@ class _GalleryBody extends StatelessWidget {
                 photoType: PhotoType.document,
               ),
               size: edge,
+            ),
+            AppPhotoThumb(
+              photo: const PhotoAsset(sha256: 'f', photoType: PhotoType.panel),
+              size: edge,
+              statusLabel: Copy.capturePhotoProcessing,
+              onTap: _ignore,
             ),
           ],
         ),

@@ -106,6 +106,7 @@ Future<void> _run() async {
       clock: clock,
       deviceId: id,
       ids: ids,
+      storageRoot: storageRoot,
     );
     final ProviderRegistry providerRegistry = ProviderRegistry.keyless();
     final ProcessingStageWorker processingWorker = ProcessingStageWorker(

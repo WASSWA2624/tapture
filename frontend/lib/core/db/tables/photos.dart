@@ -62,6 +62,12 @@ class Photos extends Table with MergeColumns {
   /// GPS longitude at capture, when location recording is on.
   RealColumn get gpsLon => real().nullable()();
 
+  /// Parent photo when this row is an edit. Null marks an original.
+  TextColumn get derivedFrom => text().nullable()();
+
+  /// Display rotation in degrees. Null is the original orientation.
+  IntColumn get rotationDegrees => integer().nullable()();
+
   @override
   List<Set<Column<Object>>> get uniqueKeys => <Set<Column<Object>>>[
     <Column<Object>>{projectId, sha256},

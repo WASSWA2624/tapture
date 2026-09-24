@@ -16,6 +16,7 @@ class ProcessActions extends StatelessWidget {
     this.failed,
     this.onProcessAll,
     this.onProcessSelected,
+    this.selectedCount = 0,
     this.onCancel,
   });
 
@@ -37,6 +38,9 @@ class ProcessActions extends StatelessWidget {
   /// Starts the current selection.
   final VoidCallback? onProcessSelected;
 
+  /// How many records are selected. The selected action stays hidden at zero.
+  final int selectedCount;
+
   /// Stops the batch. Work already finished is kept.
   final VoidCallback? onCancel;
 
@@ -54,11 +58,12 @@ class ProcessActions extends StatelessWidget {
           AppButton(label: Copy.queueCancel, onPressed: onCancel)
         else ...<Widget>[
           AppButton(label: Copy.queueProcessAll, onPressed: onProcessAll),
-          AppButton(
-            label: Copy.queueProcessSelected,
-            variant: AppButtonVariant.secondary,
-            onPressed: onProcessSelected,
-          ),
+          if (onProcessSelected != null && selectedCount > 0)
+            AppButton(
+              label: Copy.queueProcessSelected,
+              variant: AppButtonVariant.secondary,
+              onPressed: onProcessSelected,
+            ),
         ],
       ],
     );

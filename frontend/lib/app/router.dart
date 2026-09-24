@@ -520,9 +520,12 @@ List<RouteBase> get _routes {
                     GoRoute(
                       path: 'templates',
                       metadata: _projectScoped,
-                      builder: (BuildContext _, GoRouterState _) {
-                        return const TemplateListScreen();
+                      builder: (BuildContext _, GoRouterState state) {
+                        return TemplateListScreen(
+                          projectId: state.pathParameters['projectId'],
+                        );
                       },
+                      routes: _templateChildRoutes(),
                     ),
                     GoRoute(
                       path: 'datasets',
@@ -679,7 +682,53 @@ List<RouteBase> get _routes {
                   builder: (BuildContext _, GoRouterState _) {
                     return const TemplateListScreen();
                   },
-                  routes: <RouteBase>[
+                  routes: _templateChildRoutes(),
+                ),
+                GoRoute(
+                  path: 'queue',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const QueueScreen();
+                  },
+                ),
+                GoRoute(
+                  path: 'exports',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const _RoutePage(name: 'exports');
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    ),
+  ];
+  if (kDebugMode) {
+    routes.add(
+      GoRoute(
+        path: WidgetGalleryScreen.route,
+        builder: (BuildContext _, GoRouterState _) {
+          return const WidgetGalleryScreen();
+        },
+      ),
+    );
+  }
+  return routes;
+}
+
+class _AiProviderRoute extends ConsumerWidget {
+  const _AiProviderRoute();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return AiProviderSettingsScreen(
+      settings: ref.watch(projectSettingsStoreProvider),
+    );
+  }
+}
+
+List<RouteBase> _templateChildRoutes() {
+  return <RouteBase>[
                     GoRoute(
                       path: 'new',
                       builder: (BuildContext _, GoRouterState _) {
@@ -809,49 +858,7 @@ List<RouteBase> get _routes {
                         ),
                       ],
                     ),
-                  ],
-                ),
-                GoRoute(
-                  path: 'queue',
-                  builder: (BuildContext _, GoRouterState _) {
-                    return const QueueScreen();
-                  },
-                ),
-                GoRoute(
-                  path: 'exports',
-                  builder: (BuildContext _, GoRouterState _) {
-                    return const _RoutePage(name: 'exports');
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
-    ),
-  ];
-  if (kDebugMode) {
-    routes.add(
-      GoRoute(
-        path: WidgetGalleryScreen.route,
-        builder: (BuildContext _, GoRouterState _) {
-          return const WidgetGalleryScreen();
-        },
-      ),
-    );
-  }
-  return routes;
-}
-
-class _AiProviderRoute extends ConsumerWidget {
-  const _AiProviderRoute();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return AiProviderSettingsScreen(
-      settings: ref.watch(projectSettingsStoreProvider),
-    );
-  }
+                  ];
 }
 
 String? _legacyLocation(GoRouterState state) {

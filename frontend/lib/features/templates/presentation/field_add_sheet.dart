@@ -24,6 +24,7 @@ import 'field_advanced_section.dart';
 import 'field_options_editor.dart';
 import 'field_validation_editor.dart';
 import 'template_list_screen.dart' show templateListProvider;
+import 'template_locations.dart';
 
 /// Three-question add and edit flow, with Advanced collapsed by default.
 class FieldAddSheet extends ConsumerStatefulWidget {
@@ -500,7 +501,9 @@ class _FieldAdd extends Notifier<_FieldAddView> {
     }
     switch (result) {
       case Success<TemplateDef>():
-        GoRouter.maybeOf(context)?.go(_listLocation(template.id));
+        GoRouter.maybeOf(
+          context,
+        )?.go(TemplateLocations.detail(context, template.id));
       case FailureResult<TemplateDef>(:final Failure failure):
         state = state.copyWith(saveError: failure.message);
     }
@@ -577,12 +580,6 @@ String? _emptyToNull(String raw) {
   final String trimmed = raw.trim();
   return trimmed.isEmpty ? null : trimmed;
 }
-
-String _listLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}';
-}
-
-const String _templatesRoot = '/more/templates';
 
 final RegExp _startsLetter = RegExp(r'^[a-z]');
 final RegExp _packed = RegExp(

@@ -119,6 +119,8 @@ void main() {
         'captured_at',
         'gps_lat',
         'gps_lon',
+        'derived_from',
+        'rotation_degrees',
       ]),
     );
   });

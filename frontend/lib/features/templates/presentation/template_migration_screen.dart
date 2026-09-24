@@ -14,6 +14,7 @@ import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
+import 'package:tapture/features/templates/presentation/template_locations.dart';
 
 import '../domain/template_def.dart';
 import '../domain/template_versioning.dart';
@@ -138,7 +139,9 @@ class TemplateMigrationScreen extends ConsumerWidget {
         .read(_migrationProvider(templateId).notifier)
         .commit(template);
     if (saved && context.mounted) {
-      GoRouter.maybeOf(context)?.go(_fieldsLocation(templateId));
+      GoRouter.maybeOf(
+        context,
+      )?.go(TemplateLocations.detail(context, templateId));
     }
   }
 }
@@ -197,9 +200,3 @@ final _migrationProvider = NotifierProvider.autoDispose
       _Migration.new,
       retry: (int _, Object _) => null,
     );
-
-String _fieldsLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}';
-}
-
-const String _templatesRoot = '/more/templates';

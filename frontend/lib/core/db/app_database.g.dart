@@ -10024,6 +10024,28 @@ class $PhotosTable extends Photos with TableInfo<$PhotosTable, Photo> {
     type: DriftSqlType.double,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _derivedFromMeta = const VerificationMeta(
+    'derivedFrom',
+  );
+  @override
+  late final GeneratedColumn<String> derivedFrom = GeneratedColumn<String>(
+    'derived_from',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rotationDegreesMeta = const VerificationMeta(
+    'rotationDegrees',
+  );
+  @override
+  late final GeneratedColumn<int> rotationDegrees = GeneratedColumn<int>(
+    'rotation_degrees',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -10047,6 +10069,8 @@ class $PhotosTable extends Photos with TableInfo<$PhotosTable, Photo> {
     capturedAt,
     gpsLat,
     gpsLon,
+    derivedFrom,
+    rotationDegrees,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -10230,6 +10254,24 @@ class $PhotosTable extends Photos with TableInfo<$PhotosTable, Photo> {
         gpsLon.isAcceptableOrUnknown(data['gps_lon']!, _gpsLonMeta),
       );
     }
+    if (data.containsKey('derived_from')) {
+      context.handle(
+        _derivedFromMeta,
+        derivedFrom.isAcceptableOrUnknown(
+          data['derived_from']!,
+          _derivedFromMeta,
+        ),
+      );
+    }
+    if (data.containsKey('rotation_degrees')) {
+      context.handle(
+        _rotationDegreesMeta,
+        rotationDegrees.isAcceptableOrUnknown(
+          data['rotation_degrees']!,
+          _rotationDegreesMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -10327,6 +10369,14 @@ class $PhotosTable extends Photos with TableInfo<$PhotosTable, Photo> {
         DriftSqlType.double,
         data['${effectivePrefix}gps_lon'],
       ),
+      derivedFrom: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}derived_from'],
+      ),
+      rotationDegrees: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rotation_degrees'],
+      ),
     );
   }
 
@@ -10399,6 +10449,12 @@ class Photo extends DataClass implements Insertable<Photo> {
 
   /// GPS longitude at capture, when location recording is on.
   final double? gpsLon;
+
+  /// Parent photo when this row is an edit. Null marks an original.
+  final String? derivedFrom;
+
+  /// Display rotation in degrees. Null is the original orientation.
+  final int? rotationDegrees;
   const Photo({
     required this.id,
     required this.createdAt,
@@ -10421,6 +10477,8 @@ class Photo extends DataClass implements Insertable<Photo> {
     required this.capturedAt,
     this.gpsLat,
     this.gpsLon,
+    this.derivedFrom,
+    this.rotationDegrees,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -10451,6 +10509,12 @@ class Photo extends DataClass implements Insertable<Photo> {
     }
     if (!nullToAbsent || gpsLon != null) {
       map['gps_lon'] = Variable<double>(gpsLon);
+    }
+    if (!nullToAbsent || derivedFrom != null) {
+      map['derived_from'] = Variable<String>(derivedFrom);
+    }
+    if (!nullToAbsent || rotationDegrees != null) {
+      map['rotation_degrees'] = Variable<int>(rotationDegrees);
     }
     return map;
   }
@@ -10484,6 +10548,12 @@ class Photo extends DataClass implements Insertable<Photo> {
       gpsLon: gpsLon == null && nullToAbsent
           ? const Value.absent()
           : Value(gpsLon),
+      derivedFrom: derivedFrom == null && nullToAbsent
+          ? const Value.absent()
+          : Value(derivedFrom),
+      rotationDegrees: rotationDegrees == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rotationDegrees),
     );
   }
 
@@ -10514,6 +10584,8 @@ class Photo extends DataClass implements Insertable<Photo> {
       capturedAt: serializer.fromJson<DateTime>(json['capturedAt']),
       gpsLat: serializer.fromJson<double?>(json['gpsLat']),
       gpsLon: serializer.fromJson<double?>(json['gpsLon']),
+      derivedFrom: serializer.fromJson<String?>(json['derivedFrom']),
+      rotationDegrees: serializer.fromJson<int?>(json['rotationDegrees']),
     );
   }
   @override
@@ -10541,6 +10613,8 @@ class Photo extends DataClass implements Insertable<Photo> {
       'capturedAt': serializer.toJson<DateTime>(capturedAt),
       'gpsLat': serializer.toJson<double?>(gpsLat),
       'gpsLon': serializer.toJson<double?>(gpsLon),
+      'derivedFrom': serializer.toJson<String?>(derivedFrom),
+      'rotationDegrees': serializer.toJson<int?>(rotationDegrees),
     };
   }
 
@@ -10566,6 +10640,8 @@ class Photo extends DataClass implements Insertable<Photo> {
     DateTime? capturedAt,
     Value<double?> gpsLat = const Value.absent(),
     Value<double?> gpsLon = const Value.absent(),
+    Value<String?> derivedFrom = const Value.absent(),
+    Value<int?> rotationDegrees = const Value.absent(),
   }) => Photo(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -10588,6 +10664,10 @@ class Photo extends DataClass implements Insertable<Photo> {
     capturedAt: capturedAt ?? this.capturedAt,
     gpsLat: gpsLat.present ? gpsLat.value : this.gpsLat,
     gpsLon: gpsLon.present ? gpsLon.value : this.gpsLon,
+    derivedFrom: derivedFrom.present ? derivedFrom.value : this.derivedFrom,
+    rotationDegrees: rotationDegrees.present
+        ? rotationDegrees.value
+        : this.rotationDegrees,
   );
   Photo copyWithCompanion(PhotosCompanion data) {
     return Photo(
@@ -10624,6 +10704,12 @@ class Photo extends DataClass implements Insertable<Photo> {
           : this.capturedAt,
       gpsLat: data.gpsLat.present ? data.gpsLat.value : this.gpsLat,
       gpsLon: data.gpsLon.present ? data.gpsLon.value : this.gpsLon,
+      derivedFrom: data.derivedFrom.present
+          ? data.derivedFrom.value
+          : this.derivedFrom,
+      rotationDegrees: data.rotationDegrees.present
+          ? data.rotationDegrees.value
+          : this.rotationDegrees,
     );
   }
 
@@ -10650,7 +10736,9 @@ class Photo extends DataClass implements Insertable<Photo> {
           ..write('sha256: $sha256, ')
           ..write('capturedAt: $capturedAt, ')
           ..write('gpsLat: $gpsLat, ')
-          ..write('gpsLon: $gpsLon')
+          ..write('gpsLon: $gpsLon, ')
+          ..write('derivedFrom: $derivedFrom, ')
+          ..write('rotationDegrees: $rotationDegrees')
           ..write(')'))
         .toString();
   }
@@ -10678,6 +10766,8 @@ class Photo extends DataClass implements Insertable<Photo> {
     capturedAt,
     gpsLat,
     gpsLon,
+    derivedFrom,
+    rotationDegrees,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -10703,7 +10793,9 @@ class Photo extends DataClass implements Insertable<Photo> {
           other.sha256 == this.sha256 &&
           other.capturedAt == this.capturedAt &&
           other.gpsLat == this.gpsLat &&
-          other.gpsLon == this.gpsLon);
+          other.gpsLon == this.gpsLon &&
+          other.derivedFrom == this.derivedFrom &&
+          other.rotationDegrees == this.rotationDegrees);
 }
 
 class PhotosCompanion extends UpdateCompanion<Photo> {
@@ -10728,6 +10820,8 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
   final Value<DateTime> capturedAt;
   final Value<double?> gpsLat;
   final Value<double?> gpsLon;
+  final Value<String?> derivedFrom;
+  final Value<int?> rotationDegrees;
   final Value<int> rowid;
   const PhotosCompanion({
     this.id = const Value.absent(),
@@ -10751,6 +10845,8 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
     this.capturedAt = const Value.absent(),
     this.gpsLat = const Value.absent(),
     this.gpsLon = const Value.absent(),
+    this.derivedFrom = const Value.absent(),
+    this.rotationDegrees = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   PhotosCompanion.insert({
@@ -10775,6 +10871,8 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
     required DateTime capturedAt,
     this.gpsLat = const Value.absent(),
     this.gpsLon = const Value.absent(),
+    this.derivedFrom = const Value.absent(),
+    this.rotationDegrees = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : createdAt = Value(createdAt),
        updatedAt = Value(updatedAt),
@@ -10814,6 +10912,8 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
     Expression<DateTime>? capturedAt,
     Expression<double>? gpsLat,
     Expression<double>? gpsLon,
+    Expression<String>? derivedFrom,
+    Expression<int>? rotationDegrees,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -10838,6 +10938,8 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
       if (capturedAt != null) 'captured_at': capturedAt,
       if (gpsLat != null) 'gps_lat': gpsLat,
       if (gpsLon != null) 'gps_lon': gpsLon,
+      if (derivedFrom != null) 'derived_from': derivedFrom,
+      if (rotationDegrees != null) 'rotation_degrees': rotationDegrees,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -10864,6 +10966,8 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
     Value<DateTime>? capturedAt,
     Value<double?>? gpsLat,
     Value<double?>? gpsLon,
+    Value<String?>? derivedFrom,
+    Value<int?>? rotationDegrees,
     Value<int>? rowid,
   }) {
     return PhotosCompanion(
@@ -10888,6 +10992,8 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
       capturedAt: capturedAt ?? this.capturedAt,
       gpsLat: gpsLat ?? this.gpsLat,
       gpsLon: gpsLon ?? this.gpsLon,
+      derivedFrom: derivedFrom ?? this.derivedFrom,
+      rotationDegrees: rotationDegrees ?? this.rotationDegrees,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -10958,6 +11064,12 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
     if (gpsLon.present) {
       map['gps_lon'] = Variable<double>(gpsLon.value);
     }
+    if (derivedFrom.present) {
+      map['derived_from'] = Variable<String>(derivedFrom.value);
+    }
+    if (rotationDegrees.present) {
+      map['rotation_degrees'] = Variable<int>(rotationDegrees.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -10988,6 +11100,8 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
           ..write('capturedAt: $capturedAt, ')
           ..write('gpsLat: $gpsLat, ')
           ..write('gpsLon: $gpsLon, ')
+          ..write('derivedFrom: $derivedFrom, ')
+          ..write('rotationDegrees: $rotationDegrees, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();

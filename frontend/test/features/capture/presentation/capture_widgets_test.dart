@@ -13,6 +13,7 @@ import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/files/storage_guard.dart';
 import 'package:tapture/core/files/text_store.dart';
 import 'package:tapture/core/permissions/permissions_service.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
@@ -270,7 +271,7 @@ void main() {
       draft('b', type: 'serial', order: 1),
     ];
     await tester.pumpWidget(wrap(PhotoTray(photos: photos, onAdd: () {})));
-    expect(find.text('front'), findsWidgets);
+    expect(find.text(Copy.photoFront), findsWidgets);
     await tester.pumpWidget(
       wrap(PhotoReorder(photos: photos, onReorder: (_) {})),
     );
@@ -316,7 +317,7 @@ void main() {
           ),
         ),
       );
-      await tester.tap(find.text('Crop'));
+      await tester.tap(find.widgetWithText(AppButton, Copy.photoCrop));
       await tester.pump();
       await tester.tap(find.text('Revert'));
       await tester.pump();

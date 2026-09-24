@@ -16,11 +16,15 @@ import 'package:tapture/features/projects/projects.dart';
 import '../domain/template_def.dart';
 import '../templates.dart' show templateRepositoryProvider;
 import 'template_duplicate_action.dart';
+import 'template_locations.dart';
 
 /// A project's templates, each row showing field and record counts.
 class TemplateListScreen extends ConsumerWidget {
-  /// Creates the list.
-  const TemplateListScreen({super.key});
+  /// Creates the list. [projectId] keeps navigation inside that project.
+  const TemplateListScreen({this.projectId, super.key});
+
+  /// Project that opened this list, when the route is project-scoped.
+  final String? projectId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,7 +41,9 @@ class TemplateListScreen extends ConsumerWidget {
       footer: value.hasValue
           ? AppPrimaryAction(
               label: Copy.templatesCreate,
-              onPressed: () => context.go(_createLocation),
+              onPressed: () => context.go(
+                TemplateLocations.create(context, projectId: projectId),
+              ),
             )
           : null,
       body: AsyncValueView<List<TemplateDef>>(
@@ -94,12 +100,14 @@ class TemplateListScreen extends ConsumerWidget {
       AppOverflowAction(
         label: Copy.templatesExport,
         icon: Icons.ios_share_outlined,
-        onTap: () => context.go(_exportLocation(template.id)),
+        onTap: () => context.go(
+          TemplateLocations.child(context, template.id, 'export'),
+        ),
       ),
       AppOverflowAction(
         label: Copy.templatesImport,
         icon: Icons.file_upload_outlined,
-        onTap: () => context.go(_importLocation),
+        onTap: () => context.go(TemplateLocations.import(context)),
       ),
       if (recordCount == 0)
         AppOverflowAction(
@@ -117,7 +125,7 @@ Widget _empty(BuildContext context) {
     headline: Copy.templatesEmptyHeadline,
     message: Copy.templatesEmptyMessage,
     actionLabel: Copy.templatesPickLibrary,
-    onAction: () => context.go(_libraryLocation),
+    onAction: () => context.go(TemplateLocations.library(context)),
   );
 }
 
@@ -158,7 +166,7 @@ Future<void> _delete(
 }
 
 void _open(BuildContext context, String id) {
-  context.go(_fieldsLocation(id));
+  context.go(TemplateLocations.detail(context, id));
 }
 
 /// Live templates for the open project. Kept alive so the list and create
@@ -179,24 +187,4 @@ final Provider<Map<String, int>> templateRecordCountsProvider =
       return const <String, int>{};
     });
 
-/// Must match [AppRoutes.templateCreate], [AppRoutes.templateLibrary],
-/// [AppRoutes.templateImport], [AppRoutes.template] and
-/// [AppRoutes.templateExport]. This file cannot import `router.dart` — the
-/// router imports the screen.
-const String _templatesRoot = '/more/templates';
-const String _newSegment = 'new';
-const String _librarySegment = 'library';
-const String _importSegment = 'import';
-const String _exportSegment = 'export';
-const String _createLocation = '$_templatesRoot/$_newSegment';
-const String _libraryLocation = '$_templatesRoot/$_librarySegment';
-const String _importLocation = '$_templatesRoot/$_importSegment';
 const String _deleteReason = 'Removed from the project.';
-
-String _fieldsLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}';
-}
-
-String _exportLocation(String id) {
-  return '${_fieldsLocation(id)}/$_exportSegment';
-}

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
@@ -31,35 +32,31 @@ final class ProjectListToolbar extends ConsumerWidget {
         if ((row.project.organisation ?? '').trim().isNotEmpty)
           row.project.organisation!.trim(),
     };
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    final String filterLabel = Copy.projectFilters(criteria.activeFilterCount);
+    return Row(
       children: <Widget>[
-        AppSearchField(
-          hint: Copy.projectSearchHint,
-          text: criteria.query,
-          onChanged: ref.read(projectListCriteriaProvider.notifier).setQuery,
+        Expanded(
+          child: AppSearchField(
+            hint: Copy.projectSearchHint,
+            text: criteria.query,
+            onChanged: ref.read(projectListCriteriaProvider.notifier).setQuery,
+          ),
         ),
-        const SizedBox(height: Space.x2),
-        Wrap(
-          spacing: Space.x2,
-          runSpacing: Space.x2,
-          children: <Widget>[
-            AppButton(
-              label: Copy.projectFilters(criteria.activeFilterCount),
-              variant: AppButtonVariant.secondary,
-              icon: Icons.filter_list,
-              onPressed: () => unawaited(
-                _openFilters(context, ref, criteria, organisations),
-              ),
-            ),
-            if (criteria.isActive)
-              AppButton(
-                label: Copy.clear,
-                variant: AppButtonVariant.text,
-                onPressed: ref.read(projectListCriteriaProvider.notifier).clear,
-              ),
-          ],
+        AppIconButton(
+          icon: Icons.filter_list,
+          tooltip: filterLabel,
+          semanticLabel: filterLabel,
+          selected: criteria.activeFilterCount > 0,
+          onPressed: () =>
+              unawaited(_openFilters(context, ref, criteria, organisations)),
         ),
+        if (criteria.isActive)
+          AppIconButton(
+            icon: Icons.clear,
+            tooltip: Copy.clear,
+            semanticLabel: Copy.clear,
+            onPressed: ref.read(projectListCriteriaProvider.notifier).clear,
+          ),
       ],
     );
   }
@@ -74,6 +71,7 @@ Future<void> _openFilters(
   return showAppSheet<void>(
     context,
     title: Copy.projectFiltersTitle,
+    contentSized: true,
     builder: (BuildContext sheetContext) {
       return _ProjectFilterForm(
         initial: criteria,
@@ -114,6 +112,8 @@ class _ProjectFilterFormState extends State<_ProjectFilterForm> {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.all(Space.x3),
       children: <Widget>[
         const Text(Copy.projectStatusFilter),

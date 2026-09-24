@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_section_header.dart';
+import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
@@ -51,9 +54,25 @@ class QueueScreen extends ConsumerWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Text('${Copy.queueUnprocessed} ${snapshot.unprocessed}'),
-              Text('${Copy.queueQueued} ${snapshot.queued}'),
-              Text('${Copy.queueFailed} ${snapshot.failed}'),
+              Wrap(
+                spacing: Space.x2,
+                runSpacing: Space.x2,
+                children: <Widget>[
+                  AppStatusPill(
+                    status: RecordStatus.captured,
+                    label: Copy.queueUnprocessedCount(snapshot.unprocessed),
+                  ),
+                  AppStatusPill(
+                    status: RecordStatus.queued,
+                    label: Copy.queueQueuedCount(snapshot.queued),
+                  ),
+                  AppStatusPill(
+                    status: RecordStatus.failed,
+                    label: Copy.queueFailedCount(snapshot.failed),
+                  ),
+                ],
+              ),
+              const SizedBox(height: Space.x2),
               Text(
                 Copy.queueUsage(
                   snapshot.requestsToday,
@@ -95,12 +114,12 @@ class QueueScreen extends ConsumerWidget {
                     : null,
               ),
               Expanded(
-                child: ListView.builder(
-                  itemCount: snapshot.failures.length + snapshot.groups.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    if (index < snapshot.failures.length) {
-                      final ProcessingJob job = snapshot.failures[index];
-                      return AppListTile(
+                child: ListView(
+                  children: <Widget>[
+                    if (snapshot.failures.isNotEmpty)
+                      const AppSectionHeader(title: Copy.queueFailedTitle),
+                    for (final ProcessingJob job in snapshot.failures)
+                      AppListTile(
                         leading: const Icon(Icons.error_outline),
                         title: '${Copy.queueRetry}: ${job.recordId}',
                         subtitle: job.lastError ?? Copy.queueFailed,
@@ -109,40 +128,41 @@ class QueueScreen extends ConsumerWidget {
                             : () => ref
                                   .read(processingControllerProvider.notifier)
                                   .retry(job.id),
-                      );
-                    }
-                    final QueueGroup group =
-                        snapshot.groups[index - snapshot.failures.length];
-                    return AppListTile(
-                      title: group.label,
-                      subtitle: Copy.recordsCount(group.records),
-                      onTap: batch.isRunning
-                          ? null
-                          : () => ref
-                                .read(processingControllerProvider.notifier)
-                                .process(
-                                  projectId: projectId,
-                                  groupLabel: group.label,
-                                  confirmOnline: (ProcessingJob job) async {
-                                    final summary = await ref.read(
-                                      processingEgressSummaryProvider,
-                                    )(job);
-                                    if (summary.imageCount == 0 &&
-                                        summary.payloadBytes == 0) {
-                                      return true;
-                                    }
-                                    if (!context.mounted) {
-                                      return false;
-                                    }
-                                    return showEgressPreview(
-                                      context,
-                                      imageCount: summary.imageCount,
-                                      payloadBytes: summary.payloadBytes,
-                                    );
-                                  },
-                                ),
-                    );
-                  },
+                      ),
+                    if (snapshot.groups.isNotEmpty)
+                      const AppSectionHeader(title: Copy.queueGroupsTitle),
+                    for (final QueueGroup group in snapshot.groups)
+                      AppListTile(
+                        leading: const Icon(Icons.folder_outlined),
+                        title: group.label,
+                        subtitle: Copy.recordsCount(group.records),
+                        onTap: batch.isRunning
+                            ? null
+                            : () => ref
+                                  .read(processingControllerProvider.notifier)
+                                  .process(
+                                    projectId: projectId,
+                                    groupLabel: group.label,
+                                    confirmOnline: (ProcessingJob job) async {
+                                      final summary = await ref.read(
+                                        processingEgressSummaryProvider,
+                                      )(job);
+                                      if (summary.imageCount == 0 &&
+                                          summary.payloadBytes == 0) {
+                                        return true;
+                                      }
+                                      if (!context.mounted) {
+                                        return false;
+                                      }
+                                      return showEgressPreview(
+                                        context,
+                                        imageCount: summary.imageCount,
+                                        payloadBytes: summary.payloadBytes,
+                                      );
+                                    },
+                                  ),
+                      ),
+                  ],
                 ),
               ),
             ],

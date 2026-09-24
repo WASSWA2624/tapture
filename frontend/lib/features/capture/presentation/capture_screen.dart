@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/audio/audio_recorder_service.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -15,15 +16,20 @@ import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/photo_markup.dart';
 import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
+import 'package:tapture/features/capture/domain/capture_photo_repository.dart';
 import 'package:tapture/features/capture/domain/capture_record_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
+import 'package:tapture/features/capture/domain/photo_derivation.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
+import 'package:tapture/features/capture/domain/photo_repository.dart';
+import 'package:tapture/features/capture/domain/photo_rotate.dart';
 import 'package:tapture/features/capture/domain/save_and_analyse.dart';
 import 'package:tapture/features/capture/presentation/audio_recorder.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
@@ -32,6 +38,7 @@ import 'package:tapture/features/capture/presentation/gallery_picker.dart';
 import 'package:tapture/features/capture/presentation/inline_fields_section.dart';
 import 'package:tapture/features/capture/presentation/photo_caption_sheet.dart';
 import 'package:tapture/features/capture/presentation/photo_crop_screen.dart';
+import 'package:tapture/features/capture/presentation/photo_doodle_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_tray.dart';
 import 'package:tapture/features/capture/presentation/photo_viewer_screen.dart';
 import 'package:tapture/features/capture/presentation/record_caption_field.dart';
@@ -123,6 +130,9 @@ final class CaptureScreen extends ConsumerStatefulWidget {
 class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   final Set<String> _selected = <String>{};
   final Map<String, Uint8List> _bytes = <String, Uint8List>{};
+  final Map<String, String> _thumbs = <String, String>{};
+  final Set<String> _missing = <String>{};
+  String? _derivationNotice;
   bool _restored = false;
   bool _askingTemplate = true;
   bool _onStage = true;
@@ -207,13 +217,11 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       scrollable: true,
       footer: Row(
         children: <Widget>[
-          Expanded(
-            child: AppButton(
-              label: Copy.captureSaveRaw,
-              variant: AppButtonVariant.secondary,
-              busy: uiState.saving,
-              onPressed: widget.onSaveRaw ?? () => unawaited(_save(false)),
-            ),
+          AppButton(
+            label: Copy.captureSaveRaw,
+            variant: AppButtonVariant.secondary,
+            busy: uiState.saving,
+            onPressed: widget.onSaveRaw ?? () => unawaited(_save(false)),
           ),
           const SizedBox(width: Space.x2),
           Expanded(
@@ -242,10 +250,13 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                 unawaited(controller.setTemplate(id));
               },
             ),
+          const AppSectionHeader(title: Copy.capturePhotosSection, dense: true),
           PhotoTray(
-            photos: session.photos,
+            photos: _activePhotos(session),
             captions: session.captions,
             selectedIds: _selected,
+            thumbPaths: _thumbs,
+            missingIds: _missing,
             onAdd: needsChoice ? _ignore : (widget.onAddPhoto ?? _add),
             onLongPress: (PhotoDraft photo) {
               setState(() {
@@ -257,7 +268,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             onTap: (PhotoDraft photo) => _openViewer(session, photo),
           ),
           if (project != null) ...<Widget>[
-            const SizedBox(height: Space.x3),
+            const AppSectionHeader(title: Copy.captureAudioSection, dense: true),
             AudioRecorder(
               recorder: ref.watch(audioRecorderServiceProvider),
               relativePath:
@@ -268,7 +279,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             if (session.audio.isNotEmpty)
               Text(Copy.captureAudioCount(session.audio.length)),
           ],
-          const SizedBox(height: Space.x3),
+          const AppSectionHeader(title: Copy.captureRecordCaption, dense: true),
           RecordCaptionField(
             value: session.recordCaption,
             onChanged: (String text) async {
@@ -330,6 +341,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     await showAppSheet<void>(
       context,
       title: Copy.captureAddSheetTitle,
+      contentSized: true,
       builder: (BuildContext sheetContext) {
         return Column(
           mainAxisSize: MainAxisSize.min,
@@ -414,21 +426,62 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
         showAppSnack(context, failure.message, tone: SnackTone.error);
       case Success<void>():
         setState(() => _bytes[id] = bytes);
+        unawaited(_refreshThumbs(<PhotoDraft>[draft]));
+    }
+  }
+
+  List<PhotoDraft> _activePhotos(CaptureSession session) {
+    final Result<List<PhotoDraft>> selected = PhotoDerivation.select(
+      session.photos,
+    );
+    switch (selected) {
+      case Success<List<PhotoDraft>>(:final List<PhotoDraft> value):
+        return value;
+      case FailureResult<List<PhotoDraft>>(:final Failure failure):
+        if (_derivationNotice != failure.message) {
+          _derivationNotice = failure.message;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              showAppSnack(context, failure.message, tone: SnackTone.error);
+            }
+          });
+        }
+        return <PhotoDraft>[
+          for (final PhotoDraft photo in session.photos)
+            if (photo.derivedFrom == null) photo,
+        ];
     }
   }
 
   void _openViewer(CaptureSession session, PhotoDraft photo) {
-    final int index = session.photos.indexWhere(
-      (PhotoDraft row) => row.id == photo.id,
+    final List<PhotoDraft> photos = _activePhotos(session);
+    final int index = photos.indexWhere((PhotoDraft row) => row.id == photo.id);
+    final CaptureController controller = ref.read(
+      captureControllerProvider(widget.projectId).notifier,
     );
     unawaited(
       Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (BuildContext routeContext) {
             return PhotoViewerScreen(
-              photos: session.photos,
+              photos: photos,
               initialIndex: index < 0 ? 0 : index,
               images: _bytes,
+              missingIds: _missing,
+              loadBytes: _readPhoto,
+              onRotate: (PhotoDraft current, int degrees) async {
+                final Result<void> saved = await controller.updatePhoto(
+                  PhotoRotate.apply(current, degrees),
+                );
+                if (saved is FailureResult<void> && mounted) {
+                  showAppSnack(
+                    context,
+                    saved.failure.message,
+                    tone: SnackTone.error,
+                  );
+                }
+                return saved is Success<void>;
+              },
               onCaption: (PhotoDraft current) {
                 Navigator.of(routeContext).pop();
                 unawaited(_caption(session, current));
@@ -436,8 +489,15 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               onCrop: (PhotoDraft current) {
                 unawaited(_crop(routeContext, current));
               },
+              onDraw: (PhotoDraft current) {
+                unawaited(_draw(routeContext, current));
+              },
               onType: (PhotoDraft current) {
                 unawaited(_type(routeContext, current));
+              },
+              onRevert: (PhotoDraft current) {
+                Navigator.of(routeContext).pop();
+                unawaited(_revert(current.id));
               },
             );
           },
@@ -450,6 +510,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     await showAppSheet<void>(
       context,
       title: Copy.capturePhotoCaption,
+      contentSized: true,
       builder: (BuildContext sheetContext) {
         return PhotoCaptionSheet(
           initial: session.captions[photo.id] ?? '',
@@ -490,8 +551,10 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     final _AudioScope? scope = await showAppSheet<_AudioScope>(
       context,
       title: Copy.captureAudioScopeTitle,
+      contentSized: true,
       builder: (BuildContext sheetContext) {
-        return ListView(
+        return Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             if (session.photos.isNotEmpty)
               AppListTile(
@@ -557,17 +620,26 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   }
 
   Future<void> _crop(BuildContext routeContext, PhotoDraft photo) async {
+    final Uint8List? bytes = await _readPhoto(photo);
+    if (!routeContext.mounted) {
+      return;
+    }
     await Navigator.of(routeContext).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
           return PhotoCropScreen(
             photo: photo,
-            bytes: _bytes[photo.id],
+            bytes: bytes,
             onCropped: (PhotoDraft derived, Uint8List? png) {
-              Navigator.of(context).pop();
-              if (png != null) {
-                unawaited(_storePhoto(png, derivedFrom: photo.id));
+              if (png == null) {
+                return;
               }
+              unawaited(() async {
+                final bool saved = await _commitDerived(photo, derived, png);
+                if (saved && context.mounted) {
+                  Navigator.of(context).pop();
+                }
+              }());
             },
             onRevert: (PhotoDraft source) {
               Navigator.of(context).pop();
@@ -579,54 +651,217 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     );
   }
 
-  Future<void> _revert(String sourceId) async {
-    final CaptureSession session = ref.read(
-      captureControllerProvider(widget.projectId),
+  Future<void> _draw(BuildContext routeContext, PhotoDraft photo) async {
+    final Uint8List? bytes = await _readPhoto(photo);
+    if (bytes == null) {
+      if (mounted) {
+        showAppSnack(context, Copy.missingPhoto, tone: SnackTone.error);
+      }
+      return;
+    }
+    if (!routeContext.mounted) {
+      return;
+    }
+    await Navigator.of(routeContext).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          return PhotoDoodleScreen(
+            photo: photo,
+            bytes: bytes,
+            onDrawn: (PhotoDraft derived, Uint8List png) {
+              unawaited(() async {
+                final bool saved = await _commitDerived(photo, derived, png);
+                if (saved && context.mounted) {
+                  Navigator.of(context).pop();
+                }
+              }());
+            },
+          );
+        },
+      ),
     );
+  }
+
+  Future<void> _revert(String photoId) async {
+    final Result<void> reverted = await ref
+        .read(captureControllerProvider(widget.projectId).notifier)
+        .revertPhoto(photoId);
+    if (!mounted) {
+      return;
+    }
+    switch (reverted) {
+      case FailureResult<void>(:final Failure failure):
+        showAppSnack(context, failure.message, tone: SnackTone.error);
+      case Success<void>():
+        setState(() {
+          _bytes.remove(photoId);
+          _thumbs.remove(photoId);
+          _missing.remove(photoId);
+        });
+    }
+  }
+
+  Future<bool> _commitDerived(
+    PhotoDraft source,
+    PhotoDraft derived,
+    Uint8List png,
+  ) async {
     final CaptureController controller = ref.read(
       captureControllerProvider(widget.projectId).notifier,
     );
-    for (final PhotoDraft photo in session.photos) {
-      if (photo.derivedFrom == sourceId) {
-        await controller.removePhoto(photo.id);
-        _bytes.remove(photo.id);
+    final Result<void> saved = await controller.updatePhoto(
+      derived.copyWith(
+        projectId: widget.projectId,
+        sha256: sha256.convert(png).toString(),
+        fileSize: png.length,
+      ),
+      bytes: png,
+    );
+    if (!mounted) {
+      return false;
+    }
+    switch (saved) {
+      case FailureResult<void>(:final Failure failure):
+        showAppSnack(context, failure.message, tone: SnackTone.error);
+        return false;
+      case Success<void>():
+        final CaptureSession session = ref.read(
+          captureControllerProvider(widget.projectId),
+        );
+        final String? caption = session.captions[source.id];
+        if (caption != null && caption.isNotEmpty) {
+          await controller.setCaption(derived.id, caption);
+        }
+        if (!mounted) {
+          return true;
+        }
+        setState(() => _bytes[derived.id] = png);
+        unawaited(_refreshThumbs(<PhotoDraft>[derived]));
+        return true;
+    }
+  }
+
+  Future<Uint8List?> _readPhoto(PhotoDraft photo) async {
+    final Uint8List? cached = _bytes[photo.id];
+    if (cached != null) {
+      return cached;
+    }
+    final PhotoRepository repository = ref
+        .read(capturePersistenceProvider)
+        .photos;
+    if (repository is! CapturePhotoRepository) {
+      return null;
+    }
+    final Result<Uint8List> bytes = await repository.readBytes(photo);
+    switch (bytes) {
+      case FailureResult<Uint8List>():
+        if (mounted) {
+          setState(() => _missing.add(photo.id));
+        }
+        return null;
+      case Success<Uint8List>(:final Uint8List value):
+        _bytes[photo.id] = value;
+        return value;
+    }
+  }
+
+  Future<void> _refreshThumbs(List<PhotoDraft> photos) async {
+    final PhotoRepository repository = ref
+        .read(capturePersistenceProvider)
+        .photos;
+    if (repository is! CapturePhotoRepository) {
+      return;
+    }
+    final Map<String, String> next = Map<String, String>.of(_thumbs);
+    final Set<String> missing = Set<String>.of(_missing);
+    for (final PhotoDraft photo in photos) {
+      final Result<String> thumb = await repository.cachedThumbnailPath(
+        photo,
+        edge: AppConstants.images.thumbnailEdge,
+      );
+      switch (thumb) {
+        case FailureResult<String>():
+          missing.add(photo.id);
+          next.remove(photo.id);
+        case Success<String>(:final String value):
+          missing.remove(photo.id);
+          next[photo.id] = value;
       }
     }
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _thumbs
+          ..clear()
+          ..addAll(next);
+        _missing
+          ..clear()
+          ..addAll(missing);
+      });
     }
   }
 
   Future<void> _type(BuildContext routeContext, PhotoDraft photo) async {
-    final Uint8List? bytes = _bytes[photo.id];
+    final Uint8List? bytes = await _readPhoto(photo);
     if (bytes == null) {
-      showAppSnack(context, Copy.missingPhoto, tone: SnackTone.error);
+      if (mounted) {
+        showAppSnack(context, Copy.missingPhoto, tone: SnackTone.error);
+      }
+      return;
+    }
+    if (!routeContext.mounted) {
       return;
     }
     final TextEditingController text = TextEditingController();
+    String? error;
     await showAppSheet<void>(
       routeContext,
       title: Copy.photoTypeOn,
+      contentSized: true,
       builder: (BuildContext sheetContext) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            AppTextField(label: Copy.photoTypeOn, controller: text),
-            AppButton(
-              label: Copy.save,
-              onPressed: () async {
-                final Uint8List png = await PhotoMarkup.typeOn(
-                  bytes,
-                  text.text,
-                );
-                if (sheetContext.mounted) {
-                  Navigator.of(sheetContext).pop();
-                }
-                await _storePhoto(png, derivedFrom: photo.id);
-              },
-            ),
-          ],
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setSheet) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                AppTextField(label: Copy.photoTypeOn, controller: text),
+                if (error != null) Text(error!),
+                AppButton(
+                  label: Copy.save,
+                  onPressed: () async {
+                    final Result<Uint8List> png = await PhotoMarkup.typeOn(
+                      bytes,
+                      text.text,
+                      rotationDegrees: photo.rotationDegrees,
+                    );
+                    switch (png) {
+                      case FailureResult<Uint8List>(:final Failure failure):
+                        setSheet(() => error = failure.message);
+                      case Success<Uint8List>(:final Uint8List value):
+                        final String id = _ids.newId();
+                        final bool saved = await _commitDerived(
+                          photo,
+                          photo.copyWith(
+                            id: id,
+                            relativePath: 'photos/$id.png',
+                            storedFilename: '$id.png',
+                            originalFilename: '$id.png',
+                            mimeType: 'image/png',
+                            derivedFrom: photo.id,
+                            rotationDegrees: 0,
+                            capturedAt: const SystemClock().nowUtc(),
+                          ),
+                          value,
+                        );
+                        if (saved && sheetContext.mounted) {
+                          Navigator.of(sheetContext).pop();
+                        }
+                    }
+                  },
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -666,11 +901,14 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
           photoCount: session.photos.length,
           onResume: () {
             Navigator.of(dialogContext).pop();
-            unawaited(
-              ref
+            unawaited(() async {
+              await ref
                   .read(captureControllerProvider(widget.projectId).notifier)
-                  .replaceSession(session),
-            );
+                  .replaceSession(session);
+              if (mounted) {
+                await _refreshThumbs(_activePhotos(session));
+              }
+            }());
           },
           onDiscard: () async {
             await ref

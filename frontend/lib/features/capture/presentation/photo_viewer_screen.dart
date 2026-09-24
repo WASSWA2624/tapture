@@ -15,7 +15,10 @@ final class PhotoViewerScreen extends StatefulWidget {
     this.onCrop,
     this.onCaption,
     this.onType,
+    this.onDraw,
+    this.onRevert,
     this.images = const <String, Uint8List>{},
+    this.loadBytes,
     super.key,
   });
 
@@ -28,8 +31,8 @@ final class PhotoViewerScreen extends StatefulWidget {
   /// Ids whose file is missing.
   final Set<String> missingIds;
 
-  /// Rotation request.
-  final void Function(PhotoDraft photo, int degrees)? onRotate;
+  /// Persists a quarter turn. True means the viewer may show it.
+  final Future<bool> Function(PhotoDraft photo, int degrees)? onRotate;
 
   /// Opens crop.
   final ValueChanged<PhotoDraft>? onCrop;
@@ -40,8 +43,17 @@ final class PhotoViewerScreen extends StatefulWidget {
   /// Types onto a derived copy of the visible photo.
   final ValueChanged<PhotoDraft>? onType;
 
+  /// Opens freehand drawing.
+  final ValueChanged<PhotoDraft>? onDraw;
+
+  /// Walks back one derived version.
+  final ValueChanged<PhotoDraft>? onRevert;
+
   /// Session bytes keyed by photo id.
   final Map<String, Uint8List> images;
+
+  /// Loads stored bytes when [images] does not hold them.
+  final Future<Uint8List?> Function(PhotoDraft photo)? loadBytes;
 
   @override
   State<PhotoViewerScreen> createState() => _PhotoViewerScreenState();
@@ -49,16 +61,38 @@ final class PhotoViewerScreen extends StatefulWidget {
 
 class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
   late final PageController _controller;
+  late List<PhotoDraft> _photos;
   late int _index;
+  final Map<String, Uint8List> _images = <String, Uint8List>{};
 
   @override
   void initState() {
     super.initState();
+    _photos = List<PhotoDraft>.of(widget.photos);
+    _images.addAll(widget.images);
     _index = widget.initialIndex.clamp(
       0,
-      widget.photos.isEmpty ? 0 : widget.photos.length - 1,
+      _photos.isEmpty ? 0 : _photos.length - 1,
     );
     _controller = PageController(initialPage: _index);
+    for (final PhotoDraft photo in _photos) {
+      if (!_images.containsKey(photo.id)) {
+        _load(photo);
+      }
+    }
+  }
+
+  Future<void> _load(PhotoDraft photo) async {
+    final Future<Uint8List?> Function(PhotoDraft photo)? load =
+        widget.loadBytes;
+    if (load == null) {
+      return;
+    }
+    final Uint8List? bytes = await load(photo);
+    if (!mounted || bytes == null) {
+      return;
+    }
+    setState(() => _images[photo.id] = bytes);
   }
 
   @override
@@ -69,27 +103,32 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.photos.isEmpty) {
+    if (_photos.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: const Text(Copy.photo)),
         body: const Center(child: Text(Copy.missingPhoto)),
       );
     }
-    final PhotoDraft current = widget.photos[_index];
+    final PhotoDraft current = _photos[_index];
     final bool missing = widget.missingIds.contains(current.id);
     return Scaffold(
       appBar: AppBar(
         title: Text(current.photoType),
         actions: <Widget>[
           IconButton(
-            tooltip: Copy.captureTitle,
-            onPressed: () => widget.onRotate?.call(current, 90),
+            tooltip: Copy.photoRotate,
+            onPressed: () => _rotate(current),
             icon: const Icon(Icons.rotate_right),
           ),
           IconButton(
             tooltip: Copy.photoCrop,
             onPressed: () => widget.onCrop?.call(current),
             icon: const Icon(Icons.crop),
+          ),
+          IconButton(
+            tooltip: Copy.photoDraw,
+            onPressed: () => widget.onDraw?.call(current),
+            icon: const Icon(Icons.gesture),
           ),
           IconButton(
             tooltip: Copy.capturePhotoCaption,
@@ -101,33 +140,65 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
             onPressed: () => widget.onType?.call(current),
             icon: const Icon(Icons.title),
           ),
+          if (current.derivedFrom != null)
+            IconButton(
+              tooltip: Copy.photoRevert,
+              onPressed: () => widget.onRevert?.call(current),
+              icon: const Icon(Icons.undo),
+            ),
         ],
       ),
       body: PageView.builder(
         controller: _controller,
-        itemCount: widget.photos.length,
+        itemCount: _photos.length,
         onPageChanged: (int i) => setState(() => _index = i),
         itemBuilder: (BuildContext context, int i) {
-          final PhotoDraft photo = widget.photos[i];
-          final bool isMissing = widget.missingIds.contains(photo.id);
-          final Uint8List? bytes = widget.images[photo.id];
-          return InteractiveViewer(
-            child: Center(
-              child: isMissing
-                  ? const Text(Copy.missingPhoto)
-                  : bytes == null
-                  ? Text('${photo.id}\nrot=${photo.rotationDegrees}')
-                  : Image.memory(bytes, fit: BoxFit.contain),
-            ),
-          );
+          final PhotoDraft photo = _photos[i];
+          return _frame(photo);
         },
       ),
       bottomNavigationBar: missing
-          ? null
+          ? const ListTile(title: Text(Copy.missingPhoto))
           : ListTile(
               title: Text(current.photoType),
               subtitle: Text(current.relativePath),
             ),
     );
+  }
+
+  Widget _frame(PhotoDraft photo) {
+    if (widget.missingIds.contains(photo.id)) {
+      return const Center(child: Text(Copy.missingPhoto));
+    }
+    final Uint8List? bytes = _images[photo.id];
+    if (bytes == null) {
+      return const Center(child: Text(Copy.loading));
+    }
+    return InteractiveViewer(
+      child: Center(
+        child: RotatedBox(
+          quarterTurns: ((photo.rotationDegrees % 360) + 360) % 360 ~/ 90,
+          child: Image.memory(bytes, fit: BoxFit.contain),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _rotate(PhotoDraft current) async {
+    final Future<bool> Function(PhotoDraft photo, int degrees)? rotate =
+        widget.onRotate;
+    if (rotate == null) {
+      return;
+    }
+    final bool saved = await rotate(current, 90);
+    if (!saved || !mounted) {
+      return;
+    }
+    setState(() {
+      _photos[_index] = _photos[_index].copyWith(
+        rotationDegrees:
+            ((_photos[_index].rotationDegrees + 90) % 360 + 360) % 360,
+      );
+    });
   }
 }

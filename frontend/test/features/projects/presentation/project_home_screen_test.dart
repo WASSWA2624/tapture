@@ -711,14 +711,10 @@ void _expectCountCards(WidgetTester tester) {
   expect(find.text(Copy.homeProcess), findsOneWidget);
   expect(find.text(Copy.homeExport), findsOneWidget);
   expect(find.text(Copy.homeShare), findsOneWidget);
-  expect(find.text('2'), findsOneWidget);
-  expect(find.text('3'), findsOneWidget);
-  expect(find.text('1'), findsOneWidget);
-  expect(find.text('4'), findsOneWidget);
-  expect(find.text(Copy.homeReviewPending(2)), findsNothing);
-  expect(find.text(Copy.homeProcessPending(3)), findsNothing);
-  expect(find.text(Copy.homeExportPending(1)), findsNothing);
-  expect(find.text(Copy.homeSharePending(4)), findsNothing);
+  expect(find.text(Copy.homeReviewPending(2)), findsOneWidget);
+  expect(find.text(Copy.homeProcessPending(3)), findsOneWidget);
+  expect(find.text(Copy.homeExportPending(1)), findsOneWidget);
+  expect(find.text(Copy.homeSharePending(4)), findsOneWidget);
   expect(
     find.byKey(const ValueKey<String>('home-review')),
     hasSemanticLabel(Copy.homeReviewPending(2)),

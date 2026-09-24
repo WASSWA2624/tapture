@@ -69,6 +69,34 @@ final class _CapturePhotos implements CapturePhotoRepository {
   @override
   Stream<List<PhotoAsset>> watchByRecord(String recordId) =>
       Stream<List<PhotoAsset>>.value(const <PhotoAsset>[]);
+
+  @override
+  Future<Result<Uint8List>> readBytes(PhotoDraft photo) async {
+    return const FailureResult<Uint8List>(
+      StorageFailure(
+        message: 'That photo could not be read from this device.',
+        recoveryAction: 'Capture the photo again, then try again.',
+      ),
+    );
+  }
+
+  @override
+  Future<Result<String>> cachedThumbnailPath(
+    PhotoDraft photo, {
+    required int edge,
+  }) async {
+    return const FailureResult<String>(
+      StorageFailure(
+        message: 'That photo could not be read from this device.',
+        recoveryAction: 'Capture the photo again, then try again.',
+      ),
+    );
+  }
+
+  @override
+  Future<Result<void>> retireDerived(String id) async {
+    return const Success<void>(null);
+  }
 }
 
 T _ok<T>(Result<T> result) {

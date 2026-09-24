@@ -21,6 +21,7 @@ import '../templates.dart' show templateRepositoryProvider;
 import 'field_delete_action.dart';
 import 'field_reorder.dart';
 import 'template_list_screen.dart' show templateListProvider;
+import 'template_locations.dart';
 
 /// The one screen where a template's fields are added, edited, reordered
 /// and retired.
@@ -351,86 +352,43 @@ final Provider<Map<String, int>> fieldValueCountsProvider =
     });
 
 void _openAdd(BuildContext context, String templateId) {
-  context.go(_addLocation(templateId));
+  context.go(TemplateLocations.child(context, templateId, 'fields/new'));
 }
 
 void _openRequired(BuildContext context, String templateId) {
-  context.go(_requiredLocation(templateId));
+  context.go(TemplateLocations.child(context, templateId, 'required'));
 }
 
 void _openIdentity(BuildContext context, String templateId) {
-  context.go(_identityLocation(templateId));
+  context.go(TemplateLocations.child(context, templateId, 'identity'));
 }
 
 void _openOutput(BuildContext context, String templateId) {
-  context.go(_outputLocation(templateId));
+  context.go(TemplateLocations.child(context, templateId, 'output'));
 }
 
 void _openMigrate(BuildContext context, String templateId) {
-  context.go(_migrateLocation(templateId));
+  context.go(TemplateLocations.child(context, templateId, 'migrate'));
 }
 
 void _openAliases(BuildContext context, String templateId) {
-  context.go(_aliasesLocation(templateId));
+  context.go(TemplateLocations.child(context, templateId, 'aliases'));
 }
 
 void _openChecklist(BuildContext context, String templateId) {
-  context.go(_checklistLocation(templateId));
+  context.go(TemplateLocations.child(context, templateId, 'checklist'));
 }
 
 void _openDetection(BuildContext context, String templateId) {
-  context.go(_detectionLocation(templateId));
+  context.go(TemplateLocations.child(context, templateId, 'detection'));
 }
 
 void _openEdit(BuildContext context, String templateId, String fieldKey) {
-  context.go(_editLocation(templateId, fieldKey));
+  context.go(
+    '${TemplateLocations.detail(context, templateId)}/fields/${Uri.encodeComponent(fieldKey)}',
+  );
 }
 
-/// Must match [AppRoutes.templateFieldCreate] and [AppRoutes.templateField].
-const String _templatesRoot = '/more/templates';
-const String _fieldsSegment = 'fields';
-const String _newSegment = 'new';
-const String _requiredSegment = 'required';
-const String _identitySegment = 'identity';
-const String _outputSegment = 'output';
-const String _migrateSegment = 'migrate';
-const String _aliasesSegment = 'aliases';
-const String _checklistSegment = 'checklist';
-const String _detectionSegment = 'detection';
-
-String _addLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}/$_fieldsSegment/'
-      '$_newSegment';
-}
-
-String _editLocation(String id, String fieldKey) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}/$_fieldsSegment/'
-      '${Uri.encodeComponent(fieldKey)}';
-}
-
-String _requiredLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}/$_requiredSegment';
-}
-
-String _identityLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}/$_identitySegment';
-}
-
-String _outputLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}/$_outputSegment';
-}
-
-String _migrateLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}/$_migrateSegment';
-}
-
-String _aliasesLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}/$_aliasesSegment';
-}
-
-String _checklistLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}/$_checklistSegment';
-}
 
 bool _mentioned(Map<String, Object?> detection, String fieldKey) {
   if (detection.containsKey(fieldKey)) {
@@ -445,8 +403,4 @@ bool _mentioned(Map<String, Object?> detection, String fieldKey) {
     }
   }
   return false;
-}
-
-String _detectionLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}/$_detectionSegment';
 }

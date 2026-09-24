@@ -7,6 +7,7 @@ import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
 import 'package:tapture/features/capture/domain/capture_persistence.dart';
+import 'package:tapture/features/capture/domain/capture_photo_repository.dart';
 import 'package:tapture/features/capture/domain/capture_reset.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
@@ -239,6 +240,46 @@ final class CaptureController extends Notifier<CaptureSession> {
       }
     }
     final CaptureSession next = state.copyWith(photos: photos, isDirty: true);
+    final Result<void> session = await _persistence.saveSession(next);
+    return session.fold(FailureResult<void>.new, (_) {
+      state = next;
+      return const Success<void>(null);
+    });
+  }
+
+  /// Persists [photo]. When [bytes] is set, writes a new derived asset.
+  Future<Result<void>> updatePhoto(PhotoDraft photo, {Uint8List? bytes}) {
+    if (bytes != null) {
+      return addPhoto(photo, bytes: bytes);
+    }
+    return setPhoto(photo);
+  }
+
+  /// Walks one step from [photoId] toward its original without deleting it.
+  Future<Result<void>> revertPhoto(String photoId) async {
+    PhotoDraft? photo;
+    for (final PhotoDraft row in state.photos) {
+      if (row.id == photoId) {
+        photo = row;
+        break;
+      }
+    }
+    if (photo == null || photo.derivedFrom == null) {
+      return const Success<void>(null);
+    }
+    final PhotoRepository repository = _persistence.photos;
+    if (repository is CapturePhotoRepository) {
+      final Result<void> retired = await repository.retireDerived(photoId);
+      if (retired is FailureResult<void>) {
+        return retired;
+      }
+    }
+    final CaptureSession next = state.copyWith(
+      photos: state.photos
+          .where((PhotoDraft row) => row.id != photoId)
+          .toList(growable: false),
+      isDirty: true,
+    );
     final Result<void> session = await _persistence.saveSession(next);
     return session.fold(FailureResult<void>.new, (_) {
       state = next;

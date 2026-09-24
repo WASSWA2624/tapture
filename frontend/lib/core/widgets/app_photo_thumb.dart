@@ -21,6 +21,7 @@ class AppPhotoThumb extends StatelessWidget {
     required this.photo,
     required this.size,
     this.selected = false,
+    this.statusLabel,
     this.onTap,
     this.onLongPress,
   });
@@ -34,6 +35,10 @@ class AppPhotoThumb extends StatelessWidget {
   /// Multi-select highlight. A tick is shown as well as a border
   /// (FE-A11Y-05).
   final bool selected;
+
+  /// Processing or other status. Null hides the badge. Text plus an icon,
+  /// so the state is not colour alone (FE-A11Y-05).
+  final String? statusLabel;
 
   /// Opens the viewer. Null means the thumb is not tappable.
   final VoidCallback? onTap;
@@ -58,12 +63,17 @@ class AppPhotoThumb extends StatelessWidget {
   }
 
   String get _label {
-    return Copy.photoThumbLabel(
+    final String base = Copy.photoThumbLabel(
       type: photo.photoType?.label ?? Copy.photo,
       missing: _missing,
       captioned: photo.hasCaption,
       selected: selected,
     );
+    final String? status = statusLabel;
+    if (status == null || status.isEmpty) {
+      return base;
+    }
+    return '$base, $status';
   }
 
   @override
@@ -97,6 +107,14 @@ class AppPhotoThumb extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(Space.x1),
               child: Icon(Icons.check, color: colors.primary, size: Space.x5),
+            ),
+          ),
+        if (statusLabel != null)
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.all(Space.x1),
+              child: _StatusBadge(label: statusLabel!, maxWidth: edge / 2),
             ),
           ),
       ],
@@ -207,6 +225,50 @@ class _TypeBadge extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusBadge extends StatelessWidget {
+  const _StatusBadge({required this.label, required this.maxWidth});
+
+  final String label;
+  final double maxWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppColors colors = context.colors;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(Radii.sm),
+        border: Border.all(color: colors.outline, width: Space.x0 / 2),
+      ),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        child: Padding(
+          padding: const EdgeInsets.all(Space.x0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Icon(
+                Icons.hourglass_top,
+                size: Space.x4,
+                color: colors.onSurface,
+              ),
+              const SizedBox(width: Space.x0),
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppText.caption.copyWith(color: colors.onSurface),
+                ),
+              ),
+            ],
           ),
         ),
       ),

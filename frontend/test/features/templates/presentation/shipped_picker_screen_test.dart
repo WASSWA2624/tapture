@@ -165,7 +165,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.text(Copy.templatesAdd), findsOneWidget);
+    expect(find.text(Copy.templatesAddToProject), findsOneWidget);
 
     await tester.tap(find.byType(AppPrimaryAction));
     await tester.pump();

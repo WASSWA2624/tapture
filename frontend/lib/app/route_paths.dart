@@ -41,6 +41,67 @@ abstract final class RoutePaths {
       '${project(projectId)}/context';
   static String projectTemplates(String projectId) =>
       '${project(projectId)}/templates';
+
+  /// Template destinations. [projectId] keeps them inside the project branch.
+  static String templateRoot({String? projectId}) {
+    if (projectId == null || projectId.isEmpty) {
+      return templates;
+    }
+    return projectTemplates(projectId);
+  }
+
+  static String templateCreate({String? projectId}) =>
+      '${templateRoot(projectId: projectId)}/new';
+
+  static String templateLibrary({String? projectId}) =>
+      '${templateRoot(projectId: projectId)}/library';
+
+  static String templateImport({String? projectId}) =>
+      '${templateRoot(projectId: projectId)}/import';
+
+  static String templateDetail(String templateId, {String? projectId}) =>
+      '${templateRoot(projectId: projectId)}/${Uri.encodeComponent(templateId)}';
+
+  static String templateExport(String templateId, {String? projectId}) =>
+      '${templateDetail(templateId, projectId: projectId)}/export';
+
+  static String templateRequired(String templateId, {String? projectId}) =>
+      '${templateDetail(templateId, projectId: projectId)}/required';
+
+  static String templateIdentity(String templateId, {String? projectId}) =>
+      '${templateDetail(templateId, projectId: projectId)}/identity';
+
+  static String templateOutput(String templateId, {String? projectId}) =>
+      '${templateDetail(templateId, projectId: projectId)}/output';
+
+  static String templateMigrate(String templateId, {String? projectId}) =>
+      '${templateDetail(templateId, projectId: projectId)}/migrate';
+
+  static String templateAliases(String templateId, {String? projectId}) =>
+      '${templateDetail(templateId, projectId: projectId)}/aliases';
+
+  static String templateChecklist(String templateId, {String? projectId}) =>
+      '${templateDetail(templateId, projectId: projectId)}/checklist';
+
+  static String templateDetection(String templateId, {String? projectId}) =>
+      '${templateDetail(templateId, projectId: projectId)}/detection';
+
+  static String templateFieldNew(String templateId, {String? projectId}) =>
+      '${templateDetail(templateId, projectId: projectId)}/fields/new';
+
+  static String templateField(
+    String templateId,
+    String fieldKey, {
+    String? projectId,
+  }) =>
+      '${templateDetail(templateId, projectId: projectId)}/fields/'
+      '${Uri.encodeComponent(fieldKey)}';
+
+  static String templateFieldLookup(
+    String templateId,
+    String fieldKey, {
+    String? projectId,
+  }) => '${templateField(templateId, fieldKey, projectId: projectId)}/lookup';
   static String projectRecords(String projectId) =>
       '${project(projectId)}/records';
   static String projectQueue(String projectId) => '${project(projectId)}/queue';

@@ -25,6 +25,7 @@ import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/projects/projects.dart';
+import 'package:tapture/features/templates/presentation/template_locations.dart';
 
 import '../domain/field_def.dart';
 import '../domain/template_def.dart';
@@ -227,7 +228,7 @@ class XlsxMappingScreen extends ConsumerWidget {
     if (saved == null || !context.mounted) {
       return;
     }
-    GoRouter.maybeOf(context)?.go(_fieldsLocation(saved.id));
+    GoRouter.maybeOf(context)?.go(TemplateLocations.detail(context, saved.id));
   }
 }
 
@@ -589,8 +590,3 @@ String _ruleCopy(Requiredness rule) {
 }
 
 /// Must match [AppRoutes.template]. This file cannot import `router.dart`.
-String _fieldsLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}';
-}
-
-const String _templatesRoot = '/more/templates';

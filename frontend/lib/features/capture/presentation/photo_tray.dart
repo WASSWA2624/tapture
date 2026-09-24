@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_photo_thumb.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 
 /// Horizontal thumbnail strip with count, add action and badges.
@@ -12,10 +15,12 @@ final class PhotoTray extends StatelessWidget {
     this.onLongPress,
     this.selectedIds = const <String>{},
     this.captions = const <String, String>{},
+    this.thumbPaths = const <String, String>{},
+    this.missingIds = const <String>{},
     super.key,
   });
 
-  /// Photos in tray order.
+  /// Photos in tray order. Callers pass the active derived set.
   final List<PhotoDraft> photos;
 
   /// Add affordance.
@@ -33,6 +38,12 @@ final class PhotoTray extends StatelessWidget {
   /// Caption map for indicator.
   final Map<String, String> captions;
 
+  /// Absolute cached thumbnail paths keyed by photo id.
+  final Map<String, String> thumbPaths;
+
+  /// Photos whose file could not be read.
+  final Set<String> missingIds;
+
   @override
   Widget build(BuildContext context) {
     if (photos.isEmpty) {
@@ -42,10 +53,11 @@ final class PhotoTray extends StatelessWidget {
           children: <Widget>[
             const Text(Copy.captureNoPhotosHeadline),
             const Text(Copy.captureNoPhotosMessage),
-            IconButton(
+            AppIconButton(
+              icon: Icons.add_a_photo,
               tooltip: Copy.captureAddPhoto,
+              semanticLabel: Copy.captureAddPhoto,
               onPressed: onAdd,
-              icon: const Icon(Icons.add_a_photo),
             ),
           ],
         ),
@@ -54,63 +66,45 @@ final class PhotoTray extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('${photos.length}'),
+        Text(Copy.capturePhotoCount(photos.length)),
         SizedBox(
-          height: 96,
+          height: Space.x12 * 2,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: photos.length + 1,
             itemBuilder: (BuildContext context, int index) {
               if (index == photos.length) {
-                return IconButton(
+                return AppIconButton(
+                  icon: Icons.add_a_photo,
                   tooltip: Copy.captureAddPhoto,
+                  semanticLabel: Copy.captureAddPhoto,
                   onPressed: onAdd,
-                  icon: const Icon(Icons.add_a_photo),
                 );
               }
               final PhotoDraft photo = photos[index];
-              final bool selected = selectedIds.contains(photo.id);
               final bool hasCaption =
                   photo.hasCaption || (captions[photo.id]?.isNotEmpty ?? false);
-              return GestureDetector(
-                onTap: () => onTap?.call(photo),
-                onLongPress: () => onLongPress?.call(photo),
-                child: Container(
-                  width: 80,
-                  margin: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: selected ? Colors.blue : Colors.grey,
-                      width: selected ? 3 : 1,
+              final String? thumb = thumbPaths[photo.id];
+              final bool missing = missingIds.contains(photo.id);
+              return Padding(
+                padding: const EdgeInsets.all(Space.x1),
+                child: RotatedBox(
+                  quarterTurns: _quarterTurns(photo.rotationDegrees),
+                  child: AppPhotoThumb(
+                    key: ValueKey<String>('photo-thumb-${photo.id}'),
+                    photo: PhotoAsset(
+                      sha256: photo.sha256,
+                      thumbPath: missing ? 'missing' : (thumb ?? ''),
+                      photoType: _photoType(photo.photoType),
+                      hasCaption: hasCaption,
                     ),
-                  ),
-                  child: Stack(
-                    children: <Widget>[
-                      Center(child: Text(photo.photoType)),
-                      Positioned(
-                        top: 2,
-                        left: 2,
-                        child: Text(
-                          photo.photoType,
-                          style: const TextStyle(fontSize: 10),
-                        ),
-                      ),
-                      if (hasCaption)
-                        const Positioned(
-                          bottom: 2,
-                          right: 2,
-                          child: Icon(Icons.notes, size: 14),
-                        ),
-                      if (photo.processingState != 'ready')
-                        Positioned(
-                          bottom: 2,
-                          left: 2,
-                          child: Text(
-                            photo.processingState,
-                            style: const TextStyle(fontSize: 9),
-                          ),
-                        ),
-                    ],
+                    size: Space.x12 * 2,
+                    selected: selectedIds.contains(photo.id),
+                    statusLabel: photo.processingState == 'ready'
+                        ? null
+                        : Copy.capturePhotoProcessing,
+                    onTap: () => onTap?.call(photo),
+                    onLongPress: () => onLongPress?.call(photo),
                   ),
                 ),
               );
@@ -120,4 +114,17 @@ final class PhotoTray extends StatelessWidget {
       ],
     );
   }
+}
+
+int _quarterTurns(int degrees) {
+  return (((degrees % 360) + 360) % 360) ~/ 90;
+}
+
+PhotoType _photoType(String raw) {
+  for (final PhotoType type in PhotoType.values) {
+    if (type.name == raw) {
+      return type;
+    }
+  }
+  return PhotoType.other;
 }

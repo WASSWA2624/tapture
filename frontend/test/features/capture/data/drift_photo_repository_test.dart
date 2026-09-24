@@ -26,14 +26,22 @@ void main() {
       addTearDown(() => root.delete(recursive: true));
       final FixedClock clock = FixedClock(DateTime.utc(2026, 9, 23, 16, 35));
       final Project project = await db.select(db.projects).getSingle();
+      final StorageRoot storage = StorageRoot.fake(documentsDirectory: root);
       final DriftPhotoRepository repository = DriftPhotoRepository(
         db: db,
-        writer: FileWriter(
-          storageRoot: StorageRoot.fake(documentsDirectory: root),
-        ),
+        writer: FileWriter(storageRoot: storage),
         clock: clock,
         deviceId: 'device-a',
         ids: UuidV7Service.sequence(clock),
+        storageRoot: storage,
+        decodeThumbnail:
+            (
+              String sourcePath, {
+              required int longEdge,
+              required int quality,
+            }) async {
+              return File(sourcePath).readAsBytes();
+            },
       );
       final PhotoDraft draft = PhotoDraft(
         id: 'photo-1',
@@ -57,15 +65,39 @@ void main() {
       expect(saved.sha256, isNotEmpty);
       expect(saved.fileSize, 4);
       expect((await db.select(db.photos).getSingle()).sha256, saved.sha256);
-      final Directory storage = _ok(
-        await StorageRoot.fake(documentsDirectory: root).resolve(),
+      final Directory resolved = _ok(await storage.resolve());
+      final File original = File(
+        '${resolved.path}/projects/${project.folderName}/photos/photo-1.jpg',
       );
+      expect(original.readAsBytesSync(), <int>[1, 2, 3, 4]);
+      expect(_ok(await repository.readBytes(saved)), <int>[1, 2, 3, 4]);
       expect(
-        File(
-          '${storage.path}/projects/${project.folderName}/photos/photo-1.jpg',
-        ).readAsBytesSync(),
-        <int>[1, 2, 3, 4],
+        _ok(await repository.cachedThumbnailPath(saved, edge: 32)),
+        isNotEmpty,
       );
+
+      final PhotoDraft derived = _ok(
+        await repository.saveDraft(
+          saved.copyWith(
+            id: 'photo-2',
+            relativePath: 'photos/photo-2.png',
+            storedFilename: 'photo-2.png',
+            derivedFrom: saved.id,
+            rotationDegrees: 90,
+            sha256: 'pending',
+          ),
+          bytes: Uint8List.fromList(<int>[9, 9, 9]),
+        ),
+      );
+      expect(derived.derivedFrom, saved.id);
+      expect(derived.rotationDegrees, 90);
+      expect(original.readAsBytesSync(), <int>[1, 2, 3, 4]);
+
+      _ok(await repository.retireDerived(derived.id));
+      expect(await repository.readBytes(saved), isA<Success<Uint8List>>());
+      final Result<void> refused = await repository.retireDerived(saved.id);
+      expect(refused, isA<FailureResult<void>>());
+      expect(original.readAsBytesSync(), <int>[1, 2, 3, 4]);
     },
   );
 }

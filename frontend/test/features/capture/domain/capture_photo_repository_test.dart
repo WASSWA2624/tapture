@@ -60,4 +60,22 @@ final class _CapturePhotos implements CapturePhotoRepository {
   Stream<List<PhotoAsset>> watchByRecord(String recordId) {
     return Stream<List<PhotoAsset>>.value(const <PhotoAsset>[]);
   }
+
+  @override
+  Future<Result<Uint8List>> readBytes(PhotoDraft photo) async {
+    return Success<Uint8List>(Uint8List.fromList(bytes ?? const <int>[]));
+  }
+
+  @override
+  Future<Result<String>> cachedThumbnailPath(
+    PhotoDraft photo, {
+    required int edge,
+  }) async {
+    return const Success<String>('thumb');
+  }
+
+  @override
+  Future<Result<void>> retireDerived(String id) async {
+    return const Success<void>(null);
+  }
 }

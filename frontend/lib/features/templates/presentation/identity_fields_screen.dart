@@ -18,6 +18,7 @@ import '../domain/field_def.dart';
 import '../domain/template_def.dart';
 import '../templates.dart' show templateRepositoryProvider;
 import 'template_list_screen.dart' show templateListProvider;
+import 'template_locations.dart';
 
 /// Template-level identity set for duplicate detection (§13.5).
 class IdentityFieldsScreen extends ConsumerWidget {
@@ -105,7 +106,9 @@ class IdentityFieldsScreen extends ConsumerWidget {
         .read(_identityFieldsProvider(templateId).notifier)
         .commit();
     if (saved && context.mounted) {
-      GoRouter.maybeOf(context)?.go(_fieldsLocation(templateId));
+      GoRouter.maybeOf(
+        context,
+      )?.go(TemplateLocations.detail(context, templateId));
     }
   }
 }
@@ -221,9 +224,3 @@ TemplateDef _write(TemplateDef template, Set<String> selected) {
     ],
   );
 }
-
-String _fieldsLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}';
-}
-
-const String _templatesRoot = '/more/templates';

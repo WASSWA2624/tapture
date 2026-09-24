@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_initializing_formals
 
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:drift/drift.dart' hide Uint8List;
@@ -9,6 +10,8 @@ import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/file_writer.dart';
+import 'package:tapture/core/files/storage_root.dart';
+import 'package:tapture/core/files/thumbnail_cache.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/capture/domain/capture_photo_repository.dart';
@@ -26,17 +29,30 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
     required Clock clock,
     required String deviceId,
     required IdService ids,
+    StorageRoot? storageRoot,
+    Future<List<int>> Function(
+      String sourcePath, {
+      required int longEdge,
+      required int quality,
+    })?
+    decodeThumbnail,
   }) : _db = db,
        _writer = writer,
        _clock = clock,
        _deviceId = deviceId,
-       _ids = ids;
+       _ids = ids,
+       _storageRoot = storageRoot,
+       _thumbs = storageRoot == null
+           ? null
+           : ThumbnailCache(storageRoot: storageRoot, decode: decodeThumbnail);
 
   final sqlite.AppDatabase _db;
   final FileWriter _writer;
   final Clock _clock;
   final String _deviceId;
   final IdService _ids;
+  final StorageRoot? _storageRoot;
+  final ThumbnailCache? _thumbs;
 
   @override
   Stream<List<PhotoAsset>> watchByRecord(String recordId) {
@@ -150,6 +166,8 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
           capturedAt: Value<DateTime>(captured),
           gpsLat: Value<double?>(ready.gpsLat),
           gpsLon: Value<double?>(ready.gpsLon),
+          derivedFrom: Value<String?>(ready.derivedFrom),
+          rotationDegrees: Value<int?>(ready.rotationDegrees),
         ),
         clock: _clock,
         deviceId: _deviceId,
@@ -158,6 +176,125 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
       return saved.map((sqlite.Photo row) => _draft(row, ready));
     } on Object catch (error) {
       return FailureResult<PhotoDraft>(storageFailureFrom(error));
+    }
+  }
+
+  @override
+  Future<Result<Uint8List>> readBytes(PhotoDraft photo) async {
+    try {
+      final Result<File> file = await _sourceFile(photo);
+      switch (file) {
+        case FailureResult<File>(:final Failure failure):
+          return FailureResult<Uint8List>(failure);
+        case Success<File>(:final File value):
+          if (!value.existsSync()) {
+            return const FailureResult<Uint8List>(
+              StorageFailure(
+                message: 'That photo could not be read from this device.',
+                recoveryAction: 'Capture the photo again, then try again.',
+              ),
+            );
+          }
+          return Success<Uint8List>(await value.readAsBytes());
+      }
+    } on Object catch (error) {
+      return FailureResult<Uint8List>(storageFailureFrom(error));
+    }
+  }
+
+  @override
+  Future<Result<String>> cachedThumbnailPath(
+    PhotoDraft photo, {
+    required int edge,
+  }) async {
+    final ThumbnailCache? thumbs = _thumbs;
+    if (thumbs == null) {
+      return const FailureResult<String>(
+        StorageFailure(
+          message: 'That photo could not be read from this device.',
+          recoveryAction: 'Capture the photo again, then try again.',
+        ),
+      );
+    }
+    final Result<File> source = await _sourceFile(photo);
+    switch (source) {
+      case FailureResult<File>(:final Failure failure):
+        return FailureResult<String>(failure);
+      case Success<File>(:final File value):
+        if (!value.existsSync()) {
+          return const FailureResult<String>(
+            StorageFailure(
+              message: 'That photo could not be read from this device.',
+              recoveryAction: 'Capture the photo again, then try again.',
+            ),
+          );
+        }
+        final Result<File> thumb = await thumbs.thumbnail(
+          photo.sha256,
+          value.path,
+          edge: edge,
+        );
+        return thumb.map((File file) => file.path);
+    }
+  }
+
+  @override
+  Future<Result<void>> retireDerived(String id) async {
+    try {
+      final sqlite.Photo? row =
+          await (_db.select(_db.photos)
+                ..where((sqlite.$PhotosTable table) => table.id.equals(id)))
+              .getSingleOrNull();
+      if (row == null) {
+        return const Success<void>(null);
+      }
+      if (row.derivedFrom == null) {
+        return const FailureResult<void>(
+          ValidationFailure(
+            message: 'The original photo stays in place.',
+            recoveryAction: 'Revert an edited photo instead.',
+          ),
+        );
+      }
+      await (_db.delete(
+        _db.photos,
+      )..where((sqlite.$PhotosTable table) => table.id.equals(id))).go();
+      return const Success<void>(null);
+    } on Object catch (error) {
+      return FailureResult<void>(storageFailureFrom(error));
+    }
+  }
+
+  Future<Result<File>> _sourceFile(PhotoDraft photo) async {
+    final StorageRoot? storageRoot = _storageRoot;
+    if (storageRoot == null) {
+      return const FailureResult<File>(
+        StorageFailure(
+          message: 'That photo could not be read from this device.',
+          recoveryAction: 'Capture the photo again, then try again.',
+        ),
+      );
+    }
+    final sqlite.Project? project =
+        await (_db.select(_db.projects)..where(
+              (sqlite.$ProjectsTable row) => row.id.equals(photo.projectId),
+            ))
+            .getSingleOrNull();
+    if (project == null) {
+      return const FailureResult<File>(
+        StorageFailure(message: 'The photo project was not found.'),
+      );
+    }
+    final Result<Directory> root = await storageRoot.resolve();
+    switch (root) {
+      case FailureResult<Directory>(:final Failure failure):
+        return FailureResult<File>(failure);
+      case Success<Directory>(:final Directory value):
+        return Success<File>(
+          File(
+            '${value.path}/projects/${project.folderName}/${photo.relativePath}',
+          ),
+        );
     }
   }
 
@@ -215,10 +352,10 @@ PhotoDraft _draft(sqlite.Photo row, PhotoDraft presentation) {
     capturedAt: row.capturedAt,
     gpsLat: row.gpsLat,
     gpsLon: row.gpsLon,
-    rotationDegrees: presentation.rotationDegrees,
+    rotationDegrees: row.rotationDegrees ?? 0,
     processingState: presentation.processingState,
     hasCaption: presentation.hasCaption,
     supersededBy: presentation.supersededBy,
-    derivedFrom: presentation.derivedFrom,
+    derivedFrom: row.derivedFrom,
   );
 }

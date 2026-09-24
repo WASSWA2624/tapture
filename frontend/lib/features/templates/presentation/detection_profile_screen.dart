@@ -22,6 +22,7 @@ import '../domain/field_def.dart';
 import '../domain/template_def.dart';
 import '../templates.dart' show templateRepositoryProvider;
 import 'template_list_screen.dart' show templateListProvider;
+import 'template_locations.dart';
 
 /// Per-template signals that decide how a photo is matched to a template.
 class DetectionProfileScreen extends ConsumerWidget {
@@ -165,7 +166,9 @@ class DetectionProfileScreen extends ConsumerWidget {
         .read(_detectionProfileProvider(templateId).notifier)
         .commit();
     if (saved && context.mounted) {
-      GoRouter.maybeOf(context)?.go(_fieldsLocation(templateId));
+      GoRouter.maybeOf(
+        context,
+      )?.go(TemplateLocations.detail(context, templateId));
     }
   }
 }
@@ -548,13 +551,7 @@ List<String> _filled(Iterable<String> values) {
   ];
 }
 
-String _fieldsLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}';
-}
-
 final RegExp _tokenSplit = RegExp(r'[,;\n]');
-
-const String _templatesRoot = '/more/templates';
 const String _shippedSource = 'shipped';
 const String _classesKey = 'object_classes';
 const String _keywordsKey = 'keywords';

@@ -17,6 +17,7 @@ class AppBottomSheet extends StatelessWidget {
     required this.title,
     required this.child,
     this.sidePanel = false,
+    this.contentSized = false,
   });
 
   /// Heading; also the semantic name of the sheet (FE-A11Y-02).
@@ -27,6 +28,10 @@ class AppBottomSheet extends StatelessWidget {
 
   /// When true, this is the expanded-layout side panel.
   final bool sidePanel;
+
+  /// Shrink-wraps short content and scrolls when the keyboard or text scale
+  /// needs more than the sheet cap.
+  final bool contentSized;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +54,7 @@ class AppBottomSheet extends StatelessWidget {
             bottom: MediaQuery.viewInsetsOf(context).bottom,
           ),
           child: Column(
+            mainAxisSize: contentSized ? MainAxisSize.min : MainAxisSize.max,
             children: <Widget>[
               if (!sidePanel) const _SheetHandle(),
               Padding(
@@ -69,7 +75,8 @@ class AppBottomSheet extends StatelessWidget {
                   ),
                 ),
               ),
-              Expanded(
+              Flexible(
+                fit: contentSized ? FlexFit.loose : FlexFit.tight,
                 child: LayoutBuilder(
                   builder: (BuildContext context, BoxConstraints constraints) {
                     final double width = constraints.maxWidth < _readableWidth
@@ -82,7 +89,9 @@ class AppBottomSheet extends StatelessWidget {
                         alignment: Alignment.topCenter,
                         child: DefaultTextStyle(
                           style: AppText.body.copyWith(color: colors.onSurface),
-                          child: child,
+                          child: contentSized
+                              ? SingleChildScrollView(child: child)
+                              : child,
                         ),
                       ),
                     );
@@ -128,9 +137,15 @@ Future<T?> showAppSheet<T>(
   BuildContext context, {
   required String title,
   required WidgetBuilder builder,
+  bool contentSized = false,
 }) {
   if (context.sizeClass == SizeClass.expanded) {
-    return _showSidePanel<T>(context, title: title, builder: builder);
+    return _showSidePanel<T>(
+      context,
+      title: title,
+      builder: builder,
+      contentSized: contentSized,
+    );
   }
   return showModalBottomSheet<T>(
     context: context,
@@ -146,7 +161,11 @@ Future<T?> showAppSheet<T>(
               constraints: BoxConstraints(
                 maxHeight: constraints.maxHeight * _sheetFraction,
               ),
-              child: AppBottomSheet(title: title, child: builder(sheetContext)),
+              child: AppBottomSheet(
+                title: title,
+                contentSized: contentSized,
+                child: builder(sheetContext),
+              ),
             ),
           );
         },
@@ -159,6 +178,7 @@ Future<T?> _showSidePanel<T>(
   BuildContext context, {
   required String title,
   required WidgetBuilder builder,
+  bool contentSized = false,
 }) {
   final bool reduceMotion = MediaQuery.disableAnimationsOf(context);
   return showGeneralDialog<T>(
@@ -182,6 +202,7 @@ Future<T?> _showSidePanel<T>(
               child: AppBottomSheet(
                 title: title,
                 sidePanel: true,
+                contentSized: contentSized,
                 child: builder(dialogContext),
               ),
             ),

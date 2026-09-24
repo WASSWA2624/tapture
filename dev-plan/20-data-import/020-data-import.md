@@ -4,6 +4,8 @@
 
 ## Implement
 
+Feedback FBK0000072 (prompt `prompts/feedback-23092026-2222/001-resolve-projects-capture-template-feedback.md`, decision D4(a)) adds project-menu Import on top of this contract: the selected project is the fixed destination, content is validated before it is read, and nothing is written until the operator accepts the preview.
+
 Everything needed to continue an inventory someone else started. One entry point that takes any file the app accepts —
 a bundle, a spreadsheet, a reference dataset or a template — validates it through the shared file gate, detects its
 kind from that result rather than from its extension, explains each destination in one line and routes it to the flow

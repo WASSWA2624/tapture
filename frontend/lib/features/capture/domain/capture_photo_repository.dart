@@ -12,4 +12,16 @@ import 'photo_repository.dart';
 abstract interface class CapturePhotoRepository implements PhotoRepository {
   /// Writes original [bytes] first, then stores all [photo] metadata.
   Future<Result<PhotoDraft>> saveDraft(PhotoDraft photo, {Uint8List? bytes});
+
+  /// Reads the stored bytes of [photo]. Does not follow a derived parent.
+  Future<Result<Uint8List>> readBytes(PhotoDraft photo);
+
+  /// Cached thumbnail path for [photo] at [edge]. Generates the file on a miss.
+  Future<Result<String>> cachedThumbnailPath(
+    PhotoDraft photo, {
+    required int edge,
+  });
+
+  /// Removes a derived row. Refuses an original and never unlinks its file.
+  Future<Result<void>> retireDerived(String id);
 }

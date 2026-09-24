@@ -224,6 +224,40 @@ void main() {
   );
 
   test(
+    'version 19 keeps an existing photo as an original and can run twice',
+    () async {
+      expect(kDestructiveSteps.contains(19), isFalse);
+      final AppDatabase db = AppDatabase.memory();
+      addTearDown(db.close);
+      await db.customSelect('SELECT 1').get();
+      await db.customStatement('ALTER TABLE photos DROP COLUMN derived_from');
+      await db.customStatement(
+        'ALTER TABLE photos DROP COLUMN rotation_degrees',
+      );
+      await _insertProject(db);
+      await db.customStatement(
+        'INSERT INTO photos '
+        '(id, created_at, updated_at, updated_by_device, rev, project_id, '
+        'capture_session_id, original_filename, stored_filename, relative_path, '
+        'photo_type, sort_order, width, height, file_size, mime_type, sha256, '
+        'captured_at) '
+        "VALUES ('photo-1', 1, 1, 'device-1', 1, 'project-1', 'session-1', "
+        "'IMG.jpg', 'photo-1.jpg', 'photos/photo-1.jpg', 'front', 0, 2, 2, "
+        "4, 'image/jpeg', 'hash-1', 1)",
+      );
+
+      await migrateToV19(Migrator(db), db);
+      await migrateToV19(Migrator(db), db);
+
+      final Photo photo = await db.select(db.photos).getSingle();
+      expect(photo.derivedFrom, isNull);
+      expect(photo.rotationDegrees, isNull);
+      expect(photo.sha256, 'hash-1');
+      expect(await _count(db, 'photos'), 1);
+    },
+  );
+
+  test(
     'migrateToV16 is not a destructive step and a second run is a no-op',
     () async {
       expect(kDestructiveSteps.contains(16), isFalse);

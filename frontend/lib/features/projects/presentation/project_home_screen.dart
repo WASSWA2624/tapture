@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:tapture/app/route_paths.dart';
+import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
@@ -190,7 +190,7 @@ class _HomeBody extends ConsumerWidget {
       projectHomeAssociationsProvider,
     );
     final bool shellOwns = ShellHeaderScope.ownsHeaderOf(context);
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: Space.x4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -252,28 +252,32 @@ class _HomeBody extends ConsumerWidget {
       _CountCard(
         cardKey: const ValueKey<String>('home-review'),
         label: Copy.homeReview,
-        count: counts.review,
+        message: Copy.homeReviewPending(counts.review),
+        icon: Icons.fact_check_outlined,
         semanticLabel: Copy.homeReviewPending(counts.review),
         onTap: () => unawaited(context.push(_reviewList(projectId))),
       ),
       _CountCard(
         cardKey: const ValueKey<String>('home-process'),
         label: Copy.homeProcess,
-        count: counts.process,
+        message: Copy.homeProcessPending(counts.process),
+        icon: Icons.pending_outlined,
         semanticLabel: Copy.homeProcessPending(counts.process),
         onTap: () => unawaited(context.push(_processList(projectId))),
       ),
       _CountCard(
         cardKey: const ValueKey<String>('home-export'),
         label: Copy.homeExport,
-        count: counts.toExport,
+        message: Copy.homeExportPending(counts.toExport),
+        icon: Icons.output,
         semanticLabel: Copy.homeExportPending(counts.toExport),
         onTap: () => unawaited(context.push(_exportList(projectId))),
       ),
       _CountCard(
         cardKey: const ValueKey<String>('home-share'),
         label: Copy.homeShare,
-        count: counts.toShare,
+        message: Copy.homeSharePending(counts.toShare),
+        icon: Icons.ios_share_outlined,
         semanticLabel: Copy.homeSharePending(counts.toShare),
         onTap: () => unawaited(context.push(_shareList(projectId))),
       ),
@@ -347,22 +351,21 @@ class _CountCard extends StatelessWidget {
   const _CountCard({
     required this.cardKey,
     required this.label,
-    required this.count,
+    required this.message,
+    required this.icon,
     required this.semanticLabel,
     required this.onTap,
   });
 
   final Key cardKey;
   final String label;
-  final int count;
+  final String message;
+  final IconData icon;
   final String semanticLabel;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final String number = NumberFormat.decimalPattern(
-      Localizations.localeOf(context).toString(),
-    ).format(count);
     return AppCard(
       key: cardKey,
       elevationLevel: 0,
@@ -374,17 +377,18 @@ class _CountCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            Icon(icon, size: Space.x5, color: context.colors.onSurface),
+            const SizedBox(height: Space.x1),
             Text(
               label,
               style: AppText.caption,
-              maxLines: 1,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: Space.x1),
             Text(
-              number,
-              style: AppText.title,
-              maxLines: 1,
+              message,
+              style: AppText.caption,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
           ],

@@ -17,6 +17,7 @@ import '../domain/field_def.dart';
 import '../domain/template_def.dart';
 import '../templates.dart' show templateRepositoryProvider;
 import 'template_list_screen.dart' show templateListProvider;
+import 'template_locations.dart';
 
 /// Spreadsheet column or generated header for each field (§18).
 class OutputMappingScreen extends ConsumerWidget {
@@ -105,7 +106,9 @@ class OutputMappingScreen extends ConsumerWidget {
         .read(_outputMappingProvider(templateId).notifier)
         .commit();
     if (saved && context.mounted) {
-      GoRouter.maybeOf(context)?.go(_fieldsLocation(templateId));
+      GoRouter.maybeOf(
+        context,
+      )?.go(TemplateLocations.detail(context, templateId));
     }
   }
 }
@@ -347,9 +350,4 @@ TemplateDef _write(TemplateDef template, Map<String, String> columns) {
   );
 }
 
-String _fieldsLocation(String id) {
-  return '$_templatesRoot/${Uri.encodeComponent(id)}';
-}
-
-const String _templatesRoot = '/more/templates';
 const String _importedSource = 'imported';

@@ -20,6 +20,7 @@ export 'mic_permission_gate.dart';
 export 'photo_caption_sheet.dart';
 export 'photo_crop_screen.dart';
 export 'photo_delete_action.dart';
+export 'photo_doodle_screen.dart';
 export 'photo_move_action.dart';
 export 'photo_multi_select.dart';
 export 'photo_reorder.dart';

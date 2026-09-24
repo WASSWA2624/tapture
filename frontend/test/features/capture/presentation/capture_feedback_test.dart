@@ -12,6 +12,7 @@ import 'package:tapture/core/db/tables/device_profile.dart';
 import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/files/text_store.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
@@ -123,7 +124,7 @@ void main() {
     expect(find.text(Copy.captureTakePhoto), findsNothing);
     await tester.tap(find.text(Copy.captureChoosePhoto));
     await tester.pumpAndSettle();
-    expect(find.text('1'), findsWidgets);
+    expect(find.text(Copy.capturePhotoCount(1)), findsWidgets);
   });
 
   testWidgets('a caption can target one photo, the selection, and all', (
@@ -151,10 +152,10 @@ void main() {
       await controller.addPhoto(_draft(id));
     }
     await tester.pumpAndSettle();
-    await tester.longPress(find.text('a').first);
-    await tester.longPress(find.text('b').first);
+    await tester.longPress(find.byKey(const ValueKey<String>('photo-thumb-a')));
+    await tester.longPress(find.byKey(const ValueKey<String>('photo-thumb-b')));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('a').first);
+    await tester.tap(find.byKey(const ValueKey<String>('photo-thumb-a')));
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip(Copy.capturePhotoCaption));
     await tester.pumpAndSettle();
@@ -201,7 +202,10 @@ void main() {
     expect(find.text(Copy.captureResume), findsOneWidget);
     await tester.tap(find.text(Copy.captureResume));
     await tester.pumpAndSettle();
-    expect(find.text('kept'), findsWidgets);
+    expect(
+      find.byKey(const ValueKey<String>('photo-thumb-kept')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('crop keeps the source path and stores a derived copy', (
@@ -222,11 +226,8 @@ void main() {
         ),
       ),
     );
-    final TextButton button = tester.widget<TextButton>(
-      find.widgetWithText(TextButton, Copy.photoCrop),
-    );
     await tester.runAsync(() async {
-      button.onPressed!.call();
+      await tester.tap(find.widgetWithText(AppButton, Copy.photoCrop));
       await Future<void>.delayed(const Duration(seconds: 2));
     });
     await tester.pump();

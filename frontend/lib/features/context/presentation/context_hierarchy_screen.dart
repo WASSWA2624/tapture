@@ -385,5 +385,5 @@ class _ContextHierarchyScreenState
 }
 
 String _projectTemplates(String projectId) {
-  return RoutePaths.projectTemplates(projectId);
+  return RoutePaths.templateLibrary(projectId: projectId);
 }
