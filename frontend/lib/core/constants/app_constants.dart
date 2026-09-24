@@ -28,6 +28,12 @@ abstract final class AppConstants {
     debounce: Duration(milliseconds: 300),
   );
 
+  /// Recorder elapsed-time and input-level sampling cadence.
+  static const Duration audioMeterTick = Duration(milliseconds: 100);
+
+  /// Audio timings grouped for runtime callers.
+  static const ({Duration meterTick}) audio = (meterTick: audioMeterTick);
+
   /// How long dictation listens at most, how much silence ends it, and how
   /// long the recogniser gets to hand over its last words after a stop.
   static const ({Duration listenFor, Duration pauseFor, Duration settle})

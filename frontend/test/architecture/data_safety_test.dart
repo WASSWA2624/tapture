@@ -180,7 +180,10 @@ Iterable<_Violation> _rawWriteViolations(String path, String source) sync* {
     }
     final String field = match.group(1) ?? match.group(2)!;
     final String? function = _enclosingFunction(lines, index);
-    if (_isRepository(path) && function != null && _isCreateMethod(function)) {
+    if ((_isRepository(path) &&
+            function != null &&
+            _isCreateMethod(function)) ||
+        _isInsertCompanion(lines, index)) {
       continue;
     }
     yield (
@@ -192,6 +195,26 @@ Iterable<_Violation> _rawWriteViolations(String path, String source) sync* {
           'writes a separate column (FE-SEC-08)',
     );
   }
+}
+
+/// A typed Drift insert companion proves the raw value belongs to a new row,
+/// even when the enclosing transaction callback obscures the method name.
+bool _isInsertCompanion(List<String> lines, int index) {
+  final int first = index - 12 < 0 ? 0 : index - 12;
+  final RegExp insertFunction = RegExp(
+    r'\b(?:insert|create|add)[A-Z][A-Za-z0-9_]*\s*\(',
+  );
+  for (int at = index; at >= first; at--) {
+    if (lines[at].contains('Companion.insert(') ||
+        insertFunction.hasMatch(lines[at])) {
+      return true;
+    }
+    if (lines[at].contains('.write(') ||
+        RegExp(r'\bupdate[A-Z][A-Za-z0-9_]*\s*\(').hasMatch(lines[at])) {
+      return false;
+    }
+  }
+  return false;
 }
 
 /// `delete` / `deleteWhere` in a repository file.

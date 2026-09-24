@@ -4,7 +4,12 @@ import 'dart:convert';
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
-import 'package:tapture/core/db/tables/context.dart' show upsertContextPreset;
+import 'package:tapture/core/db/tables/context.dart'
+    show
+        clearContextStateForProject,
+        deleteContextDefinition,
+        deleteContextPreset,
+        upsertContextPreset;
 import 'package:tapture/core/db/tables/tombstones.dart';
 import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -68,9 +73,15 @@ final class ContextRepositoryImpl implements ContextRepository {
               ))
               .get();
       for (final sqlite.ContextData row in existing) {
-        await (_db.delete(
-          _db.context,
-        )..where((sqlite.$ContextTable tbl) => tbl.id.equals(row.id))).go();
+        await writeTombstone(
+          _db,
+          entityType: _db.context.actualTableName,
+          entityId: row.id,
+          reason: 'Context hierarchy replaced.',
+          clock: _clock,
+          deviceId: _deviceId,
+        );
+        await deleteContextDefinition(_db, id: row.id);
       }
       final List<ContextLevel> ordered = <ContextLevel>[
         for (int i = 0; i < levels.length; i++) levels[i].copyWith(order: i),
@@ -277,9 +288,7 @@ final class ContextRepositoryImpl implements ContextRepository {
         clock: _clock,
         deviceId: _deviceId,
       );
-      await (_db.delete(
-        _db.contextPresets,
-      )..where((sqlite.$ContextPresetsTable tbl) => tbl.id.equals(id))).go();
+      await deleteContextPreset(_db, id: id);
     });
   }
 
@@ -325,10 +334,7 @@ final class ContextRepositoryImpl implements ContextRepository {
     Map<String, String> values,
     Map<String, String> pinned,
   ) async {
-    await (_db.delete(_db.contextState)..where(
-          (sqlite.$ContextStateTable tbl) => tbl.projectId.equals(projectId),
-        ))
-        .go();
+    await clearContextStateForProject(_db, projectId: projectId);
     final DateTime now = _clock.nowUtc();
     if (pinned.isNotEmpty) {
       await _db

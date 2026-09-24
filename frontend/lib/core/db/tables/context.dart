@@ -117,3 +117,37 @@ Future<ContextPreset> upsertContextPreset(
       ))
       .getSingle();
 }
+
+/// Removes one definition after its caller has recorded the merge tombstone.
+Future<void> deleteContextDefinition(
+  GeneratedDatabase tx, {
+  required String id,
+}) async {
+  final AppDatabase db = tx as AppDatabase;
+  await (tx.delete(
+    db.context,
+  )..where(($ContextTable table) => table.id.equals(id))).go();
+}
+
+/// Removes one preset after its caller has recorded the merge tombstone.
+Future<void> deleteContextPreset(
+  GeneratedDatabase tx, {
+  required String id,
+}) async {
+  final AppDatabase db = tx as AppDatabase;
+  await (tx.delete(
+    db.contextPresets,
+  )..where(($ContextPresetsTable table) => table.id.equals(id))).go();
+}
+
+/// Clears transient current values before the caller writes a new snapshot.
+Future<void> clearContextStateForProject(
+  GeneratedDatabase tx, {
+  required String projectId,
+}) async {
+  final AppDatabase db = tx as AppDatabase;
+  await (tx.delete(
+        db.contextState,
+      )..where(($ContextStateTable table) => table.projectId.equals(projectId)))
+      .go();
+}

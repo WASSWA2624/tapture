@@ -16,9 +16,7 @@ import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/projects/projects.dart';
-import 'package:tapture/features/reference/domain/lookup_binding.dart';
-import 'package:tapture/features/reference/domain/reference_dataset.dart';
-import 'package:tapture/features/reference/presentation/dataset_list_screen.dart';
+import 'package:tapture/features/reference/reference.dart';
 import 'package:tapture/features/templates/domain/field_def.dart';
 import 'package:tapture/features/templates/domain/template_def.dart';
 import 'package:tapture/features/templates/templates.dart'

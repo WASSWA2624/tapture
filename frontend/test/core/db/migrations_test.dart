@@ -213,9 +213,9 @@ void main() {
       expect(await _count(db, 'capture_sessions'), 1);
       expect(await _count(db, 'attachments'), 1);
       expect(await _count(db, 'attachment_owners'), 1);
-      final List<QueryRow> indexes = await db.customSelect(
-        "PRAGMA index_list('attachment_owners')",
-      ).get();
+      final List<QueryRow> indexes = await db
+          .customSelect("PRAGMA index_list('attachment_owners')")
+          .get();
       expect(
         indexes.map((QueryRow row) => row.read<String>('name')),
         contains('attachment_owners_by_owner'),

@@ -14,10 +14,7 @@ import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/projects/projects.dart';
-import 'package:tapture/features/templates/domain/field_def.dart';
-import 'package:tapture/features/templates/domain/template_def.dart';
-import 'package:tapture/features/templates/templates.dart'
-    show templateRepositoryProvider;
+import 'package:tapture/features/templates/templates.dart';
 
 import '../context.dart' show contextRepositoryProvider;
 import '../domain/context_state.dart';

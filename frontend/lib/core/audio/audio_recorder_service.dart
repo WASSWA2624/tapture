@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -24,7 +25,7 @@ abstract interface class AudioRecorderService {
   factory AudioRecorderService.fake({
     FileWriter? writer,
     Failure? startFailure,
-    Duration tick = const Duration(milliseconds: 100),
+    Duration tick = AppConstants.audioMeterTick,
   }) {
     return _FakeAudioRecorder(
       writer: writer,

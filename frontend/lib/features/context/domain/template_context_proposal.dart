@@ -1,5 +1,4 @@
-import 'package:tapture/features/templates/domain/field_def.dart';
-import 'package:tapture/features/templates/domain/template_def.dart';
+import 'package:tapture/features/templates/templates.dart';
 
 /// Stable hierarchy suggestions and any ambiguity that requires attention.
 final class TemplateContextProposal {

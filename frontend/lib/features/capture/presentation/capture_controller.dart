@@ -2,10 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/core/files/text_store.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
-import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
 import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
 import 'package:tapture/features/capture/domain/capture_persistence.dart';
@@ -26,10 +24,7 @@ final Provider<PhotoRepository> photoRepositoryProvider =
 /// Session + photo persistence. Tests override with a memory store.
 final Provider<CapturePersistence> capturePersistenceProvider =
     Provider<CapturePersistence>((Ref ref) {
-      return CapturePersistenceImpl(
-        photos: ref.watch(photoRepositoryProvider),
-        store: TextStore.memory(),
-      );
+      return _MemoryCapturePersistence(ref.watch(photoRepositoryProvider));
     });
 
 /// Capture session for a project id. Persist before every emit.
@@ -414,6 +409,55 @@ final class _MemoryPhotoRepository implements PhotoRepository {
   @override
   Future<Result<void>> delete(String id, {required String reason}) async {
     _rows.remove(id);
+    return const Success<void>(null);
+  }
+}
+
+final class _MemoryCapturePersistence implements CapturePersistence {
+  _MemoryCapturePersistence(this._photos);
+
+  final PhotoRepository _photos;
+  final Map<String, CaptureSession> _sessions = <String, CaptureSession>{};
+
+  @override
+  PhotoRepository get photos => _photos;
+
+  @override
+  Future<Result<PhotoDraft>> savePhoto(
+    PhotoDraft photo, {
+    Uint8List? bytes,
+  }) async {
+    final Result<PhotoAsset> saved = await _photos.save(photo.asAsset);
+    return saved.map(
+      (PhotoAsset asset) => photo.copyWith(
+        id: asset.id,
+        projectId: asset.projectId,
+        recordId: asset.recordId,
+        relativePath: asset.relativePath,
+        sha256: asset.sha256,
+      ),
+    );
+  }
+
+  @override
+  Future<Result<void>> deletePhoto(String photoId, {required String reason}) {
+    return _photos.delete(photoId, reason: reason);
+  }
+
+  @override
+  Future<Result<void>> saveSession(CaptureSession session) async {
+    _sessions[session.projectId] = session;
+    return const Success<void>(null);
+  }
+
+  @override
+  Future<Result<CaptureSession?>> loadSession(String projectId) async {
+    return Success<CaptureSession?>(_sessions[projectId]);
+  }
+
+  @override
+  Future<Result<void>> clearSession(String projectId) async {
+    _sessions.remove(projectId);
     return const Success<void>(null);
   }
 }

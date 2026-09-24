@@ -14,10 +14,7 @@ import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
-import '../data/dataset_csv_import.dart';
-import '../domain/reference_dataset.dart';
-import '../domain/reference_row.dart';
-import '../reference.dart' show referenceRepositoryProvider;
+import '../reference.dart';
 
 /// Ends every import: pick the key column and confirm duplicates.
 class DatasetKeyScreen extends ConsumerStatefulWidget {

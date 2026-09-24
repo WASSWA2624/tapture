@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:drift/drift.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/attachment_owners.dart';
 import 'package:tapture/core/db/tables/attachments.dart';
@@ -18,13 +17,14 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 
+import '../domain/capture_record_persistence.dart';
 import '../domain/capture_session.dart';
 import '../domain/photo_draft.dart';
 
 /// The single transaction boundary that turns a capture session into a raw
 /// record. Processing can add proposals later, but never rewrites these raw
 /// values or the frozen context object.
-final class CaptureRecordWriter {
+final class CaptureRecordWriter implements CaptureRecordPersistence {
   /// Creates a writer over the application database.
   const CaptureRecordWriter({
     required sqlite.AppDatabase db,
@@ -42,7 +42,14 @@ final class CaptureRecordWriter {
   final IdService _ids;
 
   /// Persists one complete CAPTURED record or rolls every row back.
+  @override
   Future<Result<String>> persist(CaptureSession session) {
+    return createRecord(session);
+  }
+
+  /// Create-path implementation kept distinct so raw-column guardrails can
+  /// prove these values are inserted once and are never refinement updates.
+  Future<Result<String>> createRecord(CaptureSession session) {
     return runInTransaction(_db, () async {
       // A capture session owns exactly one raw record. Using its stable id
       // makes a retry safe even when the record transaction committed but the
@@ -250,11 +257,6 @@ final class CaptureRecordWriter {
         );
   }
 }
-
-/// Production overrides this with [CaptureRecordWriter]. Tests can inject a
-/// writer without opening Drift.
-final Provider<CaptureRecordWriter?> captureRecordWriterProvider =
-    Provider<CaptureRecordWriter?>((Ref _) => null);
 
 String? _raw(Object? value) {
   if (value == null) {

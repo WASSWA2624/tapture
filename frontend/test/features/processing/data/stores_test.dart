@@ -27,43 +27,47 @@ void main() {
     await db.close();
   });
 
-  test('ocr cache round-trips and the fake matches a perceptual hash', () async {
-    final OcrCache cache = OcrCache(
-      db: db,
-      clock: FixedClock(t0),
-      deviceId: 'device-a',
-      ids: UuidV7Service.sequence(FixedClock(t0)),
-    );
-    const OcrResult result = OcrResult(
-      text: 'SN458923',
-      blocks: <OcrBlock>[
-        OcrBlock(text: 'SN458923', bounds: Rect.fromLTRB(1, 2, 3, 4), confidence: 0.9),
-      ],
-    );
-    _ok(
-      await cache.put(
-        contentHash: 'abc',
-        perceptualHash: 'ffff',
-        result: result,
-      ),
-    );
-    final OcrResult? loaded = _ok(
-      await cache.lookup(contentHash: 'abc', perceptualHash: '0000'),
-    );
-    expect(loaded?.text, 'SN458923');
-    expect(loaded?.blocks.single.confidence, 0.9);
+  test(
+    'ocr cache round-trips and the fake matches a perceptual hash',
+    () async {
+      final OcrCache cache = OcrCache(
+        db: db,
+        clock: FixedClock(t0),
+        deviceId: 'device-a',
+        ids: UuidV7Service.sequence(FixedClock(t0)),
+      );
+      const OcrResult result = OcrResult(
+        text: 'SN458923',
+        blocks: <OcrBlock>[
+          OcrBlock(
+            text: 'SN458923',
+            bounds: Rect.fromLTRB(1, 2, 3, 4),
+            confidence: 0.9,
+          ),
+        ],
+      );
+      _ok(
+        await cache.put(
+          contentHash: 'abc',
+          perceptualHash: 'ffff',
+          result: result,
+        ),
+      );
+      final OcrResult? loaded = _ok(
+        await cache.lookup(contentHash: 'abc', perceptualHash: '0000'),
+      );
+      expect(loaded?.text, 'SN458923');
+      expect(loaded?.blocks.single.confidence, 0.9);
 
-    final FakeOcrCache fake = FakeOcrCache();
-    fake.put(contentHash: 'abc', perceptualHash: 'abcd', result: result);
-    expect(
-      fake.lookup(contentHash: 'other', perceptualHash: 'abcd')?.text,
-      'SN458923',
-    );
-    expect(
-      PerceptualHash.matches('abcd', 'abcd'),
-      isTrue,
-    );
-  });
+      final FakeOcrCache fake = FakeOcrCache();
+      fake.put(contentHash: 'abc', perceptualHash: 'abcd', result: result);
+      expect(
+        fake.lookup(contentHash: 'other', perceptualHash: 'abcd')?.text,
+        'SN458923',
+      );
+      expect(PerceptualHash.matches('abcd', 'abcd'), isTrue);
+    },
+  );
 
   test('response store keeps the raw body and refuses a secret', () async {
     final ResponseStore store = ResponseStore(
@@ -88,7 +92,10 @@ void main() {
       rawResponse: '{}',
       parsedOk: false,
     );
-    expect(secret.fold((Failure failure) => failure, (_) => null), isA<StorageFailure>());
+    expect(
+      secret.fold((Failure failure) => failure, (_) => null),
+      isA<StorageFailure>(),
+    );
 
     final FakeResponseStore fake = FakeResponseStore();
     expect(

@@ -13,10 +13,7 @@ import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
-import 'package:tapture/features/reference/domain/lookup_matcher.dart';
-import 'package:tapture/features/reference/domain/reference_row.dart';
-import 'package:tapture/features/reference/reference.dart'
-    show referenceRepositoryProvider;
+import 'package:tapture/features/reference/reference.dart';
 
 import '../context.dart' show contextRepositoryProvider;
 import '../domain/context_cascade.dart';

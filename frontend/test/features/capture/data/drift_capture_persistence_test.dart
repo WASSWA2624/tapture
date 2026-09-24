@@ -8,7 +8,8 @@ import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/capture/data/drift_capture_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_photo_repository.dart';
-import 'package:tapture/features/capture/domain/capture_session.dart';
+import 'package:tapture/features/capture/domain/capture_session.dart'
+    as capture;
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/domain/photo_repository.dart';
 
@@ -27,7 +28,7 @@ void main() {
       deviceId: 'device-a',
       ids: UuidV7Service.sequence(clock),
     );
-    final CaptureSession session = CaptureSession(
+    final capture.CaptureSession session = capture.CaptureSession(
       id: 'session-1',
       projectId: project.id,
       templateId: 'template-1',
@@ -36,7 +37,7 @@ void main() {
     );
 
     _ok(await persistence.saveSession(session));
-    final CaptureSession? restored = _ok(
+    final capture.CaptureSession? restored = _ok(
       await persistence.loadSession(project.id),
     );
     expect(restored?.toJson(), session.toJson());

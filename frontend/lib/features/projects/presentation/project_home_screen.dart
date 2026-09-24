@@ -17,8 +17,7 @@ import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
-import 'package:tapture/features/context/domain/context_state.dart';
-import 'package:tapture/features/context/presentation/context_providers.dart';
+import 'package:tapture/features/context/context.dart';
 import 'package:tapture/features/templates/templates.dart';
 
 import '../domain/project_repository.dart';

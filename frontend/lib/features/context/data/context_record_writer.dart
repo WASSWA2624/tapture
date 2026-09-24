@@ -45,6 +45,36 @@ final class ContextRecordWriter {
     applied = ContextApplication.apply(state);
     return runInTransaction(_db, () async {
       final DateTime now = _clock.nowUtc();
+      Future<void> createFields() async {
+        for (final ({String fieldKey, String value, String source}) field
+            in applied.fields) {
+          final Result<sqlite.RecordField> written = await insertRecordField(
+            _db,
+            row: sqlite.RecordFieldsCompanion.insert(
+              recordId: recordId,
+              fieldKey: field.fieldKey,
+              valueRaw: Value<String>(field.value),
+              source: field.source,
+              createdAt: now,
+              updatedAt: now,
+              updatedByDevice: _deviceId,
+            ),
+            clock: _clock,
+            deviceId: _deviceId,
+            ids: _ids,
+            operator: operator,
+          );
+          if (written case FailureResult<sqlite.RecordField>(
+            :final Failure failure,
+          )) {
+            throw StorageFailure(
+              message: failure.message,
+              recoveryAction: failure.recoveryAction ?? 'Try again.',
+            );
+          }
+        }
+      }
+
       await (_db.update(
         _db.records,
       )..where((sqlite.$RecordsTable tbl) => tbl.id.equals(recordId))).write(
@@ -54,33 +84,7 @@ final class ContextRecordWriter {
           updatedByDevice: Value<String>(_deviceId),
         ),
       );
-      for (final ({String fieldKey, String value, String source}) field
-          in applied.fields) {
-        final Result<sqlite.RecordField> written = await insertRecordField(
-          _db,
-          row: sqlite.RecordFieldsCompanion.insert(
-            recordId: recordId,
-            fieldKey: field.fieldKey,
-            valueRaw: Value<String>(field.value),
-            source: field.source,
-            createdAt: now,
-            updatedAt: now,
-            updatedByDevice: _deviceId,
-          ),
-          clock: _clock,
-          deviceId: _deviceId,
-          ids: _ids,
-          operator: operator,
-        );
-        if (written case FailureResult<sqlite.RecordField>(
-          :final Failure failure,
-        )) {
-          throw StorageFailure(
-            message: failure.message,
-            recoveryAction: failure.recoveryAction ?? 'Try again.',
-          );
-        }
-      }
+      await createFields();
     });
   }
 

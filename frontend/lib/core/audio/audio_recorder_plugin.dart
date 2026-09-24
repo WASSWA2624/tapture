@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:record/record.dart' as record;
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -58,14 +59,14 @@ final class AudioRecorderPlugin implements AudioRecorderService {
       _write = _writer.write(stream, relativePath);
       _phase = AudioRecorderPhase.recording;
       _timer?.cancel();
-      _timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
+      _timer = Timer.periodic(AppConstants.audio.meterTick, (_) {
         if (_phase == AudioRecorderPhase.recording) {
-          _elapsed += const Duration(milliseconds: 100);
+          _elapsed += AppConstants.audio.meterTick;
           _emit();
         }
       });
       _amplitude = _recorder
-          .onAmplitudeChanged(const Duration(milliseconds: 100))
+          .onAmplitudeChanged(AppConstants.audio.meterTick)
           .listen((record.Amplitude value) {
             _emit(level: ((value.current + 60) / 60).clamp(0, 1));
           });

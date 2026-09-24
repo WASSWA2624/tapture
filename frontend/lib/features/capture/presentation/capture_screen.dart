@@ -19,9 +19,9 @@ import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/photo_markup.dart';
-import 'package:tapture/features/capture/data/capture_record_writer.dart';
 import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
+import 'package:tapture/features/capture/domain/capture_record_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/domain/save_and_analyse.dart';
@@ -36,11 +36,15 @@ import 'package:tapture/features/capture/presentation/photo_tray.dart';
 import 'package:tapture/features/capture/presentation/photo_viewer_screen.dart';
 import 'package:tapture/features/capture/presentation/record_caption_field.dart';
 import 'package:tapture/features/capture/presentation/template_picker_sheet.dart';
-import 'package:tapture/features/context/domain/context_state.dart';
-import 'package:tapture/features/context/presentation/context_providers.dart';
+import 'package:tapture/features/context/context.dart';
 import 'package:tapture/features/processing/processing.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/templates.dart';
+
+/// Production supplies the Drift-backed transaction writer. Tests may inject
+/// a focused in-memory implementation without crossing presentation into data.
+final Provider<CaptureRecordPersistence?> captureRecordWriterProvider =
+    Provider<CaptureRecordPersistence?>((Ref _) => null);
 
 /// Camera and library picker for capture. Tests override with [PhotoPicker.fake].
 final Provider<PhotoPicker> capturePhotoPickerProvider = Provider<PhotoPicker>(
@@ -56,6 +60,30 @@ final StreamProvider<List<TemplateDef>> captureTemplatesProvider =
       }
       return ref.watch(templateRepositoryProvider).watchByProject(projectId);
     });
+
+typedef _CaptureUiState = ({String audioId, bool saving});
+
+final _captureUiProvider =
+    NotifierProvider.family<_CaptureUiController, _CaptureUiState, String>(
+      _CaptureUiController.new,
+    );
+
+final class _CaptureUiController extends Notifier<_CaptureUiState> {
+  _CaptureUiController(String _);
+
+  final IdService _ids = UuidV7Service(const SystemClock());
+
+  @override
+  _CaptureUiState build() => (audioId: _ids.newId(), saving: false);
+
+  void renewAudioId() {
+    state = (audioId: _ids.newId(), saving: state.saving);
+  }
+
+  void setSaving(bool saving) {
+    state = (audioId: state.audioId, saving: saving);
+  }
+}
 
 /// Capture surface: tray, caption, template choice, saves.
 final class CaptureScreen extends ConsumerStatefulWidget {
@@ -98,9 +126,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   bool _restored = false;
   bool _askingTemplate = true;
   bool _onStage = true;
-  bool _saving = false;
   final IdService _ids = UuidV7Service(const SystemClock());
-  late String _audioId = _ids.newId();
 
   @override
   void initState() {
@@ -132,6 +158,9 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     );
     final CaptureController controller = ref.read(
       captureControllerProvider(widget.projectId).notifier,
+    );
+    final _CaptureUiState uiState = ref.watch(
+      _captureUiProvider(widget.projectId),
     );
     final ContextState? activeContext = widget.projectId.isEmpty
         ? null
@@ -182,7 +211,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             child: AppButton(
               label: Copy.captureSaveRaw,
               variant: AppButtonVariant.secondary,
-              busy: _saving,
+              busy: uiState.saving,
               onPressed: widget.onSaveRaw ?? () => unawaited(_save(false)),
             ),
           ),
@@ -190,7 +219,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
           Expanded(
             child: AppButton(
               label: Copy.captureSaveAndAnalyse,
-              busy: _saving,
+              busy: uiState.saving,
               onPressed:
                   widget.onSaveAndAnalyse ?? () => unawaited(_save(true)),
             ),
@@ -232,7 +261,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             AudioRecorder(
               recorder: ref.watch(audioRecorderServiceProvider),
               relativePath:
-                  'projects/${project.folderName}/audio/$_audioId.wav',
+                  'projects/${project.folderName}/audio/${uiState.audioId}.wav',
               onCompleted: (AudioRecording recording) =>
                   unawaited(_audioStopped(recording)),
             ),
@@ -452,6 +481,9 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   }
 
   Future<void> _audioStopped(AudioRecording recording) async {
+    final _CaptureUiState uiState = ref.read(
+      _captureUiProvider(widget.projectId),
+    );
     final CaptureSession session = ref.read(
       captureControllerProvider(widget.projectId),
     );
@@ -499,13 +531,13 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     };
     final int audioSegment = recording.relativePath.indexOf('audio/');
     final String projectPath = audioSegment < 0
-        ? 'audio/$_audioId.wav'
+        ? 'audio/${uiState.audioId}.wav'
         : recording.relativePath.substring(audioSegment);
     final Result<void> saved = await ref
         .read(captureControllerProvider(widget.projectId).notifier)
         .addAudio(
           AudioDraft(
-            id: _audioId,
+            id: uiState.audioId,
             projectId: widget.projectId,
             relativePath: projectPath,
             mimeType: recording.mimeType,
@@ -520,7 +552,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       case FailureResult<void>(:final Failure failure):
         showAppSnack(context, failure.message, tone: SnackTone.error);
       case Success<void>():
-        setState(() => _audioId = _ids.newId());
+        ref.read(_captureUiProvider(widget.projectId).notifier).renewAudioId();
     }
   }
 
@@ -667,39 +699,47 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   }
 
   Future<void> _save(bool process) async {
-    if (_saving || !mounted) {
+    final _CaptureUiController ui = ref.read(
+      _captureUiProvider(widget.projectId).notifier,
+    );
+    if (ref.read(_captureUiProvider(widget.projectId)).saving || !mounted) {
       return;
     }
-    final CaptureRecordWriter? writer = ref.read(captureRecordWriterProvider);
+    final CaptureRecordPersistence? writer = ref.read(
+      captureRecordWriterProvider,
+    );
     if (writer == null) {
       showAppSnack(context, Copy.captureSaveFailed, tone: SnackTone.error);
       return;
     }
-    setState(() => _saving = true);
+    ui.setSaving(true);
     final CaptureController controller = ref.read(
       captureControllerProvider(widget.projectId).notifier,
     );
-    final Result<Object> result;
-    if (process) {
-      result = await controller.saveAndAnalyse(
-        persist: writer.persist,
-        enqueue: (String recordId) async {
-          final Result<String> queued = await ref
-              .read(processingRepositoryProvider)
-              .enqueue(recordId);
-          return queued.map(
-            (String jobId) =>
-                SaveAndAnalyse.jobFor(jobId: jobId, recordId: recordId),
-          );
-        },
-      );
-    } else {
-      result = await controller.saveRaw(writer.persist);
+    late final Result<Object> result;
+    try {
+      if (process) {
+        result = await controller.saveAndAnalyse(
+          persist: writer.persist,
+          enqueue: (String recordId) async {
+            final Result<String> queued = await ref
+                .read(processingRepositoryProvider)
+                .enqueue(recordId);
+            return queued.map(
+              (String jobId) =>
+                  SaveAndAnalyse.jobFor(jobId: jobId, recordId: recordId),
+            );
+          },
+        );
+      } else {
+        result = await controller.saveRaw(writer.persist);
+      }
+    } finally {
+      ui.setSaving(false);
     }
     if (!mounted) {
       return;
     }
-    setState(() => _saving = false);
     switch (result) {
       case FailureResult<Object>(:final Failure failure):
         showAppSnack(

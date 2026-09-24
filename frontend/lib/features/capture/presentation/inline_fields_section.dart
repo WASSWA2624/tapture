@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/features/templates/domain/field_def.dart';
-import 'package:tapture/features/templates/domain/field_type_registry.dart';
+import 'package:tapture/features/templates/templates.dart';
 
 /// Inline template fields: identity + required visible; rest behind More.
 final class InlineFieldsSection extends StatefulWidget {
