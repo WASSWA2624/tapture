@@ -13,7 +13,12 @@ first, so the command is always safe to repeat. Stop it with Ctrl-C.
 from __future__ import annotations
 
 import argparse
+import subprocess
 import sys
+import threading
+import time
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -74,6 +79,60 @@ def free_port(port: int, keep: bool) -> None:
     release_port(port, "web")
 
 
+def _serving(port: int) -> bool:
+    """True once the compiled app, not only the HTML shell, is being served.
+
+    The dev server answers `/` before `flutter_bootstrap.js` exists. Opening
+    Chrome then leaves it on a page that never connects the debug client.
+    """
+    for host in ("127.0.0.1", "localhost"):
+        try:
+            with urllib.request.urlopen(
+                f"http://{host}:{port}/flutter_bootstrap.js",
+                timeout=2,
+            ) as response:
+                if response.status == 200:
+                    return True
+        except (urllib.error.URLError, TimeoutError, OSError):
+            continue
+    return False
+
+
+def _open_chrome(url: str) -> None:
+    """Open [url] in a Chrome window, without a remote-debugging port.
+
+    `flutter run -d chrome` adds that port, and current Chrome never answers
+    Debugger.enable. A normal window still loads the dev server, which is what
+    hot reload attaches to.
+    """
+    info(f"opening {url} in Chrome")
+    if sys.platform == "win32":
+        # The first quoted argument of `start` is a window title. This opens a
+        # tab in the Chrome the operator already runs, which is the window that
+        # reaches the dev server. A separate profile never completes that step.
+        subprocess.run(
+            ["cmd", "/c", "start", "", "chrome", url],
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        return
+    import webbrowser
+
+    webbrowser.open(url)
+
+
+def _open_chrome_when_ready(port: int) -> None:
+    """Wait out the web compile, then open the served app."""
+    deadline = time.monotonic() + 15 * 60
+    while time.monotonic() < deadline:
+        if _serving(port):
+            _open_chrome(f"http://localhost:{port}")
+            return
+        time.sleep(1)
+    info(f"Chrome was not opened; the server did not answer on port {port}")
+
+
 def entry() -> None:
     args = parse_args()
     if not (FRONTEND / "web").is_dir():
@@ -85,12 +144,16 @@ def entry() -> None:
     step("Freeing the port")
     free_port(args.port, args.keep_ports)
 
-    device = "web-server" if args.server else "chrome"
-    step(f"Starting the web app on {device} at http://localhost:{args.port}")
+    # `-d chrome` drives the page through Chrome's remote debugger. On this
+    # Windows/Chrome pair Debugger.enable never returns, so that launch exits
+    # before the app is usable. The dev server still hot-reloads; Chrome is
+    # opened on the URL once the server answers.
+    where = "this machine" if args.server else "Chrome"
+    step(f"Starting the web app for {where} at http://localhost:{args.port}")
     command = [
         "run",
         "-d",
-        device,
+        "web-server",
         "--web-port",
         str(args.port),
         # CanvasKit and the Flutter web SDK come from gstatic.com by default, so
@@ -102,6 +165,13 @@ def entry() -> None:
     ]
     if args.server:
         command += ["--web-hostname", "0.0.0.0"]
+    else:
+        threading.Thread(
+            target=_open_chrome_when_ready,
+            args=(args.port,),
+            name="open-chrome",
+            daemon=True,
+        ).start()
     flutter(command)
 
 
