@@ -9,6 +9,7 @@ final class RecordCaptionField extends StatefulWidget {
     required this.value,
     required this.onChanged,
     this.onWriteFailed,
+    this.afterDictation,
     super.key,
   });
 
@@ -20,6 +21,9 @@ final class RecordCaptionField extends StatefulWidget {
 
   /// Optional failure handler.
   final ValueChanged<String>? onWriteFailed;
+
+  /// Control drawn after the speech-to-text microphone.
+  final Widget? afterDictation;
 
   @override
   State<RecordCaptionField> createState() => _RecordCaptionFieldState();
@@ -71,6 +75,7 @@ class _RecordCaptionFieldState extends State<RecordCaptionField>
       controller: _controller,
       label: Copy.captureRecordCaption,
       onChanged: (String text) => _persist(text),
+      afterDictation: widget.afterDictation,
     );
   }
 }

@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/core/audio/audio_recorder_service.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart' show AppDatabase;
 import 'package:tapture/core/db/database_provider.dart';
@@ -13,6 +15,7 @@ import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/files/text_store.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/fields/dictation_scope.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
@@ -40,6 +43,7 @@ import 'package:tapture/features/templates/domain/template_row.dart';
 import '../../../support/factories.dart';
 import '../../../support/fakes/fake_context_repository.dart';
 import '../../../support/fakes/fake_photo_repository.dart';
+import '../../../support/fakes/fake_stt_service.dart';
 
 void main() {
   testWidgets('operator loads from the shared database', (
@@ -444,12 +448,137 @@ void main() {
       expect(find.text(Copy.missingPhoto), findsOneWidget);
     },
   );
+
+  testWidgets(
+    'the record control sits after the caption microphone',
+    (WidgetTester tester) async {
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      const List<({Brightness brightness, bool outdoor})> themes =
+          <({Brightness brightness, bool outdoor})>[
+            (brightness: Brightness.light, outdoor: false),
+            (brightness: Brightness.dark, outdoor: false),
+            (brightness: Brightness.light, outdoor: true),
+          ];
+      for (final double width in <double>[360, 800, 1200]) {
+        for (final ({Brightness brightness, bool outdoor}) theme in themes) {
+          for (final double scale in <double>[1, 2]) {
+            for (final bool portrait in <bool>[true, false]) {
+              for (final bool rtl in <bool>[false, true]) {
+                tester.view.devicePixelRatio = 1;
+                tester.view.physicalSize = portrait
+                    ? Size(width, 1000)
+                    : Size(width < 900 ? 900 : width, 700);
+                final FakePhotoRepository photos = FakePhotoRepository();
+                addTearDown(photos.dispose);
+                await tester.pumpWidget(
+                  _captionAudioScope(
+                    brightness: theme.brightness,
+                    outdoor: theme.outdoor,
+                    textScale: scale,
+                    rtl: rtl,
+                    photos: photos,
+                    recorder: AudioRecorderService.fake(),
+                  ),
+                );
+                await tester.pumpAndSettle();
+                final Finder mic = find.byKey(
+                  const ValueKey<String>('app-text-field-dictate'),
+                );
+                final Finder record = find.byTooltip(Copy.captureRecordAudio);
+                expect(mic, findsOneWidget);
+                expect(record, findsOneWidget);
+                expect(find.byIcon(Icons.graphic_eq), findsOneWidget);
+                expect(
+                  tester.getSize(record).shortestSide,
+                  greaterThanOrEqualTo(Sizes.minTapTarget),
+                );
+                final double micX = tester.getTopLeft(mic).dx;
+                final double recordX = tester.getTopLeft(record).dx;
+                expect(rtl ? recordX < micX : recordX > micX, isTrue);
+                expect(find.text(Copy.captureAudioSection), findsNothing);
+                expect(
+                  find.widgetWithText(AppButton, Copy.captureRecordAudio),
+                  findsNothing,
+                );
+                expect(
+                  find.text(Copy.audioRecorderStatus('idle', 0)),
+                  findsOneWidget,
+                );
+                await tester.pumpWidget(const SizedBox.shrink());
+              }
+            }
+          }
+        }
+      }
+    },
+    timeout: const Timeout(Duration(minutes: 4)),
+  );
+
+  testWidgets('the waveform control starts recording', (
+    WidgetTester tester,
+  ) async {
+    final FakePhotoRepository photos = FakePhotoRepository();
+    addTearDown(photos.dispose);
+    final AudioRecorderService recorder = AudioRecorderService.fake();
+    await tester.pumpWidget(
+      _captionAudioScope(photos: photos, recorder: recorder),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip(Copy.captureRecordAudio));
+    await tester.pump();
+    expect(find.byIcon(Icons.graphic_eq), findsNothing);
+    expect(find.text(Copy.capturePauseAudio), findsOneWidget);
+    expect(find.text(Copy.captureStopAudio), findsOneWidget);
+    await recorder.stop();
+    await tester.pump();
+  });
 }
 
 Widget _scope(Widget child, {List<Override> extras = const <Override>[]}) {
   return ProviderScope(
     overrides: extras,
     child: MaterialApp(home: Scaffold(body: child)),
+  );
+}
+
+Widget _captionAudioScope({
+  required FakePhotoRepository photos,
+  required AudioRecorderService recorder,
+  Brightness brightness = Brightness.light,
+  bool outdoor = false,
+  double textScale = 1,
+  bool rtl = false,
+}) {
+  return ProviderScope(
+    overrides: <Override>[
+      currentProjectDetailsProvider.overrideWith((Ref _) => aProject(id: 'p1')),
+      photoRepositoryProvider.overrideWith((Ref _) => photos),
+      capturePersistenceProvider.overrideWith(
+        (Ref ref) =>
+            CapturePersistenceImpl(photos: photos, store: TextStore.memory()),
+      ),
+      audioRecorderServiceProvider.overrideWith((Ref _) => recorder),
+    ],
+    child: MaterialApp(
+      theme: buildTheme(brightness: brightness, outdoor: outdoor),
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(textScale)),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
+      home: Directionality(
+        textDirection: rtl ? TextDirection.rtl : TextDirection.ltr,
+        child: DictationScope(
+          service: FakeSttService(),
+          languageTag: 'en',
+          child: const Scaffold(body: CaptureScreen(projectId: 'p1')),
+        ),
+      ),
+    ),
   );
 }
 

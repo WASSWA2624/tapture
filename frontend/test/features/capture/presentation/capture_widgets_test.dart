@@ -82,13 +82,15 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text(Copy.captureRecordAudio));
+    await recorder.start('audio/interrupted.wav');
     await tester.pump();
     expect(find.text(Copy.capturePauseAudio), findsOneWidget);
 
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    tester.binding.scheduleForcedFrame();
     await tester.pump();
     expect(find.text(Copy.audioRecorderStatus('paused', 0)), findsOneWidget);
+    expect(find.text(Copy.captureStopAudio), findsOneWidget);
     expect(find.text(Copy.captureStopAudio), findsOneWidget);
 
     await recorder.stop();
@@ -387,7 +389,7 @@ void main() {
           ),
         ),
       );
-      expect(find.text(Copy.captureRecordAudio), findsOneWidget);
+      expect(find.text(Copy.audioRecorderStatus('idle', 0)), findsOneWidget);
 
       await tester.pumpWidget(
         wrap(

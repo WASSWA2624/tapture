@@ -73,15 +73,6 @@ class _AudioRecorderState extends State<AudioRecorder>
     }
   }
 
-  Future<void> _start() async {
-    final Result<void> result = await widget.recorder.start(
-      widget.relativePath,
-    );
-    result.fold((Failure failure) {
-      showAppSnack(context, failure.message, tone: SnackTone.error);
-    }, (_) {});
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -92,10 +83,6 @@ class _AudioRecorderState extends State<AudioRecorder>
         LinearProgressIndicator(value: _state.level.clamp(0.0, 1.0)),
         Row(
           children: <Widget>[
-            if (_state.phase == AudioRecorderPhase.idle ||
-                _state.phase == AudioRecorderPhase.failed ||
-                _state.phase == AudioRecorderPhase.completed)
-              AppButton(label: Copy.captureRecordAudio, onPressed: _start),
             if (_state.phase == AudioRecorderPhase.recording)
               AppButton(
                 label: Copy.capturePauseAudio,
@@ -103,7 +90,7 @@ class _AudioRecorderState extends State<AudioRecorder>
               ),
             if (_state.phase == AudioRecorderPhase.paused)
               AppButton(
-                label: Copy.captureRecordAudio,
+                label: Copy.captureResume,
                 onPressed: () => widget.recorder.resume(),
               ),
             if (_state.phase == AudioRecorderPhase.recording ||

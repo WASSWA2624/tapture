@@ -14,6 +14,7 @@ import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
@@ -282,21 +283,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                 unawaited(_caption(session, target));
               },
             ),
-          if (project != null) ...<Widget>[
-            const AppSectionHeader(
-              title: Copy.captureAudioSection,
-              dense: true,
-            ),
-            AudioRecorder(
-              recorder: ref.watch(audioRecorderServiceProvider),
-              relativePath:
-                  'projects/${project.folderName}/audio/${uiState.audioId}.wav',
-              onCompleted: (AudioRecording recording) =>
-                  unawaited(_audioStopped(recording)),
-            ),
-            if (session.audio.isNotEmpty)
-              Text(Copy.captureAudioCount(session.audio.length)),
-          ],
           const AppSectionHeader(title: Copy.captureRecordCaption, dense: true),
           RecordCaptionField(
             value: session.recordCaption,
@@ -314,7 +300,25 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                 tone: SnackTone.error,
               );
             },
+            afterDictation: project == null
+                ? null
+                : _RecordAudioButton(
+                    recorder: ref.watch(audioRecorderServiceProvider),
+                    relativePath:
+                        'projects/${project.folderName}/audio/${uiState.audioId}.wav',
+                  ),
           ),
+          if (project != null) ...<Widget>[
+            AudioRecorder(
+              recorder: ref.watch(audioRecorderServiceProvider),
+              relativePath:
+                  'projects/${project.folderName}/audio/${uiState.audioId}.wav',
+              onCompleted: (AudioRecording recording) =>
+                  unawaited(_audioStopped(recording)),
+            ),
+            if (session.audio.isNotEmpty)
+              Text(Copy.captureAudioCount(session.audio.length)),
+          ],
           const SizedBox(height: Space.x2),
           InlineFieldsSection(
             fields: widget.fields,
@@ -1082,6 +1086,66 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
 }
 
 enum _AudioScope { currentPhoto, selectedPhotos, allPhotos }
+
+/// Waveform control for the caption field. Hidden while a take is open.
+final class _RecordAudioButton extends StatefulWidget {
+  const _RecordAudioButton({
+    required this.recorder,
+    required this.relativePath,
+  });
+
+  final AudioRecorderService recorder;
+  final String relativePath;
+
+  @override
+  State<_RecordAudioButton> createState() => _RecordAudioButtonState();
+}
+
+class _RecordAudioButtonState extends State<_RecordAudioButton> {
+  AudioRecorderPhase _phase = AudioRecorderPhase.idle;
+  StreamSubscription<AudioRecorderState>? _sub;
+
+  @override
+  void initState() {
+    super.initState();
+    _sub = widget.recorder.state.listen((AudioRecorderState next) {
+      if (mounted) {
+        setState(() => _phase = next.phase);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    unawaited(_sub?.cancel());
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_phase == AudioRecorderPhase.recording ||
+        _phase == AudioRecorderPhase.paused) {
+      return const SizedBox.shrink();
+    }
+    return AppIconButton(
+      icon: Icons.graphic_eq,
+      semanticLabel: Copy.captureRecordAudio,
+      tooltip: Copy.captureRecordAudio,
+      outlined: false,
+      onPressed: () async {
+        final Result<void> result = await widget.recorder.start(
+          widget.relativePath,
+        );
+        if (!mounted) {
+          return;
+        }
+        result.fold((Failure failure) {
+          showAppSnack(context, failure.message, tone: SnackTone.error);
+        }, (_) {});
+      },
+    );
+  }
+}
 
 bool _sameContext(Map<String, String> left, Map<String, String> right) {
   if (left.length != right.length) return false;
