@@ -28,7 +28,7 @@ class Context extends Table with MergeColumns {
 
   @override
   List<Set<Column<Object>>> get uniqueKeys => <Set<Column<Object>>>[
-    <Column<Object>>{projectId, level},
+    <Column<Object>>{projectId, fieldKey},
   ];
 }
 
@@ -38,12 +38,14 @@ Future<void> setContextLevel(
   required String projectId,
   required int level,
   required String value,
+  String? fieldKey,
   Clock? clock,
   String? deviceId,
 }) async {
   final AppDatabase db = tx as AppDatabase;
   final DateTime now = (clock ?? const SystemClock()).nowUtc();
   final String device = deviceId ?? '';
+  final String key = fieldKey ?? 'level-$level';
   await tx.transaction(() async {
     await (tx.delete(db.contextState)..where(
           ($ContextStateTable tbl) =>
@@ -54,7 +56,7 @@ Future<void> setContextLevel(
     final ContextStateRow? existing =
         await (tx.select(db.contextState)..where(
               ($ContextStateTable tbl) =>
-                  tbl.projectId.equals(projectId) & tbl.level.equals(level),
+                  tbl.projectId.equals(projectId) & tbl.fieldKey.equals(key),
             ))
             .getSingleOrNull();
     if (existing == null) {
@@ -64,6 +66,7 @@ Future<void> setContextLevel(
             ContextStateCompanion.insert(
               projectId: projectId,
               level: level,
+              fieldKey: Value<String>(key),
               value: value,
               setAt: now,
               createdAt: now,

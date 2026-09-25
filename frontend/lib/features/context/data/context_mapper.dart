@@ -22,8 +22,13 @@ abstract final class ContextMapper {
       if (row.level <= 0) {
         continue;
       }
+      if (row.fieldKey.isNotEmpty) {
+        values[row.fieldKey] = row.value;
+        continue;
+      }
       for (final ContextLevel level in levels) {
-        if (level.order + 1 == row.level) {
+        if (level.order + 1 == row.level &&
+            !values.containsKey(level.fieldKey)) {
           values[level.fieldKey] = row.value;
           break;
         }

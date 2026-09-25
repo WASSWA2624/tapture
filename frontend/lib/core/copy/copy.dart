@@ -496,6 +496,9 @@ abstract final class Copy {
   /// Soft-deletes a project after typed confirmation.
   static const String projectDelete = 'Delete project';
 
+  /// Row menu label. The confirm dialog keeps [projectDelete].
+  static const String projectDeleteMenu = 'Delete';
+
   /// Title of the delete confirmation, naming the project.
   static String projectDeleteTitle(String name) => 'Delete $name?';
 
@@ -589,7 +592,7 @@ abstract final class Copy {
   }
 
   /// Title of the create-project form.
-  static const String projectCreateTitle = 'New project';
+  static const String projectCreateTitle = 'Create project';
 
   /// Title of the create form when it is copying another project.
   static const String projectDuplicateTitle = 'Duplicate project';
@@ -751,8 +754,24 @@ abstract final class Copy {
   /// Stops an export before a file is kept.
   static const String projectExportCancel = 'Cancel';
 
-  /// Primary action on the open-project home.
+  /// Edits one captured record.
+  static const String recordEdit = 'Edit';
+
+  /// Archives one captured record. The photos stay on the device.
+  static const String recordDelete = 'Delete';
+
+  /// Confirm copy for archiving a captured record.
+  static const String recordArchiveMessage =
+      'The photos stay on this device. The record leaves this list.';
+
+  /// Primary action on the open-project home when a record already exists.
   static const String continueCapturing = 'Continue capturing';
+
+  /// Home primary action before the first record.
+  static const String captureStart = 'Start capturing';
+
+  /// Home primary action after at least one record.
+  static const String captureMore = 'Capture more';
 
   /// Review card on the project home.
   static const String homeReview = 'Needs review';
@@ -775,42 +794,22 @@ abstract final class Copy {
 
   /// How many records are waiting for review.
   static String homeReviewPending(int n) {
-    return Intl.plural(
-      n,
-      zero: 'Nothing needs review',
-      one: '1 record needs review',
-      other: '$n records need review',
-    );
+    return Intl.plural(n, zero: 'None', one: '1 record', other: '$n records');
   }
 
   /// How many records are waiting to be processed.
   static String homeProcessPending(int n) {
-    return Intl.plural(
-      n,
-      zero: 'Nothing is ready to process',
-      one: '1 record is ready to process',
-      other: '$n records are ready to process',
-    );
+    return Intl.plural(n, zero: 'None', one: '1 record', other: '$n records');
   }
 
   /// How many records are waiting to be exported.
   static String homeExportPending(int n) {
-    return Intl.plural(
-      n,
-      zero: 'Nothing is ready to export',
-      one: '1 record is ready to export',
-      other: '$n records are ready to export',
-    );
+    return Intl.plural(n, zero: 'None', one: '1 record', other: '$n records');
   }
 
   /// How many finished files are waiting to be shared.
   static String homeSharePending(int n) {
-    return Intl.plural(
-      n,
-      zero: 'No exports to share',
-      one: '1 export to share',
-      other: '$n exports to share',
-    );
+    return Intl.plural(n, zero: 'None', one: '1 export', other: '$n exports');
   }
 
   /// Shell destination: capture. Visually dominant in the four-destination bar.
@@ -824,6 +823,9 @@ abstract final class Copy {
 
   /// Pinned-template destination the status line opens.
   static const String navTemplates = 'Templates';
+
+  /// Project-scoped template list. The app-wide list keeps [navTemplates].
+  static const String projectTemplatesTitle = 'Project templates';
 
   /// Project datasets destination.
   static const String navDatasets = 'Datasets';
@@ -948,6 +950,24 @@ abstract final class Copy {
 
   /// Primary action that opens the blank-template form.
   static const String templatesCreate = 'Create a blank template';
+
+  /// Renames a template from its row menu.
+  static const String templatesEdit = 'Edit';
+
+  /// Opens upload and library choices on the template list.
+  static const String templatesAddChoices = 'Add templates';
+
+  /// Uploads a template file.
+  static const String templatesUpload = 'Upload a template';
+
+  /// Attaches a template that already exists.
+  static const String templatesUseExisting = 'Use an existing template';
+
+  /// Search on the template list matched nothing.
+  static const String templatesNoMatch = 'No matching templates';
+
+  /// Search on the field list matched nothing.
+  static const String fieldsNoMatch = 'No matching fields';
 
   /// How a project chooses a template when capture starts.
   static const String templateChoiceLabel = 'Template choice';
@@ -1777,7 +1797,7 @@ abstract final class Copy {
   static const String statusNoContext = 'No context';
 
   /// Context hierarchy screen title.
-  static const String contextHierarchyTitle = 'Context levels';
+  static const String contextHierarchyTitle = 'Project contexts';
 
   /// Empty hierarchy.
   static const String contextHierarchyEmptyHeadline = 'No context levels';
@@ -2077,6 +2097,12 @@ abstract final class Copy {
 
   /// Photo caption sheet title.
   static const String capturePhotoCaption = 'Photo caption';
+
+  /// Removes one draft photo from the capture tray.
+  static const String captureRemovePhoto = 'Remove photo';
+
+  /// Opens the caption for one thumbnail.
+  static const String captureCaptionAction = 'Caption';
 
   /// Caption scope: this photo.
   static String captionScopeThis(int n) => 'This photo ($n)';

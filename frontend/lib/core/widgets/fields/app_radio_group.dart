@@ -62,13 +62,14 @@ class AppRadioGroup<T> extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          ExcludeSemantics(
-            child: Text(
-              label,
-              style: AppText.label.copyWith(color: colors.onSurface),
+          if (showLabel)
+            ExcludeSemantics(
+              child: Text(
+                label,
+                style: AppText.label.copyWith(color: colors.onSurface),
+              ),
             ),
-          ),
-          const SizedBox(height: Space.x2),
+          if (showLabel) const SizedBox(height: Space.x2),
           Material(
             color: colors.surface,
             shape: RoundedRectangleBorder(

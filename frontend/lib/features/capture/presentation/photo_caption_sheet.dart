@@ -16,6 +16,8 @@ final class PhotoCaptionSheet extends StatefulWidget {
     this.selectedCount = 0,
     this.allCount = 1,
     this.initialScope = CaptionScope.thisPhoto,
+    this.showScope = true,
+    this.audio,
     super.key,
   });
 
@@ -36,6 +38,12 @@ final class PhotoCaptionSheet extends StatefulWidget {
 
   /// Scope selected when the sheet opens.
   final CaptionScope initialScope;
+
+  /// When false, the sheet edits only [initialScope] and hides the chooser.
+  final bool showScope;
+
+  /// Optional recorder, the same control the capture page uses.
+  final Widget? audio;
 
   @override
   State<PhotoCaptionSheet> createState() => _PhotoCaptionSheetState();
@@ -68,18 +76,20 @@ class _PhotoCaptionSheetState extends State<PhotoCaptionSheet> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           const Text(Copy.capturePhotoCaption),
-          CaptionScopeSelector(
-            scope: _scope,
-            thisCount: 1,
-            selectedCount: widget.selectedCount,
-            allCount: widget.allCount,
-            onChanged: (CaptionScope scope) => setState(() => _scope = scope),
-          ),
+          if (widget.showScope)
+            CaptionScopeSelector(
+              scope: _scope,
+              thisCount: 1,
+              selectedCount: widget.selectedCount,
+              allCount: widget.allCount,
+              onChanged: (CaptionScope scope) => setState(() => _scope = scope),
+            ),
           AppTextField(
             controller: _controller,
             label: Copy.capturePhotoCaption,
           ),
           if (_error != null) Text(_error!),
+          ?widget.audio,
           AppButton(
             label: Copy.captureSaved,
             onPressed: () async {

@@ -8,6 +8,12 @@ import 'package:tapture/features/exports/domain/export_repository.dart';
 
 /// In-memory [ExportRepository] for feature tests that must not open a database.
 final class FakeExportRepository implements ExportRepository {
+  /// Creates the fake. [displayName] is the name the screen shows.
+  FakeExportRepository({this.displayName});
+
+  /// Operator-facing name. Null keeps the stored id name.
+  final String? displayName;
+
   final Map<String, ExportEntry> _rows = <String, ExportEntry>{};
   final StreamController<void> _changes = StreamController<void>.broadcast();
   int _next = 0;
@@ -99,7 +105,7 @@ final class FakeExportRepository implements ExportRepository {
       id: id,
       projectId: projectId,
       version: version,
-      fileName: '$id.xlsx',
+      fileName: displayName ?? '$id.xlsx',
       bytes: Uint8List(0),
     ));
   }

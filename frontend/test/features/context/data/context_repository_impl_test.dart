@@ -59,6 +59,7 @@ void main() {
       rev: 1,
       projectId: 'proj-1',
       level: 2,
+      fieldKey: level.fieldKey,
       value: 'Kasubi HC IV',
       setAt: at,
     );
@@ -70,6 +71,7 @@ void main() {
       rev: 1,
       projectId: 'proj-1',
       level: 0,
+      fieldKey: '',
       value: jsonEncode(<String, String>{'surveyor': 'Sam'}),
       setAt: at,
     );
@@ -124,6 +126,36 @@ void main() {
     _ok(await repo.saveHierarchy('proj-1', const <ContextLevel>[]));
     expect(await db.select(db.context).get(), isEmpty);
     expect(await db.select(db.contextState).get(), isEmpty);
+  });
+
+  test('two fields can share one level and both values survive', () async {
+    _ok(
+      await repo.saveHierarchy('proj-1', const <ContextLevel>[
+        ContextLevel(fieldKey: 'district', order: 0, label: 'District'),
+        ContextLevel(fieldKey: 'ward', order: 0, label: 'Ward'),
+        ContextLevel(fieldKey: 'facility', order: 1, label: 'Facility'),
+      ]),
+    );
+    _ok(
+      await repo.setLevelValue(
+        projectId: 'proj-1',
+        fieldKey: 'district',
+        value: 'North',
+        clearBelow: false,
+      ),
+    );
+    _ok(
+      await repo.setLevelValue(
+        projectId: 'proj-1',
+        fieldKey: 'ward',
+        value: 'A',
+        clearBelow: false,
+      ),
+    );
+    final ContextState state = _ok(await repo.load('proj-1'));
+    expect(state.levels, hasLength(3));
+    expect(state.values['district'], 'North');
+    expect(state.values['ward'], 'A');
   });
 
   test('hierarchy and values survive a simulated restart', () async {

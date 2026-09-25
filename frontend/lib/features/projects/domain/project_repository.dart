@@ -57,6 +57,16 @@ abstract interface class ProjectRepository {
     String projectId, {
     required List<String> statuses,
   });
+
+  /// Hides [recordId] from lists. Photo files and raw values stay.
+  Future<Result<void>> archiveRecord(String recordId);
+
+  /// Writes a refined value beside the original raw column.
+  Future<Result<void>> refineRecordField({
+    required String recordId,
+    required String fieldKey,
+    required String value,
+  });
 }
 
 /// One landing-list row: the project plus the counts and last-worked
@@ -78,8 +88,22 @@ typedef ProjectHomeCounts = ({
   int toShare,
 });
 
+/// One field value on a captured record, for search and edit.
+typedef ProjectRecordFieldValue = ({
+  String fieldKey,
+  String raw,
+  String refined,
+  String approved,
+});
+
 /// One captured record shown on the project records list.
-typedef ProjectRecordRow = ({String id, String status, int photoCount});
+typedef ProjectRecordRow = ({
+  String id,
+  String status,
+  int photoCount,
+  String? thumbPath,
+  List<ProjectRecordFieldValue> fields,
+});
 
 /// Empty home counts. Shared by the empty stand-in and tests.
 const ProjectHomeCounts emptyProjectHomeCounts = (

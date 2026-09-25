@@ -65,6 +65,7 @@ final class _BrowserDownloads implements DownloadService {
     required String fileName,
     required Uint8List bytes,
     required String mimeType,
+    String? subfolder,
   }) async {
     try {
       final _Blob blob = _Blob(

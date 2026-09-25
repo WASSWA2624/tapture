@@ -88,6 +88,10 @@ void main() {
     await repo.saveHierarchy('p1', const <ContextLevel>[
       ContextLevel(fieldKey: 'a', order: 0, label: 'A'),
     ]);
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(400, 800);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(
       wrap(
         const ContextHierarchyScreen(projectId: 'p1'),
@@ -101,7 +105,7 @@ void main() {
       message: 'hier-write',
       recoveryAction: 'retry',
     );
-    await tester.tap(find.byIcon(Icons.delete_outline));
+    await tester.tap(find.byTooltip(Copy.contextRemoveLevel));
     await tester.pumpAndSettle();
     expect(find.textContaining('hier-write'), findsWidgets);
     expect((await repo.load('p1')).valueOrNull?.levels, hasLength(1));
@@ -119,12 +123,12 @@ void main() {
       wrap(const ContextHierarchyScreen(projectId: 'p1')),
     );
     await tester.pumpAndSettle();
-    expect(find.text('A'), findsOneWidget);
-    expect(find.text('B'), findsOneWidget);
-    expect(find.text('C'), findsOneWidget);
+    expect(find.text('A'), findsWidgets);
+    expect(find.text('B'), findsWidgets);
+    expect(find.text('C'), findsWidgets);
 
     final TestGesture gesture = await tester.startGesture(
-      tester.getCenter(find.text('C')),
+      tester.getCenter(find.text('C').last),
     );
     await tester.pump(const Duration(milliseconds: 700));
     await gesture.moveBy(const Offset(0, -120));

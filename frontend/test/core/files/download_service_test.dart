@@ -72,6 +72,60 @@ void main() {
   );
 
   test(
+    'an Exports subfolder is nested under Tapture and stays off the default save',
+    () async {
+      final Directory folder = _tempFolder();
+      final DownloadService downloads = folderDownloads(() async => folder);
+      final Uint8List bytes = Uint8List.fromList(<int>[9]);
+
+      final String? plain = _ok(
+        await downloads.save(
+          fileName: 'note.zip',
+          bytes: bytes,
+          mimeType: 'application/zip',
+        ),
+      );
+      final String? nested = _ok(
+        await downloads.save(
+          fileName: 'book.xlsx',
+          bytes: bytes,
+          mimeType: 'application/vnd.ms-excel',
+          subfolder: 'Exports',
+        ),
+      );
+
+      expect(_slash(plain), _slash('${folder.path}/Tapture/note.zip'));
+      expect(
+        _slash(nested),
+        _slash('${folder.path}/Tapture/Exports/book.xlsx'),
+      );
+      expect(File(nested!).readAsBytesSync(), bytes);
+
+      const MethodChannel channel = MethodChannel('com.tapture.app/files');
+      _onChannel(channel, (MethodCall call) async {
+        expect(call.method, 'saveToDownloads');
+        final Map<Object?, Object?> args =
+            call.arguments as Map<Object?, Object?>;
+        expect(args['subfolder'], 'Exports');
+        return 'Download/Tapture/Exports/book.xlsx';
+      });
+      final DownloadService android = androidDownloads(
+        channel: channel,
+        fallback: folderDownloads(() async => folder),
+      );
+      final String? viaChannel = _ok(
+        await android.save(
+          fileName: 'book.xlsx',
+          bytes: bytes,
+          mimeType: 'application/vnd.ms-excel',
+          subfolder: 'Exports',
+        ),
+      );
+      expect(viaChannel, 'Download/Tapture/Exports/book.xlsx');
+    },
+  );
+
+  test(
     'an unsupported reply and a thrown PlatformException both fall back',
     () async {
       final Directory folder = _tempFolder();

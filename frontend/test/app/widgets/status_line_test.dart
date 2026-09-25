@@ -142,7 +142,7 @@ void main() {
     expect(
       find.descendant(
         of: find.byType(StatusLine),
-        matching: find.text('Alpha'),
+        matching: find.text(Copy.navCapture),
       ),
       findsOneWidget,
     );
@@ -151,6 +151,54 @@ void main() {
     expect(
       container.read(routerProvider).state.uri.path,
       AppRoutes.project('p1'),
+    );
+  });
+
+  testWidgets('create and project templates use their own titles', (
+    WidgetTester tester,
+  ) async {
+    final StreamController<NetworkState> radio = StreamController<NetworkState>(
+      sync: true,
+    );
+    addTearDown(radio.close);
+    radio.add(NetworkState.online);
+    final ProviderContainer container = await _pump(tester, radio: radio);
+
+    container.read(routerProvider).go(AppRoutes.projectCreate);
+    await tester.pumpAndSettle();
+    expect(
+      find.descendant(
+        of: find.byType(StatusLine),
+        matching: find.text(Copy.projectCreateTitle),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text(Copy.projectShowArchived), findsNothing);
+    expect(find.byKey(const ValueKey<String>('shell-back')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey<String>('shell-back')));
+    await tester.pumpAndSettle();
+    expect(container.read(routerProvider).state.uri.path, AppRoutes.projects);
+
+    container.read(openProjectIdProvider.notifier).open('p1');
+    container.read(routerProvider).go(AppRoutes.projectTemplates('p1'));
+    await tester.pumpAndSettle();
+    expect(
+      find.descendant(
+        of: find.byType(StatusLine),
+        matching: find.text(Copy.projectTemplatesTitle),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text(Copy.projectShowArchived), findsNothing);
+
+    container.read(routerProvider).go('${AppRoutes.project('p1')}/capture');
+    await tester.pumpAndSettle();
+    expect(
+      find.descendant(
+        of: find.byType(StatusLine),
+        matching: find.text(Copy.navCapture),
+      ),
+      findsOneWidget,
     );
   });
 

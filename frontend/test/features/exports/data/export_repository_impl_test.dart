@@ -12,6 +12,7 @@ import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/exports/data/export_repository_impl.dart';
+import 'package:tapture/features/exports/domain/export_file_name.dart';
 import 'package:tapture/features/exports/domain/export_repository.dart';
 import 'package:tapture/features/projects/data/project_repository_impl.dart';
 import 'package:tapture/features/projects/domain/project.dart';
@@ -39,10 +40,40 @@ void main() {
 
     expect(first.version, 1);
     expect(second.version, 2);
-    expect(first.fileName, isNot(second.fileName));
-    expect(harness.file(first.fileName).existsSync(), isTrue);
-    expect(harness.file(second.fileName).existsSync(), isTrue);
-    expect(await harness.db.select(harness.db.exports).get(), hasLength(2));
+    final DateTime local = DateTime.utc(2026, 9, 24, 8).toLocal();
+    final String display = ExportFileName.build(
+      projectName: 'Test project',
+      local: local,
+    );
+    expect(first.fileName, display);
+    expect(second.fileName, display);
+    final List<ExportRow> stored = await harness.db
+        .select(harness.db.exports)
+        .get();
+    expect(stored, hasLength(2));
+    expect(stored[0].filePath, isNot(stored[1].filePath));
+    for (final ExportRow row in stored) {
+      final String storedName = row.filePath.split('/').last;
+      expect(storedName, isNot(display));
+      expect(harness.file(storedName).existsSync(), isTrue);
+    }
+  });
+
+  test('a display name keeps letters and digits and stamps the local time', () {
+    expect(
+      ExportFileName.build(
+        projectName: 'Boiler / A',
+        local: DateTime(2026, 9, 24, 20, 42, 13),
+      ),
+      'Boiler-A-240926-204213.xlsx',
+    );
+    expect(
+      ExportFileName.build(
+        projectName: '///',
+        local: DateTime(2026, 1, 2, 3, 4, 5),
+      ),
+      'Project-020126-030405.xlsx',
+    );
   });
 
   test('a refused write leaves records and exports unchanged', () async {

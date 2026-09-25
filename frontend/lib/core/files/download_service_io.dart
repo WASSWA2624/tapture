@@ -194,9 +194,10 @@ final class _FolderDownloads implements DownloadService {
     required String fileName,
     required Uint8List bytes,
     required String mimeType,
+    String? subfolder,
   }) async {
     try {
-      final Directory folder = await _targetFolder();
+      final Directory folder = await _targetFolder(subfolder: subfolder);
       await folder.create(recursive: true);
       final File target = _freeName(folder, fileName);
       final File part = File('${target.path}$_partSuffix');
@@ -227,8 +228,11 @@ final class _FolderDownloads implements DownloadService {
     );
   }
 
-  Future<Directory> _targetFolder() async {
+  Future<Directory> _targetFolder({String? subfolder}) async {
     final Directory base = await _folder();
+    if (subfolder == 'Exports') {
+      return Directory('${base.path}/$_taptureFolder/Exports');
+    }
     return _taptureSubfolder ? Directory('${base.path}/$_taptureFolder') : base;
   }
 }
@@ -313,23 +317,28 @@ final class _ChannelDownloads implements DownloadService {
     required String fileName,
     required Uint8List bytes,
     required String mimeType,
+    String? subfolder,
   }) async {
     try {
-      final Object? location = await _channel.invokeMethod<Object>(
-        'saveToDownloads',
-        <String, Object>{
-          'fileName': fileName,
-          'mimeType': mimeType,
-          'bytes': bytes,
-        },
-      );
+      final Object? location = await _channel
+          .invokeMethod<Object>('saveToDownloads', <String, Object>{
+            'fileName': fileName,
+            'mimeType': mimeType,
+            'bytes': bytes,
+            'subfolder': ?subfolder,
+          });
       if (location is String && location.isNotEmpty) {
         return Success<String?>(location);
       }
     } on Object {
       // Missing plugin, unsupported API, or any write the channel refused.
     }
-    return _fallback.save(fileName: fileName, bytes: bytes, mimeType: mimeType);
+    return _fallback.save(
+      fileName: fileName,
+      bytes: bytes,
+      mimeType: mimeType,
+      subfolder: subfolder,
+    );
   }
 }
 

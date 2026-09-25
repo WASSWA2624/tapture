@@ -176,7 +176,7 @@ List<AppOverflowAction> _rowActions(
       onTap: () => unawaited(ProjectArchiveAction.apply(ref, project)),
     ),
     AppOverflowAction(
-      label: Copy.projectDelete,
+      label: Copy.projectDeleteMenu,
       icon: Icons.delete_outline,
       onTap: () =>
           unawaited(ProjectDeleteAction.confirm(context, ref, project)),

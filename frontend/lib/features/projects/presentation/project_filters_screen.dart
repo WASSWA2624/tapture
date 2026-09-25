@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
-import 'package:tapture/core/widgets/fields/app_choice_field.dart';
+import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
 
 import '../domain/project_repository.dart';
@@ -51,12 +52,34 @@ class _ProjectFiltersScreenState extends ConsumerState<ProjectFiltersScreen> {
     return AppPage(
       key: const ValueKey<String>('route-project-filters'),
       title: '${Copy.navProjects} › ${Copy.projectFiltersTitle}',
+      footer: AppPrimaryAction(
+        label: Copy.projectApplyFilters,
+        onPressed: () {
+          final ProjectListCriteria current = ref.read(
+            projectListCriteriaProvider,
+          );
+          ref
+              .read(projectListCriteriaProvider.notifier)
+              .set(
+                current.copyWith(
+                  statuses: _statuses.isEmpty
+                      ? const <ProjectStatus>{ProjectStatus.active}
+                      : _statuses,
+                  pin: _pin,
+                  organisations: _organisations,
+                ),
+              );
+          context.pop();
+        },
+      ),
       body: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          const AppSectionHeader(title: Copy.projectStatusFilter),
           AppCheckboxGroup<ProjectStatus>(
             label: Copy.projectStatusFilter,
+            showLabel: false,
             value: _statuses,
             options: const <Choice<ProjectStatus>>[
               Choice<ProjectStatus>(
@@ -72,9 +95,12 @@ class _ProjectFiltersScreenState extends ConsumerState<ProjectFiltersScreen> {
               setState(() => _statuses = value);
             },
           ),
-          const SizedBox(height: Space.x1),
-          AppChoiceField<ProjectPinFilter>(
+          const SizedBox(height: Space.x4),
+          const AppSectionHeader(title: Copy.projectPinFilter),
+          AppRadioGroup<ProjectPinFilter>(
             label: Copy.projectPinFilter,
+            showLabel: false,
+            direction: Axis.vertical,
             value: _pin,
             options: <Choice<ProjectPinFilter>>[
               for (final ProjectPinFilter value in ProjectPinFilter.values)
@@ -83,16 +109,16 @@ class _ProjectFiltersScreenState extends ConsumerState<ProjectFiltersScreen> {
                   Copy.projectPinFilterLabel(value.name),
                 ),
             ],
-            onChanged: (ProjectPinFilter? next) {
-              if (next != null) {
-                setState(() => _pin = next);
-              }
+            onChanged: (ProjectPinFilter next) {
+              setState(() => _pin = next);
             },
           ),
-          if (organisations.isNotEmpty) ...<Widget>[
-            const SizedBox(height: Space.x1),
+          const SizedBox(height: Space.x4),
+          const AppSectionHeader(title: Copy.projectOrganisation),
+          if (organisations.isNotEmpty)
             AppCheckboxGroup<String>(
               label: Copy.projectOrganisation,
+              showLabel: false,
               value: _organisations,
               options: <Choice<String>>[
                 for (final String organisation in organisations)
@@ -102,28 +128,6 @@ class _ProjectFiltersScreenState extends ConsumerState<ProjectFiltersScreen> {
                 setState(() => _organisations = value);
               },
             ),
-          ],
-          const SizedBox(height: Space.x1),
-          AppButton(
-            label: Copy.projectApplyFilters,
-            onPressed: () {
-              final ProjectListCriteria current = ref.read(
-                projectListCriteriaProvider,
-              );
-              ref
-                  .read(projectListCriteriaProvider.notifier)
-                  .set(
-                    current.copyWith(
-                      statuses: _statuses.isEmpty
-                          ? const <ProjectStatus>{ProjectStatus.active}
-                          : _statuses,
-                      pin: _pin,
-                      organisations: _organisations,
-                    ),
-                  );
-              context.pop();
-            },
-          ),
         ],
       ),
     );

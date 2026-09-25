@@ -35,6 +35,7 @@ kUpgradeSteps = <int, _UpgradeStep>{
   17: migrateToV17,
   18: migrateToV18,
   19: migrateToV19,
+  20: migrateToV20,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -325,6 +326,42 @@ Future<void> migrateToV19(Migrator migrator, AppDatabase db) async {
   if (!columns.contains('rotation_degrees')) {
     await migrator.addColumn(db.photos, db.photos.rotationDegrees);
   }
+}
+
+/// Schema version 20: several fields may share one context level.
+///
+/// Existing definition rows stay. State rows gain [ContextState.fieldKey],
+/// copied from the definition with the same project and level.
+Future<void> migrateToV20(Migrator migrator, AppDatabase db) async {
+  final List<QueryRow> tables = await db
+      .customSelect(
+        "SELECT name FROM sqlite_master WHERE type = 'table' "
+        "AND name = 'context_state'",
+      )
+      .get();
+  if (tables.isEmpty) {
+    return;
+  }
+  final List<QueryRow> info = await db
+      .customSelect('PRAGMA table_info("context_state")')
+      .get();
+  final Set<String> columns = <String>{
+    for (final QueryRow row in info) row.read<String>('name'),
+  };
+  if (!columns.contains('field_key')) {
+    await migrator.addColumn(db.contextState, db.contextState.fieldKey);
+  }
+  await db.customStatement(
+    'UPDATE context_state SET field_key = ('
+    'SELECT field_key FROM context_definitions '
+    'WHERE context_definitions.project_id = context_state.project_id '
+    'AND context_definitions.level = context_state.level) '
+    "WHERE field_key = '' AND level > 0",
+  );
+  // ignore: experimental_member_use
+  await migrator.alterTable(TableMigration(db.contextState));
+  // ignore: experimental_member_use
+  await migrator.alterTable(TableMigration(db.context));
 }
 
 /// Expression index that serves pinned-first, then newest (FE-PERF-03).

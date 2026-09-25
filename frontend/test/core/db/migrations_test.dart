@@ -257,6 +257,35 @@ void main() {
     },
   );
 
+  test('version 20 keeps three context levels and copies field keys', () async {
+    expect(kDestructiveSteps.contains(20), isFalse);
+    final AppDatabase db = AppDatabase.memory();
+    addTearDown(db.close);
+    await db.customSelect('SELECT 1').get();
+    await db.customStatement(
+      'INSERT INTO context_definitions '
+      '(id, created_at, updated_at, updated_by_device, rev, project_id, '
+      'level, field_key, label) VALUES '
+      "('c1', 1, 1, 'device-1', 1, 'project-1', 1, 'district', 'District'), "
+      "('c2', 1, 1, 'device-1', 1, 'project-1', 2, 'facility', 'Facility'), "
+      "('c3', 1, 1, 'device-1', 1, 'project-1', 3, 'ward', 'Ward')",
+    );
+    await db.customStatement(
+      'INSERT INTO context_state '
+      '(id, created_at, updated_at, updated_by_device, rev, project_id, '
+      "level, field_key, value, set_at) VALUES "
+      "('s1', 1, 1, 'device-1', 1, 'project-1', 1, '', 'North', 1)",
+    );
+
+    await migrateToV20(Migrator(db), db);
+    await migrateToV20(Migrator(db), db);
+
+    expect(await _count(db, 'context_definitions'), 3);
+    final ContextStateRow state = await db.select(db.contextState).getSingle();
+    expect(state.fieldKey, 'district');
+    expect(state.value, 'North');
+  });
+
   test(
     'migrateToV16 is not a destructive step and a second run is a no-op',
     () async {

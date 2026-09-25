@@ -35,7 +35,13 @@ void main() {
     final FakeProjectRepository projects = FakeProjectRepository();
     addTearDown(projects.dispose);
     projects.seedRecords('project-1', const <ProjectRecordRow>[
-      (id: 'r1', status: 'captured', photoCount: 1),
+      (
+        id: 'r1',
+        status: 'captured',
+        photoCount: 1,
+        thumbPath: null,
+        fields: <ProjectRecordFieldValue>[],
+      ),
     ]);
     final FakeExportRepository exports = FakeExportRepository();
     addTearDown(exports.dispose);
@@ -60,7 +66,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(Copy.projectExportWrote), findsOneWidget);
     expect(shared, 0);
-    await tester.tap(find.widgetWithText(AppButton, Copy.projectExportShare));
+    await tester.tap(find.text(Copy.projectExportShare));
     await tester.pumpAndSettle();
     expect(shared, 1);
   });
@@ -71,7 +77,13 @@ void main() {
     final FakeProjectRepository projects = FakeProjectRepository();
     addTearDown(projects.dispose);
     projects.seedRecords('project-1', const <ProjectRecordRow>[
-      (id: 'r1', status: 'captured', photoCount: 1),
+      (
+        id: 'r1',
+        status: 'captured',
+        photoCount: 1,
+        thumbPath: null,
+        fields: <ProjectRecordFieldValue>[],
+      ),
     ]);
     await _pump(tester, projects: projects);
     await tester.tap(find.widgetWithText(AppButton, Copy.projectExport));
@@ -86,7 +98,13 @@ void main() {
     final FakeProjectRepository projects = FakeProjectRepository();
     addTearDown(projects.dispose);
     projects.seedRecords('project-1', const <ProjectRecordRow>[
-      (id: 'r1', status: 'captured', photoCount: 1),
+      (
+        id: 'r1',
+        status: 'captured',
+        photoCount: 1,
+        thumbPath: null,
+        fields: <ProjectRecordFieldValue>[],
+      ),
     ]);
     await _pump(
       tester,
@@ -103,6 +121,42 @@ void main() {
     expect(find.text(Copy.projectExportWrote), findsNothing);
     expect(find.widgetWithText(AppButton, Copy.projectExport), findsOneWidget);
   });
+
+  testWidgets(
+    'a saved export shows the display name and keeps it when the copy fails',
+    (WidgetTester tester) async {
+      final FakeProjectRepository projects = FakeProjectRepository();
+      addTearDown(projects.dispose);
+      projects.seedRecords('project-1', const <ProjectRecordRow>[
+        (
+          id: 'r1',
+          status: 'captured',
+          photoCount: 1,
+          thumbPath: null,
+          fields: <ProjectRecordFieldValue>[],
+        ),
+      ]);
+      final FakeExportRepository exports = FakeExportRepository(
+        displayName: 'Test-project-240926-110000.xlsx',
+      );
+      addTearDown(exports.dispose);
+      await _pump(
+        tester,
+        projects: projects,
+        overrides: <Override>[
+          exportRepositoryProvider.overrideWith((Ref _) => exports),
+          downloadServiceProvider.overrideWith(
+            (Ref _) => DownloadService.fake(fail: true),
+          ),
+        ],
+      );
+      await tester.tap(find.widgetWithText(AppButton, Copy.projectExport));
+      await tester.pumpAndSettle();
+      expect(find.text(Copy.projectExportWrote), findsOneWidget);
+      expect(find.text('Test-project-240926-110000.xlsx'), findsOneWidget);
+      expect(find.textContaining('could not save'), findsOneWidget);
+    },
+  );
 }
 
 Future<void> _pump(

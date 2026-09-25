@@ -88,11 +88,13 @@ abstract interface class DownloadService {
   /// Saves [bytes] as [fileName]. Succeeds with where the file went, which
   /// is null when the browser decides. On Android 10+ that is
   /// `Download/Tapture/<name>`; on desktop, the path under
-  /// `Downloads/Tapture/`.
+  /// `Downloads/Tapture/`. [subfolder] is a single extra folder under
+  /// Tapture, used by project exports. Null keeps the shared Tapture folder.
   Future<Result<String?>> save({
     required String fileName,
     required Uint8List bytes,
     required String mimeType,
+    String? subfolder,
   });
 
   /// Whether [openExternally] can hand a copy to another app.
@@ -197,12 +199,16 @@ final class _FakeDownloadService implements DownloadService {
     required String fileName,
     required Uint8List bytes,
     required String mimeType,
+    String? subfolder,
   }) async {
     if (_fail) {
       return FailureResult<String?>(downloadFailure(fileName));
     }
     _onSave?.call(fileName, bytes, mimeType);
-    return Success<String?>('downloads/$fileName');
+    final String place = subfolder == null
+        ? 'downloads/$fileName'
+        : 'downloads/$subfolder/$fileName';
+    return Success<String?>(place);
   }
 
   @override

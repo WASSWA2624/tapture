@@ -15,8 +15,8 @@ import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
-import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
@@ -207,31 +207,39 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       });
     }
     final Project? project = ref.watch(currentProjectDetailsProvider);
-    final String title = widget.projectId.isEmpty
-        ? Copy.navCapture
-        : (project?.name ?? Copy.navProjects);
+    final String chosenTemplate = ref.watch(projectTemplateSelectionProvider);
+    if (chosenTemplate.isNotEmpty && session.templateId != chosenTemplate) {
+      final String id = chosenTemplate;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          unawaited(controller.setTemplate(id));
+        }
+      });
+    }
+    const String title = Copy.navCapture;
     final Widget? banner = widget.headroom;
     return AppPage(
       key: const ValueKey<String>('route-capture'),
       title: title,
       showAppBar: false,
       scrollable: true,
-      footer: Row(
+      footer: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          AppButton(
-            label: Copy.captureSaveRaw,
-            variant: AppButtonVariant.secondary,
-            busy: uiState.saving,
-            onPressed: widget.onSaveRaw ?? () => unawaited(_save(false)),
-          ),
-          const SizedBox(width: Space.x2),
-          Expanded(
+          SizedBox(
+            width: double.infinity,
             child: AppButton(
-              label: Copy.captureSaveAndAnalyse,
+              label: Copy.captureSaveRaw,
+              variant: AppButtonVariant.secondary,
               busy: uiState.saving,
-              onPressed:
-                  widget.onSaveAndAnalyse ?? () => unawaited(_save(true)),
+              onPressed: widget.onSaveRaw ?? () => unawaited(_save(false)),
             ),
+          ),
+          const SizedBox(height: Space.x2),
+          AppPrimaryAction(
+            label: Copy.captureSaveAndAnalyse,
+            busy: uiState.saving,
+            onPressed: widget.onSaveAndAnalyse ?? () => unawaited(_save(true)),
           ),
         ],
       ),
@@ -251,7 +259,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                 unawaited(controller.setTemplate(id));
               },
             ),
-          const AppSectionHeader(title: Copy.capturePhotosSection, dense: true),
           PhotoTray(
             photos: _activePhotos(session),
             captions: session.captions,
@@ -267,6 +274,15 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               });
             },
             onTap: (PhotoDraft photo) => _openViewer(session, photo),
+            onRemove: (PhotoDraft photo) {
+              unawaited(
+                ref
+                    .read(captureControllerProvider(widget.projectId).notifier)
+                    .removePhoto(photo.id),
+              );
+            },
+            onCaption: (PhotoDraft photo) =>
+                unawaited(_caption(session, photo, onlyThisPhoto: true)),
           ),
           if (_activePhotos(session).isNotEmpty)
             AppButton(
@@ -291,7 +307,28 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                 null,
                 text,
               );
-              return result.fold((Failure _) => false, (_) => true);
+              if (result is FailureResult<void>) {
+                return false;
+              }
+              final List<PhotoDraft> visible = _activePhotos(session);
+              final List<String> ids = _selected.isEmpty
+                  ? <String>[for (final PhotoDraft photo in visible) photo.id]
+                  : <String>[
+                      for (final PhotoDraft photo in visible)
+                        if (_selected.contains(photo.id)) photo.id,
+                    ];
+              if (ids.isEmpty) {
+                return true;
+              }
+              final Result<void> applied = await controller.applyCaptions(
+                CaptionApply.apply(
+                  photoIds: ids,
+                  text: text,
+                  mode: CaptionApplyMode.replace,
+                  existing: session.captions,
+                ),
+              );
+              return applied.fold((Failure _) => false, (_) => true);
             },
             onWriteFailed: (String _) {
               showAppSnack(
@@ -367,26 +404,33 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       builder: (BuildContext sheetContext) {
         return Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             if (picker.canTakePhoto)
-              AppButton(
-                label: Copy.captureTakePhoto,
-                icon: Icons.photo_camera_outlined,
-                onPressed: () {
-                  Navigator.of(sheetContext).pop();
-                  unawaited(_take(picker));
-                },
+              SizedBox(
+                width: double.infinity,
+                child: AppButton(
+                  label: Copy.captureTakePhoto,
+                  icon: Icons.photo_camera_outlined,
+                  onPressed: () {
+                    Navigator.of(sheetContext).pop();
+                    unawaited(_take(picker));
+                  },
+                ),
               ),
             if (picker.canTakePhoto) const SizedBox(height: Space.x2),
-            AppButton(
-              label: Copy.captureChoosePhoto,
-              icon: Icons.photo_library_outlined,
-              variant: AppButtonVariant.secondary,
-              onPressed: () {
-                Navigator.of(sheetContext).pop();
-                unawaited(_choose(picker));
-              },
+            SizedBox(
+              width: double.infinity,
+              child: AppButton(
+                label: Copy.captureChoosePhoto,
+                icon: Icons.photo_library_outlined,
+                variant: AppButtonVariant.secondary,
+                onPressed: () {
+                  Navigator.of(sheetContext).pop();
+                  unawaited(_choose(picker));
+                },
+              ),
             ),
           ],
         );
@@ -533,7 +577,15 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     );
   }
 
-  Future<void> _caption(CaptureSession session, PhotoDraft photo) async {
+  Future<void> _caption(
+    CaptureSession session,
+    PhotoDraft photo, {
+    bool onlyThisPhoto = false,
+  }) async {
+    final _CaptureUiState uiState = ref.read(
+      _captureUiProvider(widget.projectId),
+    );
+    final Project? project = ref.read(currentProjectDetailsProvider);
     await showAppSheet<void>(
       context,
       title: Copy.capturePhotoCaption,
@@ -543,9 +595,23 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
           initial: session.captions[photo.id] ?? '',
           selectedCount: _selected.length,
           allCount: session.photos.length,
-          initialScope: _selected.isEmpty
+          showScope: !onlyThisPhoto,
+          initialScope: onlyThisPhoto
               ? CaptionScope.thisPhoto
-              : CaptionScope.selected,
+              : (_selected.isEmpty
+                    ? CaptionScope.thisPhoto
+                    : CaptionScope.selected),
+          audio: project == null
+              ? null
+              : AudioRecorder(
+                  recorder: ref.read(audioRecorderServiceProvider),
+                  relativePath:
+                      'projects/${project.folderName}/audio/${uiState.audioId}.wav',
+                  onCompleted: (AudioRecording recording) {
+                    Navigator.of(sheetContext).pop();
+                    unawaited(_audioStopped(recording, onlyPhotoId: photo.id));
+                  },
+                ),
           onSave: (String text, CaptionScope scope) async {
             final List<String> ids = switch (scope) {
               CaptionScope.thisPhoto => <String>[photo.id],
@@ -571,57 +637,22 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     );
   }
 
-  Future<void> _audioStopped(AudioRecording recording) async {
+  Future<void> _audioStopped(
+    AudioRecording recording, {
+    String? onlyPhotoId,
+  }) async {
     final _CaptureUiState uiState = ref.read(
       _captureUiProvider(widget.projectId),
     );
     final CaptureSession session = ref.read(
       captureControllerProvider(widget.projectId),
     );
-    final _AudioScope? scope = await showAppSheet<_AudioScope>(
-      context,
-      title: Copy.captureAudioScopeTitle,
-      contentSized: true,
-      builder: (BuildContext sheetContext) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            if (session.photos.isNotEmpty)
-              AppListTile(
-                title: Copy.captureAudioCurrentPhoto,
-                onTap: () =>
-                    Navigator.pop(sheetContext, _AudioScope.currentPhoto),
-              ),
-            if (_selected.isNotEmpty)
-              AppListTile(
-                title: Copy.captureAudioSelectedPhotos(_selected.length),
-                onTap: () =>
-                    Navigator.pop(sheetContext, _AudioScope.selectedPhotos),
-              ),
-            AppListTile(
-              title: Copy.captureAudioAllPhotos(session.photos.length),
-              onTap: () => Navigator.pop(sheetContext, _AudioScope.allPhotos),
-            ),
-          ],
-        );
-      },
-    );
-    if (!mounted) {
-      return;
-    }
-    // Dismissing the optional photo-scope chooser must not orphan a file that
-    // has already been flushed. It remains record-level evidence.
-    final List<String> photoIds = switch (scope) {
-      null => const <String>[],
-      _AudioScope.currentPhoto =>
-        session.photos.isEmpty
-            ? const <String>[]
-            : <String>[session.photos.last.id],
-      _AudioScope.selectedPhotos => _selected.toList(growable: false),
-      _AudioScope.allPhotos => <String>[
-        for (final PhotoDraft photo in session.photos) photo.id,
-      ],
-    };
+    final List<PhotoDraft> visible = _activePhotos(session);
+    final List<String> photoIds = onlyPhotoId != null
+        ? <String>[onlyPhotoId]
+        : (_selected.isEmpty
+              ? <String>[for (final PhotoDraft photo in visible) photo.id]
+              : _selected.toList(growable: false));
     final int audioSegment = recording.relativePath.indexOf('audio/');
     final String projectPath = audioSegment < 0
         ? 'audio/${uiState.audioId}.wav'
@@ -1084,8 +1115,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     return onStage;
   }
 }
-
-enum _AudioScope { currentPhoto, selectedPhotos, allPhotos }
 
 /// Waveform control for the caption field. Hidden while a take is open.
 final class _RecordAudioButton extends StatefulWidget {

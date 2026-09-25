@@ -24,3 +24,4 @@ export 'presentation/project_list_filter.dart'
         projectListShowArchivedProvider;
 export 'presentation/project_list_view.dart';
 export 'presentation/project_open_externally_action.dart';
+export 'presentation/project_template_selection.dart';

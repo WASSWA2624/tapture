@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/projects.dart' as projects_db;
+import 'package:tapture/core/db/tables/record_fields.dart';
 import 'package:tapture/core/db/tables/reference.dart';
 import 'package:tapture/core/db/tables/template_fields.dart';
 import 'package:tapture/core/db/tables/template_rows.dart';
@@ -301,7 +302,13 @@ final class ProjectRepositoryImpl implements ProjectRepository {
         .customSelect(
           'SELECT r.id AS id, r.status AS status, '
           '(SELECT COUNT(*) FROM photos p WHERE p.record_id = r.id) '
-          'AS photo_count '
+          'AS photo_count, '
+          '(SELECT p.relative_path FROM photos p WHERE p.record_id = r.id '
+          'ORDER BY p.sort_order, p.id LIMIT 1) AS thumb_path, '
+          '(SELECT group_concat(f.field_key || char(31) || '
+          "ifnull(f.value_raw,'') || char(31) || ifnull(f.value_refined,'') "
+          "|| char(31) || ifnull(f.value_final,''), char(30)) "
+          'FROM record_fields f WHERE f.record_id = r.id) AS field_blob '
           'FROM records r WHERE r.project_id = ? '
           'AND r.status IN ($marks) '
           'ORDER BY r.created_at, r.id',
@@ -309,7 +316,11 @@ final class ProjectRepositoryImpl implements ProjectRepository {
             Variable<String>(projectId),
             for (final String status in statuses) Variable<String>(status),
           ],
-          readsFrom: <TableInfo<dynamic, dynamic>>{_db.records, _db.photos},
+          readsFrom: <TableInfo<dynamic, dynamic>>{
+            _db.records,
+            _db.photos,
+            _db.recordFields,
+          },
         )
         .watch()
         .map(
@@ -319,9 +330,62 @@ final class ProjectRepositoryImpl implements ProjectRepository {
                 id: row.read<String>('id'),
                 status: row.read<String>('status'),
                 photoCount: row.read<int>('photo_count'),
+                thumbPath: row.read<String?>('thumb_path'),
+                fields: _recordFields(row.read<String?>('field_blob')),
               ),
           ],
         );
+  }
+
+  @override
+  Future<Result<void>> archiveRecord(String recordId) async {
+    final sqlite.RecordRow? row =
+        await (_db.select(_db.records)
+              ..where((sqlite.$RecordsTable tbl) => tbl.id.equals(recordId)))
+            .getSingleOrNull();
+    if (row == null) {
+      return const FailureResult<void>(_missing);
+    }
+    await (_db.update(
+      _db.records,
+    )..where((sqlite.$RecordsTable tbl) => tbl.id.equals(recordId))).write(
+      sqlite.RecordsCompanion(
+        status: const Value<String>('archived'),
+        updatedAt: Value<DateTime>(_clock.nowUtc()),
+        updatedByDevice: Value<String>(_deviceId),
+        rev: Value<int>(row.rev + 1),
+      ),
+    );
+    return const Success<void>(null);
+  }
+
+  @override
+  Future<Result<void>> refineRecordField({
+    required String recordId,
+    required String fieldKey,
+    required String value,
+  }) async {
+    final sqlite.RecordField? field =
+        await (_db.select(_db.recordFields)..where(
+              (sqlite.$RecordFieldsTable tbl) =>
+                  tbl.recordId.equals(recordId) & tbl.fieldKey.equals(fieldKey),
+            ))
+            .getSingleOrNull();
+    if (field == null) {
+      return const FailureResult<void>(_missing);
+    }
+    final Result<sqlite.RecordField> written = await writeRecordFieldRefined(
+      _db,
+      id: field.id,
+      valueRefined: value,
+      clock: _clock,
+      deviceId: _deviceId,
+      ids: _ids,
+    );
+    return written.fold(
+      FailureResult<void>.new,
+      (_) => const Success<void>(null),
+    );
   }
 
   @override
@@ -801,6 +865,25 @@ final Provider<ProjectRepository> projectRepositoryProvider =
       return _EmptyProjectRepository();
     });
 
+List<ProjectRecordFieldValue> _recordFields(String? blob) {
+  if (blob == null || blob.isEmpty) {
+    return const <ProjectRecordFieldValue>[];
+  }
+  return <ProjectRecordFieldValue>[
+    for (final String row in blob.split('\u001e'))
+      if (row.isNotEmpty)
+        () {
+          final List<String> parts = row.split('\u001f');
+          return (
+            fieldKey: parts.isEmpty ? '' : parts[0],
+            raw: parts.length > 1 ? parts[1] : '',
+            refined: parts.length > 2 ? parts[2] : '',
+            approved: parts.length > 3 ? parts[3] : '',
+          );
+        }(),
+  ];
+}
+
 /// Empty watch streams and failing writes. Production never keeps this;
 /// tests that need rows inject [FakeProjectRepository] or an in-memory
 /// [ProjectRepositoryImpl].
@@ -826,6 +909,20 @@ final class _EmptyProjectRepository implements ProjectRepository {
     required List<String> statuses,
   }) {
     return Stream<List<ProjectRecordRow>>.value(const <ProjectRecordRow>[]);
+  }
+
+  @override
+  Future<Result<void>> archiveRecord(String recordId) async {
+    return const FailureResult<void>(_missing);
+  }
+
+  @override
+  Future<Result<void>> refineRecordField({
+    required String recordId,
+    required String fieldKey,
+    required String value,
+  }) async {
+    return const FailureResult<void>(_missing);
   }
 
   @override

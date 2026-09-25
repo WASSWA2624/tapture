@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
@@ -10,6 +11,7 @@ import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
@@ -37,7 +39,6 @@ class FieldListScreen extends ConsumerWidget {
     final AsyncValue<TemplateDef?> value = ref
         .watch(templateListProvider)
         .whenData(_pick);
-    final Map<String, int> valueCounts = ref.watch(fieldValueCountsProvider);
     final TemplateDef? template = value.asData?.value;
     return AppPage(
       key: const ValueKey<String>('route-template-fields'),
@@ -95,33 +96,101 @@ class FieldListScreen extends ConsumerWidget {
         onRetry: () => ref.invalidate(templateListProvider),
         data: (TemplateDef? row) {
           final TemplateDef loaded = row!;
-          return ReorderableListView.builder(
-            buildDefaultDragHandles: false,
-            itemCount: loaded.fields.length,
-            proxyDecorator: (Widget child, int _, Animation<double> _) {
-              return child;
-            },
-            onReorderItem: (int from, int to) {
-              unawaited(
-                ref
-                    .read(_fieldListProvider.notifier)
-                    .reorder(context, loaded, from, to),
-              );
-            },
-            itemBuilder: (BuildContext context, int index) {
-              final FieldDef field = loaded.fields[index];
-              return _FieldRow(
-                key: ValueKey<String>(field.fieldKey),
-                template: loaded,
-                field: field,
-                index: index,
-                last: index == loaded.fields.length - 1,
-                valueCount: valueCounts[field.fieldKey] ?? 0,
-              );
-            },
+          final String query = ref.watch(fieldListQueryProvider);
+          final String needle = query.trim().toLowerCase();
+          final List<FieldDef> fields = needle.isEmpty
+              ? loaded.fields
+              : <FieldDef>[
+                  for (final FieldDef field in loaded.fields)
+                    if (field.label.toLowerCase().contains(needle) ||
+                        field.fieldKey.toLowerCase().contains(needle) ||
+                        field.type.name.toLowerCase().contains(needle))
+                      field,
+                ];
+          return Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  Space.x4,
+                  Space.x1,
+                  Space.x4,
+                  Space.x2,
+                ),
+                child: AppSearchField(
+                  hint: Copy.search,
+                  text: query,
+                  onChanged: (String text) {
+                    ref.read(fieldListQueryProvider.notifier).set(text);
+                  },
+                ),
+              ),
+              Expanded(child: _fieldList(context, ref, loaded, fields, needle)),
+            ],
           );
         },
       ),
+    );
+  }
+
+  Widget _fieldList(
+    BuildContext context,
+    WidgetRef ref,
+    TemplateDef loaded,
+    List<FieldDef> fields,
+    String needle,
+  ) {
+    if (fields.isEmpty) {
+      return const AppEmptyState(
+        icon: Icons.search,
+        headline: Copy.fieldsNoMatch,
+        message: Copy.search,
+      );
+    }
+    if (needle.isNotEmpty) {
+      return ListView.builder(
+        itemCount: fields.length,
+        itemBuilder: (BuildContext context, int index) {
+          final FieldDef field = fields[index];
+          final int source = loaded.fields.indexWhere(
+            (FieldDef row) => row.fieldKey == field.fieldKey,
+          );
+          return _FieldRow(
+            key: ValueKey<String>(field.fieldKey),
+            template: loaded,
+            field: field,
+            index: source,
+            last: source == loaded.fields.length - 1,
+            valueCount:
+                ref.watch(fieldValueCountsProvider)[field.fieldKey] ?? 0,
+          );
+        },
+      );
+    }
+    final Map<String, int> valueCounts = ref.watch(fieldValueCountsProvider);
+    return ReorderableListView.builder(
+      buildDefaultDragHandles: false,
+      itemCount: loaded.fields.length,
+      proxyDecorator: (Widget child, int _, Animation<double> _) {
+        return child;
+      },
+      onReorderItem: (int from, int to) {
+        unawaited(
+          ref
+              .read(_fieldListProvider.notifier)
+              .reorder(context, loaded, from, to),
+        );
+      },
+      itemBuilder: (BuildContext context, int index) {
+        final FieldDef field = loaded.fields[index];
+        return _FieldRow(
+          key: ValueKey<String>(field.fieldKey),
+          template: loaded,
+          field: field,
+          index: index,
+          last: index == loaded.fields.length - 1,
+          valueCount: valueCounts[field.fieldKey] ?? 0,
+        );
+      },
     );
   }
 
@@ -402,4 +471,20 @@ bool _mentioned(Map<String, Object?> detection, String fieldKey) {
     }
   }
   return false;
+}
+
+/// Query for one template's field list. Ephemeral (FE-STATE-02).
+final NotifierProvider<FieldListQuery, String> fieldListQueryProvider =
+    NotifierProvider<FieldListQuery, String>(
+      FieldListQuery.new,
+      retry: (int _, Object _) => null,
+    );
+
+/// Holds the field-list search text.
+final class FieldListQuery extends Notifier<String> {
+  @override
+  String build() => '';
+
+  /// Replaces the query.
+  void set(String value) => state = value;
 }

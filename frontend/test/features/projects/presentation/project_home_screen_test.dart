@@ -88,12 +88,34 @@ void main() {
     expect(find.text('Ward 1'), findsOneWidget);
     _expectCountCards(tester);
     expect(find.byType(AppPrimaryAction), findsOneWidget);
-    expect(find.text(Copy.continueCapturing), findsOneWidget);
+    expect(find.text(Copy.captureStart), findsOneWidget);
     expect(find.text(Copy.unprocessedCount(0)), findsNothing);
 
     final Size screen = tester.getSize(find.byType(MaterialApp));
     final Offset action = tester.getCenter(find.byType(AppPrimaryAction));
     expect(action.dy, greaterThan(screen.height * 2 / 3));
+  });
+
+  testWidgets('a project with a record offers capture more', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    repo.seedRecords('project-1', const <ProjectRecordRow>[
+      (
+        id: 'r1',
+        status: 'captured',
+        photoCount: 1,
+        thumbPath: null,
+        fields: <ProjectRecordFieldValue>[],
+      ),
+    ]);
+    await _pump(tester, repo: repo, openProjectId: 'project-1');
+    await tester.pump();
+    await tester.pump();
+    expect(find.text(Copy.captureMore), findsOneWidget);
+    expect(find.text(Copy.captureStart), findsNothing);
   });
 
   testWidgets('association rows render zero, singular, and plural counts', (
@@ -122,10 +144,6 @@ void main() {
         find.text(Copy.projectContextLevelCount(counts.levels)),
         findsOneWidget,
       );
-      expect(
-        find.text(Copy.projectTemplateCount(counts.templates)),
-        findsOneWidget,
-      );
       await tester.pumpWidget(const SizedBox.shrink());
     }
   });
@@ -149,10 +167,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(
-      find.text(Copy.projectAssociationCountUnavailable),
-      findsNWidgets(2),
-    );
+    expect(find.text(Copy.projectAssociationCountUnavailable), findsOneWidget);
     expect(find.text(Copy.projectAssociationRetry), findsOneWidget);
   });
 
@@ -233,7 +248,7 @@ void main() {
       filter: AppRoutes.shareFilter,
     );
     await expectOpens(
-      tap: find.text(Copy.continueCapturing),
+      tap: find.text(Copy.captureStart),
       path: AppRoutes.capture('project-1'),
     );
   });
@@ -276,7 +291,9 @@ void main() {
     WidgetTester tester,
   ) async {
     await _pumpPopulated(tester);
-    final double tile = tester.getTopLeft(find.text(Copy.navTemplates)).dx;
+    final double tile = tester
+        .getTopLeft(find.text(Copy.contextHierarchyTitle))
+        .dx;
     final double card = tester
         .getTopLeft(find.byKey(const ValueKey<String>('home-review')))
         .dx;
@@ -311,9 +328,9 @@ void main() {
     final GoRouter router = await _pumpPopulated(tester);
     await tester.tap(find.byType(AppOverflowMenu));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(Copy.projectDelete));
+    await tester.tap(find.text(Copy.projectDeleteMenu));
     await tester.pump();
-    await tester.enterText(find.byType(TextField), 'Alpha');
+    await tester.enterText(find.byType(TextField).last, 'Alpha');
     await tester.pump();
     await tester.tap(find.text(Copy.projectDelete).last);
     await tester.pumpAndSettle();

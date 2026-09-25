@@ -3,13 +3,18 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
+import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/projects/projects.dart';
 
@@ -34,46 +39,91 @@ class TemplateListScreen extends ConsumerWidget {
     );
     return AppPage(
       key: const ValueKey<String>('route-templates'),
-      title: Copy.navTemplates,
+      title: projectId == null ? Copy.navTemplates : Copy.projectTemplatesTitle,
       showAppBar: false,
       inset: false,
       scrollable: false,
       footer: value.hasValue
-          ? AppPrimaryAction(
-              label: Copy.templatesCreate,
-              onPressed: () => context.go(
-                TemplateLocations.create(context, projectId: projectId),
-              ),
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                AppButton(
+                  label: Copy.templatesAddChoices,
+                  variant: AppButtonVariant.secondary,
+                  onPressed: () => unawaited(_addTemplates(context)),
+                ),
+                const SizedBox(height: Space.x2),
+                AppPrimaryAction(
+                  label: Copy.templatesCreate,
+                  onPressed: () => context.go(
+                    TemplateLocations.create(context, projectId: projectId),
+                  ),
+                ),
+              ],
             )
           : null,
       body: AsyncValueView<List<TemplateDef>>(
         value: value,
-        isEmpty: (List<TemplateDef> rows) => rows.isEmpty,
-        empty: () => _empty(context),
+        isEmpty: (List<TemplateDef> _) => false,
         onRetry: () => ref.invalidate(templateListProvider),
         data: (List<TemplateDef> rows) {
-          return SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                for (final TemplateDef template in rows)
-                  AppListTile(
-                    title: template.name,
-                    subtitle: Copy.templateListSubtitle(
-                      fields: template.fields.length,
-                      records: recordCounts[template.id] ?? 0,
-                    ),
-                    trailing: AppOverflowMenu(
-                      items: _actions(
-                        context,
-                        ref,
-                        template,
-                        recordCounts[template.id] ?? 0,
+          final String query = ref.watch(templateListQueryProvider);
+          final String needle = query.trim().toLowerCase();
+          final List<TemplateDef> visible = <TemplateDef>[
+            for (final TemplateDef template in rows)
+              if (needle.isEmpty ||
+                  template.name.toLowerCase().contains(needle))
+                template,
+          ];
+          return Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  Space.x4,
+                  Space.x1,
+                  Space.x4,
+                  Space.x2,
+                ),
+                child: AppSearchField(
+                  hint: Copy.search,
+                  text: query,
+                  onChanged: (String text) {
+                    ref.read(templateListQueryProvider.notifier).set(text);
+                  },
+                ),
+              ),
+              Expanded(
+                child: visible.isEmpty
+                    ? (rows.isEmpty
+                          ? _empty(context)
+                          : const AppEmptyState(
+                              icon: Icons.search,
+                              headline: Copy.templatesNoMatch,
+                              message: Copy.search,
+                            ))
+                    : ListView(
+                        children: <Widget>[
+                          for (final TemplateDef template in visible)
+                            AppListTile(
+                              title: template.name,
+                              subtitle: Copy.templateListSubtitle(
+                                fields: template.fields.length,
+                                records: recordCounts[template.id] ?? 0,
+                              ),
+                              trailing: AppOverflowMenu(
+                                items: _actions(
+                                  context,
+                                  ref,
+                                  template,
+                                  recordCounts[template.id] ?? 0,
+                                ),
+                              ),
+                              onTap: () => _open(context, template.id),
+                            ),
+                        ],
                       ),
-                    ),
-                    onTap: () => _open(context, template.id),
-                  ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),
@@ -87,6 +137,11 @@ class TemplateListScreen extends ConsumerWidget {
     int recordCount,
   ) {
     return <AppOverflowAction>[
+      AppOverflowAction(
+        label: Copy.templatesEdit,
+        icon: Icons.edit_outlined,
+        onTap: () => unawaited(_rename(context, ref, template)),
+      ),
       AppOverflowAction(
         label: Copy.templatesOpen,
         icon: Icons.article_outlined,
@@ -187,3 +242,113 @@ final Provider<Map<String, int>> templateRecordCountsProvider =
     });
 
 const String _deleteReason = 'Removed from the project.';
+
+/// Query for the template list. Ephemeral (FE-STATE-02).
+final NotifierProvider<TemplateListQuery, String> templateListQueryProvider =
+    NotifierProvider<TemplateListQuery, String>(
+      TemplateListQuery.new,
+      retry: (int _, Object _) => null,
+    );
+
+/// Holds the template-list search text.
+final class TemplateListQuery extends Notifier<String> {
+  @override
+  String build() => '';
+
+  /// Replaces the query.
+  void set(String value) => state = value;
+}
+
+Future<void> _addTemplates(BuildContext context) async {
+  await showAppSheet<void>(
+    context,
+    title: Copy.templatesAddChoices,
+    contentSized: true,
+    builder: (BuildContext sheetContext) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          AppListTile(
+            title: Copy.templatesUpload,
+            onTap: () {
+              Navigator.of(sheetContext).pop();
+              context.go(TemplateLocations.import(context));
+            },
+          ),
+          AppListTile(
+            title: Copy.templatesUseExisting,
+            onTap: () {
+              Navigator.of(sheetContext).pop();
+              context.go(TemplateLocations.library(context));
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+Future<void> _rename(
+  BuildContext context,
+  WidgetRef ref,
+  TemplateDef template,
+) async {
+  final String? name = await showAppSheet<String>(
+    context,
+    title: Copy.templatesEdit,
+    contentSized: true,
+    builder: (BuildContext sheetContext) {
+      return _RenameTemplate(initial: template.name);
+    },
+  );
+  if (name == null || !context.mounted) {
+    return;
+  }
+  await ref
+      .read(templateRepositoryProvider)
+      .save(template.copyWith(name: name));
+}
+
+class _RenameTemplate extends StatefulWidget {
+  const _RenameTemplate({required this.initial});
+
+  final String initial;
+
+  @override
+  State<_RenameTemplate> createState() => _RenameTemplateState();
+}
+
+class _RenameTemplateState extends State<_RenameTemplate> {
+  late final TextEditingController _name = TextEditingController(
+    text: widget.initial,
+  );
+  String? _error;
+
+  @override
+  void dispose() {
+    _name.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        AppTextField(label: Copy.projectName, controller: _name),
+        if (_error != null) Text(_error!),
+        AppButton(
+          label: Copy.save,
+          onPressed: () {
+            final String trimmed = _name.text.trim();
+            if (trimmed.isEmpty) {
+              setState(() => _error = Copy.nameRequired);
+              return;
+            }
+            Navigator.of(context).pop(trimmed);
+          },
+        ),
+      ],
+    );
+  }
+}

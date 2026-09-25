@@ -495,4 +495,48 @@ void main() {
       expect(find.byType(SizedBox), findsWidgets);
     },
   );
+
+  testWidgets('a thumbnail tap opens the photo and the other controls do not', (
+    WidgetTester tester,
+  ) async {
+    PhotoDraft? tapped;
+    PhotoDraft? removed;
+    var captions = 0;
+    await tester.pumpWidget(
+      wrap(
+        PhotoTray(
+          photos: <PhotoDraft>[draft('a'), draft('b', order: 1)],
+          onAdd: () {},
+          onTap: (PhotoDraft photo) => tapped = photo,
+          onRemove: (PhotoDraft photo) => removed = photo,
+          onCaption: (PhotoDraft _) => captions++,
+        ),
+      ),
+    );
+    expect(find.text(Copy.capturePhotosSection), findsNothing);
+    await tester.tap(find.byKey(const ValueKey<String>('photo-thumb-a')));
+    expect(tapped?.id, 'a');
+    await tester.tap(find.byTooltip(Copy.captureRemovePhoto).first);
+    expect(removed?.id, 'a');
+    expect(tapped?.id, 'a');
+    await tester.tap(find.text(Copy.captureCaptionAction).first);
+    expect(captions, 1);
+    expect(tapped?.id, 'a');
+  });
+
+  testWidgets('a per-photo caption sheet hides the scope chooser', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      wrap(
+        PhotoCaptionSheet(
+          initial: '',
+          showScope: false,
+          onSave: (String _, CaptionScope _) async => true,
+        ),
+      ),
+    );
+    expect(find.byType(CaptionScopeSelector), findsNothing);
+    expect(find.text(Copy.capturePhotoCaption), findsWidgets);
+  });
 }

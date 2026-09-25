@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/features/projects/domain/project_repository.dart';
 import 'package:tapture/features/projects/presentation/project_records_screen.dart';
 import 'package:tapture/features/projects/projects.dart';
@@ -20,8 +19,20 @@ void main() {
     final FakeProjectRepository repo = FakeProjectRepository();
     addTearDown(repo.dispose);
     repo.seedRecords('project-1', const <ProjectRecordRow>[
-      (id: 'r1', status: 'captured', photoCount: 2),
-      (id: 'r2', status: 'approved', photoCount: 1),
+      (
+        id: 'r1',
+        status: 'captured',
+        photoCount: 2,
+        thumbPath: null,
+        fields: <ProjectRecordFieldValue>[],
+      ),
+      (
+        id: 'r2',
+        status: 'approved',
+        photoCount: 1,
+        thumbPath: null,
+        fields: <ProjectRecordFieldValue>[],
+      ),
     ]);
     final GoRouter router = GoRouter(
       initialLocation:
@@ -53,8 +64,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(Copy.projectRecordPosition(1)), findsOneWidget);
-    expect(find.text(Copy.projectRecordPhotos(2)), findsOneWidget);
-    expect(find.byType(AppStatusPill), findsOneWidget);
+    expect(find.byTooltip(Copy.recordEdit), findsOneWidget);
     expect(find.text(Copy.projectRecordPosition(2)), findsNothing);
   });
 }

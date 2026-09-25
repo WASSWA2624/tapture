@@ -14,6 +14,8 @@ import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/fields/app_radio_group.dart';
+import 'package:tapture/core/widgets/fields/choice.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
@@ -22,11 +24,13 @@ import 'package:tapture/features/templates/templates.dart';
 
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
+import 'captured_items.dart';
 import 'current_project.dart';
 import 'project_archive_action.dart';
 import 'project_delete_action.dart';
 import 'project_duplicate_action.dart';
 import 'project_open_externally_action.dart';
+import 'project_template_selection.dart';
 
 /// Open-project home: what to do next, with one primary capture action.
 class ProjectHomeScreen extends ConsumerWidget {
@@ -38,6 +42,8 @@ class ProjectHomeScreen extends ConsumerWidget {
     final Project? details = ref.watch(currentProjectDetailsProvider);
     final AsyncValue<ProjectHomeView?> value = ref.watch(projectHomeProvider);
     final ProjectHomeView? view = value.asData?.value;
+    final int records =
+        ref.watch(projectHomeRecordCountProvider).asData?.value ?? 0;
     return AppPage(
       key: const ValueKey<String>('route-project'),
       title: details?.name ?? Copy.navProjects,
@@ -49,7 +55,7 @@ class ProjectHomeScreen extends ConsumerWidget {
       footer: view == null
           ? null
           : AppPrimaryAction(
-              label: Copy.continueCapturing,
+              label: records == 0 ? Copy.captureStart : Copy.captureMore,
               onPressed: () => context.go(_capture(view.project.id)),
             ),
       body: AsyncValueView<ProjectHomeView?>(
@@ -134,6 +140,30 @@ final Provider<String> projectHomeContextProvider = Provider<String>((Ref ref) {
   return contextStatusLabel(value.asData?.value ?? const ContextState());
 });
 
+const List<String> _homeRecordStatuses = <String>[
+  'draft',
+  'captured',
+  'CAPTURED',
+  'queued',
+  'processing',
+  'needsReview',
+  'approved',
+];
+
+/// How many records the open project already holds. Derived (FE-STATE-06).
+final StreamProvider<int> projectHomeRecordCountProvider = StreamProvider<int>((
+  Ref ref,
+) {
+  final String? id = ref.watch(currentProjectProvider);
+  if (id == null) {
+    return Stream<int>.value(0);
+  }
+  return ref
+      .watch(projectRepositoryProvider)
+      .watchRecords(id, statuses: _homeRecordStatuses)
+      .map((List<ProjectRecordRow> rows) => rows.length);
+}, retry: (int _, Object _) => null);
+
 /// Pending Review, Process, Export and Share counts for the open project.
 final StreamProvider<ProjectHomeCounts> projectHomeCountsProvider =
     StreamProvider<ProjectHomeCounts>((Ref ref) {
@@ -206,6 +236,14 @@ class _HomeBody extends ConsumerWidget {
           Text(view.context, style: AppText.caption),
           const SizedBox(height: Space.x2),
           AppListTile(
+            title: Copy.contextPinnedTitle,
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => showPinnedFieldsSheet(
+              context: context,
+              projectId: view.project.id,
+            ),
+          ),
+          AppListTile(
             title: Copy.contextHierarchyTitle,
             subtitle: associations.when(
               data: (ProjectHomeAssociations value) =>
@@ -217,18 +255,7 @@ class _HomeBody extends ConsumerWidget {
             trailing: const Icon(Icons.chevron_right),
             onTap: () => unawaited(context.push(_context(view.project.id))),
           ),
-          AppListTile(
-            title: Copy.navTemplates,
-            subtitle: associations.when(
-              data: (ProjectHomeAssociations value) =>
-                  Copy.projectTemplateCount(value.templates),
-              error: (Object _, StackTrace _) =>
-                  Copy.projectAssociationCountUnavailable,
-              loading: () => Copy.loading,
-            ),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => unawaited(context.push(_templates(view.project.id))),
-          ),
+          ..._templateSwitch(ref, view.project.id),
           if (associations.hasError)
             TextButton(
               onPressed: () {
@@ -243,6 +270,8 @@ class _HomeBody extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: Space.x4),
             child: Column(children: _countRows(context, counts)),
           ),
+          const SizedBox(height: Space.x4),
+          CapturedItems(projectId: view.project.id),
         ],
       ),
     );
@@ -302,6 +331,35 @@ class _HomeBody extends ConsumerWidget {
   }
 }
 
+List<Widget> _templateSwitch(WidgetRef ref, String projectId) {
+  final AsyncValue<List<TemplateDef>> templates = ref.watch(
+    projectHomeTemplatesProvider(projectId),
+  );
+  return templates.maybeWhen(
+    data: (List<TemplateDef> loaded) {
+      if (loaded.isEmpty) {
+        return const <Widget>[Text(Copy.contextNoTemplatesHeadline)];
+      }
+      final String chosen = ref.watch(projectTemplateSelectionProvider);
+      final String value = chosen.isEmpty ? loaded.first.id : chosen;
+      return <Widget>[
+        AppRadioGroup<String>(
+          label: Copy.navTemplates,
+          value: value,
+          options: <Choice<String>>[
+            for (final TemplateDef template in loaded)
+              Choice<String>(template.id, template.name),
+          ],
+          onChanged: (String id) {
+            ref.read(projectTemplateSelectionProvider.notifier).select(id);
+          },
+        ),
+      ];
+    },
+    orElse: () => const <Widget>[],
+  );
+}
+
 List<AppOverflowAction> _projectHomeMenu(
   BuildContext context,
   WidgetRef ref,
@@ -314,6 +372,11 @@ List<AppOverflowAction> _projectHomeMenu(
     project,
   );
   return <AppOverflowAction>[
+    AppOverflowAction(
+      label: Copy.navTemplates,
+      icon: Icons.article_outlined,
+      onTap: () => context.push(_templates(project.id)),
+    ),
     AppOverflowAction(
       label: Copy.projectExport,
       icon: Icons.ios_share_outlined,
@@ -347,7 +410,7 @@ List<AppOverflowAction> _projectHomeMenu(
       onTap: () => unawaited(_archiveThenList(context, ref, project)),
     ),
     AppOverflowAction(
-      label: Copy.projectDelete,
+      label: Copy.projectDeleteMenu,
       icon: Icons.delete_outline,
       onTap: () => unawaited(_deleteThenList(context, ref, project)),
     ),
@@ -375,7 +438,7 @@ class _CountCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCard(
       key: cardKey,
-      padding: const EdgeInsets.symmetric(vertical: Space.x2),
+      padding: const EdgeInsets.all(Space.x3),
       onTap: onTap,
       child: Semantics(
         label: semanticLabel,

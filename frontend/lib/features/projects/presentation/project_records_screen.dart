@@ -3,14 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
-import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
+import 'captured_items.dart';
 
 /// Records for the open project, limited by the route filter.
 final class ProjectRecordsScreen extends ConsumerWidget {
@@ -50,11 +49,7 @@ final class ProjectRecordsScreen extends ConsumerWidget {
             itemCount: rows.length,
             itemBuilder: (BuildContext context, int index) {
               final ProjectRecordRow row = rows[index];
-              return AppListTile(
-                title: Copy.projectRecordPosition(index + 1),
-                subtitle: Copy.projectRecordPhotos(row.photoCount),
-                trailing: AppStatusPill(status: _pill(row.status)),
-              );
+              return CapturedItemTile(row: row, position: index + 1);
             },
           );
         },
@@ -86,19 +81,5 @@ List<String> _statusesFor(String filter) {
       'queued',
       'processing',
     ],
-  };
-}
-
-RecordStatus _pill(String status) {
-  return switch (status) {
-    'needsReview' => RecordStatus.needsReview,
-    'queued' => RecordStatus.queued,
-    'processing' => RecordStatus.processing,
-    'approved' => RecordStatus.approved,
-    'failed' => RecordStatus.failed,
-    'archived' => RecordStatus.archived,
-    'draft' => RecordStatus.draft,
-    'extracted' => RecordStatus.extracted,
-    _ => RecordStatus.captured,
   };
 }

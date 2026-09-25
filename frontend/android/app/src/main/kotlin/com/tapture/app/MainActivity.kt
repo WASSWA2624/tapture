@@ -40,6 +40,7 @@ class MainActivity : FlutterActivity() {
                         call.argument("fileName"),
                         call.argument("mimeType"),
                         call.argument("bytes"),
+                        call.argument("subfolder"),
                         result,
                     )
                     "openDownloads" -> openDownloads(result)
@@ -244,13 +245,19 @@ class MainActivity : FlutterActivity() {
         fileName: String?,
         mimeType: String?,
         bytes: ByteArray?,
+        subfolder: String?,
         result: MethodChannel.Result,
     ) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || fileName == null || bytes == null) {
             result.error("unsupported", "Shared downloads need Android 10 or later.", null)
             return
         }
-        writeOnQ(fileName, mimeType, bytes, result)
+        val relative = if (subfolder == "Exports") {
+            "Download/Tapture/Exports"
+        } else {
+            "Download/Tapture"
+        }
+        writeOnQ(fileName, mimeType, bytes, relative, result)
     }
 
     @SuppressLint("NewApi")
@@ -258,6 +265,7 @@ class MainActivity : FlutterActivity() {
         fileName: String,
         mimeType: String?,
         bytes: ByteArray,
+        relativePath: String,
         result: MethodChannel.Result,
     ) {
         io.execute {
@@ -265,7 +273,7 @@ class MainActivity : FlutterActivity() {
                 val values = ContentValues().apply {
                     put(MediaStore.Downloads.DISPLAY_NAME, fileName)
                     put(MediaStore.Downloads.MIME_TYPE, mimeType ?: "application/octet-stream")
-                    put(MediaStore.Downloads.RELATIVE_PATH, "Download/Tapture")
+                    put(MediaStore.Downloads.RELATIVE_PATH, relativePath)
                     put(MediaStore.Downloads.IS_PENDING, 1)
                 }
                 val resolver = contentResolver
@@ -282,7 +290,7 @@ class MainActivity : FlutterActivity() {
                     null,
                     null,
                 )?.use { if (it.moveToFirst()) it.getString(0) else fileName } ?: fileName
-                main.post { result.success("Download/Tapture/$name") }
+                main.post { result.success("$relativePath/$name") }
             } catch (_: Exception) {
                 main.post { result.error("write_failed", "Could not write the download.", null) }
             }

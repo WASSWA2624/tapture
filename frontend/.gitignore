@@ -69,14 +69,18 @@ key.properties
 *__*__*.zip
 TAPTURE-*.zip
 
-# Operator-captured photos and other user images. Branding, platform icons
-# and golden PNG baselines stay tracked.
+# Operator-captured photos and other user images. Branding and platform
+# icons stay tracked. Every image under test/ is local, including golden
+# PNG baselines and failure dumps.
 **/photos/
 *.jpg
 *.jpeg
 *.heic
 *.heif
 *.webp
+/test/**/*.png
+/test/**/*.gif
+/test/**/*.bmp
 
 # Golden comparison dumps. Baselines stay in goldens/; these are local diffs.
 **/failures/

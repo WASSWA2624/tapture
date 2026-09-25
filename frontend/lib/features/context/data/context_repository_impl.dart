@@ -83,9 +83,7 @@ final class ContextRepositoryImpl implements ContextRepository {
         );
         await deleteContextDefinition(_db, id: row.id);
       }
-      final List<ContextLevel> ordered = <ContextLevel>[
-        for (int i = 0; i < levels.length; i++) levels[i].copyWith(order: i),
-      ];
+      final List<ContextLevel> ordered = List<ContextLevel>.of(levels);
       final DateTime now = _clock.nowUtc();
       for (final ContextLevel level in ordered) {
         await _db
@@ -343,6 +341,7 @@ final class ContextRepositoryImpl implements ContextRepository {
             sqlite.ContextStateCompanion.insert(
               projectId: projectId,
               level: 0,
+              fieldKey: const Value<String>(''),
               value: jsonEncode(pinned),
               setAt: now,
               createdAt: now,
@@ -362,6 +361,7 @@ final class ContextRepositoryImpl implements ContextRepository {
             sqlite.ContextStateCompanion.insert(
               projectId: projectId,
               level: level.order + 1,
+              fieldKey: Value<String>(level.fieldKey),
               value: value,
               setAt: now,
               createdAt: now,

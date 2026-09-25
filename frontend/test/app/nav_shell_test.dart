@@ -366,7 +366,7 @@ void main() {
       find.descendant(of: _pane(), matching: find.byType(AppListTile)),
       findsOneWidget,
     );
-    expect(find.text(Copy.continueCapturing), findsOneWidget);
+    expect(find.text(Copy.captureStart), findsOneWidget);
     expect(
       find.descendant(of: _pane(), matching: find.text(Copy.projectsCreate)),
       findsOneWidget,

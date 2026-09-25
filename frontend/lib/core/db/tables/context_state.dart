@@ -9,6 +9,9 @@ class ContextState extends Table with MergeColumns {
   /// Hierarchy order matching [Context.level].
   IntColumn get level => integer()();
 
+  /// Template field this value belongs to. Empty on the pinned-json row.
+  TextColumn get fieldKey => text().withDefault(const Constant(''))();
+
   /// Pinned value. Written here, never to a log sink.
   TextColumn get value => text()();
 
@@ -17,6 +20,6 @@ class ContextState extends Table with MergeColumns {
 
   @override
   List<Set<Column<Object>>> get uniqueKeys => <Set<Column<Object>>>[
-    <Column<Object>>{projectId, level},
+    <Column<Object>>{projectId, fieldKey},
   ];
 }

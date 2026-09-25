@@ -48,7 +48,6 @@ final class TemplateContextProposal {
       return byTemplate != 0 ? byTemplate : a.field.compareTo(b.field);
     });
 
-    final Map<int, String> keyAtLevel = <int, String>{};
     final Map<String, int> levelForKey = <String, int>{};
     final Set<String> seen = <String>{};
     final List<String> conflicts = <String>[];
@@ -57,17 +56,11 @@ final class TemplateContextProposal {
     for (final row in declared) {
       final FieldDef field = row.value;
       final int level = field.contextLevel!;
-      final String? existingKey = keyAtLevel[level];
-      if (existingKey != null && existingKey != field.fieldKey) {
-        conflicts.add('Level $level: $existingKey / ${field.fieldKey}');
-        continue;
-      }
       final int? existingLevel = levelForKey[field.fieldKey];
       if (existingLevel != null && existingLevel != level) {
         conflicts.add('${field.fieldKey}: Level $existingLevel / Level $level');
         continue;
       }
-      keyAtLevel[level] = field.fieldKey;
       levelForKey[field.fieldKey] = level;
       if (seen.add(field.fieldKey)) {
         levels.add((level: level, field: field));

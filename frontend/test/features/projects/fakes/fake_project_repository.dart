@@ -120,6 +120,78 @@ final class FakeProjectRepository implements ProjectRepository {
     });
   }
 
+  @override
+  Future<Result<void>> archiveRecord(String recordId) async {
+    for (final MapEntry<String, List<ProjectRecordRow>> entry
+        in _records.entries) {
+      final int index = entry.value.indexWhere(
+        (ProjectRecordRow row) => row.id == recordId,
+      );
+      if (index < 0) {
+        continue;
+      }
+      final ProjectRecordRow current = entry.value[index];
+      entry.value[index] = (
+        id: current.id,
+        status: 'archived',
+        photoCount: current.photoCount,
+        thumbPath: current.thumbPath,
+        fields: current.fields,
+      );
+      _emit();
+      return const Success<void>(null);
+    }
+    return const FailureResult<void>(
+      StorageFailure(
+        message: 'That record is not on this device.',
+        recoveryAction: 'Go back and try again.',
+      ),
+    );
+  }
+
+  @override
+  Future<Result<void>> refineRecordField({
+    required String recordId,
+    required String fieldKey,
+    required String value,
+  }) async {
+    for (final List<ProjectRecordRow> rows in _records.values) {
+      final int index = rows.indexWhere(
+        (ProjectRecordRow row) => row.id == recordId,
+      );
+      if (index < 0) {
+        continue;
+      }
+      final ProjectRecordRow current = rows[index];
+      rows[index] = (
+        id: current.id,
+        status: current.status,
+        photoCount: current.photoCount,
+        thumbPath: current.thumbPath,
+        fields: <ProjectRecordFieldValue>[
+          for (final ProjectRecordFieldValue field in current.fields)
+            if (field.fieldKey == fieldKey)
+              (
+                fieldKey: field.fieldKey,
+                raw: field.raw,
+                refined: value,
+                approved: field.approved,
+              )
+            else
+              field,
+        ],
+      );
+      _emit();
+      return const Success<void>(null);
+    }
+    return const FailureResult<void>(
+      StorageFailure(
+        message: 'That record is not on this device.',
+        recoveryAction: 'Go back and try again.',
+      ),
+    );
+  }
+
   List<ProjectListRow> _listSnapshot(bool includeArchived) {
     final List<ProjectListRow> rows = <ProjectListRow>[
       for (final Project project in _visible(includeArchived))

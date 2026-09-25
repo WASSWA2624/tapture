@@ -4,14 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
+import 'package:tapture/app/theme/color_tokens.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
+import 'package:tapture/core/widgets/fields/app_radio_group.dart';
+import 'package:tapture/core/widgets/fields/choice.dart';
+import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/templates.dart';
@@ -20,7 +27,6 @@ import '../context.dart' show contextRepositoryProvider;
 import '../domain/context_state.dart';
 import '../domain/template_context_proposal.dart';
 import 'context_providers.dart';
-import 'pinned_fields_sheet.dart';
 
 /// Project-owned templates used by both proposals and the add-level sheet.
 final contextHierarchyTemplatesProvider =
@@ -50,6 +56,7 @@ class ContextHierarchyScreen extends ConsumerStatefulWidget {
 class _ContextHierarchyScreenState
     extends ConsumerState<ContextHierarchyScreen> {
   List<ContextLevel> _levels = <ContextLevel>[];
+  String? _templateId;
   bool _loaded = false;
   Failure? _error;
   bool _saving = false;
@@ -106,16 +113,31 @@ class _ContextHierarchyScreenState
       scrollable: false,
       footer: AppPrimaryAction(
         label: Copy.contextSaveHierarchy,
-        onPressed: _saving ? null : () => unawaited(_save(projectId)),
+        onPressed: _levels.isEmpty || _saving
+            ? null
+            : () => unawaited(_save(projectId)),
       ),
       body: Column(
         children: <Widget>[
-          AppListTile(
-            title: Copy.contextPinnedTitle,
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () =>
-                showPinnedFieldsSheet(context: context, projectId: projectId),
+          templates.maybeWhen(
+            data: (List<TemplateDef> loaded) {
+              if (loaded.isEmpty) {
+                return const SizedBox.shrink();
+              }
+              final String selected = _templateId ?? loaded.first.id;
+              return AppRadioGroup<String>(
+                label: Copy.navTemplates,
+                value: selected,
+                options: <Choice<String>>[
+                  for (final TemplateDef template in loaded)
+                    Choice<String>(template.id, template.name),
+                ],
+                onChanged: (String id) => setState(() => _templateId = id),
+              );
+            },
+            orElse: () => const SizedBox.shrink(),
           ),
+          if (_levels.isNotEmpty) _diagram(context),
           Expanded(
             child: _levels.isEmpty
                 ? _proposalView(context, projectId, templates)
@@ -143,30 +165,27 @@ class _ContextHierarchyScreenState
                           index + 1,
                           level.fieldKey,
                         ),
-                        trailing: IconButton(
-                          tooltip: Copy.contextRemoveLevel,
-                          icon: const Icon(Icons.delete_outline),
-                          onPressed: () {
-                            setState(() {
-                              _levels = <ContextLevel>[
-                                for (final ContextLevel row in _levels)
-                                  if (row.fieldKey != level.fieldKey) row,
-                              ];
-                              _levels = <ContextLevel>[
-                                for (int i = 0; i < _levels.length; i++)
-                                  _levels[i].copyWith(order: i),
-                              ];
-                            });
-                            unawaited(_persist(projectId));
-                          },
+                        leading: ReorderableDragStartListener(
+                          index: index,
+                          child: const Icon(Icons.drag_handle),
+                        ),
+                        trailing: _levelActions(
+                          context,
+                          projectId,
+                          index,
+                          level,
                         ),
                       );
                     },
                   ),
           ),
-          TextButton(
-            onPressed: () => unawaited(_addLevel(projectId)),
-            child: const Text(Copy.contextAddLevel),
+          SizedBox(
+            width: double.infinity,
+            child: AppButton(
+              label: Copy.contextAddLevel,
+              variant: AppButtonVariant.secondary,
+              onPressed: () => unawaited(_addLevel(projectId)),
+            ),
           ),
         ],
       ),
@@ -207,17 +226,13 @@ class _ContextHierarchyScreenState
             message: Copy.contextTemplateConflictMessage(
               proposal.conflicts.join(', '),
             ),
-            actionLabel: Copy.contextOpenTemplates,
-            onAction: () => context.push(_projectTemplates(projectId)),
           );
         }
         if (proposal.levels.isEmpty) {
-          return AppEmptyState(
+          return const AppEmptyState(
             icon: Icons.account_tree_outlined,
             headline: Copy.contextNoDeclaredLevelsHeadline,
             message: Copy.contextNoDeclaredLevelsMessage,
-            actionLabel: Copy.contextOpenTemplates,
-            onAction: () => context.push(_projectTemplates(projectId)),
           );
         }
         return ListView(
@@ -250,7 +265,7 @@ class _ContextHierarchyScreenState
         for (int index = 0; index < proposals.length; index++)
           ContextLevel(
             fieldKey: proposals[index].field.fieldKey,
-            order: index,
+            order: proposals[index].level - 1,
             label: proposals[index].field.label,
             datasetId: proposals[index].field.lookup['datasetId'] is String
                 ? proposals[index].field.lookup['datasetId']! as String
@@ -270,6 +285,9 @@ class _ContextHierarchyScreenState
         loadFailure = failure;
       case Success<List<TemplateDef>>(:final List<TemplateDef> value):
         for (final TemplateDef template in value) {
+          if (_templateId != null && template.id != _templateId) {
+            continue;
+          }
           fields.addAll(template.fields);
         }
     }
@@ -348,6 +366,139 @@ class _ContextHierarchyScreenState
     await _persist(projectId);
   }
 
+  Widget _levelActions(
+    BuildContext context,
+    String projectId,
+    int index,
+    ContextLevel level,
+  ) {
+    final bool compact = context.sizeClass == SizeClass.compact;
+    void remove() {
+      setState(() {
+        _levels = <ContextLevel>[
+          for (final ContextLevel row in _levels)
+            if (row.fieldKey != level.fieldKey) row,
+        ];
+      });
+      unawaited(_persist(projectId));
+    }
+
+    if (compact) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          AppIconButton(
+            icon: Icons.edit_outlined,
+            outlined: false,
+            tooltip: Copy.templatesEdit,
+            semanticLabel: Copy.templatesEdit,
+            onPressed: () => unawaited(_editLevel(projectId, index)),
+          ),
+          AppIconButton(
+            icon: Icons.delete_outline,
+            outlined: false,
+            tooltip: Copy.contextRemoveLevel,
+            semanticLabel: Copy.contextRemoveLevel,
+            onPressed: remove,
+          ),
+        ],
+      );
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        AppButton(
+          label: Copy.templatesEdit,
+          variant: AppButtonVariant.text,
+          onPressed: () => unawaited(_editLevel(projectId, index)),
+        ),
+        AppButton(
+          label: Copy.recordDelete,
+          variant: AppButtonVariant.text,
+          onPressed: remove,
+        ),
+      ],
+    );
+  }
+
+  Widget _diagram(BuildContext context) {
+    final Map<int, List<ContextLevel>> groups = <int, List<ContextLevel>>{};
+    for (final ContextLevel level in _levels) {
+      groups.putIfAbsent(level.order, () => <ContextLevel>[]).add(level);
+    }
+    final List<int> orders = groups.keys.toList()..sort();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        for (final int order in orders)
+          DecoratedBox(
+            decoration: BoxDecoration(
+              border: Border(left: BorderSide(color: context.colors.outline)),
+            ),
+            child: Padding(
+              padding: const EdgeInsetsDirectional.only(
+                start: Space.x2,
+                bottom: Space.x2,
+              ),
+              child: Wrap(
+                spacing: Space.x2,
+                children: <Widget>[
+                  for (final ContextLevel level in groups[order]!)
+                    Text(level.label.isEmpty ? level.fieldKey : level.label),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Future<void> _editLevel(String projectId, int index) async {
+    final ContextLevel current = _levels[index];
+    final Result<List<TemplateDef>> templates = await _templates(projectId);
+    if (templates is! Success<List<TemplateDef>> || !mounted) {
+      return;
+    }
+    final List<FieldDef> fields = <FieldDef>[
+      for (final TemplateDef template in templates.value)
+        if (_templateId == null || template.id == _templateId)
+          ...template.fields,
+    ];
+    final Set<String> used = <String>{
+      for (final ContextLevel level in _levels)
+        if (level.fieldKey != current.fieldKey) level.fieldKey,
+    };
+    final FieldDef? picked = await showAppSheet<FieldDef>(
+      context,
+      title: Copy.templatesEdit,
+      builder: (BuildContext sheetContext) {
+        return ListView(
+          children: <Widget>[
+            for (final FieldDef field in fields)
+              if (!used.contains(field.fieldKey))
+                AppListTile(
+                  title: field.label,
+                  subtitle: field.fieldKey,
+                  onTap: () => Navigator.pop(sheetContext, field),
+                ),
+          ],
+        );
+      },
+    );
+    if (picked == null) {
+      return;
+    }
+    final Object? datasetId = picked.lookup['datasetId'];
+    setState(() {
+      _levels[index] = current.copyWith(
+        fieldKey: picked.fieldKey,
+        label: picked.label,
+        datasetId: datasetId is String ? datasetId : null,
+      );
+    });
+    await _persist(projectId);
+  }
+
   Future<Result<List<TemplateDef>>> _templates(String projectId) async {
     try {
       final List<TemplateDef> list = await ref
@@ -385,5 +536,5 @@ class _ContextHierarchyScreenState
 }
 
 String _projectTemplates(String projectId) {
-  return RoutePaths.templateLibrary(projectId: projectId);
+  return RoutePaths.projectTemplates(projectId);
 }

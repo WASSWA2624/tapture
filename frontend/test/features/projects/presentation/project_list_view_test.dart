@@ -52,7 +52,8 @@ void main() {
       expect(find.text(Copy.projectOpenWith), findsNothing);
       expect(find.text(Copy.projectDownloadCopy), findsNothing);
       expect(find.text(Copy.projectArchive), findsOneWidget);
-      expect(find.text(Copy.projectDelete), findsOneWidget);
+      expect(find.text(Copy.projectDeleteMenu), findsOneWidget);
+      expect(find.text(Copy.projectDelete), findsNothing);
       expect(find.text(Copy.projectEditTitle), findsNothing);
     },
   );

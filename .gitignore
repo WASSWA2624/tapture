@@ -18,8 +18,8 @@ __pycache__/
 # Logs
 *.log
 
-# Operator-captured photos and local app data. Branding, icons and golden
-# PNG baselines stay tracked.
+# Operator-captured photos and local app data. Branding and icons stay
+# tracked. Images under frontend/test are ignored in frontend/.gitignore.
 /Tapture/
 **/photos/
 *.jpg

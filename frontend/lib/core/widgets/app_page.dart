@@ -254,9 +254,23 @@ class _PageHeaderRegistration extends StatefulWidget {
 }
 
 class _PageHeaderRegistrationState extends State<_PageHeaderRegistration> {
+  ModalRoute<Object?>? _route;
+
   @override
   void initState() {
     super.initState();
+    _schedule();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final ModalRoute<Object?>? next = ModalRoute.of(context);
+    if (!identical(next, _route)) {
+      _route?.animation?.removeStatusListener(_onStatus);
+      _route = next;
+      _route?.animation?.addStatusListener(_onStatus);
+    }
     _schedule();
   }
 
@@ -270,9 +284,26 @@ class _PageHeaderRegistrationState extends State<_PageHeaderRegistration> {
     }
   }
 
+  void _onStatus(AnimationStatus status) {
+    if (status == AnimationStatus.completed ||
+        status == AnimationStatus.dismissed) {
+      _schedule();
+    }
+  }
+
+  @override
+  void dispose() {
+    _route?.animation?.removeStatusListener(_onStatus);
+    super.dispose();
+  }
+
   void _schedule() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
+        return;
+      }
+      final ModalRoute<Object?>? route = ModalRoute.of(context);
+      if (route != null && !route.isCurrent) {
         return;
       }
       ShellHeaderScope.publish(

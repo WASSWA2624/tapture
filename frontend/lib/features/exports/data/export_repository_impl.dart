@@ -18,6 +18,7 @@ import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/features/exports/domain/export_file_name.dart';
 import 'package:tapture/features/exports/domain/export_repository.dart';
 
 /// Device [ExportRepository]. A workbook is a new file under the project's
@@ -161,8 +162,13 @@ final class ExportRepositoryImpl implements ExportRepository {
     }
     final Uint8List bytes = (encoded as Success<Uint8List>).value;
     final String id = _ids.newId();
-    final String fileName = '$id.xlsx';
-    final String relative = 'projects/${project.folderName}/exports/$fileName';
+    final String storedName = '$id.xlsx';
+    final String relative =
+        'projects/${project.folderName}/exports/$storedName';
+    final String displayName = ExportFileName.build(
+      projectName: project.name,
+      local: _clock.nowUtc().toLocal(),
+    );
     final Result<WrittenFile> written = await _writer.write(
       Stream<List<int>>.value(bytes),
       relative,
@@ -202,7 +208,7 @@ final class ExportRepositoryImpl implements ExportRepository {
           id: value.id,
           projectId: value.projectId,
           version: value.version,
-          fileName: fileName,
+          fileName: displayName,
           bytes: bytes,
         ));
     }

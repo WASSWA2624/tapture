@@ -39,6 +39,7 @@ final class _NoDownloads implements DownloadService {
     required String fileName,
     required Uint8List bytes,
     required String mimeType,
+    String? subfolder,
   }) async {
     return FailureResult<String?>(downloadFailure(fileName));
   }

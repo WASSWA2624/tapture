@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -11,7 +12,9 @@ import 'package:tapture/core/export/xlsx_encoder.dart';
 import 'package:tapture/core/files/download_service.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/exports/exports.dart';
@@ -113,6 +116,20 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
           _cancel = null;
           _saved = value;
         });
+        final Result<String?> copy = await ref
+            .read(downloadServiceProvider)
+            .save(
+              fileName: value.fileName,
+              bytes: value.bytes,
+              mimeType: XlsxEncoder.mimeType,
+              subfolder: 'Exports',
+            );
+        if (!mounted) {
+          return;
+        }
+        if (copy is FailureResult<String?>) {
+          showAppSnack(context, copy.failure.message, tone: SnackTone.error);
+        }
     }
   }
 
@@ -183,14 +200,12 @@ class _SavedExport extends ConsumerWidget {
           const Text(Copy.offlineWorking),
           const SizedBox(height: Space.x2),
         ],
-        const Text(Copy.projectExportWrote),
+        const Text(Copy.projectExportWrote, style: AppText.title),
         const SizedBox(height: Space.x1),
-        Text(Copy.projectExportSaved(saved.fileName)),
+        Text(saved.fileName),
         const SizedBox(height: Space.x2),
-        AppButton(
+        AppPrimaryAction(
           label: Copy.projectExportShare,
-          icon: Icons.ios_share_outlined,
-          variant: AppButtonVariant.secondary,
           onPressed: () => unawaited(_share(ref)),
         ),
       ],

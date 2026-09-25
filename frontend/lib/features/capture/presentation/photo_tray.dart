@@ -14,6 +14,8 @@ final class PhotoTray extends StatelessWidget {
     required this.onAdd,
     this.onTap,
     this.onLongPress,
+    this.onRemove,
+    this.onCaption,
     this.selectedIds = const <String>{},
     this.captions = const <String, String>{},
     this.thumbPaths = const <String, String>{},
@@ -32,6 +34,12 @@ final class PhotoTray extends StatelessWidget {
 
   /// Enters multi-select.
   final ValueChanged<PhotoDraft>? onLongPress;
+
+  /// Removes one draft. Separate from [onTap].
+  final ValueChanged<PhotoDraft>? onRemove;
+
+  /// Opens the caption for one photo. Separate from [onTap].
+  final ValueChanged<PhotoDraft>? onCaption;
 
   /// Selected photo ids.
   final Set<String> selectedIds;
@@ -69,37 +77,73 @@ final class PhotoTray extends StatelessWidget {
       children: <Widget>[
         Text(Copy.capturePhotoCount(photos.length)),
         SizedBox(
-          height: Space.x12 * 2,
+          height: Space.x12 * 2 + Sizes.minTapTarget,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: photos.length + 1,
             itemBuilder: (BuildContext context, int index) {
               const double edge = Space.x12 * 2;
               if (index == photos.length) {
-                return _AddPhotoTarget(edge: edge, onPressed: onAdd);
+                return Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.only(end: Space.x2),
+                    child: _AddPhotoTarget(edge: edge, onPressed: onAdd),
+                  ),
+                );
               }
               final PhotoDraft photo = photos[index];
               final bool hasCaption =
                   photo.hasCaption || (captions[photo.id]?.isNotEmpty ?? false);
               final String? thumb = thumbPaths[photo.id];
               final bool missing = missingIds.contains(photo.id);
-              return RotatedBox(
-                quarterTurns: _quarterTurns(photo.rotationDegrees),
-                child: AppPhotoThumb(
-                  key: ValueKey<String>('photo-thumb-${photo.id}'),
-                  photo: PhotoAsset(
-                    sha256: photo.sha256,
-                    thumbPath: missing ? 'missing' : (thumb ?? ''),
-                    photoType: _photoType(photo.photoType),
-                    hasCaption: hasCaption,
-                  ),
-                  size: edge,
-                  selected: selectedIds.contains(photo.id),
-                  statusLabel: photo.processingState == 'ready'
-                      ? null
-                      : Copy.capturePhotoProcessing,
-                  onTap: () => onTap?.call(photo),
-                  onLongPress: () => onLongPress?.call(photo),
+              return Padding(
+                padding: const EdgeInsetsDirectional.only(end: Space.x2),
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(
+                      width: edge,
+                      height: edge,
+                      child: Stack(
+                        children: <Widget>[
+                          RotatedBox(
+                            quarterTurns: _quarterTurns(photo.rotationDegrees),
+                            child: AppPhotoThumb(
+                              key: ValueKey<String>('photo-thumb-${photo.id}'),
+                              photo: PhotoAsset(
+                                sha256: photo.sha256,
+                                thumbPath: missing ? 'missing' : (thumb ?? ''),
+                                photoType: _photoType(photo.photoType),
+                                hasCaption: hasCaption,
+                              ),
+                              size: edge,
+                              selected: selectedIds.contains(photo.id),
+                              statusLabel: photo.processingState == 'ready'
+                                  ? null
+                                  : Copy.capturePhotoProcessing,
+                              onTap: () => onTap?.call(photo),
+                              onLongPress: () => onLongPress?.call(photo),
+                            ),
+                          ),
+                          PositionedDirectional(
+                            top: 0,
+                            end: 0,
+                            child: AppIconButton(
+                              icon: Icons.close,
+                              outlined: false,
+                              tooltip: Copy.captureRemovePhoto,
+                              semanticLabel: Copy.captureRemovePhoto,
+                              onPressed: () => onRemove?.call(photo),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => onCaption?.call(photo),
+                      child: const Text(Copy.captureCaptionAction),
+                    ),
+                  ],
                 ),
               );
             },

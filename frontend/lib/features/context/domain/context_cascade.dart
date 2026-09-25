@@ -17,9 +17,11 @@ abstract final class ContextCascade {
     if (index < 0) {
       return const <({ContextLevel level, String value})>[];
     }
+    final int changedOrder = ordered[index].order;
     return <({ContextLevel level, String value})>[
-      for (final ContextLevel level in ordered.skip(index + 1))
-        (level: level, value: state.values[level.fieldKey] ?? ''),
+      for (final ContextLevel level in ordered)
+        if (level.order > changedOrder)
+          (level: level, value: state.values[level.fieldKey] ?? ''),
     ];
   }
 

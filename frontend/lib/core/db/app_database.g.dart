@@ -3089,7 +3089,7 @@ class $ContextTable extends Context with TableInfo<$ContextTable, ContextData> {
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   List<Set<GeneratedColumn>> get uniqueKeys => [
-    {projectId, level},
+    {projectId, fieldKey},
   ];
   @override
   ContextData map(Map<String, dynamic> data, {String? tablePrefix}) {
@@ -3546,6 +3546,18 @@ class $ContextStateTable extends ContextState
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _fieldKeyMeta = const VerificationMeta(
+    'fieldKey',
+  );
+  @override
+  late final GeneratedColumn<String> fieldKey = GeneratedColumn<String>(
+    'field_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
   static const VerificationMeta _valueMeta = const VerificationMeta('value');
   @override
   late final GeneratedColumn<String> value = GeneratedColumn<String>(
@@ -3573,6 +3585,7 @@ class $ContextStateTable extends ContextState
     rev,
     projectId,
     level,
+    fieldKey,
     value,
     setAt,
   ];
@@ -3640,6 +3653,12 @@ class $ContextStateTable extends ContextState
     } else if (isInserting) {
       context.missing(_levelMeta);
     }
+    if (data.containsKey('field_key')) {
+      context.handle(
+        _fieldKeyMeta,
+        fieldKey.isAcceptableOrUnknown(data['field_key']!, _fieldKeyMeta),
+      );
+    }
     if (data.containsKey('value')) {
       context.handle(
         _valueMeta,
@@ -3663,7 +3682,7 @@ class $ContextStateTable extends ContextState
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   List<Set<GeneratedColumn>> get uniqueKeys => [
-    {projectId, level},
+    {projectId, fieldKey},
   ];
   @override
   ContextStateRow map(Map<String, dynamic> data, {String? tablePrefix}) {
@@ -3696,6 +3715,10 @@ class $ContextStateTable extends ContextState
       level: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}level'],
+      )!,
+      fieldKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}field_key'],
       )!,
       value: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -3736,6 +3759,9 @@ class ContextStateRow extends DataClass implements Insertable<ContextStateRow> {
   /// Hierarchy order matching [Context.level].
   final int level;
 
+  /// Template field this value belongs to. Empty on the pinned-json row.
+  final String fieldKey;
+
   /// Pinned value. Written here, never to a log sink.
   final String value;
 
@@ -3749,6 +3775,7 @@ class ContextStateRow extends DataClass implements Insertable<ContextStateRow> {
     required this.rev,
     required this.projectId,
     required this.level,
+    required this.fieldKey,
     required this.value,
     required this.setAt,
   });
@@ -3762,6 +3789,7 @@ class ContextStateRow extends DataClass implements Insertable<ContextStateRow> {
     map['rev'] = Variable<int>(rev);
     map['project_id'] = Variable<String>(projectId);
     map['level'] = Variable<int>(level);
+    map['field_key'] = Variable<String>(fieldKey);
     map['value'] = Variable<String>(value);
     map['set_at'] = Variable<DateTime>(setAt);
     return map;
@@ -3776,6 +3804,7 @@ class ContextStateRow extends DataClass implements Insertable<ContextStateRow> {
       rev: Value(rev),
       projectId: Value(projectId),
       level: Value(level),
+      fieldKey: Value(fieldKey),
       value: Value(value),
       setAt: Value(setAt),
     );
@@ -3794,6 +3823,7 @@ class ContextStateRow extends DataClass implements Insertable<ContextStateRow> {
       rev: serializer.fromJson<int>(json['rev']),
       projectId: serializer.fromJson<String>(json['projectId']),
       level: serializer.fromJson<int>(json['level']),
+      fieldKey: serializer.fromJson<String>(json['fieldKey']),
       value: serializer.fromJson<String>(json['value']),
       setAt: serializer.fromJson<DateTime>(json['setAt']),
     );
@@ -3809,6 +3839,7 @@ class ContextStateRow extends DataClass implements Insertable<ContextStateRow> {
       'rev': serializer.toJson<int>(rev),
       'projectId': serializer.toJson<String>(projectId),
       'level': serializer.toJson<int>(level),
+      'fieldKey': serializer.toJson<String>(fieldKey),
       'value': serializer.toJson<String>(value),
       'setAt': serializer.toJson<DateTime>(setAt),
     };
@@ -3822,6 +3853,7 @@ class ContextStateRow extends DataClass implements Insertable<ContextStateRow> {
     int? rev,
     String? projectId,
     int? level,
+    String? fieldKey,
     String? value,
     DateTime? setAt,
   }) => ContextStateRow(
@@ -3832,6 +3864,7 @@ class ContextStateRow extends DataClass implements Insertable<ContextStateRow> {
     rev: rev ?? this.rev,
     projectId: projectId ?? this.projectId,
     level: level ?? this.level,
+    fieldKey: fieldKey ?? this.fieldKey,
     value: value ?? this.value,
     setAt: setAt ?? this.setAt,
   );
@@ -3846,6 +3879,7 @@ class ContextStateRow extends DataClass implements Insertable<ContextStateRow> {
       rev: data.rev.present ? data.rev.value : this.rev,
       projectId: data.projectId.present ? data.projectId.value : this.projectId,
       level: data.level.present ? data.level.value : this.level,
+      fieldKey: data.fieldKey.present ? data.fieldKey.value : this.fieldKey,
       value: data.value.present ? data.value.value : this.value,
       setAt: data.setAt.present ? data.setAt.value : this.setAt,
     );
@@ -3861,6 +3895,7 @@ class ContextStateRow extends DataClass implements Insertable<ContextStateRow> {
           ..write('rev: $rev, ')
           ..write('projectId: $projectId, ')
           ..write('level: $level, ')
+          ..write('fieldKey: $fieldKey, ')
           ..write('value: $value, ')
           ..write('setAt: $setAt')
           ..write(')'))
@@ -3876,6 +3911,7 @@ class ContextStateRow extends DataClass implements Insertable<ContextStateRow> {
     rev,
     projectId,
     level,
+    fieldKey,
     value,
     setAt,
   );
@@ -3890,6 +3926,7 @@ class ContextStateRow extends DataClass implements Insertable<ContextStateRow> {
           other.rev == this.rev &&
           other.projectId == this.projectId &&
           other.level == this.level &&
+          other.fieldKey == this.fieldKey &&
           other.value == this.value &&
           other.setAt == this.setAt);
 }
@@ -3902,6 +3939,7 @@ class ContextStateCompanion extends UpdateCompanion<ContextStateRow> {
   final Value<int> rev;
   final Value<String> projectId;
   final Value<int> level;
+  final Value<String> fieldKey;
   final Value<String> value;
   final Value<DateTime> setAt;
   final Value<int> rowid;
@@ -3913,6 +3951,7 @@ class ContextStateCompanion extends UpdateCompanion<ContextStateRow> {
     this.rev = const Value.absent(),
     this.projectId = const Value.absent(),
     this.level = const Value.absent(),
+    this.fieldKey = const Value.absent(),
     this.value = const Value.absent(),
     this.setAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -3925,6 +3964,7 @@ class ContextStateCompanion extends UpdateCompanion<ContextStateRow> {
     this.rev = const Value.absent(),
     required String projectId,
     required int level,
+    this.fieldKey = const Value.absent(),
     required String value,
     required DateTime setAt,
     this.rowid = const Value.absent(),
@@ -3943,6 +3983,7 @@ class ContextStateCompanion extends UpdateCompanion<ContextStateRow> {
     Expression<int>? rev,
     Expression<String>? projectId,
     Expression<int>? level,
+    Expression<String>? fieldKey,
     Expression<String>? value,
     Expression<DateTime>? setAt,
     Expression<int>? rowid,
@@ -3955,6 +3996,7 @@ class ContextStateCompanion extends UpdateCompanion<ContextStateRow> {
       if (rev != null) 'rev': rev,
       if (projectId != null) 'project_id': projectId,
       if (level != null) 'level': level,
+      if (fieldKey != null) 'field_key': fieldKey,
       if (value != null) 'value': value,
       if (setAt != null) 'set_at': setAt,
       if (rowid != null) 'rowid': rowid,
@@ -3969,6 +4011,7 @@ class ContextStateCompanion extends UpdateCompanion<ContextStateRow> {
     Value<int>? rev,
     Value<String>? projectId,
     Value<int>? level,
+    Value<String>? fieldKey,
     Value<String>? value,
     Value<DateTime>? setAt,
     Value<int>? rowid,
@@ -3981,6 +4024,7 @@ class ContextStateCompanion extends UpdateCompanion<ContextStateRow> {
       rev: rev ?? this.rev,
       projectId: projectId ?? this.projectId,
       level: level ?? this.level,
+      fieldKey: fieldKey ?? this.fieldKey,
       value: value ?? this.value,
       setAt: setAt ?? this.setAt,
       rowid: rowid ?? this.rowid,
@@ -4011,6 +4055,9 @@ class ContextStateCompanion extends UpdateCompanion<ContextStateRow> {
     if (level.present) {
       map['level'] = Variable<int>(level.value);
     }
+    if (fieldKey.present) {
+      map['field_key'] = Variable<String>(fieldKey.value);
+    }
     if (value.present) {
       map['value'] = Variable<String>(value.value);
     }
@@ -4033,6 +4080,7 @@ class ContextStateCompanion extends UpdateCompanion<ContextStateRow> {
           ..write('rev: $rev, ')
           ..write('projectId: $projectId, ')
           ..write('level: $level, ')
+          ..write('fieldKey: $fieldKey, ')
           ..write('value: $value, ')
           ..write('setAt: $setAt, ')
           ..write('rowid: $rowid')

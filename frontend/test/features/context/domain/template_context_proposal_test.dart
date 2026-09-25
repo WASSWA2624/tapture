@@ -78,9 +78,14 @@ void main() {
     ], projectId: 'p1');
 
     expect(proposal.hasConflicts, isTrue);
-    expect(proposal.conflicts, hasLength(2));
-    expect(proposal.conflicts.first, contains('Level 1'));
-    expect(proposal.conflicts.last, contains('country'));
+    expect(proposal.conflicts, hasLength(1));
+    expect(proposal.conflicts.single, contains('country'));
+    expect(
+      proposal.levels.map(
+        (TemplateContextLevelProposal level) => level.field.fieldKey,
+      ),
+      containsAll(<String>['country', 'district']),
+    );
   });
 
   test('ignores templates owned by another project', () {
