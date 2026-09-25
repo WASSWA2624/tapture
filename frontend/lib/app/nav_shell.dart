@@ -232,12 +232,8 @@ class _Pane extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    if (projects) ...<Widget>[
-                      ProjectListActions.paneToolbar(
-                        context,
-                        ref,
-                        showCreate: _paneHasRows(ref),
-                      ),
+                    if (projects && _paneHasRows(ref)) ...<Widget>[
+                      ProjectListActions.paneToolbar(context, ref),
                       const SizedBox(height: Space.x2),
                     ],
                     if (projects) const ProjectListToolbar(),

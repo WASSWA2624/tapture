@@ -57,6 +57,12 @@ class StatusLine extends ConsumerWidget {
     final List<AppOverflowAction> overflow =
         chrome?.overflow ?? const <AppOverflowAction>[];
     final List<Widget> actions = chrome?.actions ?? const <Widget>[];
+    final bool menuBesideTitle =
+        uri.path == AppRoutes.projects &&
+        overflow.isNotEmpty &&
+        (chrome == null ||
+            chrome.title.isEmpty ||
+            chrome.title == Copy.navProjects);
     return Material(
       color: bar,
       child: DecoratedBox(
@@ -100,23 +106,43 @@ class StatusLine extends ConsumerWidget {
                     ),
                     const SizedBox(width: Space.x2),
                   ],
-                  Expanded(
-                    child: Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppText.bodyStrong.copyWith(color: ink),
+                  if (menuBesideTitle) ...<Widget>[
+                    Flexible(
+                      fit: FlexFit.loose,
+                      child: Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppText.bodyStrong.copyWith(color: ink),
+                      ),
                     ),
-                  ),
-                  ...actions,
-                  if (actions.isNotEmpty && overflow.isNotEmpty)
                     const SizedBox(width: Space.x2),
-                  if (overflow.isNotEmpty)
                     AppOverflowMenu(
                       key: const ValueKey<String>('app-page-overflow'),
                       inverted: inverted,
                       items: overflow,
                     ),
+                    const Spacer(),
+                    ...actions,
+                  ] else ...<Widget>[
+                    Expanded(
+                      child: Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppText.bodyStrong.copyWith(color: ink),
+                      ),
+                    ),
+                    ...actions,
+                    if (actions.isNotEmpty && overflow.isNotEmpty)
+                      const SizedBox(width: Space.x2),
+                    if (overflow.isNotEmpty)
+                      AppOverflowMenu(
+                        key: const ValueKey<String>('app-page-overflow'),
+                        inverted: inverted,
+                        items: overflow,
+                      ),
+                  ],
                 ],
               ),
             ),

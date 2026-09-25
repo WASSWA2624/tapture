@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
-import 'package:tapture/core/widgets/app_overflow_menu.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart'
+    show AppOverflowAction;
 
 import 'project_list_filter.dart';
 
@@ -47,7 +48,8 @@ abstract final class ProjectListActions {
     ];
   }
 
-  /// Filled create plus the more menu, for the expanded pane header.
+  /// Filled create control for the expanded pane header. Show archived
+  /// stays on the Projects title, not in this pane.
   static Widget paneToolbar(
     BuildContext context,
     WidgetRef ref, {
@@ -65,7 +67,6 @@ abstract final class ProjectListActions {
             label: Copy.projectsCreate,
             onPressed: () => create(context),
           ),
-        AppOverflowMenu(key: overflowKey, items: overflow(ref)),
       ],
     );
   }

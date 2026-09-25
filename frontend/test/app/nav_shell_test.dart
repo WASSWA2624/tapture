@@ -373,8 +373,20 @@ void main() {
     );
     expect(find.byKey(ProjectListActions.createKey), findsOneWidget);
     expect(find.byKey(ProjectListActions.createKey), meetsTapTarget());
-    expect(find.byKey(ProjectListActions.overflowKey), findsOneWidget);
-    expect(find.byKey(ProjectListActions.overflowKey), meetsTapTarget());
+    expect(find.byKey(ProjectListActions.overflowKey), findsNothing);
+    expect(
+      find.byKey(const ValueKey<String>('app-page-overflow')),
+      findsOneWidget,
+    );
+    expect(
+      tester.getTopRight(find.byType(StatusLine)).dx -
+          tester
+              .getTopRight(
+                find.byKey(const ValueKey<String>('app-page-overflow')),
+              )
+              .dx,
+      lessThanOrEqualTo(Space.x3 + 1),
+    );
     expect(
       tester.getBottomLeft(find.byKey(ProjectListActions.createKey)).dy,
       lessThan(tester.getTopLeft(_paneSearch()).dy),
@@ -395,7 +407,7 @@ void main() {
         findsNothing,
       );
 
-      await tester.tap(find.byKey(ProjectListActions.overflowKey));
+      await tester.tap(find.byKey(const ValueKey<String>('app-page-overflow')));
       await tester.pumpAndSettle();
       expect(find.text(Copy.projectShowArchived), findsOneWidget);
       await tester.tap(find.text(Copy.projectShowArchived));
@@ -477,6 +489,17 @@ void main() {
       ),
       findsOneWidget,
     );
+    final Finder title = find.descendant(
+      of: find.byType(StatusLine),
+      matching: find.text(Copy.navProjects),
+    );
+    final Finder menu = find.byKey(const ValueKey<String>('app-page-overflow'));
+    expect(menu, findsOneWidget);
+    expect(
+      tester.getTopLeft(menu).dx - tester.getTopRight(title).dx,
+      lessThanOrEqualTo(Space.x2 + 1),
+    );
+    expect(find.byKey(ProjectListActions.overflowKey), findsNothing);
   });
 
   testWidgets('search text and the open project survive 400 and 1200 dp', (
