@@ -489,15 +489,12 @@ void main() {
       ),
       findsOneWidget,
     );
-    final Finder title = find.descendant(
-      of: find.byType(StatusLine),
-      matching: find.text(Copy.navProjects),
-    );
     final Finder menu = find.byKey(const ValueKey<String>('app-page-overflow'));
     expect(menu, findsOneWidget);
     expect(
-      tester.getTopLeft(menu).dx - tester.getTopRight(title).dx,
-      lessThanOrEqualTo(Space.x2 + 1),
+      tester.getTopRight(find.byType(StatusLine)).dx -
+          tester.getTopRight(menu).dx,
+      lessThanOrEqualTo(Space.x3 + 1),
     );
     expect(find.byKey(ProjectListActions.overflowKey), findsNothing);
   });
