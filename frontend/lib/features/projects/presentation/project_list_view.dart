@@ -7,6 +7,7 @@ import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
@@ -78,10 +79,7 @@ class ProjectListView extends ConsumerWidget {
                           container: true,
                           label: Copy.projectStatusArchived,
                           child: const ExcludeSemantics(
-                            child: Icon(
-                              Icons.inventory_2_outlined,
-                              size: Space.x5,
-                            ),
+                            child: Icon(AppIcons.archive, size: Space.x5),
                           ),
                         ),
                         const SizedBox(width: Space.x2),
@@ -91,7 +89,7 @@ class ProjectListView extends ConsumerWidget {
                           container: true,
                           label: Copy.pinnedProject,
                           child: const ExcludeSemantics(
-                            child: Icon(Icons.push_pin, size: Space.x5),
+                            child: Icon(AppIcons.pinned, size: Space.x5),
                           ),
                         ),
                         const SizedBox(width: Space.x2),
@@ -115,7 +113,7 @@ class ProjectListView extends ConsumerWidget {
 Widget _empty(BuildContext context, {required bool searching}) {
   final bool expanded = context.sizeClass == SizeClass.expanded;
   return AppEmptyState(
-    icon: Icons.folder_open_outlined,
+    icon: AppIcons.project,
     headline: searching
         ? Copy.projectsNoMatchHeadline
         : Copy.projectsEmptyHeadline,
@@ -152,17 +150,17 @@ List<AppOverflowAction> _rowActions(
   return <AppOverflowAction>[
     AppOverflowAction(
       label: Copy.projectExport,
-      icon: Icons.ios_share_outlined,
+      icon: AppIcons.export,
       onTap: () => context.push(RoutePaths.projectExports(project.id)),
     ),
     AppOverflowAction(
       label: Copy.projectRename,
-      icon: Icons.edit_outlined,
+      icon: AppIcons.edit,
       onTap: () => unawaited(ProjectRenameAction.open(context, ref, project)),
     ),
     AppOverflowAction(
       label: pinned ? Copy.projectUnpin : Copy.projectPin,
-      icon: Icons.push_pin_outlined,
+      icon: AppIcons.pin,
       onTap: () => unawaited(
         ref.read(projectRepositoryProvider).setPinned(project.id, !pinned),
       ),
@@ -172,12 +170,12 @@ List<AppOverflowAction> _rowActions(
       label: project.status == ProjectStatus.archived
           ? Copy.projectUnarchive
           : Copy.projectArchive,
-      icon: Icons.inventory_2_outlined,
+      icon: AppIcons.archive,
       onTap: () => unawaited(ProjectArchiveAction.apply(ref, project)),
     ),
     AppOverflowAction(
       label: Copy.projectDeleteMenu,
-      icon: Icons.delete_outline,
+      icon: AppIcons.delete,
       onTap: () =>
           unawaited(ProjectDeleteAction.confirm(context, ref, project)),
     ),

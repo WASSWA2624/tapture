@@ -3,6 +3,7 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 
 part 'progress_step.dart';
 
@@ -133,9 +134,9 @@ class _RunningMark extends StatelessWidget {
 
 (Color, IconData, String) _style(StepState state, AppColors colors) {
   return switch (state) {
-    StepState.done => (colors.success, Icons.check_circle, Copy.stepDone),
-    StepState.running => (colors.info, Icons.sync, Copy.stepRunning),
-    StepState.waiting => (colors.outline, Icons.schedule, Copy.stepWaiting),
-    StepState.failed => (colors.danger, Icons.error_outline, Copy.failed),
+    StepState.done => (colors.success, AppIcons.done, Copy.stepDone),
+    StepState.running => (colors.info, AppIcons.processing, Copy.stepRunning),
+    StepState.waiting => (colors.outline, AppIcons.queued, Copy.stepWaiting),
+    StepState.failed => (colors.danger, AppIcons.error, Copy.failed),
   };
 }

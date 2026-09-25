@@ -6,6 +6,7 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
@@ -98,7 +99,7 @@ class _GiveFeedbackState extends ConsumerState<GiveFeedbackScreen> {
         compactBar: true,
         scrollable: false,
         leading: AppIconButton(
-          icon: Icons.close_fullscreen,
+          icon: AppIcons.collapsePanel,
           semanticLabel: Copy.feedbackContinueLater,
           tooltip: Copy.feedbackContinueLater,
           outlined: false,
@@ -107,7 +108,7 @@ class _GiveFeedbackState extends ConsumerState<GiveFeedbackScreen> {
         overflow: <AppOverflowAction>[
           AppOverflowAction(
             key: const ValueKey<String>('feedback-discard-draft'),
-            icon: Icons.delete_outline,
+            icon: AppIcons.delete,
             label: Copy.feedbackDiscardDraft,
             onTap: () => unawaited(_discard()),
           ),

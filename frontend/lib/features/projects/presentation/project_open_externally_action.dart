@@ -6,6 +6,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/download_service.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
@@ -99,7 +100,7 @@ AppOverflowAction? projectOpenExternallyMenuItem(
   return AppOverflowAction(
     key: ValueKey<String>('project-open-${project.id}'),
     label: openWith ? Copy.projectOpenWith : Copy.projectDownloadCopy,
-    icon: openWith ? Icons.open_in_new : Icons.download_outlined,
+    icon: openWith ? AppIcons.openExternal : AppIcons.download,
     onTap: () =>
         unawaited(ProjectOpenExternallyAction.open(context, ref, project)),
   );

@@ -21,6 +21,7 @@ import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/projects/domain/project_repository.dart';
+import 'package:tapture/features/projects/presentation/project_list_screen.dart';
 import 'package:tapture/features/projects/projects.dart';
 
 import '../features/projects/fakes/fake_project_repository.dart';
@@ -36,6 +37,26 @@ void main() {
     expect(find.byKey(const ValueKey<String>('nav-pane')), findsNothing);
     expect(find.byType(NavShell), findsOneWidget);
   });
+
+  for (final double width in <double>[393, 800, 1200]) {
+    testWidgets(
+      'at $width dp the header clears the status bar and pages see no top inset',
+      (WidgetTester tester) async {
+        tester.view.padding = const FakeViewPadding(top: 24);
+        tester.view.viewPadding = const FakeViewPadding(top: 24);
+        addTearDown(tester.view.resetPadding);
+        addTearDown(tester.view.resetViewPadding);
+        await _pump(tester, width: width);
+        await tester.pumpAndSettle();
+
+        expect(tester.getTopLeft(find.byType(StatusLine)).dy, 24);
+        final BuildContext page = tester.element(
+          find.byType(ProjectListScreen),
+        );
+        expect(MediaQuery.paddingOf(page).top, 0);
+      },
+    );
+  }
 
   testWidgets('medium width uses a navigation rail', (
     WidgetTester tester,

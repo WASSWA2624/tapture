@@ -8,6 +8,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
@@ -15,15 +16,14 @@ import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
-import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
-import 'package:tapture/core/widgets/fields/choice.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/presentation/template_locations.dart';
 
 import '../domain/field_def.dart';
+import '../domain/shipped_template_category.dart';
 import '../domain/template_def.dart';
 import '../templates.dart' show shippedTemplateLoaderProvider;
 import 'template_list_screen.dart';
@@ -41,7 +41,6 @@ class ShippedPickerScreen extends ConsumerStatefulWidget {
 class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
   final TextEditingController _name = TextEditingController();
   String _query = '';
-  final Set<String> _kinds = <String>{};
   final Set<String> _picked = <String>{};
   bool _saving = false;
 
@@ -69,7 +68,7 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
       title: preview == null
           ? Copy.templatesLibraryTitle
           : Copy.shippedTemplateName(preview.templateKey),
-      scrollable: preview == null,
+      scrollable: false,
       footer: preview != null
           ? null
           : value.maybeWhen(
@@ -80,7 +79,7 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
                 return AppPrimaryAction(
                   label: Copy.save,
                   busy: _saving,
-                  onPressed: _picked.isEmpty && _kinds.isEmpty
+                  onPressed: _picked.isEmpty
                       ? null
                       : () => unawaited(_savePicked()),
                 );
@@ -90,7 +89,7 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
       leading: preview == null
           ? null
           : AppIconButton(
-              icon: Icons.arrow_back,
+              icon: AppIcons.back,
               semanticLabel: Copy.close,
               tooltip: Copy.close,
               outlined: false,
@@ -130,7 +129,7 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
   }
 
   Future<void> _savePicked() async {
-    if (_saving || (_picked.isEmpty && _kinds.isEmpty)) {
+    if (_saving || _picked.isEmpty) {
       return;
     }
     final String? projectId =
@@ -142,23 +141,7 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
     }
     final List<TemplateDef> rows =
         ref.read(shippedLibraryProvider).asData?.value ?? const <TemplateDef>[];
-    final Set<String> attached = <String>{
-      for (final TemplateDef template
-          in ref.read(templateListProvider).asData?.value ??
-              const <TemplateDef>[])
-        template.templateKey,
-    };
-    final List<String> keys = _picked.isNotEmpty
-        ? List<String>.of(_picked)
-        : <String>[
-            for (final TemplateDef row in rows)
-              if (_kinds.contains(row.kind) &&
-                  !attached.contains(row.templateKey))
-                row.templateKey,
-          ];
-    if (keys.isEmpty) {
-      return;
-    }
+    final List<String> keys = List<String>.of(_picked);
     setState(() => _saving = true);
     Failure? failure;
     for (final String key in keys) {
@@ -198,82 +181,81 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
 
   Widget _library(List<TemplateDef> rows, Set<String> attached) {
     final String query = _query.trim().toLowerCase();
-    final List<String> kinds = <String>{
-      for (final TemplateDef template in rows) template.kind,
-    }.toList()..sort();
     final List<TemplateDef> shown = <TemplateDef>[
       for (final TemplateDef template in rows)
-        if (_kinds.isEmpty || _kinds.contains(template.kind))
-          if (query.isEmpty ||
-              Copy.shippedTemplateName(
-                template.templateKey,
-              ).toLowerCase().contains(query) ||
-              Copy.shippedKindTitle(
-                template.kind,
-              ).toLowerCase().contains(query))
-            template,
-    ];
-    String? lastKind;
+        if (query.isEmpty ||
+            Copy.shippedTemplateName(
+              template.templateKey,
+            ).toLowerCase().contains(query) ||
+            Copy.shippedCategoryTitle(
+              ShippedTemplateCategory.of(template.templateKey).name,
+            ).toLowerCase().contains(query))
+          template,
+    ]..sort(_byCategory);
+    final double gutter = AppPage.gutter(context);
+    ShippedTemplateCategory? lastCategory;
     return Column(
-      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        AppSearchField(
-          hint: Copy.shippedLibrarySearchHint,
-          onChanged: (String value) => setState(() => _query = value),
-        ),
-        const SizedBox(height: Space.x2),
-        AppCheckboxGroup<String>(
-          label: Copy.shippedKindFilter,
-          showLabel: false,
-          value: _kinds,
-          options: <Choice<String>>[
-            for (final String kind in kinds)
-              Choice<String>(kind, Copy.shippedKindTitle(kind)),
-          ],
-          onChanged: (Set<String> value) => setState(() {
-            _kinds
-              ..clear()
-              ..addAll(value);
-          }),
-        ),
-        if (shown.isEmpty)
-          AppEmptyState(
-            icon: Icons.search_off_outlined,
-            headline: Copy.shippedLibraryNoMatch(_query),
-            message: Copy.shippedLibraryNoMatchMessage,
+        Padding(
+          padding: EdgeInsets.fromLTRB(gutter, Space.x1, gutter, Space.x2),
+          child: AppSearchField(
+            hint: Copy.shippedLibrarySearchHint,
+            text: _query,
+            onChanged: (String value) => setState(() => _query = value),
           ),
-        for (final TemplateDef template in shown) ...<Widget>[
-          if (template.kind != lastKind)
-            AppSectionHeader(
-              title: Copy.shippedKindTitle(lastKind = template.kind),
-              dense: true,
-            ),
-          AppListTile(
-            title: Copy.shippedTemplateName(template.templateKey),
-            subtitle: attached.contains(template.templateKey)
-                ? Copy.shippedAddedToProject
-                : Copy.fieldsCount(template.fields.length),
-            selected: _picked.contains(template.templateKey),
-            trailing: attached.contains(template.templateKey)
-                ? const Icon(Icons.check_circle_outline)
-                : Checkbox(
-                    value: _picked.contains(template.templateKey),
-                    onChanged: (bool? value) =>
-                        _togglePicked(template.templateKey, value ?? false),
-                  ),
-            onTap: () => ref
-                .read(_shippedPickerProvider.notifier)
-                .preview(template.templateKey),
-            onLongPress: attached.contains(template.templateKey)
-                ? null
-                : () => _togglePicked(
-                    template.templateKey,
-                    !_picked.contains(template.templateKey),
-                  ),
-          ),
-        ],
+        ),
+        Expanded(
+          child: shown.isEmpty
+              ? AppEmptyState(
+                  icon: AppIcons.searchEmpty,
+                  headline: Copy.shippedLibraryNoMatch(_query),
+                  message: Copy.shippedLibraryNoMatchMessage,
+                )
+              : ListView(
+                  children: <Widget>[
+                    for (final TemplateDef template in shown) ...<Widget>[
+                      if (ShippedTemplateCategory.of(template.templateKey) !=
+                          lastCategory)
+                        AppSectionHeader(
+                          title: Copy.shippedCategoryTitle(
+                            (lastCategory = ShippedTemplateCategory.of(
+                              template.templateKey,
+                            )).name,
+                          ),
+                          dense: true,
+                        ),
+                      _libraryRow(template, attached),
+                    ],
+                  ],
+                ),
+        ),
       ],
+    );
+  }
+
+  Widget _libraryRow(TemplateDef template, Set<String> attached) {
+    final bool isAttached = attached.contains(template.templateKey);
+    final bool picked = _picked.contains(template.templateKey);
+    return AppListTile(
+      title: Copy.shippedTemplateName(template.templateKey),
+      subtitle: isAttached
+          ? Copy.shippedAddedToProject
+          : Copy.fieldsCount(template.fields.length),
+      selected: picked,
+      trailing: isAttached
+          ? const Icon(AppIcons.success)
+          : Checkbox(
+              value: picked,
+              onChanged: (bool? value) =>
+                  _togglePicked(template.templateKey, value ?? false),
+            ),
+      onTap: () => ref
+          .read(_shippedPickerProvider.notifier)
+          .preview(template.templateKey),
+      onLongPress: isAttached
+          ? null
+          : () => _togglePicked(template.templateKey, !picked),
     );
   }
 
@@ -298,7 +280,7 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
         if (attached)
           const AppListTile(
             title: Copy.shippedAddedToProject,
-            leading: Icon(Icons.check_circle_outline),
+            leading: Icon(AppIcons.success),
             dense: true,
           ),
         for (final FieldDef field in template.fields)
@@ -323,10 +305,30 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
 
 Widget _empty() {
   return const AppEmptyState(
-    icon: Icons.article_outlined,
+    icon: AppIcons.template,
     headline: Copy.templatesLibraryEmptyHeadline,
     message: Copy.templatesLibraryEmptyMessage,
   );
+}
+
+/// Library order: group order first, then the order inside the group, then
+/// the name for keys the grouping does not list.
+int _byCategory(TemplateDef a, TemplateDef b) {
+  final int group = ShippedTemplateCategory.of(
+    a.templateKey,
+  ).index.compareTo(ShippedTemplateCategory.of(b.templateKey).index);
+  if (group != 0) {
+    return group;
+  }
+  final int order = ShippedTemplateCategory.orderOf(
+    a.templateKey,
+  ).compareTo(ShippedTemplateCategory.orderOf(b.templateKey));
+  if (order != 0) {
+    return order;
+  }
+  return Copy.shippedTemplateName(
+    a.templateKey,
+  ).compareTo(Copy.shippedTemplateName(b.templateKey));
 }
 
 TemplateDef? _selected(List<TemplateDef>? rows, String? key) {

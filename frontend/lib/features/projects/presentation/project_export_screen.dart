@@ -11,6 +11,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/export/xlsx_encoder.dart';
 import 'package:tapture/core/files/download_service.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
@@ -56,7 +57,7 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
         isEmpty: (List<ProjectRecordRow> rows) =>
             rows.isEmpty && _saved == null,
         empty: () => const AppEmptyState(
-          icon: Icons.ios_share_outlined,
+          icon: AppIcons.export,
           headline: Copy.projectExportEmptyHeadline,
           message: Copy.projectExportEmptyMessage,
         ),
@@ -176,7 +177,7 @@ class _ExportReady extends StatelessWidget {
         ] else
           AppButton(
             label: Copy.projectExport,
-            icon: Icons.ios_share_outlined,
+            icon: AppIcons.export,
             onPressed: onExport,
           ),
       ],

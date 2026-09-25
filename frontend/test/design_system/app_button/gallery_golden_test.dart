@@ -6,6 +6,7 @@ import 'package:tapture/app/theme/outdoor_theme.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
 
 void main() {
   group('app button', () {
@@ -156,6 +157,19 @@ class _GalleryBody extends StatelessWidget {
           ),
           const SizedBox(height: Space.x4),
         ],
+        const Text('expanded', style: AppText.section),
+        const SizedBox(height: Space.x2),
+        const AppButton(
+          label: 'Save raw',
+          variant: AppButtonVariant.secondary,
+          expand: true,
+          onPressed: _ignorePress,
+        ),
+        const SizedBox(height: Space.x2),
+        const AppPrimaryAction(
+          label: 'Save and process',
+          onPressed: _ignorePress,
+        ),
       ],
     );
   }

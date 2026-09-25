@@ -7,6 +7,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 
 import 'app_text_field.dart';
 
@@ -88,7 +89,7 @@ class _AppDateFieldState extends State<AppDateField> {
       helper: showAuto ? Copy.autoFilled : null,
       prefix: showAuto
           ? Icon(
-              Icons.auto_awesome,
+              AppIcons.ai,
               semanticLabel: Copy.autoFilled,
               color: context.colors.secondary,
               size: Space.x6,
@@ -97,7 +98,7 @@ class _AppDateFieldState extends State<AppDateField> {
       trailing: value == null || !widget.enabled
           ? null
           : AppIconButton(
-              icon: Icons.clear,
+              icon: AppIcons.clear,
               semanticLabel: Copy.clearField(widget.label),
               tooltip: Copy.clearField(widget.label),
               onPressed: () => widget.onChanged(null),

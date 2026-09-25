@@ -7,6 +7,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
@@ -45,7 +46,7 @@ class DeleteFeedbackScreen extends ConsumerWidget {
       empty: () => _frame(
         context,
         const AppEmptyState(
-          icon: Icons.feedback_outlined,
+          icon: AppIcons.feedback,
           headline: Copy.feedbackEmptyHeadline,
           message: Copy.feedbackEmptyMessage,
         ),
@@ -107,7 +108,7 @@ class DeleteFeedbackScreen extends ConsumerWidget {
       inset: false,
       footer: footer,
       leading: AppIconButton(
-        icon: Icons.close,
+        icon: AppIcons.close,
         semanticLabel: Copy.close,
         tooltip: Copy.close,
         outlined: false,

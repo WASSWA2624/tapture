@@ -13,11 +13,13 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
+import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/settings/settings.dart';
+import 'package:tapture/features/templates/domain/shipped_template_category.dart';
 import 'package:tapture/features/templates/presentation/shipped_picker_screen.dart';
 import 'package:tapture/features/templates/templates.dart';
 
@@ -144,11 +146,10 @@ void main() {
     await tester.pump();
 
     expect(find.byType(AppSectionHeader), findsOneWidget);
+    expect(find.text(Copy.shippedCategoryTitle('general')), findsOneWidget);
     expect(find.byType(AppListTile), findsOneWidget);
-    expect(
-      find.text(Copy.shippedTemplateName('generic_item')),
-      findsNWidgets(3),
-    );
+    expect(find.byType(AppCheckboxGroup<String>), findsNothing);
+    expect(find.text(Copy.shippedTemplateName('generic_item')), findsOneWidget);
     expect(find.text(Copy.fieldsCount(2)), findsOneWidget);
 
     await tester.tap(find.byType(AppListTile));
@@ -246,63 +247,110 @@ void main() {
     );
   });
 
-  testWidgets('search and kind filter the loaded library', (
+  testWidgets('the library is one list grouped under seven categories', (
     WidgetTester tester,
   ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(393, 20000);
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
     await _pump(
       tester,
       overrides: <Override>[
         shippedLibraryProvider.overrideWith(
-          (Ref _) async => const <TemplateDef>[
-            TemplateDef(
-              id: 'g',
-              templateKey: 'generic_item',
-              name: 'generic',
-              version: 1,
-              fields: <FieldDef>[],
-              identityFieldKeys: <String>[],
-              rows: <TemplateRow>[],
-              kind: 'generic',
-            ),
-            TemplateDef(
-              id: 'm',
-              templateKey: 'meter_reading',
-              name: 'meter',
-              version: 1,
-              fields: <FieldDef>[],
-              identityFieldKeys: <String>[],
-              rows: <TemplateRow>[],
-              kind: 'stock',
-            ),
+          (Ref _) async => <TemplateDef>[
+            for (final ShippedTemplateCategory category
+                in ShippedTemplateCategory.values.reversed)
+              for (final String key in category.templateKeys) _shipped(key),
           ],
         ),
       ],
     );
     await tester.pumpAndSettle();
-    expect(find.widgetWithText(AppListTile, 'Generic'), findsOneWidget);
-    expect(find.widgetWithText(AppListTile, 'Meter reading'), findsOneWidget);
 
-    await tester.enterText(find.byType(EditableText), 'meter');
-    await tester.pump(const Duration(milliseconds: 400));
-    expect(find.widgetWithText(AppListTile, 'Meter reading'), findsOneWidget);
-    expect(find.widgetWithText(AppListTile, 'Generic'), findsNothing);
-
-    await tester.enterText(find.byType(EditableText), '');
-    await tester.pump(const Duration(milliseconds: 400));
-    await tester.tap(find.text('Stock / Store').first);
-    await tester.pump();
-    expect(find.widgetWithText(AppListTile, 'Meter reading'), findsOneWidget);
-    expect(find.widgetWithText(AppListTile, 'Generic'), findsNothing);
-
-    await tester.enterText(find.byType(EditableText), 'meter');
-    await tester.pump(const Duration(milliseconds: 400));
-    expect(find.widgetWithText(AppListTile, 'Meter reading'), findsOneWidget);
-
-    await tester.enterText(find.byType(EditableText), 'no-such');
-    await tester.pump(const Duration(milliseconds: 400));
-    expect(find.text(Copy.shippedLibraryNoMatch('no-such')), findsOneWidget);
-    expect(find.byType(EditableText), findsOneWidget);
+    final List<String> headings = <String>[
+      for (final AppSectionHeader header in tester.widgetList<AppSectionHeader>(
+        find.byType(AppSectionHeader),
+      ))
+        header.title,
+    ];
+    expect(headings, <String>[
+      for (final ShippedTemplateCategory category
+          in ShippedTemplateCategory.values)
+        Copy.shippedCategoryTitle(category.name),
+    ]);
+    expect(find.byType(AppCheckboxGroup<String>), findsNothing);
+    expect(find.byType(AppListTile), findsNWidgets(23));
+    final double search = tester.getBottomLeft(find.byType(EditableText)).dy;
+    final double firstHeading = tester
+        .getTopLeft(find.byType(AppSectionHeader).first)
+        .dy;
+    expect(firstHeading, greaterThan(search));
   });
+
+  testWidgets(
+    'search matches names and categories, and a miss sits at the top',
+    (WidgetTester tester) async {
+      await _pump(
+        tester,
+        overrides: <Override>[
+          shippedLibraryProvider.overrideWith(
+            (Ref _) async => <TemplateDef>[
+              _shipped('generic_item'),
+              _shipped('meter_reading'),
+              _shipped('livestock_animal'),
+              _shipped('plant_tree'),
+            ],
+          ),
+        ],
+      );
+      await tester.pumpAndSettle();
+      expect(find.widgetWithText(AppListTile, 'Generic'), findsOneWidget);
+      expect(find.widgetWithText(AppListTile, 'Meter reading'), findsOneWidget);
+
+      await tester.enterText(find.byType(EditableText), 'meter');
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(find.widgetWithText(AppListTile, 'Meter reading'), findsOneWidget);
+      expect(find.widgetWithText(AppListTile, 'Generic'), findsNothing);
+
+      await tester.enterText(find.byType(EditableText), 'animals');
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(
+        find.widgetWithText(AppListTile, 'Livestock / Animal'),
+        findsOneWidget,
+      );
+      expect(
+        find.widgetWithText(AppListTile, 'Plant / Tree survey'),
+        findsOneWidget,
+      );
+      expect(find.widgetWithText(AppListTile, 'Meter reading'), findsNothing);
+
+      await tester.enterText(find.byType(EditableText), 'audit');
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(find.text(Copy.shippedLibraryNoMatch('audit')), findsOneWidget);
+      expect(find.byType(AppListTile), findsNothing);
+      expect(find.byType(Checkbox), findsNothing);
+      expect(find.byType(EditableText), findsOneWidget);
+      final double search = tester.getBottomLeft(find.byType(EditableText)).dy;
+      final double empty = tester.getTopLeft(find.byType(AppEmptyState)).dy;
+      expect(empty - search, lessThan(64));
+    },
+  );
+}
+
+TemplateDef _shipped(String key) {
+  return TemplateDef(
+    id: key,
+    templateKey: key,
+    name: key,
+    version: 1,
+    fields: const <FieldDef>[],
+    identityFieldKeys: const <String>[],
+    rows: const <TemplateRow>[],
+    kind: key,
+  );
 }
 
 Future<void> _pump(

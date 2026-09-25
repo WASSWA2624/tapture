@@ -15,6 +15,7 @@ class AppButton extends StatelessWidget {
     this.variant = AppButtonVariant.primary,
     this.busy = false,
     this.icon,
+    this.expand = false,
   });
 
   /// Visible label; also the semantic name of the control (FE-A11Y-02).
@@ -33,6 +34,11 @@ class AppButton extends StatelessWidget {
   /// Optional leading icon, hidden while [busy] so the spinner owns that slot.
   final IconData? icon;
 
+  /// When true, the button fills its slot's width at the primary action's
+  /// height, so a stacked secondary action lines up with the primary one.
+  /// Otherwise it is as wide as its label.
+  final bool expand;
+
   @override
   Widget build(BuildContext context) {
     final bool isDisabled = onPressed == null && !busy;
@@ -47,20 +53,27 @@ class AppButton extends StatelessWidget {
     final Widget child = Builder(
       builder: (BuildContext buttonContext) => _child(buttonContext),
     );
+    final ButtonStyle? size = expand
+        ? const ButtonStyle(
+            minimumSize: WidgetStatePropertyAll<Size>(
+              Size(double.infinity, Sizes.controlHeight),
+            ),
+          )
+        : null;
     final Widget button = switch (variant) {
       AppButtonVariant.primary => FilledButton(
         onPressed: visualPress,
-        style: _fillStyle(colors),
+        style: _fillStyle(colors).merge(size),
         child: child,
       ),
       AppButtonVariant.secondary => OutlinedButton(
         onPressed: visualPress,
-        style: _outlineStyle(colors),
+        style: _outlineStyle(colors).merge(size),
         child: child,
       ),
       AppButtonVariant.text => TextButton(
         onPressed: visualPress,
-        style: _textStyle(colors),
+        style: _textStyle(colors).merge(size),
         child: child,
       ),
       AppButtonVariant.destructive => FilledButton(
@@ -69,7 +82,7 @@ class AppButton extends StatelessWidget {
           colors,
           background: colors.danger,
           foreground: _onFill(colors.danger, colors),
-        ),
+        ).merge(size),
         child: child,
       ),
     };
@@ -77,12 +90,14 @@ class AppButton extends StatelessWidget {
       liveRegion: busy,
       child: AbsorbPointer(
         absorbing: busy,
-        child: Align(
-          alignment: Alignment.center,
-          widthFactor: 1,
-          heightFactor: 1,
-          child: button,
-        ),
+        child: expand
+            ? SizedBox(width: double.infinity, child: button)
+            : Align(
+                alignment: Alignment.center,
+                widthFactor: 1,
+                heightFactor: 1,
+                child: button,
+              ),
       ),
     );
   }

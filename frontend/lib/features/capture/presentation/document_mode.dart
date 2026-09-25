@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 
 /// Document-mode boundary detection outcome for the shutter path.
@@ -43,7 +44,7 @@ final class DocumentMode extends StatelessWidget {
       label: message,
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(Space.x3),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[

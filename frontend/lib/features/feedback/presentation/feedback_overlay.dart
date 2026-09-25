@@ -12,6 +12,7 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/lifecycle/lifecycle.dart';
 import 'package:tapture/core/widgets/app_floating_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
@@ -183,7 +184,7 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
           if (!expanded)
             AppFloatingButton(
               key: const ValueKey<String>('feedback-button'),
-              icon: Icons.feedback_outlined,
+              icon: AppIcons.feedback,
               label: Copy.feedback,
               hint: Copy.feedbackButtonHint,
               expandOnHover: context.formFactor == FormFactor.desktop,
@@ -288,26 +289,26 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
         items: <AppOverflowAction>[
           AppOverflowAction(
             key: ValueKey<String>(open ? 'feedback-continue' : 'feedback-give'),
-            icon: Icons.rate_review_outlined,
+            icon: AppIcons.feedback,
             label: open ? Copy.feedbackContinue : Copy.feedbackGive,
             onTap: () => ref.read(feedbackDraftProvider.notifier).expand(),
           ),
           if (open)
             AppOverflowAction(
               key: const ValueKey<String>('feedback-add-screen'),
-              icon: Icons.screenshot_monitor_outlined,
+              icon: AppIcons.screenshot,
               label: Copy.feedbackAddScreen,
               onTap: () => unawaited(_addThisScreen(uiContext)),
             ),
           AppOverflowAction(
             key: const ValueKey<String>('feedback-download'),
-            icon: Icons.download_outlined,
+            icon: AppIcons.download,
             label: Copy.feedbackDownload,
             onTap: () => unawaited(_openDownload(uiContext)),
           ),
           AppOverflowAction(
             key: const ValueKey<String>('feedback-delete'),
-            icon: Icons.delete_outline,
+            icon: AppIcons.delete,
             label: Copy.feedbackDelete,
             onTap: () => unawaited(_openDelete(uiContext)),
           ),

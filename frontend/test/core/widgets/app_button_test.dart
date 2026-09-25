@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_page.dart';
@@ -118,6 +119,59 @@ void main() {
       final Size size = tester.getSize(find.byType(AppButton));
       expect(size.width, lessThanOrEqualTo(360));
     },
+  );
+
+  testWidgets('an expanded button fills its slot at the primary height', (
+    WidgetTester tester,
+  ) async {
+    final Size size = await _slotSize(tester, expand: true);
+
+    expect(size.width, 361);
+    expect(size.height, Sizes.controlHeight);
+  });
+
+  testWidgets('a default button keeps the width of its label', (
+    WidgetTester tester,
+  ) async {
+    final Size size = await _slotSize(tester, expand: false);
+
+    expect(size.width, lessThan(200));
+  });
+}
+
+Future<Size> _slotSize(WidgetTester tester, {required bool expand}) async {
+  tester.view.devicePixelRatio = 1;
+  tester.view.physicalSize = const Size(393, 800);
+  addTearDown(() {
+    tester.view.resetPhysicalSize();
+    tester.view.resetDevicePixelRatio();
+  });
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: buildTheme(brightness: Brightness.light),
+      home: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Space.x4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              AppButton(
+                label: 'Save raw',
+                variant: AppButtonVariant.secondary,
+                expand: expand,
+                onPressed: _ignorePress,
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+  return tester.getSize(
+    find.descendant(
+      of: find.byType(AppButton),
+      matching: find.byType(OutlinedButton),
+    ),
   );
 }
 

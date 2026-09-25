@@ -23,6 +23,7 @@ import 'package:tapture/core/widgets/app_card.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/app_floating_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
@@ -201,7 +202,7 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
                   ),
                   actions: const <Widget>[
                     AppIconButton(
-                      icon: Icons.contrast,
+                      icon: AppIcons.theme,
                       semanticLabel: Copy.galleryTheme,
                       tooltip: Copy.galleryTheme,
                       onPressed: _noop,
@@ -209,7 +210,7 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
                   ],
                   overflow: const <AppOverflowAction>[
                     AppOverflowAction(
-                      icon: Icons.save_outlined,
+                      icon: AppIcons.save,
                       label: Copy.save,
                       onTap: _noop,
                     ),
@@ -399,24 +400,33 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
             AppButton(
               label: Copy.save,
               variant: variant,
-              icon: Icons.check,
+              icon: AppIcons.check,
               onPressed: _noop,
             ),
           ],
         ),
         const SizedBox(height: Space.x3),
       ],
+      const AppButton(
+        label: Copy.save,
+        variant: AppButtonVariant.secondary,
+        expand: true,
+        onPressed: _noop,
+      ),
+      const SizedBox(height: Space.x2),
+      const AppPrimaryAction(label: Copy.save, onPressed: _noop),
+      const SizedBox(height: Space.x3),
       const Row(
         children: <Widget>[
           AppIconButton(
-            icon: Icons.search,
+            icon: AppIcons.search,
             semanticLabel: Copy.galleryFields,
             tooltip: Copy.galleryFields,
             onPressed: _noop,
           ),
           SizedBox(width: Space.x2),
           AppIconButton(
-            icon: Icons.mic,
+            icon: AppIcons.dictating,
             semanticLabel: Copy.galleryFields,
             tooltip: Copy.galleryFields,
             selected: true,
@@ -433,7 +443,7 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         child: Stack(
           children: <Widget>[
             AppFloatingButton(
-              icon: Icons.feedback_outlined,
+              icon: AppIcons.feedback,
               label: Copy.feedback,
               hint: Copy.feedbackButtonHint,
               onPressed: _ignoreAnchor,
@@ -456,11 +466,7 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
 
   List<Widget> _overflowMenus() {
     const List<AppOverflowAction> items = <AppOverflowAction>[
-      AppOverflowAction(
-        icon: Icons.save_outlined,
-        label: Copy.save,
-        onTap: _noop,
-      ),
+      AppOverflowAction(icon: AppIcons.save, label: Copy.save, onTap: _noop),
     ];
     final Color fill = context.colors.surfaceVariant;
     return <Widget>[
@@ -649,6 +655,14 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),
+      AppChoiceField<String>(
+        label: 'Grade',
+        options: _grades.take(1).toList(),
+        value: 'a',
+        alwaysSheet: true,
+        onChanged: (_) {},
+      ),
+      const SizedBox(height: Space.x4),
       AppRadioGroup<String>(
         label: 'Grade',
         options: _grades,
@@ -659,6 +673,14 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       AppRadioGroup<String>(
         label: 'Grade',
         options: _grades,
+        onChanged: (_) {},
+      ),
+      const SizedBox(height: Space.x4),
+      AppRadioGroup<String>(
+        label: 'Grade',
+        options: _grades,
+        value: 'b',
+        framed: false,
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),
@@ -853,7 +875,7 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
     return <Widget>[
       const AppSectionHeader(title: Copy.galleryStates),
       const AppEmptyState(
-        icon: Icons.inbox_outlined,
+        icon: AppIcons.empty,
         headline: Copy.emptyHeadline,
         message: Copy.emptyMessage,
         actionLabel: Copy.tryAgain,
@@ -907,14 +929,14 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       const AppSectionHeader(title: Copy.galleryFeedback),
       const AppBanner(
         message: Copy.unsavedChanges,
-        icon: Icons.wifi_off,
+        icon: AppIcons.offline,
         tone: SnackTone.warning,
         onDismiss: _noop,
       ),
       const SizedBox(height: Space.x4),
       const AppBanner(
         message: Copy.unsavedChanges,
-        icon: Icons.info_outline,
+        icon: AppIcons.info,
         tone: SnackTone.info,
       ),
       const SizedBox(height: Space.x4),

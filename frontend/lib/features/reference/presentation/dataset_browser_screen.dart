@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
@@ -83,7 +85,7 @@ class _DatasetBrowserScreenState extends ConsumerState<DatasetBrowserScreen> {
       body: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(Space.x4),
             child: AppSearchField(
               hint: Copy.datasetsSearchHint,
               text: _query,
@@ -109,7 +111,7 @@ class _DatasetBrowserScreenState extends ConsumerState<DatasetBrowserScreen> {
                   )
                 : _rows.isEmpty
                 ? const AppEmptyState(
-                    icon: Icons.table_rows_outlined,
+                    icon: AppIcons.datasetRow,
                     headline: Copy.datasetsBrowserEmptyHeadline,
                     message: Copy.datasetsBrowserEmptyMessage,
                   )

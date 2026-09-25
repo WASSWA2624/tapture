@@ -5,6 +5,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
@@ -53,7 +54,7 @@ class RequiredColumnsScreen extends ConsumerWidget {
         value: value,
         isEmpty: (TemplateDef? row) => row == null || row.fields.isEmpty,
         empty: () => const AppEmptyState(
-          icon: Icons.rule,
+          icon: AppIcons.rules,
           headline: Copy.requiredColumnsEmptyHeadline,
           message: Copy.requiredColumnsEmptyMessage,
         ),
@@ -71,7 +72,7 @@ class RequiredColumnsScreen extends ConsumerWidget {
         if (view.saveError != null)
           AppBanner(
             message: view.saveError!,
-            icon: Icons.error_outline,
+            icon: AppIcons.error,
             tone: SnackTone.error,
           ),
         for (final _Group group in groups) ...<Widget>[

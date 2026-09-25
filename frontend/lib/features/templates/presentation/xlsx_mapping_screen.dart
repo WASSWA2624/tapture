@@ -12,6 +12,7 @@ import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/project_folders.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/import/import.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
@@ -78,7 +79,7 @@ class XlsxMappingScreen extends ConsumerWidget {
         key: ValueKey<String>('route-xlsx-mapping'),
         title: Copy.xlsxMappingTitle,
         body: AppEmptyState(
-          icon: Icons.table_chart_outlined,
+          icon: AppIcons.dataset,
           headline: Copy.xlsxMappingEmptyHeadline,
           message: Copy.xlsxMappingEmptyMessage,
         ),
@@ -110,7 +111,7 @@ class XlsxMappingScreen extends ConsumerWidget {
         isEmpty: (WorkbookSnapshot book) =>
             book.sheets.isEmpty || book.sheets.first.columns.isEmpty,
         empty: () => const AppEmptyState(
-          icon: Icons.table_chart_outlined,
+          icon: AppIcons.dataset,
           headline: Copy.xlsxMappingEmptyHeadline,
           message: Copy.xlsxMappingEmptyMessage,
         ),
@@ -130,7 +131,7 @@ class XlsxMappingScreen extends ConsumerWidget {
         if (view.saveError != null)
           AppBanner(
             message: view.saveError!,
-            icon: Icons.error_outline,
+            icon: AppIcons.error,
             tone: SnackTone.error,
           ),
         for (final _XlsxRow row in view.rows) ...<Widget>[
@@ -151,9 +152,7 @@ class XlsxMappingScreen extends ConsumerWidget {
                   label: row.skipped
                       ? Copy.xlsxMappingInclude
                       : Copy.xlsxMappingSkip,
-                  icon: row.skipped
-                      ? Icons.add_outlined
-                      : Icons.remove_circle_outline,
+                  icon: row.skipped ? AppIcons.add : AppIcons.remove,
                   onTap: () => controller.toggleSkip(row.index),
                 ),
               ],

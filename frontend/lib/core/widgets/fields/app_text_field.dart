@@ -10,6 +10,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/normalise/spoken_text.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 
 import 'dictation_phase.dart';
@@ -305,7 +306,7 @@ class _AppTextFieldState extends State<AppTextField> {
       children: <Widget>[
         if (showClear)
           AppIconButton(
-            icon: Icons.clear,
+            icon: AppIcons.clear,
             semanticLabel: Copy.clearField(field.label),
             tooltip: Copy.clearField(field.label),
             outlined: false,
@@ -318,7 +319,7 @@ class _AppTextFieldState extends State<AppTextField> {
         if (showMic)
           AppIconButton(
             key: const ValueKey<String>('app-text-field-dictate'),
-            icon: on ? Icons.mic : Icons.mic_none,
+            icon: on ? AppIcons.dictating : AppIcons.dictate,
             semanticLabel: mic,
             tooltip: mic,
             selected: on ? true : null,
@@ -329,9 +330,7 @@ class _AppTextFieldState extends State<AppTextField> {
         // Last, so the show / hide control is always the far end of the field.
         if (field.obscureText)
           AppIconButton(
-            icon: _revealed
-                ? Icons.visibility_off_outlined
-                : Icons.visibility_outlined,
+            icon: _revealed ? AppIcons.hide : AppIcons.show,
             semanticLabel: reveal,
             tooltip: reveal,
             outlined: false,

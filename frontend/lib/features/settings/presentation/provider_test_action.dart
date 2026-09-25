@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 
@@ -33,7 +34,7 @@ class ProviderTestAction extends StatelessWidget {
     }
     if (view == ProviderTestView.empty && onTest == null) {
       return const AppEmptyState(
-        icon: Icons.vpn_key_outlined,
+        icon: AppIcons.key,
         headline: Copy.apiKeyTest,
         message: Copy.apiKeyCustody,
       );

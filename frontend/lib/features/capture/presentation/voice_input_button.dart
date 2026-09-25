@@ -7,6 +7,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/permissions/permissions_service.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 
 /// Mic affordance for long-text fields: listening state and live partials.
 final class VoiceInputButton extends StatefulWidget {
@@ -102,7 +103,7 @@ class _VoiceInputButtonState extends State<VoiceInputButton> {
         IconButton(
           tooltip: _listening ? Copy.stopDictating('') : Copy.dictateInto(''),
           onPressed: _toggle,
-          icon: Icon(_listening ? Icons.mic : Icons.mic_none),
+          icon: Icon(_listening ? AppIcons.dictating : AppIcons.dictate),
         ),
         if (_listening) const Text(Copy.captureListening),
         if (_partial.isNotEmpty) Text(_partial),

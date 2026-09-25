@@ -11,6 +11,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
@@ -82,7 +83,7 @@ class _ContextHierarchyScreenState
         title: Copy.contextHierarchyTitle,
         showAppBar: false,
         body: AppEmptyState(
-          icon: Icons.account_tree_outlined,
+          icon: AppIcons.context,
           headline: Copy.contextHierarchyEmptyHeadline,
           message: Copy.contextHierarchyEmptyMessage,
         ),
@@ -167,7 +168,7 @@ class _ContextHierarchyScreenState
                         ),
                         leading: ReorderableDragStartListener(
                           index: index,
-                          child: const Icon(Icons.drag_handle),
+                          child: const Icon(AppIcons.reorder),
                         ),
                         trailing: _levelActions(
                           context,
@@ -179,13 +180,11 @@ class _ContextHierarchyScreenState
                     },
                   ),
           ),
-          SizedBox(
-            width: double.infinity,
-            child: AppButton(
-              label: Copy.contextAddLevel,
-              variant: AppButtonVariant.secondary,
-              onPressed: () => unawaited(_addLevel(projectId)),
-            ),
+          AppButton(
+            label: Copy.contextAddLevel,
+            variant: AppButtonVariant.secondary,
+            expand: true,
+            onPressed: () => unawaited(_addLevel(projectId)),
           ),
         ],
       ),
@@ -200,7 +199,7 @@ class _ContextHierarchyScreenState
     return templates.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (Object _, StackTrace _) => AppEmptyState(
-        icon: Icons.error_outline,
+        icon: AppIcons.error,
         headline: Copy.contextTemplateFailureHeadline,
         message: Copy.contextTemplateFailureMessage,
         actionLabel: Copy.queueRetry,
@@ -210,7 +209,7 @@ class _ContextHierarchyScreenState
       data: (List<TemplateDef> loaded) {
         if (loaded.isEmpty) {
           return AppEmptyState(
-            icon: Icons.article_outlined,
+            icon: AppIcons.template,
             headline: Copy.contextNoTemplatesHeadline,
             message: Copy.contextNoTemplatesMessage,
             actionLabel: Copy.contextOpenTemplates,
@@ -221,7 +220,7 @@ class _ContextHierarchyScreenState
             TemplateContextProposal.fromTemplates(loaded, projectId: projectId);
         if (proposal.hasConflicts) {
           return AppEmptyState(
-            icon: Icons.warning_amber_outlined,
+            icon: AppIcons.warning,
             headline: Copy.contextTemplateConflictHeadline,
             message: Copy.contextTemplateConflictMessage(
               proposal.conflicts.join(', '),
@@ -230,7 +229,7 @@ class _ContextHierarchyScreenState
         }
         if (proposal.levels.isEmpty) {
           return const AppEmptyState(
-            icon: Icons.account_tree_outlined,
+            icon: AppIcons.context,
             headline: Copy.contextNoDeclaredLevelsHeadline,
             message: Copy.contextNoDeclaredLevelsMessage,
           );
@@ -315,21 +314,21 @@ class _ContextHierarchyScreenState
       builder: (BuildContext context) {
         if (loadFailure != null) {
           return AppEmptyState(
-            icon: Icons.error_outline,
+            icon: AppIcons.error,
             headline: Copy.contextTemplateFailureHeadline,
             message: loadFailure.message,
           );
         }
         if (fields.isEmpty) {
           return const AppEmptyState(
-            icon: Icons.article_outlined,
+            icon: AppIcons.template,
             headline: Copy.contextNoTemplatesHeadline,
             message: Copy.contextNoTemplatesMessage,
           );
         }
         if (available.isEmpty) {
           return const AppEmptyState(
-            icon: Icons.account_tree_outlined,
+            icon: AppIcons.context,
             headline: Copy.contextNoEligibleFieldsHeadline,
             message: Copy.contextNoEligibleFieldsMessage,
           );
@@ -388,14 +387,14 @@ class _ContextHierarchyScreenState
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           AppIconButton(
-            icon: Icons.edit_outlined,
+            icon: AppIcons.edit,
             outlined: false,
             tooltip: Copy.templatesEdit,
             semanticLabel: Copy.templatesEdit,
             onPressed: () => unawaited(_editLevel(projectId, index)),
           ),
           AppIconButton(
-            icon: Icons.delete_outline,
+            icon: AppIcons.delete,
             outlined: false,
             tooltip: Copy.contextRemoveLevel,
             semanticLabel: Copy.contextRemoveLevel,

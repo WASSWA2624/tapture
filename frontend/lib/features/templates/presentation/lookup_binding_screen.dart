@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
@@ -90,7 +92,7 @@ class _LookupBindingScreenState extends ConsumerState<LookupBindingScreen> {
         value: template,
         isEmpty: (TemplateDef? value) => value == null,
         empty: () => const AppEmptyState(
-          icon: Icons.article_outlined,
+          icon: AppIcons.template,
           headline: Copy.templatesEmptyHeadline,
           message: Copy.templatesEmptyMessage,
         ),
@@ -101,7 +103,7 @@ class _LookupBindingScreenState extends ConsumerState<LookupBindingScreen> {
           final FieldDef? field = _fieldOf(value);
           if (field == null) {
             return const AppEmptyState(
-              icon: Icons.link_off_outlined,
+              icon: AppIcons.unlink,
               headline: Copy.datasetsBrowserEmptyHeadline,
               message: Copy.datasetsBrowserEmptyMessage,
             );
@@ -110,7 +112,7 @@ class _LookupBindingScreenState extends ConsumerState<LookupBindingScreen> {
             value: datasets,
             isEmpty: (List<ReferenceDataset> rows) => rows.isEmpty,
             empty: () => AppEmptyState(
-              icon: Icons.table_chart_outlined,
+              icon: AppIcons.dataset,
               headline: Copy.datasetsBindingEmptyHeadline,
               message: Copy.datasetsBindingEmptyMessage,
               actionLabel: Copy.datasetsImport,
@@ -141,7 +143,7 @@ class _LookupBindingScreenState extends ConsumerState<LookupBindingScreen> {
                   ),
                   if (selected != null) ...<Widget>[
                     Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(Space.x4),
                       child: Text(selected.keyColumn),
                     ),
                     for (final String column in selected.columns)

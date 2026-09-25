@@ -3,6 +3,7 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/fields/app_email_field.dart';
@@ -303,7 +304,7 @@ class _ErrorSummary extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Icon(Icons.error_outline, color: colors.warning, size: Space.x6),
+              Icon(AppIcons.error, color: colors.warning, size: Space.x6),
               const SizedBox(width: Space.x3),
               Expanded(
                 child: Column(

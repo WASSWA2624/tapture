@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
@@ -101,13 +103,13 @@ class _DatasetAddRowSheetState extends ConsumerState<DatasetAddRowSheet> {
     }
     if (widget.datasetId.isEmpty) {
       return const AppEmptyState(
-        icon: Icons.table_chart_outlined,
+        icon: AppIcons.dataset,
         headline: Copy.datasetsEmptyHeadline,
         message: Copy.datasetsEmptyMessage,
       );
     }
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(Space.x4),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[

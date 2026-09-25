@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/network/network.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/features/settings/presentation/offline_switch.dart';
@@ -27,7 +28,7 @@ class OfflineBanner extends ConsumerWidget {
     }
     return AppBanner(
       message: Copy.offlineWorking,
-      icon: Icons.cloud_off,
+      icon: AppIcons.offline,
       tone: SnackTone.info,
       onDismiss: () {
         ref.read(offlineBannerVisibleProvider.notifier).dismiss();

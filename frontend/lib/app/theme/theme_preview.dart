@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 
 import 'dimensions.dart';
 
@@ -17,7 +18,7 @@ class ThemePreview extends StatelessWidget {
           IconButton(
             tooltip: 'Search',
             onPressed: _ignorePress,
-            icon: Icon(Icons.search),
+            icon: Icon(AppIcons.search),
           ),
         ],
       ),

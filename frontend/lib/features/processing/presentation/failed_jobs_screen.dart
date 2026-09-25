@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
@@ -41,7 +42,7 @@ class FailedJobsScreen extends ConsumerWidget {
         isEmpty: (QueueSnapshot snapshot) => snapshot.failures.isEmpty,
         empty: () {
           return const AppEmptyState(
-            icon: Icons.task_alt,
+            icon: AppIcons.success,
             headline: Copy.queueFailedEmptyHeadline,
             message: Copy.queueFailedEmptyMessage,
           );

@@ -139,9 +139,8 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
     final Clock clock = ref.read(contextClockProvider);
     final bool due = ContextAutoClear.shouldClear(
       enabled: enabled,
-      idleInterval: Duration(
-        seconds: store.read(SettingKeys.contextAutoClearSeconds),
-      ),
+      idleInterval:
+          AppConstants.second * store.read(SettingKeys.contextAutoClearSeconds),
       lastActivity: _lastActivity ?? clock.nowUtc(),
       now: clock.nowUtc(),
       alreadyFiredThisPeriod: _fired,

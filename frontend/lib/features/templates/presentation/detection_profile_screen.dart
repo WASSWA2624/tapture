@@ -7,6 +7,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
@@ -52,7 +53,7 @@ class DetectionProfileScreen extends ConsumerWidget {
         value: value,
         isEmpty: (TemplateDef? row) => row == null,
         empty: () => const AppEmptyState(
-          icon: Icons.center_focus_strong,
+          icon: AppIcons.detection,
           headline: Copy.detectionProfileEmptyHeadline,
           message: Copy.detectionProfileEmptyMessage,
         ),
@@ -73,13 +74,13 @@ class DetectionProfileScreen extends ConsumerWidget {
       children: <Widget>[
         const AppBanner(
           message: Copy.detectionProfileExplain,
-          icon: Icons.info_outline,
+          icon: AppIcons.info,
           tone: SnackTone.info,
         ),
         if (view.saveError != null)
           AppBanner(
             message: view.saveError!,
-            icon: Icons.error_outline,
+            icon: AppIcons.error,
             tone: SnackTone.error,
           ),
         _TokenField(
@@ -101,7 +102,7 @@ class DetectionProfileScreen extends ConsumerWidget {
         if (patterned.isEmpty)
           const AppBanner(
             message: Copy.detectionProfileNoPatterns,
-            icon: Icons.info_outline,
+            icon: AppIcons.info,
             tone: SnackTone.info,
           )
         else
@@ -125,7 +126,7 @@ class DetectionProfileScreen extends ConsumerWidget {
         if (datasets.isEmpty)
           const AppBanner(
             message: Copy.detectionProfileNoDatasets,
-            icon: Icons.info_outline,
+            icon: AppIcons.info,
             tone: SnackTone.info,
           )
         else

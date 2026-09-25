@@ -6,6 +6,7 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 
 import 'fields/app_text_field.dart';
 
@@ -132,7 +133,7 @@ class _AppSearchFieldState extends State<AppSearchField> {
         textInputAction: TextInputAction.search,
         keyboardType: TextInputType.text,
         prefix: ExcludeSemantics(
-          child: Icon(Icons.search, color: colors.onSurface, size: Space.x6),
+          child: Icon(AppIcons.search, color: colors.onSurface, size: Space.x6),
         ),
         afterDictation: widget.afterMic,
         trailing: count == null

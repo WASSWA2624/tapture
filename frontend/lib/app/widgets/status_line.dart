@@ -12,6 +12,7 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/network/network.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/shell_header_scope.dart';
@@ -83,7 +84,7 @@ class StatusLine extends ConsumerWidget {
                   if (!root)
                     AppIconButton(
                       key: const ValueKey<String>('shell-back'),
-                      icon: Icons.arrow_back,
+                      icon: AppIcons.back,
                       semanticLabel: MaterialLocalizations.of(
                         context,
                       ).backButtonTooltip,

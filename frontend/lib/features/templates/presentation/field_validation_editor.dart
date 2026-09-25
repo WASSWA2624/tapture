@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
@@ -126,7 +127,7 @@ class _FieldValidationEditorState extends State<FieldValidationEditor> {
         const AppSectionHeader(title: Copy.fieldValidationTitle, dense: true),
         if (_isEmpty)
           const AppEmptyState(
-            icon: Icons.rule,
+            icon: AppIcons.rules,
             headline: Copy.fieldValidationEmptyHeadline,
             message: Copy.fieldValidationEmptyMessage,
           ),

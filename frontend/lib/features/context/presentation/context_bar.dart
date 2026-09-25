@@ -6,6 +6,7 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/features/projects/projects.dart';
 
@@ -59,7 +60,7 @@ class ContextBar extends ConsumerWidget {
         continue;
       }
       if (i > 0 && children.isNotEmpty) {
-        children.add(const Icon(Icons.chevron_right, size: Space.x4));
+        children.add(const Icon(AppIcons.open, size: Space.x4));
       }
       children.add(
         AppChip(
@@ -80,7 +81,7 @@ class ContextBar extends ConsumerWidget {
       children.add(
         AppChip(
           label: '${pin.value} · ${Copy.contextPinMarker}',
-          icon: Icons.push_pin_outlined,
+          icon: AppIcons.pin,
           onTap: () =>
               showPinnedFieldsSheet(context: context, projectId: projectId),
         ),

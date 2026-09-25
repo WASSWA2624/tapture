@@ -5,6 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/audio/audio_recorder_service.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
@@ -15,19 +16,19 @@ import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
-import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
-import 'package:tapture/core/widgets/fields/choice.dart';
 import 'package:tapture/core/widgets/photo_markup.dart';
 import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
 import 'package:tapture/features/capture/domain/capture_photo_repository.dart';
 import 'package:tapture/features/capture/domain/capture_record_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
+import 'package:tapture/features/capture/domain/capture_template_choice.dart';
 import 'package:tapture/features/capture/domain/photo_derivation.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/domain/photo_repository.dart';
@@ -36,6 +37,7 @@ import 'package:tapture/features/capture/domain/save_and_analyse.dart';
 import 'package:tapture/features/capture/presentation/audio_recorder.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
 import 'package:tapture/features/capture/presentation/capture_recovery_prompt.dart';
+import 'package:tapture/features/capture/presentation/capture_target_fields.dart';
 import 'package:tapture/features/capture/presentation/gallery_picker.dart';
 import 'package:tapture/features/capture/presentation/inline_fields_section.dart';
 import 'package:tapture/features/capture/presentation/photo_caption_sheet.dart';
@@ -44,13 +46,12 @@ import 'package:tapture/features/capture/presentation/photo_doodle_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_tray.dart';
 import 'package:tapture/features/capture/presentation/photo_viewer_screen.dart';
 import 'package:tapture/features/capture/presentation/record_caption_field.dart';
-import 'package:tapture/features/capture/presentation/template_picker_sheet.dart';
 import 'package:tapture/features/context/context.dart';
 import 'package:tapture/features/processing/processing.dart';
-import 'package:tapture/features/projects/domain/project_repository.dart'
-    show ProjectListRow;
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/templates.dart';
+
+export 'capture_target_fields.dart' show captureProjectTemplatesProvider;
 
 /// Production supplies the Drift-backed transaction writer. Tests may inject
 /// a focused in-memory implementation without crossing presentation into data.
@@ -61,18 +62,6 @@ final Provider<CaptureRecordPersistence?> captureRecordWriterProvider =
 final Provider<PhotoPicker> capturePhotoPickerProvider = Provider<PhotoPicker>(
   (Ref _) => PhotoPicker(),
 );
-
-/// Templates owned by one project. Empty until that project has a template.
-final captureProjectTemplatesProvider =
-    StreamProvider.family<List<TemplateDef>, String>((
-      Ref ref,
-      String projectId,
-    ) {
-      if (projectId.isEmpty) {
-        return Stream<List<TemplateDef>>.value(const <TemplateDef>[]);
-      }
-      return ref.watch(templateRepositoryProvider).watchByProject(projectId);
-    });
 
 /// Templates for the open project, read through the templates barrel.
 final StreamProvider<List<TemplateDef>> captureTemplatesProvider =
@@ -150,7 +139,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   final Set<String> _missing = <String>{};
   String? _derivationNotice;
   bool _restored = false;
-  bool _askingTemplate = true;
   bool _onStage = true;
   String? _chosen;
   final IdService _ids = UuidV7Service(const SystemClock());
@@ -227,32 +215,23 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
         });
       }
     }
-    final String? choice = ref
-        .watch(currentProjectDetailsProvider)
-        ?.settings
-        .templateChoice;
-    final bool needsChoice = _needsChoice(templates, choice);
-    if (!needsChoice &&
-        (choice == null || choice == 'auto') &&
-        templates.length == 1 &&
-        session.templateId != templates.first.id) {
-      final String id = templates.first.id;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          unawaited(controller.setTemplate(id));
-        }
-      });
-    }
     final Project? project = ref.watch(currentProjectDetailsProvider);
-    final String chosenTemplate = ref.watch(projectTemplateSelectionProvider);
-    if (chosenTemplate.isNotEmpty && session.templateId != chosenTemplate) {
-      final String id = chosenTemplate;
+    final String? templateId = CaptureTemplateChoice.resolve(
+      templateIds: <String>[
+        for (final TemplateDef template in templates) template.id,
+      ],
+      selection: ref.watch(projectTemplateSelectionProvider),
+      sessionTemplateId: session.templateId,
+      choice: project?.settings.templateChoice,
+    );
+    if (templateId != null && session.templateId != templateId) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          unawaited(controller.setTemplate(id));
+          unawaited(controller.setTemplate(templateId));
         }
       });
     }
+    final bool needsChoice = ready && templateId == null;
     const String title = Copy.navCapture;
     final Widget? banner = widget.headroom;
     return AppPage(
@@ -263,16 +242,14 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       footer: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          SizedBox(
-            width: double.infinity,
-            child: AppButton(
-              label: Copy.captureSaveRaw,
-              variant: AppButtonVariant.secondary,
-              busy: uiState.saving,
-              onPressed: ready
-                  ? (widget.onSaveRaw ?? () => unawaited(_save(false)))
-                  : null,
-            ),
+          AppButton(
+            label: Copy.captureSaveRaw,
+            variant: AppButtonVariant.secondary,
+            expand: true,
+            busy: uiState.saving,
+            onPressed: ready
+                ? (widget.onSaveRaw ?? () => unawaited(_save(false)))
+                : null,
           ),
           const SizedBox(height: Space.x2),
           AppPrimaryAction(
@@ -287,23 +264,14 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          ?banner,
-          _CaptureProjectPicker(
-            selectedId: projectId,
-            onSelected: _chooseProject,
+          if (banner != null) ...<Widget>[banner, _blockGap],
+          CaptureTargetFields(
+            selectedProjectId: projectId,
+            templates: templates,
+            templateId: templateId,
+            onProjectSelected: _chooseProject,
           ),
-          if (needsChoice)
-            TemplatePickerSheet(
-              templates: <({String id, String name, int lastUsedMs})>[
-                for (final TemplateDef template in templates)
-                  (id: template.id, name: template.name, lastUsedMs: 0),
-              ],
-              pinnedId: _preselect(templates, session),
-              onSelected: (String id) {
-                setState(() => _askingTemplate = false);
-                unawaited(controller.setTemplate(id));
-              },
-            ),
+          _blockGap,
           PhotoTray(
             photos: _activePhotos(session),
             captions: session.captions,
@@ -329,10 +297,12 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             onCaption: (PhotoDraft photo) =>
                 unawaited(_caption(session, photo, onlyThisPhoto: true)),
           ),
-          if (_activePhotos(session).isNotEmpty)
+          _blockGap,
+          if (_activePhotos(session).isNotEmpty) ...<Widget>[
             AppButton(
               label: Copy.capturePhotoCaption,
               variant: AppButtonVariant.secondary,
+              expand: true,
               onPressed: ready
                   ? () {
                       final List<PhotoDraft> visible = _activePhotos(session);
@@ -347,6 +317,8 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                     }
                   : null,
             ),
+            _blockGap,
+          ],
           RecordCaptionField(
             enabled: ready,
             value: session.recordCaption,
@@ -395,6 +367,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                   unawaited(_audioStopped(recording)),
             ),
           ),
+          // The recorder block carries its own gap and is empty while idle.
           if (project != null) ...<Widget>[
             AudioRecorder(
               recorder: ref.watch(audioRecorderServiceProvider),
@@ -403,10 +376,15 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               onCompleted: (AudioRecording recording) =>
                   unawaited(_audioStopped(recording)),
             ),
-            if (session.audio.isNotEmpty)
-              Text(Copy.captureAudioCount(session.audio.length)),
+            if (session.audio.isNotEmpty) ...<Widget>[
+              const SizedBox(height: Space.x2),
+              Text(
+                Copy.captureAudioCount(session.audio.length),
+                style: AppText.caption,
+              ),
+            ],
           ],
-          const SizedBox(height: Space.x2),
+          _blockGap,
           InlineFieldsSection(
             fields: widget.fields,
             values: session.values,
@@ -417,27 +395,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
         ],
       ),
     );
-  }
-
-  bool _needsChoice(List<TemplateDef> templates, String? choice) {
-    if (!_askingTemplate || templates.isEmpty) {
-      return false;
-    }
-    if (choice == 'manual' || choice == 'suggest') {
-      return true;
-    }
-    return templates.length > 1;
-  }
-
-  String? _preselect(List<TemplateDef> templates, CaptureSession session) {
-    if (templates.isEmpty) {
-      return null;
-    }
-    if (session.templateId.isNotEmpty &&
-        templates.any((TemplateDef t) => t.id == session.templateId)) {
-      return session.templateId;
-    }
-    return templates.first.id;
   }
 
   Future<void> _add() async {
@@ -456,29 +413,25 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             if (picker.canTakePhoto)
-              SizedBox(
-                width: double.infinity,
-                child: AppButton(
-                  label: Copy.captureTakePhoto,
-                  icon: Icons.photo_camera_outlined,
-                  onPressed: () {
-                    Navigator.of(sheetContext).pop();
-                    unawaited(_take(picker));
-                  },
-                ),
-              ),
-            if (picker.canTakePhoto) const SizedBox(height: Space.x2),
-            SizedBox(
-              width: double.infinity,
-              child: AppButton(
-                label: Copy.captureChoosePhoto,
-                icon: Icons.photo_library_outlined,
-                variant: AppButtonVariant.secondary,
+              AppButton(
+                label: Copy.captureTakePhoto,
+                icon: AppIcons.camera,
+                expand: true,
                 onPressed: () {
                   Navigator.of(sheetContext).pop();
-                  unawaited(_choose(picker));
+                  unawaited(_take(picker));
                 },
               ),
+            if (picker.canTakePhoto) const SizedBox(height: Space.x2),
+            AppButton(
+              label: Copy.captureChoosePhoto,
+              icon: AppIcons.photoLibrary,
+              variant: AppButtonVariant.secondary,
+              expand: true,
+              onPressed: () {
+                Navigator.of(sheetContext).pop();
+                unawaited(_choose(picker));
+              },
             ),
           ],
         );
@@ -1207,7 +1160,7 @@ class _RecordAudioButtonState extends State<_RecordAudioButton> {
     final bool live = _live;
     return AppIconButton(
       key: const ValueKey<String>('capture-record-audio'),
-      icon: live ? Icons.stop : Icons.fiber_manual_record,
+      icon: live ? AppIcons.stop : AppIcons.recordAudio,
       semanticLabel: live ? Copy.captureStopAudio : Copy.captureRecordAudio,
       tooltip: live ? Copy.captureStopAudio : Copy.captureRecordAudio,
       outlined: false,
@@ -1249,105 +1202,8 @@ class _RecordAudioButtonState extends State<_RecordAudioButton> {
   }
 }
 
-/// Project this capture is filed under. Empty selection explains why the
-/// capture actions are disabled.
-final class _CaptureProjectPicker extends ConsumerWidget {
-  const _CaptureProjectPicker({
-    required this.selectedId,
-    required this.onSelected,
-  });
-
-  final String selectedId;
-  final ValueChanged<String> onSelected;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<ProjectListRow>> list = ref.watch(
-      projectListProvider,
-    );
-    final List<ProjectListRow> active = list.maybeWhen(
-      data: (List<ProjectListRow> rows) => <ProjectListRow>[
-        for (final ProjectListRow row in rows)
-          if (row.project.status == ProjectStatus.active) row,
-      ],
-      orElse: () => const <ProjectListRow>[],
-    );
-    final List<Choice<String>> options = <Choice<String>>[];
-    bool templatesSettled = list.hasValue;
-    for (final ProjectListRow row in active) {
-      final AsyncValue<List<TemplateDef>> owned = ref.watch(
-        captureProjectTemplatesProvider(row.project.id),
-      );
-      if (!owned.hasValue) {
-        templatesSettled = false;
-      }
-      final bool allowed = owned.maybeWhen(
-        data: (List<TemplateDef> loaded) => loaded.isNotEmpty,
-        orElse: () => false,
-      );
-      if (allowed) {
-        options.add(Choice<String>(row.project.id, row.project.name));
-      }
-    }
-    final bool selectedAllowed = options.any(
-      (Choice<String> option) => option.value == selectedId,
-    );
-    final String? message = _captureGateMessage(
-      projectsLoaded: list.hasValue,
-      activeCount: active.length,
-      hasChoice: options.isNotEmpty,
-      selectedId: selectedId,
-      selectedAllowed: selectedAllowed,
-      templatesSettled: templatesSettled,
-    );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        if (options.isNotEmpty)
-          AppChoiceField<String>(
-            label: Copy.captureProjectLabel,
-            options: options,
-            value: selectedAllowed ? selectedId : null,
-            onChanged: (String? id) {
-              if (id != null && id.isNotEmpty) {
-                onSelected(id);
-              }
-            },
-          ),
-        if (message != null) ...<Widget>[
-          if (options.isNotEmpty) const SizedBox(height: Space.x2),
-          Text(message),
-        ],
-      ],
-    );
-  }
-}
-
-String? _captureGateMessage({
-  required bool projectsLoaded,
-  required int activeCount,
-  required bool hasChoice,
-  required String selectedId,
-  required bool selectedAllowed,
-  required bool templatesSettled,
-}) {
-  if (!projectsLoaded || selectedAllowed) {
-    return null;
-  }
-  if (activeCount == 0) {
-    return Copy.captureCreateProjectFirst;
-  }
-  if (selectedId.isNotEmpty && templatesSettled) {
-    return Copy.captureNeedsTemplate;
-  }
-  if (hasChoice) {
-    return Copy.captureChooseProject;
-  }
-  if (templatesSettled) {
-    return Copy.captureNeedsTemplate;
-  }
-  return null;
-}
+/// Space between the capture page's blocks (FBK0000128).
+const Widget _blockGap = SizedBox(height: Space.x4);
 
 bool _sameContext(Map<String, String> left, Map<String, String> right) {
   if (left.length != right.length) return false;

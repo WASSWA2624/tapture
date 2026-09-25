@@ -6,8 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/router.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/theme_controller.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -17,6 +19,8 @@ import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
+import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
@@ -24,8 +28,8 @@ import 'package:tapture/features/projects/domain/project_repository.dart';
 import 'package:tapture/features/projects/presentation/project_export_screen.dart';
 import 'package:tapture/features/projects/presentation/project_home_screen.dart';
 import 'package:tapture/features/projects/projects.dart';
-import 'package:tapture/features/templates/templates.dart';
 import 'package:tapture/features/settings/settings.dart';
+import 'package:tapture/features/templates/templates.dart';
 
 import '../../../support/a11y_matchers.dart';
 import '../../../support/factories.dart';
@@ -112,6 +116,7 @@ void main() {
     repo.seedRecords('project-1', const <ProjectRecordRow>[
       (
         id: 'r1',
+        templateId: 't1',
         status: 'captured',
         photoCount: 1,
         thumbPath: null,
@@ -123,36 +128,6 @@ void main() {
     await tester.pump();
     expect(find.text(Copy.captureMore), findsOneWidget);
     expect(find.text(Copy.captureStart), findsNothing);
-  });
-
-  testWidgets('association rows render zero, singular, and plural counts', (
-    WidgetTester tester,
-  ) async {
-    for (final ({int levels, int templates}) counts
-        in <({int levels, int templates})>[
-          (levels: 0, templates: 0),
-          (levels: 1, templates: 1),
-          (levels: 3, templates: 4),
-        ]) {
-      await _pumpPopulated(
-        tester,
-        overrides: <Override>[
-          projectHomeAssociationsProvider.overrideWith(
-            (Ref _) => AsyncData<ProjectHomeAssociations>((
-              contextLevels: counts.levels,
-              templates: counts.templates,
-            )),
-          ),
-        ],
-      );
-      await tester.pumpAndSettle();
-
-      expect(
-        find.text(Copy.projectContextLevelCount(counts.levels)),
-        findsOneWidget,
-      );
-      await tester.pumpWidget(const SizedBox.shrink());
-    }
   });
 
   testWidgets('association failure stays visible and retryable', (
@@ -300,18 +275,168 @@ void main() {
     );
   });
 
-  testWidgets('association rows and destination cards share one inset', (
+  testWidgets('pinned fields and contexts live in the menu, not the body', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter router = await _pumpPopulated(tester);
+
+    expect(find.text(Copy.contextPinnedTitle), findsNothing);
+    expect(find.text(Copy.contextHierarchyTitle), findsNothing);
+
+    await tester.tap(find.byType(AppOverflowMenu));
+    await tester.pumpAndSettle();
+    final double templates = tester.getTopLeft(find.text(Copy.navTemplates)).dy;
+    final double pinned = tester
+        .getTopLeft(find.text(Copy.contextPinnedTitle))
+        .dy;
+    final double contexts = tester
+        .getTopLeft(find.text(Copy.contextHierarchyTitle))
+        .dy;
+    final double export = tester.getTopLeft(find.text(Copy.projectExport)).dy;
+    expect(templates, lessThan(pinned));
+    expect(pinned, lessThan(contexts));
+    expect(contexts, lessThan(export));
+
+    await tester.tap(find.text(Copy.contextHierarchyTitle));
+    await tester.pumpAndSettle();
+    expect(router.state.uri.path, RoutePaths.projectContext('project-1'));
+  });
+
+  testWidgets('the menu opens the pinned fields sheet', (
     WidgetTester tester,
   ) async {
     await _pumpPopulated(tester);
-    final double tile = tester
-        .getTopLeft(find.text(Copy.contextHierarchyTitle))
-        .dx;
-    final double card = tester
-        .getTopLeft(find.byKey(const ValueKey<String>('home-review')))
-        .dx;
-    expect(tile, closeTo(card, 1));
+
+    await _chooseOverflow(tester, Copy.contextPinnedTitle);
+
+    expect(find.byType(AppBottomSheet), findsOneWidget);
+    expect(find.text(Copy.contextPinnedTitle), findsWidgets);
   });
+
+  for (final ({double width, double gutter}) layout
+      in <({double width, double gutter})>[
+        (width: 393, gutter: Space.x4),
+        (width: 800, gutter: Space.x4),
+        (width: 1200, gutter: Space.x5),
+      ]) {
+    testWidgets(
+      'at ${layout.width} dp the template label, radios, caption and cards '
+      'share one start with no frame',
+      (WidgetTester tester) async {
+        _setSurface(tester, Size(layout.width, 886));
+        final FakeTemplateRepository templates = FakeTemplateRepository();
+        addTearDown(templates.dispose);
+        _ok(await templates.save(aTemplate(id: 't1', name: 'Assets')));
+        _ok(await templates.save(aTemplate(id: 't2', name: 'Rooms')));
+        await _pumpPopulated(
+          tester,
+          overrides: <Override>[
+            templateRepositoryProvider.overrideWith((Ref _) => templates),
+          ],
+        );
+        await tester.pumpAndSettle();
+
+        final double body = tester
+            .getTopLeft(find.byType(ProjectHomeScreen))
+            .dx;
+        final double label = tester.getTopLeft(find.text(Copy.navTemplates)).dx;
+        final double radio = tester
+            .getTopLeft(find.byType(Radio<String>).first)
+            .dx;
+        final double caption = tester.getTopLeft(find.text('Ward 1')).dx;
+        final double card = tester
+            .getTopLeft(find.byKey(const ValueKey<String>('home-review')))
+            .dx;
+        expect(label - body, closeTo(layout.gutter, 1));
+        expect(radio, closeTo(label, 1));
+        expect(caption, closeTo(label, 1));
+        expect(card, closeTo(label, 1));
+        expect(
+          find.descendant(
+            of: find.byType(AppRadioGroup<String>),
+            matching: find.byType(Divider),
+          ),
+          findsNothing,
+        );
+      },
+    );
+  }
+
+  testWidgets(
+    'the search is pinned at the top and stays while the body scrolls',
+    (WidgetTester tester) async {
+      _setSurface(tester, const Size(393, 640));
+      final FakeProjectRepository repo = FakeProjectRepository();
+      addTearDown(repo.dispose);
+      _ok(await repo.create(aProject(name: 'Alpha')));
+      repo.seedRecords('project-1', <ProjectRecordRow>[
+        for (int i = 0; i < 12; i++)
+          (
+            id: 'r$i',
+            templateId: 't1',
+            status: 'captured',
+            photoCount: 0,
+            thumbPath: null,
+            fields: <ProjectRecordFieldValue>[
+              (fieldKey: 'name', raw: 'Item $i', refined: '', approved: ''),
+            ],
+          ),
+      ]);
+      await _pump(
+        tester,
+        repo: repo,
+        openProjectId: 'project-1',
+        contextLabel: 'Ward 1',
+      );
+      await tester.pumpAndSettle();
+
+      final Finder search = find.byKey(const ValueKey<String>('home-search'));
+      final double top = tester.getTopLeft(search).dy;
+      expect(top, lessThan(tester.getTopLeft(find.text('Ward 1')).dy));
+      final double titleRow = tester
+          .getBottomLeft(find.byType(AppOverflowMenu))
+          .dy;
+      expect(top - titleRow, lessThanOrEqualTo(Space.x2));
+
+      await tester.drag(find.text('Item 3'), const Offset(0, -600));
+      await tester.pumpAndSettle();
+      expect(tester.getTopLeft(search).dy, top);
+      expect(tester.getTopLeft(find.text('Ward 1')).dy, lessThan(top));
+
+      await tester.enterText(
+        find.descendant(of: search, matching: find.byType(EditableText)),
+        'Item 11',
+      );
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(find.text('Item 11'), findsWidgets);
+      expect(find.text('Item 2'), findsNothing);
+    },
+  );
+
+  for (final ({String name, Size size, double scale}) layout
+      in <({String name, Size size, double scale})>[
+        (name: '200 percent text', size: const Size(393, 886), scale: 2),
+        (name: 'landscape', size: const Size(886, 393), scale: 1),
+      ]) {
+    testWidgets('in ${layout.name} the search and capture stay on screen', (
+      WidgetTester tester,
+    ) async {
+      _setSurface(tester, layout.size);
+      tester.platformDispatcher.textScaleFactorTestValue = layout.scale;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await _pumpPopulated(tester);
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      final Rect search = tester.getRect(
+        find.byKey(const ValueKey<String>('home-search')),
+      );
+      final Rect capture = tester.getRect(find.byType(AppPrimaryAction));
+      expect(search.top, greaterThanOrEqualTo(0));
+      expect(capture.bottom, lessThanOrEqualTo(layout.size.height));
+      expect(search.bottom, lessThan(capture.top));
+    });
+  }
 
   testWidgets('export from the home menu opens this project', (
     WidgetTester tester,
@@ -641,6 +766,12 @@ Future<GoRouter> _pump(
                 path: 'edit',
                 builder: (BuildContext _, GoRouterState _) {
                   return const Text('edit');
+                },
+              ),
+              GoRoute(
+                path: 'context',
+                builder: (BuildContext _, GoRouterState _) {
+                  return const Text('context');
                 },
               ),
               GoRoute(

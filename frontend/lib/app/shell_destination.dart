@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 
 import 'route_paths.dart';
 
@@ -38,29 +39,29 @@ final class ShellDestination {
 const List<ShellDestination> shellDestinations = <ShellDestination>[
   ShellDestination(
     path: RoutePaths.projects,
-    icon: Icons.folder_outlined,
-    selectedIcon: Icons.folder,
+    icon: AppIcons.project,
+    selectedIcon: AppIcons.projectSelected,
     label: Copy.navProjects,
     hasList: true,
   ),
   ShellDestination(
     path: RoutePaths.captureRoot,
-    icon: Icons.photo_camera_outlined,
-    selectedIcon: Icons.photo_camera,
+    icon: AppIcons.camera,
+    selectedIcon: AppIcons.cameraSelected,
     label: Copy.navCapture,
     dominant: true,
   ),
   ShellDestination(
     path: RoutePaths.records,
-    icon: Icons.list_alt_outlined,
-    selectedIcon: Icons.list_alt,
+    icon: AppIcons.records,
+    selectedIcon: AppIcons.recordsSelected,
     label: Copy.navRecords,
     hasList: true,
   ),
   ShellDestination(
     path: RoutePaths.more,
-    icon: Icons.settings_outlined,
-    selectedIcon: Icons.settings,
+    icon: AppIcons.settings,
+    selectedIcon: AppIcons.settingsSelected,
     label: Copy.navMore,
   ),
 ];

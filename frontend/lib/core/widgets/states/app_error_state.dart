@@ -5,6 +5,7 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 
 /// Renders a typed [Failure] as icon, message and recovery (FE-CONS-11).
 ///
@@ -83,12 +84,12 @@ class AppErrorState extends StatelessWidget {
 /// (FE-THEME-05, FE-A11Y-05).
 (IconData, Color) _visual(Failure failure, AppColors colors) {
   return switch (failure) {
-    NetworkFailure() => (Icons.cloud_off, colors.info),
-    PermissionFailure() => (Icons.lock_outline, colors.warning),
-    StorageFailure() => (Icons.save_outlined, colors.warning),
-    ValidationFailure() => (Icons.rule, colors.warning),
-    CorruptionFailure() => (Icons.broken_image_outlined, colors.danger),
-    CancelledFailure() => (Icons.stop_circle_outlined, colors.secondary),
-    ProviderFailure() => (Icons.error_outline, colors.danger),
+    NetworkFailure() => (AppIcons.offline, colors.info),
+    PermissionFailure() => (AppIcons.lock, colors.warning),
+    StorageFailure() => (AppIcons.save, colors.warning),
+    ValidationFailure() => (AppIcons.rules, colors.warning),
+    CorruptionFailure() => (AppIcons.brokenFile, colors.danger),
+    CancelledFailure() => (AppIcons.stopped, colors.secondary),
+    ProviderFailure() => (AppIcons.error, colors.danger),
   };
 }

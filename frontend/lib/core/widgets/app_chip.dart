@@ -4,6 +4,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 
 part 'app_chip_row.dart';
 
@@ -108,7 +109,7 @@ class AppChip extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             if (selected) ...<Widget>[
-              Icon(Icons.check, color: foreground, size: Space.x4),
+              Icon(AppIcons.check, color: foreground, size: Space.x4),
               const SizedBox(width: Space.x1),
             ] else if (icon != null) ...<Widget>[
               Icon(icon, color: foreground, size: Space.x4),
@@ -117,7 +118,7 @@ class AppChip extends StatelessWidget {
             if (bounded) Flexible(child: text) else text,
             if (onDismiss != null)
               AppIconButton(
-                icon: Icons.close,
+                icon: AppIcons.close,
                 semanticLabel: Copy.dismissChip(label),
                 tooltip: Copy.dismissChip(label),
                 onPressed: onDismiss,

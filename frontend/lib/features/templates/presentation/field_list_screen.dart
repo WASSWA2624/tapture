@@ -7,6 +7,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
@@ -49,37 +50,37 @@ class FieldListScreen extends ConsumerWidget {
           : <AppOverflowAction>[
               AppOverflowAction(
                 label: Copy.requiredColumnsTitle,
-                icon: Icons.rule,
+                icon: AppIcons.rules,
                 onTap: () => _openRequired(context, template.id),
               ),
               AppOverflowAction(
                 label: Copy.identityFieldsTitle,
-                icon: Icons.fingerprint,
+                icon: AppIcons.identity,
                 onTap: () => _openIdentity(context, template.id),
               ),
               AppOverflowAction(
                 label: Copy.outputMappingTitle,
-                icon: Icons.view_column_outlined,
+                icon: AppIcons.columns,
                 onTap: () => _openOutput(context, template.id),
               ),
               AppOverflowAction(
                 label: Copy.templateMigrationTitle,
-                icon: Icons.upgrade,
+                icon: AppIcons.migrate,
                 onTap: () => _openMigrate(context, template.id),
               ),
               AppOverflowAction(
                 label: Copy.rowAliasesTitle,
-                icon: Icons.alternate_email,
+                icon: AppIcons.aliases,
                 onTap: () => _openAliases(context, template.id),
               ),
               AppOverflowAction(
                 label: Copy.checklistTitle,
-                icon: Icons.checklist,
+                icon: AppIcons.checklist,
                 onTap: () => _openChecklist(context, template.id),
               ),
               AppOverflowAction(
                 label: Copy.detectionProfileTitle,
-                icon: Icons.center_focus_strong,
+                icon: AppIcons.detection,
                 onTap: () => _openDetection(context, template.id),
               ),
             ],
@@ -141,7 +142,7 @@ class FieldListScreen extends ConsumerWidget {
   ) {
     if (fields.isEmpty) {
       return const AppEmptyState(
-        icon: Icons.search,
+        icon: AppIcons.search,
         headline: Copy.fieldsNoMatch,
         message: Copy.search,
       );
@@ -238,7 +239,7 @@ class _FieldRow extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           AppIconButton(
-            icon: Icons.keyboard_arrow_up,
+            icon: AppIcons.moveUp,
             semanticLabel: Copy.fieldMoveUp(field.label),
             tooltip: Copy.fieldMoveUp(field.label),
             outlined: false,
@@ -251,7 +252,7 @@ class _FieldRow extends ConsumerWidget {
                   ),
           ),
           AppIconButton(
-            icon: Icons.keyboard_arrow_down,
+            icon: AppIcons.moveDown,
             semanticLabel: Copy.fieldMoveDown(field.label),
             tooltip: Copy.fieldMoveDown(field.label),
             outlined: false,
@@ -266,7 +267,7 @@ class _FieldRow extends ConsumerWidget {
           ReorderableDragStartListener(
             index: index,
             child: AppIconButton(
-              icon: Icons.drag_handle,
+              icon: AppIcons.reorder,
               semanticLabel: Copy.fieldReorder(field.label),
               tooltip: Copy.fieldReorder(field.label),
               outlined: false,
@@ -276,12 +277,12 @@ class _FieldRow extends ConsumerWidget {
             items: <AppOverflowAction>[
               AppOverflowAction(
                 label: Copy.templatesEditField,
-                icon: Icons.edit_outlined,
+                icon: AppIcons.edit,
                 onTap: () => _openEdit(context, template.id, field.fieldKey),
               ),
               AppOverflowAction(
                 label: Copy.templatesDeleteField,
-                icon: Icons.delete_outline,
+                icon: AppIcons.delete,
                 onTap: () => unawaited(
                   ref
                       .read(_fieldListProvider.notifier)
@@ -303,7 +304,7 @@ class _FieldRow extends ConsumerWidget {
 
 Widget _empty(BuildContext context, String templateId) {
   return AppEmptyState(
-    icon: Icons.view_list_outlined,
+    icon: AppIcons.fields,
     headline: Copy.templatesFieldsEmptyHeadline,
     message: Copy.templatesFieldsEmptyMessage,
     actionLabel: Copy.templatesAddField,

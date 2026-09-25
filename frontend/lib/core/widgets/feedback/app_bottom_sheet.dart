@@ -88,6 +88,8 @@ class AppBottomSheet extends StatelessWidget {
                     height: contentSized ? null : constraints.maxHeight,
                     child: Align(
                       alignment: Alignment.topCenter,
+                      // A short sheet ends under its content, not at the cap.
+                      heightFactor: contentSized ? 1 : null,
                       child: DefaultTextStyle(
                         style: AppText.body.copyWith(color: colors.onSurface),
                         child: contentSized
@@ -160,6 +162,8 @@ Future<T?> showAppSheet<T>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
+    // AppBottomSheet draws the one handle; the theme's would be a second.
+    showDragHandle: false,
     backgroundColor: context.colors.surface,
     elevation: 0,
     shape: const RoundedRectangleBorder(
@@ -169,8 +173,10 @@ Future<T?> showAppSheet<T>(
     builder: (BuildContext sheetContext) {
       return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
+          // As tall as the sheet, so the scrim shows above a short one.
           return Align(
             alignment: Alignment.bottomCenter,
+            heightFactor: 1,
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 maxHeight: constraints.maxHeight * _sheetFraction,

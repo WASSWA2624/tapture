@@ -6,6 +6,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
@@ -65,7 +66,7 @@ class AppMultiChoiceField<T> extends StatelessWidget {
               enabled: enabled,
               suffixIcon: ExcludeSemantics(
                 child: Icon(
-                  Icons.expand_more,
+                  AppIcons.expand,
                   color: colors.onSurface,
                   size: Space.x6,
                 ),

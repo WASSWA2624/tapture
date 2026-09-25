@@ -11,44 +11,44 @@ abstract final class StatusStyle {
     return switch (status) {
       RecordStatus.draft => (
         colors.secondary,
-        Icons.edit_note,
+        AppIcons.draft,
         Copy.statusDraft,
       ),
       RecordStatus.captured => (
         colors.info,
-        Icons.photo_camera,
+        AppIcons.captured,
         Copy.statusCaptured,
       ),
-      RecordStatus.queued => (colors.info, Icons.schedule, Copy.statusQueued),
+      RecordStatus.queued => (colors.info, AppIcons.queued, Copy.statusQueued),
       RecordStatus.processing => (
         colors.secondary,
-        Icons.sync,
+        AppIcons.processing,
         Copy.statusProcessing,
       ),
       RecordStatus.extracted => (
         colors.info,
-        Icons.auto_awesome,
+        AppIcons.ai,
         Copy.statusExtracted,
       ),
       RecordStatus.needsReview => (
         colors.warning,
-        Icons.flag,
+        AppIcons.review,
         Copy.statusNeedsReview,
       ),
       RecordStatus.approved => (
         colors.success,
-        Icons.verified,
+        AppIcons.verified,
         Copy.statusApproved,
       ),
-      RecordStatus.failed => (colors.danger, Icons.error_outline, Copy.failed),
+      RecordStatus.failed => (colors.danger, AppIcons.error, Copy.failed),
       RecordStatus.archived => (
         colors.outline,
-        Icons.inventory_2,
+        AppIcons.archive,
         Copy.statusArchived,
       ),
       RecordStatus.deleted => (
         colors.danger,
-        Icons.delete_outline,
+        AppIcons.delete,
         Copy.statusDeleted,
       ),
     };

@@ -300,7 +300,8 @@ final class ProjectRepositoryImpl implements ProjectRepository {
     final String marks = List<String>.filled(statuses.length, '?').join(', ');
     return _db
         .customSelect(
-          'SELECT r.id AS id, r.status AS status, '
+          'SELECT r.id AS id, r.template_id AS template_id, '
+          'r.status AS status, '
           '(SELECT COUNT(*) FROM photos p WHERE p.record_id = r.id) '
           'AS photo_count, '
           '(SELECT p.relative_path FROM photos p WHERE p.record_id = r.id '
@@ -328,6 +329,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
             for (final QueryRow row in rows)
               (
                 id: row.read<String>('id'),
+                templateId: row.read<String>('template_id'),
                 status: row.read<String>('status'),
                 photoCount: row.read<int>('photo_count'),
                 thumbPath: row.read<String?>('thumb_path'),
@@ -378,6 +380,30 @@ final class ProjectRepositoryImpl implements ProjectRepository {
       _db,
       id: field.id,
       valueRefined: value,
+      clock: _clock,
+      deviceId: _deviceId,
+      ids: _ids,
+    );
+    return written.fold(
+      FailureResult<void>.new,
+      (_) => const Success<void>(null),
+    );
+  }
+
+  @override
+  Future<Result<void>> addRecordField({
+    required String recordId,
+    required String fieldKey,
+    required String value,
+  }) async {
+    final Result<sqlite.RecordField> written = await insertRecordField(
+      _db,
+      row: sqlite.RecordFieldsCompanion(
+        recordId: Value<String>(recordId),
+        fieldKey: Value<String>(fieldKey),
+        valueRaw: Value<String?>(value),
+        source: const Value<String>(_typedSource),
+      ),
       clock: _clock,
       deviceId: _deviceId,
       ids: _ids,
@@ -865,6 +891,9 @@ final Provider<ProjectRepository> projectRepositoryProvider =
       return _EmptyProjectRepository();
     });
 
+/// Source of a value a person typed, the same tag capture writes.
+const String _typedSource = 'TYPED';
+
 List<ProjectRecordFieldValue> _recordFields(String? blob) {
   if (blob == null || blob.isEmpty) {
     return const <ProjectRecordFieldValue>[];
@@ -918,6 +947,15 @@ final class _EmptyProjectRepository implements ProjectRepository {
 
   @override
   Future<Result<void>> refineRecordField({
+    required String recordId,
+    required String fieldKey,
+    required String value,
+  }) async {
+    return const FailureResult<void>(_missing);
+  }
+
+  @override
+  Future<Result<void>> addRecordField({
     required String recordId,
     required String fieldKey,
     required String value,

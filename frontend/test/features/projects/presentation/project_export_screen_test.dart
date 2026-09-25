@@ -37,6 +37,7 @@ void main() {
     projects.seedRecords('project-1', const <ProjectRecordRow>[
       (
         id: 'r1',
+        templateId: 't1',
         status: 'captured',
         photoCount: 1,
         thumbPath: null,
@@ -79,6 +80,7 @@ void main() {
     projects.seedRecords('project-1', const <ProjectRecordRow>[
       (
         id: 'r1',
+        templateId: 't1',
         status: 'captured',
         photoCount: 1,
         thumbPath: null,
@@ -100,6 +102,7 @@ void main() {
     projects.seedRecords('project-1', const <ProjectRecordRow>[
       (
         id: 'r1',
+        templateId: 't1',
         status: 'captured',
         photoCount: 1,
         thumbPath: null,
@@ -130,6 +133,7 @@ void main() {
       projects.seedRecords('project-1', const <ProjectRecordRow>[
         (
           id: 'r1',
+          templateId: 't1',
           status: 'captured',
           photoCount: 1,
           thumbPath: null,

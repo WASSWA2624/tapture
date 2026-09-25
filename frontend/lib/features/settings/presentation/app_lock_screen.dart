@@ -13,6 +13,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/lifecycle/lifecycle_observer.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
@@ -93,7 +94,7 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         const SizedBox(height: Space.x12),
-        Icon(Icons.lock_outline, size: Space.x10, color: ink),
+        Icon(AppIcons.lock, size: Space.x10, color: ink),
         const SizedBox(height: Space.x3),
         Text(
           Copy.appLockUnlockTitle,

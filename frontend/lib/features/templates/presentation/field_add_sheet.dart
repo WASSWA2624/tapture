@@ -5,6 +5,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
@@ -146,7 +147,7 @@ class _FieldAddSheetState extends ConsumerState<FieldAddSheet> {
         value: value,
         isEmpty: (TemplateDef? row) => row == null,
         empty: () => const AppEmptyState(
-          icon: Icons.view_list_outlined,
+          icon: AppIcons.fields,
           headline: Copy.fieldAddEmptyHeadline,
           message: Copy.fieldAddEmptyMessage,
         ),
@@ -170,7 +171,7 @@ class _FieldAddSheetState extends ConsumerState<FieldAddSheet> {
         if (view.twoFactsWarning != null) ...<Widget>[
           const AppBanner(
             message: Copy.fieldTwoFactsWarning,
-            icon: Icons.warning_amber_outlined,
+            icon: AppIcons.warning,
             tone: SnackTone.warning,
           ),
           AppButton(

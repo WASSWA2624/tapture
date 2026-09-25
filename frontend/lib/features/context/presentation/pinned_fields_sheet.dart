@@ -9,6 +9,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
@@ -93,7 +94,7 @@ class _PinnedFieldsSheetState extends ConsumerState<PinnedFieldsSheet> {
                   const <TemplateDef>[])
               .isNotEmpty;
       return AppEmptyState(
-        icon: Icons.push_pin_outlined,
+        icon: AppIcons.pin,
         headline: Copy.contextPinnedEmptyHeadline,
         message: hasTemplates
             ? Copy.contextPinnedEmptyMessage

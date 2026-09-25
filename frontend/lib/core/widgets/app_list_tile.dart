@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 
 /// The one list row projects, records, templates and datasets render
@@ -73,7 +74,7 @@ class AppListTile extends StatelessWidget {
           child: Row(
             children: <Widget>[
               if (selected) ...<Widget>[
-                Icon(Icons.check, color: colors.primary, size: Space.x6),
+                Icon(AppIcons.check, color: colors.primary, size: Space.x6),
                 const SizedBox(width: Space.x3),
               ],
               if (leading != null) ...<Widget>[

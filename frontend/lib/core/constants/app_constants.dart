@@ -31,8 +31,13 @@ abstract final class AppConstants {
   /// Recorder elapsed-time and input-level sampling cadence.
   static const Duration audioMeterTick = Duration(milliseconds: 100);
 
-  /// Audio timings grouped for runtime callers.
-  static const ({Duration meterTick}) audio = (meterTick: audioMeterTick);
+  /// Audio timings and the recording format, grouped for runtime callers.
+  /// Speech needs no more than 16 kHz mono, which keeps a take small.
+  static const ({Duration meterTick, int sampleRate, int channels}) audio = (
+    meterTick: audioMeterTick,
+    sampleRate: 16000,
+    channels: 1,
+  );
 
   /// How long dictation listens at most, how much silence ends it, and how
   /// long the recogniser gets to hand over its last words after a stop.
@@ -42,6 +47,16 @@ abstract final class AppConstants {
     pauseFor: Duration(seconds: 4),
     settle: Duration(seconds: 2),
   );
+
+  /// How long a location fix may take before capture goes on without one.
+  static const Duration locationTimeout = Duration(seconds: 3);
+
+  /// How long the same barcode is ignored after a hit, so one code held in
+  /// front of the camera is read once.
+  static const Duration barcodeRepeatWindow = Duration(milliseconds: 800);
+
+  /// One second, for durations a setting stores as a count of seconds.
+  static const Duration second = Duration(seconds: 1);
 
   /// Bounds for virtualised lists and trays.
   static const ({int pageSize}) lists = (pageSize: listPageSize);

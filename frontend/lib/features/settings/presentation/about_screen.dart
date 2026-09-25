@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/device/device_identity.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
@@ -32,7 +33,7 @@ class AboutScreen extends ConsumerWidget {
         onRetry: () => ref.invalidate(aboutProvider),
         empty: () {
           return const AppEmptyState(
-            icon: Icons.info_outlined,
+            icon: AppIcons.info,
             headline: Copy.settingsAboutEmptyHeadline,
             message: Copy.settingsAboutEmptyMessage,
           );
@@ -47,7 +48,7 @@ class AboutScreen extends ConsumerWidget {
               AppListTile(
                 title: Copy.settingsLicences,
                 subtitle: Copy.settingsLicencesEffect,
-                trailing: const Icon(Icons.chevron_right),
+                trailing: const Icon(AppIcons.open),
                 onTap: () => context.go(_licencesRoute),
               ),
             ],

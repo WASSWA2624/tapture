@@ -32,7 +32,7 @@ List<({String name, ThemeData theme})> get _modes {
 
 Future<void> _pumpGallery(WidgetTester tester, ThemeData theme) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(400, 820);
+  tester.view.physicalSize = const Size(400, 920);
   addTearDown(() {
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();
@@ -70,6 +70,14 @@ Future<void> _pumpGallery(WidgetTester tester, ThemeData theme) async {
               label: 'Sheet filled',
               options: _five,
               value: 'b',
+              onChanged: (_) {},
+            ),
+            const SizedBox(height: Space.x4),
+            AppChoiceField<String>(
+              label: 'One option, always a sheet',
+              options: _three.take(1).toList(),
+              value: 'a',
+              alwaysSheet: true,
               onChanged: (_) {},
             ),
             const SizedBox(height: Space.x4),

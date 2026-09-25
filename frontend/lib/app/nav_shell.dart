@@ -79,32 +79,39 @@ class _Chrome extends ConsumerWidget {
               ),
             ),
             Expanded(
-              child: SafeArea(
-                top: false,
-                child: Row(
-                  children: <Widget>[
-                    if (rail)
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          border: showPane
-                              ? null
-                              : BorderDirectional(end: hairline),
+              // The header above already cleared the status bar. Pages below
+              // must not see that inset again, or every page frame pads the
+              // top twice (FE-RESP-08).
+              child: MediaQuery.removePadding(
+                context: context,
+                removeTop: true,
+                child: SafeArea(
+                  top: false,
+                  child: Row(
+                    children: <Widget>[
+                      if (rail)
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                            border: showPane
+                                ? null
+                                : BorderDirectional(end: hairline),
+                          ),
+                          child: _Rail(
+                            shell: shell,
+                            inverted: _darkDesktopRail(context),
+                          ),
                         ),
-                        child: _Rail(
-                          shell: shell,
-                          inverted: _darkDesktopRail(context),
+                      if (showPane)
+                        SizedBox(
+                          width: Sizes.listPane,
+                          child: _Pane(index: shell.currentIndex),
                         ),
+                      Expanded(
+                        key: const ValueKey<String>('nav-body-slot'),
+                        child: shell,
                       ),
-                    if (showPane)
-                      SizedBox(
-                        width: Sizes.listPane,
-                        child: _Pane(index: shell.currentIndex),
-                      ),
-                    Expanded(
-                      key: const ValueKey<String>('nav-body-slot'),
-                      child: shell,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

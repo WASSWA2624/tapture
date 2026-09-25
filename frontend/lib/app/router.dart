@@ -10,6 +10,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/app_brand_lockup.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
@@ -942,14 +943,14 @@ class _RoutePage extends StatelessWidget {
             const AppSectionHeader(title: Copy.navMore),
             AppListTile(
               title: Copy.navTemplates,
-              leading: const Icon(Icons.article_outlined),
-              trailing: const Icon(Icons.chevron_right),
+              leading: const Icon(AppIcons.template),
+              trailing: const Icon(AppIcons.open),
               onTap: () => context.go(AppRoutes.templates),
             ),
             AppListTile(
               title: Copy.navQueue,
-              leading: const Icon(Icons.pending_outlined),
-              trailing: const Icon(Icons.chevron_right),
+              leading: const Icon(AppIcons.queued),
+              trailing: const Icon(AppIcons.open),
               onTap: () => context.go(AppRoutes.queue),
             ),
           ],
@@ -1005,24 +1006,24 @@ String _titleFor(String name) {
 
 IconData _iconFor(String name) {
   return switch (name) {
-    'projects' || 'project' => Icons.folder_outlined,
-    'capture' => Icons.photo_camera_outlined,
-    'records' || 'record' => Icons.list_alt_outlined,
-    'more' => Icons.settings_outlined,
-    'templates' => Icons.article_outlined,
-    'datasets' => Icons.table_chart_outlined,
-    'template-library' => Icons.article_outlined,
-    'template-fields' => Icons.view_list_outlined,
-    'template-export' => Icons.ios_share_outlined,
-    'template-required' => Icons.rule,
-    'template-identity' => Icons.fingerprint,
-    'template-output' => Icons.view_column_outlined,
-    'template-migrate' => Icons.upgrade,
-    'field-add' => Icons.add,
-    'field-edit' => Icons.edit_outlined,
-    'queue' => Icons.pending_outlined,
-    'exports' => Icons.ios_share_outlined,
-    _ => Icons.inbox_outlined,
+    'projects' || 'project' => AppIcons.project,
+    'capture' => AppIcons.camera,
+    'records' || 'record' => AppIcons.records,
+    'more' => AppIcons.settings,
+    'templates' => AppIcons.template,
+    'datasets' => AppIcons.dataset,
+    'template-library' => AppIcons.template,
+    'template-fields' => AppIcons.fields,
+    'template-export' => AppIcons.export,
+    'template-required' => AppIcons.rules,
+    'template-identity' => AppIcons.identity,
+    'template-output' => AppIcons.columns,
+    'template-migrate' => AppIcons.migrate,
+    'field-add' => AppIcons.add,
+    'field-edit' => AppIcons.edit,
+    'queue' => AppIcons.queued,
+    'exports' => AppIcons.export,
+    _ => AppIcons.empty,
   };
 }
 

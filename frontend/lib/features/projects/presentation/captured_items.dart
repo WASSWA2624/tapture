@@ -5,18 +5,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_photo_thumb.dart';
-import 'package:tapture/core/widgets/app_search_field.dart';
-import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
-import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
+import 'record_edit_sheet.dart';
 
-/// Search plus captured rows for [projectId].
+/// Captured rows for [projectId], filtered by [capturedItemsQueryProvider].
+/// The project home pins the search field above its scrolling body.
 class CapturedItems extends ConsumerWidget {
   /// Creates the list.
   const CapturedItems({required this.projectId, super.key});
@@ -39,16 +39,9 @@ class CapturedItems extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        AppSearchField(
-          hint: Copy.search,
-          text: query,
-          onChanged: (String text) {
-            ref.read(capturedItemsQueryProvider.notifier).set(text);
-          },
-        ),
         if (visible.isEmpty)
           const AppEmptyState(
-            icon: Icons.photo_library_outlined,
+            icon: AppIcons.records,
             headline: Copy.projectRecordsEmptyHeadline,
             message: Copy.projectRecordsEmptyMessage,
           )
@@ -90,14 +83,14 @@ class CapturedItemTile extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           AppIconButton(
-            icon: Icons.edit_outlined,
+            icon: AppIcons.edit,
             outlined: false,
             tooltip: Copy.recordEdit,
             semanticLabel: Copy.recordEdit,
-            onPressed: () => unawaited(_edit(context, ref, row)),
+            onPressed: () => unawaited(showRecordEditSheet(context, row)),
           ),
           AppIconButton(
-            icon: Icons.delete_outline,
+            icon: AppIcons.delete,
             outlined: false,
             tooltip: Copy.recordDelete,
             semanticLabel: Copy.recordDelete,
@@ -174,64 +167,6 @@ String _title(ProjectRecordRow row, int position) {
     }
   }
   return Copy.projectRecordPosition(position);
-}
-
-Future<void> _edit(
-  BuildContext context,
-  WidgetRef ref,
-  ProjectRecordRow row,
-) async {
-  final Map<String, TextEditingController> controllers =
-      <String, TextEditingController>{
-        for (final ProjectRecordFieldValue field in row.fields)
-          field.fieldKey: TextEditingController(
-            text: field.refined.isNotEmpty ? field.refined : field.raw,
-          ),
-      };
-  final bool? saved = await showAppSheet<bool>(
-    context,
-    title: Copy.recordEdit,
-    builder: (BuildContext sheetContext) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          for (final ProjectRecordFieldValue field in row.fields)
-            AppTextField(
-              label: field.fieldKey,
-              controller: controllers[field.fieldKey]!,
-            ),
-          AppIconButton(
-            icon: Icons.check,
-            outlined: false,
-            tooltip: Copy.save,
-            semanticLabel: Copy.save,
-            onPressed: () => Navigator.of(sheetContext).pop(true),
-          ),
-        ],
-      );
-    },
-  );
-  if (saved != true) {
-    for (final TextEditingController controller in controllers.values) {
-      controller.dispose();
-    }
-    return;
-  }
-  final ProjectRepository repository = ref.read(projectRepositoryProvider);
-  for (final ProjectRecordFieldValue field in row.fields) {
-    final String text = controllers[field.fieldKey]?.text ?? '';
-    if (text == field.raw && field.refined.isEmpty) {
-      continue;
-    }
-    await repository.refineRecordField(
-      recordId: row.id,
-      fieldKey: field.fieldKey,
-      value: text,
-    );
-  }
-  for (final TextEditingController controller in controllers.values) {
-    controller.dispose();
-  }
 }
 
 Future<void> _archive(

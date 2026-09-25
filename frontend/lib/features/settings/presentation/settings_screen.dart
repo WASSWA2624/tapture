@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
@@ -38,7 +39,7 @@ class SettingsScreen extends ConsumerWidget {
         onRetry: () => ref.invalidate(settingsSectionsProvider),
         empty: () {
           return const AppEmptyState(
-            icon: Icons.settings_outlined,
+            icon: AppIcons.settings,
             headline: Copy.settingsEmptyHeadline,
             message: Copy.settingsEmptyMessage,
           );
@@ -57,7 +58,7 @@ class SettingsScreen extends ConsumerWidget {
                   subtitle: sections[index].subtitle,
                   trailing: sections[index].route == null
                       ? null
-                      : const Icon(Icons.chevron_right),
+                      : const Icon(AppIcons.open),
                   onTap: sections[index].route == null
                       ? null
                       : () => context.go(sections[index].route!),

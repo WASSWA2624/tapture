@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
@@ -58,7 +59,7 @@ class LookupPickerSheet extends StatelessWidget {
     }
     if (matches.isEmpty) {
       return const AppEmptyState(
-        icon: Icons.search_off_outlined,
+        icon: AppIcons.searchEmpty,
         headline: Copy.datasetsBrowserEmptyHeadline,
         message: Copy.datasetsBrowserEmptyMessage,
       );

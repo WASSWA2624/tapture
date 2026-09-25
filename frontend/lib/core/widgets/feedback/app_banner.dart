@@ -4,6 +4,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 
 /// Persistent status under the app bar for offline and warning states.
@@ -65,7 +66,7 @@ class AppBanner extends StatelessWidget {
                   ),
                   if (onDismiss != null)
                     AppIconButton(
-                      icon: Icons.close,
+                      icon: AppIcons.close,
                       semanticLabel: Copy.dismiss,
                       tooltip: Copy.dismiss,
                       onPressed: onDismiss,

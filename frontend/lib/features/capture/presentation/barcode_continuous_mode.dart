@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:tapture/core/barcode/barcode_scanner_service.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 
@@ -10,7 +11,7 @@ final class BarcodeContinuousMode extends StatefulWidget {
   /// Creates continuous mode.
   const BarcodeContinuousMode({
     required this.scanner,
-    this.debounce = const Duration(milliseconds: 800),
+    this.debounce = AppConstants.barcodeRepeatWindow,
     super.key,
   });
 

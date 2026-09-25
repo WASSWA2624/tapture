@@ -5,6 +5,7 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
@@ -22,6 +23,7 @@ class AppChoiceField<T> extends StatelessWidget {
     required this.onChanged,
     this.value,
     this.enabled = true,
+    this.alwaysSheet = false,
   });
 
   /// Visible name of the control (FE-A11Y-02).
@@ -39,13 +41,18 @@ class AppChoiceField<T> extends StatelessWidget {
   /// When false, the control does not accept input.
   final bool enabled;
 
+  /// When true, the field always shows its current value and opens the
+  /// searchable sheet, whatever the option count. Use it for a switch that
+  /// must read as a control even with one option.
+  final bool alwaysSheet;
+
   @override
   Widget build(BuildContext context) {
     return Semantics(
       container: true,
       label: label,
       value: _selected?.label,
-      child: options.length < _sheetThreshold
+      child: !alwaysSheet && options.length < _sheetThreshold
           ? _SegmentedChoice<T>(
               label: label,
               options: options,
@@ -184,7 +191,7 @@ class _Segment<T> extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   if (selected) ...<Widget>[
-                    Icon(Icons.check, color: foreground, size: Space.x4),
+                    Icon(AppIcons.check, color: foreground, size: Space.x4),
                     const SizedBox(width: Space.x1),
                   ] else if (option.icon != null) ...<Widget>[
                     Icon(option.icon, color: foreground, size: Space.x4),
@@ -239,7 +246,7 @@ class _SheetChoice<T> extends StatelessWidget {
             enabled: enabled,
             suffixIcon: ExcludeSemantics(
               child: Icon(
-                Icons.expand_more,
+                AppIcons.expand,
                 color: colors.onSurface,
                 size: Space.x6,
               ),

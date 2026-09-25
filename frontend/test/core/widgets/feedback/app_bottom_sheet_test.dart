@@ -43,6 +43,57 @@ void main() {
     expect(sheet.width, closeTo(400, 1));
   });
 
+  for (final bool contentSized in <bool>[true, false]) {
+    testWidgets(
+      'a ${contentSized ? 'short' : 'full'} sheet draws one handle and is '
+      'only as tall as its content',
+      (WidgetTester tester) async {
+        await _pump(
+          tester,
+          const Size(393, 886),
+          Builder(
+            builder: (BuildContext context) {
+              return AppButton(
+                label: 'Open',
+                onPressed: () {
+                  showAppSheet<void>(
+                    context,
+                    title: 'Edit',
+                    contentSized: contentSized,
+                    builder: (BuildContext context) => const Text('Body'),
+                  );
+                },
+              );
+            },
+          ),
+        );
+
+        await tester.tap(find.text('Open'));
+        await tester.pumpAndSettle();
+
+        final BottomSheet modal = tester.widget<BottomSheet>(
+          find.byType(BottomSheet),
+        );
+        expect(modal.showDragHandle, isFalse);
+        final double modalHeight = tester
+            .getSize(find.byType(BottomSheet))
+            .height;
+        final double sheetHeight = tester
+            .getSize(find.byType(AppBottomSheet))
+            .height;
+        expect(modalHeight, closeTo(sheetHeight, 1));
+        if (contentSized) {
+          expect(sheetHeight, lessThan(886 / 2));
+        } else {
+          final double available = tester
+              .getSize(find.byType(Scaffold).first)
+              .height;
+          expect(sheetHeight, lessThanOrEqualTo(available * 0.75 + 1));
+        }
+      },
+    );
+  }
+
   testWidgets('expanded width presents a side panel', (
     WidgetTester tester,
   ) async {

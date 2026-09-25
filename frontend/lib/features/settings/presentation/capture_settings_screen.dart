@@ -7,6 +7,7 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/files/photo_path_builder.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
@@ -40,7 +41,7 @@ class CaptureSettingsScreen extends ConsumerWidget {
         onRetry: () => ref.invalidate(captureSettingsProvider),
         empty: () {
           return const AppEmptyState(
-            icon: Icons.photo_camera_outlined,
+            icon: AppIcons.camera,
             headline: Copy.settingsCaptureEmptyHeadline,
             message: Copy.settingsCaptureEmptyMessage,
           );

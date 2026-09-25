@@ -9,6 +9,7 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/feedback/app_panel_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
@@ -86,7 +87,7 @@ class FeedbackShots extends ConsumerWidget {
           children: <Widget>[
             if (onAddScreen != null)
               AppIconButton(
-                icon: Icons.screenshot_monitor_outlined,
+                icon: AppIcons.screenshot,
                 semanticLabel: Copy.feedbackAddScreen,
                 tooltip: Copy.feedbackAddScreen,
                 outlined: false,
@@ -94,7 +95,7 @@ class FeedbackShots extends ConsumerWidget {
               ),
             if (canCapture)
               AppIconButton(
-                icon: Icons.desktop_windows_outlined,
+                icon: AppIcons.window,
                 semanticLabel: Copy.feedbackAddWindow,
                 tooltip: Copy.feedbackAddWindow,
                 selected: sharing ? true : null,
@@ -103,7 +104,7 @@ class FeedbackShots extends ConsumerWidget {
               ),
             if (sharing)
               AppIconButton(
-                icon: Icons.stop_screen_share_outlined,
+                icon: AppIcons.stopSharing,
                 semanticLabel: Copy.feedbackStopSharing,
                 tooltip: Copy.feedbackStopSharing,
                 outlined: false,
@@ -113,14 +114,14 @@ class FeedbackShots extends ConsumerWidget {
               ),
             if (canTakePhoto)
               AppIconButton(
-                icon: Icons.photo_camera_outlined,
+                icon: AppIcons.camera,
                 semanticLabel: Copy.feedbackTakePhoto,
                 tooltip: Copy.feedbackTakePhoto,
                 outlined: false,
                 onPressed: () => unawaited(_add(context, form, camera: true)),
               ),
             AppIconButton(
-              icon: Icons.add_photo_alternate_outlined,
+              icon: AppIcons.photoLibrary,
               semanticLabel: Copy.feedbackChoosePhoto,
               tooltip: Copy.feedbackChoosePhoto,
               outlined: false,
@@ -300,7 +301,7 @@ class _ShotTile extends StatelessWidget {
             color: colors.surface,
             shape: const RoundedRectangleBorder(borderRadius: radius),
             child: AppIconButton(
-              icon: Icons.close,
+              icon: AppIcons.close,
               semanticLabel: remove,
               tooltip: remove,
               onPressed: () => onRemove(shot.id),

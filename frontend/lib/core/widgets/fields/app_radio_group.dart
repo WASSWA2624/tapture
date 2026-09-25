@@ -24,6 +24,7 @@ class AppRadioGroup<T> extends StatelessWidget {
     this.enabled = true,
     this.direction = Axis.vertical,
     this.showLabel = true,
+    this.framed = true,
   });
 
   /// Visible name of the group (FE-A11Y-02).
@@ -49,6 +50,10 @@ class AppRadioGroup<T> extends StatelessWidget {
   /// drawn, for a screen whose title already says what is being chosen.
   final bool showLabel;
 
+  /// Vertical only. When false, the options sit on the page with no outline
+  /// and no dividers, and each radio starts where [label] starts.
+  final bool framed;
+
   @override
   Widget build(BuildContext context) {
     if (direction == Axis.horizontal) {
@@ -56,6 +61,29 @@ class AppRadioGroup<T> extends StatelessWidget {
     }
     final AppColors colors = context.colors;
     final BorderSide side = _outline(context);
+    final Widget group = RadioGroup<T>(
+      groupValue: value,
+      onChanged: _handleChanged,
+      child: Column(
+        children: <Widget>[
+          for (int i = 0; i < options.length; i++) ...<Widget>[
+            if (i > 0 && framed)
+              Divider(
+                height: side.width,
+                thickness: side.width,
+                color: colors.outline,
+              ),
+            _RadioOption<T>(
+              option: options[i],
+              selected: options[i].value == value,
+              enabled: enabled,
+              onChanged: onChanged,
+              flush: !framed,
+            ),
+          ],
+        ],
+      ),
+    );
     return Semantics(
       container: true,
       label: label,
@@ -69,37 +97,19 @@ class AppRadioGroup<T> extends StatelessWidget {
                 style: AppText.label.copyWith(color: colors.onSurface),
               ),
             ),
-          if (showLabel) const SizedBox(height: Space.x2),
-          Material(
-            color: colors.surface,
-            shape: RoundedRectangleBorder(
-              borderRadius: const BorderRadius.all(Radius.circular(Radii.md)),
-              side: side,
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: RadioGroup<T>(
-              groupValue: value,
-              onChanged: _handleChanged,
-              child: Column(
-                children: <Widget>[
-                  for (int i = 0; i < options.length; i++) ...<Widget>[
-                    if (i > 0)
-                      Divider(
-                        height: side.width,
-                        thickness: side.width,
-                        color: colors.outline,
-                      ),
-                    _RadioOption<T>(
-                      option: options[i],
-                      selected: options[i].value == value,
-                      enabled: enabled,
-                      onChanged: onChanged,
-                    ),
-                  ],
-                ],
+          if (showLabel) SizedBox(height: framed ? Space.x2 : Space.x1),
+          if (framed)
+            Material(
+              color: colors.surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: const BorderRadius.all(Radius.circular(Radii.md)),
+                side: side,
               ),
-            ),
-          ),
+              clipBehavior: Clip.antiAlias,
+              child: group,
+            )
+          else
+            group,
         ],
       ),
     );
@@ -168,6 +178,7 @@ class _RadioOption<T> extends StatelessWidget {
     required this.enabled,
     required this.onChanged,
     this.compact = false,
+    this.flush = false,
   });
 
   final Choice<T> option;
@@ -175,6 +186,9 @@ class _RadioOption<T> extends StatelessWidget {
   final bool enabled;
   final ValueChanged<T> onChanged;
   final bool compact;
+
+  /// No start inset, so the radio lines up with the group's label.
+  final bool flush;
 
   @override
   Widget build(BuildContext context) {
@@ -197,6 +211,12 @@ class _RadioOption<T> extends StatelessWidget {
             child: Padding(
               padding: compact
                   ? const EdgeInsetsDirectional.only(end: Space.x2)
+                  : flush
+                  ? const EdgeInsetsDirectional.only(
+                      end: Space.x3,
+                      top: Space.x1,
+                      bottom: Space.x1,
+                    )
                   : const EdgeInsets.symmetric(
                       horizontal: Space.x3,
                       vertical: Space.x1,

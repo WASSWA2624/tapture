@@ -133,6 +133,7 @@ final class FakeProjectRepository implements ProjectRepository {
       final ProjectRecordRow current = entry.value[index];
       entry.value[index] = (
         id: current.id,
+        templateId: current.templateId,
         status: 'archived',
         photoCount: current.photoCount,
         thumbPath: current.thumbPath,
@@ -155,6 +156,10 @@ final class FakeProjectRepository implements ProjectRepository {
     required String fieldKey,
     required String value,
   }) async {
+    final Failure? failure = fieldWriteFailure;
+    if (failure != null) {
+      return FailureResult<void>(failure);
+    }
     for (final List<ProjectRecordRow> rows in _records.values) {
       final int index = rows.indexWhere(
         (ProjectRecordRow row) => row.id == recordId,
@@ -165,6 +170,7 @@ final class FakeProjectRepository implements ProjectRepository {
       final ProjectRecordRow current = rows[index];
       rows[index] = (
         id: current.id,
+        templateId: current.templateId,
         status: current.status,
         photoCount: current.photoCount,
         thumbPath: current.thumbPath,
@@ -179,6 +185,53 @@ final class FakeProjectRepository implements ProjectRepository {
               )
             else
               field,
+        ],
+      );
+      _emit();
+      return const Success<void>(null);
+    }
+    return const FailureResult<void>(
+      StorageFailure(
+        message: 'That record is not on this device.',
+        recoveryAction: 'Go back and try again.',
+      ),
+    );
+  }
+
+  /// Fields [addRecordField] stored, keyed `recordId/fieldKey`.
+  final Map<String, String> addedFields = <String, String>{};
+
+  /// When set, [addRecordField] and [refineRecordField] fail with it.
+  Failure? fieldWriteFailure;
+
+  @override
+  Future<Result<void>> addRecordField({
+    required String recordId,
+    required String fieldKey,
+    required String value,
+  }) async {
+    final Failure? failure = fieldWriteFailure;
+    if (failure != null) {
+      return FailureResult<void>(failure);
+    }
+    for (final List<ProjectRecordRow> rows in _records.values) {
+      final int index = rows.indexWhere(
+        (ProjectRecordRow row) => row.id == recordId,
+      );
+      if (index < 0) {
+        continue;
+      }
+      final ProjectRecordRow current = rows[index];
+      addedFields['$recordId/$fieldKey'] = value;
+      rows[index] = (
+        id: current.id,
+        templateId: current.templateId,
+        status: current.status,
+        photoCount: current.photoCount,
+        thumbPath: current.thumbPath,
+        fields: <ProjectRecordFieldValue>[
+          ...current.fields,
+          (fieldKey: fieldKey, raw: value, refined: '', approved: ''),
         ],
       );
       _emit();

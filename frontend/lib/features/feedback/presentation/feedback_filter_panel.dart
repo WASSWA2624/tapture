@@ -5,6 +5,7 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
 import 'package:tapture/core/widgets/fields/app_date_field.dart';
@@ -96,7 +97,7 @@ class FeedbackFilterPanel extends StatelessWidget {
                   backgroundColor: colors.primary,
                   textColor: colors.onPrimary,
                   child: AppIconButton(
-                    icon: Icons.tune,
+                    icon: AppIcons.filter,
                     semanticLabel: toggle,
                     tooltip: toggle,
                     selected: expanded,

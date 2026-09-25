@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 
 import 'app_icon_button.dart';
 import 'app_overflow_menu.dart';
@@ -73,6 +74,17 @@ class AppPage extends StatelessWidget {
   /// When true, the app bar is one 48dp row with no extra padding, for
   /// overlay-style screens that should not spend height on chrome.
   final bool compactBar;
+
+  /// The page's side margin for [context]'s size class. A body that owns its
+  /// scrolling (`scrollable: false`) insets its own text and controls by this
+  /// so every page lines up on the same edge (FE-RESP-02).
+  static double gutter(BuildContext context) {
+    return context.responsive(
+      compact: Space.x4,
+      medium: Space.x4,
+      expanded: Space.x5,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +172,7 @@ extension on AppPage {
     }
     final String back = MaterialLocalizations.of(context).backButtonTooltip;
     return AppIconButton(
-      icon: Icons.arrow_back,
+      icon: AppIcons.back,
       semanticLabel: back,
       tooltip: back,
       outlined: false,
@@ -227,12 +239,10 @@ EdgeInsets _paddingFor(BuildContext context, {required bool inset}) {
   if (!inset) {
     return const EdgeInsets.symmetric(vertical: Space.x1);
   }
-  final double horizontal = context.responsive(
-    compact: Space.x4,
-    medium: Space.x4,
-    expanded: Space.x5,
+  return EdgeInsets.symmetric(
+    horizontal: AppPage.gutter(context),
+    vertical: Space.x2,
   );
-  return EdgeInsets.symmetric(horizontal: horizontal, vertical: Space.x2);
 }
 
 class _PageHeaderRegistration extends StatefulWidget {

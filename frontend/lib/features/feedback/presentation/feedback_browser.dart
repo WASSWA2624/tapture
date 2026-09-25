@@ -5,6 +5,7 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
@@ -108,7 +109,7 @@ class FeedbackBrowser extends StatelessWidget {
           ),
         if (matching.isEmpty)
           const AppEmptyState(
-            icon: Icons.filter_alt_outlined,
+            icon: AppIcons.filter,
             headline: Copy.feedbackNoMatchHeadline,
             message: Copy.feedbackNoMatchMessage,
           )

@@ -6,6 +6,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 
 part 'photo_asset.dart';
 
@@ -106,7 +107,11 @@ class AppPhotoThumb extends StatelessWidget {
             alignment: Alignment.topRight,
             child: Padding(
               padding: const EdgeInsets.all(Space.x1),
-              child: Icon(Icons.check, color: colors.primary, size: Space.x5),
+              child: Icon(
+                AppIcons.check,
+                color: colors.primary,
+                size: Space.x5,
+              ),
             ),
           ),
         if (statusLabel != null)
@@ -254,11 +259,7 @@ class _StatusBadge extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Icon(
-                Icons.hourglass_top,
-                size: Space.x4,
-                color: colors.onSurface,
-              ),
+              Icon(AppIcons.waiting, size: Space.x4, color: colors.onSurface),
               const SizedBox(width: Space.x0),
               Flexible(
                 child: Text(
@@ -289,11 +290,7 @@ class _CaptionMark extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(Space.x0),
-        child: Icon(
-          Icons.closed_caption,
-          size: Space.x4,
-          color: colors.onSurface,
-        ),
+        child: Icon(AppIcons.caption, size: Space.x4, color: colors.onSurface),
       ),
     );
   }
@@ -313,11 +310,7 @@ class _MissingPlaceholder extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(
-              Icons.broken_image_outlined,
-              color: colors.onSurface,
-              size: Space.x6,
-            ),
+            Icon(AppIcons.brokenFile, color: colors.onSurface, size: Space.x6),
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(

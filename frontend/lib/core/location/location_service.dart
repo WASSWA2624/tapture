@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/permissions/permissions_service.dart';
@@ -44,7 +45,7 @@ abstract interface class LocationService {
   /// Requests a fix, waiting at most [timeout]. Returns accuracy with the
   /// coordinates. Does nothing when GPS is off.
   Future<Result<GeoFix?>> currentFix({
-    Duration timeout = const Duration(seconds: 3),
+    Duration timeout = AppConstants.locationTimeout,
   });
 }
 
@@ -59,7 +60,7 @@ final class _UnavailableLocationService implements LocationService {
 
   @override
   Future<Result<GeoFix?>> currentFix({
-    Duration timeout = const Duration(seconds: 3),
+    Duration timeout = AppConstants.locationTimeout,
   }) async {
     return const Success<GeoFix?>(null);
   }
@@ -73,7 +74,7 @@ final class _StubLocationService implements LocationService {
 
   @override
   Future<Result<GeoFix?>> currentFix({
-    Duration timeout = const Duration(seconds: 3),
+    Duration timeout = AppConstants.locationTimeout,
   }) async {
     if (!_gpsEnabled()) {
       return const Success<GeoFix?>(null);
@@ -111,7 +112,7 @@ final class _FakeLocationService implements LocationService {
 
   @override
   Future<Result<GeoFix?>> currentFix({
-    Duration timeout = const Duration(seconds: 3),
+    Duration timeout = AppConstants.locationTimeout,
   }) async {
     calls?.add('currentFix');
     if (!_gpsEnabled()) {

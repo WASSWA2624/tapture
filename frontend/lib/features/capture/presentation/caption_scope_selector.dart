@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/fields/app_radio_group.dart';
+import 'package:tapture/core/widgets/fields/choice.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
 
 /// Explicit caption target with exact counts on every option.
@@ -31,41 +33,24 @@ final class CaptionScopeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        ListTile(
-          title: Text(Copy.captionScopeThis(thisCount)),
-          selected: scope == CaptionScope.thisPhoto,
-          leading: Icon(
-            scope == CaptionScope.thisPhoto
-                ? Icons.radio_button_checked
-                : Icons.radio_button_off,
-          ),
-          onTap: () => onChanged(CaptionScope.thisPhoto),
+    // The shared radio group (FE-CONS-01). Selected photos is offered only
+    // when some are selected, so no option on screen is a dead end.
+    return AppRadioGroup<CaptionScope>(
+      label: Copy.captionScopeLabel,
+      value: scope,
+      options: <Choice<CaptionScope>>[
+        Choice<CaptionScope>(
+          CaptionScope.thisPhoto,
+          Copy.captionScopeThis(thisCount),
         ),
-        ListTile(
-          title: Text(Copy.captionScopeSelected(selectedCount)),
-          selected: scope == CaptionScope.selected,
-          leading: Icon(
-            scope == CaptionScope.selected
-                ? Icons.radio_button_checked
-                : Icons.radio_button_off,
+        if (selectedCount > 0)
+          Choice<CaptionScope>(
+            CaptionScope.selected,
+            Copy.captionScopeSelected(selectedCount),
           ),
-          onTap: selectedCount == 0
-              ? null
-              : () => onChanged(CaptionScope.selected),
-        ),
-        ListTile(
-          title: Text(Copy.captionScopeAll(allCount)),
-          selected: scope == CaptionScope.all,
-          leading: Icon(
-            scope == CaptionScope.all
-                ? Icons.radio_button_checked
-                : Icons.radio_button_off,
-          ),
-          onTap: () => onChanged(CaptionScope.all),
-        ),
+        Choice<CaptionScope>(CaptionScope.all, Copy.captionScopeAll(allCount)),
       ],
+      onChanged: onChanged,
     );
   }
 }

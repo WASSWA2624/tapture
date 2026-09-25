@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
@@ -44,7 +45,7 @@ class ContextPresetList extends ConsumerWidget {
         title: Copy.contextPresetsTitle,
         showAppBar: false,
         body: AppEmptyState(
-          icon: Icons.bookmark_outline,
+          icon: AppIcons.preset,
           headline: Copy.contextPresetsEmptyHeadline,
           message: Copy.contextPresetsEmptyMessage,
         ),
@@ -61,7 +62,7 @@ class ContextPresetList extends ConsumerWidget {
         value: value,
         isEmpty: (List<ContextPreset> rows) => rows.isEmpty,
         empty: () => AppEmptyState(
-          icon: Icons.bookmark_outline,
+          icon: AppIcons.preset,
           headline: Copy.contextPresetsEmptyHeadline,
           message: Copy.contextPresetsEmptyMessage,
           actionLabel: Copy.contextPresetSave,
@@ -89,7 +90,7 @@ class ContextPresetList extends ConsumerWidget {
                 ),
               ListTile(
                 title: const Text(Copy.contextPresetSave),
-                leading: const Icon(Icons.add),
+                leading: const Icon(AppIcons.add),
                 onTap: () => unawaited(
                   showAppSheet<void>(
                     context,

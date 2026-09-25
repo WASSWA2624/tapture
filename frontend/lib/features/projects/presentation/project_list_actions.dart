@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart'
     show AppOverflowAction;
 
@@ -40,7 +41,7 @@ abstract final class ProjectListActions {
       AppOverflowAction(
         key: const ValueKey<String>('project-show-archived'),
         label: Copy.projectShowArchived,
-        icon: show ? Icons.check : Icons.inventory_2_outlined,
+        icon: show ? AppIcons.check : AppIcons.archive,
         onTap: () {
           ref.read(projectListShowArchivedProvider.notifier).set(!show);
         },

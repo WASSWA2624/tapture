@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_initializing_formals
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:record/record.dart' as record;
 import 'package:tapture/core/constants/app_constants.dart';
@@ -8,26 +9,43 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/file_writer.dart';
+import 'package:tapture/core/files/storage_root.dart';
 
 import 'audio_recorder_service.dart';
 
+/// Suffix of a take the plugin is still writing. It sits beside the target,
+/// never under `.cache`, because it is the only copy until it is published.
+const String _stagingSuffix = '.recording';
+
 /// Native microphone adapter. Plugin types stop in this core platform file;
 /// capture depends only on [AudioRecorderService].
+///
+/// The recorder plugins cannot stream WAV, so a take is recorded in file mode
+/// to a staging file beside the target and then published through
+/// [FileWriter.copyIn], which hashes it and renames it into place.
 final class AudioRecorderPlugin implements AudioRecorderService {
-  /// Creates an adapter whose chunks land through [writer].
-  AudioRecorderPlugin({required FileWriter writer}) : _writer = writer;
+  /// Creates an adapter that stages takes under [storageRoot] and publishes
+  /// them through [writer]. [recorder] is the test seam.
+  AudioRecorderPlugin({
+    required FileWriter writer,
+    required StorageRoot storageRoot,
+    record.AudioRecorder? recorder,
+  }) : _writer = writer,
+       _storageRoot = storageRoot,
+       _recorder = recorder ?? record.AudioRecorder();
 
   final FileWriter _writer;
-  final record.AudioRecorder _recorder = record.AudioRecorder();
+  final StorageRoot _storageRoot;
+  final record.AudioRecorder _recorder;
   final StreamController<AudioRecorderState> _states =
       StreamController<AudioRecorderState>.broadcast();
-  Future<Result<WrittenFile>>? _write;
   StreamSubscription<record.Amplitude>? _amplitude;
   Timer? _timer;
   Duration _elapsed = Duration.zero;
   AudioRecorderPhase _phase = AudioRecorderPhase.idle;
   AudioRecording? _completed;
   String? _path;
+  File? _staging;
 
   @override
   Stream<AudioRecorderState> get state => _states.stream;
@@ -50,13 +68,27 @@ final class AudioRecorderPlugin implements AudioRecorderService {
           ),
         );
       }
+      final Result<Directory> root = await _storageRoot.resolve();
+      final Directory folder = switch (root) {
+        Success<Directory>(:final Directory value) => value,
+        FailureResult<Directory>(:final Failure failure) => throw failure,
+      };
+      final File staging = File(
+        '${folder.path}/${_relative(relativePath)}$_stagingSuffix',
+      );
+      await staging.parent.create(recursive: true);
       _path = relativePath;
+      _staging = staging;
       _completed = null;
       _elapsed = Duration.zero;
-      final Stream<List<int>> stream = await _recorder.startStream(
-        const record.RecordConfig(encoder: record.AudioEncoder.wav),
+      await _recorder.start(
+        record.RecordConfig(
+          encoder: record.AudioEncoder.wav,
+          sampleRate: AppConstants.audio.sampleRate,
+          numChannels: AppConstants.audio.channels,
+        ),
+        path: staging.path,
       );
-      _write = _writer.write(stream, relativePath);
       _phase = AudioRecorderPhase.recording;
       _timer?.cancel();
       _timer = Timer.periodic(AppConstants.audio.meterTick, (_) {
@@ -72,10 +104,19 @@ final class AudioRecorderPlugin implements AudioRecorderService {
           });
       _emit();
       return const Success<void>(null);
-    } on Object catch (error) {
+    } on Failure catch (failure) {
       _phase = AudioRecorderPhase.failed;
       _emit();
-      return FailureResult<void>(Failure.from(error));
+      return FailureResult<void>(failure);
+    } on Object {
+      _phase = AudioRecorderPhase.failed;
+      _emit();
+      return const FailureResult<void>(
+        ProviderFailure(
+          message: Copy.audioStartFailed,
+          recoveryAction: Copy.audioStartFailedRecovery,
+        ),
+      );
     }
   }
 
@@ -113,13 +154,16 @@ final class AudioRecorderPlugin implements AudioRecorderService {
       _phase = AudioRecorderPhase.finalizing;
       _emit();
       await _recorder.stop();
-      final Future<Result<WrittenFile>>? write = _write;
-      if (write == null || _path == null) {
-        throw StateError('No audio write is active.');
+      final File? staging = _staging;
+      final String? path = _path;
+      if (staging == null || path == null) {
+        throw StateError('No audio take is active.');
       }
-      final Result<WrittenFile> result = await write;
+      final Result<WrittenFile> result = await _writer.copyIn(staging, path);
       switch (result) {
         case FailureResult<WrittenFile>(:final Failure failure):
+          // The staging file is the only copy; it stays for the next attempt
+          // and the orphan report (FE-SIMP-09).
           _phase = AudioRecorderPhase.failed;
           _emit();
           return FailureResult<Duration>(failure);
@@ -131,6 +175,8 @@ final class AudioRecorderPlugin implements AudioRecorderService {
             duration: _elapsed,
             mimeType: 'audio/wav',
           );
+          _staging = null;
+          await discardUnpublishedFile(staging);
           _phase = AudioRecorderPhase.completed;
           _emit();
           return Success<Duration>(_elapsed);
@@ -149,4 +195,21 @@ final class AudioRecorderPlugin implements AudioRecorderService {
       );
     }
   }
+}
+
+/// [relativePath] with forward slashes, refused when it could leave the
+/// storage folder. [FileWriter.copyIn] applies the same rule to the target.
+String _relative(String relativePath) {
+  final String relative = relativePath.replaceAll(r'\', '/').trim();
+  final List<String> parts = relative.split('/');
+  if (relative.isEmpty ||
+      relative.startsWith('/') ||
+      relative.contains(':') ||
+      parts.any((String part) => part.isEmpty || part == '.' || part == '..')) {
+    throw const ValidationFailure(
+      message: Copy.audioPathOutsideStorage,
+      recoveryAction: Copy.audioStartFailedRecovery,
+    );
+  }
+  return relative;
 }

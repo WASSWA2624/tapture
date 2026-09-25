@@ -4,6 +4,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 
 /// Catalogue confirm and alert. Features call [showAppConfirm] and
@@ -155,11 +156,7 @@ class AppDialog extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         ExcludeSemantics(
-          child: Icon(
-            Icons.warning_amber_outlined,
-            color: colors.danger,
-            size: Space.x6,
-          ),
+          child: Icon(AppIcons.warning, color: colors.danger, size: Space.x6),
         ),
         const SizedBox(width: Space.x3),
         Expanded(child: heading),

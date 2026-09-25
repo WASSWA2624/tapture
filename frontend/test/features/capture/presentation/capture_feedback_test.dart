@@ -15,6 +15,7 @@ import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/files/text_store.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/fields/dictation_scope.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
@@ -32,6 +33,7 @@ import 'package:tapture/features/context/presentation/context_bar.dart';
 import 'package:tapture/features/projects/domain/project.dart';
 import 'package:tapture/features/projects/domain/project_settings.dart';
 import 'package:tapture/features/projects/presentation/current_project.dart';
+import 'package:tapture/features/projects/presentation/project_template_selection.dart';
 import 'package:tapture/features/settings/data/settings_store.dart';
 import 'package:tapture/features/settings/domain/setting_keys.dart';
 import 'package:tapture/features/settings/presentation/capture_settings_screen.dart';
@@ -125,7 +127,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip(Copy.captureAddPhoto));
+    await tester.tap(find.text(Copy.captureAddPhoto));
     await tester.pumpAndSettle();
     expect(find.text(Copy.captureTakePhoto), findsNothing);
     await tester.tap(find.text(Copy.captureChoosePhoto));
@@ -264,7 +266,7 @@ void main() {
     expect(find.text('Site'), findsNothing);
   });
 
-  testWidgets('manual choice with two templates shows the sheet first', (
+  testWidgets('manual choice leaves the template empty until one is picked', (
     WidgetTester tester,
   ) async {
     final Project project = aProject(
@@ -288,8 +290,30 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    final Finder field = find.byKey(
+      const ValueKey<String>('capture-template-field'),
+    );
+    expect(field, findsOneWidget);
+    expect(find.text('Computers'), findsNothing);
+    expect(find.widgetWithText(AppButton, Copy.captureAddPhoto), findsNothing);
+
+    await tester.tap(field);
+    await tester.pumpAndSettle();
     expect(find.text('Computers'), findsOneWidget);
     expect(find.text('Furniture'), findsOneWidget);
+    await tester.tap(find.text('Furniture'));
+    await tester.pumpAndSettle();
+
+    final ProviderContainer container = ProviderScope.containerOf(
+      tester.element(find.byType(CaptureScreen)),
+    );
+    expect(container.read(projectTemplateSelectionProvider), 't2');
+    expect(container.read(captureControllerProvider('p1')).templateId, 't2');
+    expect(find.text('Furniture'), findsOneWidget);
+    expect(
+      find.widgetWithText(AppButton, Copy.captureAddPhoto),
+      findsOneWidget,
+    );
   });
 
   testWidgets(
@@ -380,7 +404,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip(Copy.captureAddPhoto));
+      await tester.tap(find.text(Copy.captureAddPhoto));
       await tester.pumpAndSettle();
       expect(find.text(Copy.captureAddSheetTitle), findsOneWidget);
       expect(
@@ -491,7 +515,7 @@ void main() {
                 final Finder record = find.byTooltip(Copy.captureRecordAudio);
                 expect(mic, findsOneWidget);
                 expect(record, findsOneWidget);
-                expect(find.byIcon(Icons.fiber_manual_record), findsOneWidget);
+                expect(find.byIcon(AppIcons.recordAudio), findsOneWidget);
                 expect(find.byType(AppSectionHeader), findsNothing);
                 final TextField caption = tester.widget<TextField>(
                   find.byWidgetPredicate(
@@ -517,7 +541,7 @@ void main() {
                 );
                 expect(
                   find.text(Copy.audioRecorderStatus('idle', 0)),
-                  findsOneWidget,
+                  findsNothing,
                 );
                 await tester.pumpWidget(const SizedBox.shrink());
               }
@@ -541,8 +565,9 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip(Copy.captureRecordAudio));
     await tester.pump();
-    expect(find.byIcon(Icons.fiber_manual_record), findsNothing);
-    expect(find.byIcon(Icons.stop), findsOneWidget);
+    expect(find.byIcon(AppIcons.recordAudio), findsNothing);
+    expect(find.byIcon(AppIcons.stop), findsOneWidget);
+    expect(find.text(Copy.audioRecorderStatus('recording', 0)), findsOneWidget);
     expect(find.text(Copy.capturePauseAudio), findsOneWidget);
     expect(find.text(Copy.captureStopAudio), findsOneWidget);
     await recorder.stop();
@@ -564,10 +589,7 @@ Widget _scope(
   bool withTemplate = true,
 }) {
   return ProviderScope(
-    overrides: <Override>[
-      if (withTemplate) _oneCaptureTemplate(),
-      ...extras,
-    ],
+    overrides: <Override>[if (withTemplate) _oneCaptureTemplate(), ...extras],
     child: MaterialApp(home: Scaffold(body: child)),
   );
 }

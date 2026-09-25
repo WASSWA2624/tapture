@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -48,7 +49,7 @@ abstract interface class BarcodeScannerService {
   /// Drops repeated codes within [window] for continuous counting.
   static Stream<BarcodeHit> debounceRepeats(
     Stream<BarcodeHit> source, {
-    Duration window = const Duration(milliseconds: 800),
+    Duration window = AppConstants.barcodeRepeatWindow,
   }) {
     BarcodeHit? last;
     DateTime? at;

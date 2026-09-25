@@ -1,6 +1,7 @@
 # 07 — Consistency and uniformity
 
-*Enforced by dev-plan tasks 013 (tokens) and 047 (widget gallery); every design-system task adds to the catalogue.*
+*Enforced by dev-plan tasks 013 (tokens) and 047 (widget gallery), and by `test/architecture/icons_test.dart` (FE-CONS-08);
+every design-system task adds to the catalogue.*
 
 ## FE-CONS-01 — Catalogue first
 Before writing a widget, look in `core/widgets/`. If something close exists, extend it rather than fork it. Building a
@@ -32,7 +33,8 @@ merge, refine. `lib/core/naming/domain_names.dart` is the reference; synonyms fa
 
 ## FE-CONS-08 — One icon per concept
 Camera, microphone, scan, refine, export, merge, duplicate, conflict, verified. Fixed once in the design system;
-never chosen ad hoc per screen.
+never chosen ad hoc per screen. `AppIcons` in `lib/core/widgets/app_icons.dart` is that list, drawn from the widely
+recognised Material glyphs; `test/architecture/icons_test.dart` fails on an `Icons.` glyph named anywhere else.
 
 ## FE-CONS-09 — One formatter
 Dates, times, numbers, units, currency and file sizes are formatted by shared helpers, so the same value never appears

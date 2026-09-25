@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
@@ -48,7 +49,7 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
         key: const ValueKey<String>('route-project-settings'),
         title: Copy.projectSettingsTitle,
         body: AppEmptyState(
-          icon: Icons.tune,
+          icon: AppIcons.settings,
           headline: Copy.projectSettingsEmptyHeadline,
           message: Copy.projectSettingsEmptyMessage,
           actionLabel: Copy.navProjects,
@@ -67,7 +68,7 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
       overflow: <AppOverflowAction>[
         AppOverflowAction(
           label: Copy.projectEditTitle,
-          icon: Icons.edit_outlined,
+          icon: AppIcons.edit,
           onTap: () => context.go(_edit(project.id)),
         ),
       ],

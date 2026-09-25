@@ -655,6 +655,62 @@ void main() {
     );
   });
 
+  test(
+    'a new field is stored as the typed original, then refined beside it',
+    () async {
+      _ok(await repo.create(aProject()));
+      final RecordRow record = _ok(
+        await upsertRecord(
+          db,
+          row: RecordsCompanion(
+            projectId: const Value<String>('project-1'),
+            templateId: const Value<String>('template-1'),
+            status: const Value<String>('captured'),
+            processingMode: const Value<String>('manual'),
+            contextJson: const Value<String>('{}'),
+            identityHash: const Value<String>('hash-edit'),
+            source: const Value<String>('capture'),
+            capturedAt: Value<DateTime>(t0),
+            capturedBy: const Value<String>('Ada'),
+          ),
+          clock: clock,
+          deviceId: 'device-test',
+          ids: UuidV7Service.sequence(clock),
+        ),
+      );
+
+      _ok(
+        await repo.addRecordField(
+          recordId: record.id,
+          fieldKey: 'asset_tag',
+          value: 'A-1',
+        ),
+      );
+      _ok(
+        await repo.refineRecordField(
+          recordId: record.id,
+          fieldKey: 'asset_tag',
+          value: 'A-001',
+        ),
+      );
+
+      final List<ProjectRecordRow> rows = await repo
+          .watchRecords('project-1', statuses: const <String>['captured'])
+          .first;
+      expect(rows.single.templateId, 'template-1');
+      final ProjectRecordFieldValue field = rows.single.fields.single;
+      expect(field.fieldKey, 'asset_tag');
+      expect(field.raw, 'A-1');
+      expect(field.refined, 'A-001');
+      final RecordField stored =
+          await (db.select(db.recordFields)
+                ..where(($RecordFieldsTable t) => t.recordId.equals(record.id)))
+              .getSingle();
+      expect(stored.source, 'TYPED');
+      expect(stored.valueRaw, 'A-1');
+    },
+  );
+
   test('presentation under projects imports no core/db', () {
     final Directory presentation = Directory(
       'lib/features/projects/presentation',

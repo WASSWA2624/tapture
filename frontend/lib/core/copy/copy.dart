@@ -392,6 +392,9 @@ abstract final class Copy {
   /// Prompt on list-pane and picker search fields.
   static const String search = 'Search';
 
+  /// What to change when a search matches nothing.
+  static const String searchNoMatchMessage = 'Change the search.';
+
   /// Semantic name of the title-bar overflow control.
   static const String overflowMenu = 'More options';
 
@@ -446,16 +449,6 @@ abstract final class Copy {
 
   /// Semantic status for a project that stays at the top of the list.
   static const String pinnedProject = 'Pinned project';
-
-  /// Project-home context association count.
-  static String projectContextLevelCount(int count) {
-    return Intl.plural(
-      count,
-      zero: 'No context levels',
-      one: '1 context level',
-      other: '$count context levels',
-    );
-  }
 
   /// Project-home template association count.
   static String projectTemplateCount(int count) {
@@ -757,6 +750,13 @@ abstract final class Copy {
   /// Edits one captured record.
   static const String recordEdit = 'Edit';
 
+  /// Edit sheet for a record with nothing to edit.
+  static const String recordEditNoFieldsHeadline = 'No fields to edit';
+
+  /// What to do when a record has no editable field.
+  static const String recordEditNoFieldsMessage =
+      "Add fields to this record's template, then edit the record here.";
+
   /// Archives one captured record. The photos stay on the device.
   static const String recordDelete = 'Delete';
 
@@ -956,6 +956,14 @@ abstract final class Copy {
 
   /// Opens upload and library choices on the template list.
   static const String templatesAddChoices = 'Add templates';
+
+  /// The add action once the project already has a template.
+  static const String templatesAddMore = 'Add more templates';
+
+  /// Empty project template list. The add action sits in the footer.
+  static const String templatesAddEmptyMessage =
+      'Add templates to start capturing. Create a blank template when none '
+      'fits.';
 
   /// Uploads a template file.
   static const String templatesUpload = 'Upload a template';
@@ -1660,17 +1668,26 @@ abstract final class Copy {
   static String shippedLibraryNoMatch(String query) {
     final String shown = query.trim();
     if (shown.isEmpty) {
-      return 'No templates match that kind.';
+      return 'No templates match.';
     }
     return 'No templates match "$shown".';
   }
 
-  /// What to change when the shipped library filter matches nothing.
-  static const String shippedLibraryNoMatchMessage =
-      'Change the search or the kind filter.';
+  /// What to change when the shipped library search matches nothing.
+  static const String shippedLibraryNoMatchMessage = searchNoMatchMessage;
 
-  /// Kind filter on the shipped library.
-  static const String shippedKindFilter = 'Kind';
+  /// Heading of a shipped library group, keyed by the group's name.
+  static String shippedCategoryTitle(String category) {
+    return switch (category) {
+      'assets' => 'Assets and equipment',
+      'places' => 'Buildings and sites',
+      'operations' => 'Stock, inspection and maintenance',
+      'people' => 'People and households',
+      'nature' => 'Plants and animals',
+      'records' => 'Documents, meetings and events',
+      _ => 'General',
+    };
+  }
 
   /// Operator-facing name of a packed template, keyed by [templateKey].
   static String shippedTemplateName(String templateKey) {
@@ -1699,36 +1716,6 @@ abstract final class Copy {
       'incident_report' => 'Incident / Issue',
       'generic_item' => 'Generic',
       _ => shippedLabel('templates.$templateKey.name'),
-    };
-  }
-
-  /// §13.4 kind heading for the library list.
-  static String shippedKindTitle(String kind) {
-    return switch (kind) {
-      'equipment' => 'Equipment / Asset',
-      'medical' => 'Medical equipment',
-      'ict' => 'ICT equipment',
-      'vehicle' => 'Vehicle / Plant',
-      'furniture' => 'Furniture and fittings',
-      'building' => 'Building / Facility',
-      'room' => 'Room / Space',
-      'utility' => 'Utility / Service point',
-      'stock' => 'Stock / Store',
-      'inspection' => 'Inspection / Compliance',
-      'work_order' => 'Maintenance / Work order',
-      'meter' => 'Meter reading',
-      'person' => 'Person / Beneficiary',
-      'staff' => 'Staff / Workforce',
-      'household' => 'Household / Dwelling',
-      'land' => 'Land / Plot / Parcel',
-      'plant' => 'Plant / Tree survey',
-      'livestock' => 'Livestock / Animal',
-      'document' => 'Document / Archive',
-      'meeting' => 'Meeting',
-      'event' => 'Event / Activity',
-      'incident' => 'Incident / Issue',
-      'generic' => 'Generic',
-      _ => kind,
     };
   }
 
@@ -2011,8 +1998,7 @@ abstract final class Copy {
       'Create a project before capturing.';
 
   /// A project is open, but it has no template to capture against.
-  static const String captureNeedsTemplate =
-      'Add a template before capturing.';
+  static const String captureNeedsTemplate = 'Add a template before capturing.';
 
   /// More fields expander.
   static const String captureMoreFields = 'More fields';
@@ -2122,6 +2108,9 @@ abstract final class Copy {
   /// Caption scope: this photo.
   static String captionScopeThis(int n) => 'This photo ($n)';
 
+  /// Heading of the caption target choice.
+  static const String captionScopeLabel = 'Apply to';
+
   /// Caption scope: selected photos.
   static String captionScopeSelected(int n) => 'Selected photos ($n)';
 
@@ -2156,6 +2145,17 @@ abstract final class Copy {
   /// Audio recorder unavailable.
   static const String audioRecorderUnavailable =
       'Audio recording is not available on this device.';
+
+  /// The recorder refused to start a take.
+  static const String audioStartFailed = 'Recording could not start.';
+
+  /// Recovery for [audioStartFailed].
+  static const String audioStartFailedRecovery =
+      'Try again. Nothing already captured was lost.';
+
+  /// A recording path that would leave the storage folder.
+  static const String audioPathOutsideStorage =
+      'The recording must be saved inside the project folder.';
 
   /// Microphone permission failure and recovery.
   static const String audioPermissionDenied =

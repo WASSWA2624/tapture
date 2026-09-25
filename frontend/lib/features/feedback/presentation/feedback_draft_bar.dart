@@ -7,6 +7,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/responsive/content_constraint.dart';
@@ -108,7 +109,7 @@ class _FeedbackDraftBarState extends ConsumerState<FeedbackDraftBar> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Icon(
-                              Icons.photo_library_outlined,
+                              AppIcons.photoLibrary,
                               size: Space.x5,
                               color: colors.onSurface,
                             ),
@@ -126,7 +127,7 @@ class _FeedbackDraftBarState extends ConsumerState<FeedbackDraftBar> {
                   ),
                 if (sharing)
                   AppIconButton(
-                    icon: Icons.desktop_windows_outlined,
+                    icon: AppIcons.window,
                     semanticLabel: Copy.feedbackAddWindow,
                     tooltip: Copy.feedbackAddWindow,
                     selected: true,
@@ -135,21 +136,21 @@ class _FeedbackDraftBarState extends ConsumerState<FeedbackDraftBar> {
                   ),
                 if (widget.onAddScreen != null)
                   AppIconButton(
-                    icon: Icons.screenshot_monitor_outlined,
+                    icon: AppIcons.screenshot,
                     semanticLabel: Copy.feedbackAddScreen,
                     tooltip: Copy.feedbackAddScreen,
                     outlined: false,
                     onPressed: widget.onAddScreen,
                   ),
                 AppIconButton(
-                  icon: Icons.open_in_full,
+                  icon: AppIcons.expandPanel,
                   semanticLabel: Copy.feedbackContinue,
                   tooltip: Copy.feedbackContinue,
                   outlined: false,
                   onPressed: _draft.expand,
                 ),
                 AppIconButton(
-                  icon: Icons.close,
+                  icon: AppIcons.close,
                   semanticLabel: Copy.feedbackDiscardDraft,
                   tooltip: Copy.feedbackDiscardDraft,
                   outlined: false,

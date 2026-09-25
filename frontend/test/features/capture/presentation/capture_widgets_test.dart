@@ -44,7 +44,6 @@ import 'package:tapture/features/capture/presentation/photo_type_sheet.dart';
 import 'package:tapture/features/capture/presentation/photo_viewer_screen.dart';
 import 'package:tapture/features/capture/presentation/rapid_mode_screen.dart';
 import 'package:tapture/features/capture/presentation/record_caption_field.dart';
-import 'package:tapture/features/capture/presentation/template_picker_sheet.dart';
 import 'package:tapture/features/capture/presentation/voice_input_button.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/templates.dart';
@@ -167,6 +166,14 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(Copy.captureChooseProject), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey<String>('capture-project-field')),
+      findsOneWidget,
+    );
+    await tester.tap(
+      find.byKey(const ValueKey<String>('capture-project-field')),
+    );
+    await tester.pumpAndSettle();
     expect(find.text('Alpha'), findsOneWidget);
     expect(find.text('Beta'), findsNothing);
     expect(
@@ -181,13 +188,14 @@ void main() {
       tester.widget<AppPrimaryAction>(find.byType(AppPrimaryAction)).onPressed,
       isNull,
     );
-    expect(_icon(tester, Copy.captureAddPhoto).onPressed, isNull);
+    expect(find.widgetWithText(AppButton, Copy.captureAddPhoto), findsNothing);
     expect(_icon(tester, Copy.captureRecordAudio).onPressed, isNull);
 
     await tester.tap(find.text('Alpha'));
     await tester.pumpAndSettle();
 
     expect(find.text(Copy.captureChooseProject), findsNothing);
+    expect(find.text('Assets'), findsOneWidget);
     expect(
       tester
           .widget<AppButton>(
@@ -200,7 +208,10 @@ void main() {
       tester.widget<AppPrimaryAction>(find.byType(AppPrimaryAction)).onPressed,
       isNotNull,
     );
-    expect(_icon(tester, Copy.captureAddPhoto).onPressed, isNotNull);
+    expect(
+      find.widgetWithText(AppButton, Copy.captureAddPhoto),
+      findsOneWidget,
+    );
     expect(_icon(tester, Copy.captureRecordAudio).onPressed, isNotNull);
   });
 
@@ -464,15 +475,26 @@ void main() {
       );
       expect(find.byType(VoiceInputButton), findsOneWidget);
 
+      final AudioRecorderService recorder = AudioRecorderService.fake(
+        tick: const Duration(seconds: 1),
+      );
       await tester.pumpWidget(
         wrap(
-          AudioRecorder(
-            recorder: AudioRecorderService.fake(),
-            relativePath: 'documents/a.wav',
-          ),
+          AudioRecorder(recorder: recorder, relativePath: 'documents/a.wav'),
         ),
       );
-      expect(find.text(Copy.audioRecorderStatus('idle', 0)), findsOneWidget);
+      expect(find.text(Copy.audioRecorderStatus('idle', 0)), findsNothing);
+      expect(find.byType(LinearProgressIndicator), findsNothing);
+      await recorder.start('documents/a.wav');
+      await tester.pump();
+      expect(
+        find.text(Copy.audioRecorderStatus('recording', 0)),
+        findsOneWidget,
+      );
+      expect(find.text(Copy.captureStopAudio), findsOneWidget);
+      await recorder.stop();
+      await tester.pump();
+      expect(find.byType(LinearProgressIndicator), findsNothing);
 
       await tester.pumpWidget(
         wrap(
@@ -552,30 +574,6 @@ void main() {
         ),
       );
       expect(find.text(Copy.captureStorageExport), findsOneWidget);
-
-      await tester.pumpWidget(
-        wrap(
-          TemplatePickerSheet(
-            templates: const <({String id, String name, int lastUsedMs})>[
-              (id: 't1', name: 'One', lastUsedMs: 2),
-              (id: 't2', name: 'Two', lastUsedMs: 1),
-            ],
-            onSelected: (_) {},
-          ),
-        ),
-      );
-      expect(find.text('One'), findsOneWidget);
-      await tester.pumpWidget(
-        wrap(
-          TemplatePickerSheet(
-            templates: const <({String id, String name, int lastUsedMs})>[
-              (id: 't1', name: 'Only', lastUsedMs: 1),
-            ],
-            onSelected: (_) {},
-          ),
-        ),
-      );
-      expect(find.byType(SizedBox), findsWidgets);
     },
   );
 

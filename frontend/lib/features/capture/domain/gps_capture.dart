@@ -1,3 +1,4 @@
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/location/location_service.dart';
 
@@ -9,7 +10,7 @@ abstract final class GpsCapture {
   static Future<Result<GeoFix?>> maybeFix({
     required bool gpsEnabled,
     required LocationService location,
-    Duration timeout = const Duration(seconds: 3),
+    Duration timeout = AppConstants.locationTimeout,
   }) async {
     if (!gpsEnabled) {
       return const Success<GeoFix?>(null);

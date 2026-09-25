@@ -113,16 +113,16 @@ enum PhotoType {
   /// Glyph shown with [badgeLabel] so colour is never the only signal.
   IconData get icon {
     return switch (this) {
-      PhotoType.front => Icons.crop_portrait,
-      PhotoType.back => Icons.flip_to_back,
-      PhotoType.serial => Icons.pin_outlined,
-      PhotoType.ratingPlate => Icons.badge_outlined,
-      PhotoType.damage => Icons.report_outlined,
-      PhotoType.panel => Icons.grid_view_outlined,
-      PhotoType.location => Icons.place_outlined,
-      PhotoType.attendance => Icons.groups_outlined,
-      PhotoType.document => Icons.description_outlined,
-      PhotoType.other => Icons.image_outlined,
+      PhotoType.front => AppIcons.photoFront,
+      PhotoType.back => AppIcons.photoBack,
+      PhotoType.serial => AppIcons.photoSerial,
+      PhotoType.ratingPlate => AppIcons.photoRatingPlate,
+      PhotoType.damage => AppIcons.photoDamage,
+      PhotoType.panel => AppIcons.photoPanel,
+      PhotoType.location => AppIcons.photoLocation,
+      PhotoType.attendance => AppIcons.photoAttendance,
+      PhotoType.document => AppIcons.photoDocument,
+      PhotoType.other => AppIcons.photoOther,
     };
   }
 }

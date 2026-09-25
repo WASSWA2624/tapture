@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
@@ -46,7 +47,7 @@ class TemplateImportAction extends ConsumerWidget {
         key: ValueKey<String>('route-template-import'),
         title: Copy.templatesImport,
         body: AppEmptyState(
-          icon: Icons.file_upload_outlined,
+          icon: AppIcons.import,
           headline: Copy.templatesImportEmptyHeadline,
           message: Copy.templatesImportEmptyMessage,
         ),

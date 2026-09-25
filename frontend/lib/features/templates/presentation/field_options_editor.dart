@@ -3,6 +3,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
@@ -124,7 +125,7 @@ class _FieldOptionsEditorState extends State<FieldOptionsEditor> {
         const AppSectionHeader(title: Copy.fieldOptionsTitle, dense: true),
         if (rows.isEmpty)
           const AppEmptyState(
-            icon: Icons.list_alt_outlined,
+            icon: AppIcons.fields,
             headline: Copy.fieldOptionsEmptyHeadline,
             message: Copy.fieldOptionsEmptyMessage,
           ),
@@ -170,7 +171,7 @@ class _FieldOptionsEditorState extends State<FieldOptionsEditor> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               AppIconButton(
-                icon: Icons.keyboard_arrow_up,
+                icon: AppIcons.moveUp,
                 semanticLabel: Copy.fieldMoveUp(row.label),
                 tooltip: Copy.fieldMoveUp(row.label),
                 outlined: false,
@@ -179,7 +180,7 @@ class _FieldOptionsEditorState extends State<FieldOptionsEditor> {
                     : () => _move(rows, index, index - 1),
               ),
               AppIconButton(
-                icon: Icons.keyboard_arrow_down,
+                icon: AppIcons.moveDown,
                 semanticLabel: Copy.fieldMoveDown(row.label),
                 tooltip: Copy.fieldMoveDown(row.label),
                 outlined: false,
@@ -189,7 +190,7 @@ class _FieldOptionsEditorState extends State<FieldOptionsEditor> {
               ),
               if (!row.retired)
                 AppIconButton(
-                  icon: Icons.hide_source,
+                  icon: AppIcons.hideOption,
                   semanticLabel: Copy.fieldOptionRetire,
                   tooltip: Copy.fieldOptionRetire,
                   outlined: false,

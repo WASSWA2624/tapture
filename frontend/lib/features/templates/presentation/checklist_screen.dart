@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
@@ -37,7 +38,7 @@ class ChecklistScreen extends ConsumerWidget {
         value: value,
         isEmpty: (TemplateDef? row) => row == null || row.rows.isEmpty,
         empty: () => const AppEmptyState(
-          icon: Icons.checklist,
+          icon: AppIcons.checklist,
           headline: Copy.checklistEmptyHeadline,
           message: Copy.checklistEmptyMessage,
         ),

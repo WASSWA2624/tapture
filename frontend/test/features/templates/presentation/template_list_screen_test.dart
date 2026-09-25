@@ -9,6 +9,7 @@ import 'package:tapture/app/router.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
@@ -53,14 +54,62 @@ void main() {
 
     expect(find.byType(AppEmptyState), findsOneWidget);
     expect(find.text(Copy.templatesEmptyHeadline), findsOneWidget);
-    expect(find.text(Copy.templatesEmptyMessage), findsOneWidget);
-    expect(find.text(Copy.templatesPickLibrary), findsOneWidget);
+    expect(find.text(Copy.templatesAddEmptyMessage), findsOneWidget);
+    expect(find.text(Copy.templatesPickLibrary), findsNothing);
     expect(find.byType(AppPrimaryAction), findsOneWidget);
+    expect(find.text(Copy.templatesAddChoices), findsOneWidget);
+    expect(find.text(Copy.templatesAddMore), findsNothing);
 
-    await tester.tap(find.text(Copy.templatesPickLibrary));
+    await tester.tap(find.text(Copy.templatesAddChoices));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.templatesUseExisting));
     await tester.pumpAndSettle();
     expect(find.text('library'), findsOneWidget);
   });
+
+  for (final ({String name, Size size, double scale}) layout
+      in <({String name, Size size, double scale})>[
+        (name: 'portrait', size: const Size(393, 886), scale: 1),
+        (name: '200 percent text', size: const Size(393, 886), scale: 2),
+        (name: 'landscape', size: const Size(886, 393), scale: 1),
+      ]) {
+    testWidgets('with a template, the footer stacks two full-width actions '
+        'in ${layout.name}', (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = layout.size;
+      tester.platformDispatcher.textScaleFactorTestValue = layout.scale;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+        tester.platformDispatcher.clearTextScaleFactorTestValue();
+      });
+      await _pump(
+        tester,
+        overrides: <Override>[
+          templateListProvider.overrideWith(
+            (Ref _) => Stream<List<TemplateDef>>.value(<TemplateDef>[
+              aTemplate(name: 'Assets'),
+            ]),
+          ),
+        ],
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text(Copy.templatesAddMore), findsOneWidget);
+      expect(find.text(Copy.templatesAddChoices), findsNothing);
+      final Rect add = tester.getRect(
+        find.descendant(
+          of: find.widgetWithText(AppButton, Copy.templatesAddMore),
+          matching: find.byType(OutlinedButton),
+        ),
+      );
+      final Rect create = tester.getRect(find.byType(AppPrimaryAction));
+      expect(add.width, closeTo(create.width, 1));
+      expect(add.left, closeTo(create.left, 1));
+      expect(add.bottom, lessThanOrEqualTo(create.top));
+    });
+  }
 
   testWidgets('a failed load renders through AsyncValueView', (
     WidgetTester tester,

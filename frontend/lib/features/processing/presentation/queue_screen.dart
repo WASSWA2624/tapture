@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
@@ -45,7 +46,7 @@ class QueueScreen extends ConsumerWidget {
             snapshot.groups.isEmpty,
         empty: () {
           return const AppEmptyState(
-            icon: Icons.inbox_outlined,
+            icon: AppIcons.empty,
             headline: Copy.queueEmptyHeadline,
             message: Copy.queueEmptyMessage,
           );
@@ -120,7 +121,7 @@ class QueueScreen extends ConsumerWidget {
                       const AppSectionHeader(title: Copy.queueFailedTitle),
                     for (final ProcessingJob job in snapshot.failures)
                       AppListTile(
-                        leading: const Icon(Icons.error_outline),
+                        leading: const Icon(AppIcons.error),
                         title: '${Copy.queueRetry}: ${job.recordId}',
                         subtitle: job.lastError ?? Copy.queueFailed,
                         onTap: batch.isRunning
@@ -133,7 +134,7 @@ class QueueScreen extends ConsumerWidget {
                       const AppSectionHeader(title: Copy.queueGroupsTitle),
                     for (final QueueGroup group in snapshot.groups)
                       AppListTile(
-                        leading: const Icon(Icons.folder_outlined),
+                        leading: const Icon(AppIcons.project),
                         title: group.label,
                         subtitle: Copy.recordsCount(group.records),
                         onTap: batch.isRunning

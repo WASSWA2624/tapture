@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 
 /// Full-screen photo inspector with swipe between photos.
@@ -118,33 +119,33 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
           IconButton(
             tooltip: Copy.photoRotate,
             onPressed: () => _rotate(current),
-            icon: const Icon(Icons.rotate_right),
+            icon: const Icon(AppIcons.rotate),
           ),
           IconButton(
             tooltip: Copy.photoCrop,
             onPressed: () => widget.onCrop?.call(current),
-            icon: const Icon(Icons.crop),
+            icon: const Icon(AppIcons.crop),
           ),
           IconButton(
             tooltip: Copy.photoDraw,
             onPressed: () => widget.onDraw?.call(current),
-            icon: const Icon(Icons.gesture),
+            icon: const Icon(AppIcons.draw),
           ),
           IconButton(
             tooltip: Copy.capturePhotoCaption,
             onPressed: () => widget.onCaption?.call(current),
-            icon: const Icon(Icons.notes),
+            icon: const Icon(AppIcons.caption),
           ),
           IconButton(
             tooltip: Copy.photoTypeOn,
             onPressed: () => widget.onType?.call(current),
-            icon: const Icon(Icons.title),
+            icon: const Icon(AppIcons.typeText),
           ),
           if (current.derivedFrom != null)
             IconButton(
               tooltip: Copy.photoRevert,
               onPressed: () => widget.onRevert?.call(current),
-              icon: const Icon(Icons.undo),
+              icon: const Icon(AppIcons.undo),
             ),
         ],
       ),

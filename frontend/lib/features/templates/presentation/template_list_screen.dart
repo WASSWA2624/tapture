@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
@@ -48,8 +49,11 @@ class TemplateListScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 AppButton(
-                  label: Copy.templatesAddChoices,
+                  label: (value.asData?.value.isEmpty ?? true)
+                      ? Copy.templatesAddChoices
+                      : Copy.templatesAddMore,
                   variant: AppButtonVariant.secondary,
+                  expand: true,
                   onPressed: () => unawaited(_addTemplates(context)),
                 ),
                 const SizedBox(height: Space.x2),
@@ -95,11 +99,11 @@ class TemplateListScreen extends ConsumerWidget {
               Expanded(
                 child: visible.isEmpty
                     ? (rows.isEmpty
-                          ? _empty(context)
+                          ? _empty()
                           : const AppEmptyState(
-                              icon: Icons.search,
+                              icon: AppIcons.searchEmpty,
                               headline: Copy.templatesNoMatch,
-                              message: Copy.search,
+                              message: Copy.searchNoMatchMessage,
                             ))
                     : ListView(
                         children: <Widget>[
@@ -139,47 +143,47 @@ class TemplateListScreen extends ConsumerWidget {
     return <AppOverflowAction>[
       AppOverflowAction(
         label: Copy.templatesEdit,
-        icon: Icons.edit_outlined,
+        icon: AppIcons.edit,
         onTap: () => unawaited(_rename(context, ref, template)),
       ),
       AppOverflowAction(
         label: Copy.templatesOpen,
-        icon: Icons.article_outlined,
+        icon: AppIcons.template,
         onTap: () => _open(context, template.id),
       ),
       AppOverflowAction(
         label: Copy.projectsDuplicate,
-        icon: Icons.copy_outlined,
+        icon: AppIcons.duplicate,
         onTap: () => unawaited(_duplicate(context, ref, template)),
       ),
       AppOverflowAction(
         label: Copy.templatesExport,
-        icon: Icons.ios_share_outlined,
+        icon: AppIcons.export,
         onTap: () =>
             context.go(TemplateLocations.child(context, template.id, 'export')),
       ),
       AppOverflowAction(
         label: Copy.templatesImport,
-        icon: Icons.file_upload_outlined,
+        icon: AppIcons.import,
         onTap: () => context.go(TemplateLocations.import(context)),
       ),
       if (recordCount == 0)
         AppOverflowAction(
           label: Copy.templatesDelete,
-          icon: Icons.delete_outline,
+          icon: AppIcons.delete,
           onTap: () => unawaited(_delete(context, ref, template, recordCount)),
         ),
     ];
   }
 }
 
-Widget _empty(BuildContext context) {
-  return AppEmptyState(
-    icon: Icons.article_outlined,
+/// The empty list names the next step; the footer's add action offers it
+/// (FE-SIMP-11), so the page has one add button, not two.
+Widget _empty() {
+  return const AppEmptyState(
+    icon: AppIcons.template,
     headline: Copy.templatesEmptyHeadline,
-    message: Copy.templatesEmptyMessage,
-    actionLabel: Copy.templatesPickLibrary,
-    onAction: () => context.go(TemplateLocations.library(context)),
+    message: Copy.templatesAddEmptyMessage,
   );
 }
 

@@ -59,6 +59,35 @@ void main() {
     expect(find.byIcon(Icons.check), findsOneWidget);
   });
 
+  for (final int count in <int>[1, 2, 3]) {
+    testWidgets('alwaysSheet shows the value and opens a sheet with $count '
+        'option(s)', (WidgetTester tester) async {
+      String? latest;
+      await _pump(
+        tester,
+        AppChoiceField<String>(
+          label: 'Project',
+          options: three.take(count).toList(),
+          value: 'a',
+          alwaysSheet: true,
+          onChanged: (String? value) => latest = value,
+        ),
+      );
+
+      expect(find.text('Project'), findsOneWidget);
+      expect(find.text('Alpha'), findsOneWidget);
+      expect(find.byIcon(Icons.expand_more), findsOneWidget);
+      expect(find.byType(AppChoiceField<String>), meetsTapTarget());
+
+      await tester.tap(find.byType(AppChoiceField<String>));
+      await tester.pumpAndSettle();
+      expect(find.byType(TextField), findsOneWidget);
+      await tester.tap(find.text(three[count - 1].label).last);
+      await tester.pumpAndSettle();
+      expect(latest, three[count - 1].value);
+    });
+  }
+
   testWidgets('four options open a searchable sheet', (
     WidgetTester tester,
   ) async {

@@ -21,6 +21,7 @@ void main() {
     repo.seedRecords('project-1', const <ProjectRecordRow>[
       (
         id: 'r1',
+        templateId: 't1',
         status: 'captured',
         photoCount: 2,
         thumbPath: null,
@@ -28,6 +29,7 @@ void main() {
       ),
       (
         id: 'r2',
+        templateId: 't1',
         status: 'approved',
         photoCount: 1,
         thumbPath: null,

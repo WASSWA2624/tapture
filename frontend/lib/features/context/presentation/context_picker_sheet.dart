@@ -6,6 +6,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
@@ -106,7 +107,7 @@ class _ContextPickerSheetState extends ConsumerState<ContextPickerSheet> {
         if (_recents.isEmpty &&
             (widget.level.datasetId == null || widget.level.datasetId!.isEmpty))
           const AppEmptyState(
-            icon: Icons.history,
+            icon: AppIcons.history,
             headline: Copy.contextRecents,
             message: Copy.contextHierarchyEmptyMessage,
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/permissions/permissions_service.dart';
 import 'package:tapture/core/widgets/app_button.dart';
@@ -63,7 +64,7 @@ class _CameraPermissionGateState extends State<CameraPermissionGate> {
     return Semantics(
       label: Copy.captureCameraReason,
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(Space.x6),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[

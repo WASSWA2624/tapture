@@ -5,6 +5,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
@@ -62,7 +63,7 @@ class TemplateMigrationScreen extends ConsumerWidget {
             row == null ||
             TemplateVersioning.preview(current: row, records: records).isEmpty,
         empty: () => const AppEmptyState(
-          icon: Icons.upgrade,
+          icon: AppIcons.migrate,
           headline: Copy.templateMigrationEmptyHeadline,
           message: Copy.templateMigrationEmptyMessage,
         ),
@@ -78,13 +79,13 @@ class TemplateMigrationScreen extends ConsumerWidget {
       children: <Widget>[
         const AppBanner(
           message: Copy.templateMigrationExplain,
-          icon: Icons.info_outline,
+          icon: AppIcons.info,
           tone: SnackTone.info,
         ),
         if (view.saveError != null)
           AppBanner(
             message: view.saveError!,
-            icon: Icons.error_outline,
+            icon: AppIcons.error,
             tone: SnackTone.error,
           ),
         ..._section(Copy.templateMigrationAdded, preview.added),

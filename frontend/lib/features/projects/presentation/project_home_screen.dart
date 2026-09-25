@@ -8,11 +8,13 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_card.dart';
-import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
@@ -75,7 +77,7 @@ class ProjectHomeScreen extends ConsumerWidget {
         value: value,
         isEmpty: (ProjectHomeView? loaded) => loaded == null,
         empty: () => AppEmptyState(
-          icon: Icons.folder_open_outlined,
+          icon: AppIcons.project,
           headline: Copy.homeEmptyHeadline,
           message: Copy.homeEmptyMessage,
           actionLabel: Copy.navProjects,
@@ -233,60 +235,76 @@ class _HomeBody extends ConsumerWidget {
       projectHomeAssociationsProvider,
     );
     final bool shellOwns = ShellHeaderScope.ownsHeaderOf(context);
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          if (!shellOwns)
-            Row(
+    final double gutter = AppPage.gutter(context);
+    final String query = ref.watch(capturedItemsQueryProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (!shellOwns)
+          Padding(
+            padding: EdgeInsets.fromLTRB(gutter, Space.x2, gutter, Space.x0),
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Expanded(child: Text(view.project.name, style: AppText.title)),
                 AppOverflowMenu(items: _projectHomeMenu(context, ref, view)),
               ],
             ),
-          if (!shellOwns) const SizedBox(height: Space.x1),
-          Text(view.context, style: AppText.caption),
-          const SizedBox(height: Space.x2),
-          AppListTile(
-            title: Copy.contextPinnedTitle,
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => showPinnedFieldsSheet(
-              context: context,
-              projectId: view.project.id,
+          ),
+        // Pinned at the very top so a long home scrolls under it.
+        Padding(
+          padding: EdgeInsets.fromLTRB(gutter, Space.x1, gutter, Space.x2),
+          child: AppSearchField(
+            key: const ValueKey<String>('home-search'),
+            hint: Copy.search,
+            text: query,
+            onChanged: (String text) {
+              ref.read(capturedItemsQueryProvider.notifier).set(text);
+            },
+          ),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: gutter),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Text(view.context, style: AppText.caption),
+                      const SizedBox(height: Space.x3),
+                      ..._templateSwitch(ref, view.project.id),
+                      if (associations.hasError) ...<Widget>[
+                        const SizedBox(height: Space.x2),
+                        const Text(Copy.projectAssociationCountUnavailable),
+                        AppButton(
+                          label: Copy.projectAssociationRetry,
+                          variant: AppButtonVariant.text,
+                          onPressed: () {
+                            ref.invalidate(
+                              projectContextProvider(view.project.id),
+                            );
+                            ref.invalidate(
+                              projectHomeTemplatesProvider(view.project.id),
+                            );
+                            ref.invalidate(projectHomeAssociationsProvider);
+                          },
+                        ),
+                      ],
+                      const SizedBox(height: Space.x4),
+                      ..._countRows(context, counts),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: Space.x4),
+                CapturedItems(projectId: view.project.id),
+              ],
             ),
           ),
-          AppListTile(
-            title: Copy.contextHierarchyTitle,
-            subtitle: associations.when(
-              data: (ProjectHomeAssociations value) =>
-                  Copy.projectContextLevelCount(value.contextLevels),
-              error: (Object _, StackTrace _) =>
-                  Copy.projectAssociationCountUnavailable,
-              loading: () => Copy.loading,
-            ),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => unawaited(context.push(_context(view.project.id))),
-          ),
-          ..._templateSwitch(ref, view.project.id),
-          if (associations.hasError)
-            TextButton(
-              onPressed: () {
-                ref.invalidate(projectContextProvider(view.project.id));
-                ref.invalidate(projectHomeTemplatesProvider(view.project.id));
-                ref.invalidate(projectHomeAssociationsProvider);
-              },
-              child: const Text(Copy.projectAssociationRetry),
-            ),
-          const SizedBox(height: Space.x4),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Space.x4),
-            child: Column(children: _countRows(context, counts)),
-          ),
-          const SizedBox(height: Space.x4),
-          CapturedItems(projectId: view.project.id),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -297,7 +315,7 @@ class _HomeBody extends ConsumerWidget {
         cardKey: const ValueKey<String>('home-review'),
         label: Copy.homeReview,
         message: Copy.homeReviewPending(counts.review),
-        icon: Icons.fact_check_outlined,
+        icon: AppIcons.review,
         semanticLabel: Copy.homeReviewPending(counts.review),
         onTap: () => unawaited(context.push(_reviewList(projectId))),
       ),
@@ -305,7 +323,7 @@ class _HomeBody extends ConsumerWidget {
         cardKey: const ValueKey<String>('home-process'),
         label: Copy.homeProcess,
         message: Copy.homeProcessPending(counts.process),
-        icon: Icons.pending_outlined,
+        icon: AppIcons.queued,
         semanticLabel: Copy.homeProcessPending(counts.process),
         onTap: () => unawaited(context.push(_processList(projectId))),
       ),
@@ -313,7 +331,7 @@ class _HomeBody extends ConsumerWidget {
         cardKey: const ValueKey<String>('home-export'),
         label: Copy.homeExport,
         message: Copy.homeExportPending(counts.toExport),
-        icon: Icons.output,
+        icon: AppIcons.export,
         semanticLabel: Copy.homeExportPending(counts.toExport),
         onTap: () => unawaited(context.push(_exportList(projectId))),
       ),
@@ -321,7 +339,7 @@ class _HomeBody extends ConsumerWidget {
         cardKey: const ValueKey<String>('home-share'),
         label: Copy.homeShare,
         message: Copy.homeSharePending(counts.toShare),
-        icon: Icons.ios_share_outlined,
+        icon: AppIcons.share,
         semanticLabel: Copy.homeSharePending(counts.toShare),
         onTap: () => unawaited(context.push(_shareList(projectId))),
       ),
@@ -351,13 +369,16 @@ List<Widget> _templateSwitch(WidgetRef ref, String projectId) {
   return templates.maybeWhen(
     data: (List<TemplateDef> loaded) {
       if (loaded.isEmpty) {
-        return const <Widget>[Text(Copy.contextNoTemplatesHeadline)];
+        return const <Widget>[
+          Text(Copy.contextNoTemplatesHeadline, style: AppText.body),
+        ];
       }
       final String chosen = ref.watch(projectTemplateSelectionProvider);
       final String value = chosen.isEmpty ? loaded.first.id : chosen;
       return <Widget>[
         AppRadioGroup<String>(
           label: Copy.navTemplates,
+          framed: false,
           value: value,
           options: <Choice<String>>[
             for (final TemplateDef template in loaded)
@@ -387,17 +408,29 @@ List<AppOverflowAction> _projectHomeMenu(
   return <AppOverflowAction>[
     AppOverflowAction(
       label: Copy.navTemplates,
-      icon: Icons.article_outlined,
+      icon: AppIcons.template,
       onTap: () => context.push(_templates(project.id)),
     ),
     AppOverflowAction(
+      label: Copy.contextPinnedTitle,
+      icon: AppIcons.pin,
+      onTap: () => unawaited(
+        showPinnedFieldsSheet(context: context, projectId: project.id),
+      ),
+    ),
+    AppOverflowAction(
+      label: Copy.contextHierarchyTitle,
+      icon: AppIcons.context,
+      onTap: () => unawaited(context.push(_context(project.id))),
+    ),
+    AppOverflowAction(
       label: Copy.projectExport,
-      icon: Icons.ios_share_outlined,
+      icon: AppIcons.export,
       onTap: () => context.push(RoutePaths.projectExports(project.id)),
     ),
     AppOverflowAction(
       label: Copy.projectsDuplicate,
-      icon: Icons.copy_outlined,
+      icon: AppIcons.duplicate,
       onTap: () => ProjectDuplicateAction.open(
         context,
         sourceId: project.id,
@@ -406,12 +439,12 @@ List<AppOverflowAction> _projectHomeMenu(
     ),
     AppOverflowAction(
       label: Copy.projectEditTitle,
-      icon: Icons.edit_outlined,
+      icon: AppIcons.edit,
       onTap: () => context.go(_edit(project.id)),
     ),
     AppOverflowAction(
       label: Copy.projectSettingsTitle,
-      icon: Icons.tune,
+      icon: AppIcons.settings,
       onTap: () => context.go(_settings(project.id)),
     ),
     ?open,
@@ -419,12 +452,14 @@ List<AppOverflowAction> _projectHomeMenu(
       label: project.status == ProjectStatus.archived
           ? Copy.projectUnarchive
           : Copy.projectArchive,
-      icon: Icons.inventory_2_outlined,
+      icon: project.status == ProjectStatus.archived
+          ? AppIcons.unarchive
+          : AppIcons.archive,
       onTap: () => unawaited(_archiveThenList(context, ref, project)),
     ),
     AppOverflowAction(
       label: Copy.projectDeleteMenu,
-      icon: Icons.delete_outline,
+      icon: AppIcons.delete,
       onTap: () => unawaited(_deleteThenList(context, ref, project)),
     ),
   ];

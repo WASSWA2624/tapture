@@ -10,6 +10,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
@@ -49,7 +50,7 @@ class DownloadFeedbackScreen extends ConsumerWidget {
         context,
         controller,
         const AppEmptyState(
-          icon: Icons.feedback_outlined,
+          icon: AppIcons.feedback,
           headline: Copy.feedbackEmptyHeadline,
           message: Copy.feedbackEmptyMessage,
         ),
@@ -121,7 +122,7 @@ class DownloadFeedbackScreen extends ConsumerWidget {
         onSaveToFolder: onSaveToFolder,
       ),
       leading: AppIconButton(
-        icon: Icons.close,
+        icon: AppIcons.close,
         semanticLabel: Copy.close,
         tooltip: Copy.close,
         outlined: false,

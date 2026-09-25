@@ -67,6 +67,15 @@ abstract interface class ProjectRepository {
     required String fieldKey,
     required String value,
   });
+
+  /// Stores the first value of a field [recordId] has no row for. The value
+  /// is the typed original, exactly as capture stores a typed value, so it
+  /// is written once and later edits refine it (FE-SEC-08).
+  Future<Result<void>> addRecordField({
+    required String recordId,
+    required String fieldKey,
+    required String value,
+  });
 }
 
 /// One landing-list row: the project plus the counts and last-worked
@@ -99,6 +108,7 @@ typedef ProjectRecordFieldValue = ({
 /// One captured record shown on the project records list.
 typedef ProjectRecordRow = ({
   String id,
+  String templateId,
   String status,
   int photoCount,
   String? thumbPath,

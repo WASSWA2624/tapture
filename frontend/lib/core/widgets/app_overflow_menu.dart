@@ -3,6 +3,7 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 
 part 'app_overflow_action.dart';
 
@@ -54,7 +55,7 @@ class AppOverflowMenu extends StatelessWidget {
           shape: _menuShape(colors),
           style: outlined ? null : _borderlessStyle(colors),
           icon: Icon(
-            Icons.more_vert,
+            AppIcons.more,
             size: Space.x6,
             color: iconColor,
             semanticLabel: Copy.overflowMenu,

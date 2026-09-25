@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tapture/app/theme/color_tokens.dart';
+import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/camera/camera_service.dart';
 import 'package:tapture/core/copy/copy.dart';
 
@@ -62,14 +64,16 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
           children: <Widget>[
             ColoredBox(
               color: switch (_state) {
-                CameraPreviewState.starting => Colors.black54,
-                CameraPreviewState.running => Colors.black,
-                CameraPreviewState.failed => Colors.red.shade900,
+                CameraPreviewState.starting => AppColors.dark.surfaceVariant,
+                CameraPreviewState.running => AppColors.dark.background,
+                CameraPreviewState.failed => AppColors.dark.danger,
               },
               child: Center(
                 child: Text(
                   _state.name,
-                  style: const TextStyle(color: Colors.white),
+                  style: AppText.caption.copyWith(
+                    color: AppColors.dark.onSurface,
+                  ),
                 ),
               ),
             ),
@@ -88,7 +92,7 @@ final class _GridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
-      ..color = Colors.white24
+      ..color = AppColors.dark.outline
       ..strokeWidth = 1;
     for (var i = 1; i < 3; i++) {
       final double dx = size.width * i / 3;

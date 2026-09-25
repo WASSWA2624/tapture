@@ -4,6 +4,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 
 /// A titled dialog that holds a whole flow — a form, a filter and its
 /// results — where a desktop shows over the current screen what a phone
@@ -107,7 +108,7 @@ class _AppPanelDialogState extends State<AppPanelDialog> {
                         Space.x2,
                       ),
                       child: AppIconButton(
-                        icon: Icons.close,
+                        icon: AppIcons.close,
                         semanticLabel: Copy.close,
                         tooltip: Copy.close,
                         onPressed:

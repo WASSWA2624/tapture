@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tapture/app/theme/color_tokens.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/camera/camera_service.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 
 /// Flash, focus, zoom and grid controls for capture.
 final class CameraControls extends StatefulWidget {
@@ -79,10 +82,13 @@ class _CameraControlsState extends State<CameraControls> {
                     child: Semantics(
                       label: Copy.captureFocus,
                       child: Container(
-                        width: 48,
-                        height: 48,
+                        width: Sizes.minTapTarget,
+                        height: Sizes.minTapTarget,
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.yellow, width: 2),
+                          border: Border.all(
+                            color: AppColors.dark.warning,
+                            width: Space.x0,
+                          ),
                         ),
                       ),
                     ),
@@ -101,9 +107,9 @@ class _CameraControlsState extends State<CameraControls> {
                 iconSize: 28,
                 onPressed: _cycleFlash,
                 icon: Icon(switch (widget.camera.flashMode) {
-                  CameraFlashMode.off => Icons.flash_off,
-                  CameraFlashMode.auto => Icons.flash_auto,
-                  CameraFlashMode.on => Icons.flash_on,
+                  CameraFlashMode.off => AppIcons.flashOff,
+                  CameraFlashMode.auto => AppIcons.flashAuto,
+                  CameraFlashMode.on => AppIcons.flashOn,
                 }),
               ),
             ),
@@ -114,7 +120,9 @@ class _CameraControlsState extends State<CameraControls> {
                 iconSize: 28,
                 onPressed: _toggleGrid,
                 icon: Icon(
-                  widget.camera.gridEnabled ? Icons.grid_on : Icons.grid_off,
+                  widget.camera.gridEnabled
+                      ? AppIcons.gridOn
+                      : AppIcons.gridOff,
                 ),
               ),
             ),
@@ -124,7 +132,7 @@ class _CameraControlsState extends State<CameraControls> {
               child: IconButton(
                 iconSize: 28,
                 onPressed: () => _zoom(-0.5),
-                icon: const Icon(Icons.zoom_out),
+                icon: const Icon(AppIcons.zoomOut),
               ),
             ),
             Semantics(
@@ -133,7 +141,7 @@ class _CameraControlsState extends State<CameraControls> {
               child: IconButton(
                 iconSize: 28,
                 onPressed: () => _zoom(0.5),
-                icon: const Icon(Icons.zoom_in),
+                icon: const Icon(AppIcons.zoomIn),
               ),
             ),
             Semantics(
@@ -142,7 +150,7 @@ class _CameraControlsState extends State<CameraControls> {
               child: IconButton(
                 iconSize: 48,
                 onPressed: widget.onShutter,
-                icon: const Icon(Icons.camera),
+                icon: const Icon(AppIcons.shutter),
               ),
             ),
           ],

@@ -5,6 +5,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
@@ -47,7 +48,7 @@ class OutputMappingScreen extends ConsumerWidget {
         value: value,
         isEmpty: (TemplateDef? row) => row == null || row.fields.isEmpty,
         empty: () => const AppEmptyState(
-          icon: Icons.view_column_outlined,
+          icon: AppIcons.columns,
           headline: Copy.outputMappingEmptyHeadline,
           message: Copy.outputMappingEmptyMessage,
         ),
@@ -65,13 +66,13 @@ class OutputMappingScreen extends ConsumerWidget {
           message: view.imported
               ? Copy.outputMappingImportedHint
               : Copy.outputMappingBuiltHint,
-          icon: Icons.info_outline,
+          icon: AppIcons.info,
           tone: SnackTone.info,
         ),
         if (view.saveError != null)
           AppBanner(
             message: view.saveError!,
-            icon: Icons.error_outline,
+            icon: AppIcons.error,
             tone: SnackTone.error,
           ),
         for (final FieldDef field in template.fields)

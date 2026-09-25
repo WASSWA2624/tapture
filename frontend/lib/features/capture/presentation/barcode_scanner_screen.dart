@@ -6,6 +6,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 
 /// One-handed barcode scan with confirm / rescan.
 final class BarcodeScannerScreen extends StatefulWidget {
@@ -67,7 +68,7 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
             IconButton(
               onPressed: () => widget.scanner.setTorch(!widget.scanner.torchOn),
               icon: Icon(
-                widget.scanner.torchOn ? Icons.flash_on : Icons.flash_off,
+                widget.scanner.torchOn ? AppIcons.flashOn : AppIcons.flashOff,
               ),
             ),
         ],

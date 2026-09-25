@@ -4,6 +4,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 
 /// Queued snack body. Features call [showAppSnack] rather than constructing
 /// [SnackBar] (FE-CONS-05). Colour is never the only signal (FE-A11Y-05).
@@ -87,10 +88,10 @@ enum SnackTone {
   /// Icon that accompanies this tone (FE-A11Y-05).
   IconData get icon {
     return switch (this) {
-      SnackTone.info => Icons.info_outline,
-      SnackTone.success => Icons.check_circle_outline,
-      SnackTone.warning => Icons.warning_amber_outlined,
-      SnackTone.error => Icons.error_outline,
+      SnackTone.info => AppIcons.info,
+      SnackTone.success => AppIcons.success,
+      SnackTone.warning => AppIcons.warning,
+      SnackTone.error => AppIcons.error,
     };
   }
 

@@ -11,6 +11,7 @@ import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/photo_markup.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 
@@ -51,13 +52,13 @@ class _PhotoDoodleScreenState extends State<PhotoDoodleScreen> {
         title: const Text(Copy.photoDraw),
         actions: <Widget>[
           AppIconButton(
-            icon: Icons.undo,
+            icon: AppIcons.undo,
             tooltip: Copy.photoUndoDraw,
             semanticLabel: Copy.photoUndoDraw,
             onPressed: _strokes.isEmpty && _current == null ? null : _undo,
           ),
           AppIconButton(
-            icon: Icons.delete_outline,
+            icon: AppIcons.delete,
             tooltip: Copy.photoClearDraw,
             semanticLabel: Copy.photoClearDraw,
             onPressed: _strokes.isEmpty ? null : _clear,

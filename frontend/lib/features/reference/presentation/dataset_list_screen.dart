@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
@@ -44,7 +45,7 @@ class DatasetListScreen extends ConsumerWidget {
         value: value,
         isEmpty: (List<ReferenceDataset> rows) => rows.isEmpty,
         empty: () => AppEmptyState(
-          icon: Icons.table_chart_outlined,
+          icon: AppIcons.dataset,
           headline: Copy.datasetsEmptyHeadline,
           message: Copy.datasetsEmptyMessage,
           actionLabel: Copy.datasetsImport,

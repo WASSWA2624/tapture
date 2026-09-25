@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
@@ -38,7 +39,7 @@ final class ProjectRecordsScreen extends ConsumerWidget {
         ),
         isEmpty: (List<ProjectRecordRow> rows) => rows.isEmpty,
         empty: () => const AppEmptyState(
-          icon: Icons.list_alt_outlined,
+          icon: AppIcons.records,
           headline: Copy.projectRecordsEmptyHeadline,
           message: Copy.projectRecordsEmptyMessage,
         ),

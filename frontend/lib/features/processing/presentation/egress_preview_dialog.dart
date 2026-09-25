@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
@@ -34,7 +35,7 @@ class EgressPreviewDialog extends StatelessWidget {
     }
     if (imageCount == 0 && payloadBytes == 0) {
       return const AppEmptyState(
-        icon: Icons.cloud_off_outlined,
+        icon: AppIcons.offline,
         headline: Copy.egressEmptyHeadline,
         message: Copy.egressEmptyMessage,
       );

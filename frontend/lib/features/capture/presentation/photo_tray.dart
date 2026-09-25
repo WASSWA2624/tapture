@@ -3,7 +3,9 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_photo_thumb.dart';
+import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 
 /// Horizontal thumbnail strip with count, add action and badges.
@@ -56,20 +58,15 @@ final class PhotoTray extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (photos.isEmpty) {
-      return Semantics(
-        label: Copy.captureNoPhotosHeadline,
-        child: Column(
-          children: <Widget>[
-            const Text(Copy.captureNoPhotosHeadline),
-            const Text(Copy.captureNoPhotosMessage),
-            AppIconButton(
-              icon: Icons.add_a_photo,
-              tooltip: Copy.captureAddPhoto,
-              semanticLabel: Copy.captureAddPhoto,
-              onPressed: onAdd,
-            ),
-          ],
-        ),
+      // The catalogue empty state names the next step and offers it. While
+      // capture is not ready [onAdd] is null, the action is hidden and the
+      // gate message above says why (FE-SIMP-11).
+      return AppEmptyState(
+        icon: AppIcons.addPhoto,
+        headline: Copy.captureNoPhotosHeadline,
+        message: Copy.captureNoPhotosMessage,
+        actionLabel: Copy.captureAddPhoto,
+        onAction: onAdd,
       );
     }
     return Column(
@@ -129,7 +126,7 @@ final class PhotoTray extends StatelessWidget {
                             top: 0,
                             end: 0,
                             child: AppIconButton(
-                              icon: Icons.close,
+                              icon: AppIcons.close,
                               outlined: false,
                               tooltip: Copy.captureRemovePhoto,
                               semanticLabel: Copy.captureRemovePhoto,
@@ -193,7 +190,7 @@ class _AddPhotoTarget extends StatelessWidget {
             child: InkWell(
               onTap: onPressed,
               child: ExcludeSemantics(
-                child: Icon(Icons.add_a_photo, color: colors.onSurface),
+                child: Icon(AppIcons.addPhoto, color: colors.onSurface),
               ),
             ),
           ),

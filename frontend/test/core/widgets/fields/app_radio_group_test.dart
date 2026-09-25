@@ -102,6 +102,55 @@ void _horizontalCases() {
     const Choice<String>('o', 'Other'),
   ];
 
+  for (final TextDirection direction in TextDirection.values) {
+    testWidgets('an unframed group has no dividers and its radios start at '
+        'the label, ${direction.name}', (WidgetTester tester) async {
+      await _pump(
+        tester,
+        Directionality(
+          textDirection: direction,
+          child: AppRadioGroup<String>(
+            label: 'Templates',
+            options: const <Choice<String>>[
+              Choice<String>('a', 'Assets'),
+              Choice<String>('b', 'Rooms'),
+            ],
+            value: 'a',
+            framed: false,
+            onChanged: (_) {},
+          ),
+        ),
+      );
+
+      expect(find.byType(Divider), findsNothing);
+      final Rect label = tester.getRect(find.text('Templates'));
+      final Rect radio = tester.getRect(find.byType(Radio<String>).first);
+      if (direction == TextDirection.ltr) {
+        expect(radio.left, closeTo(label.left, 1));
+      } else {
+        expect(radio.right, closeTo(label.right, 1));
+      }
+    });
+  }
+
+  testWidgets('a framed group keeps its outline and dividers', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      AppRadioGroup<String>(
+        label: 'Grade',
+        options: const <Choice<String>>[
+          Choice<String>('a', 'A'),
+          Choice<String>('b', 'B'),
+        ],
+        onChanged: (_) {},
+      ),
+    );
+
+    expect(find.byType(Divider), findsOneWidget);
+  });
+
   testWidgets('horizontal options share one line when there is room', (
     WidgetTester tester,
   ) async {

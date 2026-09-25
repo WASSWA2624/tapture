@@ -13,6 +13,7 @@ import 'package:tapture/core/files/folder_picker.dart';
 import 'package:tapture/core/files/storage_guard.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/files/volume_stats.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
@@ -43,7 +44,7 @@ class StorageSettingsScreen extends ConsumerWidget {
         onRetry: () => ref.invalidate(storageSettingsProvider),
         empty: () {
           return const AppEmptyState(
-            icon: Icons.folder_outlined,
+            icon: AppIcons.folder,
             headline: Copy.settingsStorageEmptyHeadline,
             message: Copy.settingsStorageEmptyMessage,
           );

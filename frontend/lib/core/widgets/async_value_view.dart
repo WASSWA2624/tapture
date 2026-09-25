@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
@@ -52,7 +53,7 @@ class AsyncValueView<T> extends StatelessWidget {
         if (isEmpty?.call(loaded) ?? false) {
           return empty?.call() ??
               const AppEmptyState(
-                icon: Icons.inbox_outlined,
+                icon: AppIcons.empty,
                 headline: Copy.emptyHeadline,
                 message: Copy.emptyMessage,
               );

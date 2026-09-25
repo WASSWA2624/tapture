@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 
 import 'project_list_criteria.dart';
@@ -23,7 +24,7 @@ final class ProjectListToolbar extends ConsumerWidget {
       text: criteria.query,
       onChanged: ref.read(projectListCriteriaProvider.notifier).setQuery,
       afterMic: AppIconButton(
-        icon: Icons.filter_list,
+        icon: AppIcons.filter,
         tooltip: filterLabel,
         semanticLabel: filterLabel,
         selected: criteria.activeFilterCount > 0 ? true : null,

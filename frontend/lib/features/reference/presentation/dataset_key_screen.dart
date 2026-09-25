@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
@@ -63,7 +65,7 @@ class _DatasetKeyScreenState extends ConsumerState<DatasetKeyScreen> {
         title: Copy.datasetsKeyTitle,
         showAppBar: false,
         body: AppEmptyState(
-          icon: Icons.table_chart_outlined,
+          icon: AppIcons.dataset,
           headline: Copy.datasetsEmptyHeadline,
           message: Copy.datasetsEmptyMessage,
         ),
@@ -87,7 +89,7 @@ class _DatasetKeyScreenState extends ConsumerState<DatasetKeyScreen> {
       body: ListView(
         children: <Widget>[
           const Padding(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.all(Space.x4),
             child: Text(Copy.datasetsKeyMessage),
           ),
           for (final String column in draft.dataset.columns)
@@ -104,7 +106,7 @@ class _DatasetKeyScreenState extends ConsumerState<DatasetKeyScreen> {
             ),
           if (dups > 0) ...<Widget>[
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(Space.x4),
               child: Text(
                 '${Copy.datasetsDuplicateCount(dups)}. '
                 '${Copy.datasetsCollidingValues(samples.where((String s) => s.isNotEmpty).take(3).toList())}',
