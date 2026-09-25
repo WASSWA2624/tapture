@@ -14,6 +14,8 @@ import 'package:tapture/core/files/storage_guard.dart';
 import 'package:tapture/core/files/text_store.dart';
 import 'package:tapture/core/permissions/permissions_service.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
@@ -44,9 +46,22 @@ import 'package:tapture/features/capture/presentation/rapid_mode_screen.dart';
 import 'package:tapture/features/capture/presentation/record_caption_field.dart';
 import 'package:tapture/features/capture/presentation/template_picker_sheet.dart';
 import 'package:tapture/features/capture/presentation/voice_input_button.dart';
-import 'package:tapture/features/templates/domain/field_def.dart';
+import 'package:tapture/features/projects/projects.dart';
+import 'package:tapture/features/templates/templates.dart';
 
+import '../../../support/factories.dart';
 import '../../../support/fakes/fake_photo_repository.dart';
+import '../../projects/fakes/fake_project_repository.dart';
+import '../../templates/fakes/fake_template_repository.dart';
+
+AppIconButton _icon(WidgetTester tester, String tooltip) {
+  return tester.widget<AppIconButton>(
+    find.ancestor(
+      of: find.byTooltip(tooltip),
+      matching: find.byType(AppIconButton),
+    ),
+  );
+}
 
 Widget wrap(Widget child, {List<Override> overrides = const <Override>[]}) {
   return ProviderScope(
@@ -119,6 +134,74 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(Copy.captureSaveRaw), findsOneWidget);
     expect(find.text(Copy.captureSaveAndAnalyse), findsOneWidget);
+  });
+
+  testWidgets('capture actions stay disabled until a project is chosen', (
+    WidgetTester tester,
+  ) async {
+    final FakePhotoRepository photos = FakePhotoRepository();
+    addTearDown(photos.dispose);
+    final FakeProjectRepository projects = FakeProjectRepository();
+    addTearDown(projects.dispose);
+    final FakeTemplateRepository templates = FakeTemplateRepository();
+    addTearDown(templates.dispose);
+    await projects.create(aProject(id: 'p1', name: 'Alpha'));
+    await projects.create(aProject(id: 'p2', name: 'Beta'));
+    await templates.save(aTemplate(id: 't1', name: 'Assets', projectId: 'p1'));
+    await tester.pumpWidget(
+      wrap(
+        const CaptureScreen(projectId: ''),
+        overrides: <Override>[
+          photoRepositoryProvider.overrideWith((Ref _) => photos),
+          projectRepositoryProvider.overrideWith((Ref _) => projects),
+          templateRepositoryProvider.overrideWith((Ref _) => templates),
+          capturePersistenceProvider.overrideWith(
+            (Ref ref) => CapturePersistenceImpl(
+              photos: photos,
+              store: TextStore.memory(),
+            ),
+          ),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(Copy.captureChooseProject), findsOneWidget);
+    expect(find.text('Alpha'), findsOneWidget);
+    expect(find.text('Beta'), findsNothing);
+    expect(
+      tester
+          .widget<AppButton>(
+            find.widgetWithText(AppButton, Copy.captureSaveRaw),
+          )
+          .onPressed,
+      isNull,
+    );
+    expect(
+      tester.widget<AppPrimaryAction>(find.byType(AppPrimaryAction)).onPressed,
+      isNull,
+    );
+    expect(_icon(tester, Copy.captureAddPhoto).onPressed, isNull);
+    expect(_icon(tester, Copy.captureRecordAudio).onPressed, isNull);
+
+    await tester.tap(find.text('Alpha'));
+    await tester.pumpAndSettle();
+
+    expect(find.text(Copy.captureChooseProject), findsNothing);
+    expect(
+      tester
+          .widget<AppButton>(
+            find.widgetWithText(AppButton, Copy.captureSaveRaw),
+          )
+          .onPressed,
+      isNotNull,
+    );
+    expect(
+      tester.widget<AppPrimaryAction>(find.byType(AppPrimaryAction)).onPressed,
+      isNotNull,
+    );
+    expect(_icon(tester, Copy.captureAddPhoto).onPressed, isNotNull);
+    expect(_icon(tester, Copy.captureRecordAudio).onPressed, isNotNull);
   });
 
   testWidgets('inline_fields empty required more validation', (

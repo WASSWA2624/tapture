@@ -178,6 +178,74 @@ void main() {
     expect(find.text('fields'), findsOneWidget);
   });
 
+  testWidgets('selected shipped templates save onto the project', (
+    WidgetTester tester,
+  ) async {
+    final FakeShippedTemplateLoader loader = FakeShippedTemplateLoader()
+      ..rows.addAll(<TemplateDef>[
+        const TemplateDef(
+          id: '',
+          templateKey: 'generic_item',
+          name: 'templates.generic_item.name',
+          version: 1,
+          fields: <FieldDef>[],
+          identityFieldKeys: <String>[],
+          rows: <TemplateRow>[],
+          kind: 'generic',
+          source: 'shipped',
+        ),
+        const TemplateDef(
+          id: '',
+          templateKey: 'equipment_asset',
+          name: 'templates.equipment_asset.name',
+          version: 1,
+          fields: <FieldDef>[],
+          identityFieldKeys: <String>[],
+          rows: <TemplateRow>[],
+          kind: 'asset',
+          source: 'shipped',
+        ),
+      ]);
+    await _pump(
+      tester,
+      openProject: true,
+      withRouter: true,
+      overrides: <Override>[
+        shippedTemplateLoaderProvider.overrideWith((Ref _) => loader),
+      ],
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(
+      tester
+          .widget<AppPrimaryAction>(
+            find.ancestor(
+              of: find.text(Copy.save),
+              matching: find.byType(AppPrimaryAction),
+            ),
+          )
+          .onPressed,
+      isNull,
+    );
+    await tester.longPress(find.byType(AppListTile).at(0));
+    await tester.longPress(find.byType(AppListTile).at(1));
+    await tester.pump();
+    await tester.tap(find.text(Copy.save));
+    await tester.pump();
+    await tester.pump();
+
+    expect(loader.copies, hasLength(2));
+    expect(
+      loader.copies.map((TemplateDef row) => row.templateKey),
+      containsAll(<String>['generic_item', 'equipment_asset']),
+    );
+    expect(
+      loader.copies.every((TemplateDef row) => row.projectId == 'project-1'),
+      isTrue,
+    );
+  });
+
   testWidgets('search and kind filter the loaded library', (
     WidgetTester tester,
   ) async {

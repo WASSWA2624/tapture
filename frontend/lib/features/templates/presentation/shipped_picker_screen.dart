@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,9 +10,11 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
@@ -38,6 +42,8 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
   final TextEditingController _name = TextEditingController();
   String _query = '';
   final Set<String> _kinds = <String>{};
+  final Set<String> _picked = <String>{};
+  bool _saving = false;
 
   @override
   void dispose() {
@@ -64,6 +70,23 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
           ? Copy.templatesLibraryTitle
           : Copy.shippedTemplateName(preview.templateKey),
       scrollable: preview == null,
+      footer: preview != null
+          ? null
+          : value.maybeWhen(
+              data: (List<TemplateDef> rows) {
+                if (rows.isEmpty) {
+                  return null;
+                }
+                return AppPrimaryAction(
+                  label: Copy.save,
+                  busy: _saving,
+                  onPressed: _picked.isEmpty && _kinds.isEmpty
+                      ? null
+                      : () => unawaited(_savePicked()),
+                );
+              },
+              orElse: () => null,
+            ),
       leading: preview == null
           ? null
           : AppIconButton(
@@ -94,6 +117,83 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
         },
       ),
     );
+  }
+
+  void _togglePicked(String templateKey, bool picked) {
+    setState(() {
+      if (picked) {
+        _picked.add(templateKey);
+      } else {
+        _picked.remove(templateKey);
+      }
+    });
+  }
+
+  Future<void> _savePicked() async {
+    if (_saving || (_picked.isEmpty && _kinds.isEmpty)) {
+      return;
+    }
+    final String? projectId =
+        ref.read(currentProjectProvider) ??
+        TemplateLocations.projectIdOf(context);
+    if (projectId == null || projectId.isEmpty) {
+      showAppSnack(context, Copy.statusNoProject, tone: SnackTone.error);
+      return;
+    }
+    final List<TemplateDef> rows =
+        ref.read(shippedLibraryProvider).asData?.value ?? const <TemplateDef>[];
+    final Set<String> attached = <String>{
+      for (final TemplateDef template
+          in ref.read(templateListProvider).asData?.value ??
+              const <TemplateDef>[])
+        template.templateKey,
+    };
+    final List<String> keys = _picked.isNotEmpty
+        ? List<String>.of(_picked)
+        : <String>[
+            for (final TemplateDef row in rows)
+              if (_kinds.contains(row.kind) &&
+                  !attached.contains(row.templateKey))
+                row.templateKey,
+          ];
+    if (keys.isEmpty) {
+      return;
+    }
+    setState(() => _saving = true);
+    Failure? failure;
+    for (final String key in keys) {
+      TemplateDef? source;
+      for (final TemplateDef row in rows) {
+        if (row.templateKey == key) {
+          source = row;
+          break;
+        }
+      }
+      if (source == null) {
+        continue;
+      }
+      final Result<TemplateDef> result = await ref
+          .read(shippedTemplateLoaderProvider)
+          .copyToProject(
+            templateKey: key,
+            projectId: projectId,
+            name: Copy.shippedTemplateName(key),
+          );
+      if (result is FailureResult<TemplateDef>) {
+        failure = result.failure;
+        break;
+      }
+      _picked.remove(key);
+    }
+    if (!mounted) {
+      return;
+    }
+    setState(() => _saving = false);
+    if (failure != null) {
+      showAppSnack(context, failure.message, tone: SnackTone.error);
+      return;
+    }
+    context.go(TemplateLocations.root(context));
   }
 
   Widget _library(List<TemplateDef> rows, Set<String> attached) {
@@ -154,12 +254,23 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
             subtitle: attached.contains(template.templateKey)
                 ? Copy.shippedAddedToProject
                 : Copy.fieldsCount(template.fields.length),
+            selected: _picked.contains(template.templateKey),
             trailing: attached.contains(template.templateKey)
                 ? const Icon(Icons.check_circle_outline)
-                : null,
+                : Checkbox(
+                    value: _picked.contains(template.templateKey),
+                    onChanged: (bool? value) =>
+                        _togglePicked(template.templateKey, value ?? false),
+                  ),
             onTap: () => ref
                 .read(_shippedPickerProvider.notifier)
                 .preview(template.templateKey),
+            onLongPress: attached.contains(template.templateKey)
+                ? null
+                : () => _togglePicked(
+                    template.templateKey,
+                    !_picked.contains(template.templateKey),
+                  ),
           ),
         ],
       ],

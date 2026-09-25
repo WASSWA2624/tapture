@@ -24,10 +24,12 @@ import 'package:tapture/features/projects/domain/project_repository.dart';
 import 'package:tapture/features/projects/presentation/project_export_screen.dart';
 import 'package:tapture/features/projects/presentation/project_home_screen.dart';
 import 'package:tapture/features/projects/projects.dart';
+import 'package:tapture/features/templates/templates.dart';
 import 'package:tapture/features/settings/settings.dart';
 
 import '../../../support/a11y_matchers.dart';
 import '../../../support/factories.dart';
+import '../../templates/fakes/fake_template_repository.dart';
 import '../fakes/fake_project_repository.dart';
 
 void main() {
@@ -89,6 +91,11 @@ void main() {
     _expectCountCards(tester);
     expect(find.byType(AppPrimaryAction), findsOneWidget);
     expect(find.text(Copy.captureStart), findsOneWidget);
+    expect(find.text(Copy.captureNeedsTemplate), findsOneWidget);
+    expect(
+      tester.widget<AppPrimaryAction>(find.byType(AppPrimaryAction)).onPressed,
+      isNull,
+    );
     expect(find.text(Copy.unprocessedCount(0)), findsNothing);
 
     final Size screen = tester.getSize(find.byType(MaterialApp));
@@ -200,7 +207,10 @@ void main() {
   ) async {
     final FakeProjectRepository repo = FakeProjectRepository();
     addTearDown(repo.dispose);
+    final FakeTemplateRepository templates = FakeTemplateRepository();
+    addTearDown(templates.dispose);
     _ok(await repo.create(aProject(name: 'Alpha')));
+    _ok(await templates.save(aTemplate(projectId: 'project-1')));
     repo.seedHomeCounts(
       'project-1',
       review: 2,
@@ -218,6 +228,9 @@ void main() {
         tester,
         repo: repo,
         openProjectId: 'project-1',
+        overrides: <Override>[
+          templateRepositoryProvider.overrideWith((Ref _) => templates),
+        ],
       );
       await tester.pump();
       await tester.pump();

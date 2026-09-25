@@ -1999,6 +1999,21 @@ abstract final class Copy {
   static const String captureNoPhotosMessage =
       'Add a photo, import a file, or type a caption to start.';
 
+  /// Project selector on the capture surface.
+  static const String captureProjectLabel = 'Project';
+
+  /// Capture is open and projects exist, but none is selected.
+  static const String captureChooseProject =
+      'Choose a project to start capturing.';
+
+  /// Capture is open and there is no project to file it under.
+  static const String captureCreateProjectFirst =
+      'Create a project before capturing.';
+
+  /// A project is open, but it has no template to capture against.
+  static const String captureNeedsTemplate =
+      'Add a template before capturing.';
+
   /// More fields expander.
   static const String captureMoreFields = 'More fields';
 

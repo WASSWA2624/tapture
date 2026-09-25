@@ -15,6 +15,7 @@ import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/files/text_store.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/fields/dictation_scope.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
@@ -273,13 +274,15 @@ void main() {
     await tester.pumpWidget(
       _scope(
         const CaptureScreen(projectId: 'p1'),
+        withTemplate: false,
         extras: <Override>[
           currentProjectDetailsProvider.overrideWith((Ref _) => project),
-          captureTemplatesProvider.overrideWith(
-            (Ref _) => Stream<List<TemplateDef>>.value(<TemplateDef>[
-              _template('t1', 'Computers'),
-              _template('t2', 'Furniture'),
-            ]),
+          captureProjectTemplatesProvider.overrideWith(
+            (Ref ref, String id) =>
+                Stream<List<TemplateDef>>.value(<TemplateDef>[
+                  _template('t1', 'Computers'),
+                  _template('t2', 'Furniture'),
+                ]),
           ),
         ],
       ),
@@ -488,7 +491,18 @@ void main() {
                 final Finder record = find.byTooltip(Copy.captureRecordAudio);
                 expect(mic, findsOneWidget);
                 expect(record, findsOneWidget);
-                expect(find.byIcon(Icons.graphic_eq), findsOneWidget);
+                expect(find.byIcon(Icons.fiber_manual_record), findsOneWidget);
+                expect(find.byType(AppSectionHeader), findsNothing);
+                final TextField caption = tester.widget<TextField>(
+                  find.byWidgetPredicate(
+                    (Widget widget) =>
+                        widget is TextField &&
+                        widget.decoration?.labelText ==
+                            Copy.captureRecordCaption,
+                  ),
+                );
+                expect(caption.minLines, greaterThan(1));
+                expect(caption.maxLines, greaterThan(1));
                 expect(
                   tester.getSize(record).shortestSide,
                   greaterThanOrEqualTo(Sizes.minTapTarget),
@@ -527,7 +541,8 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip(Copy.captureRecordAudio));
     await tester.pump();
-    expect(find.byIcon(Icons.graphic_eq), findsNothing);
+    expect(find.byIcon(Icons.fiber_manual_record), findsNothing);
+    expect(find.byIcon(Icons.stop), findsOneWidget);
     expect(find.text(Copy.capturePauseAudio), findsOneWidget);
     expect(find.text(Copy.captureStopAudio), findsOneWidget);
     await recorder.stop();
@@ -535,9 +550,24 @@ void main() {
   });
 }
 
-Widget _scope(Widget child, {List<Override> extras = const <Override>[]}) {
+Override _oneCaptureTemplate() {
+  return captureProjectTemplatesProvider.overrideWith(
+    (Ref ref, String id) => Stream<List<TemplateDef>>.value(<TemplateDef>[
+      _template('t1', 'Test template'),
+    ]),
+  );
+}
+
+Widget _scope(
+  Widget child, {
+  List<Override> extras = const <Override>[],
+  bool withTemplate = true,
+}) {
   return ProviderScope(
-    overrides: extras,
+    overrides: <Override>[
+      if (withTemplate) _oneCaptureTemplate(),
+      ...extras,
+    ],
     child: MaterialApp(home: Scaffold(body: child)),
   );
 }
@@ -552,6 +582,7 @@ Widget _captionAudioScope({
 }) {
   return ProviderScope(
     overrides: <Override>[
+      _oneCaptureTemplate(),
       currentProjectDetailsProvider.overrideWith((Ref _) => aProject(id: 'p1')),
       photoRepositoryProvider.overrideWith((Ref _) => photos),
       capturePersistenceProvider.overrideWith(

@@ -10,6 +10,7 @@ final class RecordCaptionField extends StatefulWidget {
     required this.onChanged,
     this.onWriteFailed,
     this.afterDictation,
+    this.enabled = true,
     super.key,
   });
 
@@ -24,6 +25,9 @@ final class RecordCaptionField extends StatefulWidget {
 
   /// Control drawn after the speech-to-text microphone.
   final Widget? afterDictation;
+
+  /// When false, the field and its microphone do not accept input.
+  final bool enabled;
 
   @override
   State<RecordCaptionField> createState() => _RecordCaptionFieldState();
@@ -74,6 +78,10 @@ class _RecordCaptionFieldState extends State<RecordCaptionField>
     return AppTextField(
       controller: _controller,
       label: Copy.captureRecordCaption,
+      minLines: 3,
+      maxLines: 6,
+      enabled: widget.enabled,
+      textInputAction: TextInputAction.newline,
       onChanged: (String text) => _persist(text),
       afterDictation: widget.afterDictation,
     );

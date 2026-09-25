@@ -17,10 +17,11 @@ import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
-import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
+import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
+import 'package:tapture/core/widgets/fields/choice.dart';
 import 'package:tapture/core/widgets/photo_markup.dart';
 import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
@@ -46,6 +47,8 @@ import 'package:tapture/features/capture/presentation/record_caption_field.dart'
 import 'package:tapture/features/capture/presentation/template_picker_sheet.dart';
 import 'package:tapture/features/context/context.dart';
 import 'package:tapture/features/processing/processing.dart';
+import 'package:tapture/features/projects/domain/project_repository.dart'
+    show ProjectListRow;
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/templates.dart';
 
@@ -58,6 +61,18 @@ final Provider<CaptureRecordPersistence?> captureRecordWriterProvider =
 final Provider<PhotoPicker> capturePhotoPickerProvider = Provider<PhotoPicker>(
   (Ref _) => PhotoPicker(),
 );
+
+/// Templates owned by one project. Empty until that project has a template.
+final captureProjectTemplatesProvider =
+    StreamProvider.family<List<TemplateDef>, String>((
+      Ref ref,
+      String projectId,
+    ) {
+      if (projectId.isEmpty) {
+        return Stream<List<TemplateDef>>.value(const <TemplateDef>[]);
+      }
+      return ref.watch(templateRepositoryProvider).watchByProject(projectId);
+    });
 
 /// Templates for the open project, read through the templates barrel.
 final StreamProvider<List<TemplateDef>> captureTemplatesProvider =
@@ -137,6 +152,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   bool _restored = false;
   bool _askingTemplate = true;
   bool _onStage = true;
+  String? _chosen;
   final IdService _ids = UuidV7Service(const SystemClock());
 
   @override
@@ -153,8 +169,34 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     super.deactivate();
   }
 
+  /// Project this capture is filed under. A route id stands until the
+  /// operator picks another. Empty means none is selected.
+  String _projectId() {
+    final String? chosen = _chosen;
+    if (chosen != null && chosen.isNotEmpty) {
+      return chosen;
+    }
+    if (widget.projectId.isNotEmpty) {
+      return widget.projectId;
+    }
+    return ref.read(currentProjectProvider) ?? '';
+  }
+
+  void _chooseProject(String id) {
+    setState(() => _chosen = id);
+    ref.read(currentProjectProvider.notifier).open(id);
+  }
+
   @override
   Widget build(BuildContext context) {
+    ref.watch(currentProjectProvider);
+    final String projectId = _projectId();
+    final AsyncValue<List<TemplateDef>> templateState = ref.watch(
+      captureProjectTemplatesProvider(projectId),
+    );
+    final List<TemplateDef> templates =
+        templateState.asData?.value ?? const <TemplateDef>[];
+    final bool ready = projectId.isNotEmpty && templates.isNotEmpty;
     final bool visible = _visible(context);
     if (_onStage && !visible) {
       _onStage = false;
@@ -165,17 +207,15 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       _onStage = true;
     }
     final CaptureSession session = ref.watch(
-      captureControllerProvider(widget.projectId),
+      captureControllerProvider(_projectId()),
     );
     final CaptureController controller = ref.read(
-      captureControllerProvider(widget.projectId).notifier,
+      captureControllerProvider(_projectId()).notifier,
     );
-    final _CaptureUiState uiState = ref.watch(
-      _captureUiProvider(widget.projectId),
-    );
-    final ContextState? activeContext = widget.projectId.isEmpty
+    final _CaptureUiState uiState = ref.watch(_captureUiProvider(_projectId()));
+    final ContextState? activeContext = _projectId().isEmpty
         ? null
-        : ref.watch(projectContextProvider(widget.projectId)).asData?.value;
+        : ref.watch(projectContextProvider(_projectId())).asData?.value;
     if (activeContext != null) {
       final Map<String, String> snapshot = <String, String>{
         ...activeContext.values,
@@ -187,9 +227,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
         });
       }
     }
-    final List<TemplateDef> templates =
-        ref.watch(captureTemplatesProvider).asData?.value ??
-        const <TemplateDef>[];
     final String? choice = ref
         .watch(currentProjectDetailsProvider)
         ?.settings
@@ -232,14 +269,18 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               label: Copy.captureSaveRaw,
               variant: AppButtonVariant.secondary,
               busy: uiState.saving,
-              onPressed: widget.onSaveRaw ?? () => unawaited(_save(false)),
+              onPressed: ready
+                  ? (widget.onSaveRaw ?? () => unawaited(_save(false)))
+                  : null,
             ),
           ),
           const SizedBox(height: Space.x2),
           AppPrimaryAction(
             label: Copy.captureSaveAndAnalyse,
             busy: uiState.saving,
-            onPressed: widget.onSaveAndAnalyse ?? () => unawaited(_save(true)),
+            onPressed: ready
+                ? (widget.onSaveAndAnalyse ?? () => unawaited(_save(true)))
+                : null,
           ),
         ],
       ),
@@ -247,6 +288,10 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           ?banner,
+          _CaptureProjectPicker(
+            selectedId: projectId,
+            onSelected: _chooseProject,
+          ),
           if (needsChoice)
             TemplatePickerSheet(
               templates: <({String id, String name, int lastUsedMs})>[
@@ -265,7 +310,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             selectedIds: _selected,
             thumbPaths: _thumbs,
             missingIds: _missing,
-            onAdd: needsChoice ? _ignore : (widget.onAddPhoto ?? _add),
+            onAdd: !ready || needsChoice ? null : (widget.onAddPhoto ?? _add),
             onLongPress: (PhotoDraft photo) {
               setState(() {
                 if (!_selected.add(photo.id)) {
@@ -277,7 +322,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             onRemove: (PhotoDraft photo) {
               unawaited(
                 ref
-                    .read(captureControllerProvider(widget.projectId).notifier)
+                    .read(captureControllerProvider(_projectId()).notifier)
                     .removePhoto(photo.id),
               );
             },
@@ -288,19 +333,22 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             AppButton(
               label: Copy.capturePhotoCaption,
               variant: AppButtonVariant.secondary,
-              onPressed: () {
-                final List<PhotoDraft> visible = _activePhotos(session);
-                final PhotoDraft target = _selected.isEmpty
-                    ? visible.last
-                    : visible.firstWhere(
-                        (PhotoDraft photo) => _selected.contains(photo.id),
-                        orElse: () => visible.last,
-                      );
-                unawaited(_caption(session, target));
-              },
+              onPressed: ready
+                  ? () {
+                      final List<PhotoDraft> visible = _activePhotos(session);
+                      final PhotoDraft target = _selected.isEmpty
+                          ? visible.last
+                          : visible.firstWhere(
+                              (PhotoDraft photo) =>
+                                  _selected.contains(photo.id),
+                              orElse: () => visible.last,
+                            );
+                      unawaited(_caption(session, target));
+                    }
+                  : null,
             ),
-          const AppSectionHeader(title: Copy.captureRecordCaption, dense: true),
           RecordCaptionField(
+            enabled: ready,
             value: session.recordCaption,
             onChanged: (String text) async {
               final Result<void> result = await controller.setCaption(
@@ -337,13 +385,15 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                 tone: SnackTone.error,
               );
             },
-            afterDictation: project == null
-                ? null
-                : _RecordAudioButton(
-                    recorder: ref.watch(audioRecorderServiceProvider),
-                    relativePath:
-                        'projects/${project.folderName}/audio/${uiState.audioId}.wav',
-                  ),
+            afterDictation: _RecordAudioButton(
+              enabled: ready,
+              recorder: ref.watch(audioRecorderServiceProvider),
+              relativePath: project == null
+                  ? null
+                  : 'projects/${project.folderName}/audio/${uiState.audioId}.wav',
+              onCompleted: (AudioRecording recording) =>
+                  unawaited(_audioStopped(recording)),
+            ),
           ),
           if (project != null) ...<Widget>[
             AudioRecorder(
@@ -389,8 +439,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     }
     return templates.first.id;
   }
-
-  void _ignore() {}
 
   Future<void> _add() async {
     final PhotoPicker picker = ref.read(capturePhotoPickerProvider);
@@ -473,10 +521,8 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     final String id = _ids.newId();
     final PhotoDraft draft = PhotoDraft(
       id: id,
-      projectId: widget.projectId,
-      captureSessionId: ref
-          .read(captureControllerProvider(widget.projectId))
-          .id,
+      projectId: _projectId(),
+      captureSessionId: ref.read(captureControllerProvider(_projectId())).id,
       originalFilename: '$id.jpg',
       storedFilename: '$id.jpg',
       relativePath: 'photos/$id.jpg',
@@ -487,7 +533,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       derivedFrom: derivedFrom,
     );
     final Result<void> saved = await ref
-        .read(captureControllerProvider(widget.projectId).notifier)
+        .read(captureControllerProvider(_projectId()).notifier)
         .addPhoto(draft, bytes: bytes);
     if (!mounted) {
       return;
@@ -528,7 +574,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     final List<PhotoDraft> photos = _activePhotos(session);
     final int index = photos.indexWhere((PhotoDraft row) => row.id == photo.id);
     final CaptureController controller = ref.read(
-      captureControllerProvider(widget.projectId).notifier,
+      captureControllerProvider(_projectId()).notifier,
     );
     unawaited(
       Navigator.of(context).push(
@@ -582,9 +628,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     PhotoDraft photo, {
     bool onlyThisPhoto = false,
   }) async {
-    final _CaptureUiState uiState = ref.read(
-      _captureUiProvider(widget.projectId),
-    );
+    final _CaptureUiState uiState = ref.read(_captureUiProvider(_projectId()));
     final Project? project = ref.read(currentProjectDetailsProvider);
     await showAppSheet<void>(
       context,
@@ -621,7 +665,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               ],
             };
             final Result<void> result = await ref
-                .read(captureControllerProvider(widget.projectId).notifier)
+                .read(captureControllerProvider(_projectId()).notifier)
                 .applyCaptions(<CaptionWrite>[
                   for (final String id in ids)
                     CaptionWrite(
@@ -641,11 +685,9 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     AudioRecording recording, {
     String? onlyPhotoId,
   }) async {
-    final _CaptureUiState uiState = ref.read(
-      _captureUiProvider(widget.projectId),
-    );
+    final _CaptureUiState uiState = ref.read(_captureUiProvider(_projectId()));
     final CaptureSession session = ref.read(
-      captureControllerProvider(widget.projectId),
+      captureControllerProvider(_projectId()),
     );
     final List<PhotoDraft> visible = _activePhotos(session);
     final List<String> photoIds = onlyPhotoId != null
@@ -658,11 +700,11 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
         ? 'audio/${uiState.audioId}.wav'
         : recording.relativePath.substring(audioSegment);
     final Result<void> saved = await ref
-        .read(captureControllerProvider(widget.projectId).notifier)
+        .read(captureControllerProvider(_projectId()).notifier)
         .addAudio(
           AudioDraft(
             id: uiState.audioId,
-            projectId: widget.projectId,
+            projectId: _projectId(),
             relativePath: projectPath,
             mimeType: recording.mimeType,
             fileSize: recording.byteLength,
@@ -676,7 +718,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       case FailureResult<void>(:final Failure failure):
         showAppSnack(context, failure.message, tone: SnackTone.error);
       case Success<void>():
-        ref.read(_captureUiProvider(widget.projectId).notifier).renewAudioId();
+        ref.read(_captureUiProvider(_projectId()).notifier).renewAudioId();
     }
   }
 
@@ -745,7 +787,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
 
   Future<void> _revert(String photoId) async {
     final Result<void> reverted = await ref
-        .read(captureControllerProvider(widget.projectId).notifier)
+        .read(captureControllerProvider(_projectId()).notifier)
         .revertPhoto(photoId);
     if (!mounted) {
       return;
@@ -768,11 +810,11 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     Uint8List png,
   ) async {
     final CaptureController controller = ref.read(
-      captureControllerProvider(widget.projectId).notifier,
+      captureControllerProvider(_projectId()).notifier,
     );
     final Result<void> saved = await controller.updatePhoto(
       derived.copyWith(
-        projectId: widget.projectId,
+        projectId: _projectId(),
         sha256: sha256.convert(png).toString(),
         fileSize: png.length,
       ),
@@ -787,7 +829,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
         return false;
       case Success<void>():
         final CaptureSession session = ref.read(
-          captureControllerProvider(widget.projectId),
+          captureControllerProvider(_projectId()),
         );
         final String? caption = session.captions[source.id];
         if (caption != null && caption.isNotEmpty) {
@@ -958,7 +1000,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     _restored = true;
     final Result<CaptureSession?> loaded = await ref
         .read(capturePersistenceProvider)
-        .loadSession(widget.projectId);
+        .loadSession(_projectId());
     if (!mounted) {
       return;
     }
@@ -970,8 +1012,8 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       return;
     }
     if (session.projectId.isNotEmpty &&
-        widget.projectId.isNotEmpty &&
-        session.projectId != widget.projectId) {
+        _projectId().isNotEmpty &&
+        session.projectId != _projectId()) {
       return;
     }
     if (!mounted) {
@@ -986,7 +1028,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             Navigator.of(dialogContext).pop();
             unawaited(() async {
               await ref
-                  .read(captureControllerProvider(widget.projectId).notifier)
+                  .read(captureControllerProvider(_projectId()).notifier)
                   .replaceSession(session);
               if (mounted) {
                 await _refreshThumbs(_activePhotos(session));
@@ -995,7 +1037,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
           },
           onDiscard: () async {
             await ref
-                .read(captureControllerProvider(widget.projectId).notifier)
+                .read(captureControllerProvider(_projectId()).notifier)
                 .discardSession();
             if (dialogContext.mounted) {
               Navigator.of(dialogContext).pop();
@@ -1011,7 +1053,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       return;
     }
     final CaptureSession session = ref.read(
-      captureControllerProvider(widget.projectId),
+      captureControllerProvider(_projectId()),
     );
     if (!_hasContent(session)) {
       return;
@@ -1021,9 +1063,9 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
 
   Future<void> _save(bool process) async {
     final _CaptureUiController ui = ref.read(
-      _captureUiProvider(widget.projectId).notifier,
+      _captureUiProvider(_projectId()).notifier,
     );
-    if (ref.read(_captureUiProvider(widget.projectId)).saving || !mounted) {
+    if (ref.read(_captureUiProvider(_projectId())).saving || !mounted) {
       return;
     }
     final CaptureRecordPersistence? writer = ref.read(
@@ -1035,7 +1077,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     }
     ui.setSaving(true);
     final CaptureController controller = ref.read(
-      captureControllerProvider(widget.projectId).notifier,
+      captureControllerProvider(_projectId()).notifier,
     );
     late final Result<Object> result;
     try {
@@ -1121,10 +1163,16 @@ final class _RecordAudioButton extends StatefulWidget {
   const _RecordAudioButton({
     required this.recorder,
     required this.relativePath,
+    this.onCompleted,
+    this.enabled = true,
   });
 
   final AudioRecorderService recorder;
-  final String relativePath;
+  final String? relativePath;
+  final ValueChanged<AudioRecording>? onCompleted;
+
+  /// When false, record and stop do not accept a press.
+  final bool enabled;
 
   @override
   State<_RecordAudioButton> createState() => _RecordAudioButtonState();
@@ -1150,30 +1198,155 @@ class _RecordAudioButtonState extends State<_RecordAudioButton> {
     super.dispose();
   }
 
+  bool get _live =>
+      _phase == AudioRecorderPhase.recording ||
+      _phase == AudioRecorderPhase.paused;
+
   @override
   Widget build(BuildContext context) {
-    if (_phase == AudioRecorderPhase.recording ||
-        _phase == AudioRecorderPhase.paused) {
-      return const SizedBox.shrink();
-    }
+    final bool live = _live;
     return AppIconButton(
-      icon: Icons.graphic_eq,
-      semanticLabel: Copy.captureRecordAudio,
-      tooltip: Copy.captureRecordAudio,
+      key: const ValueKey<String>('capture-record-audio'),
+      icon: live ? Icons.stop : Icons.fiber_manual_record,
+      semanticLabel: live ? Copy.captureStopAudio : Copy.captureRecordAudio,
+      tooltip: live ? Copy.captureStopAudio : Copy.captureRecordAudio,
       outlined: false,
-      onPressed: () async {
-        final Result<void> result = await widget.recorder.start(
-          widget.relativePath,
-        );
-        if (!mounted) {
-          return;
+      onPressed: widget.enabled ? (live ? _stop : _start) : null,
+    );
+  }
+
+  Future<void> _start() async {
+    final String? path = widget.relativePath;
+    if (path == null || path.isEmpty) {
+      showAppSnack(context, Copy.homeEmptyHeadline, tone: SnackTone.error);
+      return;
+    }
+    final Result<void> result = await widget.recorder.start(path);
+    if (!mounted) {
+      return;
+    }
+    result.fold((Failure failure) {
+      showAppSnack(context, failure.message, tone: SnackTone.error);
+    }, (_) {});
+  }
+
+  Future<void> _stop() async {
+    final Result<Duration> stopped = await widget.recorder.stop();
+    if (!mounted) {
+      return;
+    }
+    stopped.fold(
+      (Failure failure) {
+        showAppSnack(context, failure.message, tone: SnackTone.error);
+      },
+      (Duration _) {
+        final AudioRecording? completed = widget.recorder.completed;
+        if (completed != null) {
+          widget.onCompleted?.call(completed);
         }
-        result.fold((Failure failure) {
-          showAppSnack(context, failure.message, tone: SnackTone.error);
-        }, (_) {});
       },
     );
   }
+}
+
+/// Project this capture is filed under. Empty selection explains why the
+/// capture actions are disabled.
+final class _CaptureProjectPicker extends ConsumerWidget {
+  const _CaptureProjectPicker({
+    required this.selectedId,
+    required this.onSelected,
+  });
+
+  final String selectedId;
+  final ValueChanged<String> onSelected;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<List<ProjectListRow>> list = ref.watch(
+      projectListProvider,
+    );
+    final List<ProjectListRow> active = list.maybeWhen(
+      data: (List<ProjectListRow> rows) => <ProjectListRow>[
+        for (final ProjectListRow row in rows)
+          if (row.project.status == ProjectStatus.active) row,
+      ],
+      orElse: () => const <ProjectListRow>[],
+    );
+    final List<Choice<String>> options = <Choice<String>>[];
+    bool templatesSettled = list.hasValue;
+    for (final ProjectListRow row in active) {
+      final AsyncValue<List<TemplateDef>> owned = ref.watch(
+        captureProjectTemplatesProvider(row.project.id),
+      );
+      if (!owned.hasValue) {
+        templatesSettled = false;
+      }
+      final bool allowed = owned.maybeWhen(
+        data: (List<TemplateDef> loaded) => loaded.isNotEmpty,
+        orElse: () => false,
+      );
+      if (allowed) {
+        options.add(Choice<String>(row.project.id, row.project.name));
+      }
+    }
+    final bool selectedAllowed = options.any(
+      (Choice<String> option) => option.value == selectedId,
+    );
+    final String? message = _captureGateMessage(
+      projectsLoaded: list.hasValue,
+      activeCount: active.length,
+      hasChoice: options.isNotEmpty,
+      selectedId: selectedId,
+      selectedAllowed: selectedAllowed,
+      templatesSettled: templatesSettled,
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (options.isNotEmpty)
+          AppChoiceField<String>(
+            label: Copy.captureProjectLabel,
+            options: options,
+            value: selectedAllowed ? selectedId : null,
+            onChanged: (String? id) {
+              if (id != null && id.isNotEmpty) {
+                onSelected(id);
+              }
+            },
+          ),
+        if (message != null) ...<Widget>[
+          if (options.isNotEmpty) const SizedBox(height: Space.x2),
+          Text(message),
+        ],
+      ],
+    );
+  }
+}
+
+String? _captureGateMessage({
+  required bool projectsLoaded,
+  required int activeCount,
+  required bool hasChoice,
+  required String selectedId,
+  required bool selectedAllowed,
+  required bool templatesSettled,
+}) {
+  if (!projectsLoaded || selectedAllowed) {
+    return null;
+  }
+  if (activeCount == 0) {
+    return Copy.captureCreateProjectFirst;
+  }
+  if (selectedId.isNotEmpty && templatesSettled) {
+    return Copy.captureNeedsTemplate;
+  }
+  if (hasChoice) {
+    return Copy.captureChooseProject;
+  }
+  if (templatesSettled) {
+    return Copy.captureNeedsTemplate;
+  }
+  return null;
 }
 
 bool _sameContext(Map<String, String> left, Map<String, String> right) {

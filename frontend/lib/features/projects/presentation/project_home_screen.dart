@@ -44,6 +44,14 @@ class ProjectHomeScreen extends ConsumerWidget {
     final ProjectHomeView? view = value.asData?.value;
     final int records =
         ref.watch(projectHomeRecordCountProvider).asData?.value ?? 0;
+    final String? openId = details?.id;
+    final AsyncValue<List<TemplateDef>> homeTemplates = ref.watch(
+      projectHomeTemplatesProvider(openId ?? ''),
+    );
+    final bool canCapture = homeTemplates.maybeWhen(
+      data: (List<TemplateDef> loaded) => loaded.isNotEmpty,
+      orElse: () => false,
+    );
     return AppPage(
       key: const ValueKey<String>('route-project'),
       title: details?.name ?? Copy.navProjects,
@@ -56,7 +64,12 @@ class ProjectHomeScreen extends ConsumerWidget {
           ? null
           : AppPrimaryAction(
               label: records == 0 ? Copy.captureStart : Copy.captureMore,
-              onPressed: () => context.go(_capture(view.project.id)),
+              caption: homeTemplates.hasValue && !canCapture
+                  ? Copy.captureNeedsTemplate
+                  : null,
+              onPressed: canCapture
+                  ? () => context.go(_capture(view.project.id))
+                  : null,
             ),
       body: AsyncValueView<ProjectHomeView?>(
         value: value,

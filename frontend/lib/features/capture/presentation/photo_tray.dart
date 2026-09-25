@@ -26,8 +26,8 @@ final class PhotoTray extends StatelessWidget {
   /// Photos in tray order. Callers pass the active derived set.
   final List<PhotoDraft> photos;
 
-  /// Add affordance.
-  final VoidCallback onAdd;
+  /// Add affordance. Null disables the control.
+  final VoidCallback? onAdd;
 
   /// Opens viewer / type sheet.
   final ValueChanged<PhotoDraft>? onTap;
@@ -171,7 +171,7 @@ class _AddPhotoTarget extends StatelessWidget {
   const _AddPhotoTarget({required this.edge, required this.onPressed});
 
   final double edge;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {

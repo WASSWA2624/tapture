@@ -226,6 +226,7 @@ class _AppTextFieldState extends State<AppTextField> {
             onChanged: field.onChanged,
             onSubmitted: field.onSubmitted,
             onTap: field.onTap,
+            textAlignVertical: lines > 1 ? TextAlignVertical.top : null,
             obscureText: field.obscureText && !_revealed,
             autofocus: field.autofocus,
             // Keyed to the field, not the toggle: revealing a secret must
