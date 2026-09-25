@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
@@ -43,7 +44,7 @@ void main() {
     );
 
     expect(find.text('Needs review'), findsOneWidget);
-    expect(find.byIcon(Icons.flag), findsOneWidget);
+    expect(find.byIcon(AppIcons.review), findsOneWidget);
     expect(find.byType(AppStatusPill), hasSemanticLabel('Needs review'));
   });
 

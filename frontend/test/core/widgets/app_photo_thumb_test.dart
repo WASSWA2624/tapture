@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_photo_thumb.dart';
 
@@ -57,7 +58,7 @@ void main() {
 
     expect(find.byIcon(PhotoType.serial.icon), findsOneWidget);
     expect(find.text('Serial'), findsOneWidget);
-    expect(find.byIcon(Icons.closed_caption), findsOneWidget);
+    expect(find.byIcon(AppIcons.caption), findsOneWidget);
     expect(find.byIcon(Icons.check), findsOneWidget);
     expect(
       find.byType(AppPhotoThumb),

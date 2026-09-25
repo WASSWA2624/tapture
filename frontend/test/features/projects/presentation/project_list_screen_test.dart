@@ -11,6 +11,7 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
@@ -19,7 +20,6 @@ import 'package:tapture/core/widgets/fields/dictation_scope.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
-import 'package:tapture/features/projects/domain/project_repository.dart';
 import 'package:tapture/features/projects/presentation/project_export_screen.dart';
 import 'package:tapture/features/projects/presentation/project_filters_screen.dart';
 import 'package:tapture/features/projects/presentation/project_list_screen.dart';
@@ -216,7 +216,7 @@ void main() {
 
     await _openPageOverflow(tester);
     expect(find.text(Copy.projectShowArchived), findsOneWidget);
-    expect(find.byIcon(Icons.inventory_2_outlined), findsWidgets);
+    expect(find.byIcon(AppIcons.archive), findsWidgets);
     await tester.tap(find.text(Copy.projectShowArchived));
     await tester.pumpAndSettle();
     expect(find.text('Alpha'), findsOneWidget);

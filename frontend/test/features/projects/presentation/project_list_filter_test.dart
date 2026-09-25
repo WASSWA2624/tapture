@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/features/projects/domain/project_repository.dart';
 import 'package:tapture/features/projects/projects.dart';
 
 import '../../../support/factories.dart';

@@ -7,6 +7,7 @@ import 'package:tapture/app/app.dart';
 import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/network/network.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/features/settings/data/settings_store.dart';
 import 'package:tapture/features/settings/presentation/offline_switch.dart';
@@ -44,7 +45,7 @@ void main() {
       await tester.pump();
       expect(find.byType(AppBanner), findsOneWidget);
       expect(find.text(Copy.offlineWorking), findsOneWidget);
-      expect(find.byIcon(Icons.cloud_off), findsWidgets);
+      expect(find.byIcon(AppIcons.offline), findsWidgets);
 
       await tester.tap(find.byTooltip(Copy.dismiss));
       await tester.pump();

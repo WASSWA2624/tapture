@@ -398,7 +398,7 @@ void main() {
           .dy;
       expect(top - titleRow, lessThanOrEqualTo(Space.x2));
 
-      await tester.drag(find.text('Item 3'), const Offset(0, -600));
+      await tester.drag(find.text('Ward 1'), const Offset(0, -600));
       await tester.pumpAndSettle();
       expect(tester.getTopLeft(search).dy, top);
       expect(tester.getTopLeft(find.text('Ward 1')).dy, lessThan(top));

@@ -5,13 +5,6 @@ import 'package:tapture/core/errors/result.dart';
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
 
-/// One changed field on the record edit sheet. [stored] is true when the
-/// record already has a row for [fieldKey].
-typedef RecordFieldEdit = ({String fieldKey, String value, bool stored});
-
-/// Save progress of one record's edit sheet. Ephemeral (FE-STATE-02).
-typedef RecordEditState = ({bool saving, Failure? failure});
-
 /// Edit state for the record id it is created with. Auto-dispose: the sheet
 /// is its only reader (FE-STATE-09).
 final recordEditControllerProvider = NotifierProvider.autoDispose
@@ -63,3 +56,10 @@ final class RecordEditController extends Notifier<RecordEditState> {
     return const Success<void>(null);
   }
 }
+
+/// One changed field on the record edit sheet. [stored] is true when the
+/// record already has a row for [fieldKey].
+typedef RecordFieldEdit = ({String fieldKey, String value, bool stored});
+
+/// Save progress of one record's edit sheet. Ephemeral (FE-STATE-02).
+typedef RecordEditState = ({bool saving, Failure? failure});

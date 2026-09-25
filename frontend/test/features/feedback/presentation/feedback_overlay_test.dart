@@ -67,7 +67,7 @@ void main() {
         await tester.runAsync(() => _containsColor(shot, evidence)) ?? false;
     expect(containsDialog, isTrue);
 
-    await tester.tap(find.byIcon(Icons.feedback_outlined));
+    await tester.tap(find.byKey(const ValueKey<String>('feedback-button')));
     await tester.pumpAndSettle();
     expect(find.text(Copy.feedbackGive), findsNothing);
     expect(find.text('Target dialog'), findsOneWidget);
