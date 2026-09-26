@@ -37,6 +37,20 @@ void main() {
       SettingKeys.confidenceMedium.defaultValue,
       AppConstants.confidence.medium,
     );
+    expect(
+      SettingKeys.aiRowMatchThreshold.defaultValue,
+      AppConstants.processing.fuzzyMatch,
+    );
+    expect(
+      SettingKeys.aiDetectionConfident.defaultValue,
+      AppConstants.processing.detectionConfident,
+    );
+    expect(
+      SettingKeys.aiDetectionGap.defaultValue,
+      AppConstants.processing.detectionGap,
+    );
+    expect(SettingKeys.aiProviderSelection.defaultValue, '{}');
+    expect(SettingKeys.appLanguage.defaultValue, AppConstants.defaultLanguage);
   });
 
   test('no setting name looks like a secret', () {

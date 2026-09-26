@@ -14,12 +14,6 @@ import 'record_bundle.dart';
 import 'response_store.dart';
 import 'stage_support.dart';
 
-/// Guarded proposals for a record, and why any candidate was dropped.
-typedef ProposalSelection = ({
-  List<ProposedValue> proposals,
-  List<String> rejections,
-});
-
 /// Turns cached OCR candidates and stored provider responses into proposals
 /// that have passed the no-invention guard.
 final class ProposalCollector {
@@ -176,3 +170,9 @@ final class ProposalCollector {
     return (proposals: proposals, rejections: rejections);
   }
 }
+
+/// Guarded proposals for a record, and why any candidate was dropped.
+typedef ProposalSelection = ({
+  List<ProposedValue> proposals,
+  List<String> rejections,
+});

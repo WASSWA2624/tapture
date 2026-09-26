@@ -11,6 +11,9 @@ void main() {
     confidenceHigh: 0.9,
     confidenceMedium: 0.4,
     refineColumns: false,
+    refineCaptions: true,
+    dailyRequestCap: 40,
+    locale: 'en-UG',
   );
 
   test('built-in defaults match AppConstants', () {
@@ -26,6 +29,12 @@ void main() {
       builtInProjectSettingsDefaults.confidenceMedium,
       AppConstants.confidence.medium,
     );
+    expect(
+      builtInProjectSettingsDefaults.dailyRequestCap,
+      AppConstants.processing.dailyRequestCap,
+    );
+    expect(builtInProjectSettingsDefaults.locale, AppConstants.defaultLanguage);
+    expect(builtInProjectSettingsDefaults.refineCaptions, isFalse);
   });
 
   test('unknown or missing JSON loads as defaults instead of throwing', () {
@@ -141,5 +150,85 @@ void main() {
       ProjectSettings.decode('{"coverPhoto": "a.jpg"}').coverPhoto,
       isNull,
     );
+  });
+
+  group('the processing settings', () {
+    const ProjectSettings full = ProjectSettings(
+      refineCaptions: false,
+      dailyRequestCap: 12,
+      locale: 'en-UG',
+      providerSelection: <String, ({String provider, String model})>{
+        'extractFields': (provider: 'openai', model: 'gpt-vision'),
+        'transcribe': (provider: 'backend', model: 'default'),
+      },
+      templatePins: <String, String>{
+        'room=Plant room': 'template-pump',
+        'floor=2': 'template-motor',
+      },
+    );
+
+    test('round-trip through the stored JSON', () {
+      final ProjectSettings read = ProjectSettings.decode(full.encode());
+
+      expect(read, full);
+      expect(read.hashCode, full.hashCode);
+      expect(read.providerSelection?['extractFields'], (
+        provider: 'openai',
+        model: 'gpt-vision',
+      ));
+      expect(read.templatePins?['floor=2'], 'template-motor');
+    });
+
+    test('differ when only a map entry differs', () {
+      final ProjectSettings otherPin = full.copyWith(
+        templatePins: <String, String>{'room=Plant room': 'template-motor'},
+      );
+      final ProjectSettings otherModel = full.copyWith(
+        providerSelection: <String, ({String provider, String model})>{
+          'extractFields': (provider: 'openai', model: 'gpt-other'),
+          'transcribe': (provider: 'backend', model: 'default'),
+        },
+      );
+
+      expect(otherPin, isNot(full));
+      expect(otherModel, isNot(full));
+    });
+
+    test('an override wins, and an unset one inherits the app store', () {
+      final ProjectSettingsResolved overridden = full.resolve(appOn);
+      expect(overridden.refineCaptions, isFalse);
+      expect(overridden.dailyRequestCap, 12);
+      expect(overridden.locale, 'en-UG');
+
+      final ProjectSettingsResolved inherited = ProjectSettings.defaults
+          .resolve(appOn);
+      expect(inherited.refineCaptions, isTrue);
+      expect(inherited.dailyRequestCap, 40);
+      expect(inherited.locale, 'en-UG');
+      expect(
+        ProjectSettings.defaults
+            .copyWith(locale: 'fr')
+            .resolve(builtInProjectSettingsDefaults)
+            .locale,
+        'fr',
+      );
+    });
+
+    test('clearing each one unsets it and drops it from the JSON', () {
+      final ProjectSettings cleared = full.copyWith(
+        clearRefineCaptions: true,
+        clearDailyRequestCap: true,
+        clearLocale: true,
+        clearProviderSelection: true,
+        clearTemplatePins: true,
+      );
+
+      expect(cleared, ProjectSettings.defaults);
+      expect(cleared.toJson(), isEmpty);
+      expect(full.copyWith(templateChoice: 'manual').templatePins, {
+        'room=Plant room': 'template-pump',
+        'floor=2': 'template-motor',
+      });
+    });
   });
 }
