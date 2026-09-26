@@ -55,7 +55,8 @@ final class RecordDetailScreen extends ConsumerWidget {
               AppOverflowAction(
                 label: Copy.recordEditFields,
                 icon: AppIcons.fields,
-                onTap: () => unawaited(showRecordEditSheet(context, detail.row)),
+                onTap: () =>
+                    unawaited(showRecordEditSheet(context, detail.row)),
               ),
               AppOverflowAction(
                 label: Copy.recordDelete,

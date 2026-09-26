@@ -91,9 +91,8 @@ class CapturedItemTile extends ConsumerWidget {
     return AppListTile(
       title: projectRecordTitle(row, position: position),
       leading: thumb == null ? null : RecordThumb(photo: thumb),
-      onTap: () => unawaited(
-        context.push(RoutePaths.projectRecord(projectId, row.id)),
-      ),
+      onTap: () =>
+          unawaited(context.push(RoutePaths.projectRecord(projectId, row.id))),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
