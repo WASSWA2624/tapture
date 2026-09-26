@@ -11,6 +11,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart' show AppDatabase;
 import 'package:tapture/core/db/database_provider.dart';
 import 'package:tapture/core/db/tables/device_profile.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/files/text_store.dart';
@@ -31,6 +32,7 @@ import 'package:tapture/features/capture/presentation/capture_controller.dart';
 import 'package:tapture/features/capture/presentation/capture_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_crop_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_tray.dart';
+import 'package:tapture/features/capture/presentation/record_caption_field.dart';
 import 'package:tapture/features/context/context.dart'
     show contextRepositoryProvider;
 import 'package:tapture/features/context/domain/context_state.dart';
@@ -48,6 +50,7 @@ import 'package:tapture/features/templates/domain/field_def.dart';
 import 'package:tapture/features/templates/domain/template_def.dart';
 import 'package:tapture/features/templates/domain/template_row.dart';
 
+import '../../../support/a11y_matchers.dart';
 import '../../../support/factories.dart';
 import '../../../support/fakes/fake_context_repository.dart';
 import '../../../support/fakes/fake_photo_repository.dart';
@@ -132,7 +135,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text(Copy.captureAddPhoto));
+    await tester.tap(_addPhotoIcon);
     await tester.pumpAndSettle();
     expect(find.text(Copy.captureTakePhoto), findsNothing);
     await tester.tap(find.text(Copy.captureChoosePhoto));
@@ -216,25 +219,58 @@ void main() {
     await tester.pump(const Duration(milliseconds: 10));
     await harness.typeWithoutSettling('Bo');
     await tester.pump(const Duration(milliseconds: 95));
-    // The first keystroke's writes have landed; the second's have not.
+    // The first keystroke's write has landed; the second's has not.
     expect(harness.fieldText, 'Bo');
     await harness.typeWithoutSettling('Boi');
     await tester.pumpAndSettle();
     expect(harness.fieldText, 'Boi');
-    expect(harness.session.captions['a'], 'Boi');
+    expect(harness.session.recordCaption, 'Boi');
+    expect(harness.session.captions['a'], isNull);
     // Leaving the page saves once more; let that slow save land.
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump(const Duration(milliseconds: 60));
   });
 
-  testWidgets('the line under the caption says which photos it goes to', (
+  testWidgets('typing and dictating change no photo caption', (
     WidgetTester tester,
   ) async {
-    final _CaptionHarness one = await _CaptionHarness.open(tester, <String>[
+    final FakeSttService speech = FakeSttService();
+    final _CaptionHarness harness = await _CaptionHarness.open(tester, <String>[
       'a',
-    ]);
-    expect(find.text(Copy.captionGoesToAll(1)), findsOneWidget);
-    expect(one.fieldText, '');
+      'b',
+    ], speech: speech);
+    await harness.type('Site');
+    await tester.tap(_selectControl.at(1));
+    await tester.pumpAndSettle();
+    await harness.type('Site pump');
+    expect(harness.session.captions['a'], isNull);
+    expect(harness.session.captions['b'], isNull);
+
+    await tester.tap(
+      find.descendant(
+        of: harness.captionField,
+        matching: find.byKey(const ValueKey<String>('app-text-field-dictate')),
+      ),
+    );
+    await tester.pump();
+    speech.open();
+    await tester.pump();
+    await speech.finish('leaking valve');
+    await tester.pumpAndSettle();
+
+    expect(harness.fieldText.toLowerCase(), contains('leaking valve'));
+    expect(harness.session.recordCaption, harness.fieldText);
+    expect(harness.session.captions['a'], isNull);
+    expect(harness.session.captions['b'], isNull);
+    expect(find.text('leaking valve'), findsNothing);
+  });
+
+  testWidgets('the add button names the photos the caption goes to', (
+    WidgetTester tester,
+  ) async {
+    await _CaptionHarness.open(tester, <String>['a']);
+    expect(find.text(Copy.captionAddToAll(1)), findsOneWidget);
+    expect(find.text('Add to the photo'), findsOneWidget);
 
     await tester.pumpWidget(const SizedBox.shrink());
     final _CaptionHarness three = await _CaptionHarness.open(tester, <String>[
@@ -242,78 +278,152 @@ void main() {
       'b',
       'c',
     ]);
-    expect(find.text(Copy.captionGoesToAll(3)), findsOneWidget);
+    expect(find.text('Add to all 3 photos'), findsOneWidget);
+    // Nothing typed, nothing to add.
+    expect(three.addButton.onPressed, isNull);
     await three.type('Site');
+    expect(three.addButton.onPressed, isNotNull);
+    // Only spaces is nothing to add either.
+    await three.type('   ');
+    expect(three.addButton.onPressed, isNull);
+
     await tester.tap(_selectControl.at(1));
     await tester.pumpAndSettle();
-    expect(find.text(Copy.captionGoesToTicked(1)), findsOneWidget);
-    expect(three.fieldText, 'Site');
-    await three.type('Pump');
+    expect(find.text('Add to 1 ticked photo'), findsOneWidget);
     await tester.tap(_selectControl.at(2));
     await tester.pumpAndSettle();
-    expect(find.text(Copy.captionGoesToTicked(2)), findsOneWidget);
-    expect(three.fieldText, '');
-    expect(three.session.captions['c'], 'Site');
+    expect(find.text(Copy.captionAddToTicked(2)), findsOneWidget);
+    expect(find.text('Add to 2 ticked photos'), findsOneWidget);
+    // Ticking never rewrites what is typed.
+    expect(three.fieldText, '   ');
   });
 
-  testWidgets('at 200 percent text the caption target line stays on screen', (
-    WidgetTester tester,
-  ) async {
-    tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(393, 886);
-    tester.platformDispatcher.textScaleFactorTestValue = 2;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    await _CaptionHarness.open(tester, <String>['a', 'b']);
-    final Finder line = find.byKey(
-      const ValueKey<String>('capture-caption-targets'),
-    );
-    await tester.ensureVisible(line);
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(tester.getRect(line).right, lessThanOrEqualTo(393));
-  });
-
-  testWidgets('one photo takes the typed caption', (WidgetTester tester) async {
-    final _CaptionHarness harness = await _CaptionHarness.open(tester, <String>[
-      'a',
-    ]);
-    await harness.type('Boiler');
-    expect(harness.session.captions['a'], 'Boiler');
-  });
-
-  testWidgets('with none ticked a caption fills every photo, and ticks narrow '
-      'it', (WidgetTester tester) async {
+  testWidgets('a tap adds the caption after existing ones, clears the field '
+      'and says how many', (WidgetTester tester) async {
     final _CaptionHarness harness = await _CaptionHarness.open(tester, <String>[
       'a',
       'b',
       'c',
     ]);
+    _ok(await harness.controller.setCaption('b', 'Old note'));
+    await tester.pumpAndSettle();
+    await tester.tap(_selectControl.at(0));
+    await tester.tap(_selectControl.at(1));
+    await tester.pumpAndSettle();
+    await harness.type('  Pump room  ');
+
+    await tester.tap(find.byKey(const ValueKey<String>('capture-caption-add')));
+    await tester.pumpAndSettle();
+
+    expect(harness.session.captions['a'], 'Pump room');
+    expect(harness.session.captions['b'], 'Old note\nPump room');
+    expect(harness.session.captions['c'], isNull);
+    expect(harness.fieldText, '');
+    expect(harness.session.recordCaption, '');
+    expect(find.text(Copy.captionAdded(2)), findsOneWidget);
+    expect(find.text('Added to 2 photos'), findsOneWidget);
+    expect(harness.addButton.onPressed, isNull);
+  });
+
+  testWidgets('with none ticked a tap adds to every photo', (
+    WidgetTester tester,
+  ) async {
+    final _CaptionHarness harness = await _CaptionHarness.open(tester, <String>[
+      'a',
+      'b',
+    ]);
     await harness.type('Site');
+    await tester.tap(find.byKey(const ValueKey<String>('capture-caption-add')));
+    await tester.pumpAndSettle();
+
     expect(harness.session.captions['a'], 'Site');
     expect(harness.session.captions['b'], 'Site');
-    expect(harness.session.captions['c'], 'Site');
-
-    await tester.tap(_selectControl.at(1));
-    await tester.pumpAndSettle();
-    expect(harness.fieldText, 'Site');
-    await harness.type('Pump');
-    expect(harness.session.captions['a'], 'Site');
-    expect(harness.session.captions['b'], 'Pump');
-    expect(harness.session.captions['c'], 'Site');
-
-    await tester.longPress(find.byKey(const ValueKey<String>('photo-thumb-a')));
-    await tester.pumpAndSettle();
-    expect(harness.fieldText, '');
-
-    await tester.tap(_selectControl.first);
-    await tester.tap(_selectControl.at(1));
-    await tester.pumpAndSettle();
-    expect(harness.fieldText, '');
-    expect(find.widgetWithText(TextButton, 'Caption'), findsNothing);
-    expect(find.text('Photo caption'), findsNothing);
+    expect(find.text(Copy.captionAdded(2)), findsOneWidget);
   });
+
+  testWidgets('a failed add keeps the typed text and says the save failed', (
+    WidgetTester tester,
+  ) async {
+    final _CaptionHarness harness = await _CaptionHarness.open(tester, <String>[
+      'a',
+    ]);
+    await harness.type('Pump room');
+    harness.failSaves();
+
+    await tester.tap(find.byKey(const ValueKey<String>('capture-caption-add')));
+    await tester.pumpAndSettle();
+
+    expect(find.text(Copy.captureSaveFailed), findsOneWidget);
+    expect(harness.fieldText, 'Pump room');
+    expect(harness.session.recordCaption, 'Pump room');
+    expect(harness.session.captions['a'], isNull);
+  });
+
+  testWidgets('text never added stays the record caption', (
+    WidgetTester tester,
+  ) async {
+    final _CaptionHarness harness = await _CaptionHarness.open(tester, <String>[
+      'a',
+      'b',
+    ]);
+    await harness.type('Whole site');
+
+    expect(harness.session.recordCaption, 'Whole site');
+    expect(harness.session.captions['a'], isNull);
+    expect(harness.session.captions['b'], isNull);
+  });
+
+  for (final ({String name, Size size}) layout in <({String name, Size size})>[
+    (name: 'compact portrait', size: const Size(393, 886)),
+    (name: 'compact landscape', size: const Size(560, 393)),
+    (name: 'medium portrait', size: const Size(800, 1200)),
+    (name: 'medium landscape', size: const Size(1000, 700)),
+    (name: 'expanded portrait', size: const Size(1024, 1366)),
+    (name: 'expanded landscape', size: const Size(1366, 1024)),
+  ]) {
+    testWidgets('in ${layout.name} at 200 percent text the add button is '
+        '48dp and unclipped', (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = layout.size;
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      final _CaptionHarness harness = await _CaptionHarness.open(
+        tester,
+        <String>['a', 'b', 'c'],
+      );
+      await harness.type('Pump');
+      final Finder button = find.byKey(
+        const ValueKey<String>('capture-caption-add'),
+      );
+      await tester.ensureVisible(button);
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(button, meetsTapTarget());
+      final Rect rect = tester.getRect(button);
+      expect(rect.left, greaterThanOrEqualTo(0));
+      expect(rect.right, lessThanOrEqualTo(layout.size.width));
+      // Clear of the pinned saves below it.
+      final Rect saves = tester.getRect(
+        find.byKey(const ValueKey<String>('capture-saves')),
+      );
+      expect(rect.bottom, lessThanOrEqualTo(saves.top));
+      final Rect label = tester.getRect(
+        find.descendant(
+          of: button,
+          matching: find.text(Copy.captionAddToAll(3)),
+        ),
+      );
+      expect(label.top, greaterThanOrEqualTo(rect.top));
+      expect(label.bottom, lessThanOrEqualTo(rect.bottom));
+      expect(label.right, lessThanOrEqualTo(rect.right));
+      await tester.tap(button);
+      await tester.pumpAndSettle();
+      expect(harness.session.captions['b'], 'Pump');
+    });
+  }
 
   testWidgets('resume restores a stored session', (WidgetTester tester) async {
     final FakePhotoRepository photos = FakePhotoRepository();
@@ -436,7 +546,7 @@ void main() {
     );
     expect(field, findsOneWidget);
     expect(find.text('Computers'), findsNothing);
-    expect(find.widgetWithText(AppButton, Copy.captureAddPhoto), findsNothing);
+    expect(_addPhotoIcon, findsNothing);
 
     await tester.tap(field);
     await tester.pumpAndSettle();
@@ -451,10 +561,7 @@ void main() {
     expect(container.read(projectTemplateSelectionProvider), 't2');
     expect(container.read(captureControllerProvider('p1')).templateId, 't2');
     expect(find.text('Furniture'), findsOneWidget);
-    expect(
-      find.widgetWithText(AppButton, Copy.captureAddPhoto),
-      findsOneWidget,
-    );
+    expect(_addPhotoIcon, findsOneWidget);
   });
 
   testWidgets('add photo is one sheet with both icon buttons', (
@@ -482,7 +589,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text(Copy.captureAddPhoto));
+      await tester.tap(_addPhotoIcon);
       await tester.pumpAndSettle();
       expect(find.text(Copy.captureAddSheetTitle), findsOneWidget);
       expect(
@@ -655,7 +762,7 @@ void main() {
 
 /// Capture with [ids] in the tray, typed into through the caption field.
 final class _CaptionHarness {
-  _CaptionHarness._(this._tester);
+  _CaptionHarness._(this._tester, this._sessions);
 
   final WidgetTester _tester;
 
@@ -663,6 +770,7 @@ final class _CaptionHarness {
     WidgetTester tester,
     List<String> ids, {
     Duration saveDelay = Duration.zero,
+    FakeSttService? speech,
   }) async {
     final FakePhotoRepository photos = FakePhotoRepository();
     addTearDown(photos.dispose);
@@ -671,9 +779,12 @@ final class _CaptionHarness {
       store: TextStore.memory(),
     );
     final _SlowSessions slow = _SlowSessions(stored, saveDelay);
+    const Widget screen = CaptureScreen(projectId: 'p1');
     await tester.pumpWidget(
       _scope(
-        const CaptureScreen(projectId: 'p1'),
+        speech == null
+            ? screen
+            : DictationScope(service: speech, languageTag: 'en', child: screen),
         extras: <Override>[
           photoRepositoryProvider.overrideWith((Ref _) => photos),
           capturePersistenceProvider.overrideWith((Ref ref) => slow),
@@ -691,14 +802,30 @@ final class _CaptionHarness {
     // Slow saves start once the tray is set up; the setup awaits outside a
     // pump, where a pending timer would never fire.
     slow.slow = true;
-    return _CaptionHarness._(tester);
+    return _CaptionHarness._(tester, slow);
   }
+
+  final _SlowSessions _sessions;
 
   Finder get _field => find.byWidgetPredicate(
     (Widget widget) =>
         widget is TextField &&
         widget.decoration?.labelText == Copy.captureRecordCaption,
   );
+
+  /// The caption field, microphone and all.
+  Finder get captionField => find.byType(RecordCaptionField);
+
+  AppButton get addButton => _tester.widget<AppButton>(
+    find.byKey(const ValueKey<String>('capture-caption-add')),
+  );
+
+  CaptureController get controller => ProviderScope.containerOf(
+    _tester.element(find.byType(CaptureScreen)),
+  ).read(captureControllerProvider('p1').notifier);
+
+  /// Every later session save fails, as a full disk would.
+  void failSaves() => _sessions.fail = true;
 
   String get fieldText =>
       _tester.widget<TextField>(_field).controller?.text ?? '';
@@ -728,6 +855,9 @@ final class _SlowSessions implements CapturePersistence {
   /// Whether session saves wait [_delay].
   bool slow = false;
 
+  /// Whether session saves fail.
+  bool fail = false;
+
   @override
   PhotoRepository get photos => _inner.photos;
 
@@ -741,6 +871,9 @@ final class _SlowSessions implements CapturePersistence {
 
   @override
   Future<Result<void>> saveSession(CaptureSession session) async {
+    if (fail) {
+      return const FailureResult<void>(StorageFailure());
+    }
     if (slow && _delay > Duration.zero) {
       await Future<void>.delayed(_delay);
     }
@@ -924,3 +1057,17 @@ final Uint8List _png = Uint8List.fromList(<int>[
 final Finder _selectControl = find.byKey(
   const ValueKey<String>('photo-corner-select-target'),
 );
+
+/// The empty tray's add-photo icon, which is its add action (FBK0000004).
+final Finder _addPhotoIcon = find.byKey(
+  const ValueKey<String>('empty-state-icon-action'),
+);
+
+T _ok<T>(Result<T> result) {
+  return switch (result) {
+    Success<T>(:final T value) => value,
+    FailureResult<T>(:final Failure failure) => throw TestFailure(
+      failure.message,
+    ),
+  };
+}

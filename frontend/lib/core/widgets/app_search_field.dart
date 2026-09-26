@@ -6,13 +6,16 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 
 import 'fields/app_text_field.dart';
 
 /// Debounced search input. [onChanged] fires once per debounce window, not
 /// once per keystroke. Records, datasets and template pickers reuse this
-/// control.
+/// control. A list with something to filter by passes [onFilter], and every
+/// such list shows the same filter button (FBK0000003).
 class AppSearchField extends StatefulWidget {
   /// Creates a search field. [debounce] defaults to
   /// [AppConstants.interaction.debounce].
@@ -25,6 +28,8 @@ class AppSearchField extends StatefulWidget {
     Duration? debounce,
     this.resultCount,
     this.afterMic,
+    this.onFilter,
+    this.activeFilterCount = 0,
     this.enabled = true,
   }) : debounce = debounce ?? AppConstants.interaction.debounce;
 
@@ -49,8 +54,17 @@ class AppSearchField extends StatefulWidget {
   /// Optional hit count shown beside the field, formatted for the locale.
   final int? resultCount;
 
-  /// Control drawn immediately after the microphone. Null hides it.
+  /// Control drawn immediately after the microphone, for anything that is
+  /// not a filter. Null hides it.
   final Widget? afterMic;
+
+  /// Opens the list's filters from a filter button drawn after the
+  /// microphone. Null draws no filter button.
+  final VoidCallback? onFilter;
+
+  /// How many filters are on. Above zero the filter button reads as
+  /// selected and names the count (FE-A11Y-05).
+  final int activeFilterCount;
 
   /// When false, the field does not accept input.
   final bool enabled;
@@ -135,7 +149,7 @@ class _AppSearchFieldState extends State<AppSearchField> {
         prefix: ExcludeSemantics(
           child: Icon(AppIcons.search, color: colors.onSurface, size: Space.x6),
         ),
-        afterDictation: widget.afterMic,
+        afterDictation: _afterMic(),
         trailing: count == null
             ? null
             : Padding(
@@ -150,6 +164,32 @@ class _AppSearchFieldState extends State<AppSearchField> {
         onChanged: _schedule,
         onSubmitted: (_) => _submit(),
       ),
+    );
+  }
+
+  Widget? _afterMic() {
+    final Widget? extra = widget.afterMic;
+    final VoidCallback? onFilter = widget.onFilter;
+    if (onFilter == null) {
+      return extra;
+    }
+    final int active = widget.activeFilterCount;
+    final String label = Copy.searchFilters(active);
+    final Widget filter = AppIconButton(
+      key: const ValueKey<String>('search-filter'),
+      icon: AppIcons.filter,
+      tooltip: label,
+      semanticLabel: label,
+      selected: active > 0 ? true : null,
+      outlined: false,
+      onPressed: onFilter,
+    );
+    if (extra == null) {
+      return filter;
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[extra, filter],
     );
   }
 

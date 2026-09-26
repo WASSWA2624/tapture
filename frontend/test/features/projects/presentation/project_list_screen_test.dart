@@ -384,7 +384,7 @@ void main() {
     final Finder mic = find.byKey(
       const ValueKey<String>('app-text-field-dictate'),
     );
-    final Finder filter = find.byTooltip(Copy.projectFilters(0));
+    final Finder filter = find.byTooltip(Copy.searchFilters(0));
     expect(mic, findsOneWidget);
     expect(filter, findsOneWidget);
     expect(find.byIcon(Icons.close), findsNothing);

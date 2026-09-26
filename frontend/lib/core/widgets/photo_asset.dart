@@ -7,11 +7,13 @@ part of 'app_photo_thumb.dart';
 class PhotoAsset {
   /// Creates a photo. [thumbPath] is the cached file for the requested
   /// edge; [sourcePath] is the original and is never decoded by
-  /// [AppPhotoThumb] (FE-PERF-04).
+  /// [AppPhotoThumb] (FE-PERF-04). [thumbBytes] stands in for a cached file
+  /// where there is no file system, as in a browser.
   const PhotoAsset({
     required this.sha256,
     this.thumbPath = '',
     this.sourcePath = '',
+    this.thumbBytes,
     this.photoType,
     this.hasCaption = false,
   });
@@ -25,6 +27,12 @@ class PhotoAsset {
 
   /// Original photo path. [AppPhotoThumb] never opens this file.
   final String sourcePath;
+
+  /// The photo's encoded bytes, drawn when set in place of [thumbPath] and
+  /// decoded at the thumbnail's size, never at full size (FE-PERF-04). A
+  /// browser has no cached thumbnail files, so its capture tray passes
+  /// these. Compared by identity.
+  final Uint8List? thumbBytes;
 
   /// Optional type badge. Null hides the badge.
   final PhotoType? photoType;
@@ -41,13 +49,21 @@ class PhotoAsset {
         other.sha256 == sha256 &&
         other.thumbPath == thumbPath &&
         other.sourcePath == sourcePath &&
+        identical(other.thumbBytes, thumbBytes) &&
         other.photoType == photoType &&
         other.hasCaption == hasCaption;
   }
 
   @override
   int get hashCode {
-    return Object.hash(sha256, thumbPath, sourcePath, photoType, hasCaption);
+    return Object.hash(
+      sha256,
+      thumbPath,
+      sourcePath,
+      identityHashCode(thumbBytes),
+      photoType,
+      hasCaption,
+    );
   }
 }
 

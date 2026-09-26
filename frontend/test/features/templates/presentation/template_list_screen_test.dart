@@ -20,6 +20,7 @@ import 'package:tapture/features/projects/domain/project_repository.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/settings/settings.dart';
 import 'package:tapture/features/templates/domain/template_def.dart';
+import 'package:tapture/features/templates/presentation/template_list_filter.dart';
 import 'package:tapture/features/templates/presentation/template_list_screen.dart';
 
 import '../../../support/factories.dart';
@@ -272,6 +273,103 @@ void main() {
     expect(find.text(Copy.templatesImport), findsOneWidget);
     expect(find.text(Copy.templatesDelete), findsNothing);
   });
+
+  group('kind filter', () {
+    final List<TemplateDef> templates = <TemplateDef>[
+      aTemplate(id: 't-1', name: 'Water meter').copyWith(kind: 'meter'),
+      aTemplate(id: 't-2', name: 'Gas meter').copyWith(kind: 'meter'),
+      aTemplate(id: 't-3', name: 'Water pump').copyWith(kind: 'equipment'),
+      aTemplate(id: 't-4', name: 'Blank').copyWith(kind: ''),
+    ];
+    List<Override> listed() => <Override>[
+      templateListProvider.overrideWith(
+        (Ref _) => Stream<List<TemplateDef>>.value(templates),
+      ),
+    ];
+    Finder filterButton() =>
+        find.byKey(const ValueKey<String>('search-filter'));
+
+    testWidgets('choosing a kind in the sheet lists only that kind', (
+      WidgetTester tester,
+    ) async {
+      await _pump(tester, overrides: listed());
+      await tester.pumpAndSettle();
+      expect(find.byType(AppListTile), findsNWidgets(4));
+      expect(find.byTooltip(Copy.searchFilters(0)), findsOneWidget);
+
+      await tester.tap(filterButton());
+      await tester.pumpAndSettle();
+      expect(find.text(Copy.templateFiltersTitle), findsOneWidget);
+      await tester.tap(
+        find.byKey(const ValueKey<String>('template-kind-filter')),
+      );
+      await tester.pumpAndSettle();
+      // The kinds present, sorted, with a name for the template without one.
+      expect(find.text('equipment'), findsOneWidget);
+      expect(find.text(Copy.templateKindNone), findsOneWidget);
+      await tester.tap(find.text('meter'));
+      await tester.pumpAndSettle();
+      await tester.tapAt(const Offset(10, 10));
+      await tester.pumpAndSettle();
+      await tester.tapAt(const Offset(10, 10));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AppListTile), findsNWidgets(2));
+      expect(find.text('Water meter'), findsOneWidget);
+      expect(find.text('Gas meter'), findsOneWidget);
+      expect(find.text('Water pump'), findsNothing);
+      expect(find.byTooltip(Copy.searchFilters(1)), findsOneWidget);
+    });
+
+    testWidgets('search and the kind filter combine', (
+      WidgetTester tester,
+    ) async {
+      await _pump(tester, overrides: listed());
+      await tester.pumpAndSettle();
+      _container(tester).read(templateListFilterProvider.notifier).set(<String>{
+        'meter',
+        'equipment',
+      });
+      _container(tester).read(templateListQueryProvider.notifier).set('water');
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AppListTile), findsNWidgets(2));
+      expect(find.text('Water meter'), findsOneWidget);
+      expect(find.text('Water pump'), findsOneWidget);
+      expect(find.byTooltip(Copy.searchFilters(2)), findsOneWidget);
+
+      _container(
+        tester,
+      ).read(templateListFilterProvider.notifier).set(<String>{''});
+      await tester.pumpAndSettle();
+      expect(find.byType(AppListTile), findsNothing);
+      expect(find.text(Copy.templatesNoMatch), findsOneWidget);
+      expect(find.text(Copy.searchFilterNoMatchMessage), findsOneWidget);
+    });
+
+    testWidgets('clear filters lists every template again', (
+      WidgetTester tester,
+    ) async {
+      await _pump(tester, overrides: listed());
+      await tester.pumpAndSettle();
+      _container(
+        tester,
+      ).read(templateListFilterProvider.notifier).set(<String>{'equipment'});
+      await tester.pumpAndSettle();
+      expect(find.byType(AppListTile), findsOneWidget);
+
+      await tester.tap(filterButton());
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey<String>('filter-sheet-clear')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(Copy.templateFiltersTitle), findsNothing);
+      expect(find.byType(AppListTile), findsNWidgets(4));
+      expect(find.byTooltip(Copy.searchFilters(0)), findsOneWidget);
+    });
+  });
 }
 
 ProjectRecordRow _record(String id, String templateId, String status) {
@@ -336,5 +434,11 @@ Future<void> _pump(
         routerConfig: router,
       ),
     ),
+  );
+}
+
+ProviderContainer _container(WidgetTester tester) {
+  return ProviderScope.containerOf(
+    tester.element(find.byType(TemplateListScreen)),
   );
 }

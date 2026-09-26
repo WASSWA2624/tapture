@@ -4,6 +4,8 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/elevation.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 
 /// Shared sheet chrome: drag handle, title, scrollable body, safe area.
@@ -190,6 +192,53 @@ Future<T?> showAppSheet<T>(
             ),
           );
         },
+      );
+    },
+  );
+}
+
+/// The one filter sheet every list's search field opens from its filter
+/// button (FBK0000003): the list's facets, then a Clear filters action that
+/// runs [onClear] and closes the sheet.
+///
+/// [facets] rebuilds with the caller's state, so a choice made in the sheet
+/// shows at once.
+Future<void> showAppFilterSheet(
+  BuildContext context, {
+  required String title,
+  required WidgetBuilder facets,
+  required VoidCallback onClear,
+}) {
+  return showAppSheet<void>(
+    context,
+    title: title,
+    contentSized: true,
+    builder: (BuildContext sheetContext) {
+      return SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(
+          Space.x3,
+          Space.x0,
+          Space.x3,
+          Space.x3,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            facets(sheetContext),
+            const SizedBox(height: Space.x3),
+            AppButton(
+              key: const ValueKey<String>('filter-sheet-clear'),
+              label: Copy.searchClearFilters,
+              variant: AppButtonVariant.secondary,
+              expand: true,
+              onPressed: () {
+                onClear();
+                Navigator.of(sheetContext).pop();
+              },
+            ),
+          ],
+        ),
       );
     },
   );

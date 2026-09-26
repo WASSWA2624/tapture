@@ -466,6 +466,18 @@ abstract final class Copy {
   /// What to change when a search matches nothing.
   static const String searchNoMatchMessage = 'Change the search.';
 
+  /// The filter button on a search field, with how many filters are on.
+  static String searchFilters(int active) {
+    return active == 0 ? 'Filters' : 'Filters ($active)';
+  }
+
+  /// Turns every filter of a list off.
+  static const String searchClearFilters = 'Clear filters';
+
+  /// What to change when a search and its filters match nothing.
+  static const String searchFilterNoMatchMessage =
+      'Change the search or clear the filters.';
+
   /// Semantic name of the title-bar overflow control.
   static const String overflowMenu = 'More options';
 
@@ -494,11 +506,6 @@ abstract final class Copy {
 
   /// Secondary filter-sheet title.
   static const String projectFiltersTitle = 'Project filters';
-
-  /// Filter action with an active-predicate count.
-  static String projectFilters(int active) {
-    return active == 0 ? 'Filters' : 'Filters ($active)';
-  }
 
   /// Status filter heading.
   static const String projectStatusFilter = 'Status';
@@ -777,6 +784,12 @@ abstract final class Copy {
 
   /// Prompt on the project home search: what it looks through.
   static const String projectRecordsSearchHint = 'Search records';
+
+  /// Title of a project's records filter sheet.
+  static const String projectRecordFiltersTitle = 'Record filters';
+
+  /// The record-status facet of a project's records filters.
+  static const String projectRecordStatusFilter = 'Status';
 
   /// A project home search that matched no record, naming the query.
   static String projectRecordsNoMatch(String query) {
@@ -1130,8 +1143,23 @@ abstract final class Copy {
   /// Search on the template list matched nothing.
   static const String templatesNoMatch = 'No matching templates';
 
+  /// Title of the template list's filter sheet.
+  static const String templateFiltersTitle = 'Template filters';
+
+  /// The template-kind facet of the template list's filters.
+  static const String templateKindFilter = 'Kind';
+
+  /// A template that names no kind, as a filter option.
+  static const String templateKindNone = 'No kind';
+
   /// Search on the field list matched nothing.
   static const String fieldsNoMatch = 'No matching fields';
+
+  /// Title of a template field list's filter sheet.
+  static const String fieldFiltersTitle = 'Field filters';
+
+  /// The required, recommended or optional facet of the field filters.
+  static const String fieldRequirednessFilter = 'Requirement';
 
   /// How a project chooses a template when capture starts.
   static const String templateChoiceLabel = 'Template choice';
@@ -1442,6 +1470,7 @@ abstract final class Copy {
     required bool fromPhotos,
     bool pinnedContext = false,
     int? contextLevel,
+    String? defaultValue,
   }) {
     final List<String> parts = <String>[typeLabel];
     if (requiredField) {
@@ -1459,8 +1488,15 @@ abstract final class Copy {
     if (pinnedContext) {
       parts.add('Pinned context');
     }
+    final String shownDefault = defaultValue?.trim() ?? '';
+    if (shownDefault.isNotEmpty) {
+      parts.add(fieldRowDefault(shownDefault));
+    }
     return parts.join(' · ');
   }
+
+  /// The value a field takes when nothing fills it, on its field row.
+  static String fieldRowDefault(String value) => 'Default: $value';
 
   /// RECOMMENDED badge on a field row.
   static const String fieldRecommended = 'Recommended';
@@ -2265,16 +2301,20 @@ abstract final class Copy {
   /// Removes one draft photo from the capture tray.
   static const String captureRemovePhoto = 'Remove photo';
 
-  /// Where a caption goes when no photo is ticked: every photo.
-  static String captionGoesToAll(int n) =>
-      Intl.plural(n, one: 'Goes to the photo', other: 'Goes to all $n photos');
+  /// Adds the typed caption to every photo, when none is ticked.
+  static String captionAddToAll(int n) =>
+      Intl.plural(n, one: 'Add to the photo', other: 'Add to all $n photos');
 
-  /// Where a caption goes when photos are ticked: only those.
-  static String captionGoesToTicked(int n) => Intl.plural(
+  /// Adds the typed caption to the ticked photos only.
+  static String captionAddToTicked(int n) => Intl.plural(
     n,
-    one: 'Goes to 1 ticked photo',
-    other: 'Goes to $n ticked photos',
+    one: 'Add to 1 ticked photo',
+    other: 'Add to $n ticked photos',
   );
+
+  /// Says how many photos a caption was just added to.
+  static String captionAdded(int n) =>
+      Intl.plural(n, one: 'Added to the photo', other: 'Added to $n photos');
 
   /// Append caption mode.
   static const String captionAppend = 'Append';

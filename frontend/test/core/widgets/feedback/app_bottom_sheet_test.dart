@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
@@ -93,6 +94,46 @@ void main() {
       },
     );
   }
+
+  testWidgets('the filter sheet shows the facets and clears and closes', (
+    WidgetTester tester,
+  ) async {
+    var cleared = 0;
+    await _pump(
+      tester,
+      const Size(400, 800),
+      Builder(
+        builder: (BuildContext context) {
+          return AppButton(
+            label: 'Open',
+            onPressed: () {
+              showAppFilterSheet(
+                context,
+                title: 'Record filters',
+                facets: (BuildContext _) => const Text('Status facet'),
+                onClear: () => cleared++,
+              );
+            },
+          );
+        },
+      ),
+    );
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    expect(find.text('Record filters'), findsOneWidget);
+    expect(find.text('Status facet'), findsOneWidget);
+    final Finder clear = find.byKey(
+      const ValueKey<String>('filter-sheet-clear'),
+    );
+    expect(find.text(Copy.searchClearFilters), findsOneWidget);
+    expect(clear, meetsTapTarget());
+
+    await tester.tap(clear);
+    await tester.pumpAndSettle();
+    expect(cleared, 1);
+    expect(find.byType(AppBottomSheet), findsNothing);
+  });
 
   testWidgets('expanded width presents a side panel', (
     WidgetTester tester,

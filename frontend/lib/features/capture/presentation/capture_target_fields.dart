@@ -5,6 +5,7 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
+import 'package:tapture/core/widgets/responsive/responsive_pair.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/templates.dart';
 
@@ -85,11 +86,9 @@ final class CaptureTargetFields extends ConsumerWidget {
       selectedAllowed: selectedAllowed,
       templatesSettled: templatesSettled,
     );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        if (projects.isNotEmpty)
-          AppChoiceField<String>(
+    final Widget? project = projects.isEmpty
+        ? null
+        : AppChoiceField<String>(
             key: const ValueKey<String>('capture-project-field'),
             label: Copy.captureProjectLabel,
             options: projects,
@@ -100,10 +99,10 @@ final class CaptureTargetFields extends ConsumerWidget {
                 onProjectSelected(id);
               }
             },
-          ),
-        if (templates.isNotEmpty) ...<Widget>[
-          const SizedBox(height: Space.x3),
-          AppChoiceField<String>(
+          );
+    final Widget? template = templates.isEmpty
+        ? null
+        : AppChoiceField<String>(
             key: const ValueKey<String>('capture-template-field'),
             label: Copy.capturePickTemplate,
             options: <Choice<String>>[
@@ -117,8 +116,16 @@ final class CaptureTargetFields extends ConsumerWidget {
                 ref.read(projectTemplateSelectionProvider.notifier).select(id);
               }
             },
-          ),
-        ],
+          );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        // Side by side from medium width up; one field alone stays full
+        // width (FBK0000004).
+        if (project != null && template != null)
+          ResponsivePair(start: project, end: template)
+        else
+          ?(project ?? template),
         if (message != null) ...<Widget>[
           if (projects.isNotEmpty) const SizedBox(height: Space.x2),
           Text(message, style: AppText.body),

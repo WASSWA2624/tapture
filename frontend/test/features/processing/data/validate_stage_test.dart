@@ -87,6 +87,77 @@ void main() {
     );
   }
 
+  test('an empty field takes its default, unverified, with source default, '
+      'no evidence and its audit', () async {
+    final seeded = await record();
+    await seeded.fixture.addField(
+      'status',
+      required: true,
+      defaultValue: 'In use',
+    );
+
+    await process(seeded.fixture, seeded.job, <String, Object?>{});
+
+    final RecordField field = (await fields(seeded.fixture)).single;
+    expect(field.fieldKey, 'status');
+    expect(field.valueRaw, 'In use');
+    expect(field.verified, isFalse);
+    expect(field.source, 'default');
+    expect(field.method, 'template-default');
+    expect(field.provider, 'template');
+    expect(field.confidence, 1.0);
+    expect(
+      await seeded.fixture.db.select(seeded.fixture.db.fieldEvidence).get(),
+      isEmpty,
+    );
+    final AuditLogData audit =
+        (await seeded.fixture.db.select(seeded.fixture.db.auditLog).get())
+            .lastWhere((AuditLogData row) => row.fieldKey == 'status');
+    expect(jsonDecode(audit.reason!), <String, Object?>{
+      'source': 'default',
+      'method': 'template-default',
+      'provider': 'template',
+      'model': '',
+      'promptVersion': '',
+    });
+    // A required field its default fills counts as filled.
+    expect((await seeded.fixture.storedRecord()).status, 'EXTRACTED');
+  });
+
+  test('extracted, verified and hand-entered values keep their field from '
+      'the default', () async {
+    final seeded = await record();
+    // Required, so the online stage is not skipped and extraction runs.
+    await seeded.fixture.addField(
+      'serial',
+      required: true,
+      defaultValue: 'UNKNOWN',
+    );
+    await seeded.fixture.addField('location', defaultValue: 'Store');
+    await seeded.fixture.addField('make', defaultValue: 'Generic');
+    await seedField(seeded.fixture, 'location', 'Ward 2', source: 'manual');
+    await seedField(seeded.fixture, 'make', 'Grundfos', verified: true);
+
+    await process(seeded.fixture, seeded.job, <String, Object?>{
+      'serial': value('SN458923'),
+    });
+
+    final Map<String, RecordField> byKey = <String, RecordField>{
+      for (final RecordField field in await fields(seeded.fixture))
+        field.fieldKey: field,
+    };
+    expect(byKey['serial']!.valueRaw, 'SN458923');
+    expect(byKey['serial']!.source, 'extraction');
+    expect(byKey['location']!.valueRaw, 'Ward 2');
+    expect(byKey['make']!.valueRaw, 'Grundfos');
+    expect(
+      (await fields(
+        seeded.fixture,
+      )).where((RecordField field) => field.source == 'default'),
+      isEmpty,
+    );
+  });
+
   test('an applied value carries evidence, provenance and an audit', () async {
     final seeded = await record();
     await seeded.fixture.addField('serial', required: true);

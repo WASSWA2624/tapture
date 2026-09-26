@@ -5,6 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/blob_file_writer.dart';
+import 'package:tapture/core/files/blob_store.dart';
+import 'package:tapture/core/files/file_reader.dart';
 import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
@@ -30,6 +33,7 @@ void main() {
       final DriftPhotoRepository repository = DriftPhotoRepository(
         db: db,
         writer: FileWriter(storageRoot: storage),
+        reader: FileReader(storageRoot: storage),
         clock: clock,
         deviceId: 'device-a',
         ids: UuidV7Service.sequence(clock),
@@ -114,6 +118,7 @@ void main() {
     final DriftPhotoRepository repository = DriftPhotoRepository(
       db: db,
       writer: FileWriter(storageRoot: storage),
+      reader: FileReader(storageRoot: storage),
       clock: clock,
       deviceId: 'device-a',
       ids: UuidV7Service.sequence(clock),
@@ -150,6 +155,86 @@ void main() {
     expect(original.readAsBytesSync(), <int>[1, 2, 3, 4]);
     original.deleteSync();
     expect(await repository.readBytes(saved), isA<FailureResult<Uint8List>>());
+  });
+
+  test(
+    'a photo written by the blob writer reads back through the reader',
+    () async {
+      final AppDatabase db = await seededDatabase();
+      addTearDown(db.close);
+      final FixedClock clock = FixedClock(DateTime.utc(2026, 9, 26, 15, 50));
+      final Project project = await db.select(db.projects).getSingle();
+      final Map<String, Uint8List> files = <String, Uint8List>{};
+      final DriftPhotoRepository repository = DriftPhotoRepository(
+        db: db,
+        writer: BlobFileWriter(BlobStore.memory(backing: files)),
+        reader: FileReader.memory(files),
+        clock: clock,
+        deviceId: 'device-a',
+        ids: UuidV7Service.sequence(clock),
+      );
+      final PhotoDraft saved = _ok(
+        await repository.saveDraft(
+          PhotoDraft(
+            id: 'photo-1',
+            projectId: project.id,
+            captureSessionId: 'session-1',
+            originalFilename: 'photo-1.jpg',
+            storedFilename: 'photo-1.jpg',
+            relativePath: 'photos/photo-1.jpg',
+            sha256: '',
+          ),
+          bytes: Uint8List.fromList(<int>[5, 6, 7]),
+        ),
+      );
+
+      expect(files.keys, <String>[
+        'projects/${project.folderName}/photos/photo-1.jpg',
+      ]);
+      expect(saved.fileSize, 3);
+      expect(_ok(await repository.readBytes(saved)), <int>[5, 6, 7]);
+
+      // A reload is a new writer and reader over the same stored map.
+      final DriftPhotoRepository reloaded = DriftPhotoRepository(
+        db: db,
+        writer: BlobFileWriter(BlobStore.memory(backing: files)),
+        reader: FileReader.memory(files),
+        clock: clock,
+        deviceId: 'device-a',
+        ids: UuidV7Service.sequence(clock),
+      );
+      expect(_ok(await reloaded.readBytes(saved)), <int>[5, 6, 7]);
+    },
+  );
+
+  test('a photo missing from the store is a storage failure', () async {
+    final AppDatabase db = await seededDatabase();
+    addTearDown(db.close);
+    final FixedClock clock = FixedClock(DateTime.utc(2026, 9, 26, 15, 50));
+    final Project project = await db.select(db.projects).getSingle();
+    final DriftPhotoRepository repository = DriftPhotoRepository(
+      db: db,
+      writer: BlobFileWriter(BlobStore.memory()),
+      reader: FileReader.memory(),
+      clock: clock,
+      deviceId: 'device-a',
+      ids: UuidV7Service.sequence(clock),
+    );
+
+    final Result<Uint8List> read = await repository.readBytes(
+      PhotoDraft(
+        id: 'photo-9',
+        projectId: project.id,
+        captureSessionId: 'session-1',
+        originalFilename: 'photo-9.jpg',
+        storedFilename: 'photo-9.jpg',
+        relativePath: 'photos/photo-9.jpg',
+        sha256: 'abc',
+      ),
+    );
+
+    expect(read, isA<FailureResult<Uint8List>>());
+    expect((read as FailureResult<Uint8List>).failure, isA<StorageFailure>());
   });
 }
 

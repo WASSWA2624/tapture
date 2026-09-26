@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -127,6 +128,53 @@ void main() {
     expect(find.byType(AspectRatio), findsOneWidget);
     expect(tester.widget<AspectRatio>(find.byType(AspectRatio)).aspectRatio, 1);
     expect(tester.widget<Image>(find.byType(Image)).fit, BoxFit.cover);
+  });
+
+  testWidgets('bytes draw through Image.memory decoded at thumbnail size', (
+    WidgetTester tester,
+  ) async {
+    final Uint8List bytes = Uint8List.fromList(_kPngBytes);
+    await _pump(
+      tester,
+      AppPhotoThumb(
+        photo: PhotoAsset(sha256: 'web', thumbBytes: bytes, hasCaption: true),
+        size: edge,
+        onTap: () {},
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
+    final Image image = tester.widget<Image>(find.byType(Image));
+    expect(image.fit, BoxFit.cover);
+    final ImageProvider<Object> provider = image.image;
+    expect(provider, isA<ResizeImage>());
+    final ResizeImage resized = provider as ResizeImage;
+    expect(resized.width, edge.round());
+    expect(resized.imageProvider, isA<MemoryImage>());
+    expect((resized.imageProvider as MemoryImage).bytes, same(bytes));
+    expect(_imageFilePaths(tester), isEmpty);
+    expect(find.text('Missing photo'), findsNothing);
+    expect(find.byType(AppPhotoThumb), hasSemanticLabel('Photo, captioned'));
+  });
+
+  testWidgets('bytes are decoded at the device pixel size', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      AppPhotoThumb(
+        photo: PhotoAsset(
+          sha256: 'web',
+          thumbBytes: Uint8List.fromList(_kPngBytes),
+        ),
+        size: Space.x12,
+      ),
+    );
+    tester.view.devicePixelRatio = 2;
+    await tester.pump();
+
+    final Image image = tester.widget<Image>(find.byType(Image));
+    expect((image.image as ResizeImage).width, (Space.x12 * 2).round());
   });
 
   testWidgets('a missing thumb does not fall back to the original', (

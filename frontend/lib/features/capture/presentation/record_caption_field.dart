@@ -11,7 +11,7 @@ final class RecordCaptionField extends StatefulWidget {
     this.onWriteFailed,
     this.afterDictation,
     this.enabled = true,
-    this.targetKey,
+    this.resetKey,
     super.key,
   });
 
@@ -30,10 +30,11 @@ final class RecordCaptionField extends StatefulWidget {
   /// When false, the field and its microphone do not accept input.
   final bool enabled;
 
-  /// Names the photos the caption goes to. [value] replaces the typed text
-  /// only when this changes, and when the field is not being typed in, so
-  /// a late save never resets typing (FBK0000149).
-  final Object? targetKey;
+  /// Changes when the caption is replaced from outside; [value] then
+  /// replaces the typed text. Otherwise [value] replaces it only while the
+  /// field is not being typed in, so a late save never resets typing
+  /// (FBK0000149).
+  final Object? resetKey;
 
   @override
   State<RecordCaptionField> createState() => _RecordCaptionFieldState();
@@ -57,8 +58,8 @@ class _RecordCaptionFieldState extends State<RecordCaptionField>
     if (widget.value == _controller.text) {
       return;
     }
-    final bool targetsChanged = oldWidget.targetKey != widget.targetKey;
-    if (targetsChanged || (!_focused && oldWidget.value != widget.value)) {
+    final bool reset = oldWidget.resetKey != widget.resetKey;
+    if (reset || (!_focused && oldWidget.value != widget.value)) {
       _controller.text = widget.value;
     }
   }

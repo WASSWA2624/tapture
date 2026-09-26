@@ -5,8 +5,9 @@ import 'provenance.dart';
 /// Writes proposals. Nothing here is approved data.
 ///
 /// A verified field and a hand-entered field are skipped and the skip is
-/// recorded. A review-required value, or a required field that is still
-/// empty, sets the record to needs review.
+/// recorded. A field still empty after extraction takes its template
+/// default, if it has one. A review-required value, or a required field
+/// that is still empty, sets the record to needs review.
 final class ProposalApplication {
   /// Status written when a person must look.
   static const String needsReviewStatus = 'NEEDS_REVIEW';
@@ -14,13 +15,32 @@ final class ProposalApplication {
   /// Status written when every applied value is above review.
   static const String extractedStatus = 'EXTRACTED';
 
+  /// Provenance source of a value filled from the template's default.
+  static const String defaultSource = 'default';
+
+  /// Provenance method of a value filled from the template's default.
+  static const String defaultMethod = 'template-default';
+
+  /// Provenance provider of a value filled from the template's default.
+  static const String defaultProvider = 'template';
+
+  /// Confidence of a default: the template states it, nothing inferred it.
+  static const double defaultConfidence = 1;
+
   /// Decides writes, skips and the record status.
+  ///
+  /// [defaults] maps a field key to the value its template gives a field
+  /// nothing filled. A default is written only where there is no stored
+  /// value, the field was neither verified nor entered by hand, and no
+  /// proposal was written; it is unverified, carries no evidence, and
+  /// counts as filled for the status (FBK0000002).
   static ApplicationPlan apply({
     required List<ProposedValue> proposals,
     required List<ExistingValue> existing,
     required double high,
     required double medium,
     required List<String> requiredKeys,
+    Map<String, String> defaults = const <String, String>{},
   }) {
     final Map<String, ExistingValue> current = <String, ExistingValue>{
       for (final ExistingValue value in existing) value.fieldKey: value,
@@ -78,6 +98,35 @@ final class ProposalApplication {
         provenance: proposal.provenance,
       ));
       filled.add(proposal.fieldKey);
+    }
+    for (final MapEntry<String, String> fallback in defaults.entries) {
+      final String value = fallback.value.trim();
+      final ExistingValue? prior = current[fallback.key];
+      if (value.isEmpty ||
+          filled.contains(fallback.key) ||
+          (prior != null && (prior.verified || _manual(prior.source)))) {
+        continue;
+      }
+      writes.add((
+        fieldKey: fallback.key,
+        proposed: value,
+        confidence: defaultConfidence,
+        source: defaultSource,
+        band: Confidence.band(
+          score: defaultConfidence,
+          high: high,
+          medium: medium,
+        ),
+        evidence: const <EvidenceDraft>[],
+        provenance: Provenance.stamp(
+          source: defaultSource,
+          method: defaultMethod,
+          provider: defaultProvider,
+          model: '',
+          promptVersion: '',
+        ),
+      ));
+      filled.add(fallback.key);
     }
     for (final String key in requiredKeys) {
       if (!filled.contains(key)) {

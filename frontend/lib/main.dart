@@ -22,6 +22,7 @@ import 'core/device/platform_facts.dart';
 import 'core/errors/failure.dart';
 import 'core/errors/result.dart';
 import 'core/files/download_service.dart';
+import 'core/files/file_reader.dart';
 import 'core/files/file_writer.dart';
 import 'core/files/photo_picker.dart';
 import 'core/files/screen_capture.dart';
@@ -117,6 +118,7 @@ Future<void> _run() async {
     final DriftPhotoRepository capturePhotos = DriftPhotoRepository(
       db: db,
       writer: evidenceWriter,
+      reader: FileReader(storageRoot: storageRoot),
       clock: clock,
       deviceId: id,
       ids: ids,

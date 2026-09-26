@@ -240,27 +240,27 @@ class _SheetChoice<T> extends StatelessWidget {
       type: MaterialType.transparency,
       child: InkWell(
         onTap: enabled ? () => unawaited(_open(context)) : null,
-        child: InputDecorator(
-          isEmpty: selectedLabel.isEmpty,
-          decoration: InputDecoration(
-            labelText: label,
-            enabled: enabled,
-            suffixIcon: ExcludeSemantics(
-              child: Icon(
-                AppIcons.expand,
-                color: colors.onSurface,
-                size: Space.x6,
+        // The whole trigger is the 48dp target, so the value line is one
+        // text line tall and the field matches a labelled text field
+        // (FBK0000004).
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
+          child: InputDecorator(
+            isEmpty: selectedLabel.isEmpty,
+            decoration: InputDecoration(
+              labelText: label,
+              enabled: enabled,
+              suffixIcon: ExcludeSemantics(
+                child: Icon(
+                  AppIcons.expand,
+                  color: colors.onSurface,
+                  size: Space.x6,
+                ),
               ),
             ),
-          ),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
-            child: Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: Text(
-                selectedLabel.isEmpty ? ' ' : selectedLabel,
-                style: AppText.body.copyWith(color: colors.onSurface),
-              ),
+            child: Text(
+              selectedLabel.isEmpty ? ' ' : selectedLabel,
+              style: AppText.body.copyWith(color: colors.onSurface),
             ),
           ),
         ),

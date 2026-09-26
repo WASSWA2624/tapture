@@ -35,6 +35,83 @@ void main() {
     expect(tapped, isTrue);
   });
 
+  testWidgets('with onIconTap the icon is a named 48dp button', (
+    WidgetTester tester,
+  ) async {
+    var tapped = 0;
+    await _pump(
+      tester,
+      AppEmptyState(
+        icon: Icons.add_a_photo_outlined,
+        headline: 'No photos yet',
+        message: 'Add a photo to start this record.',
+        onIconTap: () => tapped++,
+        iconLabel: 'Add photo',
+      ),
+    );
+
+    final Finder action = find.byKey(
+      const ValueKey<String>('empty-state-icon-action'),
+    );
+    expect(action, findsOneWidget);
+    expect(find.byType(AppButton), findsNothing);
+    expect(find.byTooltip('Add photo'), findsOneWidget);
+    expect(
+      tester.getSemantics(action),
+      matchesSemantics(
+        label: 'Add photo',
+        isButton: true,
+        hasTapAction: true,
+        isFocusable: false,
+      ),
+    );
+    expect(tester.getSize(action).width, greaterThanOrEqualTo(48));
+    expect(tester.getSize(action).height, greaterThanOrEqualTo(48));
+    expect(action, meetsTapTarget());
+    expect(find.byType(AppEmptyState), hasSemanticLabel('No photos yet'));
+
+    await tester.tap(find.byIcon(Icons.add_a_photo_outlined));
+    await tester.pump();
+    expect(tapped, 1);
+  });
+
+  testWidgets('without onIconTap the icon is plain', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      const AppEmptyState(
+        icon: Icons.add_a_photo_outlined,
+        headline: 'No photos yet',
+        message: 'Add a photo to start this record.',
+        iconLabel: 'Add photo',
+      ),
+    );
+
+    expect(
+      find.byKey(const ValueKey<String>('empty-state-icon-action')),
+      findsNothing,
+    );
+    expect(find.byType(InkWell), findsNothing);
+    expect(find.byTooltip('Add photo'), findsNothing);
+    expect(find.byIcon(Icons.add_a_photo_outlined), findsOneWidget);
+  });
+
+  test('the icon and a button cannot both be the action', () {
+    expect(
+      () => AppEmptyState(
+        icon: Icons.add_a_photo_outlined,
+        headline: 'No photos yet',
+        message: 'Add a photo to start this record.',
+        actionLabel: 'Add photo',
+        onAction: () {},
+        onIconTap: () {},
+        iconLabel: 'Add photo',
+      ),
+      throwsAssertionError,
+    );
+  });
+
   testWidgets('stays usable at 200 percent text scale', (
     WidgetTester tester,
   ) async {

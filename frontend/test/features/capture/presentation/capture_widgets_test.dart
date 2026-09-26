@@ -46,6 +46,7 @@ import 'package:tapture/features/capture/presentation/voice_input_button.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/templates.dart';
 
+import '../../../support/a11y_matchers.dart';
 import '../../../support/factories.dart';
 import '../../../support/fakes/fake_photo_repository.dart';
 import '../../projects/fakes/fake_project_repository.dart';
@@ -186,7 +187,7 @@ void main() {
       tester.widget<AppPrimaryAction>(find.byType(AppPrimaryAction)).onPressed,
       isNull,
     );
-    expect(find.widgetWithText(AppButton, Copy.captureAddPhoto), findsNothing);
+    expect(_addPhotoIcon, findsNothing);
     expect(_icon(tester, Copy.captureRecordAudio).onPressed, isNull);
 
     await tester.tap(find.text('Alpha'));
@@ -206,11 +207,140 @@ void main() {
       tester.widget<AppPrimaryAction>(find.byType(AppPrimaryAction)).onPressed,
       isNotNull,
     );
-    expect(
-      find.widgetWithText(AppButton, Copy.captureAddPhoto),
-      findsOneWidget,
-    );
+    expect(_addPhotoIcon, findsOneWidget);
     expect(_icon(tester, Copy.captureRecordAudio).onPressed, isNotNull);
+  });
+
+  group('capture layout', () {
+    Future<void> pumpReady(
+      WidgetTester tester, {
+      required Size size,
+      double textScale = 1,
+    }) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = size;
+      tester.platformDispatcher.textScaleFactorTestValue = textScale;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+        tester.platformDispatcher.clearTextScaleFactorTestValue();
+      });
+      final FakePhotoRepository photos = FakePhotoRepository();
+      addTearDown(photos.dispose);
+      final FakeProjectRepository projects = FakeProjectRepository();
+      addTearDown(projects.dispose);
+      final FakeTemplateRepository templates = FakeTemplateRepository();
+      addTearDown(templates.dispose);
+      await projects.create(aProject(id: 'p1', name: 'Alpha'));
+      await templates.save(
+        aTemplate(id: 't1', name: 'Assets', projectId: 'p1'),
+      );
+      await tester.pumpWidget(
+        wrap(
+          const CaptureScreen(projectId: 'p1'),
+          overrides: <Override>[
+            photoRepositoryProvider.overrideWith((Ref _) => photos),
+            projectRepositoryProvider.overrideWith((Ref _) => projects),
+            templateRepositoryProvider.overrideWith((Ref _) => templates),
+            capturePersistenceProvider.overrideWith(
+              (Ref ref) => CapturePersistenceImpl(
+                photos: photos,
+                store: TextStore.memory(),
+              ),
+            ),
+            photoPickerProvider.overrideWith(
+              (Ref _) => const PhotoPicker.fake(canTakePhoto: true),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    final Finder projectField = find.byKey(
+      const ValueKey<String>('capture-project-field'),
+    );
+    final Finder templateField = find.byKey(
+      const ValueKey<String>('capture-template-field'),
+    );
+    final Finder saveRaw = find.widgetWithText(AppButton, Copy.captureSaveRaw);
+    final Finder saveAndProcess = find.byType(AppPrimaryAction);
+
+    const List<({String name, Size size, bool paired})> layouts =
+        <({String name, Size size, bool paired})>[
+          (name: 'compact portrait', size: Size(360, 740), paired: false),
+          (name: 'compact landscape', size: Size(560, 360), paired: false),
+          (name: 'medium portrait', size: Size(800, 1200), paired: true),
+          (name: 'medium landscape', size: Size(1000, 700), paired: true),
+          (name: 'expanded portrait', size: Size(1024, 1366), paired: true),
+          (name: 'expanded landscape', size: Size(1366, 1024), paired: true),
+        ];
+
+    for (final ({String name, Size size, bool paired}) layout in layouts) {
+      testWidgets('in ${layout.name} the selects and saves '
+          '${layout.paired ? 'share a row' : 'stack in order'}', (
+        WidgetTester tester,
+      ) async {
+        await pumpReady(tester, size: layout.size);
+
+        final Rect project = tester.getRect(projectField);
+        final Rect template = tester.getRect(templateField);
+        final Rect raw = tester.getRect(saveRaw);
+        final Rect primary = tester.getRect(saveAndProcess);
+        if (layout.paired) {
+          expect(project.top, template.top);
+          expect(project.right, lessThan(template.left));
+          expect(project.height, template.height);
+          expect(raw.top, primary.top);
+          expect(raw.right, lessThan(primary.left));
+          expect(primary.width, greaterThan(raw.width));
+        } else {
+          expect(project.bottom, lessThan(template.top));
+          expect(project.left, template.left);
+          expect(raw.bottom, lessThan(primary.top));
+          expect(raw.width, primary.width);
+        }
+        expect(projectField, meetsTapTarget());
+        expect(templateField, meetsTapTarget());
+        expect(saveRaw, meetsTapTarget());
+        expect(saveAndProcess, meetsTapTarget());
+        expect(_addPhotoIcon, meetsTapTarget());
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('in ${layout.name} nothing overflows at 200 percent text', (
+        WidgetTester tester,
+      ) async {
+        await pumpReady(tester, size: layout.size, textScale: 2);
+
+        expect(tester.takeException(), isNull);
+        expect(saveRaw, meetsTapTarget());
+        expect(saveAndProcess, meetsTapTarget());
+        expect(projectField, meetsTapTarget());
+      });
+    }
+
+    testWidgets('the empty tray has no Add photo button and its icon adds', (
+      WidgetTester tester,
+    ) async {
+      await pumpReady(tester, size: const Size(360, 740));
+
+      expect(find.text(Copy.captureNoPhotosHeadline), findsOneWidget);
+      expect(
+        find.widgetWithText(AppButton, Copy.captureAddPhoto),
+        findsNothing,
+      );
+      expect(find.byTooltip(Copy.captureAddPhoto), findsOneWidget);
+      expect(_addPhotoIcon, hasSemanticLabel(Copy.captureAddPhoto));
+
+      await tester.tap(_addPhotoIcon);
+      await tester.pumpAndSettle();
+      expect(find.text(Copy.captureAddSheetTitle), findsOneWidget);
+      expect(
+        find.widgetWithText(AppButton, Copy.captureChoosePhoto),
+        findsOneWidget,
+      );
+    });
   });
 
   testWidgets('inline_fields empty required more validation', (
@@ -785,4 +915,9 @@ final Finder _selectTarget = find.byKey(
 
 final Finder _removeTarget = find.byKey(
   const ValueKey<String>('photo-corner-remove-target'),
+);
+
+/// The empty tray's add-photo icon, which is its add action (FBK0000004).
+final Finder _addPhotoIcon = find.byKey(
+  const ValueKey<String>('empty-state-icon-action'),
 );

@@ -22,13 +22,16 @@ import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_photo_thumb.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/projects/domain/project_repository.dart';
+import 'package:tapture/features/projects/presentation/captured_items.dart';
 import 'package:tapture/features/projects/presentation/project_export_screen.dart';
 import 'package:tapture/features/projects/presentation/project_home_screen.dart';
+import 'package:tapture/features/projects/presentation/project_record_filter.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/settings/settings.dart';
 import 'package:tapture/features/templates/templates.dart';
@@ -392,6 +395,116 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('Pump house'), findsOneWidget);
     expect(find.text(Copy.projectRecordsNoMatch('buildin')), findsNothing);
+  });
+
+  group('status filter', () {
+    Future<void> pumpStatuses(WidgetTester tester) async {
+      final FakeProjectRepository repo = FakeProjectRepository();
+      addTearDown(repo.dispose);
+      _ok(await repo.create(aProject(name: 'Alpha')));
+      repo.seedRecords('project-1', <ProjectRecordRow>[
+        _record('r1', name: 'Pump house'),
+        _record('r2', name: 'Boiler room', status: 'needsReview'),
+        _record('r3', name: 'Pump shed', status: 'approved'),
+      ]);
+      await _pump(tester, repo: repo, openProjectId: 'project-1');
+      await tester.pumpAndSettle();
+    }
+
+    Finder filterButton() => find.descendant(
+      of: find.byKey(const ValueKey<String>('home-search')),
+      matching: find.byKey(const ValueKey<String>('search-filter')),
+    );
+
+    ProviderContainer container(WidgetTester tester) {
+      return ProviderScope.containerOf(
+        tester.element(find.byKey(const ValueKey<String>('home-search'))),
+      );
+    }
+
+    testWidgets('choosing a status in the sheet lists only records in it', (
+      WidgetTester tester,
+    ) async {
+      await pumpStatuses(tester);
+      expect(find.text('Pump house'), findsOneWidget);
+      expect(find.text('Boiler room'), findsOneWidget);
+      expect(find.byTooltip(Copy.searchFilters(0)), findsOneWidget);
+
+      await tester.tap(filterButton());
+      await tester.pumpAndSettle();
+      expect(find.text(Copy.projectRecordFiltersTitle), findsOneWidget);
+      await tester.tap(
+        find.byKey(const ValueKey<String>('record-status-filter')),
+      );
+      await tester.pumpAndSettle();
+      // Only the statuses present, named as their pills name them.
+      expect(find.text(Copy.statusCaptured), findsOneWidget);
+      expect(find.text(Copy.statusApproved), findsOneWidget);
+      expect(find.text(Copy.statusDraft), findsNothing);
+      await tester.tap(find.text(Copy.statusNeedsReview));
+      await tester.pumpAndSettle();
+      await tester.tapAt(const Offset(10, 10));
+      await tester.pumpAndSettle();
+      await tester.tapAt(const Offset(10, 10));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Boiler room'), findsOneWidget);
+      expect(find.text('Pump house'), findsNothing);
+      expect(find.text('Pump shed'), findsNothing);
+      expect(find.byTooltip(Copy.searchFilters(1)), findsOneWidget);
+    });
+
+    testWidgets('search and the status filter combine', (
+      WidgetTester tester,
+    ) async {
+      await pumpStatuses(tester);
+      container(tester).read(projectRecordFilterProvider.notifier).set(
+        <RecordStatus>{RecordStatus.captured, RecordStatus.approved},
+      );
+      container(tester).read(capturedItemsQueryProvider.notifier).set('pump');
+      await tester.pumpAndSettle();
+
+      expect(find.text('Pump house'), findsOneWidget);
+      expect(find.text('Pump shed'), findsOneWidget);
+      expect(find.text('Boiler room'), findsNothing);
+      expect(find.byTooltip(Copy.searchFilters(2)), findsOneWidget);
+
+      container(tester).read(capturedItemsQueryProvider.notifier).set('boiler');
+      await tester.pumpAndSettle();
+      expect(find.text(Copy.searchFilterNoMatchMessage), findsOneWidget);
+    });
+
+    testWidgets('clear filters lists every record again', (
+      WidgetTester tester,
+    ) async {
+      await pumpStatuses(tester);
+      container(tester).read(projectRecordFilterProvider.notifier).set(
+        <RecordStatus>{RecordStatus.approved},
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Pump house'), findsNothing);
+
+      await tester.tap(filterButton());
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey<String>('filter-sheet-clear')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Pump house'), findsOneWidget);
+      expect(find.text('Boiler room'), findsOneWidget);
+      expect(find.text('Pump shed'), findsOneWidget);
+      expect(find.byTooltip(Copy.searchFilters(0)), findsOneWidget);
+    });
+
+    test('a stored status reads as its lifecycle status in any case', () {
+      expect(ProjectRecordFilter.statusOf('CAPTURED'), RecordStatus.captured);
+      expect(
+        ProjectRecordFilter.statusOf('needs_review'),
+        RecordStatus.needsReview,
+      );
+      expect(ProjectRecordFilter.statusOf('exported'), isNull);
+    });
   });
 
   testWidgets('a project with no records keeps its empty state', (
@@ -814,11 +927,16 @@ void _setSurface(WidgetTester tester, Size size) {
   });
 }
 
-ProjectRecordRow _record(String id, {String? name, RecordPhotoRef? thumb}) {
+ProjectRecordRow _record(
+  String id, {
+  String? name,
+  RecordPhotoRef? thumb,
+  String status = 'captured',
+}) {
   return (
     id: id,
     templateId: 't1',
-    status: 'captured',
+    status: status,
     photoCount: thumb == null ? 0 : 1,
     thumb: thumb,
     fields: <ProjectRecordFieldValue>[

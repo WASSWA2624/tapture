@@ -34,7 +34,7 @@ List<({String name, ThemeData theme})> get _modes {
 
 Future<void> _pumpGallery(WidgetTester tester, ThemeData theme) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(400, 560);
+  tester.view.physicalSize = const Size(400, 720);
   addTearDown(() {
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();
@@ -60,6 +60,15 @@ Future<void> _pumpGallery(WidgetTester tester, ThemeData theme) async {
             ),
             const SizedBox(height: Space.x4),
             AppSearchField(hint: 'Disabled', enabled: false, onChanged: (_) {}),
+            const SizedBox(height: Space.x4),
+            AppSearchField(hint: 'Filters', onChanged: (_) {}, onFilter: () {}),
+            const SizedBox(height: Space.x4),
+            AppSearchField(
+              hint: 'Filters on',
+              onChanged: (_) {},
+              onFilter: () {},
+              activeFilterCount: 2,
+            ),
           ],
         ),
       ),

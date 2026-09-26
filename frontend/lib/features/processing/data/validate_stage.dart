@@ -75,6 +75,11 @@ final class ValidateStage {
         for (final TemplateField field in bundle.fields)
           if (field.isRequired) field.fieldKey,
       ],
+      defaults: <String, String>{
+        for (final TemplateField field in bundle.fields)
+          if ((field.defaultValue ?? '').trim().isNotEmpty)
+            field.fieldKey: field.defaultValue!,
+      },
     );
     final List<String> priorRejections = await _writes.rejections(job.id);
     await _db.transaction(() async {

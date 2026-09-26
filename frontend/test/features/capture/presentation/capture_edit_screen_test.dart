@@ -38,9 +38,30 @@ void main() {
     expect(find.text(Copy.recordEditSave), findsOneWidget);
     expect(find.text(Copy.captureSaveRaw), findsNothing);
     expect(find.byType(CaptureTargetFields), findsNothing);
-    expect(find.text(Copy.captionGoesToAll(2)), findsOneWidget);
+    expect(find.text(Copy.captionAddToAll(2)), findsOneWidget);
     expect(harness.session(tester).captions['f1'], 'Valve');
     expect(harness.session(tester).recordCaption, 'Boiler');
+    // The field holds the record's own caption, not a photo's.
+    expect(_captionText(tester), 'Boiler');
+  });
+
+  testWidgets('typing on the edit page changes no photo caption, and Add '
+      'appends it to the photos', (WidgetTester tester) async {
+    final _Harness harness = await _open(tester);
+    await tester.enterText(_captionField, 'Pump room');
+    await tester.pumpAndSettle();
+    expect(harness.session(tester).captions['f1'], 'Valve');
+    expect(harness.session(tester).captions['f2'] ?? '', isEmpty);
+    expect(harness.session(tester).recordCaption, 'Pump room');
+
+    await tester.tap(find.byKey(const ValueKey<String>('capture-caption-add')));
+    await tester.pumpAndSettle();
+
+    expect(harness.session(tester).captions['f1'], 'Valve\nPump room');
+    expect(harness.session(tester).captions['f2'], 'Pump room');
+    expect(harness.session(tester).recordCaption, '');
+    expect(_captionText(tester), '');
+    expect(find.text(Copy.captionAdded(2)), findsOneWidget);
   });
 
   testWidgets('Save changes writes the record and returns to its page', (
@@ -152,6 +173,16 @@ void main() {
 }
 
 final String _key = CaptureSessionKey.edit('r1');
+
+final Finder _captionField = find.byWidgetPredicate(
+  (Widget widget) =>
+      widget is TextField &&
+      widget.decoration?.labelText == Copy.captureRecordCaption,
+);
+
+String _captionText(WidgetTester tester) {
+  return tester.widget<TextField>(_captionField).controller?.text ?? '';
+}
 
 Finder _thumb(String id) => find.byKey(ValueKey<String>('photo-thumb-$id'));
 

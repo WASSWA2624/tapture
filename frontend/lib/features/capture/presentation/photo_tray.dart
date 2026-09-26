@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
@@ -19,6 +21,7 @@ final class PhotoTray extends StatelessWidget {
     this.selectedIds = const <String>{},
     this.captions = const <String, String>{},
     this.thumbPaths = const <String, String>{},
+    this.thumbBytes = const <String, Uint8List>{},
     this.missingIds = const <String>{},
     super.key,
   });
@@ -48,21 +51,26 @@ final class PhotoTray extends StatelessWidget {
   /// Absolute cached thumbnail paths keyed by photo id.
   final Map<String, String> thumbPaths;
 
+  /// Photo bytes keyed by photo id, drawn at thumbnail size in place of a
+  /// cached file. A browser passes these; it has no thumbnail files.
+  final Map<String, Uint8List> thumbBytes;
+
   /// Photos whose file could not be read.
   final Set<String> missingIds;
 
   @override
   Widget build(BuildContext context) {
     if (photos.isEmpty) {
-      // The catalogue empty state names the next step and offers it. While
-      // capture is not ready [onAdd] is null, the action is hidden and the
-      // gate message above says why (FE-SIMP-11).
+      // The catalogue empty state names the next step, and its add-photo
+      // icon is the action, with no button under it (FBK0000004,
+      // FE-SIMP-11). While capture is not ready [onAdd] is null, the icon
+      // is plain and the gate message above says why.
       return AppEmptyState(
         icon: AppIcons.addPhoto,
         headline: Copy.captureNoPhotosHeadline,
         message: Copy.captureNoPhotosMessage,
-        actionLabel: Copy.captureAddPhoto,
-        onAction: onAdd,
+        onIconTap: onAdd,
+        iconLabel: Copy.captureAddPhoto,
       );
     }
     return Column(
@@ -102,6 +110,7 @@ final class PhotoTray extends StatelessWidget {
                     photo: PhotoAsset(
                       sha256: photo.sha256,
                       thumbPath: missing ? 'missing' : (thumb ?? ''),
+                      thumbBytes: missing ? null : thumbBytes[photo.id],
                       hasCaption: hasCaption,
                     ),
                     size: edge,

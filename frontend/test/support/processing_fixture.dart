@@ -223,6 +223,7 @@ final class ProcessingFixture {
     String options = '[]',
     String? unit,
     int order = 0,
+    String? defaultValue,
   }) async {
     return _ok(
       await upsertTemplateField(
@@ -235,6 +236,7 @@ final class ProcessingFixture {
           isRequired: Value<bool>(required),
           options: Value<String>(options),
           unit: Value<String?>(unit),
+          defaultValue: Value<String?>(defaultValue),
           validation: Value<String>(
             pattern == null ? '{}' : '{"pattern":"${_json(pattern)}"}',
           ),

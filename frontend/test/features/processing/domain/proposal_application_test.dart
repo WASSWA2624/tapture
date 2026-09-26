@@ -117,4 +117,113 @@ void main() {
     expect(write.source, 'ai');
     expect(plan.status, ProposalApplication.extractedStatus);
   });
+
+  group('template defaults', () {
+    ApplicationPlan withDefaults({
+      List<ProposedValue> proposals = const <ProposedValue>[],
+      List<ExistingValue> existing = const <ExistingValue>[],
+      List<String> requiredKeys = const <String>[],
+      Map<String, String> defaults = const <String, String>{'status': 'In use'},
+    }) {
+      return ProposalApplication.apply(
+        proposals: proposals,
+        existing: existing,
+        high: 0.85,
+        medium: 0.6,
+        requiredKeys: requiredKeys,
+        defaults: defaults,
+      );
+    }
+
+    test('a default fills a field nothing else filled', () {
+      final ApplicationPlan plan = withDefaults();
+
+      final ProposalWrite write = plan.writes.single;
+      expect(write.fieldKey, 'status');
+      expect(write.proposed, 'In use');
+      expect(write.confidence, 1.0);
+      expect(write.source, ProposalApplication.defaultSource);
+      expect(write.source, 'default');
+      expect(write.provenance.source, 'default');
+      expect(write.provenance.method, 'template-default');
+      expect(write.provenance.provider, 'template');
+      expect(write.evidence, isEmpty);
+      expect(plan.skips, isEmpty);
+    });
+
+    test('a default fills a stored row that is still empty', () {
+      final ApplicationPlan plan = withDefaults(
+        existing: const <ExistingValue>[
+          (
+            fieldKey: 'status',
+            capturedValue: '  ',
+            verified: false,
+            source: 'ai',
+          ),
+        ],
+      );
+
+      expect(plan.writes.single.proposed, 'In use');
+    });
+
+    test('an extracted value wins over the default', () {
+      final ApplicationPlan plan = withDefaults(
+        proposals: <ProposedValue>[proposed('status', 'Broken', 0.9)],
+      );
+
+      expect(plan.writes.single.proposed, 'Broken');
+      expect(plan.writes.single.source, 'ai');
+    });
+
+    test('a stored, a verified and a hand-entered value each win', () {
+      for (final ExistingValue prior in const <ExistingValue>[
+        (
+          fieldKey: 'status',
+          capturedValue: 'Spare',
+          verified: false,
+          source: 'ai',
+        ),
+        (
+          fieldKey: 'status',
+          capturedValue: 'Spare',
+          verified: true,
+          source: 'ai',
+        ),
+        (
+          fieldKey: 'status',
+          capturedValue: 'Spare',
+          verified: false,
+          source: 'manual',
+        ),
+      ]) {
+        final ApplicationPlan plan = withDefaults(
+          existing: <ExistingValue>[prior],
+        );
+        expect(plan.writes, isEmpty, reason: prior.toString());
+      }
+    });
+
+    test('a blank default writes nothing', () {
+      final ApplicationPlan plan = withDefaults(
+        defaults: const <String, String>{'status': '   '},
+        requiredKeys: const <String>['status'],
+      );
+
+      expect(plan.writes, isEmpty);
+      expect(plan.status, ProposalApplication.needsReviewStatus);
+    });
+
+    test(
+      'a required field filled by its default leaves the record EXTRACTED',
+      () {
+        final ApplicationPlan plan = withDefaults(
+          requiredKeys: const <String>['status'],
+        );
+
+        expect(plan.needsReview, isFalse);
+        expect(plan.status, ProposalApplication.extractedStatus);
+        expect(plan.status, 'EXTRACTED');
+      },
+    );
+  });
 }

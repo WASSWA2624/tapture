@@ -5,6 +5,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
+import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
 
 import '../../../support/a11y_matchers.dart';
@@ -190,6 +191,53 @@ void main() {
     expect(tester.takeException(), isNull);
     await expectNoA11yIssues(tester);
   });
+  for (final double scale in <double>[1, 2]) {
+    testWidgets('a sheet field is as tall as a labelled text field at '
+        '${(scale * 100).round()} percent text', (WidgetTester tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = scale;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      final TextEditingController text = TextEditingController(text: 'Alpha');
+      addTearDown(text.dispose);
+      await _pump(
+        tester,
+        Column(
+          children: <Widget>[
+            AppChoiceField<String>(
+              key: const ValueKey<String>('sheet'),
+              label: 'Project',
+              options: four,
+              value: 'a',
+              onChanged: (_) {},
+            ),
+            AppTextField(
+              key: const ValueKey<String>('text'),
+              label: 'Caption',
+              controller: text,
+            ),
+          ],
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      final double sheet = tester
+          .getSize(find.byKey(const ValueKey<String>('sheet')))
+          .height;
+      final double field = tester
+          .getSize(find.byKey(const ValueKey<String>('text')))
+          .height;
+      expect(sheet, field);
+      expect(sheet, greaterThanOrEqualTo(Sizes.minTapTarget));
+      expect(find.byKey(const ValueKey<String>('sheet')), meetsTapTarget());
+      // The value line sits inside the trigger, not clipped by it.
+      final Rect trigger = tester.getRect(
+        find.byKey(const ValueKey<String>('sheet')),
+      );
+      final Rect value = tester.getRect(find.text('Alpha').first);
+      expect(trigger.top, lessThanOrEqualTo(value.top));
+      expect(trigger.bottom, greaterThanOrEqualTo(value.bottom));
+      await expectNoA11yIssues(tester);
+    });
+  }
 }
 
 Future<void> _pump(

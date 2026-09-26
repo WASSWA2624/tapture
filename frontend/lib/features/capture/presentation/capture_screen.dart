@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
@@ -23,6 +23,7 @@ import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/photo_source_sheet.dart';
+import 'package:tapture/core/widgets/responsive/responsive_pair.dart';
 import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
 import 'package:tapture/features/capture/domain/capture_photo_repository.dart';
@@ -64,7 +65,10 @@ final StreamProvider<List<TemplateDef>> captureTemplatesProvider =
       return ref.watch(templateRepositoryProvider).watchByProject(projectId);
     });
 
-typedef _CaptureUiState = ({String audioId, bool saving});
+/// The screen's own state: the next audio id, whether a save is running,
+/// and how many captions have been added to photos, which resets the
+/// caption field after each add.
+typedef _CaptureUiState = ({String audioId, bool saving, int captionAdds});
 
 final _captureUiProvider =
     NotifierProvider.family<_CaptureUiController, _CaptureUiState, String>(
@@ -77,14 +81,32 @@ final class _CaptureUiController extends Notifier<_CaptureUiState> {
   final IdService _ids = UuidV7Service(const SystemClock());
 
   @override
-  _CaptureUiState build() => (audioId: _ids.newId(), saving: false);
+  _CaptureUiState build() {
+    return (audioId: _ids.newId(), saving: false, captionAdds: 0);
+  }
 
   void renewAudioId() {
-    state = (audioId: _ids.newId(), saving: state.saving);
+    state = (
+      audioId: _ids.newId(),
+      saving: state.saving,
+      captionAdds: state.captionAdds,
+    );
   }
 
   void setSaving(bool saving) {
-    state = (audioId: state.audioId, saving: saving);
+    state = (
+      audioId: state.audioId,
+      saving: saving,
+      captionAdds: state.captionAdds,
+    );
+  }
+
+  void captionAdded() {
+    state = (
+      audioId: state.audioId,
+      saving: state.saving,
+      captionAdds: state.captionAdds + 1,
+    );
   }
 }
 
@@ -287,31 +309,32 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               busy: uiState.saving,
               onPressed: ready ? () => unawaited(_saveEdits()) : null,
             )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                AppButton(
-                  label: Copy.captureSaveRaw,
-                  variant: AppButtonVariant.secondary,
-                  expand: true,
-                  busy: uiState.saving,
-                  onPressed: ready
-                      ? (widget.onSaveRaw ?? () => unawaited(_save(false)))
-                      : null,
-                ),
-                const SizedBox(height: Space.x2),
-                AppPrimaryAction(
-                  label: Copy.captureSaveAndAnalyse,
-                  busy: uiState.saving,
-                  // Processing waits for a network; Save raw keeps capture
-                  // unblocked meanwhile (D3).
-                  caption: offline ? Copy.captureProcessNeedsNetwork : null,
-                  onPressed: ready && !offline
-                      ? (widget.onSaveAndAnalyse ??
-                            () => unawaited(_save(true)))
-                      : null,
-                ),
-              ],
+          // Stacked on compact with Save raw above; side by side from
+          // medium up, the primary twice as wide and at the end
+          // (FBK0000004, FE-SIMP-01).
+          : ResponsivePair(
+              key: const ValueKey<String>('capture-saves'),
+              endFlex: 2,
+              gap: Space.x2,
+              start: AppButton(
+                label: Copy.captureSaveRaw,
+                variant: AppButtonVariant.secondary,
+                expand: true,
+                busy: uiState.saving,
+                onPressed: ready
+                    ? (widget.onSaveRaw ?? () => unawaited(_save(false)))
+                    : null,
+              ),
+              end: AppPrimaryAction(
+                label: Copy.captureSaveAndAnalyse,
+                busy: uiState.saving,
+                // Processing waits for a network; Save raw keeps capture
+                // unblocked meanwhile (D3).
+                caption: offline ? Copy.captureProcessNeedsNetwork : null,
+                onPressed: ready && !offline
+                    ? (widget.onSaveAndAnalyse ?? () => unawaited(_save(true)))
+                    : null,
+              ),
             ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -332,6 +355,8 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             captions: session.captions,
             selectedIds: _selected,
             thumbPaths: _thumbs,
+            // A browser has no thumbnail files; its tray draws the bytes.
+            thumbBytes: kIsWeb ? _bytes : const <String, Uint8List>{},
             missingIds: _missing,
             onAdd: !ready || needsChoice ? null : (widget.onAddPhoto ?? _add),
             onLongPress: (PhotoDraft photo) {
@@ -353,38 +378,16 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
           _blockGap,
           RecordCaptionField(
             enabled: ready,
-            // The field shows what its targets share, so the next keystroke
-            // never copies one photo's caption onto another (FBK0000132).
-            value: captionTargets.isEmpty
-                ? session.recordCaption
-                : CaptionApply.sharedText(
-                    ids: captionTargets,
-                    captions: session.captions,
-                  ),
-            targetKey: captionTargets.join(','),
+            // Typing and dictation write the record's own caption only; a
+            // photo gets the text from the add button below (FBK0000155).
+            value: session.recordCaption,
+            resetKey: uiState.captionAdds,
             onChanged: (String text) async {
               final Result<void> result = await controller.setCaption(
                 null,
                 text,
               );
-              if (result is FailureResult<void>) {
-                return false;
-              }
-              final List<String> ids = _captionTargets(
-                ref.read(captureControllerProvider(_sessionKey())),
-              );
-              if (ids.isEmpty) {
-                return true;
-              }
-              final Result<void> applied = await controller.applyCaptions(
-                CaptionApply.apply(
-                  photoIds: ids,
-                  text: text,
-                  mode: CaptionApplyMode.replace,
-                  existing: session.captions,
-                ),
-              );
-              return applied.fold((Failure _) => false, (_) => true);
+              return result is Success<void>;
             },
             onWriteFailed: (String _) {
               showAppSnack(
@@ -404,16 +407,17 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             ),
           ),
           if (captionTargets.isNotEmpty) ...<Widget>[
-            const SizedBox(height: Space.x1),
-            Semantics(
-              liveRegion: true,
-              child: Text(
-                _selected.isEmpty
-                    ? Copy.captionGoesToAll(captionTargets.length)
-                    : Copy.captionGoesToTicked(captionTargets.length),
-                key: const ValueKey<String>('capture-caption-targets'),
-                style: AppText.caption,
-              ),
+            const SizedBox(height: Space.x2),
+            AppButton(
+              key: const ValueKey<String>('capture-caption-add'),
+              label: _anyTicked(session)
+                  ? Copy.captionAddToTicked(captionTargets.length)
+                  : Copy.captionAddToAll(captionTargets.length),
+              variant: AppButtonVariant.secondary,
+              expand: true,
+              onPressed: ready && session.recordCaption.trim().isNotEmpty
+                  ? () => unawaited(_addCaption())
+                  : null,
             ),
           ],
           // The recorder block carries its own gap and is empty while idle.
@@ -509,6 +513,57 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
         setState(() => _bytes[id] = bytes);
         unawaited(_refreshThumbs(<PhotoDraft>[draft]));
     }
+  }
+
+  /// Adds the typed caption after each target photo's own caption (D6),
+  /// then clears the field and says how many photos got it (D7). A failed
+  /// add keeps the typed text (FE-SIMP-09).
+  Future<void> _addCaption() async {
+    final CaptureController controller = ref.read(
+      captureControllerProvider(_sessionKey()).notifier,
+    );
+    final CaptureSession session = ref.read(
+      captureControllerProvider(_sessionKey()),
+    );
+    final String text = session.recordCaption.trim();
+    final List<String> targets = _captionTargets(session);
+    if (text.isEmpty || targets.isEmpty) {
+      return;
+    }
+    final Result<void> added = await controller.applyCaptions(
+      CaptionApply.apply(
+        photoIds: targets,
+        text: text,
+        mode: CaptionApplyMode.append,
+        existing: session.captions,
+      ),
+    );
+    if (!mounted) {
+      return;
+    }
+    if (added is FailureResult<void>) {
+      showAppSnack(context, Copy.captureSaveFailed, tone: SnackTone.error);
+      return;
+    }
+    final Result<void> cleared = await controller.setCaption(null, '');
+    if (!mounted) {
+      return;
+    }
+    if (cleared is Success<void>) {
+      ref.read(_captureUiProvider(_sessionKey()).notifier).captionAdded();
+    }
+    showAppSnack(
+      context,
+      Copy.captionAdded(targets.length),
+      tone: SnackTone.success,
+    );
+  }
+
+  /// Whether any photo in the tray is ticked.
+  bool _anyTicked(CaptureSession session) {
+    return _activePhotos(
+      session,
+    ).any((PhotoDraft photo) => _selected.contains(photo.id));
   }
 
   /// Photos a caption goes to: the ticked ones, and all of them when none
@@ -806,6 +861,22 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     final Map<String, String> next = Map<String, String>.of(_thumbs);
     final Set<String> missing = Set<String>.of(_missing);
     for (final PhotoDraft photo in photos) {
+      if (kIsWeb) {
+        // A browser cannot write thumbnail files; its tray draws the bytes
+        // read back from the store they were written to (FBK0000005).
+        if (!_bytes.containsKey(photo.id)) {
+          final Result<Uint8List> read = await repository.readBytes(photo);
+          if (read is Success<Uint8List>) {
+            _bytes[photo.id] = read.value;
+          }
+        }
+        if (_bytes.containsKey(photo.id)) {
+          missing.remove(photo.id);
+        } else {
+          missing.add(photo.id);
+        }
+        continue;
+      }
       Result<String> thumb = await repository.cachedThumbnailPath(
         photo,
         edge: AppConstants.images.thumbnailEdge,

@@ -44,7 +44,38 @@ abstract final class PathSanitizer {
     }
     return segment;
   }
+
+  /// [relativePath] with its backslashes turned into slashes, provided it
+  /// stays under the storage root: not empty, not absolute, no drive prefix
+  /// and no empty, `.` or `..` segment. Anything else throws
+  /// [ValidationFailure] rather than being rewritten (FE-SEC-06).
+  static String safeRelativePath(String relativePath) {
+    final String relative = relativePath.replaceAll(r'\', '/').trim();
+    if (relative.isEmpty ||
+        relative.startsWith('/') ||
+        _drivePrefix.hasMatch(relative)) {
+      throw _outsideStorage;
+    }
+    for (final String part in relative.split('/')) {
+      if (part.isEmpty || part == '.' || part == '..') {
+        throw _outsideStorage;
+      }
+    }
+    return relative;
+  }
 }
+
+/// A path under the storage root, with forward slashes, or a thrown
+/// [ValidationFailure] when [relativePath] would leave it. Every file writer
+/// and reader checks its path through this one rule.
+String safeRelativePath(String relativePath) {
+  return PathSanitizer.safeRelativePath(relativePath);
+}
+
+const ValidationFailure _outsideStorage = ValidationFailure(
+  message: 'The file path must stay inside the storage folder.',
+  recoveryAction: 'Save the file under the project folder and try again.',
+);
 
 /// Strips accents, turns whitespace into hyphens, removes reserved and
 /// non-printing characters, and caps length.

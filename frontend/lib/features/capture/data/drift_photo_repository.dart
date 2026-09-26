@@ -10,6 +10,7 @@ import 'package:tapture/core/db/tables/tombstones.dart';
 import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/file_reader.dart';
 import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/files/thumbnail_cache.dart';
@@ -24,9 +25,12 @@ import 'package:tapture/features/capture/domain/photo_repository.dart';
 /// file.
 final class DriftPhotoRepository implements CapturePhotoRepository {
   /// Creates the repository over one application database and storage root.
+  /// [writer] and [reader] reach the photo files wherever this platform
+  /// keeps them: under [storageRoot] on device, in IndexedDB in a browser.
   DriftPhotoRepository({
     required sqlite.AppDatabase db,
     required FileWriter writer,
+    required FileReader reader,
     required Clock clock,
     required String deviceId,
     required IdService ids,
@@ -39,6 +43,7 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
     decodeThumbnail,
   }) : _db = db,
        _writer = writer,
+       _reader = reader,
        _clock = clock,
        _deviceId = deviceId,
        _ids = ids,
@@ -49,6 +54,7 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
 
   final sqlite.AppDatabase _db;
   final FileWriter _writer;
+  final FileReader _reader;
   final Clock _clock;
   final String _deviceId;
   final IdService _ids;
@@ -183,21 +189,25 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
   @override
   Future<Result<Uint8List>> readBytes(PhotoDraft photo) async {
     try {
-      final Result<File> file = await _sourceFile(photo);
-      switch (file) {
-        case FailureResult<File>(:final Failure failure):
-          return FailureResult<Uint8List>(failure);
-        case Success<File>(:final File value):
-          if (!value.existsSync()) {
-            return const FailureResult<Uint8List>(
-              StorageFailure(
-                message: 'That photo could not be read from this device.',
-                recoveryAction: 'Capture the photo again, then try again.',
-              ),
-            );
-          }
-          return Success<Uint8List>(await value.readAsBytes());
+      final sqlite.Project? project =
+          await (_db.select(_db.projects)..where(
+                (sqlite.$ProjectsTable row) => row.id.equals(photo.projectId),
+              ))
+              .getSingleOrNull();
+      if (project == null) {
+        return const FailureResult<Uint8List>(
+          StorageFailure(message: 'The photo project was not found.'),
+        );
       }
+      final Result<Uint8List> bytes = await _reader.read(
+        'projects/${project.folderName}/${photo.relativePath}',
+      );
+      return switch (bytes) {
+        Success<Uint8List>() => bytes,
+        FailureResult<Uint8List>() => const FailureResult<Uint8List>(
+          _unreadablePhoto,
+        ),
+      };
     } on Object catch (error) {
       return FailureResult<Uint8List>(storageFailureFrom(error));
     }
@@ -384,6 +394,12 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
     }
   }
 }
+
+/// A photo whose file is gone or cannot be read on this device.
+const StorageFailure _unreadablePhoto = StorageFailure(
+  message: 'That photo could not be read from this device.',
+  recoveryAction: 'Capture the photo again, then try again.',
+);
 
 PhotoAsset _asset(sqlite.Photo row) => (
   id: row.id,

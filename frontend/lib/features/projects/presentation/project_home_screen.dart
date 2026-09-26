@@ -26,6 +26,7 @@ import 'project_archive_action.dart';
 import 'project_delete_action.dart';
 import 'project_duplicate_action.dart';
 import 'project_open_externally_action.dart';
+import 'project_record_filter.dart';
 
 /// Open-project home: what to do next, with one primary capture action.
 class ProjectHomeScreen extends ConsumerWidget {
@@ -141,6 +142,7 @@ class _HomeBody extends ConsumerWidget {
     final bool shellOwns = ShellHeaderScope.ownsHeaderOf(context);
     final double gutter = AppPage.gutter(context);
     final String query = ref.watch(capturedItemsQueryProvider);
+    final int activeFilters = ref.watch(projectRecordFilterProvider).length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -165,6 +167,15 @@ class _HomeBody extends ConsumerWidget {
             onChanged: (String text) {
               ref.read(capturedItemsQueryProvider.notifier).set(text);
             },
+            onFilter: () => unawaited(
+              showProjectRecordFilters(
+                context,
+                ref,
+                ref.read(capturedItemsProvider(project.id)).asData?.value ??
+                    const <ProjectRecordRow>[],
+              ),
+            ),
+            activeFilterCount: activeFilters,
           ),
         ),
         Expanded(

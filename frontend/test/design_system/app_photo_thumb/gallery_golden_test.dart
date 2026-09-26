@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -19,6 +20,7 @@ void main() {
       testWidgets('gallery in ${mode.name}', (WidgetTester tester) async {
         final String darkPhoto = _darkPhoto();
         await _decodeThumb(tester, darkPhoto);
+        await _decodeBytes(tester, _lightPhoto);
         await _pumpGallery(tester, mode.theme, darkPhoto: darkPhoto);
         await tester.pump();
         await expectLater(
@@ -59,6 +61,17 @@ String _darkPhoto() {
   return file.path;
 }
 
+/// A light photo held as bytes, as a browser's capture tray holds it
+/// (FBK0000005).
+final Uint8List _lightPhoto = () {
+  final img.Image pixels = img.Image(width: 96, height: 128);
+  for (final img.Pixel pixel in pixels) {
+    final int shade = 250 - (pixel.x + pixel.y) ~/ 8;
+    pixel.setRgb(shade, shade, shade - 6);
+  }
+  return img.encodePng(pixels);
+}();
+
 Future<void> _pumpGallery(
   WidgetTester tester,
   ThemeData theme, {
@@ -94,6 +107,29 @@ Future<void> _decodeThumb(WidgetTester tester, String path) async {
       FileImage(File(path)),
       width: edge,
       height: edge,
+    ).resolve(ImageConfiguration.empty);
+    final Completer<void> done = Completer<void>();
+    final ImageStreamListener listener = ImageStreamListener(
+      (ImageInfo _, bool _) => done.complete(),
+      onError: (Object error, StackTrace? _) => done.completeError(error),
+    );
+    stream.addListener(listener);
+    try {
+      await done.future;
+    } finally {
+      stream.removeListener(listener);
+    }
+  });
+}
+
+/// Decodes [bytes] into the image cache under the key a thumbnail drawn
+/// from bytes uses: the width capped at the thumbnail edge.
+Future<void> _decodeBytes(WidgetTester tester, Uint8List bytes) async {
+  final int edge = AppConstants.images.thumbnailEdge;
+  await tester.runAsync(() async {
+    final ImageStream stream = ResizeImage(
+      MemoryImage(bytes),
+      width: edge,
     ).resolve(ImageConfiguration.empty);
     final Completer<void> done = Completer<void>();
     final ImageStreamListener listener = ImageStreamListener(
@@ -215,6 +251,25 @@ class _GalleryBody extends StatelessWidget {
               photo: PhotoAsset(sha256: 'k', thumbPath: darkPhoto),
               size: edge,
               selected: true,
+              onTap: _ignore,
+              onSelectedChanged: _ignoreBool,
+              onRemove: _ignore,
+            ),
+          ],
+        ),
+        const SizedBox(height: Space.x4),
+        const AppSectionHeader(title: 'Drawn from bytes, as a browser does'),
+        Wrap(
+          spacing: Space.x4,
+          runSpacing: Space.x4,
+          children: <Widget>[
+            AppPhotoThumb(
+              photo: PhotoAsset(
+                sha256: 'l',
+                thumbBytes: _lightPhoto,
+                hasCaption: true,
+              ),
+              size: edge,
               onTap: _ignore,
               onSelectedChanged: _ignoreBool,
               onRemove: _ignore,

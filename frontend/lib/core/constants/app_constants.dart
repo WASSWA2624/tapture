@@ -406,6 +406,11 @@ abstract final class AppConstants {
     buttonStartY: 0.78,
   );
 
+  /// Project files in a browser, which has no file system: the IndexedDB
+  /// store `FileWriter` and `FileReader` keep them in, keyed by their path
+  /// under the storage root.
+  static const ({String storeName}) projectFiles = (storeName: 'project-files');
+
   /// Optional app-lock PIN shape, the persisted attempt backoff, and how
   /// often the unlock screen counts that backoff down.
   static const ({

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
@@ -13,7 +14,9 @@ part 'photo_asset.dart';
 /// The one square thumbnail every photo renders through (FE-CONS-06).
 ///
 /// Tap opens; long-press selects (FE-CONS-10). The image is the cached
-/// thumb for [size], never the original (FE-PERF-04).
+/// thumb for [size], or [PhotoAsset.thumbBytes] decoded at [size], never
+/// the original at full size (FE-PERF-04). In a browser no file is ever
+/// opened: a thumb without bytes shows the missing-photo placeholder.
 class AppPhotoThumb extends StatelessWidget {
   /// Creates a thumbnail. [size] is the layout edge; the image uses a 1:1
   /// ratio and [BoxFit.cover] (FE-RESP-09).
@@ -66,6 +69,13 @@ class AppPhotoThumb extends StatelessWidget {
   bool get _interactive => onTap != null || onLongPress != null;
 
   bool get _missing {
+    if (photo.thumbBytes != null) {
+      return false;
+    }
+    if (kIsWeb) {
+      // A browser has no file to open; without bytes the photo is missing.
+      return true;
+    }
     if (photo.thumbPath.isEmpty) {
       return false;
     }
@@ -238,6 +248,23 @@ class AppPhotoThumb extends StatelessWidget {
   }
 
   Widget _subject(AppColors colors, int decodeEdge) {
+    final Uint8List? bytes = photo.thumbBytes;
+    if (bytes != null) {
+      // Only the width is capped, so a photo keeps its shape and the cover
+      // fit crops it rather than squashing it to a square.
+      return Image.memory(
+        bytes,
+        fit: BoxFit.cover,
+        cacheWidth: decodeEdge,
+        gaplessPlayback: true,
+        excludeFromSemantics: true,
+        filterQuality: FilterQuality.medium,
+        errorBuilder: (_, _, _) => _MissingPlaceholder(colors: colors),
+      );
+    }
+    if (kIsWeb) {
+      return _MissingPlaceholder(colors: colors);
+    }
     final String path = _resolvedPath();
     if (photo.thumbPath.isNotEmpty) {
       if (File(path).existsSync()) {

@@ -9,11 +9,13 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
+import 'project_record_filter.dart';
 import 'record_thumb.dart';
 
 /// Captured rows for [projectId], filtered by [capturedItemsQueryProvider].
@@ -28,14 +30,16 @@ class CapturedItems extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final String query = ref.watch(capturedItemsQueryProvider);
+    final Set<RecordStatus> statuses = ref.watch(projectRecordFilterProvider);
     final AsyncValue<List<ProjectRecordRow>> records = ref.watch(
-      _capturedItemsProvider(projectId),
+      capturedItemsProvider(projectId),
     );
     final String needle = query.trim().toLowerCase();
     final List<ProjectRecordRow> rows = records.asData?.value ?? const [];
     final List<ProjectRecordRow> visible = <ProjectRecordRow>[
       for (final ProjectRecordRow row in rows)
-        if (_matches(row, needle)) row,
+        if (_matches(row, needle) && ProjectRecordFilter.matches(row, statuses))
+          row,
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -44,7 +48,9 @@ class CapturedItems extends ConsumerWidget {
           AppEmptyState(
             icon: AppIcons.searchEmpty,
             headline: Copy.projectRecordsNoMatch(query),
-            message: Copy.searchNoMatchMessage,
+            message: statuses.isEmpty
+                ? Copy.searchNoMatchMessage
+                : Copy.searchFilterNoMatchMessage,
           )
         else if (visible.isEmpty)
           const AppEmptyState(
@@ -150,7 +156,8 @@ const List<String> capturedItemStatuses = <String>[
   'extracted',
 ];
 
-final _capturedItemsProvider =
+/// The live records a project's home lists, before its search and filters.
+final capturedItemsProvider =
     StreamProvider.family<List<ProjectRecordRow>, String>((
       Ref ref,
       String projectId,

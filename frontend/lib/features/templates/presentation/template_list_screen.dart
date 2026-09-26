@@ -22,6 +22,7 @@ import 'package:tapture/features/projects/projects.dart';
 import '../domain/template_def.dart';
 import '../templates.dart' show templateRepositoryProvider;
 import 'template_duplicate_action.dart';
+import 'template_list_filter.dart';
 import 'template_locations.dart';
 
 /// A project's templates, each row showing field and record counts.
@@ -72,11 +73,13 @@ class TemplateListScreen extends ConsumerWidget {
         onRetry: () => ref.invalidate(templateListProvider),
         data: (List<TemplateDef> rows) {
           final String query = ref.watch(templateListQueryProvider);
+          final Set<String> kinds = ref.watch(templateListFilterProvider);
           final String needle = query.trim().toLowerCase();
           final List<TemplateDef> visible = <TemplateDef>[
             for (final TemplateDef template in rows)
-              if (needle.isEmpty ||
-                  template.name.toLowerCase().contains(needle))
+              if ((needle.isEmpty ||
+                      template.name.toLowerCase().contains(needle)) &&
+                  TemplateListFilter.matches(template, kinds))
                 template,
           ];
           return Column(
@@ -94,16 +97,21 @@ class TemplateListScreen extends ConsumerWidget {
                   onChanged: (String text) {
                     ref.read(templateListQueryProvider.notifier).set(text);
                   },
+                  onFilter: () =>
+                      unawaited(showTemplateListFilters(context, ref, rows)),
+                  activeFilterCount: kinds.length,
                 ),
               ),
               Expanded(
                 child: visible.isEmpty
                     ? (rows.isEmpty
                           ? _empty()
-                          : const AppEmptyState(
+                          : AppEmptyState(
                               icon: AppIcons.searchEmpty,
                               headline: Copy.templatesNoMatch,
-                              message: Copy.searchNoMatchMessage,
+                              message: kinds.isEmpty
+                                  ? Copy.searchNoMatchMessage
+                                  : Copy.searchFilterNoMatchMessage,
                             ))
                     : ListView(
                         children: <Widget>[

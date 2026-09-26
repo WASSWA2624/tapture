@@ -1,8 +1,10 @@
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide StepState;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:image/image.dart' as img;
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/color_swatches.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
@@ -60,6 +62,7 @@ import 'package:tapture/core/widgets/forms/keep_focused_visible.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/responsive/responsive_builder.dart';
+import 'package:tapture/core/widgets/responsive/responsive_pair.dart';
 import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
@@ -98,6 +101,10 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
   MarkupInk _ink = MarkupInk.red;
   int _inkSize = 1;
   static final FixedClock _clock = FixedClock(DateTime.utc(2026, 9, 17, 12));
+
+  /// A small encoded photo for the thumb drawn from bytes, as a browser's
+  /// capture tray draws it.
+  static final Uint8List _photoBytes = _gradientPhoto();
   static const List<Choice<AppThemeMode>> _themes = <Choice<AppThemeMode>>[
     Choice<AppThemeMode>(AppThemeMode.light, Copy.galleryLight),
     Choice<AppThemeMode>(AppThemeMode.dark, Copy.galleryDark),
@@ -380,6 +387,18 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
           );
         },
       ),
+      const SizedBox(height: Space.x4),
+      // Stacked on compact; one row, one part to two, from medium up.
+      const ResponsivePair(
+        start: AppButton(
+          label: Copy.cancel,
+          variant: AppButtonVariant.secondary,
+          expand: true,
+          onPressed: _noop,
+        ),
+        end: AppButton(label: Copy.save, expand: true, onPressed: _noop),
+        endFlex: 2,
+      ),
       const SizedBox(height: Space.x6),
     ];
   }
@@ -639,6 +658,13 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       const SizedBox(height: Space.x4),
       AppSearchField(hint: Copy.search, resultCount: 2, onChanged: (_) {}),
       const SizedBox(height: Space.x4),
+      AppSearchField(
+        hint: Copy.search,
+        onChanged: (_) {},
+        onFilter: _noop,
+        activeFilterCount: 1,
+      ),
+      const SizedBox(height: Space.x4),
       AppChoiceField<String>(
         label: 'Grade',
         options: _grades,
@@ -889,6 +915,17 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
             size: edge,
             quarterTurns: 1,
           ),
+          AppPhotoThumb(
+            photo: PhotoAsset(
+              sha256: 'bytes',
+              thumbBytes: _photoBytes,
+              hasCaption: true,
+            ),
+            size: edge,
+            onTap: _noop,
+            onSelectedChanged: (bool _) {},
+            onRemove: _noop,
+          ),
         ],
       ),
       const SizedBox(height: Space.x4),
@@ -911,6 +948,14 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         message: Copy.emptyMessage,
         actionLabel: Copy.tryAgain,
         onAction: _noop,
+      ),
+      // The icon is the next action, with no button under it.
+      const AppEmptyState(
+        icon: AppIcons.addPhoto,
+        headline: Copy.captureNoPhotosHeadline,
+        message: Copy.captureNoPhotosMessage,
+        onIconTap: _noop,
+        iconLabel: Copy.captureAddPhoto,
       ),
       const AppErrorState(failure: NetworkFailure(), onRetry: _noop),
       const AppSkeleton(shape: SkeletonShape.list, count: 2),
@@ -1044,4 +1089,14 @@ Object? _galleryNormalise({
   required Map<String, Object?> validation,
 }) {
   return value;
+}
+
+/// A diagonal grey gradient, encoded as PNG.
+Uint8List _gradientPhoto() {
+  final img.Image pixels = img.Image(width: 48, height: 64);
+  for (final img.Pixel pixel in pixels) {
+    final int shade = 64 + (pixel.x + pixel.y) * 2;
+    pixel.setRgb(shade, shade, shade);
+  }
+  return img.encodePng(pixels);
 }
