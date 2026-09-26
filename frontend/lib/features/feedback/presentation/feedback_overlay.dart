@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
@@ -69,6 +70,17 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
   bool _openingMenu = false;
   bool _menuOpen = false;
 
+  /// The folded bar's laid-out height, which the app beneath keeps clear of
+  /// while the draft is folded (FBK0000145).
+  double _foldedBarHeight = 0;
+
+  void _setFoldedBarHeight(double height) {
+    if (!mounted || _foldedBarHeight == height) {
+      return;
+    }
+    setState(() => _foldedBarHeight = height);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -132,15 +144,18 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
     final bool expanded = fold.open && fold.expanded;
     final bool docked = expanded && context.sizeClass == SizeClass.expanded;
     final Widget app = RepaintBoundary(key: _boundaryKey, child: widget.child);
-    final Widget appFrame = docked
-        ? Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Expanded(child: app),
-              SizedBox(width: AppConstants.userFeedback.panelWidth),
-            ],
-          )
-        : app;
+    final Widget appFrame = _FoldedBarInset(
+      barHeight: fold.open && !expanded ? _foldedBarHeight : 0,
+      child: docked
+          ? Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Expanded(child: app),
+                SizedBox(width: AppConstants.userFeedback.panelWidth),
+              ],
+            )
+          : app,
+    );
     return RepaintBoundary(
       key: _workspaceKey,
       child: Stack(
@@ -475,6 +490,7 @@ class _FeedbackLayer extends ConsumerWidget {
           _FoldedFeedbackBar(
             key: host._foldedKey,
             onAddScreen: () => unawaited(host._addThisScreen(context)),
+            onHeight: host._setFoldedBarHeight,
           ),
       ],
     );
@@ -482,25 +498,116 @@ class _FeedbackLayer extends ConsumerWidget {
 }
 
 /// Positions the folded bar above the larger of its resting offset and the
-/// keyboard, so only this widget rebuilds when the inset changes.
+/// keyboard, so only this widget rebuilds when the inset changes. Reports
+/// its height so the app beneath can keep clear of it.
 class _FoldedFeedbackBar extends StatelessWidget {
-  const _FoldedFeedbackBar({super.key, this.onAddScreen});
+  const _FoldedFeedbackBar({
+    super.key,
+    required this.onHeight,
+    this.onAddScreen,
+  });
 
   final VoidCallback? onAddScreen;
+  final ValueChanged<double> onHeight;
+
+  /// Where the bar rests with no keyboard: above the bottom navigation bar
+  /// on compact, and at the window bottom otherwise.
+  static double resting(BuildContext context) {
+    return context.sizeClass == SizeClass.compact
+        ? (Theme.of(context).navigationBarTheme.height ?? Sizes.minTapTarget) +
+              MediaQuery.viewPaddingOf(context).bottom
+        : 0;
+  }
 
   @override
   Widget build(BuildContext context) {
     final bool compact = context.sizeClass == SizeClass.compact;
-    final double resting = compact
-        ? (Theme.of(context).navigationBarTheme.height ?? Sizes.minTapTarget) +
-              MediaQuery.viewPaddingOf(context).bottom
-        : 0;
     return PositionedDirectional(
       start: 0,
       end: 0,
-      bottom: math.max(resting, MediaQuery.viewInsetsOf(context).bottom),
-      child: FeedbackDraftBar(bottomInset: !compact, onAddScreen: onAddScreen),
+      bottom: math.max(
+        resting(context),
+        MediaQuery.viewInsetsOf(context).bottom,
+      ),
+      child: _HeightReporter(
+        onHeight: onHeight,
+        child: FeedbackDraftBar(
+          bottomInset: !compact,
+          onAddScreen: onAddScreen,
+        ),
+      ),
     );
+  }
+}
+
+/// Tells the app beneath that the folded bar covers its bottom: while
+/// [barHeight] is above zero, the bottom view inset grows to the bar's top,
+/// so each page resizes and scrolls its last content and footer above the
+/// bar, with or without the keyboard (FBK0000145). With no bar the app gets
+/// the data unchanged.
+class _FoldedBarInset extends StatelessWidget {
+  const _FoldedBarInset({required this.barHeight, required this.child});
+
+  final double barHeight;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final MediaQueryData data = MediaQuery.of(context);
+    if (barHeight <= 0) {
+      return MediaQuery(data: data, child: child);
+    }
+    final double bottom =
+        math.max(_FoldedFeedbackBar.resting(context), data.viewInsets.bottom) +
+        barHeight;
+    return MediaQuery(
+      data: data.copyWith(
+        viewInsets: data.viewInsets.copyWith(bottom: bottom),
+        padding: data.padding.copyWith(
+          bottom: math.max(0.0, data.viewPadding.bottom - bottom),
+        ),
+      ),
+      child: child,
+    );
+  }
+}
+
+/// Reports its child's height after each layout that changes it.
+class _HeightReporter extends SingleChildRenderObjectWidget {
+  const _HeightReporter({required this.onHeight, required super.child});
+
+  final ValueChanged<double> onHeight;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) {
+    return _RenderHeightReporter(onHeight);
+  }
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenderHeightReporter renderObject,
+  ) {
+    renderObject.onHeight = onHeight;
+  }
+}
+
+class _RenderHeightReporter extends RenderProxyBox {
+  _RenderHeightReporter(this.onHeight);
+
+  ValueChanged<double> onHeight;
+  double? _reported;
+
+  @override
+  void performLayout() {
+    super.performLayout();
+    final double height = size.height;
+    if (height == _reported) {
+      return;
+    }
+    _reported = height;
+    // Layout cannot rebuild the tree; tell the overlay once the frame ends.
+    SchedulerBinding.instance.addPostFrameCallback((_) => onHeight(height));
   }
 }
 

@@ -60,17 +60,17 @@ Decisions D1–D8 use the defaults in that prompt: (a) in every case.
 
 ## Definition of done
 
-- [ ] With the keyboard open, a shell page shows its search field, part of its list and its footer, at every width and in both orientations, and a choice sheet keeps its options visible above the keyboard.
-- [ ] A record with a photo shows that photo, turned the way it was saved; a cropped photo shows its cropped version; a removed photo is never the thumbnail; a missing file shows Missing photo.
-- [ ] Each template row shows how many live records use it, and Delete is offered only for a template with no records.
-- [ ] The project home shows the search field and the records list only; no count-card symbol remains; Templates and Project contexts open from the menu.
-- [ ] The home search reads "Search records", and a query with no match names the query, on the home and in every choice sheet.
-- [ ] While offline, Save and process is disabled with a caption, and Save raw still saves.
-- [ ] On Android and iOS, Share opens the system share sheet with a hint; a failed share says why.
-- [ ] The export page summarises records, photos, audio, capture dates, status counts, templates and the file, with Export and Share in its footer.
-- [ ] Each tray photo has a checkbox and a remove control and no Caption button; a caption fills the one photo, all photos with none ticked, or the ticked photos.
-- [ ] The photo preview shows the caption with Edit caption and Delete caption; a delete asks and can be undone.
-- [ ] New template takes a name and several fields, and Create saves them together with unique keys.
-- [ ] Tapping a record opens its page, which edits its fields and deletes it.
-- [ ] A record's Edit opens capture with its photos and captions; Save changes updates the same record, refining raw values; an unsaved new capture is untouched.
-- [ ] Tests: shell insets, record thumbnails, template counts, project home, search no-match, offline capture, export share and summary, photo checkbox and captions, preview captions, template create rows, record page, record edit session and writer.
+- [x] With the keyboard open, a shell page shows its search field, part of its list and its footer, at every width and in both orientations, and a choice sheet keeps its options visible above the keyboard.
+- [x] A record with a photo shows that photo, turned the way it was saved; a cropped photo shows its cropped version; a removed photo is never the thumbnail; a missing file shows Missing photo.
+- [x] Each template row shows how many live records use it, and Delete is offered only for a template with no records.
+- [x] The project home shows the search field and the records list only; no count-card symbol remains; Templates and Project contexts open from the menu.
+- [x] The home search reads "Search records", and a query with no match names the query, on the home and in every choice sheet.
+- [x] While offline, Save and process is disabled with a caption, and Save raw still saves.
+- [x] On Android and iOS, Share opens the system share sheet with a hint; a failed share says why.
+- [x] The export page summarises records, photos, audio, capture dates, status counts, templates and the file, with Export and Share in its footer.
+- [x] Each tray photo has a checkbox and a remove control and no Caption button; a caption fills the one photo, all photos with none ticked, or the ticked photos.
+- [x] The photo preview shows the caption with Edit caption and Delete caption; a delete asks and can be undone.
+- [x] New template takes a name and several fields, and Create saves them together with unique keys.
+- [x] Tapping a record opens its page, which edits its fields and deletes it.
+- [x] A record's Edit opens capture with its photos and captions; Save changes updates the same record, refining raw values; an unsaved new capture is untouched.
+- [x] Tests: shell insets, record thumbnails, template counts, project home, search no-match, offline capture, export share and summary, photo checkbox and captions, preview captions, template create rows, record page, record edit session and writer.

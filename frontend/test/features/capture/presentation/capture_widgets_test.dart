@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image/image.dart' as img;
 import 'package:tapture/core/ai/stt_service.dart';
 import 'package:tapture/core/audio/audio_recorder_service.dart';
 import 'package:tapture/core/barcode/barcode_scanner_service.dart';
@@ -364,9 +365,9 @@ void main() {
       draft('b', type: 'serial', order: 1),
     ];
     await tester.pumpWidget(wrap(PhotoTray(photos: photos, onAdd: () {})));
-    // The tray draws no type badge: the checkbox has that corner (D6).
+    // The tray draws no type badge: the select control has that corner (D6).
     expect(find.text(Copy.photoFront), findsNothing);
-    expect(find.byType(Checkbox), findsNWidgets(2));
+    expect(_selectTarget, findsNWidgets(2));
     await tester.pumpWidget(
       wrap(PhotoReorder(photos: photos, onReorder: (_) {})),
     );
@@ -395,7 +396,10 @@ void main() {
       await tester.pumpWidget(
         wrap(
           PhotoViewerScreen(
-            photos: <PhotoDraft>[draft('a'), draft('b')],
+            photos: ValueNotifier<List<PhotoDraft>>(<PhotoDraft>[
+              draft('a'),
+              draft('b'),
+            ]),
             missingIds: const <String>{'b'},
           ),
         ),
@@ -575,15 +579,17 @@ void main() {
     expect(tapped?.id, 'a');
     await tester.tap(find.byTooltip(Copy.captureRemovePhoto).first);
     expect(removed?.id, 'a');
-    await tester.tap(find.byType(Checkbox).last);
+    await tester.tap(_selectTarget.last);
     await tester.longPress(find.byKey(const ValueKey<String>('photo-thumb-a')));
     expect(toggled, <String>['b', 'a']);
     expect(tapped?.id, 'a');
   });
 
   for (final int turns in <int>[0, 1]) {
-    testWidgets('with $turns quarter turns the checkbox and remove control '
-        'are 48dp and apart', (WidgetTester tester) async {
+    testWidgets('with $turns quarter turns the select and remove controls '
+        'are 48dp, apart and flush in the corners', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         wrap(
           PhotoTray(
@@ -592,26 +598,67 @@ void main() {
             ],
             onAdd: () {},
             onLongPress: (_) {},
+            onRemove: (_) {},
             selectedIds: const <String>{'a'},
           ),
         ),
       );
-      final Rect box = tester.getRect(find.byType(Checkbox));
-      final Rect remove = tester.getRect(
-        find.byTooltip(Copy.captureRemovePhoto),
-      );
+      final Rect select = tester.getRect(_selectTarget);
+      final Rect remove = tester.getRect(_removeTarget);
       final Rect thumb = tester.getRect(
         find.byKey(const ValueKey<String>('photo-thumb-a')),
       );
-      expect(tester.getSize(find.byType(Checkbox)).shortestSide, 48);
-      expect(remove.shortestSide, greaterThanOrEqualTo(48));
-      expect(box.overlaps(remove), isFalse);
-      expect(box.topLeft, thumb.topLeft);
-      expect(remove.topRight, thumb.topRight);
-      expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, isTrue);
-      expect(find.bySemanticsLabel(Copy.photoSelect), findsOneWidget);
+      expect(select.size, const Size.square(48));
+      expect(remove.size, const Size.square(48));
+      expect(select.overlaps(remove), isFalse);
+      expect(
+        tester
+            .getRect(find.byKey(const ValueKey<String>('photo-corner-select')))
+            .topLeft,
+        thumb.topLeft,
+      );
+      expect(
+        tester
+            .getRect(find.byKey(const ValueKey<String>('photo-corner-remove')))
+            .topRight,
+        thumb.topRight,
+      );
+      expect(
+        tester.getSemantics(_selectTarget),
+        matchesSemantics(
+          label: Copy.photoSelect,
+          isButton: true,
+          hasCheckedState: true,
+          isChecked: true,
+          hasTapAction: true,
+        ),
+      );
+      expect(
+        tester.getSemantics(_removeTarget),
+        matchesSemantics(
+          label: Copy.captureRemovePhoto,
+          isButton: true,
+          hasTapAction: true,
+        ),
+      );
     });
   }
+
+  testWidgets('a tray without remove draws no remove control', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      wrap(
+        PhotoTray(
+          photos: <PhotoDraft>[draft('a')],
+          onAdd: () {},
+          onLongPress: (_) {},
+        ),
+      ),
+    );
+    expect(_selectTarget, findsOneWidget);
+    expect(_removeTarget, findsNothing);
+  });
 
   testWidgets('the preview shows a caption to edit and delete with undo', (
     WidgetTester tester,
@@ -620,7 +667,7 @@ void main() {
     await tester.pumpWidget(
       wrap(
         PhotoViewerScreen(
-          photos: <PhotoDraft>[draft('a')],
+          photos: ValueNotifier<List<PhotoDraft>>(<PhotoDraft>[draft('a')]),
           captions: const <String, String>{'a': 'Boiler room'},
           onCaptionChanged: (PhotoDraft photo, String text) async {
             writes[photo.id] = text;
@@ -656,6 +703,46 @@ void main() {
     expect(find.text('Pump room'), findsOneWidget);
   });
 
+  testWidgets('a new version shows in the preview at the same position', (
+    WidgetTester tester,
+  ) async {
+    final ValueNotifier<List<PhotoDraft>> photos =
+        ValueNotifier<List<PhotoDraft>>(<PhotoDraft>[draft('a'), draft('b')]);
+    addTearDown(photos.dispose);
+    final Uint8List bytes = _onePixelPng();
+    await tester.pumpWidget(
+      wrap(
+        PhotoViewerScreen(
+          photos: photos,
+          initialIndex: 1,
+          captions: const <String, String>{'b': 'Pump room'},
+          images: <String, Uint8List>{'a': bytes, 'b': bytes, 'b2': bytes},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey<String>('photo-viewer-image-b')),
+      findsOneWidget,
+    );
+
+    photos.value = <PhotoDraft>[
+      draft('a'),
+      draft('b2').copyWith(derivedFrom: 'b'),
+    ];
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey<String>('photo-viewer-image-b2')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey<String>('photo-viewer-image-b')),
+      findsNothing,
+    );
+    expect(find.text('Pump room'), findsOneWidget);
+  });
+
   for (final ({String name, Size size, double scale}) layout
       in <({String name, Size size, double scale})>[
         (name: '200 percent text', size: const Size(393, 886), scale: 2),
@@ -673,7 +760,7 @@ void main() {
       await tester.pumpWidget(
         wrap(
           PhotoViewerScreen(
-            photos: <PhotoDraft>[draft('a')],
+            photos: ValueNotifier<List<PhotoDraft>>(<PhotoDraft>[draft('a')]),
             captions: const <String, String>{'a': 'Boiler room'},
           ),
         ),
@@ -685,3 +772,17 @@ void main() {
     });
   }
 }
+
+/// A valid 1×1 PNG.
+Uint8List _onePixelPng() {
+  final img.Image image = img.Image(width: 1, height: 1);
+  return Uint8List.fromList(img.encodePng(image));
+}
+
+final Finder _selectTarget = find.byKey(
+  const ValueKey<String>('photo-corner-select-target'),
+);
+
+final Finder _removeTarget = find.byKey(
+  const ValueKey<String>('photo-corner-remove-target'),
+);

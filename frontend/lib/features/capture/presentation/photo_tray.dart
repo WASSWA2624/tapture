@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_photo_thumb.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
@@ -96,39 +95,25 @@ final class PhotoTray extends StatelessWidget {
                 child: SizedBox(
                   width: edge,
                   height: edge,
-                  child: Stack(
-                    children: <Widget>[
-                      // No type badge: the checkbox takes that corner and
-                      // the preview names the type (D6).
-                      AppPhotoThumb(
-                        key: ValueKey<String>('photo-thumb-${photo.id}'),
-                        photo: PhotoAsset(
-                          sha256: photo.sha256,
-                          thumbPath: missing ? 'missing' : (thumb ?? ''),
-                          hasCaption: hasCaption,
-                        ),
-                        size: edge,
-                        quarterTurns: _quarterTurns(photo.rotationDegrees),
-                        selected: selectedIds.contains(photo.id),
-                        statusLabel: photo.processingState == 'ready'
-                            ? null
-                            : Copy.capturePhotoProcessing,
-                        onTap: () => onTap?.call(photo),
-                        onLongPress: () => onLongPress?.call(photo),
-                        onSelectedChanged: (bool _) => onLongPress?.call(photo),
-                      ),
-                      PositionedDirectional(
-                        top: 0,
-                        end: 0,
-                        child: AppIconButton(
-                          icon: AppIcons.close,
-                          outlined: false,
-                          tooltip: Copy.captureRemovePhoto,
-                          semanticLabel: Copy.captureRemovePhoto,
-                          onPressed: () => onRemove?.call(photo),
-                        ),
-                      ),
-                    ],
+                  // No type badge: the select control takes that corner and
+                  // the preview names the type (D6).
+                  child: AppPhotoThumb(
+                    key: ValueKey<String>('photo-thumb-${photo.id}'),
+                    photo: PhotoAsset(
+                      sha256: photo.sha256,
+                      thumbPath: missing ? 'missing' : (thumb ?? ''),
+                      hasCaption: hasCaption,
+                    ),
+                    size: edge,
+                    quarterTurns: _quarterTurns(photo.rotationDegrees),
+                    selected: selectedIds.contains(photo.id),
+                    statusLabel: photo.processingState == 'ready'
+                        ? null
+                        : Copy.capturePhotoProcessing,
+                    onTap: () => onTap?.call(photo),
+                    onLongPress: () => onLongPress?.call(photo),
+                    onSelectedChanged: (bool _) => onLongPress?.call(photo),
+                    onRemove: onRemove == null ? null : () => onRemove!(photo),
                   ),
                 ),
               );

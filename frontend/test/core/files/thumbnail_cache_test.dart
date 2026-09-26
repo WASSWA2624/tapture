@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image/image.dart' as img;
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -83,6 +84,43 @@ void main() {
 
     expect(decodes, 2);
     expect(rebuilt.existsSync(), isTrue);
+  });
+
+  test('the default decoder fits a stored JPEG inside the edge', () async {
+    final _Harness harness = await _Harness.open();
+    final img.Image wide = img.Image(width: 400, height: 200)
+      ..clear(img.ColorRgb8(30, 120, 200));
+    harness.source.writeAsBytesSync(img.encodeJpg(wide));
+    final ThumbnailCache cache = ThumbnailCache(storageRoot: harness.storage);
+
+    final File thumb = _ok(
+      await cache.thumbnail(
+        harness.sha256,
+        harness.source.path,
+        edge: AppConstants.images.thumbnailEdge,
+      ),
+    );
+
+    final img.Image? decoded = img.decodeImage(thumb.readAsBytesSync());
+    expect(decoded, isNotNull);
+    expect(decoded!.width, AppConstants.images.thumbnailEdge);
+    expect(decoded.height, AppConstants.images.thumbnailEdge ~/ 2);
+  });
+
+  test('the default decoder turns a file that is not a photo away', () async {
+    final _Harness harness = await _Harness.open();
+    final ThumbnailCache cache = ThumbnailCache(storageRoot: harness.storage);
+
+    final Result<File> result = await cache.thumbnail(
+      harness.sha256,
+      harness.source.path,
+      edge: AppConstants.images.thumbnailEdge,
+    );
+
+    expect(
+      result.fold((Failure failure) => failure.message, (File _) => 'ok'),
+      'That photo could not be read as an image.',
+    );
   });
 }
 

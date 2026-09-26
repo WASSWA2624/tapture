@@ -12,6 +12,7 @@ import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/photo_markup.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
+import 'package:tapture/features/capture/presentation/photo_frame.dart';
 
 /// Crop UI that writes a derived file; revert walks back one version.
 final class PhotoCropScreen extends StatefulWidget {
@@ -41,13 +42,38 @@ final class PhotoCropScreen extends StatefulWidget {
 }
 
 class _PhotoCropScreenState extends State<PhotoCropScreen> {
+  /// The crop as fractions of the photo as shown, after its rotation.
   Rect _fraction = const Rect.fromLTWH(0.1, 0.1, 0.8, 0.8);
+  Size? _photoSize;
   String? _error;
   bool _busy = false;
 
   @override
+  void initState() {
+    super.initState();
+    final Uint8List? bytes = widget.bytes;
+    if (bytes != null) {
+      unawaited(_readSize(bytes));
+    }
+  }
+
+  Future<void> _readSize(Uint8List bytes) async {
+    final Size? size = await PhotoFrame.sizeOf(bytes);
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _photoSize = size;
+      if (size == null) {
+        _error = Copy.photoUnreadable;
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final Uint8List? bytes = widget.bytes;
+    final Size? size = _photoSize;
     final AppColors colors = context.colors;
     return Scaffold(
       appBar: AppBar(title: const Text(Copy.photoCrop)),
@@ -56,17 +82,17 @@ class _PhotoCropScreenState extends State<PhotoCropScreen> {
           Expanded(
             child: bytes == null
                 ? Center(child: Text(widget.photo.id))
-                : LayoutBuilder(
-                    builder: (BuildContext context, BoxConstraints limits) {
-                      return _CropFrame(
-                        bytes: bytes,
-                        fraction: _fraction,
-                        rotationDegrees: widget.photo.rotationDegrees,
-                        color: colors.primary,
-                        onChanged: (Rect next) =>
-                            setState(() => _fraction = next),
-                      );
-                    },
+                : size == null
+                ? Center(child: Text(_error == null ? Copy.loading : ''))
+                : _CropFrame(
+                    bytes: bytes,
+                    photoSize: size,
+                    fraction: _fraction,
+                    quarterTurns: PhotoFrame.quarterTurns(
+                      widget.photo.rotationDegrees,
+                    ),
+                    color: colors.primary,
+                    onChanged: (Rect next) => setState(() => _fraction = next),
                   ),
           ),
           if (_error != null)
@@ -82,7 +108,9 @@ class _PhotoCropScreenState extends State<PhotoCropScreen> {
                   child: AppButton(
                     label: Copy.photoCrop,
                     busy: _busy,
-                    onPressed: _busy ? null : () => unawaited(_apply()),
+                    onPressed: _busy || (bytes != null && size == null)
+                        ? null
+                        : () => unawaited(_apply()),
                   ),
                 ),
                 const SizedBox(width: Space.x2),
@@ -148,79 +176,118 @@ class _PhotoCropScreenState extends State<PhotoCropScreen> {
   }
 }
 
+/// The photo drawn where [PhotoFrame.fit] puts it, with a frame that moves
+/// inside it and resizes from four corner handles.
 class _CropFrame extends StatelessWidget {
   const _CropFrame({
     required this.bytes,
+    required this.photoSize,
     required this.fraction,
-    required this.rotationDegrees,
+    required this.quarterTurns,
     required this.color,
     required this.onChanged,
   });
 
   final Uint8List bytes;
+  final Size photoSize;
   final Rect fraction;
-  final int rotationDegrees;
+  final int quarterTurns;
   final Color color;
   final ValueChanged<Rect> onChanged;
 
+  /// Half a handle's target, kept clear around the photo so corner handles
+  /// at its edges stay fully touchable.
+  static const double _reach = Sizes.minTapTarget / 2;
+
+  static const List<Alignment> _corners = <Alignment>[
+    Alignment.topLeft,
+    Alignment.topRight,
+    Alignment.bottomLeft,
+    Alignment.bottomRight,
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: <Widget>[
-        Center(
-          child: RotatedBox(
-            quarterTurns: ((rotationDegrees % 360) + 360) % 360 ~/ 90,
-            child: Image.memory(bytes, fit: BoxFit.contain),
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints limits) {
+        final Size area = limits.biggest;
+        final Rect photo = PhotoFrame.fit(
+          Size(
+            (area.width - _reach * 2).clamp(0.0, double.infinity),
+            (area.height - _reach * 2).clamp(0.0, double.infinity),
           ),
-        ),
-        LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints limits) {
-            final Rect box = _box(limits.biggest, fraction);
-            return Stack(
-              children: <Widget>[
-                Positioned.fromRect(
-                  rect: box,
+          photoSize,
+          quarterTurns,
+        ).shift(const Offset(_reach, _reach));
+        final Rect frame = PhotoFrame.toRect(fraction, photo);
+        return Stack(
+          children: <Widget>[
+            Positioned.fromRect(
+              rect: photo,
+              child: RotatedBox(
+                quarterTurns: quarterTurns,
+                child: Image.memory(
+                  bytes,
+                  fit: BoxFit.fill,
+                  gaplessPlayback: true,
+                ),
+              ),
+            ),
+            Positioned.fromRect(
+              rect: frame,
+              child: Semantics(
+                label: Copy.photoCropFrame,
+                child: GestureDetector(
+                  key: const ValueKey<String>('photo-crop-frame'),
+                  behavior: HitTestBehavior.opaque,
+                  onPanUpdate: (DragUpdateDetails details) {
+                    onChanged(
+                      PhotoFrame.move(
+                        fraction,
+                        PhotoFrame.fractionOf(details.delta, photo),
+                      ),
+                    );
+                  },
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: color, width: Space.x0),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            for (final Alignment corner in _corners)
+              Positioned(
+                left: (corner.x < 0 ? frame.left : frame.right) - _reach,
+                top: (corner.y < 0 ? frame.top : frame.bottom) - _reach,
+                width: Sizes.minTapTarget,
+                height: Sizes.minTapTarget,
+                child: Semantics(
+                  label: Copy.photoCropCorner,
                   child: GestureDetector(
+                    key: ValueKey<String>('photo-crop-corner-$corner'),
+                    behavior: HitTestBehavior.opaque,
                     onPanUpdate: (DragUpdateDetails details) {
-                      onChanged(_move(limits.biggest, details.delta));
+                      onChanged(
+                        PhotoFrame.resize(
+                          fraction,
+                          corner,
+                          PhotoFrame.fractionOf(details.delta, photo),
+                        ),
+                      );
                     },
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: color, width: Space.x0),
+                    child: Center(
+                      child: SizedBox.square(
+                        dimension: Space.x4,
+                        child: ColoredBox(color: color),
                       ),
                     ),
                   ),
                 ),
-              ],
-            );
-          },
-        ),
-      ],
+              ),
+          ],
+        );
+      },
     );
   }
-
-  Rect _move(Size size, Offset delta) {
-    if (size.width == 0 || size.height == 0) {
-      return fraction;
-    }
-    final double left = (fraction.left + delta.dx / size.width).clamp(
-      0.0,
-      1 - fraction.width,
-    );
-    final double top = (fraction.top + delta.dy / size.height).clamp(
-      0.0,
-      1 - fraction.height,
-    );
-    return Rect.fromLTWH(left, top, fraction.width, fraction.height);
-  }
-}
-
-Rect _box(Size size, Rect fraction) {
-  return Rect.fromLTWH(
-    fraction.left * size.width,
-    fraction.top * size.height,
-    fraction.width * size.width,
-    fraction.height * size.height,
-  );
 }

@@ -12,6 +12,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/download_service.dart';
+import 'package:tapture/core/files/photo_thumbnails.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
@@ -57,6 +58,47 @@ void main() {
       expect(find.text(Copy.projectEditTitle), findsNothing);
     },
   );
+
+  for (final Size size in <Size>[const Size(400, 800), const Size(1200, 800)]) {
+    testWidgets('at ${size.width.round()} dp a project photo leads its row, '
+        'and a project without one keeps its number', (
+      WidgetTester tester,
+    ) async {
+      final FakeProjectRepository repo = FakeProjectRepository();
+      addTearDown(repo.dispose);
+      _ok(await repo.create(aProject(id: 'project-1', name: 'Alpha')));
+      _ok(await repo.create(aProject(id: 'project-2', name: 'Beta')));
+      _ok(
+        await repo.setCoverPhoto(
+          'project-1',
+          Uint8List.fromList(<int>[1, 2, 3]),
+        ),
+      );
+      await _pump(
+        tester,
+        repo: repo,
+        size: size,
+        overrides: <Override>[
+          photoThumbnailsProvider.overrideWith(
+            (Ref _) => PhotoThumbnails.fake(const <String, String>{}),
+          ),
+        ],
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(
+        find.byKey(const ValueKey<String>('project-photo-project-1')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('project-photo-project-2')),
+        findsNothing,
+      );
+      expect(find.text(Copy.projectListNumber(2)), findsOneWidget);
+      expect(find.text(Copy.projectListNumber(1)), findsNothing);
+    });
+  }
 
   testWidgets('the row menu meets tap target, label and tooltip matchers', (
     WidgetTester tester,

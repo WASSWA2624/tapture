@@ -45,6 +45,57 @@ void main() {
     _ok(await persistence.clearSession(project.id));
     expect(_ok(await persistence.loadSession(project.id)), isNull);
   });
+
+  test('a record edit is stored beside the project new capture', () async {
+    final AppDatabase db = await seededDatabase();
+    addTearDown(db.close);
+    final FixedClock clock = FixedClock(DateTime.utc(2026, 9, 23, 16, 35));
+    final Project project = await db.select(db.projects).getSingle();
+    final DriftCapturePersistence persistence = DriftCapturePersistence(
+      db: db,
+      photos: _CapturePhotos(),
+      clock: clock,
+      deviceId: 'device-a',
+      ids: UuidV7Service.sequence(clock),
+    );
+    final capture.CaptureSession fresh = capture.CaptureSession(
+      id: 'session-1',
+      projectId: project.id,
+      templateId: 'template-1',
+      contextSnapshot: const <String, String>{},
+      captions: const <String, String>{'': 'New capture'},
+      isDirty: true,
+    );
+    final capture.CaptureSession edit = capture.CaptureSession(
+      id: 'record-1',
+      projectId: project.id,
+      templateId: 'template-1',
+      contextSnapshot: const <String, String>{},
+      recordId: 'record-1',
+      editing: true,
+      captions: const <String, String>{'': 'Edited'},
+      isDirty: true,
+    );
+
+    _ok(await persistence.saveSession(fresh));
+    _ok(await persistence.saveSession(edit));
+    expect(await db.select(db.captureSessions).get(), hasLength(2));
+    expect(
+      _ok(await persistence.loadSession(project.id))?.recordCaption,
+      'New capture',
+    );
+    expect(
+      _ok(await persistence.loadSession(edit.storageKey))?.recordCaption,
+      'Edited',
+    );
+
+    _ok(await persistence.clearSession(edit.storageKey));
+    expect(_ok(await persistence.loadSession(edit.storageKey)), isNull);
+    expect(
+      _ok(await persistence.loadSession(project.id))?.recordCaption,
+      'New capture',
+    );
+  });
 }
 
 final class _CapturePhotos implements CapturePhotoRepository {

@@ -1,4 +1,5 @@
 import 'audio_draft.dart';
+import 'capture_session_key.dart';
 import 'photo_draft.dart';
 
 /// In-progress capture: evidence, captions and typed values for one record.
@@ -18,6 +19,7 @@ final class CaptureSession {
     this.captions = const <String, String>{},
     this.values = const <String, Object?>{},
     this.isDirty = false,
+    this.editing = false,
   });
 
   /// Fresh session id.
@@ -51,6 +53,16 @@ final class CaptureSession {
   /// Whether unsaved mutations exist beyond durable photo writes.
   final bool isDirty;
 
+  /// Whether this session edits the saved record [recordId] rather than
+  /// capturing a new one (FBK0000148).
+  final bool editing;
+
+  /// Where the session is stored: its project for a new capture, and
+  /// [CaptureSessionKey.edit] for an edit (D6).
+  String get storageKey {
+    return editing ? CaptureSessionKey.edit(recordId ?? id) : projectId;
+  }
+
   /// Record-level caption text.
   String get recordCaption => captions[''] ?? captions['record'] ?? '';
 
@@ -74,6 +86,7 @@ final class CaptureSession {
       'captions': captions,
       'values': values,
       'isDirty': isDirty,
+      'editing': editing,
     };
   }
 
@@ -133,6 +146,7 @@ final class CaptureSession {
       captions: captions,
       values: values,
       isDirty: json['isDirty'] as bool? ?? false,
+      editing: json['editing'] as bool? ?? false,
     );
   }
 
@@ -149,6 +163,7 @@ final class CaptureSession {
     Map<String, String>? captions,
     Map<String, Object?>? values,
     bool? isDirty,
+    bool? editing,
   }) {
     return CaptureSession(
       id: id ?? this.id,
@@ -161,6 +176,7 @@ final class CaptureSession {
       captions: captions ?? this.captions,
       values: values ?? this.values,
       isDirty: isDirty ?? this.isDirty,
+      editing: editing ?? this.editing,
     );
   }
 }

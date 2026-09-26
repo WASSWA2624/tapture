@@ -9,6 +9,7 @@ export 'capture_photo_repository.dart';
 export 'capture_record_persistence.dart';
 export 'capture_reset.dart';
 export 'capture_session.dart';
+export 'capture_session_key.dart';
 export 'capture_template_choice.dart';
 export 'gps_capture.dart';
 export 'identifier_lookup.dart';

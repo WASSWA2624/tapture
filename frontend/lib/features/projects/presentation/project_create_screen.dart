@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,12 +7,14 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
 import 'current_project.dart';
+import 'project_photo_field.dart';
 
 /// Short form that creates a project, or duplicates one, then opens it.
 class ProjectCreateScreen extends ConsumerStatefulWidget {
@@ -33,6 +37,9 @@ class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen> {
   late final TextEditingController _name;
   final TextEditingController _description = TextEditingController();
   final TextEditingController _organisation = TextEditingController();
+
+  /// The optional photo, stored once the project exists.
+  Uint8List? _photo;
 
   @override
   void initState() {
@@ -83,6 +90,11 @@ class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen> {
             requiredness: FieldRequiredness.optional,
             textInputAction: TextInputAction.done,
           ),
+          ProjectPhotoField(
+            pending: _photo,
+            onPicked: (Uint8List bytes) => setState(() => _photo = bytes),
+            onRemove: () => setState(() => _photo = null),
+          ),
         ],
         submitLabel: duplicating ? Copy.projectsDuplicate : Copy.projectsCreate,
         onSubmit: () async {
@@ -96,6 +108,19 @@ class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen> {
               );
           if (created == null || !context.mounted) {
             return;
+          }
+          final Uint8List? photo = _photo;
+          if (photo != null) {
+            final Result<ProjectSettings> stored = await ref
+                .read(projectRepositoryProvider)
+                .setCoverPhoto(created.id, photo);
+            if (!context.mounted) {
+              return;
+            }
+            // The project stands without its photo; say why it is missing.
+            if (stored case FailureResult<ProjectSettings>(:final failure)) {
+              showAppSnack(context, failure.message, tone: SnackTone.error);
+            }
           }
           final GoRouter? router = GoRouter.maybeOf(context);
           if (router != null) {

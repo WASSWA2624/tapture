@@ -10,6 +10,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/features/feedback/feedback.dart';
 import 'package:tapture/features/feedback/presentation/feedback_draft.dart';
+import 'package:tapture/features/feedback/presentation/feedback_draft_bar.dart';
 import 'package:tapture/features/feedback/presentation/feedback_draft_controller.dart';
 import 'package:tapture/features/feedback/presentation/feedback_overlay.dart';
 import 'package:tapture/features/settings/domain/operator_profile.dart';
@@ -111,14 +112,144 @@ void main() {
         await tester.runAsync(() => _containsColor(shot, evidence)) ?? false;
     expect(containsMenu, isTrue);
   });
+
+  for (final ({String name, Size size, double scale, double keyboard}) layout
+      in <({String name, Size size, double scale, double keyboard})>[
+        (name: '393 dp', size: const Size(393, 886), scale: 1, keyboard: 300),
+        (name: '800 dp', size: const Size(800, 1000), scale: 1, keyboard: 300),
+        (name: '1200 dp', size: const Size(1200, 800), scale: 1, keyboard: 300),
+        // A landscape phone has 393dp; a 300dp keyboard and the bar leave
+        // no page, so the keyboard here is the height a landscape one takes.
+        (
+          name: 'landscape',
+          size: const Size(886, 393),
+          scale: 1,
+          keyboard: 120,
+        ),
+        (
+          name: '200 percent text',
+          size: const Size(393, 886),
+          scale: 2,
+          keyboard: 300,
+        ),
+      ]) {
+    testWidgets('at ${layout.name} a page scrolls clear of the folded bar', (
+      WidgetTester tester,
+    ) async {
+      double? pageInset;
+      final _Harness harness = await _pump(
+        tester,
+        size: layout.size,
+        textScale: layout.scale,
+        home: _LongPage(onInset: (double inset) => pageInset = inset),
+      );
+      expect(pageInset, 0);
+
+      await _openFeedback(tester, harness);
+      // Dismiss the Feedback menu through its barrier, then fold the draft.
+      await tester.tapAt(const Offset(4, 4));
+      await tester.pumpAndSettle();
+      harness.container.read(feedbackDraftProvider.notifier).collapse();
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      await _expectClearOfBar(tester);
+
+      tester.view.viewInsets = FakeViewPadding(bottom: layout.keyboard);
+      addTearDown(tester.view.resetViewInsets);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      await _expectClearOfBar(tester);
+
+      tester.view.resetViewInsets();
+      harness.container.read(feedbackDraftProvider.notifier).expand();
+      await tester.pumpAndSettle();
+      expect(pageInset, 0);
+
+      harness.container.read(feedbackDraftProvider.notifier).clear();
+      await tester.pumpAndSettle();
+      expect(find.byType(FeedbackDraftBar), findsNothing);
+      expect(pageInset, 0);
+    });
+  }
 }
 
-Future<_Harness> _pump(WidgetTester tester, {required Widget home}) async {
+/// Scrolls [_LongPage] to its end and checks its last row and footer action
+/// sit above the folded bar.
+Future<void> _expectClearOfBar(WidgetTester tester) async {
+  final ScrollableState list = tester.state<ScrollableState>(
+    find
+        .descendant(
+          of: find.byKey(const ValueKey<String>('long-page-list')),
+          matching: find.byType(Scrollable),
+        )
+        .first,
+  );
+  list.position.jumpTo(list.position.maxScrollExtent);
+  await tester.pumpAndSettle();
+  final Rect bar = tester.getRect(find.byType(FeedbackDraftBar));
+  final Rect last = tester.getRect(find.text('Row ${_LongPage.rows - 1}'));
+  final Rect footer = tester.getRect(
+    find.byKey(const ValueKey<String>('long-page-footer')),
+  );
+  expect(last.bottom, lessThanOrEqualTo(bar.top + 0.01));
+  expect(footer.bottom, lessThanOrEqualTo(bar.top + 0.01));
+}
+
+/// A page longer than the screen with a footer action, which reports the
+/// bottom view inset it is given.
+class _LongPage extends StatelessWidget {
+  const _LongPage({required this.onInset});
+
+  static const int rows = 40;
+
+  final ValueChanged<double> onInset;
+
+  @override
+  Widget build(BuildContext context) {
+    onInset(MediaQuery.viewInsetsOf(context).bottom);
+    return Scaffold(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+              key: const ValueKey<String>('long-page-list'),
+              itemCount: rows,
+              itemBuilder: (BuildContext _, int index) {
+                return ListTile(title: Text('Row $index'));
+              },
+            ),
+          ),
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: FilledButton(
+                key: const ValueKey<String>('long-page-footer'),
+                onPressed: () {},
+                child: const Text('Footer action'),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+Future<_Harness> _pump(
+  WidgetTester tester, {
+  required Widget home,
+  Size size = const Size(400, 800),
+  double textScale = 1,
+}) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(400, 800);
+  tester.view.physicalSize = size;
+  tester.platformDispatcher.textScaleFactorTestValue = textScale;
   addTearDown(() {
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();
+    tester.platformDispatcher.clearTextScaleFactorTestValue();
   });
   final ProviderContainer container = ProviderContainer(
     retry: (int _, Object _) => null,

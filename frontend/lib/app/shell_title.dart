@@ -129,7 +129,10 @@ String _projectLeaf(List<String> segments) {
     'capture' => Copy.navCapture,
     'context' => Copy.contextHierarchyTitle,
     'templates' => Copy.navTemplates,
-    'records' => Copy.navRecords,
+    'records' =>
+      segments.length >= 3 && segments[2] == 'edit'
+          ? '${Copy.navRecords} › ${Copy.recordEditTitle}'
+          : Copy.navRecords,
     'queue' => Copy.navQueue,
     'exports' => Copy.projectExportTitle,
     'datasets' => Copy.navDatasets,

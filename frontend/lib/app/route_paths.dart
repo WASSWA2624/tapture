@@ -109,6 +109,10 @@ abstract final class RoutePaths {
   /// One record's page inside its project.
   static String projectRecord(String projectId, String recordId) =>
       '${projectRecords(projectId)}/${Uri.encodeComponent(recordId)}';
+
+  /// Capture page that edits one saved record's photos and captions.
+  static String projectRecordEdit(String projectId, String recordId) =>
+      '${projectRecord(projectId, recordId)}/edit';
   static String projectQueue(String projectId) => '${project(projectId)}/queue';
   static String projectExports(String projectId) =>
       '${project(projectId)}/exports';

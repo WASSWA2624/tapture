@@ -12,7 +12,14 @@ import 'package:tapture/features/capture/domain/capture_session.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/domain/photo_repository.dart';
 
+/// The JSON key the stored sessions sit under.
+const String _key = 'sessions';
+
 /// [CapturePersistence] over a [PhotoRepository] and session [TextStore].
+///
+/// The store holds one JSON object of sessions keyed by storage key, so a
+/// record edit sits beside its project's new capture (D6). A store written
+/// before keys existed holds a bare session, read under its own key.
 final class CapturePersistenceImpl implements CapturePersistence {
   /// Creates persistence over [_photos] and a session [_store].
   CapturePersistenceImpl({required this._photos, required this._store});
@@ -22,6 +29,27 @@ final class CapturePersistenceImpl implements CapturePersistence {
 
   @override
   PhotoRepository get photos => _photos;
+
+  /// The stored sessions by key. Throws when the stored JSON cannot be read.
+  Map<String, Object?> _sessions() {
+    final String? raw = _store.read();
+    if (raw == null || raw.isEmpty) {
+      return <String, Object?>{};
+    }
+    final Object? decoded = jsonDecode(raw);
+    if (decoded is! Map) {
+      return <String, Object?>{};
+    }
+    final Object? keyed = decoded[_key];
+    if (keyed is Map) {
+      return Map<String, Object?>.from(keyed);
+    }
+    // A bare session from before keys, stored under its own key.
+    final CaptureSession legacy = CaptureSession.fromJson(
+      Map<String, Object?>.from(decoded),
+    );
+    return <String, Object?>{legacy.storageKey: legacy.toJson()};
+  }
 
   @override
   Future<Result<PhotoDraft>> savePhoto(
@@ -54,7 +82,9 @@ final class CapturePersistenceImpl implements CapturePersistence {
   @override
   Future<Result<void>> saveSession(CaptureSession session) async {
     try {
-      await _store.write(jsonEncode(session.toJson()));
+      final Map<String, Object?> sessions = _sessions()
+        ..[session.storageKey] = session.toJson();
+      await _store.write(jsonEncode(<String, Object?>{_key: sessions}));
       return const Success<void>(null);
     } on Object catch (error) {
       return FailureResult<void>(
@@ -64,18 +94,14 @@ final class CapturePersistenceImpl implements CapturePersistence {
   }
 
   @override
-  Future<Result<CaptureSession?>> loadSession(String projectId) async {
+  Future<Result<CaptureSession?>> loadSession(String key) async {
     try {
-      final String? raw = _store.read();
-      if (raw == null || raw.isEmpty) {
-        return const Success<CaptureSession?>(null);
-      }
-      final Object? decoded = jsonDecode(raw);
-      if (decoded is! Map) {
+      final Object? stored = _sessions()[key];
+      if (stored is! Map) {
         return const Success<CaptureSession?>(null);
       }
       return Success<CaptureSession?>(
-        CaptureSession.fromJson(Map<String, Object?>.from(decoded)),
+        CaptureSession.fromJson(Map<String, Object?>.from(stored)),
       );
     } on Object catch (error) {
       return FailureResult<CaptureSession?>(
@@ -88,9 +114,12 @@ final class CapturePersistenceImpl implements CapturePersistence {
   }
 
   @override
-  Future<Result<void>> clearSession(String projectId) async {
+  Future<Result<void>> clearSession(String key) async {
     try {
-      await _store.write('');
+      final Map<String, Object?> sessions = _sessions()..remove(key);
+      await _store.write(
+        sessions.isEmpty ? '' : jsonEncode(<String, Object?>{_key: sessions}),
+      );
       return const Success<void>(null);
     } on Object catch (error) {
       return FailureResult<void>(

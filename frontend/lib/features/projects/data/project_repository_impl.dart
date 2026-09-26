@@ -1,4 +1,6 @@
-import 'package:drift/drift.dart';
+import 'dart:typed_data';
+
+import 'package:drift/drift.dart' hide Uint8List;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/photos.dart';
@@ -12,6 +14,7 @@ import 'package:tapture/core/db/tables/tombstones.dart';
 import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/path_sanitizer.dart';
 import 'package:tapture/core/files/project_tree_stub.dart'
     if (dart.library.io) 'package:tapture/core/files/project_tree_io.dart'
@@ -51,6 +54,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
       required String folderName,
     })?
     recycleTree,
+    this._writer,
   }) : _createTree = createTree ?? project_tree.writeProjectTree,
        _discardTree = discardTree ?? project_tree.discardProjectTree,
        _recycleTree = recycleTree ?? project_tree.recycleProjectTree;
@@ -62,6 +66,9 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   final _ProjectTreeWrite _createTree;
   final _ProjectTreeWrite _discardTree;
   final _ProjectTreeWrite _recycleTree;
+
+  /// Writes project photos. Null where no files are stored.
+  final FileWriter? _writer;
 
   @override
   Stream<List<Project>> watchAll({bool includeArchived = false}) {
@@ -209,6 +216,57 @@ final class ProjectRepositoryImpl implements ProjectRepository {
       ),
     );
     return written.map((Project _) {});
+  }
+
+  @override
+  Future<Result<ProjectSettings>> setCoverPhoto(
+    String projectId,
+    Uint8List bytes,
+  ) async {
+    final FileWriter? writer = _writer;
+    if (writer == null) {
+      return const FailureResult<ProjectSettings>(_noPhotoFiles);
+    }
+    final sqlite.Project? row = await _byId(projectId);
+    if (row == null) {
+      return const FailureResult<ProjectSettings>(_missing);
+    }
+    final Project current = ProjectMapper.fromRow(row);
+    final String path =
+        'projects/${current.folderName}/cover/${_ids.newId()}.jpg';
+    // The file is durable before the settings row points at it.
+    final Result<WrittenFile> file = await writer.write(
+      Stream<List<int>>.value(bytes),
+      path,
+    );
+    switch (file) {
+      case FailureResult<WrittenFile>(:final Failure failure):
+        return FailureResult<ProjectSettings>(failure);
+      case Success<WrittenFile>(:final WrittenFile value):
+        final Result<Project> written = await _write(
+          current.copyWith(
+            settings: current.settings.copyWith(
+              coverPhoto: (path: path, sha256: value.sha256),
+            ),
+          ),
+        );
+        return written.map((Project project) => project.settings);
+    }
+  }
+
+  @override
+  Future<Result<ProjectSettings>> clearCoverPhoto(String projectId) async {
+    final sqlite.Project? row = await _byId(projectId);
+    if (row == null) {
+      return const FailureResult<ProjectSettings>(_missing);
+    }
+    final Project current = ProjectMapper.fromRow(row);
+    final Result<Project> written = await _write(
+      current.copyWith(
+        settings: current.settings.copyWith(clearCoverPhoto: true),
+      ),
+    );
+    return written.map((Project project) => project.settings);
   }
 
   @override
@@ -986,6 +1044,12 @@ final Provider<ProjectRepository> projectRepositoryProvider =
       return _EmptyProjectRepository();
     });
 
+/// Photo writes refused where no files are stored.
+const StorageFailure _noPhotoFiles = StorageFailure(
+  message: 'Project photos cannot be stored on this device.',
+  recoveryAction: 'Add the photo on a device that stores files.',
+);
+
 /// Source of a value a person typed, the same tag capture writes.
 const String _typedSource = 'TYPED';
 
@@ -1107,6 +1171,19 @@ final class _EmptyProjectRepository implements ProjectRepository {
   @override
   Future<Result<void>> update(Project project) async {
     return const FailureResult<void>(_missing);
+  }
+
+  @override
+  Future<Result<ProjectSettings>> setCoverPhoto(
+    String projectId,
+    Uint8List bytes,
+  ) async {
+    return const FailureResult<ProjectSettings>(_missing);
+  }
+
+  @override
+  Future<Result<ProjectSettings>> clearCoverPhoto(String projectId) async {
+    return const FailureResult<ProjectSettings>(_missing);
   }
 
   @override

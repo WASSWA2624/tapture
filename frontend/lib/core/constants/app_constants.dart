@@ -83,6 +83,27 @@ abstract final class AppConstants {
     cacheMaxBytes: 200 * _mib,
   );
 
+  /// Markup sizes as fractions of the photo, so a mark looks the same at
+  /// any resolution: stroke widths of the short edge and text heights of
+  /// the height. Index 0 is small, 1 medium and 2 large. [panelShare] is the
+  /// most of the screen the markup controls take beside or below the photo.
+  /// A text backing is black at [backingAlpha], padded by [backingPad] of a
+  /// line's height on every side.
+  static const ({
+    List<double> strokeFractions,
+    List<double> textFractions,
+    double panelShare,
+    double backingAlpha,
+    double backingPad,
+  })
+  markup = (
+    strokeFractions: <double>[0.004, 0.008, 0.016],
+    textFractions: <double>[0.04, 0.07, 0.11],
+    panelShare: 0.45,
+    backingAlpha: 0.6,
+    backingPad: 0.25,
+  );
+
   /// How long a tombstone and its files stay recoverable.
   static const ({int days}) retention = (days: 30);
 

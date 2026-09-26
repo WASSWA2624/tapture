@@ -7,6 +7,7 @@ import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/color_swatches.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/app/theme/markup_ink.dart';
 import 'package:tapture/app/theme/outdoor_theme.dart';
 import 'package:tapture/app/theme/surface_levels.dart';
 import 'package:tapture/app/theme/theme_controller.dart';
@@ -24,6 +25,7 @@ import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/app_floating_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_ink_picker.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
@@ -93,6 +95,8 @@ class WidgetGalleryScreen extends StatefulWidget {
 }
 
 class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
+  MarkupInk _ink = MarkupInk.red;
+  int _inkSize = 1;
   static final FixedClock _clock = FixedClock(DateTime.utc(2026, 9, 17, 12));
   static const List<Choice<AppThemeMode>> _themes = <Choice<AppThemeMode>>[
     Choice<AppThemeMode>(AppThemeMode.light, Copy.galleryLight),
@@ -871,6 +875,14 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
             selected: true,
             onTap: _noop,
             onSelectedChanged: (bool _) {},
+            onRemove: _noop,
+          ),
+          AppPhotoThumb(
+            photo: const PhotoAsset(sha256: 'pick'),
+            size: edge,
+            onTap: _noop,
+            onSelectedChanged: (bool _) {},
+            onRemove: _noop,
           ),
           AppPhotoThumb(
             photo: const PhotoAsset(sha256: 'turn', thumbPath: '/turned.jpg'),
@@ -878,6 +890,13 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
             quarterTurns: 1,
           ),
         ],
+      ),
+      const SizedBox(height: Space.x4),
+      AppInkPicker(
+        ink: _ink,
+        size: _inkSize,
+        onInk: (MarkupInk ink) => setState(() => _ink = ink),
+        onSize: (int size) => setState(() => _inkSize = size),
       ),
       const SizedBox(height: Space.x6),
     ];

@@ -11,6 +11,7 @@ final class RecordCaptionField extends StatefulWidget {
     this.onWriteFailed,
     this.afterDictation,
     this.enabled = true,
+    this.targetKey,
     super.key,
   });
 
@@ -29,6 +30,11 @@ final class RecordCaptionField extends StatefulWidget {
   /// When false, the field and its microphone do not accept input.
   final bool enabled;
 
+  /// Names the photos the caption goes to. [value] replaces the typed text
+  /// only when this changes, and when the field is not being typed in, so
+  /// a late save never resets typing (FBK0000149).
+  final Object? targetKey;
+
   @override
   State<RecordCaptionField> createState() => _RecordCaptionFieldState();
 }
@@ -36,6 +42,7 @@ final class RecordCaptionField extends StatefulWidget {
 class _RecordCaptionFieldState extends State<RecordCaptionField>
     with WidgetsBindingObserver {
   late final TextEditingController _controller;
+  bool _focused = false;
 
   @override
   void initState() {
@@ -47,7 +54,11 @@ class _RecordCaptionFieldState extends State<RecordCaptionField>
   @override
   void didUpdateWidget(covariant RecordCaptionField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.value != widget.value && widget.value != _controller.text) {
+    if (widget.value == _controller.text) {
+      return;
+    }
+    final bool targetsChanged = oldWidget.targetKey != widget.targetKey;
+    if (targetsChanged || (!_focused && oldWidget.value != widget.value)) {
       _controller.text = widget.value;
     }
   }
@@ -75,15 +86,20 @@ class _RecordCaptionFieldState extends State<RecordCaptionField>
 
   @override
   Widget build(BuildContext context) {
-    return AppTextField(
-      controller: _controller,
-      label: Copy.captureRecordCaption,
-      minLines: 3,
-      maxLines: 6,
-      enabled: widget.enabled,
-      textInputAction: TextInputAction.newline,
-      onChanged: (String text) => _persist(text),
-      afterDictation: widget.afterDictation,
+    return Focus(
+      canRequestFocus: false,
+      skipTraversal: true,
+      onFocusChange: (bool focused) => _focused = focused,
+      child: AppTextField(
+        controller: _controller,
+        label: Copy.captureRecordCaption,
+        minLines: 3,
+        maxLines: 6,
+        enabled: widget.enabled,
+        textInputAction: TextInputAction.newline,
+        onChanged: (String text) => _persist(text),
+        afterDictation: widget.afterDictation,
+      ),
     );
   }
 }

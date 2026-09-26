@@ -5,6 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/app/theme/markup_ink.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/audio/audio_recorder_service.dart';
 import 'package:tapture/core/constants/app_constants.dart';
@@ -20,15 +21,14 @@ import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
-import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
-import 'package:tapture/core/widgets/fields/app_text_field.dart';
-import 'package:tapture/core/widgets/photo_markup.dart';
+import 'package:tapture/core/widgets/photo_source_sheet.dart';
 import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
 import 'package:tapture/features/capture/domain/capture_photo_repository.dart';
 import 'package:tapture/features/capture/domain/capture_record_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
+import 'package:tapture/features/capture/domain/capture_session_key.dart';
 import 'package:tapture/features/capture/domain/capture_template_choice.dart';
 import 'package:tapture/features/capture/domain/photo_derivation.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
@@ -44,6 +44,7 @@ import 'package:tapture/features/capture/presentation/inline_fields_section.dart
 import 'package:tapture/features/capture/presentation/photo_crop_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_doodle_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_tray.dart';
+import 'package:tapture/features/capture/presentation/photo_type_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_viewer_screen.dart';
 import 'package:tapture/features/capture/presentation/record_caption_field.dart';
 import 'package:tapture/features/context/context.dart';
@@ -52,16 +53,6 @@ import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/templates.dart';
 
 export 'capture_target_fields.dart' show captureProjectTemplatesProvider;
-
-/// Production supplies the Drift-backed transaction writer. Tests may inject
-/// a focused in-memory implementation without crossing presentation into data.
-final Provider<CaptureRecordPersistence?> captureRecordWriterProvider =
-    Provider<CaptureRecordPersistence?>((Ref _) => null);
-
-/// Camera and library picker for capture. Tests override with [PhotoPicker.fake].
-final Provider<PhotoPicker> capturePhotoPickerProvider = Provider<PhotoPicker>(
-  (Ref _) => PhotoPicker(),
-);
 
 /// Templates for the open project, read through the templates barrel.
 final StreamProvider<List<TemplateDef>> captureTemplatesProvider =
@@ -97,11 +88,14 @@ final class _CaptureUiController extends Notifier<_CaptureUiState> {
   }
 }
 
-/// Capture surface: tray, caption, template choice, saves.
+/// Capture surface: tray, caption, template choice, saves. With a
+/// [recordId] it edits that saved record's photos, captions and audio
+/// instead, and saves them back to it (FBK0000148).
 final class CaptureScreen extends ConsumerStatefulWidget {
   /// Creates the screen for [projectId].
   const CaptureScreen({
     required this.projectId,
+    this.recordId,
     this.fields = const <FieldDef>[],
     this.onAddPhoto,
     this.onSaveRaw,
@@ -112,6 +106,9 @@ final class CaptureScreen extends ConsumerStatefulWidget {
 
   /// Open project. Empty on the Capture tab root.
   final String projectId;
+
+  /// The saved record to edit. Null captures a new record.
+  final String? recordId;
 
   /// Template fields for the inline section.
   final List<FieldDef> fields;
@@ -143,6 +140,21 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   String? _chosen;
   final IdService _ids = UuidV7Service(const SystemClock());
 
+  /// What the open photo preview shows, set again after each new version so
+  /// the preview follows crop, draw, type-on and revert (FBK0000150).
+  final ValueNotifier<List<PhotoDraft>> _viewerPhotos =
+      ValueNotifier<List<PhotoDraft>>(const <PhotoDraft>[]);
+
+  /// The last markup ink and size, offered again by Draw and type-on for
+  /// the rest of this visit (FE-SIMP-05).
+  MarkupInk _markupInk = MarkupInk.red;
+  int _markupSize = 1;
+
+  void _keepMarkupStyle(MarkupInk ink, int size) {
+    _markupInk = ink;
+    _markupSize = size;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -155,6 +167,27 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   void deactivate() {
     unawaited(_persist());
     super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    _viewerPhotos.dispose();
+    super.dispose();
+  }
+
+  bool get _editing => widget.recordId != null;
+
+  /// The session this page works on: the project's new capture, or the
+  /// record's edit, which is stored apart from it (D6).
+  String _sessionKey() {
+    final String? recordId = widget.recordId;
+    return recordId == null ? _projectId() : CaptureSessionKey.edit(recordId);
+  }
+
+  void _showNewestInViewer() {
+    _viewerPhotos.value = _activePhotos(
+      ref.read(captureControllerProvider(_sessionKey())),
+    );
   }
 
   /// Project this capture is filed under. A route id stands until the
@@ -184,7 +217,14 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     );
     final List<TemplateDef> templates =
         templateState.asData?.value ?? const <TemplateDef>[];
-    final bool ready = projectId.isNotEmpty && templates.isNotEmpty;
+    final CaptureSession session = ref.watch(
+      captureControllerProvider(_sessionKey()),
+    );
+    // An edit is ready once its record has loaded; its template and context
+    // are the record's own and stay as they are.
+    final bool ready = _editing
+        ? session.projectId.isNotEmpty
+        : projectId.isNotEmpty && templates.isNotEmpty;
     final bool visible = _visible(context);
     if (_onStage && !visible) {
       _onStage = false;
@@ -194,17 +234,16 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     } else if (visible) {
       _onStage = true;
     }
-    final CaptureSession session = ref.watch(
-      captureControllerProvider(_projectId()),
-    );
     final CaptureController controller = ref.read(
-      captureControllerProvider(_projectId()).notifier,
+      captureControllerProvider(_sessionKey()).notifier,
     );
-    final _CaptureUiState uiState = ref.watch(_captureUiProvider(_projectId()));
+    final _CaptureUiState uiState = ref.watch(
+      _captureUiProvider(_sessionKey()),
+    );
     final ContextState? activeContext = _projectId().isEmpty
         ? null
         : ref.watch(projectContextProvider(_projectId())).asData?.value;
-    if (activeContext != null) {
+    if (activeContext != null && !_editing) {
       final Map<String, String> snapshot = <String, String>{
         ...activeContext.values,
         ...activeContext.pinned,
@@ -224,58 +263,70 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       sessionTemplateId: session.templateId,
       choice: project?.settings.templateChoice,
     );
-    if (templateId != null && session.templateId != templateId) {
+    if (!_editing && templateId != null && session.templateId != templateId) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           unawaited(controller.setTemplate(templateId));
         }
       });
     }
-    final bool needsChoice = ready && templateId == null;
+    final bool needsChoice = !_editing && ready && templateId == null;
     final bool offline = ref.watch(offlineNowProvider);
-    const String title = Copy.navCapture;
+    final List<String> captionTargets = _captionTargets(session);
+    final String title = _editing ? Copy.recordEditTitle : Copy.navCapture;
     final Widget? banner = widget.headroom;
     return AppPage(
       key: const ValueKey<String>('route-capture'),
       title: title,
       showAppBar: false,
       scrollable: true,
-      footer: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          AppButton(
-            label: Copy.captureSaveRaw,
-            variant: AppButtonVariant.secondary,
-            expand: true,
-            busy: uiState.saving,
-            onPressed: ready
-                ? (widget.onSaveRaw ?? () => unawaited(_save(false)))
-                : null,
-          ),
-          const SizedBox(height: Space.x2),
-          AppPrimaryAction(
-            label: Copy.captureSaveAndAnalyse,
-            busy: uiState.saving,
-            // Processing waits for a network; Save raw keeps capture
-            // unblocked meanwhile (D3).
-            caption: offline ? Copy.captureProcessNeedsNetwork : null,
-            onPressed: ready && !offline
-                ? (widget.onSaveAndAnalyse ?? () => unawaited(_save(true)))
-                : null,
-          ),
-        ],
-      ),
+      footer: _editing
+          ? AppPrimaryAction(
+              key: const ValueKey<String>('record-edit-save'),
+              label: Copy.recordEditSave,
+              busy: uiState.saving,
+              onPressed: ready ? () => unawaited(_saveEdits()) : null,
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                AppButton(
+                  label: Copy.captureSaveRaw,
+                  variant: AppButtonVariant.secondary,
+                  expand: true,
+                  busy: uiState.saving,
+                  onPressed: ready
+                      ? (widget.onSaveRaw ?? () => unawaited(_save(false)))
+                      : null,
+                ),
+                const SizedBox(height: Space.x2),
+                AppPrimaryAction(
+                  label: Copy.captureSaveAndAnalyse,
+                  busy: uiState.saving,
+                  // Processing waits for a network; Save raw keeps capture
+                  // unblocked meanwhile (D3).
+                  caption: offline ? Copy.captureProcessNeedsNetwork : null,
+                  onPressed: ready && !offline
+                      ? (widget.onSaveAndAnalyse ??
+                            () => unawaited(_save(true)))
+                      : null,
+                ),
+              ],
+            ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           if (banner != null) ...<Widget>[banner, _blockGap],
-          CaptureTargetFields(
-            selectedProjectId: projectId,
-            templates: templates,
-            templateId: templateId,
-            onProjectSelected: _chooseProject,
-          ),
-          _blockGap,
+          // An edit keeps the record's project and template.
+          if (!_editing) ...<Widget>[
+            CaptureTargetFields(
+              selectedProjectId: projectId,
+              templates: templates,
+              templateId: templateId,
+              onProjectSelected: _chooseProject,
+            ),
+            _blockGap,
+          ],
           PhotoTray(
             photos: _activePhotos(session),
             captions: session.captions,
@@ -294,7 +345,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             onRemove: (PhotoDraft photo) {
               unawaited(
                 ref
-                    .read(captureControllerProvider(_projectId()).notifier)
+                    .read(captureControllerProvider(_sessionKey()).notifier)
                     .removePhoto(photo.id),
               );
             },
@@ -304,12 +355,13 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             enabled: ready,
             // The field shows what its targets share, so the next keystroke
             // never copies one photo's caption onto another (FBK0000132).
-            value: _captionTargets(session).isEmpty
+            value: captionTargets.isEmpty
                 ? session.recordCaption
                 : CaptionApply.sharedText(
-                    ids: _captionTargets(session),
+                    ids: captionTargets,
                     captions: session.captions,
                   ),
+            targetKey: captionTargets.join(','),
             onChanged: (String text) async {
               final Result<void> result = await controller.setCaption(
                 null,
@@ -319,7 +371,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                 return false;
               }
               final List<String> ids = _captionTargets(
-                ref.read(captureControllerProvider(_projectId())),
+                ref.read(captureControllerProvider(_sessionKey())),
               );
               if (ids.isEmpty) {
                 return true;
@@ -351,6 +403,19 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                   unawaited(_audioStopped(recording)),
             ),
           ),
+          if (captionTargets.isNotEmpty) ...<Widget>[
+            const SizedBox(height: Space.x1),
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                _selected.isEmpty
+                    ? Copy.captionGoesToAll(captionTargets.length)
+                    : Copy.captionGoesToTicked(captionTargets.length),
+                key: const ValueKey<String>('capture-caption-targets'),
+                style: AppText.caption,
+              ),
+            ),
+          ],
           // The recorder block carries its own gap and is empty while idle.
           if (project != null) ...<Widget>[
             AudioRecorder(
@@ -368,74 +433,36 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               ),
             ],
           ],
-          _blockGap,
-          InlineFieldsSection(
-            fields: widget.fields,
-            values: session.values,
-            onChanged: (String key, Object? value) {
-              unawaited(controller.setValue(key, value));
-            },
-          ),
+          // Field values are edited from the record page (FBK0000148).
+          if (!_editing) ...<Widget>[
+            _blockGap,
+            InlineFieldsSection(
+              fields: widget.fields,
+              values: session.values,
+              onChanged: (String key, Object? value) {
+                unawaited(controller.setValue(key, value));
+              },
+            ),
+          ],
         ],
       ),
     );
   }
 
   Future<void> _add() async {
-    final PhotoPicker picker = ref.read(capturePhotoPickerProvider);
+    final PhotoPicker picker = ref.read(photoPickerProvider);
     if (!mounted) {
       return;
     }
-    await showAppSheet<void>(
+    final Result<List<Uint8List>>? picked = await showPhotoSourceSheet(
       context,
-      title: Copy.captureAddSheetTitle,
-      contentSized: true,
-      builder: (BuildContext sheetContext) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            if (picker.canTakePhoto)
-              AppButton(
-                label: Copy.captureTakePhoto,
-                icon: AppIcons.camera,
-                expand: true,
-                onPressed: () {
-                  Navigator.of(sheetContext).pop();
-                  unawaited(_take(picker));
-                },
-              ),
-            if (picker.canTakePhoto) const SizedBox(height: Space.x2),
-            AppButton(
-              label: Copy.captureChoosePhoto,
-              icon: AppIcons.photoLibrary,
-              variant: AppButtonVariant.secondary,
-              expand: true,
-              onPressed: () {
-                Navigator.of(sheetContext).pop();
-                unawaited(_choose(picker));
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _take(PhotoPicker picker) async {
-    final Result<List<Uint8List>> result = await picker.take(
-      longEdge: GalleryPicker.defaultLongEdge,
-    );
-    await _imported(result);
-  }
-
-  Future<void> _choose(PhotoPicker picker) async {
-    final Result<List<Uint8List>> result = await picker.choose(
+      picker: picker,
       limit: GalleryPicker.defaultLimit,
       longEdge: GalleryPicker.defaultLongEdge,
     );
-    await _imported(result);
+    if (picked != null) {
+      await _imported(picked);
+    }
   }
 
   Future<void> _imported(Result<List<Uint8List>> result) async {
@@ -459,7 +486,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     final PhotoDraft draft = PhotoDraft(
       id: id,
       projectId: _projectId(),
-      captureSessionId: ref.read(captureControllerProvider(_projectId())).id,
+      captureSessionId: ref.read(captureControllerProvider(_sessionKey())).id,
       originalFilename: '$id.jpg',
       storedFilename: '$id.jpg',
       relativePath: 'photos/$id.jpg',
@@ -470,7 +497,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       derivedFrom: derivedFrom,
     );
     final Result<void> saved = await ref
-        .read(captureControllerProvider(_projectId()).notifier)
+        .read(captureControllerProvider(_sessionKey()).notifier)
         .addPhoto(draft, bytes: bytes);
     if (!mounted) {
       return;
@@ -522,14 +549,15 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     final List<PhotoDraft> photos = _activePhotos(session);
     final int index = photos.indexWhere((PhotoDraft row) => row.id == photo.id);
     final CaptureController controller = ref.read(
-      captureControllerProvider(_projectId()).notifier,
+      captureControllerProvider(_sessionKey()).notifier,
     );
+    _viewerPhotos.value = photos;
     unawaited(
       Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (BuildContext routeContext) {
             return PhotoViewerScreen(
-              photos: photos,
+              photos: _viewerPhotos,
               initialIndex: index < 0 ? 0 : index,
               images: _bytes,
               missingIds: _missing,
@@ -541,7 +569,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                         photoId: current.id,
                         text: text,
                         previousText: ref
-                            .read(captureControllerProvider(_projectId()))
+                            .read(captureControllerProvider(_sessionKey()))
                             .captions[current.id],
                       ),
                     ]);
@@ -582,9 +610,9 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   }
 
   Future<void> _audioStopped(AudioRecording recording) async {
-    final _CaptureUiState uiState = ref.read(_captureUiProvider(_projectId()));
+    final _CaptureUiState uiState = ref.read(_captureUiProvider(_sessionKey()));
     final CaptureSession session = ref.read(
-      captureControllerProvider(_projectId()),
+      captureControllerProvider(_sessionKey()),
     );
     final List<PhotoDraft> visible = _activePhotos(session);
     final List<String> photoIds = _selected.isEmpty
@@ -595,7 +623,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
         ? 'audio/${uiState.audioId}.wav'
         : recording.relativePath.substring(audioSegment);
     final Result<void> saved = await ref
-        .read(captureControllerProvider(_projectId()).notifier)
+        .read(captureControllerProvider(_sessionKey()).notifier)
         .addAudio(
           AudioDraft(
             id: uiState.audioId,
@@ -613,7 +641,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       case FailureResult<void>(:final Failure failure):
         showAppSnack(context, failure.message, tone: SnackTone.error);
       case Success<void>():
-        ref.read(_captureUiProvider(_projectId()).notifier).renewAudioId();
+        ref.read(_captureUiProvider(_sessionKey()).notifier).renewAudioId();
     }
   }
 
@@ -666,6 +694,9 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
           return PhotoDoodleScreen(
             photo: photo,
             bytes: bytes,
+            ink: _markupInk,
+            size: _markupSize,
+            onStyle: _keepMarkupStyle,
             onDrawn: (PhotoDraft derived, Uint8List png) {
               unawaited(() async {
                 final bool saved = await _commitDerived(photo, derived, png);
@@ -682,7 +713,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
 
   Future<void> _revert(String photoId) async {
     final Result<void> reverted = await ref
-        .read(captureControllerProvider(_projectId()).notifier)
+        .read(captureControllerProvider(_sessionKey()).notifier)
         .revertPhoto(photoId);
     if (!mounted) {
       return;
@@ -696,6 +727,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
           _thumbs.remove(photoId);
           _missing.remove(photoId);
         });
+        _showNewestInViewer();
     }
   }
 
@@ -705,7 +737,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     Uint8List png,
   ) async {
     final CaptureController controller = ref.read(
-      captureControllerProvider(_projectId()).notifier,
+      captureControllerProvider(_sessionKey()).notifier,
     );
     final Result<void> saved = await controller.updatePhoto(
       derived.copyWith(
@@ -724,7 +756,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
         return false;
       case Success<void>():
         final CaptureSession session = ref.read(
-          captureControllerProvider(_projectId()),
+          captureControllerProvider(_sessionKey()),
         );
         final String? caption = session.captions[source.id];
         if (caption != null && caption.isNotEmpty) {
@@ -734,6 +766,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
           return true;
         }
         setState(() => _bytes[derived.id] = png);
+        _showNewestInViewer();
         unawaited(_refreshThumbs(<PhotoDraft>[derived]));
         return true;
     }
@@ -831,61 +864,27 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     if (!routeContext.mounted) {
       return;
     }
-    final TextEditingController text = TextEditingController();
-    String? error;
-    await showAppSheet<void>(
-      routeContext,
-      title: Copy.photoTypeOn,
-      contentSized: true,
-      builder: (BuildContext sheetContext) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setSheet) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                AppTextField(label: Copy.photoTypeOn, controller: text),
-                if (error != null) Text(error!),
-                AppButton(
-                  label: Copy.save,
-                  onPressed: () async {
-                    final Result<Uint8List> png = await PhotoMarkup.typeOn(
-                      bytes,
-                      text.text,
-                      rotationDegrees: photo.rotationDegrees,
-                    );
-                    switch (png) {
-                      case FailureResult<Uint8List>(:final Failure failure):
-                        setSheet(() => error = failure.message);
-                      case Success<Uint8List>(:final Uint8List value):
-                        final String id = _ids.newId();
-                        final bool saved = await _commitDerived(
-                          photo,
-                          photo.copyWith(
-                            id: id,
-                            relativePath: 'photos/$id.png',
-                            storedFilename: '$id.png',
-                            originalFilename: '$id.png',
-                            mimeType: 'image/png',
-                            derivedFrom: photo.id,
-                            rotationDegrees: 0,
-                            capturedAt: const SystemClock().nowUtc(),
-                          ),
-                          value,
-                        );
-                        if (saved && sheetContext.mounted) {
-                          Navigator.of(sheetContext).pop();
-                        }
-                    }
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      },
+    await Navigator.of(routeContext).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          return PhotoTypeScreen(
+            photo: photo,
+            bytes: bytes,
+            ink: _markupInk,
+            size: _markupSize,
+            onStyle: _keepMarkupStyle,
+            onTyped: (PhotoDraft derived, Uint8List png) {
+              unawaited(() async {
+                final bool saved = await _commitDerived(photo, derived, png);
+                if (saved && context.mounted) {
+                  Navigator.of(context).pop();
+                }
+              }());
+            },
+          );
+        },
+      ),
     );
-    text.dispose();
   }
 
   Future<void> _restore() async {
@@ -893,6 +892,10 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       return;
     }
     _restored = true;
+    if (_editing) {
+      await _restoreEdit();
+      return;
+    }
     final Result<CaptureSession?> loaded = await ref
         .read(capturePersistenceProvider)
         .loadSession(_projectId());
@@ -923,7 +926,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             Navigator.of(dialogContext).pop();
             unawaited(() async {
               await ref
-                  .read(captureControllerProvider(_projectId()).notifier)
+                  .read(captureControllerProvider(_sessionKey()).notifier)
                   .replaceSession(session);
               if (mounted) {
                 await _refreshThumbs(_activePhotos(session));
@@ -932,7 +935,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
           },
           onDiscard: () async {
             await ref
-                .read(captureControllerProvider(_projectId()).notifier)
+                .read(captureControllerProvider(_sessionKey()).notifier)
                 .discardSession();
             if (dialogContext.mounted) {
               Navigator.of(dialogContext).pop();
@@ -943,14 +946,120 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     );
   }
 
+  /// Offers a stored, changed edit of this record, and otherwise loads the
+  /// record as it is saved now.
+  Future<void> _restoreEdit() async {
+    final String recordId = widget.recordId!;
+    final CaptureController controller = ref.read(
+      captureControllerProvider(_sessionKey()).notifier,
+    );
+    final Result<CaptureSession?> stored = await ref
+        .read(capturePersistenceProvider)
+        .loadSession(_sessionKey());
+    if (!mounted) {
+      return;
+    }
+    final CaptureSession? interrupted = switch (stored) {
+      Success<CaptureSession?>(:final CaptureSession? value) => value,
+      FailureResult<CaptureSession?>() => null,
+    };
+    if (interrupted != null && interrupted.editing && interrupted.isDirty) {
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return CaptureRecoveryPrompt(
+            photoCount: interrupted.photos.length,
+            onResume: () {
+              Navigator.of(dialogContext).pop();
+              unawaited(() async {
+                await controller.replaceSession(interrupted);
+                if (mounted) {
+                  await _refreshThumbs(_activePhotos(interrupted));
+                }
+              }());
+            },
+            onDiscard: () async {
+              await controller.replaceSession(interrupted);
+              await controller.discardSession();
+              if (dialogContext.mounted) {
+                Navigator.of(dialogContext).pop();
+              }
+              await _loadRecord(recordId);
+            },
+          );
+        },
+      );
+      return;
+    }
+    await _loadRecord(recordId);
+  }
+
+  Future<void> _loadRecord(String recordId) async {
+    final Result<void> loaded = await ref
+        .read(captureControllerProvider(_sessionKey()).notifier)
+        .loadRecord(recordId);
+    if (!mounted) {
+      return;
+    }
+    switch (loaded) {
+      case FailureResult<void>(:final Failure failure):
+        showAppSnack(context, failure.message, tone: SnackTone.error);
+      case Success<void>():
+        await _refreshThumbs(
+          _activePhotos(ref.read(captureControllerProvider(_sessionKey()))),
+        );
+    }
+  }
+
+  /// Writes the edit to its record and returns to the record's page. A
+  /// failure keeps every change and offers Retry.
+  Future<void> _saveEdits() async {
+    final _CaptureUiController ui = ref.read(
+      _captureUiProvider(_sessionKey()).notifier,
+    );
+    if (ref.read(_captureUiProvider(_sessionKey())).saving || !mounted) {
+      return;
+    }
+    ui.setSaving(true);
+    final Result<void> saved;
+    try {
+      saved = await ref
+          .read(captureControllerProvider(_sessionKey()).notifier)
+          .saveEdits();
+    } finally {
+      ui.setSaving(false);
+    }
+    if (!mounted) {
+      return;
+    }
+    switch (saved) {
+      case FailureResult<void>(:final Failure failure):
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          undoLabel: Copy.queueRetry,
+          onUndo: () => unawaited(_saveEdits()),
+        );
+      case Success<void>():
+        showAppSnack(context, Copy.recordEditSaved, tone: SnackTone.success);
+        unawaited(Navigator.of(context).maybePop());
+    }
+  }
+
   Future<void> _persist() async {
     if (!mounted) {
       return;
     }
     final CaptureSession session = ref.read(
-      captureControllerProvider(_projectId()),
+      captureControllerProvider(_sessionKey()),
     );
     if (!_hasContent(session)) {
+      return;
+    }
+    // An edit is kept only while it holds changes; a saved or untouched
+    // edit leaves nothing behind to offer next time.
+    if (session.editing && !session.isDirty) {
       return;
     }
     await ref.read(capturePersistenceProvider).saveSession(session);
@@ -958,9 +1067,9 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
 
   Future<void> _save(bool process) async {
     final _CaptureUiController ui = ref.read(
-      _captureUiProvider(_projectId()).notifier,
+      _captureUiProvider(_sessionKey()).notifier,
     );
-    if (ref.read(_captureUiProvider(_projectId())).saving || !mounted) {
+    if (ref.read(_captureUiProvider(_sessionKey())).saving || !mounted) {
       return;
     }
     final CaptureRecordPersistence? writer = ref.read(
@@ -972,7 +1081,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     }
     ui.setSaving(true);
     final CaptureController controller = ref.read(
-      captureControllerProvider(_projectId()).notifier,
+      captureControllerProvider(_sessionKey()).notifier,
     );
     late final Result<Object> result;
     try {

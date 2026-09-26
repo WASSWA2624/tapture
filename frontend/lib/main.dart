@@ -156,6 +156,8 @@ Future<void> _run() async {
           clock: clock,
           deviceId: id,
           ids: ids,
+          // Web stores no files; its project screens offer no photo.
+          writer: kIsWeb ? null : evidenceWriter,
         );
       }),
       exportRepositoryProvider.overrideWith((Ref _) {

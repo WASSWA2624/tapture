@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:tapture/core/errors/result.dart';
 
 import 'project.dart';
+import 'project_settings.dart';
 import 'project_status.dart';
 
 export 'project.dart';
@@ -29,6 +31,18 @@ abstract interface class ProjectRepository {
 
   /// Replaces the stored row that shares [Project.id].
   Future<Result<void>> update(Project project);
+
+  /// Stores [bytes] as [projectId]'s photo: the file is written under
+  /// `projects/<folder>/cover/` first, then the settings point at it. A
+  /// replaced photo's file stays. Returns the new settings (D7).
+  Future<Result<ProjectSettings>> setCoverPhoto(
+    String projectId,
+    Uint8List bytes,
+  );
+
+  /// Takes the photo off [projectId]; the file stays. Returns the new
+  /// settings.
+  Future<Result<ProjectSettings>> clearCoverPhoto(String projectId);
 
   /// Moves [id] to [status] without rewriting other fields.
   Future<Result<void>> setStatus(String id, ProjectStatus status);

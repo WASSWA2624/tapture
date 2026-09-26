@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -8,6 +9,12 @@ import 'photo_picker_stub.dart'
     if (dart.library.io) 'photo_picker_io.dart'
     if (dart.library.js_interop) 'photo_picker_web.dart'
     as platform;
+
+/// The device picker that capture and the project photo read. Tests
+/// override it with [PhotoPicker.fake].
+final Provider<PhotoPicker> photoPickerProvider = Provider<PhotoPicker>(
+  (Ref _) => PhotoPicker(),
+);
 
 /// Photos from the device camera or library. The picker plugin and the
 /// browser camera are reached only here (FE-STR-11); tests use

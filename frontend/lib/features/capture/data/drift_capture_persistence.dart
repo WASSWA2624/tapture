@@ -59,10 +59,12 @@ final class DriftCapturePersistence implements CapturePersistence {
           ValidationFailure(message: 'The capture session is not valid.'),
         );
       }
+      // The project_id column holds the storage key: the project for a new
+      // capture, `edit:<recordId>` for an edit (D6).
+      final String key = session.storageKey;
       final sqlite.CaptureSession? existing =
           await (_db.select(_db.captureSessions)..where(
-                (sqlite.$CaptureSessionsTable row) =>
-                    row.projectId.equals(session.projectId),
+                (sqlite.$CaptureSessionsTable row) => row.projectId.equals(key),
               ))
               .getSingleOrNull();
       final DateTime now = _clock.nowUtc();
@@ -71,7 +73,7 @@ final class DriftCapturePersistence implements CapturePersistence {
           .insertOnConflictUpdate(
             sqlite.CaptureSessionsCompanion(
               id: Value<String>(existing?.id ?? _ids.newId()),
-              projectId: Value<String>(session.projectId),
+              projectId: Value<String>(key),
               payloadJson: Value<String>(payload),
               createdAt: Value<DateTime>(existing?.createdAt ?? now),
               updatedAt: Value<DateTime>(now),
@@ -86,12 +88,11 @@ final class DriftCapturePersistence implements CapturePersistence {
   }
 
   @override
-  Future<Result<CaptureSession?>> loadSession(String projectId) async {
+  Future<Result<CaptureSession?>> loadSession(String key) async {
     try {
       final sqlite.CaptureSession? row =
           await (_db.select(_db.captureSessions)..where(
-                (sqlite.$CaptureSessionsTable row) =>
-                    row.projectId.equals(projectId),
+                (sqlite.$CaptureSessionsTable row) => row.projectId.equals(key),
               ))
               .getSingleOrNull();
       if (row == null || !isCaptureSessionJson(row.payloadJson)) {
@@ -108,11 +109,10 @@ final class DriftCapturePersistence implements CapturePersistence {
   }
 
   @override
-  Future<Result<void>> clearSession(String projectId) async {
+  Future<Result<void>> clearSession(String key) async {
     try {
       await (_db.delete(_db.captureSessions)..where(
-            (sqlite.$CaptureSessionsTable row) =>
-                row.projectId.equals(projectId),
+            (sqlite.$CaptureSessionsTable row) => row.projectId.equals(key),
           ))
           .go();
       return const Success<void>(null);

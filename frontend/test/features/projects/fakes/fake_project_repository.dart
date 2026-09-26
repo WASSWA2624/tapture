@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -17,6 +18,12 @@ final class FakeProjectRepository implements ProjectRepository {
 
   /// When set, [update] returns this failure instead of writing.
   Failure? updateFailure;
+
+  /// When set, [setCoverPhoto] returns this failure before any write.
+  Failure? coverPhotoFailure;
+
+  /// Photo files [setCoverPhoto] wrote, by path. Replaced ones stay.
+  final Map<String, Uint8List> coverFiles = <String, Uint8List>{};
 
   /// Tombstones [delete] wrote. Widget tests read this instead of
   /// opening a database.
@@ -386,6 +393,44 @@ final class FakeProjectRepository implements ProjectRepository {
     );
     _emit();
     return const Success<void>(null);
+  }
+
+  @override
+  Future<Result<ProjectSettings>> setCoverPhoto(
+    String projectId,
+    Uint8List bytes,
+  ) async {
+    final Failure? forced = coverPhotoFailure;
+    if (forced != null) {
+      return FailureResult<ProjectSettings>(forced);
+    }
+    final Project? current = _rows[projectId];
+    if (current == null) {
+      return const FailureResult<ProjectSettings>(_missing);
+    }
+    final String path =
+        'projects/${current.folderName}/cover/cover-${coverFiles.length + 1}.jpg';
+    coverFiles[path] = bytes;
+    final ProjectSettings next = current.settings.copyWith(
+      coverPhoto: (path: path, sha256: 'sha-${coverFiles.length}'),
+    );
+    _rows[projectId] = current.copyWith(settings: next);
+    _emit();
+    return Success<ProjectSettings>(next);
+  }
+
+  @override
+  Future<Result<ProjectSettings>> clearCoverPhoto(String projectId) async {
+    final Project? current = _rows[projectId];
+    if (current == null) {
+      return const FailureResult<ProjectSettings>(_missing);
+    }
+    final ProjectSettings next = current.settings.copyWith(
+      clearCoverPhoto: true,
+    );
+    _rows[projectId] = current.copyWith(settings: next);
+    _emit();
+    return Success<ProjectSettings>(next);
   }
 
   @override

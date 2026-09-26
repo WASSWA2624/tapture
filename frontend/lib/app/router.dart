@@ -32,6 +32,7 @@ import 'package:tapture/features/projects/presentation/project_home_screen.dart'
 import 'package:tapture/features/projects/presentation/project_list_screen.dart';
 import 'package:tapture/features/projects/presentation/project_records_screen.dart';
 import 'package:tapture/features/projects/presentation/project_settings_screen.dart';
+import 'package:tapture/features/projects/presentation/record_detail_screen.dart';
 import 'package:tapture/features/reference/data/dataset_csv_import.dart';
 import 'package:tapture/features/reference/presentation/dataset_browser_screen.dart';
 import 'package:tapture/features/reference/presentation/dataset_key_screen.dart';
@@ -246,6 +247,14 @@ abstract final class AppRoutes {
   /// Records list for [projectId].
   static String projectRecords(String projectId) =>
       RoutePaths.projectRecords(projectId);
+
+  /// One record's page on [projectId].
+  static String projectRecord(String projectId, String recordId) =>
+      RoutePaths.projectRecord(projectId, recordId);
+
+  /// The capture page that edits one saved record on [projectId].
+  static String projectRecordEdit(String projectId, String recordId) =>
+      RoutePaths.projectRecordEdit(projectId, recordId);
 
   /// Unprocessed queue for [projectId].
   static String projectQueue(String projectId) =>
@@ -495,6 +504,30 @@ List<RouteBase> get _routes {
                           projectId: state.pathParameters['projectId']!,
                         );
                       },
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: ':recordId',
+                          metadata: _projectScoped,
+                          builder: (BuildContext _, GoRouterState state) {
+                            return RecordDetailScreen(
+                              projectId: state.pathParameters['projectId']!,
+                              recordId: state.pathParameters['recordId']!,
+                            );
+                          },
+                          routes: <RouteBase>[
+                            GoRoute(
+                              path: 'edit',
+                              metadata: _projectScoped,
+                              builder: (BuildContext _, GoRouterState state) {
+                                return CaptureScreen(
+                                  projectId: state.pathParameters['projectId']!,
+                                  recordId: state.pathParameters['recordId']!,
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                     GoRoute(
                       path: 'queue',

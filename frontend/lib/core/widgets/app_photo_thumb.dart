@@ -27,6 +27,7 @@ class AppPhotoThumb extends StatelessWidget {
     this.onLongPress,
     this.quarterTurns = 0,
     this.onSelectedChanged,
+    this.onRemove,
   });
 
   /// Photo to render. Only [PhotoAsset.thumbPath] is decoded.
@@ -53,10 +54,14 @@ class AppPhotoThumb extends StatelessWidget {
   /// badges stay upright.
   final int quarterTurns;
 
-  /// Toggles [selected] from a checkbox at the top-start corner, a 48dp
-  /// target beside the long press. Null draws no checkbox and marks a
-  /// selected thumb with a tick instead.
+  /// Toggles [selected] from a select control flush in the top-start
+  /// corner, a 48dp target beside the long press. Null draws no control and
+  /// marks a selected thumb with a tick instead.
   final ValueChanged<bool>? onSelectedChanged;
+
+  /// Removes the photo from a control flush in the top-end corner, a 48dp
+  /// target. Null draws no control.
+  final VoidCallback? onRemove;
 
   bool get _interactive => onTap != null || onLongPress != null;
 
@@ -107,7 +112,13 @@ class AppPhotoThumb extends StatelessWidget {
           Align(
             alignment: Alignment.topLeft,
             child: Padding(
-              padding: const EdgeInsets.all(Space.x1),
+              // Below the select control when it holds the corner.
+              padding: EdgeInsets.fromLTRB(
+                Space.x1,
+                onSelectedChanged == null ? Space.x1 : Space.x7 + Space.x1,
+                Space.x1,
+                Space.x1,
+              ),
               child: _TypeBadge(type: photo.photoType!, maxWidth: edge),
             ),
           ),
@@ -123,7 +134,12 @@ class AppPhotoThumb extends StatelessWidget {
           Align(
             alignment: Alignment.topRight,
             child: Padding(
-              padding: const EdgeInsets.all(Space.x1),
+              padding: EdgeInsets.fromLTRB(
+                Space.x1,
+                onRemove == null ? Space.x1 : Space.x7 + Space.x1,
+                Space.x1,
+                Space.x1,
+              ),
               child: Icon(
                 AppIcons.check,
                 color: colors.primary,
@@ -176,35 +192,47 @@ class AppPhotoThumb extends StatelessWidget {
       ),
     );
     final ValueChanged<bool>? toggle = onSelectedChanged;
-    if (toggle == null) {
+    final VoidCallback? remove = onRemove;
+    if (toggle == null && remove == null) {
       return thumb;
     }
-    // The checkbox sits outside the thumb's merged semantics so a screen
-    // reader reaches it as its own control (FE-A11Y-02).
+    // The corner controls sit outside the thumb's merged semantics so a
+    // screen reader reaches each as its own control (FE-A11Y-02), and inside
+    // the thumb's rounded clip so they meet its corners (FBK0000153).
     return SizedBox(
       width: edge,
       height: edge,
-      child: Stack(
-        children: <Widget>[
-          Positioned.fill(child: thumb),
-          PositionedDirectional(
-            top: 0,
-            start: 0,
-            child: SizedBox.square(
-              dimension: Sizes.minTapTarget,
-              child: Semantics(
-                label: Copy.photoSelect,
-                child: Material(
-                  type: MaterialType.transparency,
-                  child: Checkbox(
-                    value: selected,
-                    onChanged: (bool? value) => toggle(value ?? false),
-                  ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(Radii.sm),
+        child: Stack(
+          children: <Widget>[
+            Positioned.fill(child: thumb),
+            if (toggle != null)
+              PositionedDirectional(
+                top: 0,
+                start: 0,
+                child: _CornerControl(
+                  corner: AlignmentDirectional.topStart,
+                  label: Copy.photoSelect,
+                  selected: selected,
+                  filled: selected,
+                  icon: selected ? AppIcons.check : null,
+                  onPressed: () => toggle(!selected),
                 ),
               ),
-            ),
-          ),
-        ],
+            if (remove != null)
+              PositionedDirectional(
+                top: 0,
+                end: 0,
+                child: _CornerControl(
+                  corner: AlignmentDirectional.topEnd,
+                  label: Copy.captureRemovePhoto,
+                  icon: AppIcons.close,
+                  onPressed: remove,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -235,6 +263,90 @@ class AppPhotoThumb extends StatelessWidget {
     }
     final int cap = AppConstants.images.previewEdge;
     return px > cap ? cap : px;
+  }
+}
+
+/// A thumbnail corner control: a [Space.x7] square flush in [corner], filled
+/// so it reads on any photo and rounded only on its inner corner, inside a
+/// 48dp target that reaches inward (FE-A11Y-01, FE-THEME-05).
+class _CornerControl extends StatelessWidget {
+  const _CornerControl({
+    required this.corner,
+    required this.label,
+    required this.onPressed,
+    this.icon,
+    this.filled = false,
+    this.selected,
+  });
+
+  final AlignmentDirectional corner;
+  final String label;
+  final VoidCallback onPressed;
+  final IconData? icon;
+
+  /// Primary fill, for a selected select control.
+  final bool filled;
+
+  /// Checked state for a toggle; null for a plain button.
+  final bool? selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppColors colors = context.colors;
+    final bool start = corner == AlignmentDirectional.topStart;
+    final String role = start ? 'select' : 'remove';
+    const Radius inner = Radius.circular(Radii.sm);
+    return Semantics(
+      button: true,
+      label: label,
+      checked: selected,
+      excludeSemantics: true,
+      onTap: onPressed,
+      child: Tooltip(
+        message: label,
+        child: SizedBox.square(
+          key: ValueKey<String>('photo-corner-$role-target'),
+          dimension: Sizes.minTapTarget,
+          child: Material(
+            type: MaterialType.transparency,
+            child: InkWell(
+              onTap: onPressed,
+              child: Align(
+                alignment: corner,
+                child: SizedBox.square(
+                  key: ValueKey<String>('photo-corner-$role'),
+                  dimension: Space.x7,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: filled ? colors.primary : colors.surface,
+                      // The ring and fill differ so one of them reaches
+                      // 3:1 on a black photo and on a white one in every
+                      // theme; a primary ring alone fails on black.
+                      border: Border.all(
+                        color: filled ? colors.surface : colors.outline,
+                        width: Space.x0 / 2,
+                      ),
+                      borderRadius: start
+                          ? const BorderRadiusDirectional.only(bottomEnd: inner)
+                          : const BorderRadiusDirectional.only(
+                              bottomStart: inner,
+                            ),
+                    ),
+                    child: icon == null
+                        ? null
+                        : Icon(
+                            icon,
+                            size: Space.x5,
+                            color: filled ? colors.onPrimary : colors.onSurface,
+                          ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 

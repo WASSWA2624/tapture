@@ -14,7 +14,6 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
-import 'record_edit_sheet.dart';
 import 'record_thumb.dart';
 
 /// Captured rows for [projectId], filtered by [capturedItemsQueryProvider].
@@ -101,7 +100,11 @@ class CapturedItemTile extends ConsumerWidget {
             outlined: false,
             tooltip: Copy.recordEdit,
             semanticLabel: Copy.recordEdit,
-            onPressed: () => unawaited(showRecordEditSheet(context, row)),
+            // Edit opens the record on the capture page; field values are
+            // edited from the record's page (FBK0000148).
+            onPressed: () => unawaited(
+              context.push(RoutePaths.projectRecordEdit(projectId, row.id)),
+            ),
           ),
           AppIconButton(
             icon: AppIcons.delete,

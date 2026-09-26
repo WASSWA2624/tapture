@@ -2,9 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image/image.dart' as img;
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/app/theme/outdoor_theme.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_photo_thumb.dart';
@@ -153,6 +156,149 @@ void main() {
     expect(_imageFilePaths(tester), isEmpty);
   });
 
+  testWidgets('select and remove sit flush in the top corners', (
+    WidgetTester tester,
+  ) async {
+    final List<bool> toggles = <bool>[];
+    int removed = 0;
+    await _pump(
+      tester,
+      AppPhotoThumb(
+        photo: const PhotoAsset(sha256: 'abc', photoType: PhotoType.front),
+        size: edge,
+        onTap: () {},
+        onSelectedChanged: toggles.add,
+        onRemove: () => removed += 1,
+      ),
+    );
+
+    final Rect thumb = tester.getRect(find.byType(AppPhotoThumb));
+    final Rect select = tester.getRect(_select);
+    final Rect remove = tester.getRect(_remove);
+    expect(select.topLeft, thumb.topLeft);
+    expect(remove.topRight, thumb.topRight);
+    expect(select.size, const Size.square(Space.x7));
+    expect(remove.size, const Size.square(Space.x7));
+    expect(tester.getSize(_selectTarget), const Size.square(48));
+    expect(tester.getSize(_removeTarget), const Size.square(48));
+    expect(
+      tester.getRect(_selectTarget).overlaps(tester.getRect(_removeTarget)),
+      isFalse,
+    );
+    // The type badge moves below the select control.
+    expect(
+      tester.getRect(find.text('Front')).top,
+      greaterThanOrEqualTo(select.bottom),
+    );
+
+    await tester.tap(_selectTarget);
+    await tester.tap(_removeTarget);
+    expect(toggles, <bool>[true]);
+    expect(removed, 1);
+  });
+
+  testWidgets('a thumb without the callbacks draws no corner controls', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      AppPhotoThumb(
+        photo: const PhotoAsset(sha256: 'abc'),
+        size: edge,
+        onTap: () {},
+      ),
+    );
+    expect(_selectTarget, findsNothing);
+    expect(_removeTarget, findsNothing);
+  });
+
+  for (final ({String name, ThemeData theme}) mode
+      in <({String name, ThemeData theme})>[
+        (name: 'light', theme: buildTheme(brightness: Brightness.light)),
+        (name: 'dark', theme: buildTheme(brightness: Brightness.dark)),
+        (name: 'outdoor', theme: buildOutdoorTheme(Brightness.light)),
+      ]) {
+    for (final ({String name, Color photo}) shot
+        in <({String name, Color photo})>[
+          (name: 'black', photo: const Color(0xFF000000)),
+          (name: 'white', photo: const Color(0xFFFFFFFF)),
+        ]) {
+      testWidgets('in ${mode.name} the corner controls read on a '
+          '${shot.name} photo', (WidgetTester tester) async {
+        final Directory dir = Directory.systemTemp.createTempSync(
+          'tapture_photo_corners_',
+        );
+        addTearDown(() {
+          try {
+            dir.deleteSync(recursive: true);
+          } on FileSystemException {
+            // Windows keeps the photo open while the image cache holds it;
+            // the system clears its temp folder.
+          }
+        });
+        final img.Image pixels = img.Image(width: 8, height: 8)
+          ..clear(
+            img.ColorRgb8(
+              (shot.photo.r * 255).round(),
+              (shot.photo.g * 255).round(),
+              (shot.photo.b * 255).round(),
+            ),
+          );
+        final File file = File('${dir.path}/${shot.name}_96.png')
+          ..writeAsBytesSync(img.encodePng(pixels));
+
+        for (final bool selected in <bool>[false, true]) {
+          await _pump(
+            tester,
+            Wrap(
+              spacing: Space.x4,
+              children: <Widget>[
+                AppPhotoThumb(
+                  photo: PhotoAsset(sha256: 'abc', thumbPath: file.path),
+                  size: edge,
+                  selected: selected,
+                  onTap: () {},
+                  onSelectedChanged: (bool _) {},
+                  onRemove: () {},
+                ),
+              ],
+            ),
+            theme: mode.theme,
+          );
+          expect(tester.takeException(), isNull);
+          await expectNoA11yIssues(tester);
+          for (final Finder control in <Finder>[_select, _remove]) {
+            final BoxDecoration look = _decorationOf(tester, control);
+            final double edgeContrast = <double>[
+              _contrast(look.color!, shot.photo),
+              _contrast((look.border! as Border).top.color, shot.photo),
+            ].reduce((double a, double b) => a > b ? a : b);
+            expect(
+              edgeContrast,
+              greaterThanOrEqualTo(3),
+              reason: '$control selected: $selected',
+            );
+          }
+          expect(
+            tester.getSemantics(_selectTarget),
+            matchesSemantics(
+              label: Copy.photoSelect,
+              isButton: true,
+              hasCheckedState: true,
+              isChecked: selected,
+              hasTapAction: true,
+            ),
+          );
+        }
+        // Selection is a tick as well as a fill (FE-A11Y-05).
+        expect(
+          find.descendant(of: _select, matching: find.byIcon(AppIcons.check)),
+          findsOneWidget,
+        );
+      });
+    }
+  }
+
   testWidgets('stays usable at 200 percent text scale', (
     WidgetTester tester,
   ) async {
@@ -196,7 +342,11 @@ void main() {
   });
 }
 
-Future<void> _pump(WidgetTester tester, Widget child) async {
+Future<void> _pump(
+  WidgetTester tester,
+  Widget child, {
+  ThemeData? theme,
+}) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = const Size(400, 800);
   addTearDown(() {
@@ -205,7 +355,7 @@ Future<void> _pump(WidgetTester tester, Widget child) async {
   });
   await tester.pumpWidget(
     MaterialApp(
-      theme: buildTheme(brightness: Brightness.light),
+      theme: theme ?? buildTheme(brightness: Brightness.light),
       home: Scaffold(
         body: Padding(padding: const EdgeInsets.all(Space.x4), child: child),
       ),
@@ -307,3 +457,35 @@ const List<int> _kPngBytes = <int>[
   0x60,
   0x82,
 ];
+
+final Finder _select = find.byKey(
+  const ValueKey<String>('photo-corner-select'),
+);
+
+final Finder _remove = find.byKey(
+  const ValueKey<String>('photo-corner-remove'),
+);
+
+final Finder _selectTarget = find.byKey(
+  const ValueKey<String>('photo-corner-select-target'),
+);
+
+final Finder _removeTarget = find.byKey(
+  const ValueKey<String>('photo-corner-remove-target'),
+);
+
+BoxDecoration _decorationOf(WidgetTester tester, Finder control) {
+  final DecoratedBox box = tester.widget<DecoratedBox>(
+    find.descendant(of: control, matching: find.byType(DecoratedBox)).first,
+  );
+  return box.decoration as BoxDecoration;
+}
+
+/// WCAG contrast ratio of [a] against [b].
+double _contrast(Color a, Color b) {
+  final double la = a.computeLuminance();
+  final double lb = b.computeLuminance();
+  final double light = la > lb ? la : lb;
+  final double dark = la > lb ? lb : la;
+  return (light + 0.05) / (dark + 0.05);
+}

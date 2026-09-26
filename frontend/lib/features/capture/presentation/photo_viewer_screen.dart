@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
@@ -13,6 +13,7 @@ import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
+import 'package:tapture/features/capture/presentation/photo_frame.dart';
 
 /// Full-screen photo inspector with swipe between photos, the photo edits,
 /// and the visible photo's caption to read, edit and delete (FBK0000132).
@@ -34,8 +35,9 @@ final class PhotoViewerScreen extends StatefulWidget {
     super.key,
   });
 
-  /// Record photos.
-  final List<PhotoDraft> photos;
+  /// Record photos, newest version of each. The viewer follows changes, so
+  /// a crop, drawing or typed copy shows at the same position.
+  final ValueListenable<List<PhotoDraft>> photos;
 
   /// Starting index.
   final int initialIndex;
@@ -64,7 +66,7 @@ final class PhotoViewerScreen extends StatefulWidget {
   /// Walks back one derived version.
   final ValueChanged<PhotoDraft>? onRevert;
 
-  /// Session bytes keyed by photo id.
+  /// Session bytes keyed by photo id, read each time a photo is drawn.
   final Map<String, Uint8List> images;
 
   /// Loads stored bytes when [images] does not hold them.
@@ -78,23 +80,65 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
   late final PageController _controller;
   late List<PhotoDraft> _photos;
   late int _index;
-  final Map<String, Uint8List> _images = <String, Uint8List>{};
+  final Map<String, Uint8List> _loaded = <String, Uint8List>{};
+  final Set<String> _loading = <String>{};
   final Map<String, String> _captions = <String, String>{};
 
   @override
   void initState() {
     super.initState();
-    _photos = List<PhotoDraft>.of(widget.photos);
-    _images.addAll(widget.images);
+    _photos = List<PhotoDraft>.of(widget.photos.value);
     _captions.addAll(widget.captions);
     _index = widget.initialIndex.clamp(
       0,
       _photos.isEmpty ? 0 : _photos.length - 1,
     );
     _controller = PageController(initialPage: _index);
+    widget.photos.addListener(_photosChanged);
+    _loadMissing();
+  }
+
+  @override
+  void didUpdateWidget(PhotoViewerScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.photos != widget.photos) {
+      oldWidget.photos.removeListener(_photosChanged);
+      widget.photos.addListener(_photosChanged);
+      _takePhotos();
+      _loadMissing();
+    }
+  }
+
+  /// Takes the newest photo list, keeping the position. A new version takes
+  /// its source's caption, as the capture page copies it.
+  void _photosChanged() {
+    setState(_takePhotos);
+    _loadMissing();
+  }
+
+  void _takePhotos() {
+    final List<PhotoDraft> next = List<PhotoDraft>.of(widget.photos.value);
+    _photos = next;
+    for (final PhotoDraft photo in next) {
+      final String? source = photo.derivedFrom;
+      if (source != null && !_captions.containsKey(photo.id)) {
+        final String? caption = _captions[source];
+        if (caption != null) {
+          _captions[photo.id] = caption;
+        }
+      }
+    }
+    _index = _index.clamp(0, next.isEmpty ? 0 : next.length - 1);
+  }
+
+  Uint8List? _bytesOf(PhotoDraft photo) {
+    return widget.images[photo.id] ?? _loaded[photo.id];
+  }
+
+  void _loadMissing() {
     for (final PhotoDraft photo in _photos) {
-      if (!_images.containsKey(photo.id)) {
-        _load(photo);
+      if (_bytesOf(photo) == null && _loading.add(photo.id)) {
+        unawaited(_load(photo));
       }
     }
   }
@@ -106,14 +150,16 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
       return;
     }
     final Uint8List? bytes = await load(photo);
+    _loading.remove(photo.id);
     if (!mounted || bytes == null) {
       return;
     }
-    setState(() => _images[photo.id] = bytes);
+    setState(() => _loaded[photo.id] = bytes);
   }
 
   @override
   void dispose() {
+    widget.photos.removeListener(_photosChanged);
     _controller.dispose();
     super.dispose();
   }
@@ -284,15 +330,19 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
     if (widget.missingIds.contains(photo.id)) {
       return const Center(child: Text(Copy.missingPhoto));
     }
-    final Uint8List? bytes = _images[photo.id];
+    final Uint8List? bytes = _bytesOf(photo);
     if (bytes == null) {
       return const Center(child: Text(Copy.loading));
     }
     return InteractiveViewer(
       child: Center(
         child: RotatedBox(
-          quarterTurns: ((photo.rotationDegrees % 360) + 360) % 360 ~/ 90,
-          child: Image.memory(bytes, fit: BoxFit.contain),
+          quarterTurns: PhotoFrame.quarterTurns(photo.rotationDegrees),
+          child: Image.memory(
+            bytes,
+            key: ValueKey<String>('photo-viewer-image-${photo.id}'),
+            fit: BoxFit.contain,
+          ),
         ),
       ),
     );

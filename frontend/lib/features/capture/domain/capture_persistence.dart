@@ -17,12 +17,14 @@ abstract interface class CapturePersistence {
   /// Tombstones [photoId].
   Future<Result<void>> deletePhoto(String photoId, {required String reason});
 
-  /// Writes the interrupted [session] JSON.
+  /// Writes the interrupted [session] JSON under its
+  /// [CaptureSession.storageKey].
   Future<Result<void>> saveSession(CaptureSession session);
 
-  /// Loads an interrupted session, or null when none.
-  Future<Result<CaptureSession?>> loadSession(String projectId);
+  /// Loads the interrupted session stored under [key], or null when none.
+  /// [key] is a project id, or `edit:<recordId>` for a record edit (D6).
+  Future<Result<CaptureSession?>> loadSession(String key);
 
-  /// Clears interrupted session storage.
-  Future<Result<void>> clearSession(String projectId);
+  /// Clears the interrupted session stored under [key].
+  Future<Result<void>> clearSession(String key);
 }

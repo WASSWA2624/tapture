@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -6,6 +8,8 @@ import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/photo_picker.dart';
+import 'package:tapture/core/files/photo_thumbnails.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/fields/dictation_scope.dart';
 import 'package:tapture/features/projects/presentation/project_edit_screen.dart';
@@ -135,6 +139,55 @@ void main() {
     },
   );
 
+  testWidgets('a photo is added and kept by Save, then removed', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    await _pump(tester, repo: repo);
+    await tester.pumpAndSettle();
+
+    await _pickPhoto(tester);
+    expect(repo.stored.single.settings.coverPhoto, isNotNull);
+    expect(
+      find.byKey(const ValueKey<String>('project-photo-stored')),
+      findsOneWidget,
+    );
+
+    // Save writes the stored settings, so the new photo stays.
+    await tester.enterText(find.byType(TextField).first, 'Alpha Renamed');
+    await tester.pump();
+    await tester.tap(find.byType(AppPrimaryAction));
+    await tester.pumpAndSettle();
+    expect(repo.stored.single.name, 'Alpha Renamed');
+    expect(repo.stored.single.settings.coverPhoto, isNotNull);
+
+    final Finder remove = find.text(Copy.projectPhotoRemove);
+    await tester.ensureVisible(remove);
+    await tester.pumpAndSettle();
+    await tester.tap(remove);
+    await tester.pumpAndSettle();
+    expect(repo.stored.single.settings.coverPhoto, isNull);
+    expect(repo.coverFiles, hasLength(1));
+    expect(find.text(Copy.projectPhotoAdd), findsOneWidget);
+  });
+
+  testWidgets('a photo that cannot be stored says so', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository()
+      ..coverPhotoFailure = const StorageFailure(message: 'Disk is full.');
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    await _pump(tester, repo: repo);
+    await tester.pumpAndSettle();
+
+    await _pickPhoto(tester);
+    expect(find.text('Disk is full.'), findsOneWidget);
+    expect(repo.stored.single.settings.coverPhoto, isNull);
+  });
+
   testWidgets('Project details fits at 360 dp and 200 percent text', (
     WidgetTester tester,
   ) async {
@@ -188,6 +241,12 @@ Future<void> _pump(
       retry: (int _, Object _) => null,
       overrides: <Override>[
         projectRepositoryProvider.overrideWith((Ref _) => repo),
+        photoPickerProvider.overrideWith(
+          (Ref _) => PhotoPicker.fake(photos: <Uint8List>[_photoBytes]),
+        ),
+        photoThumbnailsProvider.overrideWith(
+          (Ref _) => PhotoThumbnails.fake(const <String, String>{}),
+        ),
         projectSettingsStoreProvider.overrideWith(
           (Ref _) => SettingsStore.fake(
             stored: <String, Object?>{
@@ -215,4 +274,17 @@ T _ok<T>(Result<T> result) {
       failure.message,
     ),
   };
+}
+
+final Uint8List _photoBytes = Uint8List.fromList(<int>[9, 8, 7]);
+
+/// Picks the fake photo through the add-photo sheet.
+Future<void> _pickPhoto(WidgetTester tester) async {
+  final Finder add = find.text(Copy.projectPhotoAdd);
+  await tester.ensureVisible(add);
+  await tester.pumpAndSettle();
+  await tester.tap(add);
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(Copy.captureChoosePhoto));
+  await tester.pumpAndSettle();
 }

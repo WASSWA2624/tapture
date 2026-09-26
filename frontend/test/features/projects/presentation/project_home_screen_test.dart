@@ -313,6 +313,51 @@ void main() {
     },
   );
 
+  testWidgets('tapping a record row opens its page', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    repo.seedRecords('project-1', <ProjectRecordRow>[
+      _record('r1', name: 'Pump house'),
+    ]);
+    final GoRouter router = await _pump(
+      tester,
+      repo: repo,
+      openProjectId: 'project-1',
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Pump house'));
+    await tester.pumpAndSettle();
+    expect(router.state.uri.path, AppRoutes.projectRecord('project-1', 'r1'));
+    expect(find.text('record page'), findsOneWidget);
+  });
+
+  testWidgets('a record row Edit opens it on the capture page', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    repo.seedRecords('project-1', <ProjectRecordRow>[
+      _record('r1', name: 'Pump house'),
+    ]);
+    final GoRouter router = await _pump(
+      tester,
+      repo: repo,
+      openProjectId: 'project-1',
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip(Copy.recordEdit));
+    await tester.pumpAndSettle();
+    expect(
+      router.state.uri.path,
+      AppRoutes.projectRecordEdit('project-1', 'r1'),
+    );
+    expect(find.text('edit page'), findsOneWidget);
+  });
+
   testWidgets('the search says it looks through records', (
     WidgetTester tester,
   ) async {
@@ -661,6 +706,22 @@ Future<GoRouter> _pump(
                     body: Text('records'),
                   );
                 },
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: ':recordId',
+                    builder: (BuildContext _, GoRouterState _) {
+                      return const Text('record page');
+                    },
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'edit',
+                        builder: (BuildContext _, GoRouterState _) {
+                          return const Text('edit page');
+                        },
+                      ),
+                    ],
+                  ),
+                ],
               ),
               GoRoute(
                 path: 'queue',

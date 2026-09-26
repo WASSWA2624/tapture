@@ -114,4 +114,32 @@ void main() {
     expect(cleared.allowsProviderCalls(appOn), isTrue);
     expect(cleared.allowsImageEgress(appOn), isTrue);
   });
+
+  test('the project photo round-trips and can be cleared', () {
+    const ProjectSettings withPhoto = ProjectSettings(
+      gpsEnabled: true,
+      coverPhoto: (path: 'projects/alpha/cover/a.jpg', sha256: 'abc'),
+    );
+    final ProjectSettings read = ProjectSettings.decode(withPhoto.encode());
+    expect(read, withPhoto);
+    expect(read.coverPhoto?.path, 'projects/alpha/cover/a.jpg');
+
+    final ProjectSettings other = read.copyWith(templateChoice: 'manual');
+    expect(other.coverPhoto, read.coverPhoto);
+    final ProjectSettings cleared = read.copyWith(clearCoverPhoto: true);
+    expect(cleared.coverPhoto, isNull);
+    expect(cleared.gpsEnabled, isTrue);
+    expect(cleared.toJson().containsKey('coverPhoto'), isFalse);
+  });
+
+  test('a malformed project photo is ignored', () {
+    expect(
+      ProjectSettings.decode('{"coverPhoto": {"path": 3}}').coverPhoto,
+      isNull,
+    );
+    expect(
+      ProjectSettings.decode('{"coverPhoto": "a.jpg"}').coverPhoto,
+      isNull,
+    );
+  });
 }

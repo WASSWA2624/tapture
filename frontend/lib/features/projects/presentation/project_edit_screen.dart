@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +10,7 @@ import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_date_field.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
@@ -18,8 +21,10 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
 import 'current_project.dart';
+import 'project_photo_field.dart';
 
-/// Details form: name, description, organisation, dates and status.
+/// Details form: name, description, organisation, dates, status and the
+/// optional project photo.
 class ProjectEditScreen extends ConsumerStatefulWidget {
   /// Creates the details form. The open project comes from
   /// [currentProjectDetailsProvider]; this widget holds no id.
@@ -34,6 +39,7 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen> {
   TextEditingController? _description;
   TextEditingController? _organisation;
   String? _boundId;
+  bool _photoBusy = false;
 
   @override
   void dispose() {
@@ -130,6 +136,16 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen> {
               }
             },
           ),
+          ProjectPhotoField(
+            stored: project.settings.coverPhoto,
+            busy: _photoBusy,
+            onPicked: (Uint8List bytes) {
+              _photo((_ProjectEdit edit) => edit.setPhoto(project.id, bytes));
+            },
+            onRemove: () {
+              _photo((_ProjectEdit edit) => edit.clearPhoto(project.id));
+            },
+          ),
         ],
         submitLabel: Copy.save,
         onSubmit: () async {
@@ -143,6 +159,24 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen> {
         },
       ),
     );
+  }
+
+  /// Stores a photo change straight away, as a photo is a file, and says
+  /// when it could not be stored.
+  Future<void> _photo(
+    Future<Result<ProjectSettings>> Function(_ProjectEdit edit) change,
+  ) async {
+    setState(() => _photoBusy = true);
+    final Result<ProjectSettings> result = await change(
+      ref.read(_projectEditProvider.notifier),
+    );
+    if (!mounted) {
+      return;
+    }
+    setState(() => _photoBusy = false);
+    if (result case FailureResult<ProjectSettings>(:final failure)) {
+      showAppSnack(context, failure.message, tone: SnackTone.error);
+    }
   }
 
   void _bind(Project project) {
@@ -206,6 +240,35 @@ class _ProjectEdit extends Notifier<_ProjectEditView> {
       endsOn: project.endsOn,
       status: project.status,
     );
+  }
+
+  /// Stores [bytes] as the project's photo. Save keeps it, because the
+  /// settings it writes are the stored ones.
+  Future<Result<ProjectSettings>> setPhoto(
+    String projectId,
+    Uint8List bytes,
+  ) async {
+    final Result<ProjectSettings> stored = await ref
+        .read(projectRepositoryProvider)
+        .setCoverPhoto(projectId, bytes);
+    _keep(stored);
+    return stored;
+  }
+
+  /// Takes the photo off the project; its file stays.
+  Future<Result<ProjectSettings>> clearPhoto(String projectId) async {
+    final Result<ProjectSettings> stored = await ref
+        .read(projectRepositoryProvider)
+        .clearCoverPhoto(projectId);
+    _keep(stored);
+    return stored;
+  }
+
+  void _keep(Result<ProjectSettings> stored) {
+    final Project? source = _source;
+    if (source != null && stored is Success<ProjectSettings>) {
+      _source = source.copyWith(settings: stored.value);
+    }
   }
 
   /// Sets the start date and marks the form dirty.

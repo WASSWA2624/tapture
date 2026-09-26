@@ -19,6 +19,7 @@ final class ProjectSettings {
     this.confidenceMedium,
     this.refineColumns,
     this.templateChoice,
+    this.coverPhoto,
   });
 
   /// Every switch unset, so [resolve] returns the app defaults.
@@ -54,6 +55,7 @@ final class ProjectSettings {
       confidenceMedium: _number(map[_confidenceMedium]),
       refineColumns: _bool(map[_refineColumns]) ?? _bool(map[_refinedColumns]),
       templateChoice: _readTemplateChoice(map[_templateChoice]),
+      coverPhoto: _readCoverPhoto(map[_coverPhoto]),
     );
   }
 
@@ -85,6 +87,10 @@ final class ProjectSettings {
   /// for the same behaviour as `auto`.
   final String? templateChoice;
 
+  /// The project's optional photo, shown as its list thumbnail
+  /// (FBK0000154). Null keeps the project number.
+  final ProjectCoverPhoto? coverPhoto;
+
   /// The validated object written onto the row. Unset keys are omitted so
   /// a later read can still fall back to the app store.
   Map<String, Object?> toJson() {
@@ -97,6 +103,11 @@ final class ProjectSettings {
       if (confidenceMedium != null) _confidenceMedium: confidenceMedium,
       if (refineColumns != null) _refineColumns: refineColumns,
       if (templateChoice != null) _templateChoice: templateChoice,
+      if (coverPhoto case final ProjectCoverPhoto photo)
+        _coverPhoto: <String, Object?>{
+          _coverPath: photo.path,
+          _coverSha256: photo.sha256,
+        },
     };
   }
 
@@ -114,6 +125,7 @@ final class ProjectSettings {
     double? confidenceMedium,
     bool? refineColumns,
     String? templateChoice,
+    ProjectCoverPhoto? coverPhoto,
     bool clearAiEnabled = false,
     bool clearDoNotSendImages = false,
     bool clearGpsEnabled = false,
@@ -122,6 +134,7 @@ final class ProjectSettings {
     bool clearConfidenceMedium = false,
     bool clearRefineColumns = false,
     bool clearTemplateChoice = false,
+    bool clearCoverPhoto = false,
   }) {
     return ProjectSettings(
       aiEnabled: clearAiEnabled ? null : (aiEnabled ?? this.aiEnabled),
@@ -144,6 +157,7 @@ final class ProjectSettings {
       templateChoice: clearTemplateChoice
           ? null
           : (templateChoice ?? this.templateChoice),
+      coverPhoto: clearCoverPhoto ? null : (coverPhoto ?? this.coverPhoto),
     );
   }
 
@@ -183,6 +197,7 @@ final class ProjectSettings {
     confidenceMedium,
     refineColumns,
     templateChoice,
+    coverPhoto,
   );
 
   @override
@@ -196,9 +211,14 @@ final class ProjectSettings {
             other.confidenceHigh == confidenceHigh &&
             other.confidenceMedium == confidenceMedium &&
             other.refineColumns == refineColumns &&
-            other.templateChoice == templateChoice);
+            other.templateChoice == templateChoice &&
+            other.coverPhoto == coverPhoto);
   }
 }
+
+/// A project's photo: its path under the storage root, as
+/// `projects/<folder>/cover/<id>.jpg`, and the file's hash (D7).
+typedef ProjectCoverPhoto = ({String path, String sha256});
 
 /// App-store values a project setting falls back to when unset.
 typedef ProjectSettingsDefaults = ({
@@ -245,6 +265,9 @@ const String _confidenceMedium = 'confidenceMedium';
 const String _refineColumns = 'refineColumns';
 const String _refinedColumns = 'refinedColumns';
 const String _templateChoice = 'templateChoice';
+const String _coverPhoto = 'coverPhoto';
+const String _coverPath = 'path';
+const String _coverSha256 = 'sha256';
 
 const Set<String> _templateChoices = <String>{'auto', 'suggest', 'manual'};
 
@@ -272,6 +295,18 @@ String? _readTemplateChoice(Object? raw) {
     return raw;
   }
   return null;
+}
+
+ProjectCoverPhoto? _readCoverPhoto(Object? raw) {
+  if (raw is! Map) {
+    return null;
+  }
+  final Object? path = raw[_coverPath];
+  final Object? sha256 = raw[_coverSha256];
+  if (path is! String || path.isEmpty || sha256 is! String) {
+    return null;
+  }
+  return (path: path, sha256: sha256);
 }
 
 String? _readFolderStrategy(Object? raw) {

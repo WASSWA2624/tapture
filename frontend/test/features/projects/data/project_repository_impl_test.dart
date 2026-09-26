@@ -1,10 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/db/app_database.dart' hide Project;
 import 'package:tapture/core/db/app_database.dart' as sqlite show Project;
+import 'package:tapture/core/db/tables/attachment_owners.dart';
+import 'package:tapture/core/db/tables/attachments.dart';
+import 'package:tapture/core/db/tables/captions.dart';
 import 'package:tapture/core/db/tables/photos.dart';
 import 'package:tapture/core/db/tables/projects.dart' as projects_db;
 import 'package:tapture/core/db/tables/records.dart';
@@ -15,6 +19,7 @@ import 'package:tapture/core/db/tables/templates.dart';
 import 'package:tapture/core/db/tables/tombstones.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/project_folders.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
@@ -745,6 +750,134 @@ void main() {
     expect(counts, <String, int>{'assets': 2, 'rooms': 1});
   });
 
+  test(
+    'watchRecord lists live photos with captions and counts audio',
+    () async {
+      _ok(await repo.create(aProject()));
+      final IdService ids = UuidV7Service.sequence(clock);
+      _ok(
+        await upsertRecord(
+          db,
+          row: _recordRow(id: 'record-1', hash: 'hash-detail'),
+          clock: clock,
+          deviceId: 'device-test',
+          ids: ids,
+        ),
+      );
+      for (final (String id, int order) in <(String, int)>[
+        ('first', 0),
+        ('second', 1),
+        ('removed', 2),
+      ]) {
+        _ok(
+          await upsertPhoto(
+            db,
+            row: _photoRow(
+              id,
+              recordId: 'record-1',
+              sortOrder: order,
+              capturedAt: t0,
+            ),
+            clock: clock,
+            deviceId: 'device-test',
+            ids: ids,
+          ),
+        );
+      }
+      await writeTombstone(
+        db,
+        entityType: 'photos',
+        entityId: 'removed',
+        reason: 'operator-delete',
+        clock: clock,
+        deviceId: 'device-test',
+      );
+      Future<Caption> caption(CaptionOwnerType owner, String id, String text) {
+        return insertCaption(
+          db,
+          row: CaptionsCompanion(
+            ownerType: Value<CaptionOwnerType>(owner),
+            ownerId: Value<String>(id),
+            textRaw: Value<String>(text),
+            inputMode: const Value<CaptionInputMode>(CaptionInputMode.typed),
+          ),
+          clock: clock,
+          deviceId: 'device-test',
+          ids: ids,
+        ).then(_ok);
+      }
+
+      await caption(CaptionOwnerType.record, 'record-1', 'Boiler room');
+      final Caption front = await caption(
+        CaptionOwnerType.photo,
+        'first',
+        'Frnt',
+      );
+      _ok(
+        await writeCaptionRefined(
+          db,
+          id: front.id,
+          textRefined: 'Front',
+          clock: clock,
+          deviceId: 'device-test',
+          ids: ids,
+        ),
+      );
+      _ok(
+        await upsertAttachment(
+          db,
+          row: const AttachmentsCompanion(
+            id: Value<String>('clip-1'),
+            projectId: Value<String>('project-1'),
+            relativePath: Value<String>('audio/clip-1.wav'),
+            mimeType: Value<String>('audio/wav'),
+            fileSize: Value<int>(4),
+            sha256: Value<String>('clip-sha'),
+            kind: Value<AttachmentKind>(AttachmentKind.audio),
+          ),
+          clock: clock,
+          deviceId: 'device-test',
+          ids: ids,
+        ),
+      );
+      await db
+          .into(db.attachmentOwners)
+          .insert(
+            AttachmentOwnersCompanion(
+              id: const Value<String>('owner-1'),
+              attachmentId: const Value<String>('clip-1'),
+              ownerType: const Value<AttachmentOwnerType>(
+                AttachmentOwnerType.record,
+              ),
+              ownerId: const Value<String>('record-1'),
+              sortOrder: const Value<int>(0),
+              createdAt: Value<DateTime>(t0),
+              updatedAt: Value<DateTime>(t0),
+              updatedByDevice: const Value<String>('device-test'),
+              rev: const Value<int>(1),
+            ),
+          );
+
+      final ProjectRecordDetail detail = (await repo
+          .watchRecord('record-1')
+          .first)!;
+      expect(detail.caption, 'Boiler room');
+      expect(
+        detail.photos
+            .map((RecordPhotoCaption photo) => photo.photo.sha256)
+            .toList(),
+        <String>['sha-first', 'sha-second'],
+      );
+      expect(detail.photos.first.caption, 'Front');
+      expect(detail.photos.last.caption, '');
+      expect(detail.audioClips, 1);
+      expect(detail.row.thumb?.sha256, 'sha-first');
+
+      _ok(await repo.archiveRecord('record-1'));
+      expect(await repo.watchRecord('record-1').first, isNull);
+    },
+  );
+
   test('presentation under projects imports no core/db', () {
     final Directory presentation = Directory(
       'lib/features/projects/presentation',
@@ -762,6 +895,108 @@ void main() {
         reason: entity.path,
       );
     }
+  });
+
+  group('project photo', () {
+    late Directory documents;
+
+    setUp(() {
+      documents = Directory.systemTemp.createTempSync('tapture-cover-');
+    });
+
+    tearDown(() {
+      if (documents.existsSync()) {
+        documents.deleteSync(recursive: true);
+      }
+    });
+
+    Future<(ProjectRepositoryImpl, Directory)> withWriter({
+      bool writable = true,
+    }) async {
+      final StorageRoot storage = StorageRoot.fake(
+        documentsDirectory: documents,
+        writable: writable,
+      );
+      final Directory root = writable
+          ? _ok(await storage.resolve())
+          : documents;
+      return (
+        ProjectRepositoryImpl(
+          db: db,
+          clock: clock,
+          deviceId: 'device-test',
+          ids: UuidV7Service.sequence(clock),
+          writer: FileWriter(storageRoot: storage),
+        ),
+        root,
+      );
+    }
+
+    test('a photo is written, then set, and a replaced file stays', () async {
+      final (ProjectRepositoryImpl photos, Directory root) = await withWriter();
+      final Project project = _ok(await photos.create(aProject()));
+
+      final ProjectSettings first = _ok(
+        await photos.setCoverPhoto(project.id, Uint8List.fromList(<int>[1, 2])),
+      );
+      final ProjectCoverPhoto one = first.coverPhoto!;
+      expect(one.path, startsWith('projects/${project.folderName}/cover/'));
+      expect(one.path, endsWith('.jpg'));
+      expect(one.sha256, isNotEmpty);
+      final File firstFile = File('${root.path}/${one.path}');
+      expect(firstFile.readAsBytesSync(), <int>[1, 2]);
+
+      final ProjectSettings second = _ok(
+        await photos.setCoverPhoto(project.id, Uint8List.fromList(<int>[3])),
+      );
+      expect(second.coverPhoto!.path, isNot(one.path));
+      expect(firstFile.existsSync(), isTrue);
+      final Project stored = (await photos.watchAll().first).single;
+      expect(stored.settings.coverPhoto, second.coverPhoto);
+
+      final ProjectSettings cleared = _ok(
+        await photos.clearCoverPhoto(project.id),
+      );
+      expect(cleared.coverPhoto, isNull);
+      expect(
+        File('${root.path}/${second.coverPhoto!.path}').existsSync(),
+        isTrue,
+      );
+      expect(
+        (await photos.watchAll().first).single.settings.coverPhoto,
+        isNull,
+      );
+    });
+
+    test('a failed file write changes nothing', () async {
+      final (ProjectRepositoryImpl photos, Directory _) = await withWriter(
+        writable: false,
+      );
+      final Project project = _ok(await photos.create(aProject()));
+
+      final Result<ProjectSettings> result = await photos.setCoverPhoto(
+        project.id,
+        Uint8List.fromList(<int>[1]),
+      );
+
+      expect(result, isA<FailureResult<ProjectSettings>>());
+      expect(
+        (await photos.watchAll().first).single.settings.coverPhoto,
+        isNull,
+      );
+    });
+
+    test('without a file writer a photo is refused', () async {
+      final Project project = _ok(await repo.create(aProject()));
+      expect(
+        await repo.setCoverPhoto(project.id, Uint8List.fromList(<int>[1])),
+        isA<FailureResult<ProjectSettings>>(),
+      );
+      expect(
+        await repo.clearCoverPhoto('missing'),
+        isA<FailureResult<ProjectSettings>>(),
+      );
+    });
   });
 }
 

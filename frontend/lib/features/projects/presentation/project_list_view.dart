@@ -24,6 +24,7 @@ import 'project_list_criteria_controller.dart';
 import 'project_list_filter.dart';
 import 'project_open_externally_action.dart';
 import 'project_rename_action.dart';
+import 'record_thumb.dart';
 
 /// The project rows the landing screen and the expanded list pane share
 /// (FE-CONS-02).
@@ -57,13 +58,7 @@ class ProjectListView extends ConsumerWidget {
                     'project-row-${rows[index].project.id}',
                   ),
                   leading: ExcludeSemantics(
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        Copy.projectListNumber(index + 1),
-                        style: AppText.label,
-                      ),
-                    ),
+                    child: _leading(rows[index].project, index + 1),
                   ),
                   title: rows[index].project.name,
                   subtitle: Copy.projectListSubtitle(
@@ -190,3 +185,19 @@ String _projectHome(String id) => RoutePaths.project(id);
 /// [AppRoutes.fromQuery].
 const String _createLocation = RoutePaths.projectCreate;
 const String _fromQuery = RoutePaths.fromQuery;
+
+/// A project's photo in the number circle when it has one (FBK0000154),
+/// and its list number otherwise.
+Widget _leading(Project project, int number) {
+  final ProjectCoverPhoto? cover = project.settings.coverPhoto;
+  if (cover != null) {
+    return RecordThumb(
+      key: ValueKey<String>('project-photo-${project.id}'),
+      photo: (sha256: cover.sha256, storagePath: cover.path, quarterTurns: 0),
+    );
+  }
+  return FittedBox(
+    fit: BoxFit.scaleDown,
+    child: Text(Copy.projectListNumber(number), style: AppText.label),
+  );
+}

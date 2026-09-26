@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
@@ -8,8 +9,10 @@ import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
 import 'package:tapture/features/capture/domain/capture_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_photo_repository.dart';
+import 'package:tapture/features/capture/domain/capture_record_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_reset.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
+import 'package:tapture/features/capture/domain/capture_session_key.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/domain/photo_repository.dart';
 import 'package:tapture/features/capture/domain/save_and_analyse.dart';
@@ -28,7 +31,14 @@ final Provider<CapturePersistence> capturePersistenceProvider =
       return _MemoryCapturePersistence(ref.watch(photoRepositoryProvider));
     });
 
-/// Capture session for a project id. Persist before every emit.
+/// Production supplies the Drift-backed transaction writer. Tests may inject
+/// a focused in-memory implementation without crossing presentation into data.
+final Provider<CaptureRecordPersistence?> captureRecordWriterProvider =
+    Provider<CaptureRecordPersistence?>((Ref _) => null);
+
+/// Capture session for a session key: a project id for a new capture, and
+/// [CaptureSessionKey.edit] for a saved record's edit (D6). Persist before
+/// every emit.
 final captureControllerProvider =
     NotifierProvider.family<CaptureController, CaptureSession, String>(
       CaptureController.new,
@@ -36,24 +46,82 @@ final captureControllerProvider =
 
 /// Intent methods — the only way the session changes.
 final class CaptureController extends Notifier<CaptureSession> {
-  /// Creates a controller bound to [projectId] (family argument).
-  CaptureController(this.projectId);
+  /// Creates a controller bound to [key] (family argument).
+  CaptureController(this.key);
 
-  /// Open project id.
-  final String projectId;
+  /// The session key: a project id, or `edit:<recordId>`.
+  final String key;
 
   CapturePersistence get _persistence => ref.read(capturePersistenceProvider);
 
   IdService get _ids => UuidV7Service(const SystemClock());
 
   @override
-  CaptureSession build() {
+  CaptureSession build() => _empty();
+
+  CaptureSession _empty() {
+    final String? recordId = CaptureSessionKey.recordOf(key);
+    if (recordId != null) {
+      // Filled by [loadRecord].
+      return CaptureSession(
+        id: recordId,
+        templateId: '',
+        contextSnapshot: const <String, String>{},
+        recordId: recordId,
+        editing: true,
+      );
+    }
     return CaptureSession(
       id: _ids.newId(),
-      projectId: projectId,
+      projectId: key,
       templateId: '',
       contextSnapshot: const <String, String>{},
     );
+  }
+
+  /// Whether [photo] is already filed on the record this session edits.
+  /// Changes to it wait for [saveEdits], so leaving an edit without saving
+  /// changes nothing on the record (FBK0000148).
+  bool _filed(PhotoDraft photo) {
+    return state.editing &&
+        photo.recordId != null &&
+        photo.recordId == state.recordId;
+  }
+
+  /// Loads the saved record [recordId] into this edit session and persists
+  /// it, so an interrupted edit can resume.
+  Future<Result<void>> loadRecord(String recordId) async {
+    final CaptureRecordPersistence? records = ref.read(
+      captureRecordWriterProvider,
+    );
+    if (records == null) {
+      return const FailureResult<void>(_noRecords);
+    }
+    final Result<CaptureSession> loaded = await records.load(recordId);
+    return loaded.fold(FailureResult<void>.new, (CaptureSession session) async {
+      final Result<void> saved = await _persistence.saveSession(session);
+      return saved.fold(FailureResult<void>.new, (_) {
+        state = session;
+        return const Success<void>(null);
+      });
+    });
+  }
+
+  /// Writes this edit to its record, then clears the stored edit. A failure
+  /// keeps every change in the session.
+  Future<Result<void>> saveEdits() async {
+    final CaptureRecordPersistence? records = ref.read(
+      captureRecordWriterProvider,
+    );
+    if (records == null || !state.editing) {
+      return const FailureResult<void>(_noRecords);
+    }
+    final CaptureSession edited = state;
+    final Result<void> updated = await records.update(edited);
+    return updated.fold(FailureResult<void>.new, (_) async {
+      state = edited.copyWith(isDirty: false);
+      return _persistence.clearSession(edited.storageKey);
+    });
   }
 
   /// Seeds or replaces the live session (recovery / tests).
@@ -65,10 +133,11 @@ final class CaptureController extends Notifier<CaptureSession> {
     });
   }
 
-  /// Adds [photo] after durable write.
+  /// Adds [photo] after durable write. In an edit it is kept off the record
+  /// until [saveEdits] files it.
   Future<Result<void>> addPhoto(PhotoDraft photo, {Uint8List? bytes}) async {
     final Result<PhotoDraft> saved = await _persistence.savePhoto(
-      photo,
+      state.editing ? photo.copyWith(clearRecordId: true) : photo,
       bytes: bytes,
     );
     return saved.fold(FailureResult<void>.new, (PhotoDraft stored) async {
@@ -99,7 +168,8 @@ final class CaptureController extends Notifier<CaptureSession> {
   }
 
   /// Removes [photoId] after tombstone; leaves emitted state unchanged on
-  /// failure.
+  /// failure. A photo filed on the record being edited leaves the session
+  /// only; [saveEdits] tombstones it.
   Future<Result<PhotoDraft?>> removePhoto(String photoId) async {
     PhotoDraft? removed;
     for (final PhotoDraft photo in state.photos) {
@@ -111,10 +181,9 @@ final class CaptureController extends Notifier<CaptureSession> {
     if (removed == null) {
       return const Success<PhotoDraft?>(null);
     }
-    final Result<void> deleted = await _persistence.deletePhoto(
-      photoId,
-      reason: 'operator-delete',
-    );
+    final Result<void> deleted = _filed(removed)
+        ? const Success<void>(null)
+        : await _persistence.deletePhoto(photoId, reason: 'operator-delete');
     return deleted.fold(FailureResult<PhotoDraft?>.new, (_) async {
       final CaptureSession next = state.copyWith(
         photos: state.photos
@@ -147,6 +216,9 @@ final class CaptureController extends Notifier<CaptureSession> {
       }
     }
     for (final PhotoDraft photo in ordered) {
+      if (_filed(photo)) {
+        continue;
+      }
       final Result<PhotoDraft> saved = await _persistence.savePhoto(photo);
       if (saved is FailureResult<PhotoDraft>) {
         return FailureResult<void>(saved.failure);
@@ -232,7 +304,7 @@ final class CaptureController extends Notifier<CaptureSession> {
         photo.id == photoId ? photo.copyWith(photoType: type) : photo,
     ];
     for (final PhotoDraft photo in photos) {
-      if (photo.id == photoId) {
+      if (photo.id == photoId && !_filed(photo)) {
         final Result<PhotoDraft> saved = await _persistence.savePhoto(photo);
         if (saved is FailureResult<PhotoDraft>) {
           return FailureResult<void>(saved.failure);
@@ -268,7 +340,7 @@ final class CaptureController extends Notifier<CaptureSession> {
       return const Success<void>(null);
     }
     final PhotoRepository repository = _persistence.photos;
-    if (repository is CapturePhotoRepository) {
+    if (repository is CapturePhotoRepository && !_filed(photo)) {
       final Result<void> retired = await repository.retireDerived(photoId);
       if (retired is FailureResult<void>) {
         return retired;
@@ -289,7 +361,9 @@ final class CaptureController extends Notifier<CaptureSession> {
 
   /// Updates a photo draft (rotation, crop link, …).
   Future<Result<void>> setPhoto(PhotoDraft photo) async {
-    final Result<PhotoDraft> saved = await _persistence.savePhoto(photo);
+    final Result<PhotoDraft> saved = _filed(photo)
+        ? Success<PhotoDraft>(photo)
+        : await _persistence.savePhoto(photo);
     return saved.fold(FailureResult<void>.new, (PhotoDraft stored) async {
       final List<PhotoDraft> photos = <PhotoDraft>[
         for (final PhotoDraft row in state.photos)
@@ -396,7 +470,7 @@ final class CaptureController extends Notifier<CaptureSession> {
     if (checkpoint case FailureResult<void>()) {
       return checkpoint;
     }
-    final Result<void> cleared = await _persistence.clearSession(projectId);
+    final Result<void> cleared = await _persistence.clearSession(key);
     if (cleared case FailureResult<void>()) {
       return cleared;
     }
@@ -408,21 +482,34 @@ final class CaptureController extends Notifier<CaptureSession> {
     return const Success<void>(null);
   }
 
-  /// Discards the interrupted session after confirm.
+  /// Discards the interrupted session after confirm. An edit drops only the
+  /// photos added during it; the record's own photos stay.
   Future<Result<void>> discardSession() async {
     for (final PhotoDraft photo in state.photos) {
+      if (_filed(photo)) {
+        continue;
+      }
       await _persistence.deletePhoto(photo.id, reason: 'session-discard');
     }
-    await _persistence.clearSession(projectId);
+    await _persistence.clearSession(key);
+    if (state.editing) {
+      state = _empty();
+      return const Success<void>(null);
+    }
     state = CaptureSession(
       id: _ids.newId(),
-      projectId: projectId,
+      projectId: key,
       templateId: state.templateId,
       contextSnapshot: state.contextSnapshot,
     );
     return const Success<void>(null);
   }
 }
+
+const StorageFailure _noRecords = StorageFailure(
+  message: 'Saved records cannot be edited on this device.',
+  recoveryAction: 'Open the record on a device that stores records.',
+);
 
 final class _MemoryPhotoRepository implements PhotoRepository {
   final Map<String, PhotoAsset> _rows = <String, PhotoAsset>{};
@@ -487,18 +574,18 @@ final class _MemoryCapturePersistence implements CapturePersistence {
 
   @override
   Future<Result<void>> saveSession(CaptureSession session) async {
-    _sessions[session.projectId] = session;
+    _sessions[session.storageKey] = session;
     return const Success<void>(null);
   }
 
   @override
-  Future<Result<CaptureSession?>> loadSession(String projectId) async {
-    return Success<CaptureSession?>(_sessions[projectId]);
+  Future<Result<CaptureSession?>> loadSession(String key) async {
+    return Success<CaptureSession?>(_sessions[key]);
   }
 
   @override
-  Future<Result<void>> clearSession(String projectId) async {
-    _sessions.remove(projectId);
+  Future<Result<void>> clearSession(String key) async {
+    _sessions.remove(key);
     return const Success<void>(null);
   }
 }

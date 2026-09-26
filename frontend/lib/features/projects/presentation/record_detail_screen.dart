@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
@@ -11,6 +12,7 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
@@ -23,7 +25,8 @@ import 'record_edit_sheet.dart';
 import 'record_thumb.dart';
 
 /// One record: its photos, caption, field values, audio and capture time,
-/// with its field editor and delete in the menu (FBK0000137).
+/// with its field editor and delete in the menu (FBK0000137), and Edit,
+/// which opens its photos and captions on the capture page (FBK0000148).
 final class RecordDetailScreen extends ConsumerWidget {
   /// Creates the page for [recordId] on [projectId].
   const RecordDetailScreen({
@@ -64,6 +67,15 @@ final class RecordDetailScreen extends ConsumerWidget {
                 onTap: () => unawaited(_delete(context, ref)),
               ),
             ],
+      footer: detail == null
+          ? null
+          : AppPrimaryAction(
+              key: const ValueKey<String>('record-edit'),
+              label: Copy.recordEdit,
+              onPressed: () => unawaited(
+                context.push(RoutePaths.projectRecordEdit(projectId, recordId)),
+              ),
+            ),
       body: AsyncValueView<ProjectRecordDetail?>(
         value: value,
         isEmpty: (ProjectRecordDetail? loaded) => loaded == null,

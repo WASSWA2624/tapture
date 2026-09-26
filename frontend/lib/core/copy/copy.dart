@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:tapture/app/theme/markup_ink.dart';
 
 /// One place every visible catalogue string comes from, keyed by meaning
 /// so translation can arrive later without touching a widget (FE-L10N-01,
@@ -177,6 +178,12 @@ abstract final class Copy {
   /// Crop action on the photo viewer.
   static const String photoCrop = 'Crop';
 
+  /// Semantic name of a crop frame corner handle.
+  static const String photoCropCorner = 'Crop corner, drag to resize';
+
+  /// Semantic name of the crop frame body.
+  static const String photoCropFrame = 'Crop frame, drag to move';
+
   /// Rotate the visible photo a quarter turn.
   static const String photoRotate = 'Rotate';
 
@@ -188,6 +195,43 @@ abstract final class Copy {
 
   /// Remove every stroke.
   static const String photoClearDraw = 'Clear drawing';
+
+  /// Name of a markup ink, read beside its swatch (FE-A11Y-05).
+  static String markupInk(MarkupInk ink) {
+    return switch (ink) {
+      MarkupInk.red => 'Red',
+      MarkupInk.yellow => 'Yellow',
+      MarkupInk.white => 'White',
+      MarkupInk.black => 'Black',
+      MarkupInk.blue => 'Blue',
+      MarkupInk.green => 'Green',
+    };
+  }
+
+  /// Label of the markup ink swatches.
+  static const String markupInkLabel = 'Ink';
+
+  /// Label of the markup size choice.
+  static const String markupSize = 'Size';
+
+  /// Switches the dark backing behind typed text on a photo.
+  static const String markupBacking = 'Dark backing';
+
+  /// What the dark backing does.
+  static const String markupBackingDescription =
+      'Keeps the words readable on a busy photo.';
+
+  /// How to place typed text on a photo.
+  static const String markupTypeHint = 'Drag the photo to move the words.';
+
+  /// The thinnest stroke or smallest text.
+  static const String markupSizeSmall = 'Small';
+
+  /// The middle stroke or text size.
+  static const String markupSizeMedium = 'Medium';
+
+  /// The thickest stroke or largest text.
+  static const String markupSizeLarge = 'Large';
 
   /// How many photos are in the tray.
   static String capturePhotoCount(int count) => Intl.plural(
@@ -847,6 +891,27 @@ abstract final class Copy {
 
   /// Edits one captured record.
   static const String recordEdit = 'Edit';
+
+  /// Label of the optional project photo on the create and edit screens.
+  static const String projectPhoto = 'Project photo (optional)';
+
+  /// Picks a photo for a project that has none.
+  static const String projectPhotoAdd = 'Add a photo';
+
+  /// Picks another photo for a project that has one.
+  static const String projectPhotoChange = 'Change photo';
+
+  /// Takes the photo off a project.
+  static const String projectPhotoRemove = 'Remove photo';
+
+  /// Title of the page that edits a saved record's photos and captions.
+  static const String recordEditTitle = 'Edit record';
+
+  /// Saves an edited record's photos, captions and audio.
+  static const String recordEditSave = 'Save changes';
+
+  /// Confirms an edited record was saved.
+  static const String recordEditSaved = 'Record updated.';
 
   /// Edit sheet for a record with nothing to edit.
   static const String recordEditNoFieldsHeadline = 'No fields to edit';
@@ -2199,6 +2264,17 @@ abstract final class Copy {
 
   /// Removes one draft photo from the capture tray.
   static const String captureRemovePhoto = 'Remove photo';
+
+  /// Where a caption goes when no photo is ticked: every photo.
+  static String captionGoesToAll(int n) =>
+      Intl.plural(n, one: 'Goes to the photo', other: 'Goes to all $n photos');
+
+  /// Where a caption goes when photos are ticked: only those.
+  static String captionGoesToTicked(int n) => Intl.plural(
+    n,
+    one: 'Goes to 1 ticked photo',
+    other: 'Goes to $n ticked photos',
+  );
 
   /// Append caption mode.
   static const String captionAppend = 'Append';

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/color_swatches.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/app/theme/markup_ink.dart';
 import 'package:tapture/app/theme/surface_levels.dart';
 import 'package:tapture/app/theme/type_ramp.dart';
 import 'package:tapture/core/constants/app_constants.dart';
@@ -19,6 +20,7 @@ import 'package:tapture/core/widgets/app_card.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/app_floating_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_ink_picker.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
@@ -242,6 +244,13 @@ Widget _sample(String name, TextEditingController field) {
         semanticLabel: Copy.galleryFields,
         tooltip: Copy.galleryFields,
         onPressed: _noop,
+      );
+    case 'app_ink_picker':
+      return AppInkPicker(
+        ink: MarkupInk.yellow,
+        size: 1,
+        onInk: (MarkupInk _) {},
+        onSize: (int _) {},
       );
     case 'app_list_tile':
       return const AppListTile(

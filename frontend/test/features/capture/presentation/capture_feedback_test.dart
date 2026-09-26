@@ -11,6 +11,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart' show AppDatabase;
 import 'package:tapture/core/db/database_provider.dart';
 import 'package:tapture/core/db/tables/device_profile.dart';
+import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/files/text_store.dart';
 import 'package:tapture/core/network/offline_now.dart';
@@ -22,8 +23,10 @@ import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/fields/dictation_scope.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
+import 'package:tapture/features/capture/domain/capture_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
+import 'package:tapture/features/capture/domain/photo_repository.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
 import 'package:tapture/features/capture/presentation/capture_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_crop_screen.dart';
@@ -119,7 +122,7 @@ void main() {
               store: TextStore.memory(),
             ),
           ),
-          capturePhotoPickerProvider.overrideWith(
+          photoPickerProvider.overrideWith(
             (Ref _) => PhotoPicker.fake(
               photos: <Uint8List>[image],
               canTakePhoto: false,
@@ -203,6 +206,75 @@ void main() {
     });
   }
 
+  testWidgets('typing faster than the session saves keeps every character', (
+    WidgetTester tester,
+  ) async {
+    final _CaptionHarness harness = await _CaptionHarness.open(tester, <String>[
+      'a',
+    ], saveDelay: const Duration(milliseconds: 50));
+    await harness.typeWithoutSettling('B');
+    await tester.pump(const Duration(milliseconds: 10));
+    await harness.typeWithoutSettling('Bo');
+    await tester.pump(const Duration(milliseconds: 95));
+    // The first keystroke's writes have landed; the second's have not.
+    expect(harness.fieldText, 'Bo');
+    await harness.typeWithoutSettling('Boi');
+    await tester.pumpAndSettle();
+    expect(harness.fieldText, 'Boi');
+    expect(harness.session.captions['a'], 'Boi');
+    // Leaving the page saves once more; let that slow save land.
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(milliseconds: 60));
+  });
+
+  testWidgets('the line under the caption says which photos it goes to', (
+    WidgetTester tester,
+  ) async {
+    final _CaptionHarness one = await _CaptionHarness.open(tester, <String>[
+      'a',
+    ]);
+    expect(find.text(Copy.captionGoesToAll(1)), findsOneWidget);
+    expect(one.fieldText, '');
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    final _CaptionHarness three = await _CaptionHarness.open(tester, <String>[
+      'a',
+      'b',
+      'c',
+    ]);
+    expect(find.text(Copy.captionGoesToAll(3)), findsOneWidget);
+    await three.type('Site');
+    await tester.tap(_selectControl.at(1));
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.captionGoesToTicked(1)), findsOneWidget);
+    expect(three.fieldText, 'Site');
+    await three.type('Pump');
+    await tester.tap(_selectControl.at(2));
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.captionGoesToTicked(2)), findsOneWidget);
+    expect(three.fieldText, '');
+    expect(three.session.captions['c'], 'Site');
+  });
+
+  testWidgets('at 200 percent text the caption target line stays on screen', (
+    WidgetTester tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(393, 886);
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await _CaptionHarness.open(tester, <String>['a', 'b']);
+    final Finder line = find.byKey(
+      const ValueKey<String>('capture-caption-targets'),
+    );
+    await tester.ensureVisible(line);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(tester.getRect(line).right, lessThanOrEqualTo(393));
+  });
+
   testWidgets('one photo takes the typed caption', (WidgetTester tester) async {
     final _CaptionHarness harness = await _CaptionHarness.open(tester, <String>[
       'a',
@@ -223,7 +295,7 @@ void main() {
     expect(harness.session.captions['b'], 'Site');
     expect(harness.session.captions['c'], 'Site');
 
-    await tester.tap(find.byType(Checkbox).at(1));
+    await tester.tap(_selectControl.at(1));
     await tester.pumpAndSettle();
     expect(harness.fieldText, 'Site');
     await harness.type('Pump');
@@ -235,8 +307,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(harness.fieldText, '');
 
-    await tester.tap(find.byType(Checkbox).first);
-    await tester.tap(find.byType(Checkbox).at(1));
+    await tester.tap(_selectControl.first);
+    await tester.tap(_selectControl.at(1));
     await tester.pumpAndSettle();
     expect(harness.fieldText, '');
     expect(find.widgetWithText(TextButton, 'Caption'), findsNothing);
@@ -298,6 +370,11 @@ void main() {
         ),
       ),
     );
+    // The photo's size is read by the engine before Crop is offered.
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 200)),
+    );
+    await tester.pump();
     await tester.runAsync(() async {
       await tester.tap(find.widgetWithText(AppButton, Copy.photoCrop));
       await Future<void>.delayed(const Duration(seconds: 2));
@@ -398,7 +475,7 @@ void main() {
                 store: TextStore.memory(),
               ),
             ),
-            capturePhotoPickerProvider.overrideWith(
+            photoPickerProvider.overrideWith(
               (Ref _) => const PhotoPicker.fake(canTakePhoto: true),
             ),
           ],
@@ -584,21 +661,22 @@ final class _CaptionHarness {
 
   static Future<_CaptionHarness> open(
     WidgetTester tester,
-    List<String> ids,
-  ) async {
+    List<String> ids, {
+    Duration saveDelay = Duration.zero,
+  }) async {
     final FakePhotoRepository photos = FakePhotoRepository();
     addTearDown(photos.dispose);
+    final CapturePersistence stored = CapturePersistenceImpl(
+      photos: photos,
+      store: TextStore.memory(),
+    );
+    final _SlowSessions slow = _SlowSessions(stored, saveDelay);
     await tester.pumpWidget(
       _scope(
         const CaptureScreen(projectId: 'p1'),
         extras: <Override>[
           photoRepositoryProvider.overrideWith((Ref _) => photos),
-          capturePersistenceProvider.overrideWith(
-            (Ref ref) => CapturePersistenceImpl(
-              photos: photos,
-              store: TextStore.memory(),
-            ),
-          ),
+          capturePersistenceProvider.overrideWith((Ref ref) => slow),
         ],
       ),
     );
@@ -610,6 +688,9 @@ final class _CaptionHarness {
       await controller.addPhoto(_draft(id));
     }
     await tester.pumpAndSettle();
+    // Slow saves start once the tray is set up; the setup awaits outside a
+    // pump, where a pending timer would never fire.
+    slow.slow = true;
     return _CaptionHarness._(tester);
   }
 
@@ -630,6 +711,49 @@ final class _CaptionHarness {
     await _tester.enterText(_field, text);
     await _tester.pumpAndSettle();
   }
+
+  Future<void> typeWithoutSettling(String text) async {
+    await _tester.enterText(_field, text);
+  }
+}
+
+/// Session saves that finish [_delay] later, as a database write does, so
+/// the caption field's value trails what is typed.
+final class _SlowSessions implements CapturePersistence {
+  _SlowSessions(this._inner, this._delay);
+
+  final CapturePersistence _inner;
+  final Duration _delay;
+
+  /// Whether session saves wait [_delay].
+  bool slow = false;
+
+  @override
+  PhotoRepository get photos => _inner.photos;
+
+  @override
+  Future<Result<PhotoDraft>> savePhoto(PhotoDraft photo, {Uint8List? bytes}) =>
+      _inner.savePhoto(photo, bytes: bytes);
+
+  @override
+  Future<Result<void>> deletePhoto(String photoId, {required String reason}) =>
+      _inner.deletePhoto(photoId, reason: reason);
+
+  @override
+  Future<Result<void>> saveSession(CaptureSession session) async {
+    if (slow && _delay > Duration.zero) {
+      await Future<void>.delayed(_delay);
+    }
+    return _inner.saveSession(session);
+  }
+
+  @override
+  Future<Result<CaptureSession?>> loadSession(String projectId) =>
+      _inner.loadSession(projectId);
+
+  @override
+  Future<Result<void>> clearSession(String projectId) =>
+      _inner.clearSession(projectId);
 }
 
 /// A switchable offline flag, so a test can bring the device back online.
@@ -795,3 +919,8 @@ final Uint8List _png = Uint8List.fromList(<int>[
   0x60,
   0x82,
 ]);
+
+/// Each thumbnail's select control, in tray order.
+final Finder _selectControl = find.byKey(
+  const ValueKey<String>('photo-corner-select-target'),
+);

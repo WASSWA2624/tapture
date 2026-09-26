@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -5,6 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/files/photo_picker.dart';
+import 'package:tapture/core/files/photo_thumbnails.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/fields/dictation_scope.dart';
 import 'package:tapture/features/projects/presentation/project_create_screen.dart';
@@ -83,6 +87,45 @@ void main() {
       ).read(currentProjectProvider),
       'created-1',
     );
+  });
+
+  testWidgets('a photo chosen on create is stored with the project', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    await _pump(tester, repo: repo);
+
+    await tester.enterText(find.byType(TextField).first, 'Alpha');
+    await _pickPhoto(tester);
+    expect(
+      find.byKey(const ValueKey<String>('project-photo-pending')),
+      findsOneWidget,
+    );
+    expect(find.text(Copy.projectPhotoChange), findsOneWidget);
+    await tester.tap(find.byType(AppPrimaryAction));
+    await tester.pumpAndSettle();
+
+    expect(repo.coverFiles.values.single, _photoBytes);
+    expect(repo.stored.single.settings.coverPhoto, isNotNull);
+  });
+
+  testWidgets('a project is created without a photo', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    await _pump(tester, repo: repo);
+
+    await tester.enterText(find.byType(TextField).first, 'Alpha');
+    await _pickPhoto(tester);
+    await tester.tap(find.text(Copy.projectPhotoRemove));
+    await tester.pump();
+    await tester.tap(find.byType(AppPrimaryAction));
+    await tester.pumpAndSettle();
+
+    expect(repo.coverFiles, isEmpty);
+    expect(repo.stored.single.settings.coverPhoto, isNull);
   });
 
   testWidgets('duplicate prefills the suggested name', (
@@ -191,6 +234,12 @@ Future<void> _pump(
       retry: (int _, Object _) => null,
       overrides: <Override>[
         projectRepositoryProvider.overrideWith((Ref _) => repo),
+        photoPickerProvider.overrideWith(
+          (Ref _) => PhotoPicker.fake(photos: <Uint8List>[_photoBytes]),
+        ),
+        photoThumbnailsProvider.overrideWith(
+          (Ref _) => PhotoThumbnails.fake(const <String, String>{}),
+        ),
       ],
       child: speech == null
           ? app
@@ -198,4 +247,17 @@ Future<void> _pump(
     ),
   );
   await tester.pump();
+}
+
+final Uint8List _photoBytes = Uint8List.fromList(<int>[9, 8, 7]);
+
+/// Picks the fake photo through the add-photo sheet.
+Future<void> _pickPhoto(WidgetTester tester) async {
+  final Finder add = find.text(Copy.projectPhotoAdd);
+  await tester.ensureVisible(add);
+  await tester.pumpAndSettle();
+  await tester.tap(add);
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(Copy.captureChoosePhoto));
+  await tester.pumpAndSettle();
 }
