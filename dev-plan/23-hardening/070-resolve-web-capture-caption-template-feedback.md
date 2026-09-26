@@ -41,7 +41,8 @@ one-place move swaps exactly two fields.
 
 Web surfaces W1 and W2 leave out (processing, export, record-list and project-cover thumbnails) are task
 [071](071-enable-processing-export-on-web.md). Processed records missing from the project home are task
-[072](072-list-processed-records-on-project-home.md).
+[072](072-list-processed-records-on-project-home.md). A Resume tapped while the Capture page's first writes are
+in flight losing the resumed photos is task [073](073-keep-resumed-capture-photos.md).
 
 ## Files
 
@@ -128,9 +129,9 @@ Web surfaces W1 and W2 leave out (processing, export, record-list and project-co
       `test/design_system/app_empty_state/goldens/app_empty_state_{light,dark,outdoor}.png`; W6
       `test/design_system/app_search_field/goldens/app_search_field_{light,dark,outdoor}.png`. Every other golden
       matches its baseline from the commit before this task.
-- [x] [071 — Enable processing, export and list thumbnails on web](071-enable-processing-export-on-web.md) and
-      [072 — List processed records on the project home](072-list-processed-records-on-project-home.md) are in the
-      plan.
+- [x] [071 — Enable processing, export and list thumbnails on web](071-enable-processing-export-on-web.md),
+      [072 — List processed records on the project home](072-list-processed-records-on-project-home.md) and
+      [073 — Keep resumed capture photos](073-keep-resumed-capture-photos.md) are in the plan.
 
 ## Verification
 
@@ -149,3 +150,11 @@ before it; these failures predate task 070 and nothing here adds to them:
 
 The golden baselines are local files; with baselines generated from the commit before this task, every golden
 passes after the regenerations listed above. The release web build compiles.
+
+In Chromium, on the release web build at 1280 by 900: Capture shows Project and Template side by side at one
+field tall, Save raw and Save and process side by side, and the empty tray's icon with no Add photo button; the
+icon opens the photo source sheet; a library photo saves with no error snack and shows in the tray at once; Save
+raw saves the record; after a reload the record's Edit reads the photo back into its tray and the viewer shows
+it, and a resumed draft does the same; the projects, records, templates and field searches carry the filter
+button, and the field list opens on its Required section. The record row's thumbnail on web still shows the
+missing-photo placeholder, which is task 071.

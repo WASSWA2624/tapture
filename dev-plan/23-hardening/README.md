@@ -52,3 +52,4 @@ Task 023, then 026–064 (40). Task 023 is one prompt for the hardening pass; 02
 - [ ] [070 — Resolve web capture, caption and template feedback](070-resolve-web-capture-caption-template-feedback.md)
 - [ ] [071 — Enable processing, export and list thumbnails on web](071-enable-processing-export-on-web.md)
 - [ ] [072 — List processed records on the project home](072-list-processed-records-on-project-home.md)
+- [ ] [073 — Keep resumed capture photos](073-keep-resumed-capture-photos.md)

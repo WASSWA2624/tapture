@@ -1,6 +1,6 @@
 # Tapture — task index
 
-72 implementation prompts across 25 phases. Work top to bottom.
+73 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task. Phases 01 to 25 are one
 task each except phase 23, which still holds the leftover field-feedback extras. Old numbers are listed in
@@ -190,6 +190,7 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 - [ ] [070 — Resolve web capture, caption and template feedback](23-hardening/070-resolve-web-capture-caption-template-feedback.md)
 - [ ] [071 — Enable processing, export and list thumbnails on web](23-hardening/071-enable-processing-export-on-web.md)
 - [ ] [072 — List processed records on the project home](23-hardening/072-list-processed-records-on-project-home.md)
+- [ ] [073 — Keep resumed capture photos](23-hardening/073-keep-resumed-capture-photos.md)
 
 ## 24 — The minimal backend
 
