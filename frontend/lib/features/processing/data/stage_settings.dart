@@ -3,6 +3,7 @@ import 'package:tapture/features/projects/projects.dart'
     show ProjectSettings, ProjectSettingsResolved, appProjectSettingsDefaults;
 import 'package:tapture/features/settings/settings.dart';
 
+import 'provider_selection.dart';
 import 'record_bundle.dart';
 
 /// The app settings, project settings and provider choice a stage reads.
@@ -23,13 +24,13 @@ final class StageSettings {
     ).resolve(appProjectSettingsDefaults(_settings));
   }
 
-  /// The provider and model selected for [operation].
+  /// The provider and model the bundle's project uses for [operation],
+  /// resolved by [ProviderSelection].
   ({ProviderDescriptor provider, ModelDescriptor model, bool fellBack})
-  selection(AiOperation operation) {
-    return _providers.validateSelection(
-      providerId: _settings.read(SettingKeys.aiProvider),
-      modelId: _settings.read(SettingKeys.aiModel),
-      operation: operation,
-    );
+  selection(RecordBundle bundle, AiOperation operation) {
+    return ProviderSelection(
+      settings: _settings,
+      providers: _providers,
+    ).resolve(bundle.project, operation);
   }
 }

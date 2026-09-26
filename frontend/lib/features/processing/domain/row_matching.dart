@@ -3,7 +3,9 @@ import 'package:tapture/core/constants/app_constants.dart';
 /// Resolves extracted text to a predefined row.
 ///
 /// Exact, alias, normalised, fuzzy, then model classification. The first
-/// strategy that clears [threshold] wins. Local strategies never call out.
+/// strategy whose score clears [threshold] wins; a strategy that falls short
+/// hands over to the next. Local strategies never call out, and [classify]
+/// runs only after all four have failed.
 final class RowMatching {
   /// The matched row, the strategy name and the score, or null.
   static Future<RowMatch?> match({
@@ -27,29 +29,38 @@ final class RowMatching {
       if (row.label.toLowerCase() == folded) {
         continue;
       }
+      final double score = AppConstants.processing.rowMatchAliasScore;
       for (final String alias in row.aliases) {
-        if (alias.toLowerCase() == folded) {
-          return (id: row.id, label: row.label, strategy: 'alias', score: 0.98);
+        if (alias.toLowerCase() == folded && score >= cut) {
+          return (
+            id: row.id,
+            label: row.label,
+            strategy: 'alias',
+            score: score,
+          );
         }
       }
     }
     final String normalised = _normalise(trimmed);
+    final double labelScore = AppConstants.processing.rowMatchNormalisedScore;
+    final double aliasScore =
+        AppConstants.processing.rowMatchNormalisedAliasScore;
     for (final MatchableRow row in rows) {
-      if (_normalise(row.label) == normalised) {
+      if (_normalise(row.label) == normalised && labelScore >= cut) {
         return (
           id: row.id,
           label: row.label,
           strategy: 'normalised',
-          score: 0.95,
+          score: labelScore,
         );
       }
       for (final String alias in row.aliases) {
-        if (_normalise(alias) == normalised) {
+        if (_normalise(alias) == normalised && aliasScore >= cut) {
           return (
             id: row.id,
             label: row.label,
             strategy: 'normalised',
-            score: 0.93,
+            score: aliasScore,
           );
         }
       }

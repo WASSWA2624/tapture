@@ -145,41 +145,83 @@ void main() {
   });
 
   test(
-    'connection test distinguishes success, authentication, and network',
+    'connection test tells success, a rejected key and a network fault apart',
     () async {
       final ProviderRegistry registry = _registry(
         backend: _TestAiService(),
         device: _TestAiService(),
       );
 
+      Future<ProviderTestOutcome> outcome(Failure failure) {
+        return registry.testConnection(_TestAiService(readFailure: failure));
+      }
+
       expect(
         await registry.testConnection(_TestAiService()),
         ProviderTestOutcome.success,
       );
       expect(
-        await registry.testConnection(
-          _TestAiService(
-            readFailure: const ProviderFailure(
-              message: 'Credential rejected (401).',
-              recoveryAction: 'Replace it.',
-            ),
+        await outcome(
+          const ProviderFailure(
+            message: 'Invalid API key',
+            kind: ProviderFailureKind.authentication,
           ),
         ),
         ProviderTestOutcome.authentication,
       );
       expect(
-        await registry.testConnection(
-          _TestAiService(
-            readFailure: const NetworkFailure(
-              message: 'Offline.',
-              recoveryAction: 'Retry later.',
-            ),
+        await outcome(
+          const NetworkFailure(message: 'Offline.', recoveryAction: 'Retry.'),
+        ),
+        ProviderTestOutcome.network,
+      );
+      expect(
+        await outcome(
+          const ProviderFailure(
+            message: 'Service unavailable (503).',
+            kind: ProviderFailureKind.unavailable,
           ),
         ),
         ProviderTestOutcome.network,
       );
     },
   );
+
+  test('a provider error that is not about the key is not called a network '
+      'fault, and the message is never read', () async {
+    final ProviderRegistry registry = _registry(
+      backend: _TestAiService(),
+      device: _TestAiService(),
+    );
+
+    Future<ProviderTestOutcome> outcome(Failure failure) {
+      return registry.testConnection(_TestAiService(readFailure: failure));
+    }
+
+    expect(
+      await outcome(
+        const ProviderFailure(
+          message: 'Too many requests.',
+          kind: ProviderFailureKind.rateLimited,
+        ),
+      ),
+      ProviderTestOutcome.failed,
+    );
+    expect(
+      await outcome(
+        const ProviderFailure(message: 'Credential rejected (401).'),
+      ),
+      ProviderTestOutcome.failed,
+    );
+    expect(
+      await outcome(const ValidationFailure()),
+      ProviderTestOutcome.validation,
+    );
+    expect(
+      await registry.testConnection(const AiService.unavailable()),
+      ProviderTestOutcome.unavailable,
+    );
+  });
 }
 
 ProviderRegistry _registry({

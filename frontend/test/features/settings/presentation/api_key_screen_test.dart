@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/copy/copy.dart';
@@ -14,9 +15,11 @@ void main() {
     final SecureStorage storage = SecureStorage.fake(backing: secrets);
     final SettingsStore settings = SettingsStore.fake();
     await tester.pumpWidget(
-      MaterialApp(
-        theme: buildTheme(brightness: Brightness.light),
-        home: ApiKeyScreen(storage: storage, settings: settings),
+      ProviderScope(
+        child: MaterialApp(
+          theme: buildTheme(brightness: Brightness.light),
+          home: ApiKeyScreen(storage: storage, settings: settings),
+        ),
       ),
     );
     await tester.pumpAndSettle();

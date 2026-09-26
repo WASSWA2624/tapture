@@ -477,7 +477,7 @@ void main() {
       expect(atLimit.blockMessage, contains('2'));
       expect(
         atLimit.blockMessage,
-        contains(atLimit.resetsAt.toIso8601String()),
+        contains(atLimit.resetsAt.toIso8601String().substring(0, 10)),
       );
       final CostGuard over = CostGuard(
         requestsToday: 3,

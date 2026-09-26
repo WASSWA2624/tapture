@@ -19,7 +19,7 @@ void main() {
     );
     addTearDown(() => directory.deleteSync(recursive: true));
     final File plate = File('${directory.path}/plate.png')
-      ..writeAsBytesSync(OcrService.paintPlate('SN1'));
+      ..writeAsBytesSync(paintOcrPlate('SN1'));
 
     final OcrResult result = await OcrService().recognise(plate.path);
 

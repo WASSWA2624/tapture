@@ -115,6 +115,10 @@ packages:
     version: ^0.17.1
     purpose: Native on-device Latin-script OCR on Android and iOS, including text blocks and bounding boxes. MIT. Replaces the synthetic fixed-font recogniser that could not read field photographs.
     task: "013"
+  battery_plus:
+    version: ^7.1.1
+    purpose: Whether the device is charging, so opportunistic on-device reading runs only on mains power. Reached only through core/background/power_source (FE-STR-11). BSD-3-Clause, fluttercommunity.dev. Replaces a hand-rolled platform channel on each OS.
+    task: "013"
   flutter_local_notifications:
     version: ^18.0.1
     purpose: One local notification when a processing batch finishes. BSD-3-Clause. Replaces a hand-rolled notification channel. No push and no remote service.

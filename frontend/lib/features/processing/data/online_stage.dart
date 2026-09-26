@@ -98,8 +98,7 @@ final class OnlineStage {
         .map((Caption row) => row.textRaw)
         .where((String value) => value.trim().isNotEmpty)
         .join('\n');
-    final List<String> transcripts = await _transcripts.forJob(job, bundle);
-    final selection = _settings.selection(AiOperation.extractFields);
+    final selection = _settings.selection(bundle, AiOperation.extractFields);
     final AiService service = selection.provider.service;
     if (!service.isAvailable) {
       await _writes.setSkip(
@@ -108,6 +107,8 @@ final class OnlineStage {
       );
       return;
     }
+    // Audio leaves only once extraction will run, as the preview says.
+    final List<String> transcripts = await _transcripts.forJob(job, bundle);
     final List<List<String>> batches = RequestBatching.split(images);
     for (var index = 0; index < batches.length; index++) {
       final List<String> batch = batches[index];
@@ -139,9 +140,9 @@ final class OnlineStage {
     if (_settings.read(SettingKeys.aiRefineCaptions)) {
       final List<String> rejected = await _captionRefinement.refine(
         jobId: job.id,
-        projectId: bundle.record.projectId,
+        project: bundle.project,
         captions: bundle.captions,
-        beforeRequest: () => _budget.require(job.id, bundle.record.projectId),
+        beforeRequest: () => _budget.require(job.id, bundle),
       );
       if (rejected.isNotEmpty) {
         await _writes.appendRejections(job.id, rejected);
@@ -188,7 +189,7 @@ final class OnlineStage {
       repairError = parsed.error ?? 'The response is malformed.';
     }
     while (true) {
-      await _budget.require(job.id, bundle.record.projectId);
+      await _budget.require(job.id, bundle);
       final ExtractFieldsRequest serviceRequest = request.toService();
       final Result<ExtractFieldsResult> result = await service.extractFields(
         ExtractFieldsRequest(

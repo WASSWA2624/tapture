@@ -46,6 +46,7 @@ class ProviderTestAction extends StatelessWidget {
       ProviderTestView.network => Copy.apiKeyNetworkFailed,
       ProviderTestView.unavailable => Copy.aiProviderUnavailable,
       ProviderTestView.validation => Copy.aiSelectionInvalid,
+      ProviderTestView.failed => Copy.apiKeyTestFailed,
     };
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -76,4 +77,8 @@ enum ProviderTestView {
 
   /// Provider/model selection is invalid.
   validation,
+
+  /// The provider answered with an error that is neither a rejected key nor
+  /// a network fault.
+  failed,
 }

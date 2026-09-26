@@ -113,19 +113,26 @@ final class Notifications {
 
   /// Sends one notification for a finished batch.
   ///
-  /// Does nothing when permission is refused.
+  /// Does nothing when permission is refused or the platform fails, and
+  /// never throws.
   Future<void> reportBatch({
     required int succeeded,
     required int failed,
   }) async {
-    final bool allowed = await _requestPermission();
-    if (!allowed) {
+    try {
+      final bool allowed = await _requestPermission();
+      if (!allowed) {
+        return;
+      }
+      await _show(
+        title: Copy.processingNotificationTitle,
+        body: Copy.processingNotificationBody(succeeded, failed),
+        route: reviewRoute,
+      );
+    } on Object {
+      // A notification is a courtesy. A platform that cannot show one
+      // changes nothing about the batch it reports.
       return;
     }
-    await _show(
-      title: Copy.processingNotificationTitle,
-      body: Copy.processingNotificationBody(succeeded, failed),
-      route: reviewRoute,
-    );
   }
 }

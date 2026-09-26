@@ -44,14 +44,20 @@ void main() {
     expect(settings.read(SettingKeys.aiDailyRequestCap), 9);
   });
 
-  test('the selection falls back to the keyless backend', () {
+  test('the selection falls back to the keyless backend', () async {
+    final AppDatabase db = await seededDatabase(records: 1);
+    addTearDown(db.close);
+    final RecordRow record = await db.select(db.records).getSingle();
+    final RecordBundle bundle = await RecordBundleLoader(
+      db: db,
+    ).load(record.id);
     final StageSettings settings = StageSettings(
       settings: SettingsStore.fake(),
       providers: ProviderRegistry.keyless(),
     );
 
     expect(
-      settings.selection(AiOperation.extractFields).provider.id,
+      settings.selection(bundle, AiOperation.extractFields).provider.id,
       ProviderRegistry.backendId,
     );
   });

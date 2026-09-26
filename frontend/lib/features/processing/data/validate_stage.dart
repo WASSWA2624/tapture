@@ -11,6 +11,7 @@ import 'package:tapture/core/normalise/units.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/projects/projects.dart'
     show ProjectSettingsResolved;
+import 'package:tapture/features/settings/settings.dart';
 
 import '../domain/evidence_linking.dart';
 import '../domain/processing_job.dart';
@@ -84,6 +85,7 @@ final class ValidateStage {
         final ({String raw, String? normalised}) value = _normalise(
           write.proposed ?? '',
           field,
+          locale: _settings.read(SettingKeys.appLanguage),
         );
         final RecordField stored = StageSupport.unwrap(
           await insertProcessingProposal(
@@ -128,7 +130,14 @@ final class ValidateStage {
       }
       await (_db.update(_db.records)
             ..where(($RecordsTable table) => table.id.equals(bundle.record.id)))
-          .write(RecordsCompanion(status: Value<String>(plan.status)));
+          .write(
+            RecordsCompanion(
+              status: Value<String>(plan.status),
+              updatedAt: Value<DateTime>(_clock.nowUtc()),
+              updatedByDevice: Value<String>(_deviceId),
+              rev: Value<int>(bundle.record.rev + 1),
+            ),
+          );
       await (_db.update(
         _db.processing,
       )..where(($ProcessingTable table) => table.id.equals(job.id))).write(
@@ -152,7 +161,14 @@ final class ValidateStage {
   }
 }
 
-({String raw, String? normalised}) _normalise(String raw, TemplateField field) {
+/// [raw] normalised for [field]: a unit converted to the field's unit, a
+/// phrase mapped to an option, or a date read with [locale]. The original
+/// phrasing is always kept beside the stored value.
+({String raw, String? normalised}) _normalise(
+  String raw,
+  TemplateField field, {
+  required String locale,
+}) {
   if (field.unit != null && field.unit!.isNotEmpty) {
     final UnitValue? converted = Units.convert(raw, targetUnit: field.unit!);
     if (converted != null) {
@@ -167,7 +183,7 @@ final class ValidateStage {
     }
   }
   if (field.type.toLowerCase() == 'date') {
-    final DateValue? date = Dates.parse(raw, locale: 'en-UG');
+    final DateValue? date = Dates.parse(raw, locale: locale);
     if (date != null) {
       return (raw: date.original, normalised: date.stored);
     }

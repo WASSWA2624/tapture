@@ -22,6 +22,9 @@ final class FakeProcessingRepository implements ProcessingRepository {
   final List<({DateTime at, int images})> _usage =
       <({DateTime at, int images})>[];
 
+  /// Every stored job, so a test can read the queue without watching it.
+  List<ProcessingJob> get stored => _rows.values.toList(growable: false);
+
   /// Releases the watch stream. Tests call this from `tearDown`.
   void dispose() {
     if (!_changes.isClosed) {
@@ -57,10 +60,14 @@ final class FakeProcessingRepository implements ProcessingRepository {
   @override
   Future<Result<int>> enqueuePending({
     String? projectId,
-    String? groupLabel,
+    List<String> groupLabels = const <String>[],
   }) async {
+    queuedGroups.add(groupLabels);
     return const Success<int>(0);
   }
+
+  /// The group labels each batch asked to queue, empty for every group.
+  final List<List<String>> queuedGroups = <List<String>>[];
 
   @override
   Future<Result<ProcessingJob?>> byId(String id) async {
@@ -114,7 +121,9 @@ final class FakeProcessingRepository implements ProcessingRepository {
   Future<Result<ProcessingJob?>> claim(
     Duration lease, {
     String? projectId,
-    String? groupLabel,
+    List<String> groupLabels = const <String>[],
+    JobStage? unfinished,
+    Set<String> skip = const <String>{},
   }) async {
     final DateTime now = DateTime.now().toUtc();
     for (final ProcessingJob job in _rows.values.toList()) {
@@ -136,7 +145,10 @@ final class FakeProcessingRepository implements ProcessingRepository {
     }
     final List<ProcessingJob> ready =
         _rows.values.where((ProcessingJob job) {
-          if (job.status != JobStatus.queued) {
+          if (job.status != JobStatus.queued || skip.contains(job.id)) {
+            return false;
+          }
+          if (unfinished != null && job.completedStages.contains(unfinished)) {
             return false;
           }
           final DateTime? notBefore = job.startedAt;

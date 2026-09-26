@@ -14,10 +14,13 @@ import 'core/ai/provider_registry.dart';
 import 'core/ai/stt_service.dart';
 import 'core/audio/audio_recorder_plugin.dart';
 import 'core/audio/audio_recorder_service.dart';
+import 'core/background/power_source.dart';
 import 'core/db/app_database.dart';
 import 'core/db/database_provider.dart';
 import 'core/device/device_identity.dart';
 import 'core/device/platform_facts.dart';
+import 'core/errors/failure.dart';
+import 'core/errors/result.dart';
 import 'core/files/download_service.dart';
 import 'core/files/file_writer.dart';
 import 'core/files/photo_picker.dart';
@@ -39,8 +42,11 @@ import 'features/feedback/presentation/feedback_providers.dart';
 import 'features/processing/data/notifications.dart';
 import 'features/processing/data/processing_repository_impl.dart';
 import 'features/processing/data/processing_stage_worker.dart';
+import 'features/processing/presentation/processing_batch_state.dart';
 import 'features/processing/presentation/processing_controller.dart';
 import 'features/processing/presentation/queue_providers.dart';
+import 'features/processing/presentation/unattended_processing.dart';
+import 'features/processing/processing.dart' show JobStage, ProcessingJob;
 import 'features/projects/data/project_openable_file_lookup_factory.dart';
 import 'features/projects/data/project_repository_impl.dart';
 import 'features/projects/presentation/current_project.dart';
@@ -221,6 +227,49 @@ Future<void> _run() async {
       processingEgressSummaryProvider.overrideWith(
         (Ref _) => processingWorker.egressSummary,
       ),
+      processingTemplateChoiceProvider.overrideWith(
+        (Ref _) => processingWorker.templateChoice,
+      ),
+      processingTemplateAssistProvider.overrideWith(
+        (Ref _) => processingWorker.templateAssist,
+      ),
+      unattendedProcessingProvider.overrideWith((Ref ref) {
+        final SettingsStore settings = ref.watch(projectSettingsStoreProvider);
+        // The batch controller stays alive while the paths listen.
+        ref.listen<ProcessingBatchState>(
+          processingControllerProvider,
+          (ProcessingBatchState? _, ProcessingBatchState _) {},
+        );
+        ProcessingController batches() {
+          return ref.read(processingControllerProvider.notifier);
+        }
+
+        final UnattendedProcessing paths = UnattendedProcessing(
+          network: ref.read(connectivityServiceProvider).watch(),
+          lifecycle: ref.read(lifecycleObserverProvider).states,
+          charging: PowerSource().watchCharging(),
+          settings: settings,
+          underCap: () async {
+            final Result<({int requests, int images})> usage = await ref
+                .read(processingRepositoryProvider)
+                .usageOn(clock.nowUtc());
+            return usage.fold(
+              (Failure _) => false,
+              (({int requests, int images}) today) =>
+                  today.requests < settings.read(SettingKeys.aiDailyRequestCap),
+            );
+          },
+          // Turning automatic processing on is the consent to send; the
+          // online stage still keeps each project's daily cap.
+          processAll: () =>
+              batches().process(confirmOnline: (ProcessingJob _) async => true),
+          readOnDevice: () =>
+              batches().process(stopAfter: JobStage.onDevice, notify: false),
+          cancel: () => batches().cancel(),
+        )..start();
+        ref.onDispose(() => unawaited(paths.dispose()));
+        return paths;
+      }),
       templateRepositoryProvider.overrideWith((Ref _) {
         return TemplateRepositoryImpl(
           db: db,

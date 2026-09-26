@@ -2,12 +2,14 @@ import 'package:tapture/core/ai/ocr_service.dart';
 import 'package:tapture/core/ai/provider_registry.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/db/app_database.dart';
+import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/settings/settings.dart';
 
 import '../domain/processing_job.dart';
+import '../domain/template_choice_needed.dart';
 import 'caption_refinement_service.dart';
 import 'detect_stage.dart';
 import 'egress_summary.dart';
@@ -22,10 +24,13 @@ import 'online_transcripts.dart';
 import 'photo_paths.dart';
 import 'prepare_stage.dart';
 import 'proposal_collector.dart';
+import 'provider_selection.dart';
 import 'record_bundle.dart';
 import 'record_bundle_loader.dart';
 import 'response_store.dart';
 import 'stage_settings.dart';
+import 'template_assist.dart';
+import 'template_choice_writer.dart';
 import 'validate_stage.dart';
 
 /// Production implementation for the six processing stages.
@@ -85,11 +90,30 @@ final class ProcessingStageWorker {
       cache: cache,
       paths: paths,
     );
+    final TemplateChoiceWriter choices = TemplateChoiceWriter(
+      db: db,
+      clock: clock,
+      deviceId: deviceId,
+      ids: ids,
+    );
     return ProcessingStageWorker._(
       loader: loader,
       prepare: PrepareStage(storageRoot: storageRoot, paths: paths),
       onDevice: onDevice,
-      detect: const DetectStage(),
+      detect: DetectStage(
+        db: db,
+        settings: stageSettings,
+        onDevice: onDevice,
+        choices: choices,
+      ),
+      choices: choices,
+      assist: TemplateAssist(
+        loader: loader,
+        settings: stageSettings,
+        onDevice: onDevice,
+        budget: budget,
+        responses: responses,
+      ),
       online: OnlineStage(
         settings: stageSettings,
         paths: paths,
@@ -108,7 +132,10 @@ final class ProcessingStageWorker {
           clock: clock,
           deviceId: deviceId,
           ids: ids,
-          providers: providers,
+          selection: ProviderSelection(
+            settings: settings,
+            providers: providers,
+          ),
         ),
         writes: writes,
       ),
@@ -117,6 +144,8 @@ final class ProcessingStageWorker {
         clock: clock,
         deviceId: deviceId,
         onDevice: onDevice,
+        settings: stageSettings,
+        responses: responses,
       ),
       validate: ValidateStage(
         db: db,
@@ -130,6 +159,7 @@ final class ProcessingStageWorker {
       egress: EgressSummary(
         loader: loader,
         settings: stageSettings,
+        responses: responses,
         paths: paths,
         onDevice: onDevice,
         completion: completion,
@@ -142,6 +172,8 @@ final class ProcessingStageWorker {
     required this._prepare,
     required this._onDevice,
     required this._detect,
+    required this._choices,
+    required this._assist,
     required this._online,
     required this._normalise,
     required this._validate,
@@ -152,14 +184,17 @@ final class ProcessingStageWorker {
   final PrepareStage _prepare;
   final OnDeviceStage _onDevice;
   final DetectStage _detect;
+  final TemplateChoiceWriter _choices;
+  final TemplateAssist _assist;
   final OnlineStage _online;
   final NormaliseStage _normalise;
   final ValidateStage _validate;
   final EgressSummary _egress;
 
   /// Runs one persisted stage. [cancel] reaches the stage; a fresh token is
-  /// used when none is given.
-  Future<void> perform(
+  /// used when none is given. Detection returns its question when it cannot
+  /// settle the template; every other stage returns null.
+  Future<TemplateChoiceNeeded?> perform(
     JobStage stage,
     ProcessingJob job, [
     CancellationToken? cancel,
@@ -172,14 +207,32 @@ final class ProcessingStageWorker {
       case JobStage.onDevice:
         await _onDevice.run(bundle, token);
       case JobStage.detect:
-        await _detect.run(bundle, token);
+        return _detect.run(bundle, token);
       case JobStage.online:
         await _online.run(job, bundle, token);
       case JobStage.normalise:
-        await _normalise.run(bundle, token);
+        await _normalise.run(job, bundle, token);
       case JobStage.validate:
         await _validate.run(job, bundle, token);
     }
+    return null;
+  }
+
+  /// Applies the operator's or the model's template choice, pinning it to
+  /// the record's context when asked.
+  Future<Result<void>> templateChoice(
+    TemplateChoiceNeeded needed,
+    TemplateChoice choice,
+  ) {
+    return _choices.apply(needed, choice);
+  }
+
+  /// The model's pick from [needed]'s shortlist, or null for the operator.
+  Future<String?> templateAssist(
+    ProcessingJob job,
+    TemplateChoiceNeeded needed,
+  ) {
+    return _assist.choose(job, needed);
   }
 
   /// Exact payload summary shown before the first provider call.

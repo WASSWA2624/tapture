@@ -5,9 +5,14 @@ import 'package:tapture/core/errors/failure.dart';
 
 /// Classifies a stage failure and the wait before the next attempt.
 ///
-/// Transient failures — network, timeout, rate limit, provider 5xx — wait.
-/// Permanent ones — authentication, an unparseable response after repair,
-/// unsupported media, a missing template — stop on the first attempt.
+/// The class comes from the failure's type, never from its wording.
+/// Transient failures — a [NetworkFailure], a [TimeoutException], and a
+/// [ProviderFailure] whose kind is rate limited or unavailable (provider
+/// 5xx) — wait and try again. Everything else stops on the first attempt:
+/// authentication, unsupported media, a malformed response or one still
+/// unparseable after repair ([CorruptionFailure]), a missing template or
+/// unreadable media ([ValidationFailure]), and any failure nobody
+/// classified, so an unknown error can never spin.
 final class JobRetry {
   /// Creates a decision for one failure.
   const JobRetry({
@@ -26,15 +31,11 @@ final class JobRetry {
   final Duration backoff;
 
   /// Classifies [error]. [attempt] is the count already spent, starting at 1
-  /// for the try that just failed. [maxAttempts] comes from settings.
-  factory JobRetry.classify(
-    Object error, {
-    required int attempt,
-    int? maxAttempts,
-  }) {
-    final int cap = maxAttempts ?? AppConstants.processing.maxAttempts;
-    final bool transient = _isTransient(error);
-    final bool stop = !transient || attempt >= cap;
+  /// for the try that just failed. A transient failure also stops once
+  /// [attempt] reaches `AppConstants.processing.maxAttempts`.
+  factory JobRetry.classify(Object error, {required int attempt}) {
+    final int cap = AppConstants.processing.maxAttempts;
+    final bool stop = !_isTransient(error) || attempt >= cap;
     return JobRetry(
       reason: _reason(error),
       permanent: stop,
@@ -62,25 +63,16 @@ final class JobRetry {
     }
     return AppConstants.processingBackoff(millis);
   }
-
-  /// Whether [error] may be tried again before the attempt cap.
-  static bool isTransient(Object error) => _isTransient(error);
 }
 
 bool _isTransient(Object error) {
-  if (error is TimeoutException || error is NetworkFailure) {
-    return true;
-  }
-  if (error is! ProviderFailure) {
-    return false;
-  }
-  final String message = error.message.toLowerCase();
-  if (_permanentProvider.hasMatch(message)) {
-    return false;
-  }
-  return _transientProvider.hasMatch(message) ||
-      message.contains('unavailable') ||
-      message.contains('failed');
+  return switch (error) {
+    TimeoutException() || NetworkFailure() => true,
+    ProviderFailure(:final ProviderFailureKind kind) =>
+      kind == ProviderFailureKind.rateLimited ||
+          kind == ProviderFailureKind.unavailable,
+    _ => false,
+  };
 }
 
 String _reason(Object error) {
@@ -95,11 +87,3 @@ String _reason(Object error) {
   }
   return 'Processing stopped.';
 }
-
-final RegExp _transientProvider = RegExp(
-  r'429|rate|timeout|timed out|5\d\d|unavailable|network',
-);
-
-final RegExp _permanentProvider = RegExp(
-  r'401|403|auth|unauthor|credential|unsupported|template|unparseable|parse',
-);

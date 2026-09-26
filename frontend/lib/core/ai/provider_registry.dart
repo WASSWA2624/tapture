@@ -9,6 +9,7 @@ import 'package:tapture/core/errors/result.dart';
 
 export 'ai_operation.dart';
 export 'model_descriptor.dart';
+export 'operation_selection.dart';
 export 'provider_descriptor.dart';
 export 'provider_key_custody.dart';
 
@@ -158,7 +159,8 @@ final class ProviderRegistry {
     return _entries[id]?.keyHeldByBackend ?? true;
   }
 
-  /// Smallest call the test action may make. Reports the three outcomes.
+  /// Smallest call the test action may make. The outcome is decided from the
+  /// failure's type and [ProviderFailure.kind], never from its message.
   Future<ProviderTestOutcome> testConnection(AiService service) async {
     if (!service.isAvailable) {
       return ProviderTestOutcome.unavailable;
@@ -194,20 +196,29 @@ enum ProviderTestOutcome {
 
   /// Provider or model selection is invalid.
   validation,
+
+  /// The provider answered with an error that is neither a rejected key nor
+  /// a network fault.
+  failed,
 }
 
 ProviderTestOutcome _outcome(Failure failure) {
-  if (failure is NetworkFailure) {
-    return ProviderTestOutcome.network;
-  }
-  final String message = failure.message.toLowerCase();
-  if (message.contains('auth') ||
-      message.contains('credential') ||
-      message.contains('401') ||
-      message.contains('403')) {
-    return ProviderTestOutcome.authentication;
-  }
-  return ProviderTestOutcome.network;
+  return switch (failure) {
+    NetworkFailure() => ProviderTestOutcome.network,
+    ProviderFailure(:final ProviderFailureKind kind) => switch (kind) {
+      ProviderFailureKind.authentication => ProviderTestOutcome.authentication,
+      ProviderFailureKind.unavailable => ProviderTestOutcome.network,
+      ProviderFailureKind.rateLimited ||
+      ProviderFailureKind.unsupportedMedia ||
+      ProviderFailureKind.malformed ||
+      ProviderFailureKind.unknown => ProviderTestOutcome.failed,
+    },
+    ValidationFailure() => ProviderTestOutcome.validation,
+    CancelledFailure() ||
+    CorruptionFailure() ||
+    PermissionFailure() ||
+    StorageFailure() => ProviderTestOutcome.failed,
+  };
 }
 
 Map<String, RegistryEntry> _entriesFrom(List<ProviderDescriptor> descriptors) {

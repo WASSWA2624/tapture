@@ -36,7 +36,7 @@ final class OnlineTranscripts {
     if (bundle.audio.isEmpty) {
       return const <String>[];
     }
-    final selection = _settings.selection(AiOperation.transcribe);
+    final selection = _settings.selection(bundle, AiOperation.transcribe);
     final AiService service = selection.provider.service;
     if (!service.isAvailable) {
       return const <String>[];
@@ -67,7 +67,7 @@ final class OnlineTranscripts {
         transcripts.add(stored.rawResponse);
         continue;
       }
-      await _budget.require(job.id, bundle.record.projectId);
+      await _budget.require(job.id, bundle);
       final TranscribeResult transcribed = StageSupport.unwrap(
         await service.transcribe(
           TranscribeRequest(

@@ -1,9 +1,20 @@
 /// Parses dates and refuses to turn an identifier into a number.
 final class Dates {
   /// Day-month-year unless [locale] is a US locale. [ambiguous] is set when
-  /// both the day and the month could be either number.
+  /// both the day and the month could be either number. A year-first date
+  /// (`2024-03-05`) is read as year, month, day in every locale.
   static DateValue? parse(String raw, {required String locale}) {
     final String trimmed = raw.trim();
+    final RegExpMatch? iso = _yearFirst.firstMatch(trimmed);
+    if (iso != null) {
+      final int year = int.parse(iso.group(1)!);
+      final int month = int.parse(iso.group(2)!);
+      final int day = int.parse(iso.group(3)!);
+      if (!_valid(year, month, day)) {
+        return null;
+      }
+      return (original: raw, stored: _iso(year, month, day), ambiguous: false);
+    }
     final RegExpMatch? numeric = _numeric.firstMatch(trimmed);
     if (numeric != null) {
       return _numericDate(trimmed, numeric, locale);
@@ -41,7 +52,9 @@ final class Dates {
 /// Original phrasing, the stored ISO date, and whether the order was ambiguous.
 typedef DateValue = ({String original, String stored, bool ambiguous});
 
-final RegExp _numeric = RegExp(r'^(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})$');
+final RegExp _yearFirst = RegExp(r'^(\d{4})[/.-](\d{1,2})[/.-](\d{1,2})$');
+
+final RegExp _numeric = RegExp(r'^(\d{1,2})[/.-](\d{1,2})[/.-](\d{2,4})$');
 
 final RegExp _named = RegExp(r'^(\d{1,2})\s+([A-Za-z]+)\s+(\d{2,4})$');
 

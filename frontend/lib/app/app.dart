@@ -7,6 +7,8 @@ import 'package:tapture/core/ai/stt_service.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/error_boundary.dart';
 import 'package:tapture/core/widgets/fields/dictation_scope.dart';
+import 'package:tapture/features/processing/processing.dart'
+    show unattendedProcessingProvider;
 import 'package:tapture/features/settings/presentation/offline_switch.dart';
 import 'package:tapture/features/settings/settings.dart';
 
@@ -43,6 +45,9 @@ class TaptureApp extends ConsumerWidget {
         .watch(offlineStoreProvider)
         .read(SettingKeys.voiceLanguage);
     final bool offline = ref.watch(offlineByChoiceProvider);
+    // Keeps automatic processing and opportunistic reading listening for
+    // the app's life; each stays off until its setting is on.
+    ref.watch(unattendedProcessingProvider);
     return MaterialApp.router(
       title: title,
       theme: buildTheme(brightness: Brightness.light, outdoor: outdoor),

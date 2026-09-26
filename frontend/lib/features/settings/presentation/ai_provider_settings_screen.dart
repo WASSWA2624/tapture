@@ -255,6 +255,7 @@ class _AiProviderSettingsScreenState
         ProviderTestOutcome.network => ProviderTestView.network,
         ProviderTestOutcome.unavailable => ProviderTestView.unavailable,
         ProviderTestOutcome.validation => ProviderTestView.validation,
+        ProviderTestOutcome.failed => ProviderTestView.failed,
       };
     });
   }

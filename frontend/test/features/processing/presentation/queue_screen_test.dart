@@ -47,7 +47,7 @@ void main() {
               CancellationToken _,
             ) async {
               if (stage == JobStage.detect && applied.isEmpty) {
-                throw const TemplateChoiceNeeded(
+                return const TemplateChoiceNeeded(
                   recordId: 'record-1',
                   projectId: 'project-1',
                   shortlist: <({String templateId, String label})>[
@@ -56,6 +56,7 @@ void main() {
                   ],
                 );
               }
+              return null;
             };
           }),
           processingTemplateChoiceProvider.overrideWith((_) {
@@ -80,6 +81,68 @@ void main() {
     await _pumpUntil(tester, find.text(Copy.queueSummary(1, 0)));
 
     expect(applied, <TemplateChoice>[(templateId: 'motor', pin: true)]);
+  });
+
+  testWidgets('a long press picks groups and Process selected runs them', (
+    WidgetTester tester,
+  ) async {
+    final FakeProcessingRepository repository = FakeProcessingRepository();
+    addTearDown(repository.dispose);
+    const QueueSnapshot snapshot = (
+      unprocessed: 6,
+      queued: 0,
+      failed: 0,
+      requestsToday: 0,
+      imagesToday: 0,
+      requestCap: 20,
+      groups: <QueueGroup>[
+        (label: 'Kampala / Plant room', records: 3),
+        (label: 'Kampala / Store', records: 2),
+        (label: 'Unassigned', records: 1),
+      ],
+      failures: <ProcessingJob>[],
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          queueSnapshotProvider.overrideWith(
+            (Ref ref) => Stream<QueueSnapshot>.value(snapshot),
+          ),
+          processingRepositoryProvider.overrideWith((_) => repository),
+        ],
+        child: MaterialApp(
+          theme: buildTheme(brightness: Brightness.light),
+          home: const QueueScreen(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.queueProcessSelected), findsNothing);
+
+    for (final String label in <String>[
+      'Kampala / Plant room',
+      'Kampala / Store',
+      'Unassigned',
+    ]) {
+      await tester.longPress(find.text(label));
+      await tester.pumpAndSettle();
+    }
+    // A second long press puts a group back.
+    await tester.longPress(find.text('Unassigned'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(Copy.queueProcessSelected));
+    await tester.pumpAndSettle();
+
+    expect(repository.queuedGroups.single.toSet(), <String>{
+      'Kampala / Plant room',
+      'Kampala / Store',
+    });
+    expect(
+      find.text(Copy.queueProcessSelected),
+      findsNothing,
+      reason: 'running a selection clears it',
+    );
   });
 }
 

@@ -3423,6 +3423,10 @@ abstract final class Copy {
   /// The test could not reach the network.
   static const String apiKeyNetworkFailed = 'The network is not available.';
 
+  /// The provider answered the test with an error of its own.
+  static const String apiKeyTestFailed =
+      'The provider answered with an error. Try again later.';
+
   /// Registry-driven AI controls.
   static const String aiOperation = 'Operation';
 
@@ -3491,6 +3495,14 @@ abstract final class Copy {
   /// What to do when the chosen template could not be applied.
   static const String templateChoiceApplyRecovery =
       'Process the record again and choose once more.';
+
+  /// A record an unattended run set aside for an operator's template
+  /// choice.
+  static const String templateChoiceWaiting =
+      'Waiting for someone to choose its template.';
+
+  /// A record read on the device, its online work left for later.
+  static const String processReadOnDevice = 'Read on this device';
 
   /// Preparing images.
   static const String processPreparing = 'Preparing images';

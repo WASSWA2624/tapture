@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:tapture/core/ai/ai_operation.dart';
 import 'package:tapture/core/ai/ai_service.dart';
-import 'package:tapture/core/ai/provider_registry.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/captions.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -10,6 +10,7 @@ import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 
 import '../domain/caption_refinement.dart';
+import 'provider_selection.dart';
 import 'response_store.dart';
 
 /// Refines raw captions beside their originals and reuses crash-saved output.
@@ -20,7 +21,7 @@ final class CaptionRefinementService {
     required Clock clock,
     required String deviceId,
     required IdService ids,
-    required this._providers,
+    required this._selection,
   }) : _db = db,
        _clock = clock,
        _deviceId = deviceId,
@@ -36,22 +37,23 @@ final class CaptionRefinementService {
   final Clock _clock;
   final String _deviceId;
   final IdService _ids;
-  final ProviderRegistry _providers;
+  final ProviderSelection _selection;
   final ResponseStore _responses;
 
   /// Refines every still-raw [caption] and returns rejected-change reasons.
   ///
+  /// The provider is the one [project] selects for refining text.
   /// [beforeRequest] enforces the same daily budget as field extraction.
   Future<List<String>> refine({
     required String jobId,
-    required String projectId,
+    required Project project,
     required List<Caption> captions,
     required Future<void> Function() beforeRequest,
   }) async {
-    final AiService service = _providers.resolve(
-      projectId: projectId,
-      operation: AiOperation.refineText,
-    );
+    final AiService service = _selection
+        .resolve(project, AiOperation.refineText)
+        .provider
+        .service;
     if (!service.isAvailable) {
       return const <String>[];
     }

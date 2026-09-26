@@ -26,17 +26,30 @@ abstract interface class ProcessingRepository {
 
   /// Queues captured records that do not yet have a job.
   ///
-  /// [groupLabel] uses the same context label shown by the queue screen.
-  Future<Result<int>> enqueuePending({String? projectId, String? groupLabel});
+  /// [groupLabels] use the same context labels the queue screen shows. Empty
+  /// means every group.
+  Future<Result<int>> enqueuePending({
+    String? projectId,
+    List<String> groupLabels = const <String>[],
+  });
 
   /// Queues [recordId] once and returns the persisted job id.
   Future<Result<String>> enqueue(String recordId);
 
-  /// Claims the oldest ready job, releasing expired leases first.
+  /// Claims the oldest ready job in [projectId] and [groupLabels] (empty
+  /// for every group), releasing expired leases first. Returns null while
+  /// the running jobs already hold the settings-store concurrency cap.
+  ///
+  /// With [unfinished], only a job that has not yet completed that stage is
+  /// claimed, so a run that stops after it never takes the same job twice.
+  /// A job in [skip] is passed over, so a batch can set one aside and carry
+  /// on with the rest.
   Future<Result<ProcessingJob?>> claim(
     Duration lease, {
     String? projectId,
-    String? groupLabel,
+    List<String> groupLabels = const <String>[],
+    JobStage? unfinished,
+    Set<String> skip = const <String>{},
   });
 
   /// Marks [jobId] complete in one transaction.

@@ -13,7 +13,7 @@ void main() {
       pinKey: 'room=Plant room',
     );
 
-    expect(needed, isA<Exception>());
+    expect(needed.modelMayDecide, isFalse, reason: 'the operator by default');
     expect(needed.recordId, 'record-1');
     expect(needed.projectId, 'project-1');
     expect(needed.shortlist.first, (templateId: 'pump', label: 'Pump'));

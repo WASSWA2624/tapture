@@ -120,8 +120,9 @@ final class ProjectSettings {
   /// default for the map itself.
   final Map<String, ({String provider, String model})>? providerSelection;
 
-  /// Template pinned per context, keyed `'<levelKey>=<value>'`, so the
-  /// template question is asked once per place. Project-only.
+  /// Template pinned per context, keyed by the record's context as
+  /// `'<levelKey>=<value>'` pairs in level-key order joined with `|`, so
+  /// the template question is asked once per place. Project-only.
   final Map<String, String>? templatePins;
 
   /// The validated object written onto the row. Unset keys are omitted so

@@ -29,6 +29,16 @@ typedef CaptionOutcome = ({bool accepted, String? refined, String? reason});
 
 String? _invented(String raw, String proposed) {
   final String rawFolded = raw.toLowerCase();
+  // Any number the raw text does not have is a new fact, whatever unit or
+  // word follows it: a quantity, a reading, a count or part of a date.
+  final Set<String> rawNumbers = <String>{
+    for (final RegExpMatch match in _number.allMatches(raw)) match.group(0)!,
+  };
+  for (final RegExpMatch match in _number.allMatches(proposed)) {
+    if (!rawNumbers.contains(match.group(0))) {
+      return 'The refinement adds a number that is not in the raw text.';
+    }
+  }
   for (final RegExpMatch match in _identifier.allMatches(proposed)) {
     final String token = match.group(0) ?? '';
     if (!raw.toLowerCase().contains(token.toLowerCase())) {
@@ -53,6 +63,8 @@ String? _invented(String raw, String proposed) {
   }
   return null;
 }
+
+final RegExp _number = RegExp(r'\d+(?:[.,]\d+)?');
 
 final RegExp _identifier = RegExp(
   r'\b(?:SN[0-9A-Z]{4,}|[A-Z]{1,4}-\d{3,}|\d{4,})\b',

@@ -17,7 +17,9 @@ final class FakeResponseStore {
     final String folded = requestSummary.toLowerCase();
     if (folded.contains('bearer ') ||
         folded.contains('"apikey"') ||
-        folded.contains('"secret"')) {
+        folded.contains('"api_key"') ||
+        folded.contains('"secret"') ||
+        folded.contains('"token"')) {
       return const FailureResult<void>(
         StorageFailure(
           message: 'A request summary cannot include a secret.',

@@ -36,7 +36,7 @@ final class _EmptyProcessingRepository implements ProcessingRepository {
   @override
   Future<Result<int>> enqueuePending({
     String? projectId,
-    String? groupLabel,
+    List<String> groupLabels = const <String>[],
   }) async {
     return const Success<int>(0);
   }
@@ -65,7 +65,9 @@ final class _EmptyProcessingRepository implements ProcessingRepository {
   Future<Result<ProcessingJob?>> claim(
     Duration lease, {
     String? projectId,
-    String? groupLabel,
+    List<String> groupLabels = const <String>[],
+    JobStage? unfinished,
+    Set<String> skip = const <String>{},
   }) async {
     return const Success<ProcessingJob?>(null);
   }

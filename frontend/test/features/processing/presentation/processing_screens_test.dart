@@ -45,18 +45,22 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(body: TemplateChoiceSheet(options: <String>[])),
+      const ProviderScope(
+        child: MaterialApp(
+          home: Scaffold(body: TemplateChoiceSheet(options: <String>[])),
+        ),
       ),
     );
     expect(find.byType(AppEmptyState), findsOneWidget);
 
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: TemplateChoiceSheet(
-            options: <String>['Equipment'],
-            failure: ProviderFailure(message: 'Could not load templates.'),
+      const ProviderScope(
+        child: MaterialApp(
+          home: Scaffold(
+            body: TemplateChoiceSheet(
+              options: <String>['Equipment'],
+              failure: ProviderFailure(message: 'Could not load templates.'),
+            ),
           ),
         ),
       ),

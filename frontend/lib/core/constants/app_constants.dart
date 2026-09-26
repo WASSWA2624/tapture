@@ -229,6 +229,7 @@ abstract final class AppConstants {
     int backoffCapMs,
     Duration jobLease,
     Duration dayWindow,
+    Duration idleAfter,
     double detectionConfident,
     double detectionGap,
     double fuzzyMatch,
@@ -244,7 +245,11 @@ abstract final class AppConstants {
     double rowMatchAliasScore,
     double rowMatchNormalisedScore,
     double rowMatchNormalisedAliasScore,
+    double rowMatchModelScore,
     double identifierFallbackConfidence,
+    double identifierPositionWeight,
+    double identifierSpecificityWeight,
+    double identifierConfidenceWeight,
     int failuresPageSize,
     int notificationId,
     String ocrEngineMlKit,
@@ -260,6 +265,7 @@ abstract final class AppConstants {
     backoffCapMs: 30000,
     jobLease: Duration(minutes: 5),
     dayWindow: Duration(days: 1),
+    idleAfter: Duration(minutes: 2),
     detectionConfident: 0.75,
     detectionGap: 0.1,
     fuzzyMatch: 0.82,
@@ -285,8 +291,15 @@ abstract final class AppConstants {
     rowMatchAliasScore: 0.98,
     rowMatchNormalisedScore: 0.95,
     rowMatchNormalisedAliasScore: 0.93,
+    rowMatchModelScore: 0.9,
     // Confidence given to an identifier candidate with no block score.
     identifierFallbackConfidence: 0.5,
+    // Identifier ranking: how high the block sits on the plate, how specific
+    // the field's pattern is, and the block's OCR confidence. Each term lies
+    // in 0..1, so the weights say how much each one counts.
+    identifierPositionWeight: 0.3,
+    identifierSpecificityWeight: 0.3,
+    identifierConfidenceWeight: 0.4,
     // Failed jobs per page on the failures list.
     failuresPageSize: 50,
     // The one local notification a batch posts, replaced by the next.

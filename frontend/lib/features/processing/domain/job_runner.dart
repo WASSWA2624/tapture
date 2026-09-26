@@ -1,6 +1,9 @@
+import 'package:tapture/core/concurrency/cancellation_token.dart';
+
 import 'processing_job.dart';
 
-/// Walks [JobStage] in order, persisting each one before the next starts.
+/// Walks [JobStage.values] in order, persisting each stage before the next
+/// starts.
 ///
 /// A cancel between stages leaves the record untouched and the job resumable
 /// from the next stage. A resumed job skips stages already on [ProcessingJob.stage].
@@ -13,8 +16,14 @@ final class JobRunner {
     required this.release,
   });
 
-  /// Runs [stage] for [job]. Throw to fail the stage.
-  final Future<void> Function(JobStage stage, ProcessingJob job) perform;
+  /// Runs [stage] for [job]. Throw to fail the stage. The token is the one
+  /// [run] was given, so stage work can stop early too.
+  final Future<void> Function(
+    JobStage stage,
+    ProcessingJob job,
+    CancellationToken token,
+  )
+  perform;
 
   /// Stores [stage] as complete and returns the job to continue with.
   final Future<ProcessingJob> Function(ProcessingJob job, JobStage stage)
@@ -23,37 +32,35 @@ final class JobRunner {
   /// Puts [job] back without losing completed stages.
   final Future<ProcessingJob> Function(ProcessingJob job) release;
 
-  /// The order every job walks.
-  static const List<JobStage> order = <JobStage>[
-    JobStage.prepare,
-    JobStage.onDevice,
-    JobStage.detect,
-    JobStage.online,
-    JobStage.normalise,
-    JobStage.validate,
-  ];
-
-  /// Runs [job] until it finishes, [isCancelled] flips, or [perform] throws.
+  /// Runs [job] until it finishes, [token] is cancelled, or [perform] throws.
+  ///
+  /// With [stopAfter], the run ends once that stage is complete and the job
+  /// is released for a later run to finish, as opportunistic on-device
+  /// reading does before any online stage.
   Future<JobRun> run(
     ProcessingJob job, {
-    required bool Function() isCancelled,
+    required CancellationToken token,
+    JobStage? stopAfter,
   }) async {
-    final Set<JobStage> done = job.completedStages;
     ProcessingJob current = job;
-    for (final JobStage stage in order) {
-      if (isCancelled()) {
+    for (final JobStage stage in JobStage.values) {
+      if (token.isCancelled) {
         final ProcessingJob released = await release(current);
-        return (job: released, cancelled: true);
+        return (job: released, cancelled: true, paused: false);
       }
-      if (done.contains(stage) || current.completedStages.contains(stage)) {
-        continue;
+      if (!current.completedStages.contains(stage)) {
+        await perform(stage, current, token);
+        current = await persist(current, stage);
       }
-      await perform(stage, current);
-      current = await persist(current, stage);
+      if (stage == stopAfter && stage != JobStage.values.last) {
+        final ProcessingJob released = await release(current);
+        return (job: released, cancelled: false, paused: true);
+      }
     }
-    return (job: current, cancelled: false);
+    return (job: current, cancelled: false, paused: false);
   }
 }
 
-/// Outcome of one [JobRunner.run].
-typedef JobRun = ({ProcessingJob job, bool cancelled});
+/// Outcome of one [JobRunner.run]. [paused] means the run stopped at its
+/// `stopAfter` stage and the job waits for the rest.
+typedef JobRun = ({ProcessingJob job, bool cancelled, bool paused});

@@ -98,10 +98,12 @@ ParsedField? _field(String key, Object? raw, FieldSchema schema) {
     if (!coerced.valid) {
       return null;
     }
+    // A bare value carries no score and no evidence, so it is never trusted
+    // above review.
     return (
       key: key,
       value: coerced.value,
-      confidence: 1,
+      confidence: 0,
       evidence: const <String>[],
     );
   }

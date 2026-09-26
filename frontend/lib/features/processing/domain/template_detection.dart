@@ -132,13 +132,13 @@ double _score(DetectionProfile profile, String text) {
   var hits = 0.0;
   for (final String keyword in profile.keywords) {
     if (keyword.isNotEmpty && folded.contains(keyword.toLowerCase())) {
-      hits += 0.35;
+      hits += AppConstants.processing.detectionKeywordWeight;
     }
   }
   for (final String pattern in profile.identifierPatterns) {
     try {
       if (RegExp(pattern).hasMatch(text)) {
-        hits += 0.5;
+        hits += AppConstants.processing.detectionPatternWeight;
       }
     } on FormatException {
       continue;
@@ -146,7 +146,7 @@ double _score(DetectionProfile profile, String text) {
   }
   for (final String keyword in profile.negativeKeywords) {
     if (keyword.isNotEmpty && folded.contains(keyword.toLowerCase())) {
-      hits -= 0.4;
+      hits -= AppConstants.processing.detectionNegativeKeywordWeight;
     }
   }
   final double weighted = hits * (profile.weight <= 0 ? 1 : profile.weight);

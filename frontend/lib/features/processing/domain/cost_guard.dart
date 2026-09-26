@@ -38,8 +38,9 @@ final class CostGuard {
 
   /// Message naming the cap and when it resets.
   String get blockMessage {
-    return "Today's limit of $requestCap requests is used. "
-        'It resets at ${resetsAt.toIso8601String()}.';
+    final String day = resetsAt.toIso8601String().substring(0, 10);
+    return "Today's limit of $requestCap online requests is used. "
+        'It resets at 00:00 UTC on $day.';
   }
 
   /// Adds one request and [images] to today's totals.

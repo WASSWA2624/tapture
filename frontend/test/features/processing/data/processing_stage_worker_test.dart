@@ -51,7 +51,7 @@ void main() {
         'photos/${record.id}/img-0.jpg',
       );
       await original.parent.create(recursive: true);
-      final List<int> originalBytes = OcrService.paintPlate('SN458923');
+      final List<int> originalBytes = paintOcrPlate('SN458923');
       await original.writeAsBytes(originalBytes);
       final DateTime now = DateTime.utc(2026, 9, 23, 8);
       final FixedClock clock = FixedClock(now);

@@ -28,7 +28,7 @@ void main() {
       'photos/${record.id}/img-0.jpg',
     );
     await original.parent.create(recursive: true);
-    final List<int> originalBytes = OcrService.paintPlate('SN1');
+    final List<int> originalBytes = paintOcrPlate('SN1');
     await original.writeAsBytes(originalBytes);
     final RecordBundle bundle = await RecordBundleLoader(
       db: db,

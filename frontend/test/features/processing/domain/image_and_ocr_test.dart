@@ -10,7 +10,7 @@ import 'package:tapture/features/processing/domain/image_preprocess.dart';
 
 void main() {
   test('preprocessing leaves the original bytes unchanged', () {
-    final Uint8List original = OcrService.paintPlate('SN458923');
+    final Uint8List original = paintOcrPlate('SN458923');
     final Uint8List before = Uint8List.fromList(original);
     final Uint8List prepared = ImagePreprocess.prepare(original);
     expect(original, before);
@@ -28,7 +28,7 @@ void main() {
       }
     });
     final io.File plate = io.File('${directory.path}/plate.png');
-    await plate.writeAsBytes(OcrService.paintPlate('SN458923'));
+    await plate.writeAsBytes(paintOcrPlate('SN458923'));
     final OcrResult result = await OcrService().recognise(plate.path);
     expect(result.text, 'SN458923');
     expect(result.blocks, isNotEmpty);

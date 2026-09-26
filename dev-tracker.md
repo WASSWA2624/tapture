@@ -1,8 +1,8 @@
 # Tapture — development tracker
 
-**46 of 69 tasks complete (67%)** · last updated 2026-09-26
+**47 of 69 tasks complete (68%)** · last updated 2026-09-26
 
-`█████████████████████████░░░░░░░░░░░░░`
+`██████████████████████████░░░░░░░░░░░░`
 
 On 2026-09-22 completed phases 01–09 became tasks 001–009, remaining phases became 010–025, and leftover
 field-feedback extras became 026–060. Field-feedback tasks 061–069 have been added to phase 23 since. Old numbers
@@ -24,7 +24,7 @@ are in [RETIRED.md](dev-plan/RETIRED.md).
 | 10 — Reference data | 1 | 1 | `██████████████` 100% |
 | 11 — Context | 1 | 1 | `██████████████` 100% |
 | 12 — Capture | 1 | 1 | `██████████████` 100% |
-| 13 — Processing | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
+| 13 — Processing | 1 | 1 | `██████████████` 100% |
 | 14 — Records | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 15 — Data quality | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 16 — Review | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
@@ -37,7 +37,7 @@ are in [RETIRED.md](dev-plan/RETIRED.md).
 | 23 — Hardening | 34 | 45 | `███████████░░░` 76% |
 | 24 — The minimal backend | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **46** | **69** | `█████████████████████████░░░░░░░░░░░░░` 67% |
+| **Total** | **47** | **69** | `██████████████████████████░░░░░░░░░░░░` 68% |
 
 ## Completed
 
@@ -55,6 +55,7 @@ are in [RETIRED.md](dev-plan/RETIRED.md).
 | 010 — Reference data | 2026-09-22 | Dataset/row models, CSV/XLSX/JSON import, key screen, browser, row edit/add, lookup binding/match/prefill/unlink, export. |
 | 011 — Context | 2026-09-22 | Hierarchy, bar, picker/pins, cascade, application/override/folder-link, presets, auto-clear and movement settings. |
 | 012 — Capture | 2026-09-22 | Session/controller durability, camera/import ports (fakes), tray/viewer/captions/voice/barcode, auto fields, both save paths, recovery/rapid/storage/template. |
+| 013 — Processing | 2026-09-26 | Leased queue and resumable runner, on-device OCR with a hash cache, keyless provider registry and egress preview, one extraction call per record, template detection with model assist and context pins, normalisers and row matching, the no-invention gate with evidence and provenance, skip rule and daily cap, queue screens, notifications and the unattended paths. |
 
 Task numbers in this table are the original atomic numbers from before the 2026-09-22 merge. [RETIRED.md](dev-plan/RETIRED.md) says which live task absorbed each one.
 
@@ -249,6 +250,16 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 | 097 | `FieldValue` is a records concept. | Open — lives in `core/widgets/fields/` until the records feature owns it, same pattern as `PhotoAsset` |
 | 010 | Contract omits `duplicatesAllowed`, `projectId` and `sourceFile` on `ReferenceDataset`. | Open — extras so import confirmation and re-import matching work; packed into `sourceFile` rather than a schema bump |
 | 010 | Files list omits `lookup_binding.dart` and `reference_row.dart`. | Open — both are required by the Contract; named beside the other domain types |
+| 013 | The charging-and-idle gate needs a power signal, and `connectivity_plus` cannot tell mains from battery. | Open — `battery_plus` (BSD-3) joined the allowlist under 013 behind `core/background/power_source.dart`; the web and any platform error read as not charging |
+| 013 | "Idle" is not defined for opportunistic OCR. | Open — idle means backgrounded for `AppConstants.processing.idleAfter` (two minutes); a resume cancels the read |
+| 013 | `template_detection_ai.dart` has no provider operation of its own. | Open — the model assist is a text-only `extractFields` call with a `template` choice field, stored with `operation: detectTemplate` and counted against the daily cap |
+| 013 | The row matcher's model strategy has no request of its own. | Open — it reads `matched_row` from the stored extraction response, so no second call leaves the device |
+| 013 | Detection's reference-dataset signal has nothing to read yet. | Open — `referenceTemplateId` is passed as null until a reference dataset links a template |
+| 013 | An unattended run has no one to answer the template question. | Open — the job is set aside for that batch and waits for the next foreground run to ask the operator |
+| 013 | The notification's review route `/records?filter=needsReview` lands on a placeholder page. | Open — 014 and 016 build the records and review lists behind it |
+| 013 | `check_tests.dart` lists 47 missing mirrored tests in capture, context, exports, reference and settings, none of them 013 files. | Open — needs a follow-up task per owning feature |
+| 013 | The guardrail suites still fail outside 013: `setState` in capture screens, `app/feedback_host.dart` and 062's `ai_provider_settings_screen.dart`; a raw throw in `capture_record_writer.dart`; an untyped public method on `ExportRepositoryImpl`; FE-STR-06 naming in capture, context, projects and templates; and `core/location` missing from the canonical directory list. | Open — 013's own files pass every suite; the rest needs its owning tasks |
+| 013 | On a checkout with `core.autocrlf=true` and no `.gitattributes`, `check_dependencies_test` edits the CRLF `pubspec.yaml` with LF patterns and miscounts. | Open — a `.gitattributes` (009 already wants one) or line-ending-agnostic patterns would settle it |
 
 ## Checklist
 
@@ -326,9 +337,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 13 — Processing
 
-*0 of 1 complete.*
+*1 of 1 complete.*
 
-- [ ] [013 — Processing: on-device first, online only when it earns its place](dev-plan/13-processing/013-processing.md)
+- [x] [013 — Processing: on-device first, online only when it earns its place](dev-plan/13-processing/013-processing.md)
 
 ### 14 — Records
 

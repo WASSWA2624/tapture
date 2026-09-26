@@ -15,6 +15,7 @@ import 'online_completion.dart';
 import 'photo_paths.dart';
 import 'record_bundle.dart';
 import 'record_bundle_loader.dart';
+import 'response_store.dart';
 import 'stage_settings.dart';
 import 'stage_support.dart';
 
@@ -24,6 +25,7 @@ final class EgressSummary {
   const EgressSummary({
     required this._loader,
     required this._settings,
+    required this._responses,
     required this._paths,
     required this._onDevice,
     required this._completion,
@@ -31,12 +33,18 @@ final class EgressSummary {
 
   final RecordBundleLoader _loader;
   final StageSettings _settings;
+  final ResponseStore _responses;
   final PhotoPaths _paths;
   final OnDeviceStage _onDevice;
   final OnlineCompletion _completion;
 
   /// The image count and approximate payload bytes for [job], or zero for
   /// both when no online call would be made.
+  ///
+  /// The bytes cover everything the online stage sends: on-device text,
+  /// template and field names, captions, context, row labels, rules, the
+  /// compressed images, and each voice note — its audio when it still needs
+  /// transcribing, else its stored transcript.
   Future<({int imageCount, int payloadBytes})> summarise(
     ProcessingJob job,
   ) async {
@@ -47,7 +55,7 @@ final class EgressSummary {
         _settings.read(SettingKeys.offlineByChoice) ||
         !settings.aiEnabled ||
         !_settings
-            .selection(AiOperation.extractFields)
+            .selection(bundle, AiOperation.extractFields)
             .provider
             .service
             .isAvailable) {
@@ -76,6 +84,7 @@ final class EgressSummary {
     for (final String rule in ExtractionRequest.defaultRules) {
       bytes += utf8.encode(rule).length;
     }
+    bytes += await _audioBytes(job, bundle);
     for (final String path in images) {
       final File file = File(path);
       if (await file.exists()) {
@@ -83,5 +92,35 @@ final class EgressSummary {
       }
     }
     return (imageCount: images.length, payloadBytes: bytes);
+  }
+
+  Future<int> _audioBytes(ProcessingJob job, RecordBundle bundle) async {
+    if (bundle.audio.isEmpty ||
+        !_settings
+            .selection(bundle, AiOperation.transcribe)
+            .provider
+            .service
+            .isAvailable) {
+      return 0;
+    }
+    final Map<String, String> transcripts = <String, String>{
+      for (final ProcessingResult response in StageSupport.unwrap(
+        await _responses.forJob(job.id),
+      ))
+        if (response.parsedOk &&
+            StageSupport.summaryValue(response.requestSummary, 'kind') ==
+                'transcript')
+          if (StageSupport.summaryValue(response.requestSummary, 'attachmentId')
+              case final String attachmentId)
+            attachmentId: response.rawResponse,
+    };
+    var bytes = 0;
+    for (final Attachment audio in bundle.audio) {
+      final String? transcript = transcripts[audio.id];
+      bytes += transcript == null
+          ? audio.fileSize
+          : utf8.encode(transcript).length;
+    }
+    return bytes;
   }
 }

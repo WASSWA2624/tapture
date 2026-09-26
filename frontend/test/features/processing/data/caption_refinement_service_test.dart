@@ -10,6 +10,7 @@ import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/processing/data/caption_refinement_service.dart';
 import 'package:tapture/features/processing/data/processing_repository_impl.dart';
+import 'package:tapture/features/processing/data/provider_selection.dart';
 import 'package:tapture/features/settings/settings.dart';
 
 import '../../../support/factories.dart';
@@ -52,13 +53,17 @@ void main() {
         clock: clock,
         deviceId: 'device-a',
         ids: ids,
-        providers: ProviderRegistry.keyless(proxy: provider),
+        selection: ProviderSelection(
+          settings: SettingsStore.fake(),
+          providers: ProviderRegistry.keyless(proxy: provider),
+        ),
       );
+      final Project project = await db.select(db.projects).getSingle();
       var budgetChecks = 0;
 
       final List<String> rejected = await service.refine(
         jobId: jobId,
-        projectId: record.projectId,
+        project: project,
         captions: <Caption>[caption],
         beforeRequest: () async => budgetChecks++,
       );
@@ -77,7 +82,7 @@ void main() {
 
       await service.refine(
         jobId: jobId,
-        projectId: record.projectId,
+        project: project,
         captions: <Caption>[written],
         beforeRequest: () async => budgetChecks++,
       );

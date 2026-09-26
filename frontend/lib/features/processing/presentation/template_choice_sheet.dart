@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -9,11 +10,13 @@ import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 
+import 'template_choice_pin.dart';
+
 /// The operator's choice when detection cannot decide.
 ///
 /// Two or three large buttons, plus a pin for the current place so the
 /// question is asked once per room.
-class TemplateChoiceSheet extends StatefulWidget {
+class TemplateChoiceSheet extends ConsumerWidget {
   /// Creates the sheet body. [failure] replaces the choices.
   const TemplateChoiceSheet({
     super.key,
@@ -32,28 +35,22 @@ class TemplateChoiceSheet extends StatefulWidget {
   final void Function(String? template, bool pin)? onChosen;
 
   @override
-  State<TemplateChoiceSheet> createState() => _TemplateChoiceSheetState();
-}
-
-class _TemplateChoiceSheetState extends State<TemplateChoiceSheet> {
-  bool _pin = true;
-
-  @override
-  Widget build(BuildContext context) {
-    final Failure? failure = widget.failure;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool pin = ref.watch(templateChoicePinProvider);
+    final Failure? failure = this.failure;
     if (failure != null) {
       return AppErrorState(failure: failure);
     }
-    if (widget.options.isEmpty) {
+    if (options.isEmpty) {
       return const AppEmptyState(
         icon: AppIcons.category,
         headline: Copy.templateChoiceEmptyHeadline,
         message: Copy.templateChoiceEmptyMessage,
       );
     }
-    final List<String> shown = widget.options.length > 3
-        ? widget.options.sublist(0, 3)
-        : widget.options;
+    final List<String> shown = options.length > 3
+        ? options.sublist(0, 3)
+        : options;
     return ListView(
       children: <Widget>[
         for (final String option in shown)
@@ -61,19 +58,20 @@ class _TemplateChoiceSheetState extends State<TemplateChoiceSheet> {
             padding: const EdgeInsets.only(bottom: Space.x2),
             child: AppButton(
               label: option,
-              onPressed: () => widget.onChosen?.call(option, _pin),
+              onPressed: () => onChosen?.call(option, pin),
             ),
           ),
         if (shown.length < 3)
           AppButton(
             label: Copy.templateChoiceOther,
             variant: AppButtonVariant.secondary,
-            onPressed: () => widget.onChosen?.call(null, _pin),
+            onPressed: () => onChosen?.call(null, pin),
           ),
         AppSwitchTile.checkbox(
           title: Copy.templateChoicePin,
-          value: _pin,
-          onChanged: (bool value) => setState(() => _pin = value),
+          value: pin,
+          onChanged: (bool value) =>
+              ref.read(templateChoicePinProvider.notifier).choose(value),
         ),
       ],
     );
