@@ -1,230 +1,142 @@
 # Universal App — Full Template Catalogue
 
-
-
 **2,349 distinct templates · 72 categories · 17 supergroups · Version 1.0.0**
-
-
 
 This is an original planning catalogue, not a finite claim to cover every possible future use case. Each entry has distinguishing starter fields. Compose these with the listed shared archetype pack and category context fields. Six entries also have detailed starter definitions in the developer pack. Use the Excel workbook or catalogue.json for capture, AI, output, review, privacy and priority metadata.
 
-
-
 ## Coverage
 
-
-
 | Group | Categories | Templates |
-
 |---|---:|---:|
-
 | 01 · Cross-sector foundations | 4 | 137 |
-
 | 02 · Business and governance | 4 | 143 |
-
 | 03 · Collaboration and delivery | 4 | 144 |
-
 | 04 · Health and life sciences | 5 | 163 |
-
 | 05 · Education research and care | 4 | 137 |
-
 | 06 · Buildings land and infrastructure | 4 | 137 |
-
 | 07 · Agriculture and natural resources | 4 | 132 |
-
 | 08 · Production and industry | 4 | 128 |
-
 | 09 · Energy utilities and environment | 4 | 128 |
-
 | 10 · Transport and supply chains | 5 | 154 |
-
 | 11 · Digital systems and communications | 4 | 132 |
-
 | 12 · Finance public administration and law | 4 | 132 |
-
 | 13 · Risk resilience and sustainability | 4 | 128 |
-
 | 14 · Social impact culture and information | 4 | 130 |
-
 | 15 · Commerce hospitality and recreation | 4 | 124 |
-
 | 16 · Professional specialist and personal services | 5 | 150 |
-
 | 17 · Specialist and emerging domains | 5 | 150 |
 
-
-
 ## Shared archetype packs
-
-
 
 **AGREEMENT — Agreement / approval**
 
 Fields: parties, purpose, terms, effective_date, expiry_date, approval_evidence.
 
-
-
 **ASSESS — Assessment / analysis**
 
 Fields: assessment_objective, criteria_reference, evidence_items, findings, assumptions, review_conclusion.
-
-
 
 **ASSET — Register / master data**
 
 Fields: item_identifier, item_name, category, manufacturer, model_number, serial_number, condition, custodian.
 
-
-
 **CASE — Case-management workflow**
 
 Fields: case_type, reported_details, source_reference, assigned_handler, case_stage, followup_actions, closure_basis.
-
-
 
 **CHECK — Checklist / verification**
 
 Fields: checklist_version, check_items, observed_results, exceptions, corrective_actions, reviewer.
 
-
-
 **COMM — Communication draft**
 
 Fields: audience, purpose, verified_facts, message_body, attachments, approved_sender.
-
-
 
 **DOC — Generated document**
 
 Fields: document_purpose, audience, required_sections, source_records, format_constraints, approved_version.
 
-
-
 **INCIDENT — Incident workflow**
 
 Fields: event_time, event_location, factual_description, immediate_action, affected_items, assigned_reviewer.
-
-
 
 **INSPECT — Inspection / field form**
 
 Fields: inspection_scope, criteria_reference, inspection_items, observed_condition, defects, recommended_actions.
 
-
-
 **LEARN — Learning / competency record**
 
 Fields: learning_objective, course_or_standard_ref, participant_refs, completion_evidence, assessment_result, assessor.
-
-
 
 **LOG — Activity / event log**
 
 Fields: activity_type, start_time, end_time, participants_or_operators, observations, outcome.
 
-
-
 **MAINT — Maintenance workflow**
 
 Fields: asset_ref, reported_problem, approved_work_scope, work_performed, parts_used, verification_results, next_due.
-
-
 
 **MEASURE — Measurement / calculation**
 
 Fields: measurement_type, value, unit, measurement_time, method_reference, instrument_ref, uncertainty_or_quality.
 
-
-
 **MEET — Meeting / collaboration**
 
 Fields: meeting_title, scheduled_time, attendees, agenda, discussion_notes, decisions, actions.
-
-
 
 **OBS — Observation / evidence capture**
 
 Fields: observation_subject, observed_at, factual_description, media_refs, capture_context, verification_notes.
 
-
-
 **PLAN — Plan / schedule**
 
 Fields: planning_objective, scope, activities, responsible_roles, dates, dependencies, resources, success_measures.
-
-
 
 **PROFILE — Profile / intake**
 
 Fields: display_name, entity_type, contact_channels, service_context, source_documents, permission_scope.
 
-
-
 **PROPOSAL — Proposal-generation workflow**
 
 Fields: opportunity_requirements, applicant_profile, project_objectives, methodology, workplan, budget, supporting_evidence, required_annexes.
-
-
 
 **REG — Register / master data**
 
 Fields: entry_identifier, record_subject, category, effective_date, source_reference, responsible_role, review_due.
 
-
-
 **REPORT — Generated report**
 
 Fields: reporting_scope, reporting_period, source_records, verified_findings, metrics, limitations, recommendations.
-
-
 
 **REQUEST — Request / approval workflow**
 
 Fields: request_purpose, requested_items_or_actions, justification, required_by, supporting_evidence, approver, decision.
 
-
-
 **SAMPLE — Sample / chain-of-custody**
 
 Fields: sample_identifier, sample_type, collection_time, collection_location, collection_method, requested_tests, custody_events.
-
-
 
 **SURVEY — Survey / questionnaire**
 
 Fields: survey_version, respondent_or_sample_code, consent_scope, questions_and_responses, sampling_context, interviewer_notes.
 
-
-
 **TRACK — Tracker / follow-up**
 
 Fields: tracked_item, current_stage, responsible_owner, target_date, latest_update, supporting_evidence, completion_criteria.
-
-
 
 **TRANS — Transaction / repeated line items**
 
 Fields: transaction_reference, transaction_date, parties, line_items, quantities, unit_or_currency, totals, source_documents.
 
-
-
 **VISIT — Visit / field workflow**
 
 Fields: visit_purpose, visited_site_or_party, visit_time, observations, discussion_notes, agreed_actions.
 
-
-
 # 01 · Cross-sector foundations
-
-
 
 ## UNI — Universal capture and records (35 templates)
 
-
-
 Shared category context: organization_ref, project_ref, subject_ref.
-
-
 
 ### UNI-001 — General observation
 
@@ -242,8 +154,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
 
-
-
 ### UNI-002 — Freeform multimedia notebook
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -259,8 +169,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### UNI-003 — Photographic evidence record
 
@@ -278,8 +186,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
 
-
-
 ### UNI-004 — Voice field note
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -295,8 +201,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
-
-
 
 ### UNI-005 — Video observation record
 
@@ -314,8 +218,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### UNI-006 — Document intake and indexing
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -331,8 +233,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
-
-
 
 ### UNI-007 — Business card capture
 
@@ -350,8 +250,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### UNI-008 — QR or barcode identification
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -367,8 +265,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### UNI-009 — GPS point observation
 
@@ -386,8 +282,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
 
-
-
 ### UNI-010 — Route or transect capture
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -403,8 +297,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### UNI-011 — Area or boundary capture
 
@@ -422,8 +314,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### UNI-012 — Time-stamped activity log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -439,8 +329,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### UNI-013 — Daily field journal
 
@@ -458,8 +346,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### UNI-014 — Person registration
 
 **Type:** Profile / intake · **Shared pack:** PROFILE.
@@ -475,8 +361,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 **Review:** Collect only necessary personal data; obtain required permissions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### UNI-015 — Organization registration
 
@@ -494,8 +378,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### UNI-016 — Site registration
 
 **Type:** Profile / intake · **Shared pack:** PROFILE.
@@ -511,8 +393,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 **Review:** Collect only necessary personal data; obtain required permissions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### UNI-017 — Household registration
 
@@ -530,8 +410,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### UNI-018 — Generic item catalogue
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -547,8 +425,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
-
-
 
 ### UNI-019 — Document-to-table extraction
 
@@ -566,8 +442,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
 
-
-
 ### UNI-020 — Spreadsheet import mapping
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -583,8 +457,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### UNI-021 — Historical record digitization
 
@@ -602,8 +474,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### UNI-022 — Evidence chain-of-custody record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -619,8 +489,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### UNI-023 — Record correction request
 
@@ -638,8 +506,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
 
-
-
 ### UNI-024 — Duplicate record review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -655,8 +521,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### UNI-025 — Data quality review
 
@@ -674,8 +538,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
 
-
-
 ### UNI-026 — Consent and permission record
 
 **Type:** Agreement / approval · **Shared pack:** AGREEMENT.
@@ -691,8 +553,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 **Review:** Authorized signatory; legal review where applicable.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
-
-
 
 ### UNI-027 — Contact update request
 
@@ -710,8 +570,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### UNI-028 — Anonymous feedback submission
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -727,8 +585,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### UNI-029 — Translation and transcription review
 
@@ -746,8 +602,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### UNI-030 — Attachment catalogue
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -763,8 +617,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### UNI-031 — Record relationship mapping
 
@@ -782,8 +634,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### UNI-032 — Bulk verification campaign
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -799,8 +649,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### UNI-033 — Data export request
 
@@ -818,8 +666,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### UNI-034 — Record retention review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -835,8 +681,6 @@ Shared category context: organization_ref, project_ref, subject_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### UNI-035 — Template change request
 
@@ -854,15 +698,9 @@ Shared category context: organization_ref, project_ref, subject_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ## AST — Assets and equipment (36 templates)
 
-
-
 Shared category context: organization_ref, site_ref, asset_ref.
-
-
 
 ### AST-001 — Equipment master inventory
 
@@ -880,8 +718,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
 
-
-
 ### AST-002 — Asset nameplate capture
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -897,8 +733,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
-
-
 
 ### AST-003 — Asset commissioning record
 
@@ -916,8 +750,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### AST-004 — Asset condition assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -933,8 +765,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
-
-
 
 ### AST-005 — Equipment fault report
 
@@ -952,8 +782,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
 
-
-
 ### AST-006 — Preventive maintenance work order
 
 **Type:** Maintenance workflow · **Shared pack:** MAINT.
@@ -969,8 +797,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 **Review:** Qualified technician approves work and return to service.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
-
-
 
 ### AST-007 — Corrective maintenance work order
 
@@ -988,8 +814,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### AST-008 — Equipment calibration record
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -1005,8 +829,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### AST-009 — Asset movement and transfer
 
@@ -1024,8 +846,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
 
-
-
 ### AST-010 — Asset issue and return
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -1041,8 +861,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### AST-011 — Asset custody acknowledgement
 
@@ -1060,8 +878,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### AST-012 — Asset physical verification
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -1077,8 +893,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### AST-013 — Asset tagging campaign
 
@@ -1096,8 +910,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### AST-014 — Asset warranty register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -1113,8 +925,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### AST-015 — Service contract register
 
@@ -1132,8 +942,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### AST-016 — Spare parts catalogue
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -1149,8 +957,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### AST-017 — Spare parts consumption
 
@@ -1168,8 +974,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### AST-018 — Equipment utilization log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -1185,8 +989,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### AST-019 — Equipment downtime log
 
@@ -1204,8 +1006,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### AST-020 — Equipment safety inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -1221,8 +1021,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### AST-021 — Asset acquisition request
 
@@ -1240,8 +1038,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### AST-022 — Asset disposal assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -1257,8 +1053,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### AST-023 — Asset decommissioning checklist
 
@@ -1276,8 +1070,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### AST-024 — Donated equipment acceptance
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -1293,8 +1085,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### AST-025 — Loaned equipment tracking
 
@@ -1312,8 +1102,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### AST-026 — Equipment installation survey
 
 **Type:** Visit / field workflow · **Shared pack:** VISIT.
@@ -1329,8 +1117,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 **Review:** Field officer verifies observations and any attributed statements.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### AST-027 — Tool crib inventory
 
@@ -1348,8 +1134,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### AST-028 — Asset replacement plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -1365,8 +1149,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### AST-029 — Asset lifecycle cost worksheet
 
@@ -1384,8 +1166,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### AST-030 — Asset loss or theft record
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -1401,8 +1181,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### AST-031 — Equipment user training record
 
@@ -1420,8 +1198,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### AST-032 — Equipment operating procedure
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -1437,8 +1213,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### AST-033 — Maintenance handover report
 
@@ -1456,8 +1230,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### AST-034 — Asset insurance schedule
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -1473,8 +1245,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### AST-035 — Mobile plant pre-use check
 
@@ -1492,8 +1262,6 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### AST-036 — Asset performance dashboard brief
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -1510,15 +1278,9 @@ Shared category context: organization_ref, site_ref, asset_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ## INV — Inventory and warehousing (34 templates)
 
-
-
 Shared category context: organization_ref, warehouse_ref, item_ref.
-
-
 
 ### INV-001 — Stock item master
 
@@ -1536,8 +1298,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
 
-
-
 ### INV-002 — Goods received note
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -1553,8 +1313,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
-
-
 
 ### INV-003 — Goods issue voucher
 
@@ -1572,8 +1330,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### INV-004 — Stock transfer note
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -1589,8 +1345,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### INV-005 — Cycle count sheet
 
@@ -1608,8 +1362,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
 
-
-
 ### INV-006 — Full stocktake worksheet
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -1625,8 +1377,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### INV-007 — Stock adjustment request
 
@@ -1644,8 +1394,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### INV-008 — Batch and lot traceability
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -1661,8 +1409,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### INV-009 — Expiry monitoring register
 
@@ -1680,8 +1426,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### INV-010 — Reorder proposal
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -1697,8 +1441,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### INV-011 — Bin location register
 
@@ -1716,8 +1458,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### INV-012 — Stock reservation
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -1733,8 +1473,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### INV-013 — Picking list
 
@@ -1752,8 +1490,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### INV-014 — Packing verification
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -1769,8 +1505,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### INV-015 — Dispatch manifest
 
@@ -1788,8 +1522,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### INV-016 — Proof of delivery
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -1805,8 +1537,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### INV-017 — Return merchandise authorization
 
@@ -1824,8 +1554,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### INV-018 — Damaged stock report
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -1841,8 +1569,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### INV-019 — Obsolete stock review
 
@@ -1860,8 +1586,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### INV-020 — Consignment stock register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -1877,8 +1601,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### INV-021 — Vendor-managed inventory check
 
@@ -1896,8 +1618,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### INV-022 — Cold storage temperature log
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -1913,8 +1633,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### INV-023 — Warehouse housekeeping inspection
 
@@ -1932,8 +1650,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### INV-024 — Warehouse capacity survey
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -1949,8 +1665,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### INV-025 — Inventory valuation worksheet
 
@@ -1968,8 +1682,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### INV-026 — Stock discrepancy investigation
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -1985,8 +1697,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### INV-027 — Inventory replenishment schedule
 
@@ -2004,8 +1714,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### INV-028 — Chemical storage register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -2021,8 +1729,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### INV-029 — Reusable container tracking
 
@@ -2040,8 +1746,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### INV-030 — Pallet and load inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -2057,8 +1761,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### INV-031 — Warehouse incident report
 
@@ -2076,8 +1778,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### INV-032 — Stock ageing report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -2093,8 +1793,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### INV-033 — Inventory demand forecast inputs
 
@@ -2112,8 +1810,6 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### INV-034 — Stock quarantine release
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -2130,15 +1826,9 @@ Shared category context: organization_ref, warehouse_ref, item_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ## PRC — Procurement and suppliers (32 templates)
 
-
-
 Shared category context: organization_ref, procurement_ref, supplier_ref.
-
-
 
 ### PRC-001 — Supplier registration
 
@@ -2156,8 +1846,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
 
-
-
 ### PRC-002 — Supplier document verification
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -2173,8 +1861,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### PRC-003 — Purchase requisition
 
@@ -2192,8 +1878,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
 
-
-
 ### PRC-004 — Request for quotation
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -2209,8 +1893,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### PRC-005 — Request for proposal pack
 
@@ -2228,8 +1910,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### PRC-006 — Tender opportunity intake
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -2245,8 +1925,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### PRC-007 — Bid clarification request
 
@@ -2264,8 +1942,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### PRC-008 — Supplier quotation capture
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -2281,8 +1957,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
-
-
 
 ### PRC-009 — Bid opening record
 
@@ -2300,8 +1974,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### PRC-010 — Technical evaluation worksheet
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -2317,8 +1989,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### PRC-011 — Commercial comparison worksheet
 
@@ -2336,8 +2006,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### PRC-012 — Supplier due diligence review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -2353,8 +2021,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### PRC-013 — Conflict-of-interest declaration
 
@@ -2372,8 +2038,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### PRC-014 — Procurement evaluation report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -2389,8 +2053,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### PRC-015 — Purchase order
 
@@ -2408,8 +2070,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### PRC-016 — Purchase order amendment
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -2425,8 +2085,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### PRC-017 — Supplier contract intake
 
@@ -2444,8 +2102,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### PRC-018 — Supplier onboarding checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -2461,8 +2117,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### PRC-019 — Supplier delivery performance
 
@@ -2480,8 +2134,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### PRC-020 — Supplier site assessment
 
 **Type:** Visit / field workflow · **Shared pack:** VISIT.
@@ -2497,8 +2149,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 **Review:** Field officer verifies observations and any attributed statements.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### PRC-021 — Procurement exception request
 
@@ -2516,8 +2166,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### PRC-022 — Single-source justification
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -2533,8 +2181,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### PRC-023 — Framework agreement call-off
 
@@ -2552,8 +2198,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### PRC-024 — Procurement savings analysis
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -2569,8 +2213,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### PRC-025 — Supplier corrective action request
 
@@ -2588,8 +2230,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### PRC-026 — Procurement plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -2605,8 +2245,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### PRC-027 — Supplier complaint record
 
@@ -2624,8 +2262,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### PRC-028 — Contract deliverable acceptance
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -2641,8 +2277,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### PRC-029 — Supplier renewal review
 
@@ -2660,8 +2294,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### PRC-030 — Import purchase checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -2677,8 +2309,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### PRC-031 — Supplier bank change verification
 
@@ -2696,8 +2326,6 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### PRC-032 — Sustainable procurement assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -2714,19 +2342,11 @@ Shared category context: organization_ref, procurement_ref, supplier_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 # 02 · Business and governance
-
-
 
 ## FIN — Finance accounting and expenses (36 templates)
 
-
-
 Shared category context: organization_ref, accounting_period, currency_code.
-
-
 
 ### FIN-001 — Invoice OCR intake
 
@@ -2744,8 +2364,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
 
-
-
 ### FIN-002 — Receipt OCR intake
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -2761,8 +2379,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
-
-
 
 ### FIN-003 — Expense claim
 
@@ -2780,8 +2396,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
 
-
-
 ### FIN-004 — Petty cash voucher
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -2797,8 +2411,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### FIN-005 — Petty cash reconciliation
 
@@ -2816,8 +2428,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### FIN-006 — Accounts payable register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -2833,8 +2443,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### FIN-007 — Accounts receivable register
 
@@ -2852,8 +2460,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### FIN-008 — Payment approval request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -2869,8 +2475,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### FIN-009 — Payment confirmation record
 
@@ -2888,8 +2492,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### FIN-010 — Bank statement import
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -2905,8 +2507,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### FIN-011 — Bank reconciliation
 
@@ -2924,8 +2524,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
 
-
-
 ### FIN-012 — Mobile money reconciliation
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -2941,8 +2539,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### FIN-013 — Cash count sheet
 
@@ -2960,8 +2556,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### FIN-014 — Sales daybook
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -2977,8 +2571,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### FIN-015 — Purchase daybook
 
@@ -2996,8 +2588,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### FIN-016 — Journal entry request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -3013,8 +2603,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### FIN-017 — Accruals schedule
 
@@ -3032,8 +2620,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### FIN-018 — Prepayments schedule
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -3049,8 +2635,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### FIN-019 — Fixed asset depreciation worksheet
 
@@ -3068,8 +2652,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### FIN-020 — Budget preparation worksheet
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -3085,8 +2667,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### FIN-021 — Budget versus actual analysis
 
@@ -3104,8 +2684,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### FIN-022 — Cash flow forecast inputs
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -3121,8 +2699,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### FIN-023 — Financial close checklist
 
@@ -3140,8 +2716,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### FIN-024 — Travel advance request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -3157,8 +2731,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### FIN-025 — Advance retirement statement
 
@@ -3176,8 +2748,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### FIN-026 — Payroll input collection
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -3193,8 +2763,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### FIN-027 — Tax evidence collection
 
@@ -3212,8 +2780,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### FIN-028 — Donor fund reconciliation
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -3229,8 +2795,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### FIN-029 — Cost allocation worksheet
 
@@ -3248,8 +2812,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### FIN-030 — Revenue recognition evidence
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -3265,8 +2827,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### FIN-031 — Credit note request
 
@@ -3284,8 +2844,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### FIN-032 — Debt collection follow-up
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -3301,8 +2859,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### FIN-033 — Financial performance report
 
@@ -3320,8 +2876,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### FIN-034 — Audit confirmation tracker
 
 **Type:** Tracker / follow-up · **Shared pack:** TRACK.
@@ -3337,8 +2891,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 **Review:** Status changes must be confirmed or tied to a trusted event.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### FIN-035 — Foreign currency transaction record
 
@@ -3356,8 +2908,6 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### FIN-036 — Financial anomaly review
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -3374,15 +2924,9 @@ Shared category context: organization_ref, accounting_period, currency_code.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ## AUD — Audit risk and compliance (36 templates)
 
-
-
 Shared category context: organization_ref, audit_or_review_ref, process_owner.
-
-
 
 ### AUD-001 — Audit engagement planning
 
@@ -3400,8 +2944,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### AUD-002 — Audit universe register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -3417,8 +2959,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### AUD-003 — Risk assessment worksheet
 
@@ -3436,8 +2976,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### AUD-004 — Risk register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -3453,8 +2991,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### AUD-005 — Control catalogue
 
@@ -3472,8 +3008,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### AUD-006 — Audit evidence intake
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -3489,8 +3023,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
-
-
 
 ### AUD-007 — Invoice audit sampling
 
@@ -3508,8 +3040,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### AUD-008 — Receipt authenticity review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -3525,8 +3055,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### AUD-009 — Control design assessment
 
@@ -3544,8 +3072,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### AUD-010 — Control operating effectiveness test
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -3561,8 +3087,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### AUD-011 — Process walkthrough
 
@@ -3580,8 +3104,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### AUD-012 — Audit interview notes
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -3597,8 +3119,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### AUD-013 — Audit finding record
 
@@ -3616,8 +3136,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
 
-
-
 ### AUD-014 — Audit issue rating review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -3633,8 +3151,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### AUD-015 — Corrective action plan
 
@@ -3652,8 +3168,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
 
-
-
 ### AUD-016 — Audit follow-up verification
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -3669,8 +3183,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### AUD-017 — Internal audit report
 
@@ -3688,8 +3200,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### AUD-018 — Regulatory obligation register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -3705,8 +3215,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### AUD-019 — Compliance evidence checklist
 
@@ -3724,8 +3232,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### AUD-020 — Policy exception register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -3741,8 +3247,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### AUD-021 — Fraud allegation intake
 
@@ -3760,8 +3264,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### AUD-022 — Whistleblowing case intake
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -3777,8 +3279,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### AUD-023 — Conflict-of-interest review
 
@@ -3796,8 +3296,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### AUD-024 — Third-party risk assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -3813,8 +3311,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### AUD-025 — Operational resilience assessment
 
@@ -3832,8 +3328,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### AUD-026 — Business continuity test
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -3849,8 +3343,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### AUD-027 — Insurance coverage gap review
 
@@ -3868,8 +3360,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### AUD-028 — Access rights certification
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -3885,8 +3375,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### AUD-029 — Recordkeeping compliance review
 
@@ -3904,8 +3392,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### AUD-030 — Environmental compliance evidence
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -3921,8 +3407,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### AUD-031 — Quality management internal audit
 
@@ -3940,8 +3424,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### AUD-032 — Supplier compliance audit
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -3957,8 +3439,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### AUD-033 — Governance effectiveness review
 
@@ -3976,8 +3456,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### AUD-034 — Audit committee briefing
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -3993,8 +3471,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### AUD-035 — Regulatory examination response
 
@@ -4012,8 +3488,6 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### AUD-036 — Compliance training attestation
 
 **Type:** Agreement / approval · **Shared pack:** AGREEMENT.
@@ -4030,15 +3504,9 @@ Shared category context: organization_ref, audit_or_review_ref, process_owner.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ## LEG — Legal contracts and governance (35 templates)
 
-
-
 Shared category context: organization_ref, matter_ref, jurisdiction.
-
-
 
 ### LEG-001 — Legal matter intake
 
@@ -4056,8 +3524,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### LEG-002 — Contract metadata extraction
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -4073,8 +3539,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### LEG-003 — Contract review request
 
@@ -4092,8 +3556,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### LEG-004 — Contract clause comparison
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -4109,8 +3571,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### LEG-005 — Contract obligations tracker
 
@@ -4128,8 +3588,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### LEG-006 — Contract renewal notice
 
 **Type:** Communication draft · **Shared pack:** COMM.
@@ -4145,8 +3603,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 **Review:** Human approves content and recipients before any sending action.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### LEG-007 — Non-disclosure agreement draft
 
@@ -4164,8 +3620,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### LEG-008 — Service agreement draft
 
 **Type:** Agreement / approval · **Shared pack:** AGREEMENT.
@@ -4181,8 +3635,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 **Review:** Authorized signatory; legal review where applicable.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### LEG-009 — Memorandum of understanding draft
 
@@ -4200,8 +3652,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### LEG-010 — Lease agreement drafting brief
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -4217,8 +3667,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### LEG-011 — Employment agreement drafting brief
 
@@ -4236,8 +3684,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### LEG-012 — Partnership agreement drafting brief
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -4253,8 +3699,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### LEG-013 — Contract signature routing
 
@@ -4272,8 +3716,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### LEG-014 — Board meeting pack
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -4289,8 +3731,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### LEG-015 — Board resolution draft
 
@@ -4308,8 +3748,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### LEG-016 — Company statutory records register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -4325,8 +3763,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### LEG-017 — Shareholder communication draft
 
@@ -4344,8 +3780,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### LEG-018 — Power of attorney drafting intake
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -4361,8 +3795,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### LEG-019 — Legal research evidence log
 
@@ -4380,8 +3812,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### LEG-020 — Litigation document chronology
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -4397,8 +3827,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### LEG-021 — Legal evidence index
 
@@ -4416,8 +3844,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### LEG-022 — Witness interview record
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -4433,8 +3859,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### LEG-023 — Dispute resolution intake
 
@@ -4452,8 +3876,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### LEG-024 — Settlement proposal drafting brief
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -4469,8 +3891,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### LEG-025 — Intellectual property register
 
@@ -4488,8 +3908,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### LEG-026 — Trademark application information
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -4505,8 +3923,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### LEG-027 — Copyright permission request
 
@@ -4524,8 +3940,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### LEG-028 — Data processing agreement brief
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -4541,8 +3955,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### LEG-029 — Document legal hold record
 
@@ -4560,8 +3972,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### LEG-030 — Legal deadline tracker
 
 **Type:** Tracker / follow-up · **Shared pack:** TRACK.
@@ -4577,8 +3987,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 **Review:** Status changes must be confirmed or tied to a trusted event.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### LEG-031 — Corporate policy approval
 
@@ -4596,8 +4004,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### LEG-032 — Delegation of authority register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -4613,8 +4019,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### LEG-033 — Regulatory filing preparation
 
@@ -4632,8 +4036,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### LEG-034 — Land transaction document intake
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -4649,8 +4051,6 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### LEG-035 — Legal opinion request
 
@@ -4668,15 +4068,9 @@ Shared category context: organization_ref, matter_ref, jurisdiction.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ## HR — Human resources and workforce (36 templates)
 
-
-
 Shared category context: organization_ref, department_ref, person_ref.
-
-
 
 ### HR-001 — Job requisition
 
@@ -4694,8 +4088,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-002 — Job description
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -4711,8 +4103,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### HR-003 — Candidate application intake
 
@@ -4730,8 +4120,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-004 — CV extraction and verification
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -4747,8 +4135,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### HR-005 — Interview schedule
 
@@ -4766,8 +4152,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-006 — Structured interview scorecard
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -4783,8 +4167,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### HR-007 — Candidate reference check
 
@@ -4802,8 +4184,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-008 — Employment offer drafting
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -4819,8 +4199,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### HR-009 — Employee onboarding checklist
 
@@ -4838,8 +4216,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-010 — Employee master record
 
 **Type:** Profile / intake · **Shared pack:** PROFILE.
@@ -4855,8 +4231,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 **Review:** Collect only necessary personal data; obtain required permissions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### HR-011 — Emergency contact record
 
@@ -4874,8 +4248,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-012 — Attendance record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -4891,8 +4263,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### HR-013 — Timesheet
 
@@ -4910,8 +4280,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-014 — Leave request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -4927,8 +4295,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### HR-015 — Overtime request
 
@@ -4946,8 +4312,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-016 — Shift roster
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -4963,8 +4327,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### HR-017 — Remote work agreement
 
@@ -4982,8 +4344,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-018 — Performance objectives plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -4999,8 +4359,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### HR-019 — Performance review
 
@@ -5018,8 +4376,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-020 — Training needs assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -5035,8 +4391,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### HR-021 — Employee learning record
 
@@ -5054,8 +4408,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-022 — Competency assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -5071,8 +4423,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### HR-023 — Employee grievance intake
 
@@ -5090,8 +4440,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-024 — Workplace misconduct report
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -5107,8 +4455,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### HR-025 — Disciplinary hearing record
 
@@ -5126,8 +4472,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-026 — Employee welfare request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -5143,8 +4487,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### HR-027 — Workplace accommodation request
 
@@ -5162,8 +4504,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-028 — Employee engagement survey
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -5179,8 +4519,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### HR-029 — Staff deployment record
 
@@ -5198,8 +4536,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-030 — Travel authorization
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -5215,8 +4551,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### HR-031 — Employee expense entitlement review
 
@@ -5234,8 +4568,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-032 — Exit interview
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -5251,8 +4583,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### HR-033 — Employee clearance checklist
 
@@ -5270,8 +4600,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-034 — Employment verification letter
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -5287,8 +4615,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### HR-035 — HR case management register
 
@@ -5306,8 +4632,6 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### HR-036 — Succession planning worksheet
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -5324,19 +4648,11 @@ Shared category context: organization_ref, department_ref, person_ref.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 # 03 · Collaboration and delivery
-
-
 
 ## MGT — Projects programs and strategy (34 templates)
 
-
-
 Shared category context: organization_ref, program_ref, project_ref.
-
-
 
 ### MGT-001 — Project concept intake
 
@@ -5354,8 +4670,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MGT-002 — Project charter
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -5371,8 +4685,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MGT-003 — Project stakeholder register
 
@@ -5390,8 +4702,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MGT-004 — Project work breakdown
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -5407,8 +4717,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MGT-005 — Project schedule
 
@@ -5426,8 +4734,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MGT-006 — Project budget
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -5443,8 +4749,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MGT-007 — Resource allocation plan
 
@@ -5462,8 +4766,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MGT-008 — Project risk log
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -5479,8 +4781,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MGT-009 — Project issue log
 
@@ -5498,8 +4798,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MGT-010 — Project decision log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -5515,8 +4813,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MGT-011 — Change request
 
@@ -5534,8 +4830,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MGT-012 — Project status update
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -5551,8 +4845,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
-
-
 
 ### MGT-013 — Milestone acceptance
 
@@ -5570,8 +4862,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MGT-014 — Deliverable review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -5587,8 +4877,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MGT-015 — Project site visit
 
@@ -5606,8 +4894,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MGT-016 — Project dependency register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -5623,8 +4909,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MGT-017 — Project communication plan
 
@@ -5642,8 +4926,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MGT-018 — Project governance plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -5659,8 +4941,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MGT-019 — Benefits realization plan
 
@@ -5678,8 +4958,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MGT-020 — Portfolio prioritization worksheet
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -5695,8 +4973,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MGT-021 — Program performance report
 
@@ -5714,8 +4990,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MGT-022 — Strategy workshop capture
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -5731,8 +5005,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MGT-023 — Strategic plan
 
@@ -5750,8 +5022,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MGT-024 — Annual operating plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -5767,8 +5037,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MGT-025 — Objective and key result tracker
 
@@ -5786,8 +5054,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MGT-026 — Business case
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -5803,8 +5069,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MGT-027 — Feasibility study intake
 
@@ -5822,8 +5086,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MGT-028 — Lessons learned register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -5839,8 +5101,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MGT-029 — Project retrospective
 
@@ -5858,8 +5118,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MGT-030 — Project closure report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -5875,8 +5133,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MGT-031 — Implementation readiness review
 
@@ -5894,8 +5150,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MGT-032 — Transformation initiative tracker
 
 **Type:** Tracker / follow-up · **Shared pack:** TRACK.
@@ -5911,8 +5165,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 **Review:** Status changes must be confirmed or tied to a trusted event.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MGT-033 — Community project progress check
 
@@ -5930,8 +5182,6 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MGT-034 — Project handover pack
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -5948,15 +5198,9 @@ Shared category context: organization_ref, program_ref, project_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ## MTG — Meetings events and coordination (34 templates)
 
-
-
 Shared category context: organization_ref, event_ref, organizer_ref.
-
-
 
 ### MTG-001 — Meeting request
 
@@ -5974,8 +5218,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MTG-002 — Meeting agenda
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -5991,8 +5233,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
-
-
 
 ### MTG-003 — Meeting invitation
 
@@ -6010,8 +5250,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MTG-004 — Meeting attendance register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -6027,8 +5265,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MTG-005 — Meeting consent and recording notice
 
@@ -6046,8 +5282,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MTG-006 — Meeting notes capture
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET. **Detailed starter schema included.**
@@ -6063,8 +5297,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
-
-
 
 ### MTG-007 — Audio meeting transcription
 
@@ -6082,8 +5314,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MTG-008 — Meeting minutes
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -6099,8 +5329,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
-
-
 
 ### MTG-009 — Meeting action tracker
 
@@ -6118,8 +5346,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P0 · Foundation.
 
-
-
 ### MTG-010 — Meeting decision register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -6135,8 +5361,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MTG-011 — Recurring meeting plan
 
@@ -6154,8 +5378,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MTG-012 — Board meeting minutes
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -6171,8 +5393,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MTG-013 — Committee meeting record
 
@@ -6190,8 +5410,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MTG-014 — Team stand-up capture
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -6207,8 +5425,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MTG-015 — Workshop facilitation plan
 
@@ -6226,8 +5442,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MTG-016 — Workshop output capture
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -6243,8 +5457,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MTG-017 — Conference registration
 
@@ -6262,8 +5474,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MTG-018 — Conference program
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -6279,8 +5489,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MTG-019 — Event budget
 
@@ -6298,8 +5506,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MTG-020 — Event vendor coordination
 
 **Type:** Tracker / follow-up · **Shared pack:** TRACK.
@@ -6315,8 +5521,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 **Review:** Status changes must be confirmed or tied to a trusted event.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MTG-021 — Venue readiness inspection
 
@@ -6334,8 +5538,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MTG-022 — Event run-of-show
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -6351,8 +5553,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MTG-023 — Speaker briefing pack
 
@@ -6370,8 +5570,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MTG-024 — Visitor sign-in
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -6387,8 +5585,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MTG-025 — Appointment booking
 
@@ -6406,8 +5602,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MTG-026 — Room booking
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -6423,8 +5617,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MTG-027 — Event equipment checklist
 
@@ -6442,8 +5634,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MTG-028 — Event incident log
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -6459,8 +5649,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MTG-029 — Event evaluation survey
 
@@ -6478,8 +5666,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MTG-030 — Participant certificate data
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -6495,8 +5681,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MTG-031 — Meeting follow-up email
 
@@ -6514,8 +5698,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MTG-032 — Travel delegation coordination
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -6531,8 +5713,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### MTG-033 — Public consultation meeting record
 
@@ -6550,8 +5730,6 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### MTG-034 — Remote meeting technical check
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -6568,15 +5746,9 @@ Shared category context: organization_ref, event_ref, organizer_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ## GRT — Grants proposals and fundraising (42 templates)
 
-
-
 Shared category context: organization_ref, opportunity_ref, funding_source_ref.
-
-
 
 ### GRT-001 — Funding opportunity intake
 
@@ -6594,8 +5766,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
 
-
-
 ### GRT-002 — Terms of reference extraction
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -6611,8 +5781,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
-
-
 
 ### GRT-003 — Opportunity eligibility checklist
 
@@ -6630,8 +5798,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-004 — Bid or no-bid assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -6647,8 +5813,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GRT-005 — Applicant organization profile
 
@@ -6666,8 +5830,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-006 — Company capability statement
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -6683,8 +5845,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GRT-007 — Brand and proposal style intake
 
@@ -6702,8 +5862,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
 
-
-
 ### GRT-008 — Proposal requirements matrix
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -6719,8 +5877,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
-
-
 
 ### GRT-009 — Proposal evidence library
 
@@ -6738,8 +5894,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-010 — Concept note
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -6755,8 +5909,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GRT-011 — Expression of interest
 
@@ -6774,8 +5926,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-012 — Full grant proposal
 
 **Type:** Proposal-generation workflow · **Shared pack:** PROPOSAL. **Detailed starter schema included.**
@@ -6791,8 +5941,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** No invented eligibility, qualifications, clients, outcomes, costs or signatures.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
-
-
 
 ### GRT-013 — Technical proposal
 
@@ -6810,8 +5958,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-014 — Financial proposal
 
 **Type:** Proposal-generation workflow · **Shared pack:** PROPOSAL.
@@ -6827,8 +5973,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** No invented eligibility, qualifications, clients, outcomes, costs or signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GRT-015 — Research funding proposal
 
@@ -6846,8 +5990,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-016 — Community project proposal
 
 **Type:** Proposal-generation workflow · **Shared pack:** PROPOSAL.
@@ -6863,8 +6005,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** No invented eligibility, qualifications, clients, outcomes, costs or signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GRT-017 — Consultancy proposal
 
@@ -6882,8 +6022,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-018 — Implementation methodology
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -6899,8 +6037,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GRT-019 — Logical framework
 
@@ -6918,8 +6054,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-020 — Theory of change
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -6935,8 +6069,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GRT-021 — Monitoring and evaluation plan
 
@@ -6954,8 +6086,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-022 — Proposal workplan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -6971,8 +6101,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GRT-023 — Grant budget narrative
 
@@ -6990,8 +6118,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-024 — Partner contribution record
 
 **Type:** Agreement / approval · **Shared pack:** AGREEMENT.
@@ -7007,8 +6133,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** Authorized signatory; legal review where applicable.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GRT-025 — Team CV tailoring brief
 
@@ -7026,8 +6150,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-026 — Past performance reference sheet
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -7043,8 +6165,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GRT-027 — Letter of support draft
 
@@ -7062,8 +6182,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-028 — Proposal compliance review
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -7079,8 +6197,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GRT-029 — Submission readiness checklist
 
@@ -7098,8 +6214,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
 
-
-
 ### GRT-030 — Grant application submission log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -7115,8 +6229,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GRT-031 — Funder clarification response
 
@@ -7134,8 +6246,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-032 — Grant award agreement intake
 
 **Type:** Agreement / approval · **Shared pack:** AGREEMENT.
@@ -7151,8 +6261,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** Authorized signatory; legal review where applicable.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GRT-033 — Grant milestone tracker
 
@@ -7170,8 +6278,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-034 — Donor narrative progress report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -7187,8 +6293,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GRT-035 — Donor financial report
 
@@ -7206,8 +6310,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-036 — Grant amendment request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -7223,8 +6325,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GRT-037 — Fundraising campaign plan
 
@@ -7242,8 +6342,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-038 — Donation pledge register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -7259,8 +6357,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GRT-039 — Donation acknowledgement
 
@@ -7278,8 +6374,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-040 — Sponsorship proposal
 
 **Type:** Proposal-generation workflow · **Shared pack:** PROPOSAL.
@@ -7295,8 +6389,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 **Review:** No invented eligibility, qualifications, clients, outcomes, costs or signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GRT-041 — Grant closeout pack
 
@@ -7314,8 +6406,6 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GRT-042 — Proposal reusable content approval
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -7332,15 +6422,9 @@ Shared category context: organization_ref, opportunity_ref, funding_source_ref.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ## CRM — Sales service and marketing (34 templates)
 
-
-
 Shared category context: organization_ref, customer_or_account_ref, campaign_ref.
-
-
 
 ### CRM-001 — Sales lead capture
 
@@ -7358,8 +6442,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### CRM-002 — Customer account profile
 
 **Type:** Profile / intake · **Shared pack:** PROFILE.
@@ -7375,8 +6457,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 **Review:** Collect only necessary personal data; obtain required permissions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### CRM-003 — Customer discovery interview
 
@@ -7394,8 +6474,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### CRM-004 — Sales opportunity record
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -7411,8 +6489,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### CRM-005 — Sales visit report
 
@@ -7430,8 +6506,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### CRM-006 — Product demonstration feedback
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -7447,8 +6521,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### CRM-007 — Customer quotation
 
@@ -7466,8 +6538,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### CRM-008 — Sales proposal
 
 **Type:** Proposal-generation workflow · **Shared pack:** PROPOSAL.
@@ -7483,8 +6553,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 **Review:** No invented eligibility, qualifications, clients, outcomes, costs or signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### CRM-009 — Sales order intake
 
@@ -7502,8 +6570,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### CRM-010 — Customer onboarding checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -7519,8 +6585,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### CRM-011 — Service request intake
 
@@ -7538,8 +6602,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### CRM-012 — Customer complaint intake
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -7555,8 +6617,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
-
-
 
 ### CRM-013 — Support ticket
 
@@ -7574,8 +6634,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### CRM-014 — Service level review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -7591,8 +6649,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### CRM-015 — Customer satisfaction survey
 
@@ -7610,8 +6666,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### CRM-016 — Customer retention review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -7627,8 +6681,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### CRM-017 — Account management plan
 
@@ -7646,8 +6698,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### CRM-018 — Sales pipeline review
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -7663,8 +6713,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### CRM-019 — Market research interview
 
@@ -7682,8 +6730,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### CRM-020 — Competitor observation
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -7699,8 +6745,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### CRM-021 — Retail merchandising visit
 
@@ -7718,8 +6762,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### CRM-022 — Promotional activation report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -7735,8 +6777,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### CRM-023 — Marketing campaign brief
 
@@ -7754,8 +6794,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### CRM-024 — Content creation brief
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -7771,8 +6809,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### CRM-025 — Social media post drafting
 
@@ -7790,8 +6826,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### CRM-026 — Case study interview
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -7807,8 +6841,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### CRM-027 — Customer testimonial permission
 
@@ -7826,8 +6858,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### CRM-028 — Email campaign approval
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -7843,8 +6873,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### CRM-029 — Product feedback log
 
@@ -7862,8 +6890,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### CRM-030 — Website content intake
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -7879,8 +6905,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### CRM-031 — Sales territory plan
 
@@ -7898,8 +6922,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### CRM-032 — Customer renewal proposal
 
 **Type:** Proposal-generation workflow · **Shared pack:** PROPOSAL.
@@ -7915,8 +6937,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 **Review:** No invented eligibility, qualifications, clients, outcomes, costs or signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### CRM-033 — Brand asset catalogue
 
@@ -7934,8 +6954,6 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### CRM-034 — Marketing performance report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -7952,19 +6970,11 @@ Shared category context: organization_ref, customer_or_account_ref, campaign_ref
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 # 04 · Health and life sciences
-
-
 
 ## HOP — Hospital and biomedical operations (35 templates)
 
-
-
 Shared category context: facility_ref, department_ref, service_unit.
-
-
 
 ### HOP-001 — Hospital facility profile
 
@@ -7982,8 +6992,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### HOP-002 — Clinical department readiness
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -7999,8 +7007,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### HOP-003 — Hospital bed inventory
 
@@ -8018,8 +7024,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### HOP-004 — Medical device acceptance test
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -8035,8 +7039,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### HOP-005 — Biomedical service inspection
 
@@ -8054,8 +7056,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### HOP-006 — Medical device electrical safety record
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -8071,8 +7071,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### HOP-007 — Medical equipment user competency
 
@@ -8090,8 +7088,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### HOP-008 — Medical gas system inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -8107,8 +7103,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### HOP-009 — Oxygen concentrator inspection
 
@@ -8126,8 +7120,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### HOP-010 — Autoclave cycle record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -8143,8 +7135,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### HOP-011 — Sterilization load release
 
@@ -8162,8 +7152,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### HOP-012 — Sterile instrument set register
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -8179,8 +7167,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### HOP-013 — Cold chain device inventory
 
@@ -8198,8 +7184,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### HOP-014 — Vaccine refrigerator review
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -8215,8 +7199,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### HOP-015 — Radiology room readiness
 
@@ -8234,8 +7216,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### HOP-016 — Dental equipment inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -8251,8 +7231,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### HOP-017 — Laboratory analyzer installation
 
@@ -8270,8 +7248,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### HOP-018 — Dialysis equipment maintenance
 
 **Type:** Maintenance workflow · **Shared pack:** MAINT.
@@ -8287,8 +7263,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 **Review:** Qualified technician approves work and return to service.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### HOP-019 — Theatre readiness checklist
 
@@ -8306,8 +7280,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### HOP-020 — Hospital laundry inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -8323,8 +7295,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### HOP-021 — Hospital kitchen hygiene inspection
 
@@ -8342,8 +7312,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### HOP-022 — Healthcare waste segregation check
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -8359,8 +7327,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### HOP-023 — Ward cleaning verification
 
@@ -8378,8 +7344,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### HOP-024 — Hospital water system log
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -8395,8 +7359,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### HOP-025 — Facility generator service record
 
@@ -8414,8 +7376,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### HOP-026 — Ambulance readiness check
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -8431,8 +7391,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### HOP-027 — Hospital consumables demand plan
 
@@ -8450,8 +7408,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### HOP-028 — Medical equipment replacement prioritization
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -8467,8 +7423,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### HOP-029 — Hospital utilities outage record
 
@@ -8486,8 +7440,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### HOP-030 — Patient transport coordination
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -8503,8 +7455,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### HOP-031 — Healthcare service complaint
 
@@ -8522,8 +7472,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### HOP-032 — Facility accreditation evidence pack
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -8539,8 +7487,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### HOP-033 — Biomedical technician field service report
 
@@ -8558,8 +7504,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### HOP-034 — Medical equipment donation needs assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -8575,8 +7519,6 @@ Shared category context: facility_ref, department_ref, service_unit.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### HOP-035 — Hospital daily operations brief
 
@@ -8594,15 +7536,9 @@ Shared category context: facility_ref, department_ref, service_unit.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ## CLN — Clinical care and patient services (36 templates)
 
-
-
 Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
-
-
 
 ### CLN-001 — Patient registration intake
 
@@ -8620,8 +7556,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-002 — Appointment request for care
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -8637,8 +7571,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CLN-003 — Clinical encounter documentation
 
@@ -8656,8 +7588,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-004 — Triage observation capture
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -8673,8 +7603,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CLN-005 — Vital signs recording
 
@@ -8692,8 +7620,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-006 — Patient history questionnaire
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -8709,8 +7635,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CLN-007 — Medication reconciliation evidence
 
@@ -8728,8 +7652,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-008 — Care consent record
 
 **Type:** Agreement / approval · **Shared pack:** AGREEMENT.
@@ -8745,8 +7667,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 **Review:** Authorized signatory; legal review where applicable.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CLN-009 — Nursing shift handover
 
@@ -8764,8 +7684,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-010 — Clinical referral document
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -8781,8 +7699,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CLN-011 — Referral completion tracking
 
@@ -8800,8 +7716,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-012 — Discharge documentation draft
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -8817,8 +7731,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CLN-013 — Patient follow-up call
 
@@ -8836,8 +7748,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-014 — Home care visit
 
 **Type:** Visit / field workflow · **Shared pack:** VISIT.
@@ -8853,8 +7763,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 **Review:** Field officer verifies observations and any attributed statements.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CLN-015 — Community health worker visit
 
@@ -8872,8 +7780,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-016 — Antenatal visit documentation
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -8889,8 +7795,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CLN-017 — Child growth measurement
 
@@ -8908,8 +7812,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-018 — Immunization administration record
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -8925,8 +7827,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CLN-019 — Rehabilitation progress note
 
@@ -8944,8 +7844,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-020 — Physiotherapy session record
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -8961,8 +7859,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CLN-021 — Dental examination documentation
 
@@ -8980,8 +7876,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-022 — Vision assessment record
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -8997,8 +7891,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CLN-023 — Hearing assessment record
 
@@ -9016,8 +7908,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-024 — Nutrition assessment intake
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -9033,8 +7923,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CLN-025 — Mental health appointment intake
 
@@ -9052,8 +7940,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-026 — Counselling session administration
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -9069,8 +7955,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CLN-027 — Palliative care coordination
 
@@ -9088,8 +7972,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-028 — Patient experience survey
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -9105,8 +7987,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CLN-029 — Clinical adverse event report
 
@@ -9124,8 +8004,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-030 — Medication administration documentation
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -9141,8 +8019,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CLN-031 — Laboratory test request
 
@@ -9160,8 +8036,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-032 — Imaging request intake
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -9177,8 +8051,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CLN-033 — Patient document release request
 
@@ -9196,8 +8068,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-034 — Clinical chart completeness audit
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -9213,8 +8083,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CLN-035 — Care pathway adherence review
 
@@ -9232,8 +8100,6 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CLN-036 — Telehealth encounter administration
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -9250,15 +8116,9 @@ Shared category context: facility_ref, patient_pseudonymous_ref, encounter_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## LAB — Laboratories and diagnostics (32 templates)
 
-
-
 Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
-
-
 
 ### LAB-001 — Laboratory sample registration
 
@@ -9276,8 +8136,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LAB-002 — Sample collection record
 
 **Type:** Sample / chain-of-custody · **Shared pack:** SAMPLE.
@@ -9293,8 +8151,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 **Review:** Qualified sampling protocols and custody confirmation required.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LAB-003 — Sample chain-of-custody
 
@@ -9312,8 +8168,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LAB-004 — Specimen reception checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -9329,8 +8183,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LAB-005 — Sample rejection record
 
@@ -9348,8 +8200,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LAB-006 — Laboratory worklist
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -9365,8 +8215,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LAB-007 — Test result transcription review
 
@@ -9384,8 +8232,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LAB-008 — Laboratory result report draft
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -9401,8 +8247,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LAB-009 — Laboratory reagent inventory
 
@@ -9420,8 +8264,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LAB-010 — Reagent preparation log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -9437,8 +8279,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LAB-011 — Quality control run record
 
@@ -9456,8 +8296,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LAB-012 — External quality assessment submission
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -9473,8 +8311,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LAB-013 — Analyzer daily checks
 
@@ -9492,8 +8328,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LAB-014 — Laboratory calibration curve record
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -9509,8 +8343,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LAB-015 — Laboratory instrument service history
 
@@ -9528,8 +8360,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LAB-016 — Laboratory temperature monitoring
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -9545,8 +8375,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LAB-017 — Environmental monitoring swab register
 
@@ -9564,8 +8392,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LAB-018 — Water testing sample record
 
 **Type:** Sample / chain-of-custody · **Shared pack:** SAMPLE.
@@ -9581,8 +8407,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 **Review:** Qualified sampling protocols and custody confirmation required.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LAB-019 — Food testing sample record
 
@@ -9600,8 +8424,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LAB-020 — Soil testing sample record
 
 **Type:** Sample / chain-of-custody · **Shared pack:** SAMPLE.
@@ -9617,8 +8439,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 **Review:** Qualified sampling protocols and custody confirmation required.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LAB-021 — Material testing sample record
 
@@ -9636,8 +8456,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LAB-022 — Pathology specimen tracking
 
 **Type:** Tracker / follow-up · **Shared pack:** TRACK.
@@ -9653,8 +8471,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 **Review:** Status changes must be confirmed or tied to a trusted event.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LAB-023 — Microscopy image annotation
 
@@ -9672,8 +8488,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LAB-024 — Laboratory method validation plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -9689,8 +8503,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LAB-025 — Laboratory nonconformance report
 
@@ -9708,8 +8520,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LAB-026 — Laboratory corrective action verification
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -9725,8 +8535,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LAB-027 — Laboratory biosafety inspection
 
@@ -9744,8 +8552,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LAB-028 — Sample storage location register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -9761,8 +8567,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LAB-029 — Sample disposal authorization
 
@@ -9780,8 +8584,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LAB-030 — Laboratory turnaround time analysis
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -9797,8 +8599,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LAB-031 — Laboratory training competency record
 
@@ -9816,8 +8616,6 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LAB-032 — Laboratory consumables forecast
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -9834,15 +8632,9 @@ Shared category context: laboratory_ref, sample_or_run_ref, method_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## PHM — Pharmacy and life sciences operations (30 templates)
 
-
-
 Shared category context: organization_ref, product_ref, batch_ref.
-
-
 
 ### PHM-001 — Pharmaceutical product catalogue
 
@@ -9860,8 +8652,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHM-002 — Medicine stock receipt
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -9877,8 +8667,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHM-003 — Medicine dispensing documentation
 
@@ -9896,8 +8684,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHM-004 — Medication stock count
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -9913,8 +8699,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHM-005 — Controlled medicine accountability
 
@@ -9932,8 +8716,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHM-006 — Medicine expiry review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -9949,8 +8731,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHM-007 — Medicine recall tracking
 
@@ -9968,8 +8748,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHM-008 — Pharmacovigilance report intake
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -9985,8 +8763,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHM-009 — Drug information request
 
@@ -10004,8 +8780,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHM-010 — Pharmacy storage inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -10021,8 +8795,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHM-011 — Medicine cold chain shipment
 
@@ -10040,8 +8812,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHM-012 — Prescription document capture
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -10057,8 +8827,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHM-013 — Pharmacy supplier qualification
 
@@ -10076,8 +8844,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHM-014 — Pharmacy stockout record
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -10093,8 +8859,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHM-015 — Medicine donation screening
 
@@ -10112,8 +8876,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHM-016 — Pharmaceutical batch documentation index
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -10129,8 +8891,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHM-017 — Manufacturing batch deviation
 
@@ -10148,8 +8908,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHM-018 — Product stability study log
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -10165,8 +8923,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHM-019 — Packaging artwork approval
 
@@ -10184,8 +8940,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHM-020 — Pharmaceutical label OCR verification
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -10201,8 +8955,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHM-021 — Quality release authorization
 
@@ -10220,8 +8972,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHM-022 — Product complaint investigation
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -10237,8 +8987,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHM-023 — Clinical study site readiness
 
@@ -10256,8 +9004,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHM-024 — Clinical study participant administration
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -10273,8 +9019,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHM-025 — Clinical study visit tracking
 
@@ -10292,8 +9036,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHM-026 — Clinical research consent tracking
 
 **Type:** Agreement / approval · **Shared pack:** AGREEMENT.
@@ -10309,8 +9051,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 **Review:** Authorized signatory; legal review where applicable.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHM-027 — Research adverse event documentation
 
@@ -10328,8 +9068,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHM-028 — Investigational product accountability
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -10345,8 +9083,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHM-029 — Regulatory submission evidence index
 
@@ -10364,8 +9100,6 @@ Shared category context: organization_ref, product_ref, batch_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHM-030 — Pharmacy service quality report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -10382,15 +9116,9 @@ Shared category context: organization_ref, product_ref, batch_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## PHE — Public health and surveillance (30 templates)
 
-
-
 Shared category context: program_ref, reporting_area, reporting_period.
-
-
 
 ### PHE-001 — Community health assessment
 
@@ -10408,8 +9136,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHE-002 — Health facility service availability
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -10425,8 +9151,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHE-003 — Disease surveillance report intake
 
@@ -10444,8 +9168,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHE-004 — Outbreak field investigation log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -10461,8 +9183,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHE-005 — Contact follow-up administration
 
@@ -10480,8 +9200,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHE-006 — Vaccination campaign microplan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -10497,8 +9215,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHE-007 — Vaccination campaign tally
 
@@ -10516,8 +9232,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHE-008 — Health promotion session record
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -10533,8 +9247,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHE-009 — Community health volunteer register
 
@@ -10552,8 +9264,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHE-010 — Household health survey
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -10569,8 +9279,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHE-011 — Nutrition screening campaign
 
@@ -10588,8 +9296,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHE-012 — Water sanitation health survey
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -10605,8 +9311,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHE-013 — Public health laboratory referral
 
@@ -10624,8 +9328,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHE-014 — Disease prevention supplies distribution
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -10641,8 +9343,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHE-015 — Maternal health program monitoring
 
@@ -10660,8 +9360,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHE-016 — Child health program monitoring
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -10677,8 +9375,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHE-017 — School health visit
 
@@ -10696,8 +9392,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHE-018 — Occupational health outreach record
 
 **Type:** Visit / field workflow · **Shared pack:** VISIT.
@@ -10713,8 +9407,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 **Review:** Field officer verifies observations and any attributed statements.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHE-019 — Health emergency resource mapping
 
@@ -10732,8 +9424,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHE-020 — Public health rumor verification
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -10749,8 +9439,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHE-021 — Health communication message approval
 
@@ -10768,8 +9456,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHE-022 — Community feedback on health services
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -10785,8 +9471,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHE-023 — Health program baseline survey
 
@@ -10804,8 +9488,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHE-024 — Health program endline survey
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -10821,8 +9503,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHE-025 — Health data completeness review
 
@@ -10840,8 +9520,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHE-026 — Epidemiological line-list import review
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -10857,8 +9535,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHE-027 — Public health situation report
 
@@ -10876,8 +9552,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHE-028 — Health supply outreach checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -10893,8 +9567,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PHE-029 — Community referral directory
 
@@ -10912,8 +9584,6 @@ Shared category context: program_ref, reporting_area, reporting_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PHE-030 — Health program supervision checklist
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -10930,19 +9600,11 @@ Shared category context: program_ref, reporting_area, reporting_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 # 05 · Education research and care
-
-
 
 ## EDU — Schools and vocational learning (38 templates)
 
-
-
 Shared category context: institution_ref, class_or_course_ref, academic_period.
-
-
 
 ### EDU-001 — School registration profile
 
@@ -10960,8 +9622,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-002 — Student enrollment application
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -10977,8 +9637,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-003 — Student enrollment register
 
@@ -10996,8 +9654,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-004 — Guardian contact record
 
 **Type:** Profile / intake · **Shared pack:** PROFILE.
@@ -11013,8 +9669,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Collect only necessary personal data; obtain required permissions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-005 — Daily learner attendance
 
@@ -11032,8 +9686,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-006 — Teacher attendance log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -11049,8 +9701,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-007 — Class timetable
 
@@ -11068,8 +9718,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-008 — Lesson plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -11085,8 +9733,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-009 — Lesson observation
 
@@ -11104,8 +9750,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-010 — Learning assessment rubric
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -11121,8 +9765,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-011 — Learner assessment results
 
@@ -11140,8 +9782,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-012 — Student report card draft
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -11157,8 +9797,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-013 — Parent teacher meeting record
 
@@ -11176,8 +9814,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-014 — Individual learning support plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -11193,8 +9829,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-015 — School safeguarding concern intake
 
@@ -11212,8 +9846,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-016 — Student counselling referral
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -11229,8 +9861,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-017 — School transfer documentation
 
@@ -11248,8 +9878,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-018 — School fee invoice
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -11265,8 +9893,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-019 — School fee payment reconciliation
 
@@ -11284,8 +9910,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-020 — Scholarship application
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -11301,8 +9925,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-021 — Scholarship award tracking
 
@@ -11320,8 +9942,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-022 — Library book issue and return
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -11337,8 +9957,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-023 — School textbook inventory
 
@@ -11356,8 +9974,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-024 — School laboratory inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -11373,8 +9989,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-025 — School infrastructure inspection
 
@@ -11392,8 +10006,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-026 — School meal delivery log
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -11409,8 +10021,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-027 — School transport route register
 
@@ -11428,8 +10038,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-028 — Educational trip permission
 
 **Type:** Agreement / approval · **Shared pack:** AGREEMENT.
@@ -11445,8 +10053,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Authorized signatory; legal review where applicable.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-029 — Extracurricular activity register
 
@@ -11464,8 +10070,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-030 — School incident report
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -11481,8 +10085,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-031 — Teacher professional development
 
@@ -11500,8 +10102,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-032 — Vocational practical assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -11517,8 +10117,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-033 — Apprenticeship placement record
 
@@ -11536,8 +10134,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-034 — Curriculum resource review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -11553,8 +10149,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-035 — School quality assurance report
 
@@ -11572,8 +10166,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-036 — School improvement plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -11589,8 +10181,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EDU-037 — Exam administration checklist
 
@@ -11608,8 +10198,6 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EDU-038 — Certificate issuance record
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -11626,15 +10214,9 @@ Shared category context: institution_ref, class_or_course_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## HED — Higher education and training (32 templates)
 
-
-
 Shared category context: institution_ref, program_ref, academic_period.
-
-
 
 ### HED-001 — University program enquiry
 
@@ -11652,8 +10234,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### HED-002 — University admission application
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -11669,8 +10249,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### HED-003 — Academic transcript extraction
 
@@ -11688,8 +10266,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### HED-004 — Credential verification record
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -11705,8 +10281,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### HED-005 — Admission review checklist
 
@@ -11724,8 +10298,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### HED-006 — Course registration
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -11741,8 +10313,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### HED-007 — Academic advising meeting
 
@@ -11760,8 +10330,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### HED-008 — Research supervision meeting
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -11777,8 +10345,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### HED-009 — Thesis proposal submission
 
@@ -11796,8 +10362,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### HED-010 — Thesis progress tracking
 
 **Type:** Tracker / follow-up · **Shared pack:** TRACK.
@@ -11813,8 +10377,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 **Review:** Status changes must be confirmed or tied to a trusted event.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### HED-011 — Graduate defense scheduling
 
@@ -11832,8 +10394,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### HED-012 — Dissertation review rubric
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -11849,8 +10409,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### HED-013 — Internship application
 
@@ -11868,8 +10426,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### HED-014 — Internship supervision visit
 
 **Type:** Visit / field workflow · **Shared pack:** VISIT.
@@ -11885,8 +10441,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 **Review:** Field officer verifies observations and any attributed statements.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### HED-015 — Internship completion report
 
@@ -11904,8 +10458,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### HED-016 — Alumni registration
 
 **Type:** Profile / intake · **Shared pack:** PROFILE.
@@ -11921,8 +10473,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 **Review:** Collect only necessary personal data; obtain required permissions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### HED-017 — Continuing education course intake
 
@@ -11940,8 +10490,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### HED-018 — Training session attendance
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -11957,8 +10505,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### HED-019 — Training evaluation survey
 
@@ -11976,8 +10522,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### HED-020 — Training certificate generation
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -11993,8 +10537,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### HED-021 — Course design brief
 
@@ -12012,8 +10554,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### HED-022 — Course content approval
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -12029,8 +10569,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### HED-023 — Learning management import mapping
 
@@ -12048,8 +10586,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### HED-024 — University accreditation evidence
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -12065,8 +10601,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### HED-025 — Faculty workload allocation
 
@@ -12084,8 +10618,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### HED-026 — Academic conference abstract
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -12101,8 +10633,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### HED-027 — Student financial aid review
 
@@ -12120,8 +10650,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### HED-028 — Exchange program application
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -12137,8 +10665,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### HED-029 — Student accommodation request
 
@@ -12156,8 +10682,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### HED-030 — Campus facility booking
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -12173,8 +10697,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### HED-031 — University community engagement report
 
@@ -12192,8 +10714,6 @@ Shared category context: institution_ref, program_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### HED-032 — Professional licensing evidence portfolio
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -12210,15 +10730,9 @@ Shared category context: institution_ref, program_ref, academic_period.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## RES — Research and knowledge management (35 templates)
 
-
-
 Shared category context: research_project_ref, study_ref, protocol_version.
-
-
 
 ### RES-001 — Research idea intake
 
@@ -12236,8 +10750,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### RES-002 — Research protocol draft
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -12253,8 +10765,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### RES-003 — Ethics review application intake
 
@@ -12272,8 +10782,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### RES-004 — Research consent record
 
 **Type:** Agreement / approval · **Shared pack:** AGREEMENT.
@@ -12289,8 +10797,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 **Review:** Authorized signatory; legal review where applicable.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### RES-005 — Participant recruitment log
 
@@ -12308,8 +10814,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### RES-006 — Interview guide
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -12325,8 +10829,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### RES-007 — Research interview transcript
 
@@ -12344,8 +10846,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### RES-008 — Focus group discussion record
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -12361,8 +10861,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### RES-009 — Survey instrument design
 
@@ -12380,8 +10878,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### RES-010 — Experiment design worksheet
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -12397,8 +10893,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### RES-011 — Experiment run log
 
@@ -12416,8 +10910,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### RES-012 — Laboratory research notebook
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -12433,8 +10925,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### RES-013 — Field research diary
 
@@ -12452,8 +10942,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### RES-014 — Data collection protocol
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -12469,8 +10957,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### RES-015 — Research dataset dictionary
 
@@ -12488,8 +10974,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### RES-016 — Qualitative coding framework
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -12505,8 +10989,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### RES-017 — Qualitative analysis memo
 
@@ -12524,8 +11006,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### RES-018 — Literature evidence extraction
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -12541,8 +11021,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### RES-019 — Systematic review screening
 
@@ -12560,8 +11038,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### RES-020 — Research source bibliography
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -12577,8 +11053,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### RES-021 — Statistical analysis request
 
@@ -12596,8 +11070,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### RES-022 — Analysis reproducibility checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -12613,8 +11085,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### RES-023 — Research data quality assessment
 
@@ -12632,8 +11102,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### RES-024 — Research results report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -12649,8 +11117,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### RES-025 — Scientific manuscript drafting brief
 
@@ -12668,8 +11134,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### RES-026 — Peer review response matrix
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -12685,8 +11149,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### RES-027 — Research poster content brief
 
@@ -12704,8 +11166,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### RES-028 — Research dissemination plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -12721,8 +11181,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### RES-029 — Data sharing request
 
@@ -12740,8 +11198,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### RES-030 — Research data management plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -12757,8 +11213,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### RES-031 — Research equipment booking
 
@@ -12776,8 +11230,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### RES-032 — Study deviation report
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -12793,8 +11245,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### RES-033 — Research replication plan
 
@@ -12812,8 +11262,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### RES-034 — Knowledge article creation
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -12829,8 +11277,6 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### RES-035 — Institutional knowledge handover
 
@@ -12848,15 +11294,9 @@ Shared category context: research_project_ref, study_ref, protocol_version.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## SOC — Social care and community services (32 templates)
 
-
-
 Shared category context: service_organization_ref, case_ref, service_area.
-
-
 
 ### SOC-001 — Social service intake
 
@@ -12874,8 +11314,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### SOC-002 — Household needs assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -12891,8 +11329,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### SOC-003 — Social worker home visit
 
@@ -12910,8 +11346,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### SOC-004 — Individual support plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -12927,8 +11361,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### SOC-005 — Service referral form
 
@@ -12946,8 +11378,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### SOC-006 — Referral follow-up record
 
 **Type:** Tracker / follow-up · **Shared pack:** TRACK.
@@ -12963,8 +11393,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 **Review:** Status changes must be confirmed or tied to a trusted event.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### SOC-007 — Case conference notes
 
@@ -12982,8 +11410,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### SOC-008 — Child protection concern record
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -12999,8 +11425,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### SOC-009 — Adult safeguarding concern record
 
@@ -13018,8 +11442,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### SOC-010 — Disability support intake
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -13035,8 +11457,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### SOC-011 — Assistive device needs assessment
 
@@ -13054,8 +11474,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### SOC-012 — Assistive device issue and return
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -13071,8 +11489,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### SOC-013 — Older person welfare visit
 
@@ -13090,8 +11506,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### SOC-014 — Caregiver support assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -13107,8 +11521,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### SOC-015 — Family support agreement
 
@@ -13126,8 +11538,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### SOC-016 — Youth mentoring enrollment
 
 **Type:** Profile / intake · **Shared pack:** PROFILE.
@@ -13143,8 +11553,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 **Review:** Collect only necessary personal data; obtain required permissions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### SOC-017 — Mentoring session log
 
@@ -13162,8 +11570,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### SOC-018 — Homelessness support intake
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -13179,8 +11585,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### SOC-019 — Shelter occupancy register
 
@@ -13198,8 +11602,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### SOC-020 — Food assistance application
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -13215,8 +11617,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### SOC-021 — Emergency welfare assistance
 
@@ -13234,8 +11634,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### SOC-022 — Livelihood support assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -13251,8 +11649,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### SOC-023 — Community mediation intake
 
@@ -13270,8 +11666,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### SOC-024 — Community accessibility survey
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -13287,8 +11681,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### SOC-025 — Social program attendance
 
@@ -13306,8 +11698,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### SOC-026 — Service satisfaction feedback
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -13323,8 +11713,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### SOC-027 — Case progress review
 
@@ -13342,8 +11730,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### SOC-028 — Case closure summary
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -13359,8 +11745,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### SOC-029 — Volunteer welfare visit log
 
@@ -13378,8 +11762,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### SOC-030 — Safeguarding training record
 
 **Type:** Learning / competency record · **Shared pack:** LEARN.
@@ -13395,8 +11777,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 **Review:** Qualified assessor verifies competency; never invent credentials.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### SOC-031 — Social care incident report
 
@@ -13414,8 +11794,6 @@ Shared category context: service_organization_ref, case_ref, service_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### SOC-032 — Community support directory
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -13432,19 +11810,11 @@ Shared category context: service_organization_ref, case_ref, service_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 # 06 · Buildings land and infrastructure
-
-
 
 ## REA — Real estate property and valuation (35 templates)
 
-
-
 Shared category context: property_ref, site_ref, inspection_or_valuation_date.
-
-
 
 ### REA-001 — Property master record
 
@@ -13462,8 +11832,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### REA-002 — Property inspection appointment
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -13479,8 +11847,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### REA-003 — Building condition survey
 
@@ -13498,8 +11864,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
 
-
-
 ### REA-004 — Room-by-room inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -13515,8 +11879,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### REA-005 — Property valuation instruction
 
@@ -13534,8 +11896,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### REA-006 — Property valuation field capture
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS. **Detailed starter schema included.**
@@ -13551,8 +11911,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
-
-
 
 ### REA-007 — Comparable property evidence
 
@@ -13570,8 +11928,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### REA-008 — Rental market evidence collection
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -13587,8 +11943,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### REA-009 — Property valuation report draft
 
@@ -13606,8 +11960,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P0 · Foundation.
 
-
-
 ### REA-010 — Landlord property inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -13623,8 +11975,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### REA-011 — Tenant move-in inspection
 
@@ -13642,8 +11992,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### REA-012 — Tenant move-out inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -13659,8 +12007,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### REA-013 — Rental application intake
 
@@ -13678,8 +12024,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### REA-014 — Tenancy register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -13695,8 +12039,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### REA-015 — Rent collection log
 
@@ -13714,8 +12056,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### REA-016 — Rent arrears follow-up
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -13731,8 +12071,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### REA-017 — Property maintenance request
 
@@ -13750,8 +12088,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### REA-018 — Property service charge reconciliation
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -13767,8 +12103,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### REA-019 — Property viewing record
 
@@ -13786,8 +12120,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### REA-020 — Property listing intake
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -13803,8 +12135,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### REA-021 — Real estate agent mandate
 
@@ -13822,8 +12152,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### REA-022 — Property sale due diligence checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -13839,8 +12167,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### REA-023 — Lease expiry tracking
 
@@ -13858,8 +12184,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### REA-024 — Property insurance inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -13875,8 +12199,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### REA-025 — Building occupancy survey
 
@@ -13894,8 +12216,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### REA-026 — Commercial space measurement
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -13911,8 +12231,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### REA-027 — Property energy performance survey
 
@@ -13930,8 +12248,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### REA-028 — Property accessibility audit
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -13947,8 +12263,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### REA-029 — Building defect photographic schedule
 
@@ -13966,8 +12280,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### REA-030 — Property handover pack
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -13983,8 +12295,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### REA-031 — Homeowners association meeting record
 
@@ -14002,8 +12312,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### REA-032 — Property sinking fund plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -14019,8 +12327,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### REA-033 — Vacant property security inspection
 
@@ -14038,8 +12344,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### REA-034 — Property boundary concern record
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -14055,8 +12359,6 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### REA-035 — Real estate portfolio review
 
@@ -14074,15 +12376,9 @@ Shared category context: property_ref, site_ref, inspection_or_valuation_date.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ## CON — Construction and engineering projects (38 templates)
 
-
-
 Shared category context: project_ref, site_ref, work_package_ref.
-
-
 
 ### CON-001 — Construction site establishment checklist
 
@@ -14100,8 +12396,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-002 — Construction daily site diary
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -14117,8 +12411,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-003 — Site progress photograph record
 
@@ -14136,8 +12428,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-004 — Construction site instruction
 
 **Type:** Communication draft · **Shared pack:** COMM.
@@ -14153,8 +12443,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Human approves content and recipients before any sending action.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-005 — Request for information
 
@@ -14172,8 +12460,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-006 — Drawing register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -14189,8 +12475,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-007 — Drawing revision comparison
 
@@ -14208,8 +12492,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-008 — Material submittal request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -14225,8 +12507,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-009 — Material delivery inspection
 
@@ -14244,8 +12524,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-010 — Concrete pour checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -14261,8 +12539,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-011 — Concrete test sample record
 
@@ -14280,8 +12556,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-012 — Reinforcement inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -14297,8 +12571,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-013 — Formwork inspection
 
@@ -14316,8 +12588,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-014 — Excavation inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -14333,8 +12603,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-015 — Earthworks quantity survey
 
@@ -14352,8 +12620,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-016 — Masonry workmanship inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -14369,8 +12635,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-017 — Roof installation inspection
 
@@ -14388,8 +12652,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-018 — Waterproofing inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -14405,8 +12667,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-019 — Electrical installation inspection
 
@@ -14424,8 +12684,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-020 — Plumbing installation inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -14441,8 +12699,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-021 — HVAC commissioning record
 
@@ -14460,8 +12716,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-022 — Construction quality nonconformance
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -14477,8 +12731,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-023 — Site corrective action tracker
 
@@ -14496,8 +12748,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-024 — Construction variation request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -14513,8 +12763,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-025 — Bill of quantities capture
 
@@ -14532,8 +12780,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-026 — Interim payment measurement
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -14549,8 +12795,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-027 — Contractor payment certificate draft
 
@@ -14568,8 +12812,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-028 — Construction labor attendance
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -14585,8 +12827,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-029 — Subcontractor work allocation
 
@@ -14604,8 +12844,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-030 — Construction equipment utilization
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -14621,8 +12859,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-031 — Construction waste tracking
 
@@ -14640,8 +12876,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-032 — Site safety induction record
 
 **Type:** Learning / competency record · **Shared pack:** LEARN.
@@ -14657,8 +12891,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Qualified assessor verifies competency; never invent credentials.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-033 — Practical completion inspection
 
@@ -14676,8 +12908,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-034 — Snag or punch list
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -14693,8 +12923,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-035 — Defects liability follow-up
 
@@ -14712,8 +12940,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-036 — As-built information capture
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -14729,8 +12955,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CON-037 — Construction handover dossier
 
@@ -14748,8 +12972,6 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CON-038 — Construction project completion report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -14766,15 +12988,9 @@ Shared category context: project_ref, site_ref, work_package_ref.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ## CIV — Civil infrastructure and public works (32 templates)
 
-
-
 Shared category context: infrastructure_ref, network_or_corridor_ref, inspection_date.
-
-
 
 ### CIV-001 — Road asset inventory
 
@@ -14792,8 +13008,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CIV-002 — Road condition survey
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -14809,8 +13023,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CIV-003 — Pothole observation
 
@@ -14828,8 +13040,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CIV-004 — Road maintenance work order
 
 **Type:** Maintenance workflow · **Shared pack:** MAINT.
@@ -14845,8 +13055,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 **Review:** Qualified technician approves work and return to service.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CIV-005 — Bridge inventory
 
@@ -14864,8 +13072,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CIV-006 — Bridge visual inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -14881,8 +13087,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CIV-007 — Culvert condition inspection
 
@@ -14900,8 +13104,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CIV-008 — Drainage channel survey
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -14917,8 +13119,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CIV-009 — Streetlight inventory
 
@@ -14936,8 +13136,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CIV-010 — Streetlight outage report
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -14953,8 +13151,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CIV-011 — Traffic sign inventory
 
@@ -14972,8 +13168,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CIV-012 — Traffic signal inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -14989,8 +13183,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CIV-013 — Sidewalk accessibility survey
 
@@ -15008,8 +13200,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CIV-014 — Road traffic count
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -15025,8 +13215,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CIV-015 — Parking utilization survey
 
@@ -15044,8 +13232,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CIV-016 — Public space condition assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -15061,8 +13247,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CIV-017 — Playground equipment inspection
 
@@ -15080,8 +13264,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CIV-018 — Retaining wall inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -15097,8 +13279,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CIV-019 — Slope condition observation
 
@@ -15116,8 +13296,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CIV-020 — Tunnel maintenance inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -15133,8 +13311,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CIV-021 — Urban road safety audit evidence
 
@@ -15152,8 +13328,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CIV-022 — Public works service request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -15169,8 +13343,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CIV-023 — Infrastructure project prioritization
 
@@ -15188,8 +13360,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CIV-024 — Infrastructure lifecycle plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -15205,8 +13375,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CIV-025 — Road works progress measurement
 
@@ -15224,8 +13392,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CIV-026 — Public works contractor inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -15241,8 +13407,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CIV-027 — Stormwater outfall inspection
 
@@ -15260,8 +13424,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CIV-028 — Public toilet facility inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -15277,8 +13439,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CIV-029 — Road reserve encroachment evidence
 
@@ -15296,8 +13456,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CIV-030 — Utility crossing record
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -15313,8 +13471,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
-
-
 
 ### CIV-031 — Footbridge accessibility check
 
@@ -15332,8 +13488,6 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ### CIV-032 — Public infrastructure service report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -15350,15 +13504,9 @@ Shared category context: infrastructure_ref, network_or_corridor_ref, inspection
 
 **Default privacy:** Internal · **Rollout:** P1 · Expansion.
 
-
-
 ## GIS — Land surveying mapping and planning (32 templates)
 
-
-
 Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_reference_system.
-
-
 
 ### GIS-001 — Land parcel field record
 
@@ -15376,8 +13524,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GIS-002 — Boundary monument inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -15393,8 +13539,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GIS-003 — Boundary verification visit
 
@@ -15412,8 +13556,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GIS-004 — GNSS survey point capture
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -15429,8 +13571,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GIS-005 — Survey control network record
 
@@ -15448,8 +13588,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GIS-006 — Topographic feature survey
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -15465,8 +13603,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GIS-007 — Land use observation
 
@@ -15484,8 +13620,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GIS-008 — Land cover classification review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -15501,8 +13635,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GIS-009 — Property address verification
 
@@ -15520,8 +13652,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GIS-010 — Building footprint capture
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -15537,8 +13667,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GIS-011 — Utility asset mapping
 
@@ -15556,8 +13684,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GIS-012 — Road corridor mapping
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -15573,8 +13699,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GIS-013 — Right-of-way survey evidence
 
@@ -15592,8 +13716,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GIS-014 — Planning application intake
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -15609,8 +13731,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GIS-015 — Development control inspection
 
@@ -15628,8 +13748,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GIS-016 — Zoning evidence review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -15645,8 +13763,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GIS-017 — Informal settlement survey
 
@@ -15664,8 +13780,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GIS-018 — Land dispute evidence register
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -15681,8 +13795,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GIS-019 — Cadastral document digitization
 
@@ -15700,8 +13812,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GIS-020 — Land acquisition needs assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -15717,8 +13827,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GIS-021 — Resettlement survey administration
 
@@ -15736,8 +13844,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GIS-022 — Compensation evidence schedule
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -15753,8 +13859,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GIS-023 — Drone mapping mission record
 
@@ -15772,8 +13876,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GIS-024 — Georeferenced photo register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -15789,8 +13891,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GIS-025 — Map feature correction request
 
@@ -15808,8 +13908,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GIS-026 — Spatial data quality review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -15825,8 +13923,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GIS-027 — GIS layer metadata
 
@@ -15844,8 +13940,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GIS-028 — Environmental buffer survey
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -15861,8 +13955,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GIS-029 — Urban service accessibility mapping
 
@@ -15880,8 +13972,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GIS-030 — Community participatory mapping
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -15897,8 +13987,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### GIS-031 — Survey equipment calibration
 
@@ -15916,8 +14004,6 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### GIS-032 — Land survey report draft
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -15934,19 +14020,11 @@ Shared category context: survey_project_ref, parcel_or_feature_ref, coordinate_r
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 # 07 · Agriculture and natural resources
-
-
 
 ## AGR — Crops farms and agribusiness (38 templates)
 
-
-
 Shared category context: farm_ref, plot_ref, production_season.
-
-
 
 ### AGR-001 — Farmer registration
 
@@ -15964,8 +14042,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-002 — Farm profile
 
 **Type:** Profile / intake · **Shared pack:** PROFILE.
@@ -15981,8 +14057,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Collect only necessary personal data; obtain required permissions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-003 — Crop plot registration
 
@@ -16000,8 +14074,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-004 — Soil sample collection
 
 **Type:** Sample / chain-of-custody · **Shared pack:** SAMPLE.
@@ -16017,8 +14089,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Qualified sampling protocols and custody confirmation required.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-005 — Soil test result intake
 
@@ -16036,8 +14106,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-006 — Land preparation log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -16053,8 +14121,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-007 — Planting record
 
@@ -16072,8 +14138,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-008 — Seed lot inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -16089,8 +14153,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-009 — Seed distribution register
 
@@ -16108,8 +14170,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-010 — Crop input application log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -16125,8 +14185,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-011 — Fertilizer stock and use
 
@@ -16144,8 +14202,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-012 — Irrigation event log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -16161,8 +14217,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-013 — Crop scouting observation
 
@@ -16180,8 +14234,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-014 — Pest observation record
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -16197,8 +14249,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-015 — Crop disease observation
 
@@ -16216,8 +14266,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-016 — Weed survey
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -16233,8 +14281,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-017 — Agronomy advisory visit
 
@@ -16252,8 +14298,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-018 — Crop growth measurement
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -16269,8 +14313,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-019 — Harvest readiness assessment
 
@@ -16288,8 +14330,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-020 — Harvest collection record
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -16305,8 +14345,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-021 — Yield estimation worksheet
 
@@ -16324,8 +14362,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-022 — Post-harvest loss assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -16341,8 +14377,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-023 — Farm storage inspection
 
@@ -16360,8 +14394,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-024 — Produce grading record
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -16377,8 +14409,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-025 — Crop sale record
 
@@ -16396,8 +14426,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-026 — Farm expense log
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -16413,8 +14441,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-027 — Farm profitability worksheet
 
@@ -16432,8 +14458,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-028 — Farm labor task sheet
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -16449,8 +14473,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-029 — Farmer training attendance
 
@@ -16468,8 +14490,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-030 — Cooperative member production plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -16485,8 +14505,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-031 — Contract farming agreement brief
 
@@ -16504,8 +14522,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-032 — Organic production evidence
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -16521,8 +14537,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-033 — Greenhouse climate log
 
@@ -16540,8 +14554,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-034 — Greenhouse infrastructure inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -16557,8 +14569,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-035 — Agricultural machinery hire record
 
@@ -16576,8 +14586,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-036 — Crop insurance damage evidence
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -16593,8 +14601,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AGR-037 — Agricultural extension impact survey
 
@@ -16612,8 +14618,6 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AGR-038 — Farm seasonal planning
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -16630,15 +14634,9 @@ Shared category context: farm_ref, plot_ref, production_season.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ## LIV — Livestock veterinary and animal care (34 templates)
 
-
-
 Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_period.
-
-
 
 ### LIV-001 — Livestock owner registration
 
@@ -16656,8 +14654,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LIV-002 — Animal identification record
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -16673,8 +14669,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LIV-003 — Herd inventory
 
@@ -16692,8 +14686,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LIV-004 — Animal birth record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -16709,8 +14701,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LIV-005 — Animal movement permit evidence
 
@@ -16728,8 +14718,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LIV-006 — Animal purchase record
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -16745,8 +14733,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LIV-007 — Animal sale record
 
@@ -16764,8 +14750,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LIV-008 — Veterinary visit record
 
 **Type:** Visit / field workflow · **Shared pack:** VISIT.
@@ -16781,8 +14765,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 **Review:** Field officer verifies observations and any attributed statements.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LIV-009 — Animal health observation
 
@@ -16800,8 +14782,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LIV-010 — Veterinary treatment documentation
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -16817,8 +14797,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LIV-011 — Animal vaccination documentation
 
@@ -16836,8 +14814,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LIV-012 — Animal breeding record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -16853,8 +14829,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LIV-013 — Pregnancy check record
 
@@ -16872,8 +14846,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LIV-014 — Animal growth monitoring
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -16889,8 +14861,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LIV-015 — Dairy milk collection
 
@@ -16908,8 +14878,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LIV-016 — Milk quality sample record
 
 **Type:** Sample / chain-of-custody · **Shared pack:** SAMPLE.
@@ -16925,8 +14893,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 **Review:** Qualified sampling protocols and custody confirmation required.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LIV-017 — Feed inventory
 
@@ -16944,8 +14910,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LIV-018 — Feed distribution log
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -16961,8 +14925,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LIV-019 — Pasture condition survey
 
@@ -16980,8 +14942,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LIV-020 — Grazing rotation plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -16997,8 +14957,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LIV-021 — Poultry flock record
 
@@ -17016,8 +14974,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LIV-022 — Poultry egg collection
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -17033,8 +14989,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LIV-023 — Poultry mortality record
 
@@ -17052,8 +15006,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LIV-024 — Animal housing inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -17069,8 +15021,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LIV-025 — Animal welfare assessment
 
@@ -17088,8 +15038,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LIV-026 — Animal disease reporting intake
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -17105,8 +15053,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LIV-027 — Livestock farm biosecurity checklist
 
@@ -17124,8 +15070,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LIV-028 — Pet clinic registration
 
 **Type:** Profile / intake · **Shared pack:** PROFILE.
@@ -17141,8 +15085,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 **Review:** Collect only necessary personal data; obtain required permissions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LIV-029 — Pet boarding intake
 
@@ -17160,8 +15102,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LIV-030 — Animal shelter intake
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -17177,8 +15117,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LIV-031 — Animal adoption application
 
@@ -17196,8 +15134,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LIV-032 — Animal transport welfare check
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -17213,8 +15149,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LIV-033 — Livestock production summary
 
@@ -17232,8 +15166,6 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LIV-034 — Veterinary medicine accountability
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -17250,15 +15182,9 @@ Shared category context: farm_or_care_site_ref, animal_or_herd_ref, production_p
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ## AQU — Fisheries aquaculture and beekeeping (30 templates)
 
-
-
 Shared category context: enterprise_ref, production_site_ref, production_cycle.
-
-
 
 ### AQU-001 — Fish farm registration
 
@@ -17276,8 +15202,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AQU-002 — Pond inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -17293,8 +15217,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AQU-003 — Aquaculture stocking record
 
@@ -17312,8 +15234,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AQU-004 — Fingerling supplier verification
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -17329,8 +15249,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AQU-005 — Pond water quality log
 
@@ -17348,8 +15266,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AQU-006 — Fish feeding log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -17365,8 +15281,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AQU-007 — Fish growth sampling
 
@@ -17384,8 +15298,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AQU-008 — Fish mortality observation
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -17401,8 +15313,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AQU-009 — Aquaculture health visit
 
@@ -17420,8 +15330,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AQU-010 — Pond maintenance record
 
 **Type:** Maintenance workflow · **Shared pack:** MAINT.
@@ -17437,8 +15345,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 **Review:** Qualified technician approves work and return to service.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AQU-011 — Fish harvest record
 
@@ -17456,8 +15362,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AQU-012 — Fish cold chain dispatch
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -17473,8 +15377,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AQU-013 — Aquaculture production cost review
 
@@ -17492,8 +15394,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AQU-014 — Fishing vessel registration evidence
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -17509,8 +15409,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AQU-015 — Fishing trip log
 
@@ -17528,8 +15426,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AQU-016 — Fish landing record
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -17545,8 +15441,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AQU-017 — Catch traceability record
 
@@ -17564,8 +15458,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AQU-018 — Fishing gear inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -17581,8 +15473,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AQU-019 — Fish landing site inspection
 
@@ -17600,8 +15490,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AQU-020 — Fisheries compliance observation
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -17617,8 +15505,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AQU-021 — Marine aquaculture cage inspection
 
@@ -17636,8 +15522,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AQU-022 — Apiary registration
 
 **Type:** Profile / intake · **Shared pack:** PROFILE.
@@ -17653,8 +15537,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 **Review:** Collect only necessary personal data; obtain required permissions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AQU-023 — Beehive inventory
 
@@ -17672,8 +15554,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AQU-024 — Beehive inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -17689,8 +15569,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AQU-025 — Honey harvest record
 
@@ -17708,8 +15586,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AQU-026 — Honey processing batch
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -17725,8 +15601,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AQU-027 — Apiary health observation
 
@@ -17744,8 +15618,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AQU-028 — Beekeeping training visit
 
 **Type:** Learning / competency record · **Shared pack:** LEARN.
@@ -17761,8 +15633,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 **Review:** Qualified assessor verifies competency; never invent credentials.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### AQU-029 — Aquaculture environmental monitoring
 
@@ -17780,8 +15650,6 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### AQU-030 — Fisheries market survey
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -17798,15 +15666,9 @@ Shared category context: enterprise_ref, production_site_ref, production_cycle.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ## FOR — Forestry conservation and biodiversity (30 templates)
 
-
-
 Shared category context: landscape_ref, management_unit_ref, survey_period.
-
-
 
 ### FOR-001 — Forest compartment register
 
@@ -17824,8 +15686,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOR-002 — Tree inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -17841,8 +15701,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOR-003 — Tree measurement record
 
@@ -17860,8 +15718,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOR-004 — Forest condition assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -17877,8 +15733,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOR-005 — Forest regeneration survey
 
@@ -17896,8 +15750,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOR-006 — Tree nursery inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -17913,8 +15765,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOR-007 — Seedling production log
 
@@ -17932,8 +15782,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOR-008 — Tree planting event record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -17949,8 +15797,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOR-009 — Tree survival monitoring
 
@@ -17968,8 +15814,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOR-010 — Forest harvesting authorization evidence
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -17985,8 +15829,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOR-011 — Timber log traceability
 
@@ -18004,8 +15846,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOR-012 — Timber volume measurement
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -18021,8 +15861,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOR-013 — Forest patrol observation
 
@@ -18040,8 +15878,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOR-014 — Forest fire observation
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -18057,8 +15893,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOR-015 — Forest pest observation
 
@@ -18076,8 +15910,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOR-016 — Protected area facility inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -18093,8 +15925,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOR-017 — Biodiversity species observation
 
@@ -18112,8 +15942,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOR-018 — Wildlife camera trap register
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -18129,8 +15957,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOR-019 — Camera trap media review
 
@@ -18148,8 +15974,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOR-020 — Wildlife population survey
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -18165,8 +15989,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOR-021 — Habitat condition survey
 
@@ -18184,8 +16006,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOR-022 — Invasive species observation
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -18201,8 +16021,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOR-023 — Human wildlife conflict intake
 
@@ -18220,8 +16038,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOR-024 — Wildlife rehabilitation record
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -18237,8 +16053,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOR-025 — Conservation community consultation
 
@@ -18256,8 +16070,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOR-026 — Forest carbon measurement inputs
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -18273,8 +16085,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOR-027 — Restoration site baseline
 
@@ -18292,8 +16102,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOR-028 — Restoration progress monitoring
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -18309,8 +16117,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOR-029 — Conservation grant activity report
 
@@ -18328,8 +16134,6 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOR-030 — Sensitive species location access review
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -18346,19 +16150,11 @@ Shared category context: landscape_ref, management_unit_ref, survey_period.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 # 08 · Production and industry
-
-
 
 ## MFG — Manufacturing production and quality (34 templates)
 
-
-
 Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
-
-
 
 ### MFG-001 — Manufactured product master
 
@@ -18376,8 +16172,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### MFG-002 — Bill of materials
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -18393,8 +16187,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### MFG-003 — Manufacturing route sheet
 
@@ -18412,8 +16204,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### MFG-004 — Production order
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -18429,8 +16219,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### MFG-005 — Production shift report
 
@@ -18448,8 +16236,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### MFG-006 — Operator production log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -18465,8 +16251,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### MFG-007 — Machine setup verification
 
@@ -18484,8 +16268,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### MFG-008 — First article inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -18501,8 +16283,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### MFG-009 — In-process quality check
 
@@ -18520,8 +16300,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### MFG-010 — Finished goods inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -18537,8 +16315,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### MFG-011 — Dimensional inspection sheet
 
@@ -18556,8 +16332,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### MFG-012 — Process parameter log
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -18573,8 +16347,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### MFG-013 — Manufacturing defect report
 
@@ -18592,8 +16364,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### MFG-014 — Nonconforming material disposition
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -18609,8 +16379,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### MFG-015 — Scrap tracking
 
@@ -18628,8 +16396,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### MFG-016 — Rework instruction request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -18645,8 +16411,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### MFG-017 — Production downtime report
 
@@ -18664,8 +16428,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### MFG-018 — Production changeover log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -18681,8 +16443,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### MFG-019 — Tooling inventory
 
@@ -18700,8 +16460,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### MFG-020 — Tooling life monitoring
 
 **Type:** Tracker / follow-up · **Shared pack:** TRACK.
@@ -18717,8 +16475,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 **Review:** Status changes must be confirmed or tied to a trusted event.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### MFG-021 — Machine lubrication record
 
@@ -18736,8 +16492,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### MFG-022 — Factory preventive maintenance plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -18753,8 +16507,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### MFG-023 — Production capacity assessment
 
@@ -18772,8 +16524,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### MFG-024 — Overall equipment effectiveness inputs
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -18789,8 +16539,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### MFG-025 — Work instruction drafting
 
@@ -18808,8 +16556,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### MFG-026 — Engineering change request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -18825,8 +16571,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### MFG-027 — Product traceability genealogy
 
@@ -18844,8 +16588,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### MFG-028 — Supplier material certificate review
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -18861,8 +16603,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### MFG-029 — Factory energy consumption log
 
@@ -18880,8 +16620,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### MFG-030 — Manufacturing safety observation
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -18897,8 +16635,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### MFG-031 — Packaging line clearance
 
@@ -18916,8 +16652,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### MFG-032 — Production planning board
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -18933,8 +16667,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### MFG-033 — Customer quality complaint review
 
@@ -18952,8 +16684,6 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### MFG-034 — Factory audit report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -18970,15 +16700,9 @@ Shared category context: plant_ref, production_line_ref, product_or_batch_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ## FOD — Food beverage and processing (32 templates)
 
-
-
 Shared category context: food_business_ref, production_site_ref, batch_ref.
-
-
 
 ### FOD-001 — Food product specification
 
@@ -18996,8 +16720,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOD-002 — Ingredient supplier approval
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -19013,8 +16735,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOD-003 — Raw food delivery inspection
 
@@ -19032,8 +16752,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOD-004 — Ingredient batch traceability
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -19049,8 +16767,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOD-005 — Food recipe version record
 
@@ -19068,8 +16784,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOD-006 — Food production batch sheet
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -19085,8 +16799,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOD-007 — Food processing temperature log
 
@@ -19104,8 +16816,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOD-008 — Food process timing log
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -19121,8 +16831,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOD-009 — Food safety control check
 
@@ -19140,8 +16848,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOD-010 — Food allergen control checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -19157,8 +16863,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOD-011 — Food allergen label review
 
@@ -19176,8 +16880,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOD-012 — Food hygiene inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -19193,8 +16895,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOD-013 — Food contact surface cleaning
 
@@ -19212,8 +16912,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOD-014 — Food sanitation verification
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -19229,8 +16927,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOD-015 — Food pest control observation
 
@@ -19248,8 +16944,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOD-016 — Food cold storage monitoring
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -19265,8 +16959,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOD-017 — Food shelf-life evidence register
 
@@ -19284,8 +16976,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOD-018 — Food sensory evaluation
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -19301,8 +16991,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOD-019 — Food laboratory sample request
 
@@ -19320,8 +17008,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOD-020 — Product recall simulation
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -19337,8 +17023,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOD-021 — Food recall action log
 
@@ -19356,8 +17040,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOD-022 — Food customer complaint
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -19373,8 +17055,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOD-023 — Food packaging inspection
 
@@ -19392,8 +17072,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOD-024 — Beverage bottling batch record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -19409,8 +17087,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOD-025 — Bakery production sheet
 
@@ -19428,8 +17104,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOD-026 — Dairy processing batch record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -19445,8 +17119,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOD-027 — Meat processing traceability
 
@@ -19464,8 +17136,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOD-028 — Food delivery temperature check
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -19481,8 +17151,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOD-029 — Food waste measurement
 
@@ -19500,8 +17168,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOD-030 — Food donation handover
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -19517,8 +17183,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FOD-031 — Food certification evidence pack
 
@@ -19536,8 +17200,6 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FOD-032 — Food factory quality summary
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -19554,15 +17216,9 @@ Shared category context: food_business_ref, production_site_ref, batch_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ## TEX — Apparel textiles crafts and materials (30 templates)
 
-
-
 Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
-
-
 
 ### TEX-001 — Garment style specification
 
@@ -19580,8 +17236,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### TEX-002 — Garment customer measurement
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -19597,8 +17251,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### TEX-003 — Tailoring order intake
 
@@ -19616,8 +17268,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### TEX-004 — Fabric roll inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -19633,8 +17283,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### TEX-005 — Fabric incoming inspection
 
@@ -19652,8 +17300,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### TEX-006 — Fabric cutting plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -19669,8 +17315,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### TEX-007 — Cutting batch record
 
@@ -19688,8 +17332,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### TEX-008 — Sewing operation record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -19705,8 +17347,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### TEX-009 — Garment in-line inspection
 
@@ -19724,8 +17364,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### TEX-010 — Garment final inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -19741,8 +17379,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### TEX-011 — Apparel finishing checklist
 
@@ -19760,8 +17396,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### TEX-012 — Textile dye batch log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -19777,8 +17411,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### TEX-013 — Fabric color approval
 
@@ -19796,8 +17428,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### TEX-014 — Fabric shrinkage test record
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -19813,8 +17443,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### TEX-015 — Textile wash test record
 
@@ -19832,8 +17460,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### TEX-016 — Garment fit review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -19849,8 +17475,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### TEX-017 — Apparel sample approval
 
@@ -19868,8 +17492,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### TEX-018 — Apparel order costing
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -19885,8 +17507,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### TEX-019 — Artisan product catalogue
 
@@ -19904,8 +17524,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### TEX-020 — Craft commission brief
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -19921,8 +17539,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### TEX-021 — Jewelry material intake
 
@@ -19940,8 +17556,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### TEX-022 — Jewelry repair intake
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -19957,8 +17571,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### TEX-023 — Footwear production specification
 
@@ -19976,8 +17588,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### TEX-024 — Leather quality inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -19993,8 +17603,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### TEX-025 — Furniture fabrication order
 
@@ -20012,8 +17620,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### TEX-026 — Woodworking quality check
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -20029,8 +17635,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### TEX-027 — Ceramics production batch
 
@@ -20048,8 +17652,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### TEX-028 — Craft market sales record
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -20065,8 +17667,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### TEX-029 — Fashion collection planning
 
@@ -20084,8 +17684,6 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### TEX-030 — Textile waste recovery log
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -20102,15 +17700,9 @@ Shared category context: workshop_or_factory_ref, order_ref, product_style_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ## MIN — Mining quarrying and geology (32 templates)
 
-
-
 Shared category context: site_ref, operation_ref, geological_or_material_ref.
-
-
 
 ### MIN-001 — Mine site asset register
 
@@ -20128,8 +17720,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MIN-002 — Geological outcrop observation
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -20145,8 +17735,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MIN-003 — Geological sample collection
 
@@ -20164,8 +17752,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MIN-004 — Drill core logging
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -20181,8 +17767,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MIN-005 — Core sample custody
 
@@ -20200,8 +17784,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MIN-006 — Assay result intake
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -20217,8 +17799,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MIN-007 — Mineral resource evidence index
 
@@ -20236,8 +17816,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MIN-008 — Quarry production log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -20253,8 +17831,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MIN-009 — Excavation progress survey
 
@@ -20272,8 +17848,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MIN-010 — Stockpile volume survey
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -20289,8 +17863,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MIN-011 — Material haulage ticket
 
@@ -20308,8 +17880,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MIN-012 — Weighbridge ticket capture
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -20325,8 +17895,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MIN-013 — Mining equipment pre-start check
 
@@ -20344,8 +17912,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MIN-014 — Mine plant maintenance work order
 
 **Type:** Maintenance workflow · **Shared pack:** MAINT.
@@ -20361,8 +17927,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 **Review:** Qualified technician approves work and return to service.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MIN-015 — Mine site safety observation
 
@@ -20380,8 +17944,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MIN-016 — Mine worker training record
 
 **Type:** Learning / competency record · **Shared pack:** LEARN.
@@ -20397,8 +17959,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 **Review:** Qualified assessor verifies competency; never invent credentials.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MIN-017 — Ground condition observation
 
@@ -20416,8 +17976,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MIN-018 — Groundwater monitoring borehole
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -20433,8 +17991,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MIN-019 — Mine water quality sample
 
@@ -20452,8 +18008,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MIN-020 — Dust exposure measurement record
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -20469,8 +18023,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MIN-021 — Noise monitoring at mine site
 
@@ -20488,8 +18040,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MIN-022 — Tailings facility inspection evidence
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -20505,8 +18055,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MIN-023 — Mine rehabilitation plan
 
@@ -20524,8 +18072,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MIN-024 — Mine rehabilitation monitoring
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -20541,8 +18087,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MIN-025 — Mining permit evidence register
 
@@ -20560,8 +18104,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MIN-026 — Community grievance intake for extractives
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -20577,8 +18119,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MIN-027 — Mineral shipment traceability
 
@@ -20596,8 +18136,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MIN-028 — Mining contractor performance review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -20613,8 +18151,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MIN-029 — Mineral royalty supporting schedule
 
@@ -20632,8 +18168,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MIN-030 — Mine closure evidence pack
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -20649,8 +18183,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MIN-031 — Geotechnical test request
 
@@ -20668,8 +18200,6 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MIN-032 — Quarry customer delivery report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -20686,19 +18216,11 @@ Shared category context: site_ref, operation_ref, geological_or_material_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 # 09 · Energy utilities and environment
-
-
 
 ## ENE — Power renewable energy and electrical (34 templates)
 
-
-
 Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
-
-
 
 ### ENE-001 — Power generation asset inventory
 
@@ -20716,8 +18238,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### ENE-002 — Solar site feasibility survey
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -20733,8 +18253,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### ENE-003 — Solar panel inventory
 
@@ -20752,8 +18270,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### ENE-004 — Solar installation inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -20769,8 +18285,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### ENE-005 — Solar system commissioning
 
@@ -20788,8 +18302,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### ENE-006 — Solar generation log
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -20805,8 +18317,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### ENE-007 — Solar panel cleaning record
 
@@ -20824,8 +18334,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### ENE-008 — Inverter fault report
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -20841,8 +18349,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### ENE-009 — Battery storage inventory
 
@@ -20860,8 +18366,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### ENE-010 — Battery system inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -20877,8 +18381,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### ENE-011 — Electrical load survey
 
@@ -20896,8 +18398,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### ENE-012 — Electricity meter reading
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -20913,8 +18413,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### ENE-013 — Electricity connection request
 
@@ -20932,8 +18430,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### ENE-014 — Electrical service outage
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -20949,8 +18445,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### ENE-015 — Power quality measurement
 
@@ -20968,8 +18462,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### ENE-016 — Transformer condition inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -20985,8 +18477,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### ENE-017 — Distribution pole inspection
 
@@ -21004,8 +18494,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### ENE-018 — Power line route inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -21021,8 +18509,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### ENE-019 — Substation maintenance record
 
@@ -21040,8 +18526,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### ENE-020 — Generator fuel usage log
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -21057,8 +18541,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### ENE-021 — Generator load test evidence
 
@@ -21076,8 +18558,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### ENE-022 — Wind turbine inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -21093,8 +18573,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### ENE-023 — Wind turbine maintenance
 
@@ -21112,8 +18590,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### ENE-024 — Hydropower station operations log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -21129,8 +18605,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### ENE-025 — Mini-grid customer registration
 
@@ -21148,8 +18622,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### ENE-026 — Mini-grid performance review
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -21165,8 +18637,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### ENE-027 — Energy audit field worksheet
 
@@ -21184,8 +18654,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### ENE-028 — Energy efficiency project evidence
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -21201,8 +18669,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### ENE-029 — EV charging station inventory
 
@@ -21220,8 +18686,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### ENE-030 — EV charging session reconciliation
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -21237,8 +18701,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### ENE-031 — Renewable project land access record
 
@@ -21256,8 +18718,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### ENE-032 — Energy project commissioning dossier
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -21273,8 +18733,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### ENE-033 — Energy service customer complaint
 
@@ -21292,8 +18750,6 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### ENE-034 — Power equipment nameplate OCR
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -21310,15 +18766,9 @@ Shared category context: operator_ref, energy_site_ref, asset_or_meter_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ## OIL — Oil gas and fuel operations (30 templates)
 
-
-
 Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
-
-
 
 ### OIL-001 — Fuel storage tank register
 
@@ -21336,8 +18786,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### OIL-002 — Fuel tank level reading
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -21353,8 +18801,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### OIL-003 — Fuel delivery receipt
 
@@ -21372,8 +18818,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### OIL-004 — Fuel dispatch record
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -21389,8 +18833,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### OIL-005 — Fuel inventory reconciliation
 
@@ -21408,8 +18850,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### OIL-006 — Fuel sample custody record
 
 **Type:** Sample / chain-of-custody · **Shared pack:** SAMPLE.
@@ -21425,8 +18865,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 **Review:** Qualified sampling protocols and custody confirmation required.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### OIL-007 — Fuel quality report intake
 
@@ -21444,8 +18882,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### OIL-008 — Retail fuel pump inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -21461,8 +18897,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### OIL-009 — Fuel dispenser calibration evidence
 
@@ -21480,8 +18914,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### OIL-010 — Pipeline asset register
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -21497,8 +18929,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### OIL-011 — Pipeline visual patrol observation
 
@@ -21516,8 +18946,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### OIL-012 — Pipeline maintenance work record
 
 **Type:** Maintenance workflow · **Shared pack:** MAINT.
@@ -21533,8 +18961,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 **Review:** Qualified technician approves work and return to service.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### OIL-013 — Gas cylinder inventory
 
@@ -21552,8 +18978,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### OIL-014 — Gas cylinder issue and return
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -21569,8 +18993,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### OIL-015 — Gas cylinder condition check
 
@@ -21588,8 +19010,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### OIL-016 — Fuel terminal vehicle entry
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -21605,8 +19025,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### OIL-017 — Fuel tanker inspection
 
@@ -21624,8 +19042,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### OIL-018 — Fuel spill incident report
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -21641,8 +19057,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### OIL-019 — Spill response equipment check
 
@@ -21660,8 +19074,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### OIL-020 — Fuel facility safety induction
 
 **Type:** Learning / competency record · **Shared pack:** LEARN.
@@ -21677,8 +19089,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 **Review:** Qualified assessor verifies competency; never invent credentials.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### OIL-021 — Process facility permit-to-work record
 
@@ -21696,8 +19106,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### OIL-022 — Gas detection instrument record
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -21713,8 +19121,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### OIL-023 — Gas detector verification log
 
@@ -21732,8 +19138,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### OIL-024 — Oilfield service visit report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -21749,8 +19153,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### OIL-025 — Well asset document register
 
@@ -21768,8 +19170,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### OIL-026 — Fuel facility emissions evidence
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -21785,8 +19185,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### OIL-027 — Fuel transport compliance evidence
 
@@ -21804,8 +19202,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### OIL-028 — Decommissioning documentation intake
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -21821,8 +19217,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### OIL-029 — Fuel customer account reconciliation
 
@@ -21840,8 +19234,6 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### OIL-030 — Fuel operations shift handover
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -21858,15 +19250,9 @@ Shared category context: operator_ref, facility_ref, asset_or_shipment_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ## WAT — Water sanitation and irrigation (34 templates)
 
-
-
 Shared category context: service_provider_ref, system_ref, site_or_sampling_point.
-
-
 
 ### WAT-001 — Water source inventory
 
@@ -21884,8 +19270,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WAT-002 — Borehole installation record
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -21901,8 +19285,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WAT-003 — Borehole condition inspection
 
@@ -21920,8 +19302,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WAT-004 — Water pump maintenance
 
 **Type:** Maintenance workflow · **Shared pack:** MAINT.
@@ -21937,8 +19317,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 **Review:** Qualified technician approves work and return to service.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WAT-005 — Water meter reading
 
@@ -21956,8 +19334,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WAT-006 — Water connection application
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -21973,8 +19349,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WAT-007 — Water leak observation
 
@@ -21992,8 +19366,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WAT-008 — Water leak repair job
 
 **Type:** Maintenance workflow · **Shared pack:** MAINT.
@@ -22009,8 +19381,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 **Review:** Qualified technician approves work and return to service.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WAT-009 — Water pressure measurement
 
@@ -22028,8 +19398,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WAT-010 — Water flow measurement
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -22045,8 +19413,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WAT-011 — Drinking water sample collection
 
@@ -22064,8 +19430,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WAT-012 — Water quality result review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -22081,8 +19445,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WAT-013 — Water treatment shift log
 
@@ -22100,8 +19462,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WAT-014 — Water treatment chemical stock
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -22117,8 +19477,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WAT-015 — Water distribution outage log
 
@@ -22136,8 +19494,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WAT-016 — Water storage tank inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -22153,8 +19509,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WAT-017 — Water tank cleaning record
 
@@ -22172,8 +19526,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WAT-018 — Standpipe service inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -22189,8 +19541,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WAT-019 — Community water committee record
 
@@ -22208,8 +19558,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WAT-020 — Community water fee collection
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -22225,8 +19573,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WAT-021 — Sanitation facility inventory
 
@@ -22244,8 +19590,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WAT-022 — Latrine condition survey
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -22261,8 +19605,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WAT-023 — Septic tank service record
 
@@ -22280,8 +19622,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WAT-024 — Sewer blockage report
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -22297,8 +19637,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WAT-025 — Sewer network inspection
 
@@ -22316,8 +19654,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WAT-026 — Wastewater sample record
 
 **Type:** Sample / chain-of-custody · **Shared pack:** SAMPLE.
@@ -22333,8 +19669,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 **Review:** Qualified sampling protocols and custody confirmation required.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WAT-027 — Wastewater treatment log
 
@@ -22352,8 +19686,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WAT-028 — Sludge disposal tracking
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -22369,8 +19701,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WAT-029 — Irrigation canal inspection
 
@@ -22388,8 +19718,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WAT-030 — Irrigation water allocation plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -22405,8 +19733,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WAT-031 — Rainwater harvesting inspection
 
@@ -22424,8 +19750,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WAT-032 — Water service satisfaction survey
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -22441,8 +19765,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WAT-033 — Water safety plan evidence
 
@@ -22460,8 +19782,6 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WAT-034 — Non-revenue water investigation
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -22478,15 +19798,9 @@ Shared category context: service_provider_ref, system_ref, site_or_sampling_poin
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ## WST — Waste recycling and circular economy (30 templates)
 
-
-
 Shared category context: operator_ref, service_area_ref, material_stream.
-
-
 
 ### WST-001 — Waste generator registration
 
@@ -22504,8 +19818,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WST-002 — Waste collection route plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -22521,8 +19833,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WST-003 — Waste collection completion
 
@@ -22540,8 +19850,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WST-004 — Waste container inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -22557,8 +19865,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WST-005 — Waste bin condition inspection
 
@@ -22576,8 +19882,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WST-006 — Waste segregation audit
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -22593,8 +19897,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WST-007 — Waste characterization study
 
@@ -22612,8 +19914,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WST-008 — Waste weighing ticket
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -22629,8 +19929,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WST-009 — Waste transfer station log
 
@@ -22648,8 +19946,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WST-010 — Recyclable materials purchase
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -22665,8 +19961,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WST-011 — Recycling sorting quality check
 
@@ -22684,8 +19978,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WST-012 — Material recovery production log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -22701,8 +19993,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WST-013 — Composting process log
 
@@ -22720,8 +20010,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WST-014 — Compost product quality sample
 
 **Type:** Sample / chain-of-custody · **Shared pack:** SAMPLE.
@@ -22737,8 +20025,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 **Review:** Qualified sampling protocols and custody confirmation required.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WST-015 — Landfill cell inspection
 
@@ -22756,8 +20042,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WST-016 — Landfill leachate sample
 
 **Type:** Sample / chain-of-custody · **Shared pack:** SAMPLE.
@@ -22773,8 +20057,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 **Review:** Qualified sampling protocols and custody confirmation required.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WST-017 — Hazardous waste manifest evidence
 
@@ -22792,8 +20074,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WST-018 — Electronic waste intake
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -22809,8 +20089,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WST-019 — Electronic device data erasure record
 
@@ -22828,8 +20106,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WST-020 — Battery recycling intake
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -22845,8 +20121,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WST-021 — Medical waste pickup record
 
@@ -22864,8 +20138,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WST-022 — Waste transport inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -22881,8 +20153,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WST-023 — Illegal dumping report
 
@@ -22900,8 +20170,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WST-024 — Community cleanup event record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -22917,8 +20185,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WST-025 — Reusable packaging circulation
 
@@ -22936,8 +20202,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WST-026 — Repair and reuse intake
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -22953,8 +20217,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WST-027 — Circular product design brief
 
@@ -22972,8 +20234,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WST-028 — Waste diversion calculation inputs
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -22989,8 +20249,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### WST-029 — Waste contractor performance
 
@@ -23008,8 +20266,6 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### WST-030 — Recycling impact report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -23026,19 +20282,11 @@ Shared category context: operator_ref, service_area_ref, material_stream.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 # 10 · Transport and supply chains
-
-
 
 ## FLT — Vehicles fleets and road transport (34 templates)
 
-
-
 Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
-
-
 
 ### FLT-001 — Vehicle master inventory
 
@@ -23056,8 +20304,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FLT-002 — Vehicle document register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -23073,8 +20319,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FLT-003 — Vehicle acquisition inspection
 
@@ -23092,8 +20336,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FLT-004 — Driver registration
 
 **Type:** Profile / intake · **Shared pack:** PROFILE.
@@ -23109,8 +20351,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 **Review:** Collect only necessary personal data; obtain required permissions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FLT-005 — Driver license verification
 
@@ -23128,8 +20368,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FLT-006 — Vehicle daily pre-trip inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -23145,8 +20383,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FLT-007 — Vehicle trip authorization
 
@@ -23164,8 +20400,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FLT-008 — Vehicle journey log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -23181,8 +20415,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FLT-009 — Vehicle mileage log
 
@@ -23200,8 +20432,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FLT-010 — Fleet fuel issue voucher
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -23217,8 +20447,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FLT-011 — Fleet fuel consumption review
 
@@ -23236,8 +20464,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FLT-012 — Vehicle maintenance request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -23253,8 +20479,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FLT-013 — Vehicle scheduled service
 
@@ -23272,8 +20496,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FLT-014 — Vehicle breakdown report
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -23289,8 +20511,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FLT-015 — Roadside assistance record
 
@@ -23308,8 +20528,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FLT-016 — Vehicle repair estimate
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -23325,8 +20543,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FLT-017 — Vehicle repair quality check
 
@@ -23344,8 +20560,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FLT-018 — Vehicle tire register
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -23361,8 +20575,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FLT-019 — Tire inspection and pressure log
 
@@ -23380,8 +20592,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FLT-020 — Vehicle battery replacement record
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -23397,8 +20607,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FLT-021 — Road traffic incident record
 
@@ -23416,8 +20624,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FLT-022 — Driver incident statement
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -23433,8 +20639,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FLT-023 — Vehicle handover checklist
 
@@ -23452,8 +20656,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FLT-024 — Vehicle return checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -23469,8 +20671,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FLT-025 — Passenger trip manifest
 
@@ -23488,8 +20688,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FLT-026 — School bus route inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -23505,8 +20703,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FLT-027 — Public transport schedule
 
@@ -23524,8 +20720,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FLT-028 — Vehicle utilization report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -23541,8 +20735,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FLT-029 — Fleet replacement assessment
 
@@ -23560,8 +20752,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FLT-030 — Rental vehicle booking
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -23577,8 +20767,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FLT-031 — Vehicle rental agreement brief
 
@@ -23596,8 +20784,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FLT-032 — Vehicle wash and detailing record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -23613,8 +20799,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FLT-033 — Fleet compliance evidence review
 
@@ -23632,8 +20816,6 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FLT-034 — Transport contractor performance
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -23650,15 +20832,9 @@ Shared category context: fleet_ref, vehicle_ref, trip_or_service_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ## LOG — Logistics freight and distribution (36 templates)
 
-
-
 Shared category context: operator_ref, shipment_ref, customer_ref.
-
-
 
 ### LOG-001 — Shipment booking
 
@@ -23676,8 +20852,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-002 — Shipping instruction intake
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -23693,8 +20867,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LOG-003 — Cargo packing list
 
@@ -23712,8 +20884,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-004 — Freight quotation
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -23729,8 +20899,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LOG-005 — Freight rate comparison
 
@@ -23748,8 +20916,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-006 — Dispatch planning
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -23765,8 +20931,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LOG-007 — Loading supervision record
 
@@ -23784,8 +20948,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-008 — Shipment condition photography
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -23801,8 +20963,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LOG-009 — Shipment tracking event
 
@@ -23820,8 +20980,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-010 — Shipment exception report
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -23837,8 +20995,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LOG-011 — Delivery appointment coordination
 
@@ -23856,8 +21012,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-012 — Delivery route execution
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -23873,8 +21027,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LOG-013 — Last-mile delivery proof
 
@@ -23892,8 +21044,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-014 — Failed delivery record
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -23909,8 +21059,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LOG-015 — Cargo damage survey
 
@@ -23928,8 +21076,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-016 — Cargo shortage report
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -23945,8 +21091,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LOG-017 — Freight claim intake
 
@@ -23964,8 +21108,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-018 — Cold chain shipment monitoring
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -23981,8 +21123,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LOG-019 — Shipment data logger register
 
@@ -24000,8 +21140,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-020 — Customs declaration evidence intake
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -24017,8 +21155,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LOG-021 — Commercial invoice verification
 
@@ -24036,8 +21172,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-022 — Certificate of origin evidence
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -24053,8 +21187,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LOG-023 — Import clearance tracker
 
@@ -24072,8 +21204,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-024 — Export readiness checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -24089,8 +21219,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LOG-025 — Bonded warehouse movement
 
@@ -24108,8 +21236,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-026 — Container inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -24125,8 +21251,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LOG-027 — Container condition inspection
 
@@ -24144,8 +21268,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-028 — Container detention tracking
 
 **Type:** Tracker / follow-up · **Shared pack:** TRACK.
@@ -24161,8 +21283,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 **Review:** Status changes must be confirmed or tied to a trusted event.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LOG-029 — Pallet exchange record
 
@@ -24180,8 +21300,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-030 — Courier parcel intake
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -24197,8 +21315,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LOG-031 — Postal delivery exception
 
@@ -24216,8 +21332,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-032 — Reverse logistics collection
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -24233,8 +21347,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LOG-033 — Distribution campaign plan
 
@@ -24252,8 +21364,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-034 — Logistics cost reconciliation
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -24269,8 +21379,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### LOG-035 — Carrier service review
 
@@ -24288,8 +21396,6 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### LOG-036 — Shipment document bundle
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -24306,15 +21412,9 @@ Shared category context: operator_ref, shipment_ref, customer_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ## AVI — Aviation airports and drone administration (28 templates)
 
-
-
 Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
-
-
 
 ### AVI-001 — Aircraft asset register
 
@@ -24332,8 +21432,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### AVI-002 — Aircraft document register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -24349,8 +21447,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### AVI-003 — Aircraft maintenance evidence intake
 
@@ -24368,8 +21464,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### AVI-004 — Aircraft defect reporting
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -24385,8 +21479,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### AVI-005 — Aviation component traceability
 
@@ -24404,8 +21496,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### AVI-006 — Ground support equipment inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -24421,8 +21511,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### AVI-007 — Ground support pre-use check
 
@@ -24440,8 +21528,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### AVI-008 — Airport facility inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -24457,8 +21543,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### AVI-009 — Runway surface observation
 
@@ -24476,8 +21560,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### AVI-010 — Airfield lighting fault report
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -24493,8 +21575,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### AVI-011 — Airport wildlife observation
 
@@ -24512,8 +21592,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### AVI-012 — Foreign object debris collection log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -24529,8 +21607,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### AVI-013 — Airport passenger assistance request
 
@@ -24548,8 +21624,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### AVI-014 — Airport accessibility review
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -24565,8 +21639,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### AVI-015 — Aviation training completion record
 
@@ -24584,8 +21656,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### AVI-016 — Crew credential expiry tracker
 
 **Type:** Tracker / follow-up · **Shared pack:** TRACK.
@@ -24601,8 +21671,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 **Review:** Status changes must be confirmed or tied to a trusted event.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### AVI-017 — Aviation occurrence intake
 
@@ -24620,8 +21688,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### AVI-018 — Airport contractor work authorization
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -24637,8 +21703,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### AVI-019 — Air cargo acceptance checklist
 
@@ -24656,8 +21720,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### AVI-020 — Air cargo handover
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -24673,8 +21735,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### AVI-021 — Lost baggage intake
 
@@ -24692,8 +21752,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### AVI-022 — Drone equipment inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -24709,8 +21767,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### AVI-023 — Drone flight permission evidence
 
@@ -24728,8 +21784,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### AVI-024 — Drone survey mission plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -24745,8 +21799,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### AVI-025 — Drone flight log
 
@@ -24764,8 +21816,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### AVI-026 — Drone image catalogue
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -24781,8 +21831,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### AVI-027 — Drone maintenance record
 
@@ -24800,8 +21848,6 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### AVI-028 — Aviation operational document review
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -24818,15 +21864,9 @@ Shared category context: operator_ref, aircraft_or_airport_ref, operation_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## MAR — Maritime ports and inland waterways (28 templates)
 
-
-
 Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
-
-
 
 ### MAR-001 — Vessel master inventory
 
@@ -24844,8 +21884,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MAR-002 — Vessel certificate register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -24861,8 +21899,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MAR-003 — Vessel maintenance record
 
@@ -24880,8 +21916,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MAR-004 — Vessel condition survey
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -24897,8 +21931,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MAR-005 — Vessel voyage log
 
@@ -24916,8 +21948,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MAR-006 — Crew sign-on administration
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -24933,8 +21963,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MAR-007 — Passenger boarding register
 
@@ -24952,8 +21980,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MAR-008 — Boat rental handover
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -24969,8 +21995,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MAR-009 — Marine safety equipment inventory
 
@@ -24988,8 +22012,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MAR-010 — Life-saving equipment inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -25005,8 +22027,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MAR-011 — Port berth booking
 
@@ -25024,8 +22044,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MAR-012 — Port arrival documentation
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -25041,8 +22059,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MAR-013 — Port cargo receipt
 
@@ -25060,8 +22076,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MAR-014 — Port cargo release
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -25077,8 +22091,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MAR-015 — Container terminal gate event
 
@@ -25096,8 +22108,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MAR-016 — Cargo tally sheet
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -25113,8 +22123,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MAR-017 — Ship loading plan evidence
 
@@ -25132,8 +22140,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MAR-018 — Marine cargo damage inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -25149,8 +22155,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MAR-019 — Bunker fuel receipt evidence
 
@@ -25168,8 +22172,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MAR-020 — Ballast water document register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -25185,8 +22187,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MAR-021 — Port waste reception record
 
@@ -25204,8 +22204,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MAR-022 — Marine pollution observation
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -25221,8 +22219,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MAR-023 — Waterway navigation aid inventory
 
@@ -25240,8 +22236,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MAR-024 — Buoy inspection record
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -25257,8 +22251,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MAR-025 — Ferry landing site inspection
 
@@ -25276,8 +22268,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MAR-026 — Dock maintenance work order
 
 **Type:** Maintenance workflow · **Shared pack:** MAINT.
@@ -25293,8 +22283,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 **Review:** Qualified technician approves work and return to service.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MAR-027 — Marine survey photographic register
 
@@ -25312,8 +22300,6 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MAR-028 — Port service performance report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -25330,15 +22316,9 @@ Shared category context: operator_ref, vessel_or_port_ref, voyage_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ## RAI — Rail transit and mobility services (28 templates)
 
-
-
 Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
-
-
 
 ### RAI-001 — Rail rolling stock inventory
 
@@ -25356,8 +22336,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### RAI-002 — Rail vehicle maintenance record
 
 **Type:** Maintenance workflow · **Shared pack:** MAINT.
@@ -25373,8 +22351,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 **Review:** Qualified technician approves work and return to service.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### RAI-003 — Rail vehicle defect report
 
@@ -25392,8 +22368,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### RAI-004 — Rail track visual inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -25409,8 +22383,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### RAI-005 — Rail track geometry evidence
 
@@ -25428,8 +22400,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### RAI-006 — Rail bridge inspection register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -25445,8 +22415,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### RAI-007 — Rail signaling asset inventory
 
@@ -25464,8 +22432,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### RAI-008 — Rail signaling fault intake
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -25481,8 +22447,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### RAI-009 — Rail station condition inspection
 
@@ -25500,8 +22464,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### RAI-010 — Rail platform accessibility check
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -25517,8 +22479,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### RAI-011 — Transit passenger count
 
@@ -25536,8 +22496,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### RAI-012 — Transit service timetable
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -25553,8 +22511,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### RAI-013 — Transit service disruption log
 
@@ -25572,8 +22528,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### RAI-014 — Transit customer complaint
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -25589,8 +22543,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### RAI-015 — Rail freight booking
 
@@ -25608,8 +22560,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### RAI-016 — Wagon loading verification
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -25625,8 +22575,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### RAI-017 — Rail cargo handover
 
@@ -25644,8 +22592,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### RAI-018 — Rail worksite authorization evidence
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -25661,8 +22607,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### RAI-019 — Rail maintenance material issue
 
@@ -25680,8 +22624,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### RAI-020 — Rail safety briefing attendance
 
 **Type:** Learning / competency record · **Shared pack:** LEARN.
@@ -25697,8 +22639,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 **Review:** Qualified assessor verifies competency; never invent credentials.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### RAI-021 — Cable car asset register
 
@@ -25716,8 +22656,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### RAI-022 — Cable car inspection evidence
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -25733,8 +22671,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### RAI-023 — Bike share station inventory
 
@@ -25752,8 +22688,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### RAI-024 — Shared bicycle condition report
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -25769,8 +22703,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### RAI-025 — Mobility service trip feedback
 
@@ -25788,8 +22720,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### RAI-026 — Parking permit application
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -25805,8 +22735,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
-
-
 
 ### RAI-027 — Accessible transport coordination
 
@@ -25824,8 +22752,6 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 ### RAI-028 — Urban mobility study field log
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -25842,19 +22768,11 @@ Shared category context: operator_ref, network_ref, vehicle_or_station_ref.
 
 **Default privacy:** Internal · **Rollout:** P2 · Specialist.
 
-
-
 # 11 · Digital systems and communications
-
-
 
 ## SWE — Software product and AI delivery (36 templates)
 
-
-
 Shared category context: organization_ref, product_or_project_ref, release_ref.
-
-
 
 ### SWE-001 — Software idea intake
 
@@ -25872,8 +22790,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-002 — Product requirements document
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -25889,8 +22805,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SWE-003 — User story
 
@@ -25908,8 +22822,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-004 — Feature request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -25925,8 +22837,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SWE-005 — Product discovery interview
 
@@ -25944,8 +22854,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-006 — User research observation
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -25961,8 +22869,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SWE-007 — Wireframe review brief
 
@@ -25980,8 +22886,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-008 — Usability test script
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -25997,8 +22901,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SWE-009 — Usability test findings
 
@@ -26016,8 +22918,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-010 — Software architecture decision record
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -26033,8 +22933,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SWE-011 — System design specification
 
@@ -26052,8 +22950,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-012 — API specification intake
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -26069,8 +22965,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SWE-013 — Database schema change request
 
@@ -26088,8 +22982,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-014 — Software task backlog
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -26105,8 +22997,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SWE-015 — Sprint planning record
 
@@ -26124,8 +23014,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-016 — Software defect report
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -26141,8 +23029,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SWE-017 — Test case definition
 
@@ -26160,8 +23046,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-018 — Test execution record
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -26177,8 +23061,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SWE-019 — Automated test failure triage
 
@@ -26196,8 +23078,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-020 — Release readiness review
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -26213,8 +23093,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SWE-021 — Release notes draft
 
@@ -26232,8 +23110,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-022 — Deployment execution log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -26249,8 +23125,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SWE-023 — Production incident timeline
 
@@ -26268,8 +23142,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-024 — Post-incident review
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -26285,8 +23157,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SWE-025 — Technical debt register
 
@@ -26304,8 +23174,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-026 — Code review checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -26321,8 +23189,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SWE-027 — Software license inventory
 
@@ -26340,8 +23206,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-028 — Open source component review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -26357,8 +23221,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SWE-029 — AI use-case assessment
 
@@ -26376,8 +23238,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-030 — AI dataset intake
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -26393,8 +23253,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SWE-031 — AI model evaluation run
 
@@ -26412,8 +23270,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-032 — AI extraction quality review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -26429,8 +23285,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SWE-033 — AI prompt version register
 
@@ -26448,8 +23302,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-034 — AI output review record
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -26465,8 +23317,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SWE-035 — Software documentation request
 
@@ -26484,8 +23334,6 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SWE-036 — Product roadmap
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -26502,15 +23350,9 @@ Shared category context: organization_ref, product_or_project_ref, release_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ## ICT — IT service management and infrastructure (34 templates)
 
-
-
 Shared category context: organization_ref, service_ref, configuration_item_ref.
-
-
 
 ### ICT-001 — IT hardware inventory
 
@@ -26528,8 +23370,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ICT-002 — Computer provisioning request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -26545,8 +23385,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ICT-003 — IT asset assignment
 
@@ -26564,8 +23402,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ICT-004 — Laptop return inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -26581,8 +23417,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ICT-005 — Server inventory
 
@@ -26600,8 +23434,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ICT-006 — Network device inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -26617,8 +23449,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ICT-007 — Software installation request
 
@@ -26636,8 +23466,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ICT-008 — IT support incident
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -26653,8 +23481,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ICT-009 — IT service request
 
@@ -26672,8 +23498,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ICT-010 — User access request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -26689,8 +23513,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ICT-011 — User account closure checklist
 
@@ -26708,8 +23530,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ICT-012 — Password reset administration
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -26725,8 +23545,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ICT-013 — IT change request
 
@@ -26744,8 +23562,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ICT-014 — Change advisory meeting record
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -26761,8 +23577,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ICT-015 — Configuration management record
 
@@ -26780,8 +23594,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ICT-016 — IT problem investigation
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -26797,8 +23609,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ICT-017 — Service catalogue entry
 
@@ -26816,8 +23626,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ICT-018 — Service availability report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -26833,8 +23641,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ICT-019 — IT backup job log
 
@@ -26852,8 +23658,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ICT-020 — Backup restore test
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -26869,8 +23673,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ICT-021 — Disaster recovery exercise
 
@@ -26888,8 +23690,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ICT-022 — Data center rack inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -26905,8 +23705,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ICT-023 — Data center environment log
 
@@ -26924,8 +23722,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ICT-024 — Network cable test record
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -26941,8 +23737,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ICT-025 — Network site survey
 
@@ -26960,8 +23754,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ICT-026 — Cloud resource ownership review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -26977,8 +23769,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ICT-027 — Cloud cost allocation review
 
@@ -26996,8 +23786,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ICT-028 — IT procurement specification
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -27013,8 +23801,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ICT-029 — Endpoint patch review
 
@@ -27032,8 +23818,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ICT-030 — IT supplier service review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -27049,8 +23833,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ICT-031 — Technology lifecycle plan
 
@@ -27068,8 +23850,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ICT-032 — IT operational handover
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -27085,8 +23865,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ICT-033 — IT knowledge base article
 
@@ -27104,8 +23882,6 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ICT-034 — Data migration reconciliation
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -27122,15 +23898,9 @@ Shared category context: organization_ref, service_ref, configuration_item_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ## CYB — Cybersecurity privacy and data governance (32 templates)
 
-
-
 Shared category context: organization_ref, authorized_scope_ref, system_or_dataset_ref.
-
-
 
 ### CYB-001 — Information asset classification
 
@@ -27148,8 +23918,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CYB-002 — Security risk assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -27165,8 +23933,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CYB-003 — Security control evidence register
 
@@ -27184,8 +23950,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CYB-004 — Authorized vulnerability assessment intake
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -27201,8 +23965,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CYB-005 — Vulnerability remediation tracker
 
@@ -27220,8 +23982,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CYB-006 — Security incident intake
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -27237,8 +23997,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CYB-007 — Security incident timeline
 
@@ -27256,8 +24014,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CYB-008 — Evidence preservation record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -27273,8 +24029,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CYB-009 — Phishing report intake
 
@@ -27292,8 +24046,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CYB-010 — Suspicious account activity review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -27309,8 +24061,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CYB-011 — Access privilege review
 
@@ -27328,8 +24078,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CYB-012 — Privileged access request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -27345,8 +24093,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CYB-013 — Security exception request
 
@@ -27364,8 +24110,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CYB-014 — Security awareness training record
 
 **Type:** Learning / competency record · **Shared pack:** LEARN.
@@ -27381,8 +24125,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 **Review:** Qualified assessor verifies competency; never invent credentials.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CYB-015 — Third-party security questionnaire
 
@@ -27400,8 +24142,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CYB-016 — Vendor security review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -27417,8 +24157,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CYB-017 — Data processing inventory
 
@@ -27436,8 +24174,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CYB-018 — Privacy impact assessment intake
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -27453,8 +24189,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CYB-019 — Data subject request administration
 
@@ -27472,8 +24206,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CYB-020 — Consent withdrawal processing
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -27489,8 +24221,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CYB-021 — Data breach assessment
 
@@ -27508,8 +24238,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CYB-022 — Data retention schedule design
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -27525,8 +24253,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CYB-023 — Data deletion verification
 
@@ -27544,8 +24270,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CYB-024 — Data sharing approval
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -27561,8 +24285,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CYB-025 — Dataset deidentification review
 
@@ -27580,8 +24302,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CYB-026 — Encryption configuration evidence
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -27597,8 +24317,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CYB-027 — Security logging coverage review
 
@@ -27616,8 +24334,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CYB-028 — Secure development review
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -27633,8 +24349,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CYB-029 — AI privacy and security review
 
@@ -27652,8 +24366,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CYB-030 — Security tabletop exercise
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -27669,8 +24381,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### CYB-031 — Incident postmortem security report
 
@@ -27688,8 +24398,6 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### CYB-032 — Data governance stewardship register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -27706,15 +24414,9 @@ Shared category context: organization_ref, authorized_scope_ref, system_or_datas
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## TEL — Telecommunications networks and connectivity (30 templates)
 
-
-
 Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
-
-
 
 ### TEL-001 — Telecom tower asset inventory
 
@@ -27732,8 +24434,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### TEL-002 — Telecom site acquisition evidence
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -27749,8 +24449,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### TEL-003 — Telecom site condition inspection
 
@@ -27768,8 +24466,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### TEL-004 — Tower maintenance work record
 
 **Type:** Maintenance workflow · **Shared pack:** MAINT.
@@ -27785,8 +24481,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 **Review:** Qualified technician approves work and return to service.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### TEL-005 — Telecom power system log
 
@@ -27804,8 +24498,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### TEL-006 — Telecom battery condition record
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -27821,8 +24513,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### TEL-007 — Radio equipment inventory
 
@@ -27840,8 +24530,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### TEL-008 — Antenna installation evidence
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -27857,8 +24545,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### TEL-009 — Fiber cable route survey
 
@@ -27876,8 +24562,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### TEL-010 — Fiber splice record
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -27893,8 +24577,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### TEL-011 — Fiber link test evidence
 
@@ -27912,8 +24594,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### TEL-012 — Fiber cut incident report
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -27929,8 +24609,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### TEL-013 — Telecom customer installation survey
 
@@ -27948,8 +24626,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### TEL-014 — Broadband service activation
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -27965,8 +24641,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### TEL-015 — Connectivity speed test log
 
@@ -27984,8 +24658,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### TEL-016 — Wireless coverage field survey
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -28001,8 +24673,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### TEL-017 — Telecom outage ticket
 
@@ -28020,8 +24690,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### TEL-018 — Telecom field technician report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -28037,8 +24705,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### TEL-019 — Network cabinet inventory
 
@@ -28056,8 +24722,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### TEL-020 — Telecom spare module tracking
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -28073,8 +24737,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### TEL-021 — Telecom site access request
 
@@ -28092,8 +24754,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### TEL-022 — Telecom service complaint
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -28109,8 +24769,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### TEL-023 — Telecom equipment decommissioning
 
@@ -28128,8 +24786,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### TEL-024 — Telecom rollout progress tracker
 
 **Type:** Tracker / follow-up · **Shared pack:** TRACK.
@@ -28145,8 +24801,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 **Review:** Status changes must be confirmed or tied to a trusted event.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### TEL-025 — Telecom contractor quality check
 
@@ -28164,8 +24818,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### TEL-026 — Community connectivity needs survey
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -28181,8 +24833,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### TEL-027 — Public Wi-Fi location register
 
@@ -28200,8 +24850,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### TEL-028 — Internet service billing reconciliation
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -28217,8 +24865,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### TEL-029 — Telecom licensing evidence index
 
@@ -28236,8 +24882,6 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### TEL-030 — Telecom operational handover
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -28254,19 +24898,11 @@ Shared category context: operator_ref, network_site_ref, service_or_asset_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 # 12 · Finance public administration and law
-
-
 
 ## BNK — Banking lending and financial services (32 templates)
 
-
-
 Shared category context: institution_ref, case_or_account_alias, product_ref.
-
-
 
 ### BNK-001 — Financial service customer intake
 
@@ -28284,8 +24920,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### BNK-002 — Customer identification evidence intake
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -28301,8 +24935,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### BNK-003 — Business account application
 
@@ -28320,8 +24952,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### BNK-004 — Account document completeness review
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -28337,8 +24967,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### BNK-005 — Loan application intake
 
@@ -28356,8 +24984,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### BNK-006 — Business lending site visit
 
 **Type:** Visit / field workflow · **Shared pack:** VISIT.
@@ -28373,8 +24999,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 **Review:** Field officer verifies observations and any attributed statements.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### BNK-007 — Loan affordability evidence
 
@@ -28392,8 +25016,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### BNK-008 — Collateral inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -28409,8 +25031,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### BNK-009 — Collateral valuation intake
 
@@ -28428,8 +25048,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### BNK-010 — Credit review memorandum draft
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -28445,8 +25063,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### BNK-011 — Loan committee meeting record
 
@@ -28464,8 +25080,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### BNK-012 — Loan offer drafting brief
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -28481,8 +25095,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### BNK-013 — Loan disbursement checklist
 
@@ -28500,8 +25112,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### BNK-014 — Loan repayment record
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -28517,8 +25127,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### BNK-015 — Loan arrears follow-up
 
@@ -28536,8 +25144,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### BNK-016 — Loan restructuring request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -28553,8 +25159,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### BNK-017 — Group savings member registration
 
@@ -28572,8 +25176,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### BNK-018 — Savings contribution record
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -28589,8 +25191,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### BNK-019 — Savings group meeting record
 
@@ -28608,8 +25208,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### BNK-020 — Microfinance field visit
 
 **Type:** Visit / field workflow · **Shared pack:** VISIT.
@@ -28625,8 +25223,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 **Review:** Field officer verifies observations and any attributed statements.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### BNK-021 — Financial agent outlet inspection
 
@@ -28644,8 +25240,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### BNK-022 — Agent float reconciliation
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -28661,8 +25255,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### BNK-023 — Financial product complaint intake
 
@@ -28680,8 +25272,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### BNK-024 — Financial transaction exception review
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -28697,8 +25287,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### BNK-025 — Transaction monitoring alert review
 
@@ -28716,8 +25304,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### BNK-026 — Investment mandate intake
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -28733,8 +25319,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### BNK-027 — Investment due diligence evidence
 
@@ -28752,8 +25336,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### BNK-028 — Investment committee memorandum draft
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -28769,8 +25351,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### BNK-029 — Portfolio reporting data intake
 
@@ -28788,8 +25368,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### BNK-030 — Financial disclosure acknowledgement
 
 **Type:** Agreement / approval · **Shared pack:** AGREEMENT.
@@ -28805,8 +25383,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 **Review:** Authorized signatory; legal review where applicable.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### BNK-031 — Bank branch operational checklist
 
@@ -28824,8 +25400,6 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### BNK-032 — Financial service accessibility review
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -28842,15 +25416,9 @@ Shared category context: institution_ref, case_or_account_alias, product_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## INS — Insurance claims and loss assessment (34 templates)
 
-
-
 Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_ref.
-
-
 
 ### INS-001 — Insurance prospect intake
 
@@ -28868,8 +25436,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### INS-002 — Insurance application evidence
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -28885,8 +25451,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### INS-003 — Insurance policy extraction
 
@@ -28904,8 +25468,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### INS-004 — Policy renewal tracker
 
 **Type:** Tracker / follow-up · **Shared pack:** TRACK.
@@ -28921,8 +25483,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 **Review:** Status changes must be confirmed or tied to a trusted event.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### INS-005 — Insurance coverage comparison
 
@@ -28940,8 +25500,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### INS-006 — Insured asset schedule
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -28957,8 +25515,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### INS-007 — Property risk survey
 
@@ -28976,8 +25532,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### INS-008 — Motor insurance inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -28993,8 +25547,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### INS-009 — Insurance claim notification
 
@@ -29012,8 +25564,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### INS-010 — Claim document checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -29029,8 +25579,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### INS-011 — Motor accident claim evidence
 
@@ -29048,8 +25596,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### INS-012 — Property damage claim inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -29065,8 +25611,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### INS-013 — Fire damage survey evidence
 
@@ -29084,8 +25628,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### INS-014 — Flood damage survey evidence
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -29101,8 +25643,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### INS-015 — Theft claim evidence index
 
@@ -29120,8 +25660,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### INS-016 — Equipment breakdown claim
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -29137,8 +25675,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### INS-017 — Cargo loss claim assessment
 
@@ -29156,8 +25692,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### INS-018 — Agricultural crop damage survey
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -29173,8 +25707,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### INS-019 — Livestock insurance claim evidence
 
@@ -29192,8 +25724,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### INS-020 — Health insurance claim administration
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -29209,8 +25739,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### INS-021 — Travel insurance claim intake
 
@@ -29228,8 +25756,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### INS-022 — Business interruption evidence
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -29245,8 +25771,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### INS-023 — Loss adjuster field report
 
@@ -29264,8 +25788,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### INS-024 — Repair estimate comparison
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -29281,8 +25803,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### INS-025 — Claim reserve review inputs
 
@@ -29300,8 +25820,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### INS-026 — Claims settlement approval
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -29317,8 +25835,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### INS-027 — Claim payment confirmation
 
@@ -29336,8 +25852,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### INS-028 — Insurance salvage inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -29353,8 +25867,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### INS-029 — Insurance subrogation evidence
 
@@ -29372,8 +25884,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### INS-030 — Customer claim status update
 
 **Type:** Communication draft · **Shared pack:** COMM.
@@ -29389,8 +25899,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 **Review:** Human approves content and recipients before any sending action.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### INS-031 — Insurance complaint resolution
 
@@ -29408,8 +25916,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### INS-032 — Broker commission reconciliation
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -29425,8 +25931,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### INS-033 — Insurance fraud concern intake
 
@@ -29444,8 +25948,6 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### INS-034 — Insurance claims performance report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -29462,15 +25964,9 @@ Shared category context: insurer_or_broker_ref, policy_alias, claim_or_survey_re
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## GOV — Government municipal and citizen services (36 templates)
 
-
-
 Shared category context: authority_ref, service_area, application_or_case_ref.
-
-
 
 ### GOV-001 — Citizen service request
 
@@ -29488,8 +25984,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-002 — Municipal complaint intake
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -29505,8 +25999,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### GOV-003 — Public service appointment
 
@@ -29524,8 +26016,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-004 — Business license application intake
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -29541,8 +26031,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### GOV-005 — License renewal checklist
 
@@ -29560,8 +26048,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-006 — Municipal inspection assignment
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -29577,8 +26063,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### GOV-007 — Business premises inspection
 
@@ -29596,8 +26080,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-008 — Public market stall allocation
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -29613,8 +26095,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### GOV-009 — Market stall occupancy register
 
@@ -29632,8 +26112,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-010 — Municipal fee payment record
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -29649,8 +26127,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### GOV-011 — Local revenue reconciliation
 
@@ -29668,8 +26144,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-012 — Public asset verification
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -29685,8 +26159,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### GOV-013 — Public works complaint resolution
 
@@ -29704,8 +26176,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-014 — Public consultation submission
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -29721,8 +26191,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### GOV-015 — Community development planning
 
@@ -29740,8 +26208,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-016 — Municipal meeting minutes
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -29757,8 +26223,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### GOV-017 — Government program beneficiary intake
 
@@ -29776,8 +26240,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-018 — Public grant disbursement record
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -29793,8 +26255,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### GOV-019 — Public project monitoring visit
 
@@ -29812,8 +26272,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-020 — Public expenditure evidence review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -29829,8 +26287,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### GOV-021 — Public procurement disclosure draft
 
@@ -29848,8 +26304,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-022 — Citizen information request
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -29865,8 +26319,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### GOV-023 — Public record digitization
 
@@ -29884,8 +26336,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-024 — Official correspondence register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -29901,8 +26351,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### GOV-025 — Official letter drafting
 
@@ -29920,8 +26368,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-026 — Permit application document review
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -29937,8 +26383,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### GOV-027 — Public building occupancy permit evidence
 
@@ -29956,8 +26400,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-028 — Social protection payment reconciliation
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -29973,8 +26415,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### GOV-029 — Service delivery performance scorecard
 
@@ -29992,8 +26432,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-030 — Government audit response tracker
 
 **Type:** Tracker / follow-up · **Shared pack:** TRACK.
@@ -30009,8 +26447,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 **Review:** Status changes must be confirmed or tied to a trusted event.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### GOV-031 — Local disaster resource register
 
@@ -30028,8 +26464,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-032 — Civil registration appointment intake
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -30045,8 +26479,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### GOV-033 — Municipal boundary service query
 
@@ -30064,8 +26496,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-034 — Public grievance appeal intake
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -30081,8 +26511,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### GOV-035 — Government facility handover
 
@@ -30100,8 +26528,6 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### GOV-036 — Public service accessibility assessment
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -30118,15 +26544,9 @@ Shared category context: authority_ref, service_area, application_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## JUS — Justice legal aid and public safety administration (30 templates)
 
-
-
 Shared category context: authorized_organization_ref, case_ref, restricted_jurisdiction.
-
-
 
 ### JUS-001 — Legal aid client intake
 
@@ -30144,8 +26564,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### JUS-002 — Legal aid referral record
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -30161,8 +26579,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### JUS-003 — Court appointment administration
 
@@ -30180,8 +26596,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### JUS-004 — Court document intake index
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -30197,8 +26611,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### JUS-005 — Court deadline evidence tracker
 
@@ -30216,8 +26628,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### JUS-006 — Hearing attendance record
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -30233,8 +26643,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### JUS-007 — Court order compliance tracker
 
@@ -30252,8 +26660,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### JUS-008 — Mediation session record
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -30269,8 +26675,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### JUS-009 — Victim support intake
 
@@ -30288,8 +26692,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### JUS-010 — Witness support coordination
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -30305,8 +26707,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### JUS-011 — Public safety incident intake
 
@@ -30324,8 +26724,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### JUS-012 — Incident photograph evidence
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -30341,8 +26739,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### JUS-013 — Evidence receipt and custody
 
@@ -30360,8 +26756,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### JUS-014 — Evidence storage audit
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -30377,8 +26771,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### JUS-015 — Lost property intake
 
@@ -30396,8 +26788,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### JUS-016 — Lost property claim verification
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -30413,8 +26803,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### JUS-017 — Missing person report administration
 
@@ -30432,8 +26820,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### JUS-018 — Community safety concern report
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -30449,8 +26835,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### JUS-019 — Community safety meeting
 
@@ -30468,8 +26852,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### JUS-020 — Emergency call quality review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -30485,8 +26867,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### JUS-021 — Detention facility welfare inspection
 
@@ -30504,8 +26884,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### JUS-022 — Custody medical referral administration
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -30521,8 +26899,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### JUS-023 — Reintegration support intake
 
@@ -30540,8 +26916,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### JUS-024 — Restorative justice agreement administration
 
 **Type:** Agreement / approval · **Shared pack:** AGREEMENT.
@@ -30557,8 +26931,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 **Review:** Authorized signatory; legal review where applicable.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### JUS-025 — Community service completion record
 
@@ -30576,8 +26948,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### JUS-026 — Public safety equipment maintenance
 
 **Type:** Maintenance workflow · **Shared pack:** MAINT.
@@ -30593,8 +26963,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 **Review:** Qualified technician approves work and return to service.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### JUS-027 — Justice service complaint intake
 
@@ -30612,8 +26980,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### JUS-028 — Case file access authorization
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -30629,8 +26995,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### JUS-029 — Case closure evidence checklist
 
@@ -30648,8 +27012,6 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### JUS-030 — Justice program performance report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -30666,19 +27028,11 @@ Shared category context: authorized_organization_ref, case_ref, restricted_juris
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 # 13 · Risk resilience and sustainability
-
-
 
 ## ENV — Environment climate and sustainability (34 templates)
 
-
-
 Shared category context: organization_or_program_ref, site_ref, monitoring_period.
-
-
 
 ### ENV-001 — Environmental baseline survey
 
@@ -30696,8 +27050,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ENV-002 — Environmental impact evidence intake
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -30713,8 +27065,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ENV-003 — Environmental management plan
 
@@ -30732,8 +27082,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ENV-004 — Environmental site inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -30749,8 +27097,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ENV-005 — Air quality monitoring
 
@@ -30768,8 +27114,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ENV-006 — Noise level survey
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -30785,8 +27129,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ENV-007 — Surface water quality sample
 
@@ -30804,8 +27146,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ENV-008 — Groundwater monitoring record
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -30821,8 +27161,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ENV-009 — Soil contamination sample
 
@@ -30840,8 +27178,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ENV-010 — Environmental spill observation
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -30857,8 +27193,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ENV-011 — Environmental complaint intake
 
@@ -30876,8 +27210,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ENV-012 — Environmental permit evidence
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -30893,8 +27225,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ENV-013 — Carbon emissions activity data
 
@@ -30912,8 +27242,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ENV-014 — Emission factor source register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -30929,8 +27257,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ENV-015 — Greenhouse gas calculation review
 
@@ -30948,8 +27274,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ENV-016 — Organizational sustainability report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -30965,8 +27289,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ENV-017 — Supplier sustainability evidence
 
@@ -30984,8 +27306,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ENV-018 — Climate vulnerability assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -31001,8 +27321,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ENV-019 — Climate adaptation project plan
 
@@ -31020,8 +27338,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ENV-020 — Flood extent observation
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -31037,8 +27353,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ENV-021 — Drought field observation
 
@@ -31056,8 +27370,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ENV-022 — Rainfall measurement log
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -31073,8 +27385,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ENV-023 — Weather station service record
 
@@ -31092,8 +27402,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ENV-024 — Coastal erosion monitoring
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -31109,8 +27417,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ENV-025 — Wetland condition survey
 
@@ -31128,8 +27434,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ENV-026 — Environmental restoration activity
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -31145,8 +27449,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ENV-027 — Sustainability materiality consultation
 
@@ -31164,8 +27466,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ENV-028 — Biodiversity project impact evidence
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -31181,8 +27481,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ENV-029 — Plastic usage inventory
 
@@ -31200,8 +27498,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ENV-030 — Water footprint activity collection
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -31217,8 +27513,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ENV-031 — Environmental compliance action tracker
 
@@ -31236,8 +27530,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ENV-032 — Climate project funding evidence
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -31253,8 +27545,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ENV-033 — Carbon project validation preparation
 
@@ -31272,8 +27562,6 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ENV-034 — Sustainability claim approval
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -31290,15 +27578,9 @@ Shared category context: organization_or_program_ref, site_ref, monitoring_perio
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ## EMR — Emergencies disasters and humanitarian response (32 templates)
 
-
-
 Shared category context: response_organization_ref, incident_ref, affected_area.
-
-
 
 ### EMR-001 — Emergency incident intake
 
@@ -31316,8 +27598,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EMR-002 — Rapid needs assessment
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -31333,8 +27613,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EMR-003 — Disaster damage field assessment
 
@@ -31352,8 +27630,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EMR-004 — Emergency household assistance intake
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -31369,8 +27645,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EMR-005 — Displacement site profile
 
@@ -31388,8 +27662,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EMR-006 — Shelter site readiness inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -31405,8 +27677,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EMR-007 — Emergency shelter occupancy
 
@@ -31424,8 +27694,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EMR-008 — Relief item distribution plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -31441,8 +27709,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EMR-009 — Relief distribution verification
 
@@ -31460,8 +27726,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EMR-010 — Relief stock tracking
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -31477,8 +27741,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EMR-011 — Emergency volunteer registration
 
@@ -31496,8 +27758,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EMR-012 — Emergency team deployment record
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -31513,8 +27773,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EMR-013 — Emergency vehicle readiness
 
@@ -31532,8 +27790,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EMR-014 — Emergency equipment inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -31549,8 +27805,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EMR-015 — Search and rescue administrative log
 
@@ -31568,8 +27822,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EMR-016 — Evacuation assistance request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -31585,8 +27837,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EMR-017 — Evacuation center registration
 
@@ -31604,8 +27854,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EMR-018 — Family reunification service intake
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -31621,8 +27869,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EMR-019 — Humanitarian referral record
 
@@ -31640,8 +27886,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EMR-020 — Emergency medical transport coordination
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -31657,8 +27901,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EMR-021 — Incident coordination meeting
 
@@ -31676,8 +27918,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EMR-022 — Emergency situation report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -31693,8 +27933,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EMR-023 — Resource request and allocation
 
@@ -31712,8 +27950,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EMR-024 — Emergency procurement justification
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -31729,8 +27965,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EMR-025 — Relief logistics handover
 
@@ -31748,8 +27982,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EMR-026 — Humanitarian feedback complaint
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -31765,8 +27997,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EMR-027 — Emergency cash assistance reconciliation
 
@@ -31784,8 +28014,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EMR-028 — Post-disaster building screening evidence
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -31801,8 +28029,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EMR-029 — Recovery planning consultation
 
@@ -31820,8 +28046,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EMR-030 — Emergency response after-action review
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -31837,8 +28061,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### EMR-031 — Disaster preparedness exercise
 
@@ -31856,8 +28078,6 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### EMR-032 — Emergency contact directory
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -31874,15 +28094,9 @@ Shared category context: response_organization_ref, incident_ref, affected_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## FIR — Fire safety security and facilities protection (30 templates)
 
-
-
 Shared category context: organization_ref, facility_ref, inspection_or_event_ref.
-
-
 
 ### FIR-001 — Fire extinguisher inventory
 
@@ -31900,8 +28114,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FIR-002 — Fire extinguisher inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -31917,8 +28129,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FIR-003 — Fire alarm equipment register
 
@@ -31936,8 +28146,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FIR-004 — Fire alarm test evidence
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -31953,8 +28161,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FIR-005 — Fire door inspection
 
@@ -31972,8 +28178,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FIR-006 — Emergency exit route check
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -31989,8 +28193,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FIR-007 — Emergency lighting test
 
@@ -32008,8 +28210,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FIR-008 — Fire hose and hydrant inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -32025,8 +28225,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FIR-009 — Fire suppression service evidence
 
@@ -32044,8 +28242,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FIR-010 — Fire risk assessment intake
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -32061,8 +28257,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FIR-011 — Fire evacuation drill record
 
@@ -32080,8 +28274,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FIR-012 — Fire warden training register
 
 **Type:** Learning / competency record · **Shared pack:** LEARN.
@@ -32097,8 +28289,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 **Review:** Qualified assessor verifies competency; never invent credentials.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FIR-013 — Fire incident report
 
@@ -32116,8 +28306,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FIR-014 — Fire prevention inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -32133,8 +28321,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FIR-015 — Building security assessment
 
@@ -32152,8 +28338,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FIR-016 — Visitor access authorization
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -32169,8 +28353,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FIR-017 — Visitor badge issue and return
 
@@ -32188,8 +28370,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FIR-018 — Key custody register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -32205,8 +28385,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FIR-019 — Access card issue request
 
@@ -32224,8 +28402,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FIR-020 — Access control fault report
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -32241,8 +28417,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FIR-021 — Security guard shift handover
 
@@ -32260,8 +28434,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FIR-022 — Security patrol checkpoint record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -32277,8 +28449,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FIR-023 — Perimeter condition inspection
 
@@ -32296,8 +28466,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FIR-024 — CCTV equipment inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -32313,8 +28481,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FIR-025 — CCTV access review
 
@@ -32332,8 +28498,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FIR-026 — Security incident evidence intake
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -32349,8 +28513,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FIR-027 — Lost key incident record
 
@@ -32368,8 +28530,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FIR-028 — Facility emergency contact verification
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -32385,8 +28545,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FIR-029 — Security contractor performance review
 
@@ -32404,8 +28562,6 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FIR-030 — Fire safety compliance evidence pack
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -32422,15 +28578,9 @@ Shared category context: organization_ref, facility_ref, inspection_or_event_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## OSH — Occupational safety quality and wellbeing (32 templates)
 
-
-
 Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
-
-
 
 ### OSH-001 — Workplace hazard observation
 
@@ -32448,8 +28598,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### OSH-002 — Workplace risk assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -32465,8 +28613,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### OSH-003 — Job safety analysis record
 
@@ -32484,8 +28630,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### OSH-004 — Work permit administration
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -32501,8 +28645,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### OSH-005 — Toolbox talk attendance
 
@@ -32520,8 +28662,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### OSH-006 — Safety induction checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -32537,8 +28677,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### OSH-007 — Personal protective equipment issue
 
@@ -32556,8 +28694,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### OSH-008 — Protective equipment inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -32573,8 +28709,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### OSH-009 — Workplace incident report
 
@@ -32592,8 +28726,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### OSH-010 — Near-miss report
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -32609,8 +28741,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### OSH-011 — Incident witness statement
 
@@ -32628,8 +28758,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### OSH-012 — Safety incident investigation
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -32645,8 +28773,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### OSH-013 — Corrective action effectiveness review
 
@@ -32664,8 +28790,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### OSH-014 — Workplace safety inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -32681,8 +28805,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### OSH-015 — Ergonomic workstation assessment
 
@@ -32700,8 +28822,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### OSH-016 — Manual handling task review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -32717,8 +28837,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### OSH-017 — Workplace exposure monitoring
 
@@ -32736,8 +28854,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### OSH-018 — Occupational noise monitoring
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -32753,8 +28869,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### OSH-019 — Occupational dust sampling
 
@@ -32772,8 +28886,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### OSH-020 — Chemical safety sheet register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -32789,8 +28901,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### OSH-021 — Chemical use risk review
 
@@ -32808,8 +28918,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### OSH-022 — Lifting equipment inspection evidence
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -32825,8 +28933,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### OSH-023 — Working at height authorization evidence
 
@@ -32844,8 +28950,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### OSH-024 — Confined space authorization evidence
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -32861,8 +28965,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### OSH-025 — Contractor safety prequalification
 
@@ -32880,8 +28982,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### OSH-026 — Safety committee meeting
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -32897,8 +28997,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### OSH-027 — Workplace wellbeing survey
 
@@ -32916,8 +29014,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### OSH-028 — Return-to-work coordination
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -32933,8 +29029,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### OSH-029 — Occupational health referral administration
 
@@ -32952,8 +29046,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### OSH-030 — Quality improvement suggestion
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -32969,8 +29061,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### OSH-031 — Safety performance report
 
@@ -32988,8 +29078,6 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### OSH-032 — Workplace emergency exercise
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -33006,19 +29094,11 @@ Shared category context: organization_ref, worksite_ref, activity_or_case_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 # 14 · Social impact culture and information
-
-
 
 ## NPO — Nonprofits volunteers and community organizations (32 templates)
 
-
-
 Shared category context: organization_ref, program_ref, community_or_partner_ref.
-
-
 
 ### NPO-001 — Nonprofit organization profile
 
@@ -33036,8 +29116,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### NPO-002 — Community organization registration
 
 **Type:** Profile / intake · **Shared pack:** PROFILE.
@@ -33053,8 +29131,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 **Review:** Collect only necessary personal data; obtain required permissions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### NPO-003 — Beneficiary registration with consent
 
@@ -33072,8 +29148,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### NPO-004 — Program eligibility review
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -33089,8 +29163,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### NPO-005 — Beneficiary service record
 
@@ -33108,8 +29180,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### NPO-006 — Community outreach visit
 
 **Type:** Visit / field workflow · **Shared pack:** VISIT.
@@ -33125,8 +29195,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 **Review:** Field officer verifies observations and any attributed statements.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### NPO-007 — Volunteer application
 
@@ -33144,8 +29212,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### NPO-008 — Volunteer onboarding
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -33161,8 +29227,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### NPO-009 — Volunteer assignment
 
@@ -33180,8 +29244,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### NPO-010 — Volunteer hours log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -33197,8 +29259,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### NPO-011 — Volunteer expense claim
 
@@ -33216,8 +29276,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### NPO-012 — Volunteer performance feedback
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -33233,8 +29291,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### NPO-013 — Volunteer recognition letter
 
@@ -33252,8 +29308,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### NPO-014 — Partner organization due diligence
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -33269,8 +29323,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### NPO-015 — Partner agreement drafting
 
@@ -33288,8 +29340,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### NPO-016 — Community project intake
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -33305,8 +29355,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### NPO-017 — Program activity planning
 
@@ -33324,8 +29372,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### NPO-018 — Program activity report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -33341,8 +29387,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### NPO-019 — Nonprofit board governance checklist
 
@@ -33360,8 +29404,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### NPO-020 — Membership application
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -33377,8 +29419,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### NPO-021 — Membership contribution record
 
@@ -33396,8 +29436,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### NPO-022 — Community meeting attendance
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -33413,8 +29451,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### NPO-023 — Charitable goods donation intake
 
@@ -33432,8 +29468,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### NPO-024 — Donation distribution record
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -33449,8 +29483,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### NPO-025 — Donor relationship note
 
@@ -33468,8 +29500,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### NPO-026 — Donor visit report
 
 **Type:** Visit / field workflow · **Shared pack:** VISIT.
@@ -33485,8 +29515,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 **Review:** Field officer verifies observations and any attributed statements.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### NPO-027 — Safeguarding incident referral
 
@@ -33504,8 +29532,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### NPO-028 — Nonprofit complaint mechanism intake
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -33521,8 +29547,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### NPO-029 — Community feedback analysis
 
@@ -33540,8 +29564,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### NPO-030 — Nonprofit annual report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -33557,8 +29579,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### NPO-031 — Social enterprise business plan
 
@@ -33576,8 +29596,6 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### NPO-032 — Community resource directory
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -33594,15 +29612,9 @@ Shared category context: organization_ref, program_ref, community_or_partner_ref
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## DEV — Development surveys and monitoring evaluation (34 templates)
 
-
-
 Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
-
-
 
 ### DEV-001 — Household socioeconomic survey
 
@@ -33620,8 +29632,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEV-002 — Community baseline assessment
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -33637,8 +29647,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEV-003 — Program indicator definition
 
@@ -33656,8 +29664,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEV-004 — Indicator measurement submission
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -33673,8 +29679,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEV-005 — Monitoring site visit checklist
 
@@ -33692,8 +29696,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEV-006 — Baseline indicator collection
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -33709,8 +29711,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEV-007 — Endline indicator collection
 
@@ -33728,8 +29728,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEV-008 — Midterm evaluation evidence
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -33745,8 +29743,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEV-009 — Program outcome harvesting
 
@@ -33764,8 +29760,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEV-010 — Most significant change story
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -33781,8 +29775,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEV-011 — Beneficiary verification sample
 
@@ -33800,8 +29792,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEV-012 — Enumerators recruitment assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -33817,8 +29807,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEV-013 — Enumerator training checklist
 
@@ -33836,8 +29824,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEV-014 — Enumerator daily work log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -33853,8 +29839,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEV-015 — Survey supervisor spot check
 
@@ -33872,8 +29856,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEV-016 — Survey back-check record
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -33889,8 +29871,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEV-017 — Survey refusal log
 
@@ -33908,8 +29888,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEV-018 — Survey translation review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -33925,8 +29903,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEV-019 — Survey pilot test
 
@@ -33944,8 +29920,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEV-020 — Community focus group
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -33961,8 +29935,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEV-021 — Key informant interview
 
@@ -33980,8 +29952,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEV-022 — Participatory ranking exercise
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -33997,8 +29967,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEV-023 — Project beneficiary satisfaction
 
@@ -34016,8 +29984,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEV-024 — Program cost effectiveness inputs
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -34033,8 +29999,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEV-025 — Impact evaluation data intake
 
@@ -34052,8 +30016,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEV-026 — Monitoring data quality audit
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -34069,8 +30031,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEV-027 — Partner reporting submission
 
@@ -34088,8 +30048,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEV-028 — Donor indicator aggregation review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -34105,8 +30063,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEV-029 — Learning agenda
 
@@ -34124,8 +30080,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEV-030 — Evaluation terms of reference
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -34141,8 +30095,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEV-031 — Evaluation report
 
@@ -34160,8 +30112,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEV-032 — Geographic coverage gap analysis inputs
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -34177,8 +30127,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEV-033 — Gender and inclusion program review
 
@@ -34196,8 +30144,6 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEV-034 — Sustainability and exit plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -34214,15 +30160,9 @@ Shared category context: program_ref, survey_or_indicator_ref, geographic_scope.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## MED — Media journalism publishing and content (32 templates)
 
-
-
 Shared category context: organization_ref, story_or_production_ref, publication_channel.
-
-
 
 ### MED-001 — Story idea pitch
 
@@ -34240,8 +30180,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MED-002 — Reporting assignment brief
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -34257,8 +30195,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MED-003 — Reporter field notebook
 
@@ -34276,8 +30212,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MED-004 — Interview preparation brief
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -34293,8 +30227,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MED-005 — Recorded interview consent
 
@@ -34312,8 +30244,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MED-006 — Journalistic interview record
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -34329,8 +30259,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MED-007 — Source contact record
 
@@ -34348,8 +30276,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MED-008 — Fact-check worksheet
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -34365,8 +30291,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MED-009 — Claim verification dossier
 
@@ -34384,8 +30308,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MED-010 — Photojournalism caption record
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -34401,8 +30323,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MED-011 — Media rights and release record
 
@@ -34420,8 +30340,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MED-012 — News article drafting brief
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -34437,8 +30355,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MED-013 — Feature article outline
 
@@ -34456,8 +30372,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MED-014 — Editorial review checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -34473,8 +30387,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MED-015 — Correction and clarification record
 
@@ -34492,8 +30404,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MED-016 — Press release drafting
 
 **Type:** Communication draft · **Shared pack:** COMM.
@@ -34509,8 +30419,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 **Review:** Human approves content and recipients before any sending action.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MED-017 — Media monitoring record
 
@@ -34528,8 +30436,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MED-018 — Podcast episode brief
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -34545,8 +30451,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MED-019 — Podcast transcript review
 
@@ -34564,8 +30468,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MED-020 — Video production brief
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -34581,8 +30483,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MED-021 — Filming location release
 
@@ -34600,8 +30500,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MED-022 — Film shot log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -34617,8 +30515,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MED-023 — Production equipment checkout
 
@@ -34636,8 +30532,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MED-024 — Production call sheet
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -34653,8 +30547,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MED-025 — Subtitle and caption review
 
@@ -34672,8 +30564,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MED-026 — Translation localization brief
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -34689,8 +30579,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MED-027 — Book manuscript intake
 
@@ -34708,8 +30596,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MED-028 — Publishing production schedule
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -34725,8 +30611,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MED-029 — Proofreading change log
 
@@ -34744,8 +30628,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MED-030 — Content archive catalogue
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -34761,8 +30643,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### MED-031 — Audience research survey
 
@@ -34780,8 +30660,6 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### MED-032 — Media performance report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -34798,15 +30676,9 @@ Shared category context: organization_ref, story_or_production_ref, publication_
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ## ART — Arts heritage museums and libraries (32 templates)
 
-
-
 Shared category context: institution_or_collection_ref, object_or_program_ref, location_ref.
-
-
 
 ### ART-001 — Museum object accession
 
@@ -34824,8 +30696,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ART-002 — Museum object condition report
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -34841,8 +30711,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ART-003 — Artwork photographic record
 
@@ -34860,8 +30728,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ART-004 — Artwork provenance research
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -34877,8 +30743,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ART-005 — Collection loan request
 
@@ -34896,8 +30760,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ART-006 — Collection loan agreement brief
 
 **Type:** Agreement / approval · **Shared pack:** AGREEMENT.
@@ -34913,8 +30775,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 **Review:** Authorized signatory; legal review where applicable.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ART-007 — Museum object movement
 
@@ -34932,8 +30792,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ART-008 — Artwork conservation treatment record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -34949,8 +30807,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ART-009 — Conservation environmental monitoring
 
@@ -34968,8 +30824,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ART-010 — Exhibition planning
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -34985,8 +30839,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ART-011 — Exhibition installation checklist
 
@@ -35004,8 +30856,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ART-012 — Gallery artwork consignment
 
 **Type:** Agreement / approval · **Shared pack:** AGREEMENT.
@@ -35021,8 +30871,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 **Review:** Authorized signatory; legal review where applicable.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ART-013 — Artwork sale documentation
 
@@ -35040,8 +30888,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ART-014 — Artist profile
 
 **Type:** Profile / intake · **Shared pack:** PROFILE.
@@ -35057,8 +30903,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 **Review:** Collect only necessary personal data; obtain required permissions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ART-015 — Artist residency application
 
@@ -35076,8 +30920,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ART-016 — Cultural grant proposal
 
 **Type:** Proposal-generation workflow · **Shared pack:** PROPOSAL.
@@ -35093,8 +30935,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 **Review:** No invented eligibility, qualifications, clients, outcomes, costs or signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ART-017 — Heritage site documentation
 
@@ -35112,8 +30952,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ART-018 — Heritage building condition survey
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -35129,8 +30967,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ART-019 — Archaeological field context record
 
@@ -35148,8 +30984,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ART-020 — Archaeological find register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -35165,8 +30999,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ART-021 — Oral history consent
 
@@ -35184,8 +31016,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ART-022 — Oral history interview
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -35201,8 +31031,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ART-023 — Intangible heritage documentation
 
@@ -35220,8 +31048,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ART-024 — Cultural event production plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -35237,8 +31063,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ART-025 — Performing arts rehearsal log
 
@@ -35256,8 +31080,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ART-026 — Theatre costume inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -35273,8 +31095,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ART-027 — Library accession record
 
@@ -35292,8 +31112,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ART-028 — Library lending transaction
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -35309,8 +31127,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ART-029 — Archive collection finding aid
 
@@ -35328,8 +31144,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ART-030 — Archive digitization quality check
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -35345,8 +31159,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ART-031 — Cultural tourism visitor feedback
 
@@ -35364,8 +31176,6 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ART-032 — Collection inventory reconciliation
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -35382,19 +31192,11 @@ Shared category context: institution_or_collection_ref, object_or_program_ref, l
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 # 15 · Commerce hospitality and recreation
-
-
 
 ## RET — Retail wholesale and e-commerce (32 templates)
 
-
-
 Shared category context: business_ref, store_or_channel_ref, product_or_order_ref.
-
-
 
 ### RET-001 — Retail product listing
 
@@ -35412,8 +31214,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### RET-002 — Retail product photography
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -35429,8 +31229,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### RET-003 — Supplier product catalogue import
 
@@ -35448,8 +31246,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### RET-004 — Retail price label verification
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -35465,8 +31261,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### RET-005 — Retail store opening checklist
 
@@ -35484,8 +31278,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### RET-006 — Retail store closing checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -35501,8 +31293,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### RET-007 — Retail sales transaction
 
@@ -35520,8 +31310,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### RET-008 — Point-of-sale receipt extraction
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -35537,8 +31325,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### RET-009 — Retail cash drawer reconciliation
 
@@ -35556,8 +31342,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### RET-010 — Retail daily sales summary
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -35573,8 +31357,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### RET-011 — Retail stock replenishment
 
@@ -35592,8 +31374,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### RET-012 — Shelf stock availability audit
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -35609,8 +31389,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### RET-013 — Retail shelf planogram check
 
@@ -35628,8 +31406,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### RET-014 — Retail promotion setup
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -35645,8 +31421,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### RET-015 — Customer order collection
 
@@ -35664,8 +31438,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### RET-016 — E-commerce order fulfillment
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -35681,8 +31453,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### RET-017 — Product return intake
 
@@ -35700,8 +31470,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### RET-018 — Refund authorization
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -35717,8 +31485,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### RET-019 — Product exchange record
 
@@ -35736,8 +31502,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### RET-020 — Retail product defect evidence
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -35753,8 +31517,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### RET-021 — Warranty service intake
 
@@ -35772,8 +31534,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### RET-022 — Customer loyalty enrollment
 
 **Type:** Profile / intake · **Shared pack:** PROFILE.
@@ -35789,8 +31549,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 **Review:** Collect only necessary personal data; obtain required permissions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### RET-023 — Gift voucher issue and redemption
 
@@ -35808,8 +31566,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### RET-024 — Wholesale customer quotation
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -35825,8 +31581,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### RET-025 — Wholesale order allocation
 
@@ -35844,8 +31598,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### RET-026 — Marketplace seller onboarding
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -35861,8 +31613,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### RET-027 — Marketplace product compliance review
 
@@ -35880,8 +31630,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### RET-028 — E-commerce product content review
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -35897,8 +31645,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### RET-029 — Retail store condition inspection
 
@@ -35916,8 +31662,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### RET-030 — Retail customer feedback
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -35933,8 +31677,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### RET-031 — Retail loss incident
 
@@ -35952,8 +31694,6 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### RET-032 — Retail performance comparison
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -35970,15 +31710,9 @@ Shared category context: business_ref, store_or_channel_ref, product_or_order_re
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ## HOS — Hotels restaurants catering and accommodation (32 templates)
 
-
-
 Shared category context: business_ref, property_or_outlet_ref, booking_or_service_ref.
-
-
 
 ### HOS-001 — Guest reservation intake
 
@@ -35996,8 +31730,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### HOS-002 — Guest check-in record
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -36013,8 +31745,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### HOS-003 — Guest check-out checklist
 
@@ -36032,8 +31762,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### HOS-004 — Room inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -36049,8 +31777,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### HOS-005 — Room housekeeping checklist
 
@@ -36068,8 +31794,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### HOS-006 — Room condition inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -36085,8 +31809,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### HOS-007 — Lost and found hotel register
 
@@ -36104,8 +31826,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### HOS-008 — Guest maintenance request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -36121,8 +31841,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### HOS-009 — Hotel linen inventory
 
@@ -36140,8 +31858,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### HOS-010 — Laundry batch tracking
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -36157,8 +31873,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### HOS-011 — Hotel minibar reconciliation
 
@@ -36176,8 +31890,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### HOS-012 — Guest complaint resolution
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -36193,8 +31905,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### HOS-013 — Guest experience survey
 
@@ -36212,8 +31922,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### HOS-014 — Hotel occupancy forecast inputs
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -36229,8 +31937,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### HOS-015 — Hotel event booking
 
@@ -36248,8 +31954,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### HOS-016 — Banquet event order
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -36265,8 +31969,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### HOS-017 — Catering quotation
 
@@ -36284,8 +31986,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### HOS-018 — Catering production plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -36301,8 +32001,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### HOS-019 — Restaurant reservation
 
@@ -36320,8 +32018,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### HOS-020 — Restaurant food order
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -36337,8 +32033,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### HOS-021 — Kitchen opening checklist
 
@@ -36356,8 +32050,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### HOS-022 — Kitchen cleaning log
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -36373,8 +32065,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### HOS-023 — Restaurant fridge temperature log
 
@@ -36392,8 +32082,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### HOS-024 — Food service delivery check
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -36409,8 +32097,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### HOS-025 — Restaurant recipe costing
 
@@ -36428,8 +32114,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### HOS-026 — Restaurant stock variance review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -36445,8 +32129,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### HOS-027 — Restaurant waste log
 
@@ -36464,8 +32146,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### HOS-028 — Restaurant cash reconciliation
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -36481,8 +32161,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### HOS-029 — Hospitality staff shift handover
 
@@ -36500,8 +32178,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### HOS-030 — Hotel accessibility inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -36517,8 +32193,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### HOS-031 — Hotel supplier service review
 
@@ -36536,8 +32210,6 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### HOS-032 — Hospitality brand standards inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -36554,15 +32226,9 @@ Shared category context: business_ref, property_or_outlet_ref, booking_or_servic
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ## TOU — Travel tourism recreation and visitor services (30 templates)
 
-
-
 Shared category context: operator_ref, trip_or_experience_ref, destination_scope.
-
-
 
 ### TOU-001 — Travel enquiry intake
 
@@ -36580,8 +32246,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### TOU-002 — Travel itinerary planning
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -36597,8 +32261,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### TOU-003 — Travel quotation
 
@@ -36616,8 +32278,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### TOU-004 — Tour booking confirmation
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -36633,8 +32293,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### TOU-005 — Traveler information intake
 
@@ -36652,8 +32310,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### TOU-006 — Travel document checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -36669,8 +32325,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### TOU-007 — Visa application evidence intake
 
@@ -36688,8 +32342,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### TOU-008 — Travel insurance document check
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -36705,8 +32357,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### TOU-009 — Airport transfer booking
 
@@ -36724,8 +32374,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### TOU-010 — Tour participant register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -36741,8 +32389,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### TOU-011 — Tour guide assignment
 
@@ -36760,8 +32406,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### TOU-012 — Tour guide field report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -36777,8 +32421,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### TOU-013 — Tour vehicle readiness
 
@@ -36796,8 +32438,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### TOU-014 — Visitor attraction ticket record
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -36813,8 +32453,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### TOU-015 — Visitor attraction condition inspection
 
@@ -36832,8 +32470,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### TOU-016 — Nature trail condition survey
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -36849,8 +32485,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### TOU-017 — Campsite registration
 
@@ -36868,8 +32502,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### TOU-018 — Campsite readiness inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -36885,8 +32517,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### TOU-019 — Adventure activity consent administration
 
@@ -36904,8 +32534,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### TOU-020 — Recreation equipment issue
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -36921,8 +32549,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### TOU-021 — Recreation equipment return check
 
@@ -36940,8 +32566,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### TOU-022 — Tourism community consultation
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -36957,8 +32581,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### TOU-023 — Visitor experience feedback
 
@@ -36976,8 +32598,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### TOU-024 — Travel service disruption record
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -36993,8 +32613,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### TOU-025 — Travel refund request
 
@@ -37012,8 +32630,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### TOU-026 — Tour supplier evaluation
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -37029,8 +32645,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### TOU-027 — Destination information source register
 
@@ -37048,8 +32662,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### TOU-028 — Responsible tourism evidence review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -37065,8 +32677,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
-
-
 
 ### TOU-029 — Tour profitability worksheet
 
@@ -37084,8 +32694,6 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ### TOU-030 — Travel emergency assistance intake
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -37102,15 +32710,9 @@ Shared category context: operator_ref, trip_or_experience_ref, destination_scope
 
 **Default privacy:** Confidential · **Rollout:** P1 · Expansion.
 
-
-
 ## SPO — Sports fitness and recreation organizations (30 templates)
 
-
-
 Shared category context: organization_ref, team_or_program_ref, event_or_session_ref.
-
-
 
 ### SPO-001 — Sports club membership application
 
@@ -37128,8 +32730,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### SPO-002 — Athlete registration
 
 **Type:** Profile / intake · **Shared pack:** PROFILE.
@@ -37145,8 +32745,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 **Review:** Collect only necessary personal data; obtain required permissions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### SPO-003 — Sports participation consent
 
@@ -37164,8 +32762,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### SPO-004 — Sports training plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -37181,8 +32777,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### SPO-005 — Training attendance record
 
@@ -37200,8 +32794,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### SPO-006 — Coach observation record
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -37217,8 +32809,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### SPO-007 — Athlete performance measurement
 
@@ -37236,8 +32826,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### SPO-008 — Sports equipment inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -37253,8 +32841,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### SPO-009 — Sports equipment issue and return
 
@@ -37272,8 +32858,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### SPO-010 — Playing field condition inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -37289,8 +32873,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### SPO-011 — Sports venue booking
 
@@ -37308,8 +32890,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### SPO-012 — Tournament planning
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -37325,8 +32905,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### SPO-013 — Match fixture record
 
@@ -37344,8 +32922,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### SPO-014 — Match result verification
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -37361,8 +32937,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### SPO-015 — Match official assignment
 
@@ -37380,8 +32954,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### SPO-016 — Sports event attendance count
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -37397,8 +32969,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### SPO-017 — Sports injury incident documentation
 
@@ -37416,8 +32986,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### SPO-018 — Athlete care referral administration
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -37433,8 +33001,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### SPO-019 — Sports safeguarding concern
 
@@ -37452,8 +33018,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### SPO-020 — Sports travel coordination
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -37469,8 +33033,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### SPO-021 — Coach qualification register
 
@@ -37488,8 +33050,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### SPO-022 — Fitness client goals intake
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -37505,8 +33065,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### SPO-023 — Personal training session log
 
@@ -37524,8 +33082,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### SPO-024 — Fitness facility equipment check
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -37541,8 +33097,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### SPO-025 — Swimming pool water test record
 
@@ -37560,8 +33114,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### SPO-026 — Swimming pool safety inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -37577,8 +33129,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### SPO-027 — Club sponsorship proposal
 
@@ -37596,8 +33146,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### SPO-028 — Sports grant application
 
 **Type:** Proposal-generation workflow · **Shared pack:** PROPOSAL.
@@ -37613,8 +33161,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 **Review:** No invented eligibility, qualifications, clients, outcomes, costs or signatures.
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
-
-
 
 ### SPO-029 — Sports event volunteer coordination
 
@@ -37632,8 +33178,6 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 ### SPO-030 — Sports program evaluation
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -37650,19 +33194,11 @@ Shared category context: organization_ref, team_or_program_ref, event_or_session
 
 **Default privacy:** Restricted · **Rollout:** P1 · Expansion.
 
-
-
 # 16 · Professional specialist and personal services
-
-
 
 ## PRO — Consulting professional and business services (30 templates)
 
-
-
 Shared category context: service_firm_ref, client_ref, engagement_ref.
-
-
 
 ### PRO-001 — Consulting enquiry intake
 
@@ -37680,8 +33216,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### PRO-002 — Consulting discovery workshop
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -37697,8 +33231,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### PRO-003 — Professional services engagement brief
 
@@ -37716,8 +33248,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### PRO-004 — Consultancy diagnostic assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -37733,8 +33263,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### PRO-005 — Consulting workplan
 
@@ -37752,8 +33280,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### PRO-006 — Consultant activity timesheet
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -37769,8 +33295,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### PRO-007 — Consulting deliverable review
 
@@ -37788,8 +33312,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### PRO-008 — Client engagement status report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -37805,8 +33327,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### PRO-009 — Business process mapping capture
 
@@ -37824,8 +33344,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### PRO-010 — Business process improvement plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -37841,8 +33359,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### PRO-011 — Operating procedure drafting
 
@@ -37860,8 +33376,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### PRO-012 — Organization design brief
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -37877,8 +33391,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### PRO-013 — Change management assessment
 
@@ -37896,8 +33408,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### PRO-014 — Business training proposal
 
 **Type:** Proposal-generation workflow · **Shared pack:** PROPOSAL.
@@ -37913,8 +33423,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 **Review:** No invented eligibility, qualifications, clients, outcomes, costs or signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### PRO-015 — Professional accreditation evidence
 
@@ -37932,8 +33440,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### PRO-016 — Translation service request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -37949,8 +33455,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### PRO-017 — Translation quality review
 
@@ -37968,8 +33472,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### PRO-018 — Interpretation session booking
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -37985,8 +33487,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### PRO-019 — Graphic design brief
 
@@ -38004,8 +33504,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### PRO-020 — Brand identity approval
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -38021,8 +33519,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### PRO-021 — Photography commission brief
 
@@ -38040,8 +33536,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### PRO-022 — Photography delivery review
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -38057,8 +33551,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### PRO-023 — Architecture design brief
 
@@ -38076,8 +33568,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### PRO-024 — Engineering consultancy inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -38093,8 +33583,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### PRO-025 — Quantity surveying measurement sheet
 
@@ -38112,8 +33600,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### PRO-026 — Professional valuation evidence review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -38129,8 +33615,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### PRO-027 — Business registration support intake
 
@@ -38148,8 +33632,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### PRO-028 — Market entry research brief
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -38165,8 +33647,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### PRO-029 — Business continuity consulting report
 
@@ -38184,8 +33664,6 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### PRO-030 — Professional engagement closure
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -38202,15 +33680,9 @@ Shared category context: service_firm_ref, client_ref, engagement_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ## FAC — Facilities cleaning repairs and local services (30 templates)
 
-
-
 Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
-
-
 
 ### FAC-001 — Cleaning service booking
 
@@ -38228,8 +33700,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FAC-002 — Cleaning site survey
 
 **Type:** Visit / field workflow · **Shared pack:** VISIT.
@@ -38245,8 +33715,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 **Review:** Field officer verifies observations and any attributed statements.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FAC-003 — Cleaning quotation
 
@@ -38264,8 +33732,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FAC-004 — Cleaning task checklist
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -38281,8 +33747,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FAC-005 — Deep cleaning completion report
 
@@ -38300,8 +33764,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FAC-006 — Cleaning materials issue
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -38317,8 +33779,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FAC-007 — Pest management service intake
 
@@ -38336,8 +33796,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FAC-008 — Pest management inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -38353,8 +33811,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FAC-009 — Pest management service record
 
@@ -38372,8 +33828,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FAC-010 — Grounds maintenance plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -38389,8 +33843,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FAC-011 — Gardening service visit
 
@@ -38408,8 +33860,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FAC-012 — Landscape design brief
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -38425,8 +33875,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FAC-013 — Appliance repair intake
 
@@ -38444,8 +33892,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FAC-014 — Appliance diagnostic record
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -38461,8 +33907,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FAC-015 — Appliance repair work order
 
@@ -38480,8 +33924,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FAC-016 — Repair customer approval
 
 **Type:** Agreement / approval · **Shared pack:** AGREEMENT.
@@ -38497,8 +33939,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 **Review:** Authorized signatory; legal review where applicable.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FAC-017 — Plumbing service request
 
@@ -38516,8 +33956,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FAC-018 — Electrical repair request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -38533,8 +33971,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FAC-019 — Locksmith service authorization
 
@@ -38552,8 +33988,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FAC-020 — Home improvement job survey
 
 **Type:** Visit / field workflow · **Shared pack:** VISIT.
@@ -38569,8 +34003,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 **Review:** Field officer verifies observations and any attributed statements.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FAC-021 — Painting job measurement
 
@@ -38588,8 +34020,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FAC-022 — Moving service inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -38605,8 +34035,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FAC-023 — Moving service quotation
 
@@ -38624,8 +34052,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FAC-024 — Moving day handover
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -38641,8 +34067,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FAC-025 — Storage service intake
 
@@ -38660,8 +34084,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FAC-026 — Laundry service intake
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -38677,8 +34099,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FAC-027 — Dry cleaning condition record
 
@@ -38696,8 +34116,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FAC-028 — Waste pickup service booking
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -38713,8 +34131,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### FAC-029 — Home services quality feedback
 
@@ -38732,8 +34148,6 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### FAC-030 — Facilities service contract review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -38750,15 +34164,9 @@ Shared category context: service_provider_ref, customer_or_site_ref, job_ref.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ## PER — Personal household family and everyday records (32 templates)
 
-
-
 Shared category context: owner_ref, household_or_personal_project_ref, privacy_scope.
-
-
 
 ### PER-001 — Personal document organizer
 
@@ -38776,8 +34184,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PER-002 — Household belongings inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -38793,8 +34199,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PER-003 — Home insurance evidence pack
 
@@ -38812,8 +34216,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PER-004 — Household appliance warranty register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -38829,8 +34231,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PER-005 — Household maintenance calendar
 
@@ -38848,8 +34248,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PER-006 — Home renovation planning
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -38865,8 +34263,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PER-007 — Personal expense capture
 
@@ -38884,8 +34280,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PER-008 — Household budget worksheet
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -38901,8 +34295,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PER-009 — Family shared purchase list
 
@@ -38920,8 +34312,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PER-010 — Personal receipt archive
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -38937,8 +34327,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PER-011 — Personal travel document checklist
 
@@ -38956,8 +34344,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PER-012 — Family event planning
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -38973,8 +34359,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PER-013 — Wedding planning brief
 
@@ -38992,8 +34376,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PER-014 — Family reunion registration
 
 **Type:** Profile / intake · **Shared pack:** PROFILE.
@@ -39009,8 +34391,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 **Review:** Collect only necessary personal data; obtain required permissions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PER-015 — Personal appointment tracker
 
@@ -39028,8 +34408,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PER-016 — Personal learning goals
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -39045,8 +34423,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PER-017 — Personal project notebook
 
@@ -39064,8 +34440,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PER-018 — Personal portfolio builder
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -39081,8 +34455,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PER-019 — Job application tracker
 
@@ -39100,8 +34472,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PER-020 — CV and cover letter drafting brief
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -39117,8 +34487,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PER-021 — Scholarship personal statement brief
 
@@ -39136,8 +34504,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PER-022 — Personal reference request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -39153,8 +34519,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PER-023 — Family history interview
 
@@ -39172,8 +34536,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PER-024 — Private photo album captions
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -39189,8 +34551,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PER-025 — Voice journal entry
 
@@ -39208,8 +34568,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PER-026 — Pet home care schedule
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -39225,8 +34583,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PER-027 — House sitter handover
 
@@ -39244,8 +34600,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PER-028 — Borrowed belongings register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -39261,8 +34615,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PER-029 — Personal emergency information card
 
@@ -39280,8 +34632,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PER-030 — Digital account legacy instructions
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -39297,8 +34647,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### PER-031 — Personal data export inventory
 
@@ -39316,8 +34664,6 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### PER-032 — Personal subscription tracker
 
 **Type:** Tracker / follow-up · **Shared pack:** TRACK.
@@ -39334,15 +34680,9 @@ Shared category context: owner_ref, household_or_personal_project_ref, privacy_s
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## FAI — Faith communities ceremonies and associations (28 templates)
 
-
-
 Shared category context: organization_ref, program_or_event_ref, voluntary_participant_ref.
-
-
 
 ### FAI-001 — Faith community voluntary registration
 
@@ -39360,8 +34700,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FAI-002 — Congregation event registration
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -39377,8 +34715,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FAI-003 — Faith community meeting agenda
 
@@ -39396,8 +34732,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FAI-004 — Faith community meeting minutes
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -39413,8 +34747,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FAI-005 — Community service volunteer roster
 
@@ -39432,8 +34764,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FAI-006 — Faith community facility inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -39449,8 +34779,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FAI-007 — Place of worship maintenance inspection
 
@@ -39468,8 +34796,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FAI-008 — Faith community donation record
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -39485,8 +34811,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FAI-009 — Anonymous donation reconciliation
 
@@ -39504,8 +34828,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FAI-010 — Community charity distribution
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -39521,8 +34843,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FAI-011 — Pastoral appointment request
 
@@ -39540,8 +34860,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FAI-012 — Confidential pastoral care administration
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -39557,8 +34875,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FAI-013 — Religious education session plan
 
@@ -39576,8 +34892,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FAI-014 — Religious education attendance
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -39593,8 +34907,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FAI-015 — Community youth event permission
 
@@ -39612,8 +34924,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FAI-016 — Ceremony booking request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -39629,8 +34939,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FAI-017 — Ceremony program drafting
 
@@ -39648,8 +34956,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FAI-018 — Marriage preparation administration
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -39665,8 +34971,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FAI-019 — Funeral service planning
 
@@ -39684,8 +34988,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FAI-020 — Memorial tribute drafting brief
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -39701,8 +35003,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FAI-021 — Community hall booking
 
@@ -39720,8 +35020,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FAI-022 — Faith organization budget
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -39737,8 +35035,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FAI-023 — Community leadership election administration
 
@@ -39756,8 +35052,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FAI-024 — Faith organization safeguarding report
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -39773,8 +35067,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FAI-025 — Faith community annual activity report
 
@@ -39792,8 +35084,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FAI-026 — Interfaith dialogue record
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -39809,8 +35099,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### FAI-027 — Religious heritage oral history
 
@@ -39828,8 +35116,6 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### FAI-028 — Community welfare referral
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -39846,15 +35132,9 @@ Shared category context: organization_ref, program_or_event_ref, voluntary_parti
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## LIF — Beauty wellbeing ceremonies and end-of-life services (30 templates)
 
-
-
 Shared category context: provider_ref, consented_client_ref, service_ref.
-
-
 
 ### LIF-001 — Salon appointment booking
 
@@ -39872,8 +35152,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LIF-002 — Hair service consultation
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -39889,8 +35167,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LIF-003 — Salon service record
 
@@ -39908,8 +35184,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LIF-004 — Salon product inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -39925,8 +35199,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LIF-005 — Salon tool cleaning record
 
@@ -39944,8 +35216,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LIF-006 — Barber service booking
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -39961,8 +35231,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LIF-007 — Beauty treatment consent administration
 
@@ -39980,8 +35248,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LIF-008 — Beauty service patch-test documentation
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -39997,8 +35263,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LIF-009 — Nail service consultation
 
@@ -40016,8 +35280,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LIF-010 — Spa appointment intake
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -40033,8 +35295,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LIF-011 — Spa service preparation checklist
 
@@ -40052,8 +35312,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LIF-012 — Massage appointment administration
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -40069,8 +35327,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LIF-013 — Wellbeing coaching goals
 
@@ -40088,8 +35344,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LIF-014 — Wellbeing workshop feedback
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -40105,8 +35359,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LIF-015 — Beauty product complaint intake
 
@@ -40124,8 +35376,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LIF-016 — Salon customer photo permission
 
 **Type:** Agreement / approval · **Shared pack:** AGREEMENT.
@@ -40141,8 +35391,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 **Review:** Authorized signatory; legal review where applicable.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LIF-017 — Tattoo design consultation
 
@@ -40160,8 +35408,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LIF-018 — Tattoo procedure consent administration
 
 **Type:** Agreement / approval · **Shared pack:** AGREEMENT.
@@ -40177,8 +35423,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 **Review:** Authorized signatory; legal review where applicable.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LIF-019 — Personal styling brief
 
@@ -40196,8 +35440,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LIF-020 — Ceremony planning consultation
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -40213,8 +35455,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LIF-021 — Funeral service request
 
@@ -40232,8 +35472,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LIF-022 — Funeral service quotation
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -40249,8 +35487,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LIF-023 — Memorial announcement drafting
 
@@ -40268,8 +35504,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LIF-024 — Cemetery plot register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -40285,8 +35519,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LIF-025 — Burial scheduling administration
 
@@ -40304,8 +35536,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LIF-026 — Cemetery condition inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -40321,8 +35551,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LIF-027 — Bereavement support referral
 
@@ -40340,8 +35568,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LIF-028 — Estate document organization
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -40357,8 +35583,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### LIF-029 — Executor administration checklist
 
@@ -40376,8 +35600,6 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### LIF-030 — Personal services quality report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -40394,19 +35616,11 @@ Shared category context: provider_ref, consented_client_ref, service_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 # 17 · Specialist and emerging domains
-
-
 
 ## SCI — Space astronomy earth and physical sciences (32 templates)
 
-
-
 Shared category context: research_or_operator_ref, instrument_or_site_ref, campaign_ref.
-
-
 
 ### SCI-001 — Astronomy observation log
 
@@ -40424,8 +35638,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SCI-002 — Telescope asset inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -40441,8 +35653,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SCI-003 — Telescope maintenance record
 
@@ -40460,8 +35670,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SCI-004 — Astronomical image catalogue
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -40477,8 +35685,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SCI-005 — Observatory environmental log
 
@@ -40496,8 +35702,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SCI-006 — Satellite data acquisition request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -40513,8 +35717,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SCI-007 — Satellite scene metadata review
 
@@ -40532,8 +35734,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SCI-008 — Remote sensing ground truth survey
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -40549,8 +35749,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SCI-009 — Satellite payload test evidence
 
@@ -40568,8 +35766,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SCI-010 — Space component traceability
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -40585,8 +35781,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SCI-011 — Space hardware inspection
 
@@ -40604,8 +35798,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SCI-012 — Space mission document register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -40621,8 +35813,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SCI-013 — Space mission readiness evidence
 
@@ -40640,8 +35830,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SCI-014 — Ground station asset inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -40657,8 +35845,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SCI-015 — Ground station service log
 
@@ -40676,8 +35862,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SCI-016 — Satellite telemetry anomaly review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -40693,8 +35877,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SCI-017 — Space science experiment log
 
@@ -40712,8 +35894,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SCI-018 — Meteorological station register
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -40729,8 +35909,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SCI-019 — Meteorological instrument calibration
 
@@ -40748,8 +35926,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SCI-020 — Weather observation record
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -40765,8 +35941,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SCI-021 — Seismic sensor deployment
 
@@ -40784,8 +35958,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SCI-022 — Seismic instrument maintenance
 
 **Type:** Maintenance workflow · **Shared pack:** MAINT.
@@ -40801,8 +35973,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 **Review:** Qualified technician approves work and return to service.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SCI-023 — Geophysical survey field log
 
@@ -40820,8 +35990,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SCI-024 — Hydrological gauging record
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -40837,8 +36005,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SCI-025 — Oceanographic sample collection
 
@@ -40856,8 +36022,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SCI-026 — Ocean buoy telemetry review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -40873,8 +36037,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SCI-027 — Glacier observation survey
 
@@ -40892,8 +36054,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SCI-028 — Physical science experiment record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -40909,8 +36069,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SCI-029 — Metrology calibration certificate intake
 
@@ -40928,8 +36086,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SCI-030 — Scientific instrument booking
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -40945,8 +36101,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### SCI-031 — Scientific data release checklist
 
@@ -40964,8 +36118,6 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### SCI-032 — Citizen science observation
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -40982,15 +36134,9 @@ Shared category context: research_or_operator_ref, instrument_or_site_ref, campa
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ## ACC — Accessibility inclusion and equitable services (30 templates)
 
-
-
 Shared category context: organization_ref, service_or_site_ref, assessment_ref.
-
-
 
 ### ACC-001 — Accessibility assessment brief
 
@@ -41008,8 +36154,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ACC-002 — Building access route inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -41025,8 +36169,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ACC-003 — Accessible toilet inspection
 
@@ -41044,8 +36186,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ACC-004 — Accessible room feature register
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -41061,8 +36201,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ACC-005 — Public transport accessibility survey
 
@@ -41080,8 +36218,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ACC-006 — Digital accessibility test plan
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -41097,8 +36233,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ACC-007 — Website accessibility findings
 
@@ -41116,8 +36250,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ACC-008 — Mobile app accessibility findings
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -41133,8 +36265,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ACC-009 — Document accessibility checklist
 
@@ -41152,8 +36282,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ACC-010 — Image alternative text review
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -41169,8 +36297,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 **Review:** Each pass or fail must have evidence or a documented reviewer basis.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ACC-011 — Video caption quality review
 
@@ -41188,8 +36314,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ACC-012 — Audio description production brief
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -41205,8 +36329,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ACC-013 — Plain language content review
 
@@ -41224,8 +36346,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ACC-014 — Easy-read document brief
 
 **Type:** Generated document · **Shared pack:** DOC.
@@ -41241,8 +36361,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 **Review:** Review all facts, professional conclusions, formatting and signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ACC-015 — Sign language interpretation booking
 
@@ -41260,8 +36378,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ACC-016 — Accessible event requirements
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -41277,8 +36393,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ACC-017 — Workplace adjustment tracking
 
@@ -41296,8 +36410,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ACC-018 — Inclusive recruitment process review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -41313,8 +36425,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ACC-019 — Inclusive service feedback
 
@@ -41332,8 +36442,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ACC-020 — Assistive technology evaluation
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -41349,8 +36457,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ACC-021 — Assistive technology loan register
 
@@ -41368,8 +36474,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ACC-022 — Braille material production request
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -41385,8 +36489,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ACC-023 — Tactile signage inventory
 
@@ -41404,8 +36506,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ACC-024 — Wayfinding usability study
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -41421,8 +36521,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ACC-025 — Inclusive emergency plan review
 
@@ -41440,8 +36538,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ACC-026 — Accessibility remediation tracker
 
 **Type:** Tracker / follow-up · **Shared pack:** TRACK.
@@ -41457,8 +36553,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 **Review:** Status changes must be confirmed or tied to a trusted event.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ACC-027 — Accessibility procurement review
 
@@ -41476,8 +36570,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ACC-028 — Disability inclusion program report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -41493,8 +36585,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 **Review:** Human verifies calculations, claims and professional judgments.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ACC-029 — Accessible communication preferences
 
@@ -41512,8 +36602,6 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ACC-030 — Accessibility conformance claim review
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -41530,15 +36618,9 @@ Shared category context: organization_ref, service_or_site_ref, assessment_ref.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## ELE — Elections civic participation and associations (28 templates)
 
-
-
 Shared category context: authorized_body_ref, event_ref, administrative_area.
-
-
 
 ### ELE-001 — Election administrative planning
 
@@ -41556,8 +36638,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ELE-002 — Polling venue inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -41573,8 +36653,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ELE-003 — Polling venue readiness inspection
 
@@ -41592,8 +36670,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ELE-004 — Election materials inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -41609,8 +36685,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ELE-005 — Election materials dispatch
 
@@ -41628,8 +36702,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ELE-006 — Election materials return
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -41645,8 +36717,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ELE-007 — Polling staff training record
 
@@ -41664,8 +36734,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ELE-008 — Election observer accreditation intake
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -41681,8 +36749,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ELE-009 — Election observer assignment
 
@@ -41700,8 +36766,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ELE-010 — Nonpartisan election observation
 
 **Type:** Observation / evidence capture · **Shared pack:** OBS.
@@ -41717,8 +36781,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 **Review:** Observed, reported and inferred details must remain distinguishable.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ELE-011 — Polling accessibility feedback
 
@@ -41736,8 +36798,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ELE-012 — Official results form capture
 
 **Type:** Transaction / repeated line items · **Shared pack:** TRANS.
@@ -41753,8 +36813,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 **Review:** Verify quantities, identifiers and monetary totals before posting.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ELE-013 — Election results transcription review
 
@@ -41772,8 +36830,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ELE-014 — Election administrative incident
 
 **Type:** Incident workflow · **Shared pack:** INCIDENT.
@@ -41789,8 +36845,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 **Review:** Qualified review for high-impact incidents; do not infer blame.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ELE-015 — Election complaint administration
 
@@ -41808,8 +36862,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ELE-016 — Ballot material custody record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -41825,8 +36877,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ELE-017 — Election administrative reconciliation
 
@@ -41844,8 +36894,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ELE-018 — Public candidate forum logistics
 
 **Type:** Plan / schedule · **Shared pack:** PLAN.
@@ -41861,8 +36909,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 **Review:** Owner confirms dates, resources and assumptions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ELE-019 — Civic education event plan
 
@@ -41880,8 +36926,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ELE-020 — Civic education attendance totals
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -41897,8 +36941,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ELE-021 — Civic education feedback
 
@@ -41916,8 +36958,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ELE-022 — Public petition intake
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -41933,8 +36973,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ELE-023 — Community consultation response
 
@@ -41952,8 +36990,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ELE-024 — Participatory budgeting proposal
 
 **Type:** Proposal-generation workflow · **Shared pack:** PROPOSAL.
@@ -41969,8 +37005,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 **Review:** No invented eligibility, qualifications, clients, outcomes, costs or signatures.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ELE-025 — Participatory budgeting evaluation
 
@@ -41988,8 +37022,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ELE-026 — Association election nomination
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -42005,8 +37037,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### ELE-027 — Association election meeting record
 
@@ -42024,8 +37054,6 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### ELE-028 — Election administration after-action report
 
 **Type:** Generated report · **Shared pack:** REPORT.
@@ -42042,15 +37070,9 @@ Shared category context: authorized_body_ref, event_ref, administrative_area.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## DEF — Defense peacekeeping and veteran administration (28 templates)
 
-
-
 Shared category context: authorized_organization_ref, program_ref, administrative_case_ref.
-
-
 
 ### DEF-001 — Nonweapon equipment inventory
 
@@ -42068,8 +37090,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEF-002 — Nonweapon equipment maintenance
 
 **Type:** Maintenance workflow · **Shared pack:** MAINT.
@@ -42085,8 +37105,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 **Review:** Qualified technician approves work and return to service.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEF-003 — Uniform and protective clothing issue
 
@@ -42104,8 +37122,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEF-004 — Administrative personnel record
 
 **Type:** Profile / intake · **Shared pack:** PROFILE.
@@ -42121,8 +37137,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 **Review:** Collect only necessary personal data; obtain required permissions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEF-005 — Personnel training completion
 
@@ -42140,8 +37154,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEF-006 — Facility accommodation allocation
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -42157,8 +37169,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEF-007 — Base facility condition inspection
 
@@ -42176,8 +37186,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEF-008 — Administrative vehicle service log
 
 **Type:** Maintenance workflow · **Shared pack:** MAINT.
@@ -42193,8 +37201,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 **Review:** Qualified technician approves work and return to service.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEF-009 — Medical appointment administration
 
@@ -42212,8 +37218,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEF-010 — Veteran benefit application intake
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -42229,8 +37233,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEF-011 — Veteran support referral
 
@@ -42248,8 +37250,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEF-012 — Veteran skills transition assessment
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -42265,8 +37265,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEF-013 — Veteran employment support plan
 
@@ -42284,8 +37282,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEF-014 — Family welfare assistance intake
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -42301,8 +37297,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEF-015 — Reintegration program attendance
 
@@ -42320,8 +37314,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEF-016 — Peacekeeping civilian engagement record
 
 **Type:** Meeting / collaboration · **Shared pack:** MEET.
@@ -42337,8 +37329,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 **Review:** Participants or chair confirm decisions and attributions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEF-017 — Humanitarian civil coordination meeting
 
@@ -42356,8 +37346,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEF-018 — Peacekeeping conduct complaint
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -42373,8 +37361,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEF-019 — Noncombat logistics handover
 
@@ -42392,8 +37378,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEF-020 — Facility environmental inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -42409,8 +37393,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEF-021 — Administrative expenditure evidence
 
@@ -42428,8 +37410,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEF-022 — Official travel reimbursement intake
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -42445,8 +37425,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEF-023 — Service history verification request
 
@@ -42464,8 +37442,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEF-024 — Veteran service satisfaction survey
 
 **Type:** Survey / questionnaire · **Shared pack:** SURVEY.
@@ -42481,8 +37457,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 **Review:** Preserve consent and sampling limits; do not infer sensitive traits.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEF-025 — Memorial event administration
 
@@ -42500,8 +37474,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEF-026 — Civilian protection concern referral
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -42517,8 +37489,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
-
-
 
 ### DEF-027 — Community support project monitoring
 
@@ -42536,8 +37506,6 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ### DEF-028 — Administrative document access review
 
 **Type:** Checklist / verification · **Shared pack:** CHECK.
@@ -42554,15 +37522,9 @@ Shared category context: authorized_organization_ref, program_ref, administrativ
 
 **Default privacy:** Restricted · **Rollout:** P2 · Specialist.
 
-
-
 ## ADV — Electronics advanced fabrication and industrial R&D (32 templates)
 
-
-
 Shared category context: facility_ref, product_or_experiment_ref, batch_or_serial_ref.
-
-
 
 ### ADV-001 — Electronic component catalogue
 
@@ -42580,8 +37542,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ADV-002 — Electronic component incoming inspection
 
 **Type:** Inspection / field form · **Shared pack:** INSPECT.
@@ -42597,8 +37557,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 **Review:** Inspector validates findings; a photo alone is not certification.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ADV-003 — Circuit board revision register
 
@@ -42616,8 +37574,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ADV-004 — Circuit board assembly traveler
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -42633,8 +37589,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ADV-005 — Electronics test fixture inventory
 
@@ -42652,8 +37606,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ADV-006 — Functional electronics test record
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -42669,8 +37621,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ADV-007 — Electronic serial number capture
 
@@ -42688,8 +37638,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ADV-008 — Electronics rework authorization
 
 **Type:** Request / approval workflow · **Shared pack:** REQUEST.
@@ -42705,8 +37653,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 **Review:** Authorization required before payments, submissions or external actions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ADV-009 — Electronics burn-in evidence
 
@@ -42724,8 +37670,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ADV-010 — Electronic failure analysis intake
 
 **Type:** Case-management workflow · **Shared pack:** CASE.
@@ -42741,8 +37685,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 **Review:** Authorized handler; restricted access; no automated adverse decision.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ADV-011 — Cleanroom access training
 
@@ -42760,8 +37702,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ADV-012 — Cleanroom environmental monitoring
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -42777,8 +37717,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ADV-013 — Cleanroom gowning checklist
 
@@ -42796,8 +37734,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ADV-014 — Semiconductor wafer lot tracking
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -42813,8 +37749,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ADV-015 — Semiconductor process deviation
 
@@ -42832,8 +37766,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ADV-016 — Semiconductor metrology result intake
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -42849,8 +37781,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ADV-017 — Additive manufacturing build request
 
@@ -42868,8 +37798,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ADV-018 — 3D printer asset inventory
 
 **Type:** Register / master data · **Shared pack:** ASSET.
@@ -42885,8 +37813,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 **Review:** Verify identifiers against source; never infer serial numbers from appearance.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ADV-019 — Additive manufacturing material lot
 
@@ -42904,8 +37830,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ADV-020 — 3D print build record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -42921,8 +37845,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ADV-021 — Printed part dimensional inspection
 
@@ -42940,8 +37862,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ADV-022 — Printed part post-processing record
 
 **Type:** Activity / event log · **Shared pack:** LOG.
@@ -42957,8 +37877,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 **Review:** Preserve original events and corrections; distinguish device and server times.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ADV-023 — Robotics equipment acceptance
 
@@ -42976,8 +37894,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ADV-024 — Robot maintenance record
 
 **Type:** Maintenance workflow · **Shared pack:** MAINT.
@@ -42993,8 +37909,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 **Review:** Qualified technician approves work and return to service.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ADV-025 — Industrial automation change review
 
@@ -43012,8 +37926,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ADV-026 — Prototype design review
 
 **Type:** Assessment / analysis · **Shared pack:** ASSESS.
@@ -43029,8 +37941,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 **Review:** Reviewer verifies evidence, assumptions and conclusions.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ADV-027 — Prototype experiment log
 
@@ -43048,8 +37958,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ADV-028 — Materials characterization sample
 
 **Type:** Sample / chain-of-custody · **Shared pack:** SAMPLE.
@@ -43065,8 +37973,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 **Review:** Qualified sampling protocols and custody confirmation required.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ADV-029 — Composite fabrication batch record
 
@@ -43084,8 +37990,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ADV-030 — Precision manufacturing calibration
 
 **Type:** Measurement / calculation · **Shared pack:** MEASURE.
@@ -43101,8 +38005,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 **Review:** Verify units, calibration and method; no safety threshold inferred by AI.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
-
 
 ### ADV-031 — Advanced product traceability dossier
 
@@ -43120,8 +38022,6 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
 
-
-
 ### ADV-032 — Industrial R&D intellectual property log
 
 **Type:** Register / master data · **Shared pack:** REG.
@@ -43137,4 +38037,3 @@ Shared category context: facility_ref, product_or_experiment_ref, batch_or_seria
 **Review:** Verify authoritative source and permission to store data.
 
 **Default privacy:** Confidential · **Rollout:** P2 · Specialist.
-
