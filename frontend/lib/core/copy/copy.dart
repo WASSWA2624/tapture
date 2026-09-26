@@ -1863,10 +1863,6 @@ abstract final class Copy {
   static const String shippedLibrarySearchHint =
       'Search by name, code, category or field';
 
-  /// Heading over the starter templates of §13.4 when catalogue areas are
-  /// listed beside them.
-  static const String shippedStarterArea = 'Starter templates';
-
   /// Heading of a catalogue area. [code] and [title] are catalogue data.
   static String shippedAreaTitle(String code, String title) => '$code · $title';
 
@@ -1959,49 +1955,6 @@ abstract final class Copy {
 
   /// What to change when the shipped library search matches nothing.
   static const String shippedLibraryNoMatchMessage = searchNoMatchMessage;
-
-  /// Heading of a shipped library group, keyed by the group's name.
-  static String shippedCategoryTitle(String category) {
-    return switch (category) {
-      'assets' => 'Assets and equipment',
-      'places' => 'Buildings and sites',
-      'operations' => 'Stock, inspection and maintenance',
-      'people' => 'People and households',
-      'nature' => 'Plants and animals',
-      'records' => 'Documents, meetings and events',
-      _ => 'General',
-    };
-  }
-
-  /// Operator-facing name of a packed template, keyed by [templateKey].
-  static String shippedTemplateName(String templateKey) {
-    return switch (templateKey) {
-      'equipment_asset' => 'Equipment / Asset',
-      'medical_equipment' => 'Medical equipment',
-      'ict_equipment' => 'ICT equipment',
-      'vehicle_plant' => 'Vehicle / Plant',
-      'furniture_fitting' => 'Furniture and fittings',
-      'building_facility' => 'Building / Facility',
-      'room_space' => 'Room / Space',
-      'utility_point' => 'Utility / Service point',
-      'stock_item' => 'Stock / Store',
-      'inspection_check' => 'Inspection / Compliance',
-      'work_order' => 'Maintenance / Work order',
-      'meter_reading' => 'Meter reading',
-      'person_beneficiary' => 'Person / Beneficiary',
-      'staff_member' => 'Staff / Workforce',
-      'household_survey' => 'Household / Dwelling',
-      'land_parcel' => 'Land / Plot / Parcel',
-      'plant_tree' => 'Plant / Tree survey',
-      'livestock_animal' => 'Livestock / Animal',
-      'document_record' => 'Document / Archive',
-      'meeting' => 'Meeting',
-      'event_activity' => 'Event / Activity',
-      'incident_report' => 'Incident / Issue',
-      'generic_item' => 'Generic',
-      _ => shippedLabel('templates.$templateKey.name'),
-    };
-  }
 
   /// Resolves a packed localisation key at render time (FE-L10N-07).
   static String shippedLabel(String key) {

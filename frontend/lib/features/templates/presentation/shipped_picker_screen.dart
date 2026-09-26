@@ -24,16 +24,15 @@ import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/presentation/template_locations.dart';
 
 import '../domain/field_def.dart';
-import '../domain/shipped_template_category.dart';
 import '../domain/shipped_template_entry.dart';
 import '../domain/template_def.dart';
 import '../templates.dart' show shippedTemplateLoaderProvider;
 import 'shipped_library_filter.dart';
 import 'template_list_screen.dart';
 
-/// Picker for the shipped library: the starter templates of §13.4 and the
-/// full catalogue, grouped by area and category, searchable and filterable;
-/// preview a template's fields, then copy it into the project.
+/// Picker for the shipped library, grouped by area and category, searchable
+/// and filterable; preview a template's fields, then copy it into the
+/// project.
 class ShippedPickerScreen extends ConsumerStatefulWidget {
   /// Creates the library picker.
   const ShippedPickerScreen({super.key});
@@ -72,13 +71,11 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
       view.previewKey,
     );
     if (preview != null && _name.text.isEmpty) {
-      _name.text = shippedEntryName(preview);
+      _name.text = preview.title;
     }
     return AppPage(
       key: const ValueKey<String>('route-template-library'),
-      title: preview == null
-          ? Copy.templatesLibraryTitle
-          : shippedEntryName(preview),
+      title: preview == null ? Copy.templatesLibraryTitle : preview.title,
       scrollable: false,
       footer: preview != null
           ? null
@@ -170,7 +167,7 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
           .copyToProject(
             templateKey: key,
             projectId: projectId,
-            name: shippedEntryName(source),
+            name: source.title,
           );
       if (result is FailureResult<TemplateDef>) {
         failure = result.failure;
@@ -262,16 +259,13 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
   Widget _libraryRow(ShippedTemplateEntry entry, Set<String> attached) {
     final bool isAttached = attached.contains(entry.templateKey);
     final bool picked = _picked.contains(entry.templateKey);
-    final String? code = entry.code;
     return AppListTile(
-      title: shippedEntryName(entry),
+      title: entry.title,
       subtitle: isAttached
           ? Copy.shippedAddedToProject
-          : code == null
-          ? Copy.fieldsCount(entry.fieldCount)
           : Copy.shippedCatalogueSubtitle(
-              code,
-              entry.recordType?.title ?? entry.kind,
+              entry.code,
+              entry.recordType.title,
               entry.fieldCount,
             ),
       selected: picked,
@@ -347,42 +341,34 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
   }
 }
 
-/// What a catalogue template is: its category, record type, suggested
-/// privacy and tier, and how its record type is captured, assisted, output
-/// and reviewed. A starter template shows none of this.
+/// What a template is: its category, record type, suggested privacy and
+/// tier, and how its record type is captured, assisted, output and reviewed.
 List<Widget> _about(ShippedTemplateEntry entry) {
-  final ShippedCatalogueCategory? category = entry.category;
-  final ShippedRecordType? type = entry.recordType;
-  final String? code = entry.code;
-  if (category == null || code == null) {
-    return const <Widget>[];
-  }
+  final ShippedRecordType type = entry.recordType;
   return <Widget>[
     AppListTile(
       title: Copy.shippedCategoryLabel,
-      subtitle: '$code · ${category.title}',
+      subtitle: '${entry.code} · ${entry.category.title}',
       dense: true,
     ),
-    if (type != null)
-      AppListTile(
-        title: Copy.shippedRecordTypeLabel,
-        subtitle: type.title,
-        dense: true,
-      ),
+    AppListTile(
+      title: Copy.shippedRecordTypeLabel,
+      subtitle: type.title,
+      dense: true,
+    ),
     AppListTile(
       title: Copy.shippedPrivacyTierLabel,
       subtitle: Copy.shippedPrivacyTier(entry.privacy, entry.rollout),
       dense: true,
     ),
-    if (type != null)
-      for (final (String label, String text) in <(String, String)>[
-        (Copy.shippedCaptureLabel, type.capture),
-        (Copy.shippedAiAssistanceLabel, type.aiAssistance),
-        (Copy.shippedOutputsLabel, type.outputs),
-        (Copy.shippedReviewLabel, type.review),
-      ])
-        if (text.isNotEmpty)
-          AppListTile(title: label, subtitle: text, dense: true),
+    for (final (String label, String text) in <(String, String)>[
+      (Copy.shippedCaptureLabel, type.capture),
+      (Copy.shippedAiAssistanceLabel, type.aiAssistance),
+      (Copy.shippedOutputsLabel, type.outputs),
+      (Copy.shippedReviewLabel, type.review),
+    ])
+      if (text.isNotEmpty)
+        AppListTile(title: label, subtitle: text, dense: true),
   ];
 }
 
@@ -420,23 +406,17 @@ String _requiredness(Requiredness requiredness) {
   };
 }
 
-/// The operator-facing name of [entry]: the catalogue's title, or the copy
-/// helper's name for a starter template.
-String shippedEntryName(ShippedTemplateEntry entry) {
-  return entry.title ?? Copy.shippedTemplateName(entry.templateKey);
-}
-
 String _searchText(ShippedTemplateEntry entry) {
-  final ShippedCatalogueCategory? category = entry.category;
+  final ShippedCatalogueCategory category = entry.category;
   return <String>[
-    shippedEntryName(entry),
+    entry.title,
     entry.templateKey,
     entry.kind,
-    ?entry.code,
-    if (category == null)
-      Copy.shippedCategoryTitle(entry.starterCategory.name)
-    else ...<String>[category.code, category.title, category.supergroupTitle],
-    ?entry.recordType?.title,
+    entry.code,
+    category.code,
+    category.title,
+    category.supergroupTitle,
+    entry.recordType.title,
     for (final String key in entry.fieldKeys)
       Copy.shippedLabel('templates.$key'),
   ].join('\n').toLowerCase();
@@ -460,55 +440,32 @@ final class _Template extends _Row {
   final ShippedTemplateEntry entry;
 }
 
-/// [shown] as list lines. Starter templates come first, in their group
-/// order; the catalogue follows in catalogue order. Area headings appear
-/// only once catalogue templates are listed, so the starter library alone
-/// reads as it always has.
+/// [shown] as list lines, in catalogue order, under a heading per area and
+/// per category.
 List<_Row> _rows(List<ShippedTemplateEntry> shown) {
-  final List<ShippedTemplateEntry> starters = <ShippedTemplateEntry>[
-    for (final ShippedTemplateEntry entry in shown)
-      if (entry.isStarter) entry,
-  ]..sort(_byCategory);
-  final List<ShippedTemplateEntry> ordered = <ShippedTemplateEntry>[
-    ...starters,
-    for (final ShippedTemplateEntry entry in shown)
-      if (!entry.isStarter) entry,
-  ];
-  final bool withAreas = ordered.length > starters.length;
   final List<_Row> rows = <_Row>[];
   String? area;
   String? section;
-  for (final ShippedTemplateEntry entry in ordered) {
-    final ShippedCatalogueCategory? category = entry.category;
-    final String areaKey = ShippedLibraryFilter.areaOf(entry);
-    if (withAreas && areaKey != area) {
-      area = areaKey;
+  for (final ShippedTemplateEntry entry in shown) {
+    final ShippedCatalogueCategory category = entry.category;
+    if (category.supergroupCode != area) {
+      area = category.supergroupCode;
       section = null;
       rows.add(
         _Heading(
-          category == null
-              ? Copy.shippedStarterArea
-              : Copy.shippedAreaTitle(
-                  category.supergroupCode,
-                  category.supergroupTitle,
-                ),
+          Copy.shippedAreaTitle(
+            category.supergroupCode,
+            category.supergroupTitle,
+          ),
           dense: false,
         ),
       );
     }
-    final String sectionKey = category == null
-        ? 'starter.${entry.starterCategory.name}'
-        : category.code;
-    if (sectionKey != section) {
-      section = sectionKey;
+    if (category.code != section) {
+      section = category.code;
       rows.add(
         _Heading(
-          category == null
-              ? Copy.shippedCategoryTitle(entry.starterCategory.name)
-              : Copy.shippedCatalogueCategoryTitle(
-                  category.code,
-                  category.title,
-                ),
+          Copy.shippedCatalogueCategoryTitle(category.code, category.title),
           dense: true,
         ),
       );
@@ -526,24 +483,6 @@ Widget _empty() {
   );
 }
 
-/// Starter order: group order first, then the order inside the group, then
-/// the name for keys the grouping does not list.
-int _byCategory(ShippedTemplateEntry a, ShippedTemplateEntry b) {
-  final int group = ShippedTemplateCategory.of(
-    a.templateKey,
-  ).index.compareTo(ShippedTemplateCategory.of(b.templateKey).index);
-  if (group != 0) {
-    return group;
-  }
-  final int order = ShippedTemplateCategory.orderOf(
-    a.templateKey,
-  ).compareTo(ShippedTemplateCategory.orderOf(b.templateKey));
-  if (order != 0) {
-    return order;
-  }
-  return shippedEntryName(a).compareTo(shippedEntryName(b));
-}
-
 ShippedTemplateEntry? _selected(List<ShippedTemplateEntry>? rows, String? key) {
   if (rows == null || key == null) {
     return null;
@@ -558,7 +497,7 @@ ShippedTemplateEntry? _selected(List<ShippedTemplateEntry>? rows, String? key) {
 
 final RegExp _whitespace = RegExp(r'\s+');
 
-/// Live shipped library: every starter and catalogue template as a light
+/// Live shipped library: every shipped template as a light
 /// row. The picker is the only reader.
 final FutureProvider<List<ShippedTemplateEntry>> shippedLibraryProvider =
     FutureProvider<List<ShippedTemplateEntry>>((Ref ref) async {

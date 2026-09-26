@@ -39,8 +39,8 @@ app-write-up.md  the product and technical specification
 ## Documentation
 
 - [app-write-up.md](app-write-up.md) — the full product and technical specification.
-- [resources/template-library.md](resources/template-library.md) — every shipped template: the 23 starter templates
-  and the 2,349 catalogue templates, with their codes, keys, record types and fields (generated; see §13.7).
+- [resources/template-library.md](resources/template-library.md) — every shipped template, all 2,349, with their
+  codes, keys, record types and fields (generated; see §13.4–13.5).
 - [dev-plan/README.md](dev-plan/README.md) — how the build is sequenced, and where to start.
 - [dev-plan/INDEX.md](dev-plan/INDEX.md) — all 281 tasks in one list.
 - [dev-plan/STANDARD.md](dev-plan/STANDARD.md) — the standing prompt every task inherits.

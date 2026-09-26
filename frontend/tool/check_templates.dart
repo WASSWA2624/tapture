@@ -7,12 +7,9 @@ const String _defaultDir = 'assets/templates';
 /// Schema file that lists the allowed field types and the asset shape.
 const String _schemaName = '_schema.json';
 
-/// Subfolder of the full catalogue: one file per category, each holding many
-/// templates, plus the pack and context field groups they inherit.
-const String _catalogueDir = 'catalogue';
-
-/// Field groups file, at the root and inside the catalogue.
-const String _groupsName = '_groups.json';
+/// The generated category-context and record-type pack groups, beside the
+/// groups of §13.3 in `_groups.json`.
+const String _catalogueGroupsName = '_catalogue_groups.json';
 
 /// How to call this, printed when an argument is not a directory.
 const String _usage = 'usage: dart run tool/check_templates.dart [directory]';
@@ -296,7 +293,9 @@ final RegExp _expressionName = RegExp(r'\b[a-z][a-z0-9_]*\b');
 /// Checks shipped template assets, printing one line per violation.
 ///
 /// Scans [directory] or `assets/templates/`. Files whose names start with
-/// `_` are schema or group lists, not assets. Exits 1 on any violation.
+/// `_` are the schema, the index or group lists, not assets. A file holding a
+/// `templates` array is a category of many templates; any other file is one
+/// template. Exits 1 on any violation.
 Future<int> main(List<String> args) async {
   final List<String> flags = args
       .where((String argument) => argument.startsWith('-'))
@@ -381,21 +380,19 @@ List<_Violation> _findViolations(Directory root) {
   final Map<String, Set<String>> groups = _readGroupKeys(root);
   final List<_ParsedAsset> assets = <_ParsedAsset>[];
   final List<_Violation> found = <_Violation>[];
+  final File catalogueGroups = File('${root.path}/$_catalogueGroupsName');
+  if (catalogueGroups.existsSync()) {
+    groups.addAll(_groupKeysFrom(catalogueGroups));
+    found.addAll(_groupViolations(catalogueGroups, schema.types));
+  }
   for (final File file in _assetFiles(root)) {
+    if (_isCategoryFile(file)) {
+      assets.addAll(_parseCatalogue(file, found));
+      continue;
+    }
     final _ParsedAsset? parsed = _parseAsset(file, found);
     if (parsed != null) {
       assets.add(parsed);
-    }
-  }
-  final Directory catalogue = Directory('${root.path}/$_catalogueDir');
-  if (catalogue.existsSync()) {
-    final File catalogueGroups = File('${catalogue.path}/$_groupsName');
-    if (catalogueGroups.existsSync()) {
-      groups.addAll(_groupKeysFrom(catalogueGroups));
-      found.addAll(_groupViolations(catalogueGroups, schema.types));
-    }
-    for (final File file in _assetFiles(catalogue)) {
-      assets.addAll(_parseCatalogue(file, found));
     }
   }
   final Map<String, _ParsedAsset> byKey = <String, _ParsedAsset>{
@@ -446,8 +443,8 @@ Iterable<_Violation> _shifted(Iterable<_Violation> violations, int offset) {
   );
 }
 
-/// Every template of one catalogue file, each parsed from its own slice so
-/// a finding names the line inside that template.
+/// Every template of one category file, each parsed from its own slice so a
+/// finding names the line inside that template.
 List<_ParsedAsset> _parseCatalogue(File file, List<_Violation> found) {
   final String source = file.readAsStringSync();
   final String path = _display(file);
@@ -490,8 +487,8 @@ List<_ParsedAsset> _parseCatalogue(File file, List<_Violation> found) {
   return parsed;
 }
 
-/// Checks every field of every group in a catalogue `_groups.json` against
-/// the same rules as a template's own fields.
+/// Checks every field of every group in `_catalogue_groups.json` against the
+/// same rules as a template's own fields.
 List<_Violation> _groupViolations(File file, Set<String> types) {
   final String source = file.readAsStringSync();
   final String path = _display(file);
@@ -569,25 +566,27 @@ int _lineIndexFrom(List<String> lines, String needle, int from) {
   return -1;
 }
 
-/// How many templates [root] holds: one per asset file, ignoring `_*.json`,
-/// plus every template in the catalogue's category files.
+/// How many templates [root] holds: every template in a category file, and
+/// one per single-template asset, ignoring `_*.json`.
 int _assetCount(Directory root) {
   if (!root.existsSync()) {
     return 0;
   }
-  int count = _assetFiles(root).length;
-  final Directory catalogue = Directory('${root.path}/$_catalogueDir');
-  if (catalogue.existsSync()) {
-    for (final File file in _assetFiles(catalogue)) {
-      final Object? templates = _asMap(
-        _decode(file.readAsStringSync()),
-      )?['templates'];
-      if (templates is List) {
-        count += templates.length;
-      }
-    }
+  int count = 0;
+  for (final File file in _assetFiles(root)) {
+    final Object? templates = _asMap(
+      _decode(file.readAsStringSync()),
+    )?['templates'];
+    count += templates is List ? templates.length : 1;
   }
   return count;
+}
+
+/// Whether [file] is a category file: an object holding a `templates`
+/// array, rather than one template.
+bool _isCategoryFile(File file) {
+  return _asMap(_decode(file.readAsStringSync()))?.containsKey('templates') ??
+      false;
 }
 
 /// JSON files in [root] that are templates, not schema or group lists.

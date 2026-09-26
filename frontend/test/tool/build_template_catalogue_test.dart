@@ -35,7 +35,7 @@ void main() {
 
     setUp(() async {
       out = Directory.systemTemp.createTempSync('tapture_catalogue_');
-      assets = '${out.path}/catalogue';
+      assets = '${out.path}/templates';
       list = '${out.path}/list.md';
       final _Run run = await _generate(<String>[
         '--source=$_fixture',
@@ -60,12 +60,14 @@ void main() {
         ).listSync().map((FileSystemEntity file) => file.uri.pathSegments.last),
         unorderedEquals(<String>[
           '_catalogue.json',
-          '_groups.json',
+          '_catalogue_groups.json',
           '01_uni_universal_capture_and_records.json',
           '01_fin_finance_accounting_and_expenses.json',
         ]),
       );
-      final Map<String, Object?> groups = _json('$assets/_groups.json');
+      final Map<String, Object?> groups = _json(
+        '$assets/_catalogue_groups.json',
+      );
       expect(
         groups.keys,
         containsAll(<String>[
@@ -138,18 +140,12 @@ void main() {
     });
 
     test('the output passes the template checker', () async {
-      final Directory root = Directory('${out.path}/templates')..createSync();
-      File(
-        'assets/templates/_schema.json',
-      ).copySync('${root.path}/_schema.json');
-      File(
-        'assets/templates/_groups.json',
-      ).copySync('${root.path}/_groups.json');
-      Directory(assets).renameSync('${root.path}/catalogue');
+      File('assets/templates/_schema.json').copySync('$assets/_schema.json');
+      File('assets/templates/_groups.json').copySync('$assets/_groups.json');
 
       final ProcessResult result = await Process.run(
         _dartExecutable(),
-        <String>['run', 'tool/check_templates.dart', root.path],
+        <String>['run', 'tool/check_templates.dart', assets],
         stdoutEncoding: utf8,
         stderrEncoding: utf8,
       );
@@ -157,6 +153,31 @@ void main() {
       expect(result.stderr, isEmpty);
       expect(result.exitCode, 0);
       expect(result.stdout, contains('3 asset(s), all atomic'));
+    });
+
+    test('replaces stale templates and keeps the hand-kept files', () async {
+      File('$assets/_schema.json').writeAsStringSync('{}\n');
+      File('$assets/_groups.json').writeAsStringSync('{}\n');
+      File('$assets/old_template.json').writeAsStringSync('{}\n');
+
+      final _Run stale = await _generate(<String>[
+        '--check',
+        '--source=$_fixture',
+        '--assets=$assets',
+        '--list=$list',
+      ]);
+      expect(stale.exitCode, 1);
+      expect(stale.errors, contains(contains('old_template.json')));
+
+      final _Run rebuilt = await _generate(<String>[
+        '--source=$_fixture',
+        '--assets=$assets',
+        '--list=$list',
+      ]);
+      expect(rebuilt.exitCode, 0);
+      expect(File('$assets/old_template.json').existsSync(), isFalse);
+      expect(File('$assets/_schema.json').existsSync(), isTrue);
+      expect(File('$assets/_groups.json').existsSync(), isTrue);
     });
 
     test('lists every template in the readable list', () {
@@ -198,7 +219,7 @@ void main() {
       addTearDown(() => out.deleteSync(recursive: true));
       final _Run run = await _generate(<String>[
         '--source=$_brokenFixture',
-        '--assets=${out.path}/catalogue',
+        '--assets=${out.path}/templates',
         '--list=${out.path}/list.md',
       ]);
 
@@ -207,7 +228,7 @@ void main() {
       for (final String error in run.errors) {
         expect(error, matches(_fileAndLine));
       }
-      expect(Directory('${out.path}/catalogue').existsSync(), isFalse);
+      expect(Directory('${out.path}/templates').existsSync(), isFalse);
       expect(run.summary, contains('nothing written'));
     },
   );

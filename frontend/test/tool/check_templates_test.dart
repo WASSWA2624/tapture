@@ -40,20 +40,18 @@ void main() {
     });
   });
 
-  group('the catalogue folder', () {
-    test('every catalogue template is checked and counted', () async {
+  group('category files', () {
+    test('every template in a category file is checked and counted', () async {
       final _Run run = await _check(<String>[_shipped]);
 
-      expect(run.summary, contains('2372 asset(s)'));
+      expect(run.summary, contains('2349 asset(s)'));
     });
 
     test('a broken catalogue template is named at its own line', () async {
       final Directory dir = Directory.systemTemp.createTempSync('tapture_cat_');
       addTearDown(() => dir.deleteSync(recursive: true));
-      final Directory catalogue = Directory('${dir.path}/catalogue')
-        ..createSync();
       const JsonEncoder json = JsonEncoder.withIndent('  ');
-      File('${catalogue.path}/_groups.json').writeAsStringSync(
+      File('${dir.path}/_catalogue_groups.json').writeAsStringSync(
         json.convert(<String, Object?>{
           'pack_fixture': <String, Object?>{
             'input_mode': 'any',
@@ -76,7 +74,7 @@ void main() {
           ], 'pack_missing'),
         ],
       });
-      File('${catalogue.path}/01_fix.json').writeAsStringSync(category);
+      File('${dir.path}/01_fix.json').writeAsStringSync(category);
       final List<String> lines = category.split('\n');
       final int window =
           lines.indexWhere((String line) => line.contains('service_window')) +
@@ -93,7 +91,10 @@ void main() {
       expect(
         run.violations,
         contains(
-          allOf(contains('_groups.json:'), contains('fixture_cost_currency')),
+          allOf(
+            contains('_catalogue_groups.json:'),
+            contains('fixture_cost_currency'),
+          ),
         ),
       );
       expect(run.violations, isNot(contains(contains('first_note'))));

@@ -12,9 +12,9 @@ import '../domain/shipped_template_entry.dart';
 import '../domain/template_repository.dart';
 import 'template_repository_impl.dart' show templateRepositoryProvider;
 
-/// Reads `assets/templates/` and the full catalogue under
-/// `assets/templates/catalogue/`, validates each asset, and copies one into a
-/// project as a version-1 [TemplateDef]. The packed JSON is never written.
+/// Reads the shipped library under `assets/templates/`, validates each
+/// template, and copies one into a project as a version-1 [TemplateDef]. The
+/// packed JSON is never written.
 abstract interface class ShippedTemplateLoader {
   /// Production loader. [readAsset] is for tests that must not open
   /// [rootBundle]; the app reads through generated [TemplateAssets] paths.
@@ -23,17 +23,12 @@ abstract interface class ShippedTemplateLoader {
     Future<String> Function(String path)? readAsset,
   }) = _AssetShippedTemplateLoader;
 
-  /// The starter templates of §13.4, groups resolved, labels still
-  /// localisation keys.
-  Future<Result<List<TemplateDef>>> library();
-
-  /// Every shipped template as a light row: the starter templates in §13.4
-  /// order, then the full catalogue in catalogue order. Fields stay
+  /// Every shipped template as a light row, in catalogue order. Fields stay
   /// unresolved until [template] is asked for one.
   Future<Result<List<ShippedTemplateEntry>>> entries();
 
-  /// One shipped template, starter or catalogue, with its groups resolved
-  /// and labels still localisation keys.
+  /// One shipped template with its groups resolved and labels still
+  /// localisation keys.
   Future<Result<TemplateDef>> template(String templateKey);
 
   /// Writes an editable copy of [templateKey] onto [projectId] at version 1.
@@ -70,39 +65,8 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
   Future<Map<String, _Group>>? _allGroups;
 
   @override
-  Future<Result<List<TemplateDef>>> library() async {
-    try {
-      return Success<List<TemplateDef>>(await _loadLibrary());
-    } on Failure catch (failure) {
-      return FailureResult<List<TemplateDef>>(failure);
-    } on FormatException {
-      return const FailureResult<List<TemplateDef>>(_corrupt);
-    } on Object catch (error) {
-      return FailureResult<List<TemplateDef>>(
-        StorageFailure(
-          message: 'The shipped templates could not be read.',
-          recoveryAction: Failure.from(error).recoveryAction ?? 'Try again.',
-        ),
-      );
-    }
-  }
-
-  @override
-  Future<Result<List<ShippedTemplateEntry>>> entries() async {
-    final Result<List<TemplateDef>> starters = await library();
-    switch (starters) {
-      case FailureResult<List<TemplateDef>>(:final Failure failure):
-        return FailureResult<List<ShippedTemplateEntry>>(failure);
-      case Success<List<TemplateDef>>(:final List<TemplateDef> value):
-        return _guard(() async {
-          final _Catalogue catalogue = await _catalogueIndex();
-          return <ShippedTemplateEntry>[
-            for (final TemplateDef template in value)
-              ShippedTemplateEntry.starter(template),
-            ...catalogue.entries,
-          ];
-        });
-    }
+  Future<Result<List<ShippedTemplateEntry>>> entries() {
+    return _guard(() async => (await _catalogueIndex()).entries);
   }
 
   @override
@@ -142,8 +106,7 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
     }
   }
 
-  /// Runs [load], turning what it throws into the same failures [library]
-  /// returns.
+  /// Runs [load], turning what it throws into a typed failure.
   Future<Result<T>> _guard<T>(Future<T> Function() load) async {
     try {
       return Success<T>(await load());
@@ -161,14 +124,8 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
     }
   }
 
-  /// [templateKey] resolved: a starter template from its own asset, a
-  /// catalogue template from its category's asset.
+  /// [templateKey] resolved from its category's asset.
   Future<TemplateDef> _resolve(String templateKey) async {
-    for (final TemplateDef starter in await _loadLibrary()) {
-      if (starter.templateKey == templateKey) {
-        return starter;
-      }
-    }
     final _Catalogue catalogue = await _catalogueIndex();
     final String? path = catalogue.assetOf[templateKey];
     final Map<String, Object?>? asset = path == null
@@ -245,25 +202,6 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
       _allGroups = null;
       rethrow;
     }
-  }
-
-  Future<List<TemplateDef>> _loadLibrary() async {
-    final _Schema schema = await _schema();
-    final Map<String, _Group> groups = await _groups(schema);
-    final Map<String, Map<String, Object?>> byKey =
-        <String, Map<String, Object?>>{};
-    final Map<String, Map<String, Object?>> byPath =
-        <String, Map<String, Object?>>{};
-    for (final String path in TemplateAssets.library) {
-      final Map<String, Object?> asset = _object(jsonDecode(await _read(path)));
-      _assertAsset(asset, schema);
-      byPath[path] = asset;
-      byKey[_string(asset['template_key'])] = asset;
-    }
-    return <TemplateDef>[
-      for (final String path in TemplateAssets.library)
-        _toDef(byPath[path]!, groups, byKey, schema),
-    ];
   }
 
   Future<_Schema> _schema() async {
@@ -764,7 +702,12 @@ _Catalogue _indexCatalogue(_CatalogueSource source) {
           title: _string(template['title']),
           code: _string(template['code']),
           category: category,
-          recordType: types[_string(template['pack'])],
+          recordType:
+              types[_string(template['pack'])] ??
+              (throw const ValidationFailure(
+                message: 'A shipped template names an unknown record type.',
+                recoveryAction: 'Reinstall the app, then try again.',
+              )),
           privacy: _string(template['privacy']),
           rollout: _string(template['rollout']),
           fieldKeys: own,

@@ -6,23 +6,67 @@ import 'package:tapture/core/constants/template_assets.dart';
 
 void main() {
   late Map<String, Object?> schema;
+  late Map<String, Object?> index;
   late Map<String, Set<String>> groupKeys;
   late Map<String, Map<String, Object?>> assets;
 
   setUpAll(() {
     schema = _asObject(File(TemplateAssets.schema).readAsStringSync());
-    groupKeys = _groupKeys(File(TemplateAssets.groups).readAsStringSync());
+    index = _asObject(File(TemplateAssets.catalogueIndex).readAsStringSync());
+    groupKeys = <String, Set<String>>{
+      ..._groupKeys(File(TemplateAssets.groups).readAsStringSync()),
+      ..._groupKeys(File(TemplateAssets.catalogueGroups).readAsStringSync()),
+    };
     assets = <String, Map<String, Object?>>{
-      for (final String path in TemplateAssets.library)
-        path: _asObject(File(path).readAsStringSync()),
+      for (final Map<String, Object?> category in _objects(index['categories']))
+        for (final Map<String, Object?> asset in _objects(
+          _asObject(
+            File(_asString(category['asset'])).readAsStringSync(),
+          )['templates'],
+        ))
+          _asString(asset['template_key']): asset,
     };
   });
 
-  test('every asset parses, validates against the schema, and resolves '
+  test('the index lists every category asset and its templates', () {
+    final List<Map<String, Object?>> categories = _objects(index['categories']);
+    expect(categories, hasLength(72));
+    expect(_objects(index['supergroups']), hasLength(17));
+    expect(_objects(index['packs']), hasLength(26));
+    expect(index['template_count'], 2349);
+    expect(assets, hasLength(2349));
+    int listed = 0;
+    for (final Map<String, Object?> category in categories) {
+      final String path = _asString(category['asset']);
+      expect(path, startsWith('assets/templates/'));
+      expect(File(path).existsSync(), isTrue, reason: path);
+      listed += category['template_count']! as int;
+    }
+    expect(listed, 2349);
+  });
+
+  test('only the schema, the index, the groups and category files ship', () {
+    final List<String> names = <String>[
+      for (final FileSystemEntity entity in Directory(
+        'assets/templates',
+      ).listSync())
+        entity.uri.pathSegments.last,
+    ]..sort();
+    expect(names.where((String name) => name.startsWith('_')), <String>[
+      '_catalogue.json',
+      '_catalogue_groups.json',
+      '_groups.json',
+      '_schema.json',
+    ]);
+    expect(
+      names.where((String name) => !name.startsWith('_')),
+      everyElement(matches(RegExp(r'^\d{2}_[a-z]+_[a-z0-9_]+\.json$'))),
+    );
+  });
+
+  test('every template validates against the schema, and resolves '
       'inherited groups and identity keys', () {
-    expect(TemplateAssets.library, hasLength(23));
-    expect(assets, hasLength(23));
-    expect(groupKeys.keys, <String>[
+    expect(groupKeys.keys.take(4), <String>[
       'record_admin',
       'location_context',
       'evidence',
@@ -48,12 +92,6 @@ void main() {
       'required',
     ]);
 
-    final Map<String, Map<String, Object?>> byKey =
-        <String, Map<String, Object?>>{
-          for (final Map<String, Object?> asset in assets.values)
-            _asString(asset['template_key']): asset,
-        };
-
     for (final MapEntry<String, Map<String, Object?>> entry in assets.entries) {
       final Map<String, Object?> asset = entry.value;
       _expectSchema(
@@ -63,73 +101,44 @@ void main() {
         requiredFieldKeys,
         allowedTypes,
       );
+      for (final String group in _stringList(asset['inherits_groups'])) {
+        expect(
+          groupKeys.containsKey(group),
+          isTrue,
+          reason: '${entry.key} inherits the unknown group "$group"',
+        );
+      }
 
-      final Set<String> inherited = _inheritedKeys(asset, groupKeys, byKey);
+      final Set<String> inherited = _inheritedKeys(asset, groupKeys, assets);
       final Set<String> own = _fieldKeys(asset);
       expect(
         own.intersection(inherited),
         isEmpty,
-        reason: '${asset['template_key']} repeats an inherited field',
+        reason: '${entry.key} repeats an inherited field',
       );
 
-      for (final String key in _stringList(asset['identity_fields'])) {
+      final List<String> identity = _stringList(asset['identity_fields']);
+      expect(identity, isNotEmpty, reason: entry.key);
+      for (final String key in identity) {
         expect(
           own.contains(key) || inherited.contains(key),
           isTrue,
           reason:
-              '${asset['template_key']} identity_fields names "$key", '
+              '${entry.key} identity_fields names "$key", '
               'which groups and the asset do not resolve',
         );
       }
     }
   });
+}
 
-  test('generic_item has ten columns and one required field', () {
-    final Map<String, Object?> asset = assets[TemplateAssets.genericItem]!;
-    final List<Map<String, Object?>> fields = _fields(asset);
-    expect(fields, hasLength(10));
-    expect(
-      fields.where(
-        (Map<String, Object?> field) => field['required'] == 'REQUIRED',
-      ),
-      hasLength(1),
-    );
-    expect(
-      fields.singleWhere(
-        (Map<String, Object?> field) => field['required'] == 'REQUIRED',
-      )['field_key'],
-      'item_name',
-    );
-  });
-
-  test(
-    'the four equipment children reuse the parent instead of duplicating it',
-    () {
-      expect(
-        assets[TemplateAssets.medicalEquipment]!['derives_from'],
-        'equipment_asset',
-      );
-      expect(
-        assets[TemplateAssets.ictEquipment]!['derives_from'],
-        'equipment_asset',
-      );
-      expect(
-        assets[TemplateAssets.vehiclePlant]!['derives_from'],
-        'equipment_asset',
-      );
-      expect(
-        assets[TemplateAssets.furnitureFitting]!['derives_from'],
-        'equipment_asset',
-      );
-    },
-  );
-
-  test('meeting ships its five child-row shapes', () {
-    expect(
-      _keysIn(assets[TemplateAssets.meeting]!['child_rows'], 'row_key'),
-      <String>['agenda_item', 'attendee', 'apology', 'decision', 'action_item'],
-    );
-  });
+List<Map<String, Object?>> _objects(Object? raw) {
+  if (raw is! List) {
+    return const <Map<String, Object?>>[];
+  }
+  return <Map<String, Object?>>[
+    for (final Object? item in raw) _asObject(item),
+  ];
 }
 
 Map<String, Object?> _asObject(Object? value) {
@@ -166,15 +175,6 @@ List<String> _stringList(Object? value) {
   return <String>[
     for (final Object? item in value)
       if (item is String) item,
-  ];
-}
-
-List<String> _keysIn(Object? raw, String key) {
-  if (raw is! List) {
-    return const <String>[];
-  }
-  return <String>[
-    for (final Object? item in raw) _asString(_asObject(item)[key]),
   ];
 }
 

@@ -8,14 +8,6 @@ import 'package:tapture/core/widgets/fields/choice.dart';
 
 import '../domain/shipped_template_entry.dart';
 
-/// Area of a starter template in the area facet. Catalogue areas use their
-/// supergroup code, which is never empty.
-const String starterArea = '';
-
-/// Tier a starter template counts under: the §13.4 library is the
-/// foundation every project starts from.
-const String starterTier = 'p0';
-
 /// The shipped library's facets: area, record type and tier.
 final class ShippedLibraryFilter extends Notifier<ShippedLibraryFilterState> {
   @override
@@ -60,26 +52,17 @@ final class ShippedLibraryFilter extends Notifier<ShippedLibraryFilterState> {
     ].where((Set<String> facet) => facet.isNotEmpty).length;
   }
 
-  /// Whether [entry] is listed under [filter]. A starter template has no
-  /// record type, so any record-type choice leaves it out.
+  /// Whether [entry] is listed under [filter]: its area, record type and
+  /// tier are each chosen, or that facet is open.
   static bool matches(
     ShippedTemplateEntry entry,
     ShippedLibraryFilterState filter,
   ) {
-    return (filter.areas.isEmpty || filter.areas.contains(areaOf(entry))) &&
+    return (filter.areas.isEmpty ||
+            filter.areas.contains(entry.category.supergroupCode)) &&
         (filter.recordTypes.isEmpty ||
-            filter.recordTypes.contains(entry.recordType?.code)) &&
-        (filter.tiers.isEmpty || filter.tiers.contains(tierOf(entry)));
-  }
-
-  /// The area facet value of [entry].
-  static String areaOf(ShippedTemplateEntry entry) {
-    return entry.category?.supergroupCode ?? starterArea;
-  }
-
-  /// The tier facet value of [entry].
-  static String tierOf(ShippedTemplateEntry entry) {
-    return entry.isStarter ? starterTier : entry.rollout;
+            filter.recordTypes.contains(entry.recordType.code)) &&
+        (filter.tiers.isEmpty || filter.tiers.contains(entry.rollout));
   }
 }
 
@@ -115,18 +98,13 @@ Future<void> showShippedLibraryFilters(
   final Map<String, String> recordTypes = <String, String>{};
   final Set<String> tiers = <String>{};
   for (final ShippedTemplateEntry entry in entries) {
-    final ShippedCatalogueCategory? category = entry.category;
-    areas[ShippedLibraryFilter.areaOf(entry)] = category == null
-        ? Copy.shippedStarterArea
-        : Copy.shippedAreaTitle(
-            category.supergroupCode,
-            category.supergroupTitle,
-          );
-    final ShippedRecordType? recordType = entry.recordType;
-    if (recordType != null) {
-      recordTypes[recordType.code] = recordType.title;
-    }
-    tiers.add(ShippedLibraryFilter.tierOf(entry));
+    final ShippedCatalogueCategory category = entry.category;
+    areas[category.supergroupCode] = Copy.shippedAreaTitle(
+      category.supergroupCode,
+      category.supergroupTitle,
+    );
+    recordTypes[entry.recordType.code] = entry.recordType.title;
+    tiers.add(entry.rollout);
   }
   final List<String> typeCodes = recordTypes.keys.toList()
     ..sort((String a, String b) => recordTypes[a]!.compareTo(recordTypes[b]!));

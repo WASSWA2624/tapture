@@ -11,8 +11,10 @@ const String _defaultPacks = 'tool/template_catalogue/packs.json';
 /// Choice lists and per-field corrections, kept by hand beside this tool.
 const String _defaultRules = 'tool/template_catalogue/field_rules.json';
 
-/// Where the catalogue assets are written. The loader reads them from here.
-const String _defaultAssets = 'assets/templates/catalogue';
+/// Where the shipped template assets are written. The loader reads them
+/// from here. Beside them sit the hand-kept `_schema.json` and the groups of
+/// §13.3 in `_groups.json`, which this tool reads and never writes.
+const String _defaultAssets = 'assets/templates';
 
 /// The groups every shipped template inherits (§13.3).
 const String _defaultBaseGroups = 'assets/templates/_groups.json';
@@ -39,8 +41,9 @@ const List<String> _baseGroups = <String>[
 /// Index file inside the assets directory.
 const String _indexName = '_catalogue.json';
 
-/// Field groups file inside the assets directory.
-const String _groupsName = '_groups.json';
+/// The generated category-context and record-type pack groups, beside the
+/// hand-kept groups of §13.3.
+const String _groupsName = '_catalogue_groups.json';
 
 /// Field group a template's own starter fields sit in.
 const String _specificGroup = 'specific_details';
@@ -50,9 +53,6 @@ const String _contextGroup = 'context';
 
 /// Unit of a measured field whose unit the operator states beside it.
 const String _asDeclared = 'as_declared';
-
-/// How many starter templates specification §13.4 ships beside the catalogue.
-const int _starterCount = 23;
 
 /// Suggested requiredness of a template's own starter fields (§13.2).
 const String _starterRequiredness = 'RECOMMENDED';
@@ -1204,17 +1204,14 @@ String _list(
     )
     ..writeln()
     ..writeln(
-      '**${_thousands(catalogue.templates.length + _starterCount)} '
-      'templates** in the app: the $_starterCount starter templates of '
-      'specification §13.4, and ${_thousands(catalogue.templates.length)} '
-      'catalogue templates in '
-      '${catalogue.categories.length} categories and '
+      '**${_thousands(catalogue.templates.length)} templates** in the app, '
+      'in ${catalogue.categories.length} categories and '
       '${catalogue.supergroups.length} supergroups (catalogue version '
-      '${catalogue.version}).',
+      '${catalogue.version}, specification §13.4).',
     )
     ..writeln()
     ..writeln(
-      'Every catalogue template is ordinary template data (§11.3). It '
+      'Every template is ordinary template data (§11.3). It '
       'inherits the four groups every shipped template carries (§13.3), its '
       "category's context fields, and its record type's pack, then adds its "
       'own starter fields. Pick one from **Templates → Library**, search it '
@@ -1308,7 +1305,7 @@ String _list(
         ..writeln()
         ..writeln(
           '${category.templates.length} templates · asset '
-          '`frontend/assets/templates/catalogue/${category.fileName}`',
+          '`frontend/assets/templates/${category.fileName}`',
         )
         ..writeln()
         ..writeln(
@@ -1354,7 +1351,15 @@ String _fieldLine(List<Map<String, Object?>> fields) {
       .join(' · ');
 }
 
-/// Files whose committed content differs from [outputs], plus catalogue
+/// Whether this tool owns the asset [name]: the index, the generated groups
+/// and every template file. `_schema.json` and `_groups.json` are kept by
+/// hand.
+bool _owned(String name) {
+  return name.endsWith('.json') &&
+      (!name.startsWith('_') || name == _indexName || name == _groupsName);
+}
+
+/// Files whose committed content differs from [outputs], plus template
 /// assets nothing generates any more.
 List<String> _staleOutputs(Map<String, String> outputs, String assetsPath) {
   final List<String> stale = <String>[
@@ -1366,8 +1371,9 @@ List<String> _staleOutputs(Map<String, String> outputs, String assetsPath) {
   final Directory assets = Directory(assetsPath);
   if (assets.existsSync()) {
     for (final FileSystemEntity entity in assets.listSync()) {
-      final String path = '$assetsPath/${entity.uri.pathSegments.last}';
-      if (entity is File && !outputs.containsKey(path)) {
+      final String name = entity.uri.pathSegments.last;
+      final String path = '$assetsPath/$name';
+      if (entity is File && _owned(name) && !outputs.containsKey(path)) {
         stale.add(path);
       }
     }
@@ -1376,13 +1382,14 @@ List<String> _staleOutputs(Map<String, String> outputs, String assetsPath) {
   return stale;
 }
 
-/// Writes [outputs] and removes catalogue assets nothing generates any more.
+/// Writes [outputs] and removes template assets nothing generates any more.
 void _write(Map<String, String> outputs, String assetsPath) {
   final Directory assets = Directory(assetsPath);
   if (assets.existsSync()) {
     for (final FileSystemEntity entity in assets.listSync()) {
-      final String path = '$assetsPath/${entity.uri.pathSegments.last}';
-      if (entity is File && !outputs.containsKey(path)) {
+      final String name = entity.uri.pathSegments.last;
+      final String path = '$assetsPath/$name';
+      if (entity is File && _owned(name) && !outputs.containsKey(path)) {
         entity.deleteSync();
       }
     }
