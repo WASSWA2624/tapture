@@ -64,7 +64,7 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 
 *Imported tables that prefill records and remove repeat typing.*
 
-- [ ] [010 — Reference data: datasets, lookups and prefill](10-reference-data/010-reference-data.md)
+- [x] [010 — Reference data: datasets, lookups and prefill](10-reference-data/010-reference-data.md)
 
 ## 11 — Context
 
@@ -76,7 +76,7 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 
 *The heart of the app: evidence in, with as little typing as possible, always saved before anything else happens.*
 
-- [ ] [012 — Capture: evidence in, saved before anything else](12-capture/012-capture.md)
+- [x] [012 — Capture: evidence in, saved before anything else](12-capture/012-capture.md)
 
 ## 13 — Processing
 

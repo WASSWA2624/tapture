@@ -3480,6 +3480,18 @@ abstract final class Copy {
   /// The third choice when the shortlist is not enough.
   static const String templateChoiceOther = 'Something else';
 
+  /// The step detail when no template was chosen. The record stays queued.
+  static const String templateChoiceSkipped =
+      'No template chosen. The record stays in the queue.';
+
+  /// The chosen template could not be applied to the record.
+  static const String templateChoiceApplyFailed =
+      'That template could not be applied.';
+
+  /// What to do when the chosen template could not be applied.
+  static const String templateChoiceApplyRecovery =
+      'Process the record again and choose once more.';
+
   /// Preparing images.
   static const String processPreparing = 'Preparing images';
 

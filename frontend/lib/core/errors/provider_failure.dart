@@ -6,6 +6,7 @@ final class ProviderFailure extends Failure {
   const ProviderFailure({
     this.message = 'A service this screen uses failed.',
     this.recoveryAction = 'Try again. Nothing already captured was lost.',
+    this.kind = ProviderFailureKind.unknown,
   });
 
   @override
@@ -13,4 +14,8 @@ final class ProviderFailure extends Failure {
 
   @override
   final String recoveryAction;
+
+  /// What went wrong, when the provider said. [ProviderFailureKind.unknown]
+  /// otherwise.
+  final ProviderFailureKind kind;
 }

@@ -232,6 +232,23 @@ abstract final class AppConstants {
     double detectionConfident,
     double detectionGap,
     double fuzzyMatch,
+    double preprocessContrast,
+    int inkLumaThreshold,
+    List<double> deskewAnglesDegrees,
+    int deskewMarginDivisor,
+    int deskewMinEdge,
+    int projectionSamples,
+    double detectionKeywordWeight,
+    double detectionPatternWeight,
+    double detectionNegativeKeywordWeight,
+    double rowMatchAliasScore,
+    double rowMatchNormalisedScore,
+    double rowMatchNormalisedAliasScore,
+    double identifierFallbackConfidence,
+    int failuresPageSize,
+    int notificationId,
+    String ocrEngineMlKit,
+    String ocrEngineDesktop,
   })
   processing = (
     extractionImageCap: 8,
@@ -246,7 +263,48 @@ abstract final class AppConstants {
     detectionConfident: 0.75,
     detectionGap: 0.1,
     fuzzyMatch: 0.82,
+    // Contrast multiplier applied to a copy prepared for reading.
+    preprocessContrast: 1.25,
+    // Luma below which a pixel counts as ink when deskewing.
+    inkLumaThreshold: 180,
+    // Small rotations tried when straightening a prepared copy.
+    deskewAnglesDegrees: <double>[-2, -1, 1, 2],
+    // The deskew canvas margin is the upright edge divided by this.
+    deskewMarginDivisor: 5,
+    // Images narrower or shorter than this are not deskewed.
+    deskewMinEdge: 16,
+    // Samples per axis when scoring a deskew projection.
+    projectionSamples: 80,
+    // Template detection: each keyword hit, each identifier pattern hit,
+    // and each negative keyword hit (subtracted).
+    detectionKeywordWeight: 0.35,
+    detectionPatternWeight: 0.5,
+    detectionNegativeKeywordWeight: 0.4,
+    // Row matching scores for the alias, normalised and normalised-alias
+    // strategies.
+    rowMatchAliasScore: 0.98,
+    rowMatchNormalisedScore: 0.95,
+    rowMatchNormalisedAliasScore: 0.93,
+    // Confidence given to an identifier candidate with no block score.
+    identifierFallbackConfidence: 0.5,
+    // Failed jobs per page on the failures list.
+    failuresPageSize: 50,
+    // The one local notification a batch posts, replaced by the next.
+    notificationId: 1,
+    // The name an OCR result records for the reader that produced it.
+    ocrEngineMlKit: 'ml-kit-text-recognition',
+    ocrEngineDesktop: 'desktop-glyph-reader',
   );
+
+  /// The OCR engine name when a result does not say which reader made it.
+  ///
+  /// A plain constant rather than a [processing] field so it can be a
+  /// parameter default.
+  static const String ocrEngineUnspecified = 'unspecified';
+
+  /// The language a project falls back to when neither it nor the app
+  /// store names one.
+  static const String defaultLanguage = 'en';
 
   /// Builds a processing retry delay from the configured millisecond value.
   static Duration processingBackoff(int milliseconds) {

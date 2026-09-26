@@ -1,11 +1,12 @@
 # Tapture — development tracker
 
-**45 of 60 tasks complete (75%)** · last updated 2026-09-22
+**46 of 69 tasks complete (67%)** · last updated 2026-09-26
 
-`████████████████████████████░░░░░░░░░░`
+`█████████████████████████░░░░░░░░░░░░░`
 
 On 2026-09-22 completed phases 01–09 became tasks 001–009, remaining phases became 010–025, and leftover
-field-feedback extras became 026–060. Old numbers are in [RETIRED.md](dev-plan/RETIRED.md).
+field-feedback extras became 026–060. Field-feedback tasks 061–069 have been added to phase 23 since. Old numbers
+are in [RETIRED.md](dev-plan/RETIRED.md).
 
 ## Phase progress
 
@@ -33,10 +34,10 @@ field-feedback extras became 026–060. Old numbers are in [RETIRED.md](dev-plan
 | 20 — Data import | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 21 — Cloud upload | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 22 — Privacy and security | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
-| 23 — Hardening | 33 | 36 | `█████████████░` 92% |
+| 23 — Hardening | 34 | 45 | `███████████░░░` 76% |
 | 24 — The minimal backend | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
-| **Total** | **45** | **60** | `████████████████████████████░░░░░░░░░░` 75% |
+| **Total** | **46** | **69** | `█████████████████████████░░░░░░░░░░░░░` 67% |
 
 ## Completed
 
@@ -385,7 +386,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 23 — Hardening
 
-*33 of 36 complete.*
+*34 of 45 complete.*
 
 - [ ] [023 — Hardening: fast, legible, reachable and unbreakable in the field](dev-plan/23-hardening/023-hardening.md)
 - [x] [026 — In-app feedback: floating button, capture, download and delete](dev-plan/23-hardening/026-in-app-feedback.md)
@@ -423,6 +424,15 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [058 — Show a collapse icon on the feedback form](dev-plan/23-hardening/058-show-collapse-icon-on-feedback-form.md)
 - [x] [059 — Show a single feedback image as a thumbnail](dev-plan/23-hardening/059-show-single-feedback-image-as-thumbnail.md)
 - [x] [060 — Borderless overflow menus](dev-plan/23-hardening/060-borderless-overflow-menus.md)
+- [x] [061 — Resolve shell, settings and capture feedback](dev-plan/23-hardening/061-resolve-shell-capture-feedback.md)
+- [ ] [062 — Resolve feedback archive 23092026-1635](dev-plan/23-hardening/062-resolve-feedback-23092026.md)
+- [ ] [063 — Resolve projects, capture and template feedback](dev-plan/23-hardening/063-resolve-feedback-23092026-2222.md)
+- [ ] [064 — Resolve projects and capture feedback](dev-plan/23-hardening/064-resolve-feedback-24092026.md)
+- [ ] [065 — Place the audio record control in the caption field](dev-plan/23-hardening/065-place-audio-record-in-caption.md)
+- [ ] [066 — Resolve project, capture and export feedback](dev-plan/23-hardening/066-resolve-project-capture-feedback.md)
+- [ ] [067 — Resolve project, template and capture feedback](dev-plan/23-hardening/067-resolve-project-template-capture-feedback.md)
+- [ ] [068 — Resolve project, record, capture and export feedback](dev-plan/23-hardening/068-resolve-project-record-capture-export-feedback.md)
+- [ ] [069 — Resolve record, capture markup and project photo feedback](dev-plan/23-hardening/069-resolve-record-capture-markup-feedback.md)
 
 ### 24 — The minimal backend
 

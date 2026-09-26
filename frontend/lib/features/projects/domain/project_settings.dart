@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:tapture/core/constants/app_constants.dart';
 
+part 'project_settings_json.dart';
+
 /// Validated project-scoped switches stored as the row's settings JSON.
 ///
 /// A null field is unset: callers [resolve] it against the app store
@@ -20,6 +22,11 @@ final class ProjectSettings {
     this.refineColumns,
     this.templateChoice,
     this.coverPhoto,
+    this.refineCaptions,
+    this.dailyRequestCap,
+    this.locale,
+    this.providerSelection,
+    this.templatePins,
   });
 
   /// Every switch unset, so [resolve] returns the app defaults.
@@ -56,6 +63,11 @@ final class ProjectSettings {
       refineColumns: _bool(map[_refineColumns]) ?? _bool(map[_refinedColumns]),
       templateChoice: _readTemplateChoice(map[_templateChoice]),
       coverPhoto: _readCoverPhoto(map[_coverPhoto]),
+      refineCaptions: _bool(map[_refineCaptions]),
+      dailyRequestCap: _count(map[_dailyRequestCap]),
+      locale: _text(map[_locale]),
+      providerSelection: _readProviderSelection(map[_providerSelection]),
+      templatePins: _readTemplatePins(map[_templatePins]),
     );
   }
 
@@ -91,6 +103,27 @@ final class ProjectSettings {
   /// (FBK0000154). Null keeps the project number.
   final ProjectCoverPhoto? coverPhoto;
 
+  /// Captions are refined without being asked. Null inherits
+  /// [SettingKeys.aiRefineCaptions].
+  final bool? refineCaptions;
+
+  /// Online extraction requests allowed for this project today. Null
+  /// inherits [SettingKeys.aiDailyRequestCap].
+  final int? dailyRequestCap;
+
+  /// Locale dates and numbers are read in, such as `en-UG`. Null inherits
+  /// [SettingKeys.appLanguage].
+  final String? locale;
+
+  /// Provider and model per operation, keyed by `AiOperation.name`. An
+  /// operation missing here uses the app selection. There is no app
+  /// default for the map itself.
+  final Map<String, ({String provider, String model})>? providerSelection;
+
+  /// Template pinned per context, keyed `'<levelKey>=<value>'`, so the
+  /// template question is asked once per place. Project-only.
+  final Map<String, String>? templatePins;
+
   /// The validated object written onto the row. Unset keys are omitted so
   /// a later read can still fall back to the app store.
   Map<String, Object?> toJson() {
@@ -108,6 +141,14 @@ final class ProjectSettings {
           _coverPath: photo.path,
           _coverSha256: photo.sha256,
         },
+      if (refineCaptions != null) _refineCaptions: refineCaptions,
+      if (dailyRequestCap != null) _dailyRequestCap: dailyRequestCap,
+      if (locale != null) _locale: locale,
+      if (providerSelection
+          case final Map<String, ({String provider, String model})> selection)
+        _providerSelection: _writeProviderSelection(selection),
+      if (templatePins case final Map<String, String> pins)
+        _templatePins: Map<String, String>.of(pins),
     };
   }
 
@@ -126,6 +167,11 @@ final class ProjectSettings {
     bool? refineColumns,
     String? templateChoice,
     ProjectCoverPhoto? coverPhoto,
+    bool? refineCaptions,
+    int? dailyRequestCap,
+    String? locale,
+    Map<String, ({String provider, String model})>? providerSelection,
+    Map<String, String>? templatePins,
     bool clearAiEnabled = false,
     bool clearDoNotSendImages = false,
     bool clearGpsEnabled = false,
@@ -135,6 +181,11 @@ final class ProjectSettings {
     bool clearRefineColumns = false,
     bool clearTemplateChoice = false,
     bool clearCoverPhoto = false,
+    bool clearRefineCaptions = false,
+    bool clearDailyRequestCap = false,
+    bool clearLocale = false,
+    bool clearProviderSelection = false,
+    bool clearTemplatePins = false,
   }) {
     return ProjectSettings(
       aiEnabled: clearAiEnabled ? null : (aiEnabled ?? this.aiEnabled),
@@ -158,6 +209,19 @@ final class ProjectSettings {
           ? null
           : (templateChoice ?? this.templateChoice),
       coverPhoto: clearCoverPhoto ? null : (coverPhoto ?? this.coverPhoto),
+      refineCaptions: clearRefineCaptions
+          ? null
+          : (refineCaptions ?? this.refineCaptions),
+      dailyRequestCap: clearDailyRequestCap
+          ? null
+          : (dailyRequestCap ?? this.dailyRequestCap),
+      locale: clearLocale ? null : (locale ?? this.locale),
+      providerSelection: clearProviderSelection
+          ? null
+          : (providerSelection ?? this.providerSelection),
+      templatePins: clearTemplatePins
+          ? null
+          : (templatePins ?? this.templatePins),
     );
   }
 
@@ -171,6 +235,9 @@ final class ProjectSettings {
       confidenceHigh: confidenceHigh ?? app.confidenceHigh,
       confidenceMedium: confidenceMedium ?? app.confidenceMedium,
       refineColumns: refineColumns ?? app.refineColumns,
+      refineCaptions: refineCaptions ?? app.refineCaptions,
+      dailyRequestCap: dailyRequestCap ?? app.dailyRequestCap,
+      locale: locale ?? app.locale,
     );
   }
 
@@ -198,6 +265,11 @@ final class ProjectSettings {
     refineColumns,
     templateChoice,
     coverPhoto,
+    refineCaptions,
+    dailyRequestCap,
+    locale,
+    _mapHash(providerSelection),
+    _mapHash(templatePins),
   );
 
   @override
@@ -212,7 +284,12 @@ final class ProjectSettings {
             other.confidenceMedium == confidenceMedium &&
             other.refineColumns == refineColumns &&
             other.templateChoice == templateChoice &&
-            other.coverPhoto == coverPhoto);
+            other.coverPhoto == coverPhoto &&
+            other.refineCaptions == refineCaptions &&
+            other.dailyRequestCap == dailyRequestCap &&
+            other.locale == locale &&
+            _sameMap(other.providerSelection, providerSelection) &&
+            _sameMap(other.templatePins, templatePins));
   }
 }
 
@@ -229,6 +306,9 @@ typedef ProjectSettingsDefaults = ({
   double confidenceHigh,
   double confidenceMedium,
   bool refineColumns,
+  bool refineCaptions,
+  int dailyRequestCap,
+  String locale,
 });
 
 /// Effective switches after [ProjectSettings.resolve].
@@ -240,6 +320,9 @@ typedef ProjectSettingsResolved = ({
   double confidenceHigh,
   double confidenceMedium,
   bool refineColumns,
+  bool refineCaptions,
+  int dailyRequestCap,
+  String locale,
 });
 
 /// Built-in fallbacks when the app store has no matching key.
@@ -252,66 +335,8 @@ ProjectSettingsDefaults get builtInProjectSettingsDefaults {
     confidenceHigh: AppConstants.confidence.high,
     confidenceMedium: AppConstants.confidence.medium,
     refineColumns: true,
+    refineCaptions: false,
+    dailyRequestCap: AppConstants.processing.dailyRequestCap,
+    locale: AppConstants.defaultLanguage,
   );
-}
-
-const String _aiEnabled = 'aiEnabled';
-const String _doNotSendImages = 'doNotSendImages';
-const String _gpsEnabled = 'gpsEnabled';
-const String _folderStrategy = 'folderStrategy';
-const String _photoFolderStrategy = 'photoFolderStrategy';
-const String _confidenceHigh = 'confidenceHigh';
-const String _confidenceMedium = 'confidenceMedium';
-const String _refineColumns = 'refineColumns';
-const String _refinedColumns = 'refinedColumns';
-const String _templateChoice = 'templateChoice';
-const String _coverPhoto = 'coverPhoto';
-const String _coverPath = 'path';
-const String _coverSha256 = 'sha256';
-
-const Set<String> _templateChoices = <String>{'auto', 'suggest', 'manual'};
-
-const Set<String> _folderStrategies = <String>{
-  'byContext',
-  'byTemplate',
-  'byCaptureDate',
-  'flat',
-};
-
-bool? _bool(Object? raw) => raw is bool ? raw : null;
-
-double? _number(Object? raw) {
-  if (raw is double) {
-    return raw;
-  }
-  if (raw is num) {
-    return raw.toDouble();
-  }
-  return null;
-}
-
-String? _readTemplateChoice(Object? raw) {
-  if (raw is String && _templateChoices.contains(raw)) {
-    return raw;
-  }
-  return null;
-}
-
-ProjectCoverPhoto? _readCoverPhoto(Object? raw) {
-  if (raw is! Map) {
-    return null;
-  }
-  final Object? path = raw[_coverPath];
-  final Object? sha256 = raw[_coverSha256];
-  if (path is! String || path.isEmpty || sha256 is! String) {
-    return null;
-  }
-  return (path: path, sha256: sha256);
-}
-
-String? _readFolderStrategy(Object? raw) {
-  if (raw is String && _folderStrategies.contains(raw)) {
-    return raw;
-  }
-  return null;
 }

@@ -15,7 +15,8 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/settings/settings.dart';
 
 import '../domain/project_repository.dart';
-import '../projects.dart' show projectRepositoryProvider;
+import '../projects.dart'
+    show appProjectSettingsDefaults, projectRepositoryProvider;
 import 'current_project.dart';
 
 /// Per-project switches that override the app defaults on this row.
@@ -59,7 +60,7 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
     }
     _bind(project);
     final SettingsStore store = ref.watch(projectSettingsStoreProvider);
-    final ProjectSettingsDefaults app = _appDefaults(store);
+    final ProjectSettingsDefaults app = appProjectSettingsDefaults(store);
     final _ProjectSettingsView view = ref.watch(_projectSettingsProvider);
     return AppPage(
       key: const ValueKey<String>('route-project-settings'),
@@ -390,18 +391,6 @@ class _ProjectSettings extends Notifier<_ProjectSettingsView> {
       draft: draft,
     );
   }
-}
-
-ProjectSettingsDefaults _appDefaults(SettingsStore store) {
-  return (
-    aiEnabled: builtInProjectSettingsDefaults.aiEnabled,
-    doNotSendImages: store.read(SettingKeys.aiDoNotSendImages),
-    gpsEnabled: store.read(SettingKeys.gpsEnabled),
-    folderStrategy: store.read(SettingKeys.folderStrategy),
-    confidenceHigh: store.read(SettingKeys.confidenceHigh),
-    confidenceMedium: store.read(SettingKeys.confidenceMedium),
-    refineColumns: builtInProjectSettingsDefaults.refineColumns,
-  );
 }
 
 ({double? value, String? error}) _parseBand(String raw) {

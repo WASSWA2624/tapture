@@ -10,12 +10,14 @@ import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
+import '../domain/template_choice_needed.dart';
 import '../processing.dart';
 import 'egress_preview_dialog.dart';
 import 'process_actions.dart';
 import 'processing_batch_state.dart';
 import 'processing_controller.dart';
 import 'queue_providers.dart';
+import 'template_choice_sheet.dart';
 
 /// The queue: counts from queries, grouped by context.
 class QueueScreen extends ConsumerWidget {
@@ -92,6 +94,8 @@ class QueueScreen extends ConsumerWidget {
                           .read(processingControllerProvider.notifier)
                           .process(
                             projectId: projectId,
+                            chooseTemplate: (TemplateChoiceNeeded needed) =>
+                                _chooseTemplate(context, needed),
                             confirmOnline: (ProcessingJob job) async {
                               final summary = await ref.read(
                                 processingEgressSummaryProvider,
@@ -144,6 +148,9 @@ class QueueScreen extends ConsumerWidget {
                                   .process(
                                     projectId: projectId,
                                     groupLabel: group.label,
+                                    chooseTemplate:
+                                        (TemplateChoiceNeeded needed) =>
+                                            _chooseTemplate(context, needed),
                                     confirmOnline: (ProcessingJob job) async {
                                       final summary = await ref.read(
                                         processingEgressSummaryProvider,
@@ -172,4 +179,33 @@ class QueueScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Asks the operator to pick from [needed]'s shortlist and maps the chosen
+/// label back to its template id. "Something else" or a dismissed sheet is
+/// no answer.
+Future<TemplateChoice?> _chooseTemplate(
+  BuildContext context,
+  TemplateChoiceNeeded needed,
+) async {
+  if (!context.mounted) {
+    return null;
+  }
+  final ({String? template, bool pin})? picked = await showTemplateChoice(
+    context,
+    options: <String>[
+      for (final ({String templateId, String label}) option in needed.shortlist)
+        option.label,
+    ],
+  );
+  final String? label = picked?.template;
+  if (picked == null || label == null) {
+    return null;
+  }
+  for (final ({String templateId, String label}) option in needed.shortlist) {
+    if (option.label == label) {
+      return (templateId: option.templateId, pin: picked.pin);
+    }
+  }
+  return null;
 }

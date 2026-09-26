@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -10,26 +11,35 @@ import 'package:tapture/core/widgets/app_progress_steps.dart';
 import '../domain/job_retry.dart';
 import '../domain/job_runner.dart';
 import '../domain/processing_repository.dart';
+import '../domain/template_choice_needed.dart';
 import 'processing_batch_state.dart';
 import 'queue_providers.dart';
 
 /// Executes foreground queue batches and exposes cancellable progress.
 final class ProcessingController extends Notifier<ProcessingBatchState> {
   var _isCancelled = false;
+  CancellationToken _token = CancellationToken();
 
   @override
   ProcessingBatchState build() => const ProcessingBatchState();
 
   /// Processes every ready job, or only [groupLabel] when supplied.
+  ///
+  /// When a stage cannot decide the template, [chooseTemplate] asks the
+  /// operator. A null answer, or no [chooseTemplate], leaves the job queued
+  /// and stops the batch; a choice is applied and the stage runs once more.
   Future<void> process({
     String? projectId,
     String? groupLabel,
     Future<bool> Function(ProcessingJob job)? confirmOnline,
+    Future<TemplateChoice?> Function(TemplateChoiceNeeded needed)?
+    chooseTemplate,
   }) async {
     if (state.isRunning) {
       return;
     }
     _isCancelled = false;
+    _token = CancellationToken();
     state = const ProcessingBatchState(isRunning: true);
     final ProcessingRepository repository = ref.read(
       processingRepositoryProvider,
@@ -80,11 +90,11 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
             if (confirm == null || !await confirm(current)) {
               await repository.release(current.id);
               _isCancelled = true;
-              throw const _ProcessingCancelled();
+              throw const _ProcessingCancelled(Copy.egressDecline);
             }
             onlineConfirmed = true;
           }
-          await ref.read(processingStageWorkProvider)(stage, current);
+          await _runStage(stage, current, repository, chooseTemplate);
         },
         persist: (ProcessingJob current, JobStage stage) async {
           return (await repository.markStage(
@@ -114,8 +124,13 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
         )).fold((Failure failure) => throw failure, (_) {});
         succeeded++;
         _replace(job.recordId, StepState.done, Copy.stepDone);
-      } on _ProcessingCancelled {
-        _replace(job.recordId, StepState.waiting, Copy.egressDecline);
+      } on _ProcessingCancelled catch (cancelled) {
+        _replace(job.recordId, StepState.waiting, cancelled.detail);
+        break;
+      } on _TemplateChoiceFailed catch (error) {
+        await repository.release(job.id);
+        failed++;
+        _replace(job.recordId, StepState.failed, error.failure.message);
         break;
       } on CancelledFailure catch (failure) {
         await repository.release(job.id);
@@ -152,6 +167,7 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
   /// Releases the current job between stages and keeps completed work.
   void cancel() {
     _isCancelled = true;
+    _token.cancel();
   }
 
   /// Returns one stopped job to the queue from either failures list.
@@ -170,6 +186,37 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
           ),
         ],
       );
+    }
+  }
+
+  /// Runs [stage] for [job], asking for a template once when the stage
+  /// cannot decide. A second [TemplateChoiceNeeded] fails the job.
+  Future<void> _runStage(
+    JobStage stage,
+    ProcessingJob job,
+    ProcessingRepository repository,
+    Future<TemplateChoice?> Function(TemplateChoiceNeeded needed)?
+    chooseTemplate,
+  ) async {
+    final ProcessingStageWork work = ref.read(processingStageWorkProvider);
+    try {
+      await work(stage, job, _token);
+    } on TemplateChoiceNeeded catch (needed) {
+      final TemplateChoice? choice = chooseTemplate == null
+          ? null
+          : await chooseTemplate(needed);
+      if (choice == null) {
+        await repository.release(job.id);
+        _isCancelled = true;
+        throw const _ProcessingCancelled(Copy.templateChoiceSkipped);
+      }
+      final Result<void> applied = await ref.read(
+        processingTemplateChoiceProvider,
+      )(needed, choice);
+      if (applied case FailureResult<void>(:final Failure failure)) {
+        throw _TemplateChoiceFailed(failure);
+      }
+      await work(stage, job, _token);
     }
   }
 
@@ -204,10 +251,24 @@ processingControllerProvider =
 
 /// One stage implementation. Production overrides this with the local-first
 /// worker; tests pass deterministic stage work.
-final Provider<Future<void> Function(JobStage, ProcessingJob)>
-processingStageWorkProvider =
-    Provider<Future<void> Function(JobStage, ProcessingJob)>((_) {
-      return (JobStage _, ProcessingJob _) async {};
+final Provider<ProcessingStageWork> processingStageWorkProvider =
+    Provider<ProcessingStageWork>((_) {
+      return (JobStage _, ProcessingJob _, CancellationToken _) async {};
+    });
+
+/// Applies the operator's template choice to the record, and stores the
+/// pin when asked. The stand-in fails until a data-layer writer overrides
+/// it, so an unwired choice is reported rather than silently dropped.
+final Provider<ProcessingTemplateChoice> processingTemplateChoiceProvider =
+    Provider<ProcessingTemplateChoice>((_) {
+      return (TemplateChoiceNeeded _, TemplateChoice _) async {
+        return const FailureResult<void>(
+          ValidationFailure(
+            message: Copy.templateChoiceApplyFailed,
+            recoveryAction: Copy.templateChoiceApplyRecovery,
+          ),
+        );
+      };
     });
 
 /// Batch notification boundary. Production uses the local plugin.
@@ -221,6 +282,14 @@ final Provider<ProcessingEgressSummary> processingEgressSummaryProvider =
     Provider<ProcessingEgressSummary>((_) {
       return (ProcessingJob _) async => (imageCount: 0, payloadBytes: 0);
     });
+
+/// Runs one stage of a job. The token is cancelled when the batch is.
+typedef ProcessingStageWork =
+    Future<void> Function(JobStage, ProcessingJob, CancellationToken);
+
+/// Applies a template choice and reports whether it was stored.
+typedef ProcessingTemplateChoice =
+    Future<Result<void>> Function(TemplateChoiceNeeded, TemplateChoice);
 
 typedef ProcessingEgressSummary =
     Future<({int imageCount, int payloadBytes})> Function(ProcessingJob);
@@ -239,5 +308,14 @@ String _stageLabel(JobStage stage) {
 }
 
 final class _ProcessingCancelled implements Exception {
-  const _ProcessingCancelled();
+  const _ProcessingCancelled(this.detail);
+
+  /// Shown on the job's step.
+  final String detail;
+}
+
+final class _TemplateChoiceFailed implements Exception {
+  const _TemplateChoiceFailed(this.failure);
+
+  final Failure failure;
 }

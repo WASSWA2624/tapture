@@ -6,6 +6,7 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
     as ml;
 import 'package:image/image.dart' as img;
 import 'package:tapture/core/concurrency/isolate_runner.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -59,6 +60,7 @@ Future<OcrResult> _recogniseNative(String imagePath) async {
     );
     return OcrResult(
       text: recognised.text,
+      engine: AppConstants.processing.ocrEngineMlKit,
       blocks: <OcrBlock>[
         for (final ml.TextBlock block in recognised.blocks)
           for (final ml.TextLine line in block.lines)
@@ -141,7 +143,11 @@ OcrResult _decodePayload(Map<String, Object?> payload) {
       );
     }
   }
-  return OcrResult(text: text, blocks: blocks);
+  return OcrResult(
+    text: text,
+    blocks: blocks,
+    engine: AppConstants.processing.ocrEngineDesktop,
+  );
 }
 
 Map<String, Object?> _read(img.Image source) {

@@ -186,6 +186,33 @@ abstract final class SettingKeys {
     false,
   );
 
+  /// Score a fuzzy row match must reach before it is accepted.
+  static final SettingKey<double> aiRowMatchThreshold = SettingKey<double>(
+    'ai.rowMatchThreshold',
+    AppConstants.processing.fuzzyMatch,
+  );
+
+  /// Local detection score at which a template is chosen without asking.
+  static final SettingKey<double> aiDetectionConfident = SettingKey<double>(
+    'ai.detectionConfident',
+    AppConstants.processing.detectionConfident,
+  );
+
+  /// Lead the best template needs over the next before detection decides.
+  static final SettingKey<double> aiDetectionGap = SettingKey<double>(
+    'ai.detectionGap',
+    AppConstants.processing.detectionGap,
+  );
+
+  /// Provider and model per operation, as a JSON object keyed by
+  /// `AiOperation.name`: `{"extractFields": {"provider": "…", "model": "…"}}`.
+  /// An operation missing from the map falls back to [aiProvider] and
+  /// [aiModel].
+  static const SettingKey<String> aiProviderSelection = SettingKey<String>(
+    'ai.providerSelection',
+    '{}',
+  );
+
   /// Selected provider id. `backend` is the keyless organisation proxy.
   static const SettingKey<String> aiProvider = SettingKey<String>(
     'ai.provider',
@@ -201,7 +228,7 @@ abstract final class SettingKeys {
   /// UI language.
   static const SettingKey<String> appLanguage = SettingKey<String>(
     'language.app',
-    'en',
+    AppConstants.defaultLanguage,
   );
 
   /// Speech-to-text language.
@@ -248,6 +275,10 @@ abstract final class SettingKeys {
     aiConcurrency.name,
     aiDailyRequestCap.name,
     aiOpportunisticOcr.name,
+    aiRowMatchThreshold.name,
+    aiDetectionConfident.name,
+    aiDetectionGap.name,
+    aiProviderSelection.name,
     aiProvider.name,
     aiModel.name,
     appLanguage.name,

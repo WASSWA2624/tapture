@@ -5,6 +5,7 @@ part 'corruption_failure.dart';
 part 'network_failure.dart';
 part 'permission_failure.dart';
 part 'provider_failure.dart';
+part 'provider_failure_kind.dart';
 part 'storage_failure.dart';
 part 'validation_failure.dart';
 
