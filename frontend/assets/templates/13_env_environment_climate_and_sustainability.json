@@ -1,0 +1,1618 @@
+{
+  "category": "ENV",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "env_environmental_baseline_survey",
+      "name": "templates.env_environmental_baseline_survey.name",
+      "title": "Environmental baseline survey",
+      "code": "ENV-001",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "environmental_components",
+          "label": "templates.catalogue.environmental_components",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_method",
+          "label": "templates.catalogue.sampling_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observations",
+          "label": "templates.catalogue.observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_environmental_impact_evidence_intake",
+      "name": "templates.env_environmental_impact_evidence_intake.name",
+      "title": "Environmental impact evidence intake",
+      "code": "ENV-002",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "project_scope",
+          "label": "templates.catalogue.project_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "baseline_sources",
+          "label": "templates.catalogue.baseline_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_environmental_management_plan",
+      "name": "templates.env_environmental_management_plan.name",
+      "title": "Environmental management plan",
+      "code": "ENV-003",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "identified_impacts",
+          "label": "templates.catalogue.identified_impacts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "mitigation_actions",
+          "label": "templates.catalogue.mitigation_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "monitoring_schedule",
+          "label": "templates.catalogue.monitoring_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_environmental_site_inspection",
+      "name": "templates.env_environmental_site_inspection.name",
+      "title": "Environmental site inspection",
+      "code": "ENV-004",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_criteria",
+          "label": "templates.catalogue.approved_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_conditions",
+          "label": "templates.catalogue.observed_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_actions",
+          "label": "templates.catalogue.required_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_air_quality_monitoring",
+      "name": "templates.env_air_quality_monitoring.name",
+      "title": "Air quality monitoring",
+      "code": "ENV-005",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "monitoring_location",
+          "label": "templates.catalogue.monitoring_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "instrument_method",
+          "label": "templates.catalogue.instrument_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_parameters",
+          "label": "templates.catalogue.observed_parameters",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_noise_level_survey",
+      "name": "templates.env_noise_level_survey.name",
+      "title": "Noise level survey",
+      "code": "ENV-006",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "measurement_location",
+          "label": "templates.catalogue.measurement_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "instrument_reference",
+          "label": "templates.catalogue.instrument_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_duration",
+          "label": "templates.catalogue.measurement_duration",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "minutes",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_surface_water_quality_sample",
+      "name": "templates.env_surface_water_quality_sample.name",
+      "title": "Surface water quality sample",
+      "code": "ENV-007",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "sampling_point",
+          "label": "templates.catalogue.sampling_point",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_conditions",
+          "label": "templates.catalogue.sampling_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_panel",
+          "label": "templates.catalogue.test_panel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_groundwater_monitoring_record",
+      "name": "templates.env_groundwater_monitoring_record.name",
+      "title": "Groundwater monitoring record",
+      "code": "ENV-008",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "well_reference",
+          "label": "templates.catalogue.well_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "water_level",
+          "label": "templates.catalogue.water_level",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_results_ref",
+          "label": "templates.catalogue.quality_results_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_soil_contamination_sample",
+      "name": "templates.env_soil_contamination_sample.name",
+      "title": "Soil contamination sample",
+      "code": "ENV-009",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "sample_location",
+          "label": "templates.catalogue.sample_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_depth",
+          "label": "templates.catalogue.sampling_depth",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "m",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "laboratory_request",
+          "label": "templates.catalogue.laboratory_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_environmental_spill_observation",
+      "name": "templates.env_environmental_spill_observation.name",
+      "title": "Environmental spill observation",
+      "code": "ENV-010",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_material",
+          "label": "templates.catalogue.observed_material",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visible_extent",
+          "label": "templates.catalogue.visible_extent",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_response",
+          "label": "templates.catalogue.authorized_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_environmental_complaint_intake",
+      "name": "templates.env_environmental_complaint_intake.name",
+      "title": "Environmental complaint intake",
+      "code": "ENV-011",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_impact",
+          "label": "templates.catalogue.reported_impact",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "location",
+          "label": "templates.catalogue.location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_evidence",
+          "label": "templates.catalogue.supporting_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_environmental_permit_evidence",
+      "name": "templates.env_environmental_permit_evidence.name",
+      "title": "Environmental permit evidence",
+      "code": "ENV-012",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "jurisdiction",
+          "label": "templates.catalogue.jurisdiction",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "permit_reference",
+          "label": "templates.catalogue.permit_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "monitoring_obligations",
+          "label": "templates.catalogue.monitoring_obligations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_carbon_emissions_activity_data",
+      "name": "templates.env_carbon_emissions_activity_data.name",
+      "title": "Carbon emissions activity data",
+      "code": "ENV-013",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "activity_type",
+          "label": "templates.catalogue.activity_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_quantity",
+          "label": "templates.catalogue.measured_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_quantity_unit",
+          "label": "templates.catalogue.measured_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_document",
+          "label": "templates.catalogue.source_document",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_emission_factor_source_register",
+      "name": "templates.env_emission_factor_source_register.name",
+      "title": "Emission factor source register",
+      "code": "ENV-014",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "factor_value",
+          "label": "templates.catalogue.factor_value",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "factor_value_unit",
+          "label": "templates.catalogue.factor_value_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "factor_units",
+          "label": "templates.catalogue.factor_units",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_version",
+          "label": "templates.catalogue.source_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "applicability",
+          "label": "templates.catalogue.applicability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_greenhouse_gas_calculation_review",
+      "name": "templates.env_greenhouse_gas_calculation_review.name",
+      "title": "Greenhouse gas calculation review",
+      "code": "ENV-015",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "activity_data",
+          "label": "templates.catalogue.activity_data",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "factor_source",
+          "label": "templates.catalogue.factor_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "boundary_assumptions",
+          "label": "templates.catalogue.boundary_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_organizational_sustainability_report",
+      "name": "templates.env_organizational_sustainability_report.name",
+      "title": "Organizational sustainability report",
+      "code": "ENV-016",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_metrics",
+          "label": "templates.catalogue.verified_metrics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reporting_boundary",
+          "label": "templates.catalogue.reporting_boundary",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "method_limitations",
+          "label": "templates.catalogue.method_limitations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_supplier_sustainability_evidence",
+      "name": "templates.env_supplier_sustainability_evidence.name",
+      "title": "Supplier sustainability evidence",
+      "code": "ENV-017",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "supplier_claims",
+          "label": "templates.catalogue.supplier_claims",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "independent_evidence",
+          "label": "templates.catalogue.independent_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "unverified_items",
+          "label": "templates.catalogue.unverified_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_climate_vulnerability_assessment",
+      "name": "templates.env_climate_vulnerability_assessment.name",
+      "title": "Climate vulnerability assessment",
+      "code": "ENV-018",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "exposure_evidence",
+          "label": "templates.catalogue.exposure_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sensitivity",
+          "label": "templates.catalogue.sensitivity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "adaptive_capacity",
+          "label": "templates.catalogue.adaptive_capacity",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_climate_adaptation_project_plan",
+      "name": "templates.env_climate_adaptation_project_plan.name",
+      "title": "Climate adaptation project plan",
+      "code": "ENV-019",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "climate_risks",
+          "label": "templates.catalogue.climate_risks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "adaptation_actions",
+          "label": "templates.catalogue.adaptation_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "monitoring_measures",
+          "label": "templates.catalogue.monitoring_measures",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_flood_extent_observation",
+      "name": "templates.env_flood_extent_observation.name",
+      "title": "Flood extent observation",
+      "code": "ENV-020",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_water_extent",
+          "label": "templates.catalogue.observed_water_extent",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observation_time",
+          "label": "templates.catalogue.observation_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "capture_method",
+          "label": "templates.catalogue.capture_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_drought_field_observation",
+      "name": "templates.env_drought_field_observation.name",
+      "title": "Drought field observation",
+      "code": "ENV-021",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "water_availability",
+          "label": "templates.catalogue.water_availability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "vegetation_conditions",
+          "label": "templates.catalogue.vegetation_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "local_reports",
+          "label": "templates.catalogue.local_reports",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_rainfall_measurement_log",
+      "name": "templates.env_rainfall_measurement_log.name",
+      "title": "Rainfall measurement log",
+      "code": "ENV-022",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "gauge_identifier",
+          "label": "templates.catalogue.gauge_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_interval",
+          "label": "templates.catalogue.measurement_interval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "rainfall_mm",
+          "label": "templates.catalogue.rainfall_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_weather_station_service_record",
+      "name": "templates.env_weather_station_service_record.name",
+      "title": "Weather station service record",
+      "code": "ENV-023",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "station_identifier",
+          "label": "templates.catalogue.station_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_tasks",
+          "label": "templates.catalogue.approved_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification",
+          "label": "templates.catalogue.verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_coastal_erosion_monitoring",
+      "name": "templates.env_coastal_erosion_monitoring.name",
+      "title": "Coastal erosion monitoring",
+      "code": "ENV-024",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "reference_line",
+          "label": "templates.catalogue.reference_line",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_change",
+          "label": "templates.catalogue.measured_change",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "survey_uncertainty",
+          "label": "templates.catalogue.survey_uncertainty",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_wetland_condition_survey",
+      "name": "templates.env_wetland_condition_survey.name",
+      "title": "Wetland condition survey",
+      "code": "ENV-025",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "wetland_features",
+          "label": "templates.catalogue.wetland_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "disturbance_signs",
+          "label": "templates.catalogue.disturbance_signs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_method",
+          "label": "templates.catalogue.sampling_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_environmental_restoration_activity",
+      "name": "templates.env_environmental_restoration_activity.name",
+      "title": "Environmental restoration activity",
+      "code": "ENV-026",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "restoration_site",
+          "label": "templates.catalogue.restoration_site",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_actions",
+          "label": "templates.catalogue.completed_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_outputs",
+          "label": "templates.catalogue.verified_outputs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_sustainability_materiality_consultation",
+      "name": "templates.env_sustainability_materiality_consultation.name",
+      "title": "Sustainability materiality consultation",
+      "code": "ENV-027",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "stakeholder_topics",
+          "label": "templates.catalogue.stakeholder_topics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "impact_evidence",
+          "label": "templates.catalogue.impact_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "views_received",
+          "label": "templates.catalogue.views_received",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_biodiversity_project_impact_evidence",
+      "name": "templates.env_biodiversity_project_impact_evidence.name",
+      "title": "Biodiversity project impact evidence",
+      "code": "ENV-028",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "baseline_measurements",
+          "label": "templates.catalogue.baseline_measurements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "followup_measurements",
+          "label": "templates.catalogue.followup_measurements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attribution_limits",
+          "label": "templates.catalogue.attribution_limits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_plastic_usage_inventory",
+      "name": "templates.env_plastic_usage_inventory.name",
+      "title": "Plastic usage inventory",
+      "code": "ENV-029",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "material_type",
+          "label": "templates.catalogue.material_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity",
+          "label": "templates.catalogue.quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_boundary",
+          "label": "templates.catalogue.measurement_boundary",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_water_footprint_activity_collection",
+      "name": "templates.env_water_footprint_activity_collection.name",
+      "title": "Water footprint activity collection",
+      "code": "ENV-030",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "water_source",
+          "label": "templates.catalogue.water_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "use_category",
+          "label": "templates.catalogue.use_category",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_volume",
+          "label": "templates.catalogue.measured_volume",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "L",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_environmental_compliance_action_tracker",
+      "name": "templates.env_environmental_compliance_action_tracker.name",
+      "title": "Environmental compliance action tracker",
+      "code": "ENV-031",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "obligation_reference",
+          "label": "templates.catalogue.obligation_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_action",
+          "label": "templates.catalogue.required_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_evidence",
+          "label": "templates.catalogue.verification_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_climate_project_funding_evidence",
+      "name": "templates.env_climate_project_funding_evidence.name",
+      "title": "Climate project funding evidence",
+      "code": "ENV-032",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_project_results",
+          "label": "templates.catalogue.verified_project_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "methodology_reference",
+          "label": "templates.catalogue.methodology_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "uncertainties",
+          "label": "templates.catalogue.uncertainties",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_carbon_project_validation_preparation",
+      "name": "templates.env_carbon_project_validation_preparation.name",
+      "title": "Carbon project validation preparation",
+      "code": "ENV-033",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "claimed_methodology",
+          "label": "templates.catalogue.claimed_methodology",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_traceability",
+          "label": "templates.catalogue.data_traceability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "independent_review",
+          "label": "templates.catalogue.independent_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "env_sustainability_claim_approval",
+      "name": "templates.env_sustainability_claim_approval.name",
+      "title": "Sustainability claim approval",
+      "code": "ENV-034",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_env",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "proposed_claim",
+          "label": "templates.catalogue.proposed_claim",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_evidence",
+          "label": "templates.catalogue.supporting_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "limitations_disclosed",
+          "label": "templates.catalogue.limitations_disclosed",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

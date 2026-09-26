@@ -1,0 +1,1623 @@
+{
+  "category": "WAT",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "wat_water_source_inventory",
+      "name": "templates.wat_water_source_inventory.name",
+      "title": "Water source inventory",
+      "code": "WAT-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "source_type",
+          "label": "templates.catalogue.source_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_location",
+          "label": "templates.catalogue.source_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_population_basis",
+          "label": "templates.catalogue.service_population_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_borehole_installation_record",
+      "name": "templates.wat_borehole_installation_record.name",
+      "title": "Borehole installation record",
+      "code": "WAT-002",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "borehole_identifier",
+          "label": "templates.catalogue.borehole_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "construction_documents",
+          "label": "templates.catalogue.construction_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_tests",
+          "label": "templates.catalogue.authorized_tests",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_borehole_condition_inspection",
+      "name": "templates.wat_borehole_condition_inspection.name",
+      "title": "Borehole condition inspection",
+      "code": "WAT-003",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "pump_condition",
+          "label": "templates.catalogue.pump_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "headworks_condition",
+          "label": "templates.catalogue.headworks_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_status",
+          "label": "templates.catalogue.service_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_water_pump_maintenance",
+      "name": "templates.wat_water_pump_maintenance.name",
+      "title": "Water pump maintenance",
+      "code": "WAT-004",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "pump_identifier",
+          "label": "templates.catalogue.pump_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_fault",
+          "label": "templates.catalogue.reported_fault",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_repair",
+          "label": "templates.catalogue.approved_repair",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_water_meter_reading",
+      "name": "templates.wat_water_meter_reading.name",
+      "title": "Water meter reading",
+      "code": "WAT-005",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "meter_identifier",
+          "label": "templates.catalogue.meter_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "displayed_reading",
+          "label": "templates.catalogue.displayed_reading",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reading_date",
+          "label": "templates.catalogue.reading_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_water_connection_application",
+      "name": "templates.wat_water_connection_application.name",
+      "title": "Water connection application",
+      "code": "WAT-006",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "service_location",
+          "label": "templates.catalogue.service_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "applicant_authority",
+          "label": "templates.catalogue.applicant_authority",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "connection_requirements",
+          "label": "templates.catalogue.connection_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_water_leak_observation",
+      "name": "templates.wat_water_leak_observation.name",
+      "title": "Water leak observation",
+      "code": "WAT-007",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "leak_location",
+          "label": "templates.catalogue.leak_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visible_evidence",
+          "label": "templates.catalogue.visible_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_impact",
+          "label": "templates.catalogue.reported_impact",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_water_leak_repair_job",
+      "name": "templates.wat_water_leak_repair_job.name",
+      "title": "Water leak repair job",
+      "code": "WAT-008",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "leak_reference",
+          "label": "templates.catalogue.leak_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_repair",
+          "label": "templates.catalogue.completed_repair",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification",
+          "label": "templates.catalogue.verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_water_pressure_measurement",
+      "name": "templates.wat_water_pressure_measurement.name",
+      "title": "Water pressure measurement",
+      "code": "WAT-009",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "measurement_point",
+          "label": "templates.catalogue.measurement_point",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pressure_reading",
+          "label": "templates.catalogue.pressure_reading",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "instrument_reference",
+          "label": "templates.catalogue.instrument_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_water_flow_measurement",
+      "name": "templates.wat_water_flow_measurement.name",
+      "title": "Water flow measurement",
+      "code": "WAT-010",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "measurement_point",
+          "label": "templates.catalogue.measurement_point",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "flow_value",
+          "label": "templates.catalogue.flow_value",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "flow_value_unit",
+          "label": "templates.catalogue.flow_value_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_method",
+          "label": "templates.catalogue.measurement_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_drinking_water_sample_collection",
+      "name": "templates.wat_drinking_water_sample_collection.name",
+      "title": "Drinking water sample collection",
+      "code": "WAT-011",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "sampling_point",
+          "label": "templates.catalogue.sampling_point",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_time",
+          "label": "templates.catalogue.sampling_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_panel",
+          "label": "templates.catalogue.test_panel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_water_quality_result_review",
+      "name": "templates.wat_water_quality_result_review.name",
+      "title": "Water quality result review",
+      "code": "WAT-012",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "laboratory_results",
+          "label": "templates.catalogue.laboratory_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "applicable_criteria_ref",
+          "label": "templates.catalogue.applicable_criteria_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_water_treatment_shift_log",
+      "name": "templates.wat_water_treatment_shift_log.name",
+      "title": "Water treatment shift log",
+      "code": "WAT-013",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "operating_period",
+          "label": "templates.catalogue.operating_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_process_observations",
+          "label": "templates.catalogue.approved_process_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "exceptions",
+          "label": "templates.catalogue.exceptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_water_treatment_chemical_stock",
+      "name": "templates.wat_water_treatment_chemical_stock.name",
+      "title": "Water treatment chemical stock",
+      "code": "WAT-014",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "chemical_product",
+          "label": "templates.catalogue.chemical_product",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "batch_number",
+          "label": "templates.catalogue.batch_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_location",
+          "label": "templates.catalogue.storage_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_water_distribution_outage_log",
+      "name": "templates.wat_water_distribution_outage_log.name",
+      "title": "Water distribution outage log",
+      "code": "WAT-015",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "affected_zone",
+          "label": "templates.catalogue.affected_zone",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outage_period",
+          "label": "templates.catalogue.outage_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_restoration",
+          "label": "templates.catalogue.service_restoration",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_water_storage_tank_inspection",
+      "name": "templates.wat_water_storage_tank_inspection.name",
+      "title": "Water storage tank inspection",
+      "code": "WAT-016",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "tank_identifier",
+          "label": "templates.catalogue.tank_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "structural_observations",
+          "label": "templates.catalogue.structural_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "cleaning_status",
+          "label": "templates.catalogue.cleaning_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_water_tank_cleaning_record",
+      "name": "templates.wat_water_tank_cleaning_record.name",
+      "title": "Water tank cleaning record",
+      "code": "WAT-017",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "tank_reference",
+          "label": "templates.catalogue.tank_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_cleaning_method",
+          "label": "templates.catalogue.approved_cleaning_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "release_evidence",
+          "label": "templates.catalogue.release_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_standpipe_service_inspection",
+      "name": "templates.wat_standpipe_service_inspection.name",
+      "title": "Standpipe service inspection",
+      "code": "WAT-018",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "tap_condition",
+          "label": "templates.catalogue.tap_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "drainage",
+          "label": "templates.catalogue.drainage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_availability",
+          "label": "templates.catalogue.service_availability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_community_water_committee_record",
+      "name": "templates.wat_community_water_committee_record.name",
+      "title": "Community water committee record",
+      "code": "WAT-019",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "service_concerns",
+          "label": "templates.catalogue.service_concerns",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "financial_summary",
+          "label": "templates.catalogue.financial_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "agreed_actions",
+          "label": "templates.catalogue.agreed_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_community_water_fee_collection",
+      "name": "templates.wat_community_water_fee_collection.name",
+      "title": "Community water fee collection",
+      "code": "WAT-020",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "payer_reference",
+          "label": "templates.catalogue.payer_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_period",
+          "label": "templates.catalogue.service_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "amount_collected",
+          "label": "templates.catalogue.amount_collected",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_sanitation_facility_inventory",
+      "name": "templates.wat_sanitation_facility_inventory.name",
+      "title": "Sanitation facility inventory",
+      "code": "WAT-021",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "facility_type",
+          "label": "templates.catalogue.facility_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "usable_units",
+          "label": "templates.catalogue.usable_units",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessibility_features",
+          "label": "templates.catalogue.accessibility_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_latrine_condition_survey",
+      "name": "templates.wat_latrine_condition_survey.name",
+      "title": "Latrine condition survey",
+      "code": "WAT-022",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "structure_condition",
+          "label": "templates.catalogue.structure_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cleanliness",
+          "label": "templates.catalogue.cleanliness",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "handwashing_access",
+          "label": "templates.catalogue.handwashing_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_septic_tank_service_record",
+      "name": "templates.wat_septic_tank_service_record.name",
+      "title": "Septic tank service record",
+      "code": "WAT-023",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "service_location",
+          "label": "templates.catalogue.service_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_scope",
+          "label": "templates.catalogue.service_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "disposal_evidence",
+          "label": "templates.catalogue.disposal_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_sewer_blockage_report",
+      "name": "templates.wat_sewer_blockage_report.name",
+      "title": "Sewer blockage report",
+      "code": "WAT-024",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "blockage_location",
+          "label": "templates.catalogue.blockage_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_effect",
+          "label": "templates.catalogue.observed_effect",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_action",
+          "label": "templates.catalogue.response_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_sewer_network_inspection",
+      "name": "templates.wat_sewer_network_inspection.name",
+      "title": "Sewer network inspection",
+      "code": "WAT-025",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "network_segment",
+          "label": "templates.catalogue.network_segment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_need",
+          "label": "templates.catalogue.maintenance_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_wastewater_sample_record",
+      "name": "templates.wat_wastewater_sample_record.name",
+      "title": "Wastewater sample record",
+      "code": "WAT-026",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "sampling_point",
+          "label": "templates.catalogue.sampling_point",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_conditions",
+          "label": "templates.catalogue.sampling_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_test_panel",
+          "label": "templates.catalogue.approved_test_panel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_wastewater_treatment_log",
+      "name": "templates.wat_wastewater_treatment_log.name",
+      "title": "Wastewater treatment log",
+      "code": "WAT-027",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "process_unit",
+          "label": "templates.catalogue.process_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_observations",
+          "label": "templates.catalogue.approved_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "exceptions",
+          "label": "templates.catalogue.exceptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_sludge_disposal_tracking",
+      "name": "templates.wat_sludge_disposal_tracking.name",
+      "title": "Sludge disposal tracking",
+      "code": "WAT-028",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "sludge_batch",
+          "label": "templates.catalogue.sludge_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_quantity",
+          "label": "templates.catalogue.measured_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_quantity_unit",
+          "label": "templates.catalogue.measured_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_destination",
+          "label": "templates.catalogue.authorized_destination",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_irrigation_canal_inspection",
+      "name": "templates.wat_irrigation_canal_inspection.name",
+      "title": "Irrigation canal inspection",
+      "code": "WAT-029",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "canal_segment",
+          "label": "templates.catalogue.canal_segment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "damage_or_blockage",
+          "label": "templates.catalogue.damage_or_blockage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "flow_observation",
+          "label": "templates.catalogue.flow_observation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_irrigation_water_allocation_plan",
+      "name": "templates.wat_irrigation_water_allocation_plan.name",
+      "title": "Irrigation water allocation plan",
+      "code": "WAT-030",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "user_requests",
+          "label": "templates.catalogue.user_requests",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "available_supply",
+          "label": "templates.catalogue.available_supply",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "allocation_basis",
+          "label": "templates.catalogue.allocation_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_rainwater_harvesting_inspection",
+      "name": "templates.wat_rainwater_harvesting_inspection.name",
+      "title": "Rainwater harvesting inspection",
+      "code": "WAT-031",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "catchment_condition",
+          "label": "templates.catalogue.catchment_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_condition",
+          "label": "templates.catalogue.storage_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_need",
+          "label": "templates.catalogue.maintenance_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_water_service_satisfaction_survey",
+      "name": "templates.wat_water_service_satisfaction_survey.name",
+      "title": "Water service satisfaction survey",
+      "code": "WAT-032",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "reliability_experience",
+          "label": "templates.catalogue.reliability_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_barriers",
+          "label": "templates.catalogue.access_barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "suggestions",
+          "label": "templates.catalogue.suggestions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_water_safety_plan_evidence",
+      "name": "templates.wat_water_safety_plan_evidence.name",
+      "title": "Water safety plan evidence",
+      "code": "WAT-033",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_risk_assessment",
+          "label": "templates.catalogue.approved_risk_assessment",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "control_records",
+          "label": "templates.catalogue.control_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_actions",
+          "label": "templates.catalogue.review_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wat_non_revenue_water_investigation",
+      "name": "templates.wat_non_revenue_water_investigation.name",
+      "title": "Non-revenue water investigation",
+      "code": "WAT-034",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wat",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "supply_volume",
+          "label": "templates.catalogue.supply_volume",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "L",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_billed_volume",
+          "label": "templates.catalogue.verified_billed_volume",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "L",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "loss_hypotheses",
+          "label": "templates.catalogue.loss_hypotheses",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

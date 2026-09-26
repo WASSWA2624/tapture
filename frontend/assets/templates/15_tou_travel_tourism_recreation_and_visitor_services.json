@@ -1,0 +1,1519 @@
+{
+  "category": "TOU",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "tou_travel_enquiry_intake",
+      "name": "templates.tou_travel_enquiry_intake.name",
+      "title": "Travel enquiry intake",
+      "code": "TOU-001",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "travel_dates",
+          "label": "templates.catalogue.travel_dates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "interests",
+          "label": "templates.catalogue.interests",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "budget_range",
+          "label": "templates.catalogue.budget_range",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_travel_itinerary_planning",
+      "name": "templates.tou_travel_itinerary_planning.name",
+      "title": "Travel itinerary planning",
+      "code": "TOU-002",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "confirmed_services",
+          "label": "templates.catalogue.confirmed_services",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "daily_schedule",
+          "label": "templates.catalogue.daily_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assumptions",
+          "label": "templates.catalogue.assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_travel_quotation",
+      "name": "templates.tou_travel_quotation.name",
+      "title": "Travel quotation",
+      "code": "TOU-003",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "included_services",
+          "label": "templates.catalogue.included_services",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "excluded_costs",
+          "label": "templates.catalogue.excluded_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quotation_validity",
+          "label": "templates.catalogue.quotation_validity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_tour_booking_confirmation",
+      "name": "templates.tou_tour_booking_confirmation.name",
+      "title": "Tour booking confirmation",
+      "code": "TOU-004",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "confirmed_itinerary",
+          "label": "templates.catalogue.confirmed_itinerary",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "traveler_requirements",
+          "label": "templates.catalogue.traveler_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_terms",
+          "label": "templates.catalogue.agreed_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_traveler_information_intake",
+      "name": "templates.tou_traveler_information_intake.name",
+      "title": "Traveler information intake",
+      "code": "TOU-005",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "minimum_booking_details",
+          "label": "templates.catalogue.minimum_booking_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "contact_preferences",
+          "label": "templates.catalogue.contact_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_travel_document_checklist",
+      "name": "templates.tou_travel_document_checklist.name",
+      "title": "Travel document checklist",
+      "code": "TOU-006",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "destination_requirements_source",
+          "label": "templates.catalogue.destination_requirements_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "traveler_documents",
+          "label": "templates.catalogue.traveler_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_date",
+          "label": "templates.catalogue.verification_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_visa_application_evidence_intake",
+      "name": "templates.tou_visa_application_evidence_intake.name",
+      "title": "Visa application evidence intake",
+      "code": "TOU-007",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "destination",
+          "label": "templates.catalogue.destination",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "application_type",
+          "label": "templates.catalogue.application_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "official_requirements_ref",
+          "label": "templates.catalogue.official_requirements_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_travel_insurance_document_check",
+      "name": "templates.tou_travel_insurance_document_check.name",
+      "title": "Travel insurance document check",
+      "code": "TOU-008",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "policy_reference",
+          "label": "templates.catalogue.policy_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "coverage_period",
+          "label": "templates.catalogue.coverage_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_airport_transfer_booking",
+      "name": "templates.tou_airport_transfer_booking.name",
+      "title": "Airport transfer booking",
+      "code": "TOU-009",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "arrival_details",
+          "label": "templates.catalogue.arrival_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "destination",
+          "label": "templates.catalogue.destination",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "functional_support_needs",
+          "label": "templates.catalogue.functional_support_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_tour_participant_register",
+      "name": "templates.tou_tour_participant_register.name",
+      "title": "Tour participant register",
+      "code": "TOU-010",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "tour_reference",
+          "label": "templates.catalogue.tour_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_participant_details",
+          "label": "templates.catalogue.minimum_participant_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "emergency_contact_permission",
+          "label": "templates.catalogue.emergency_contact_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_tour_guide_assignment",
+      "name": "templates.tou_tour_guide_assignment.name",
+      "title": "Tour guide assignment",
+      "code": "TOU-011",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "tour_scope",
+          "label": "templates.catalogue.tour_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_qualifications",
+          "label": "templates.catalogue.verified_qualifications",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_dates",
+          "label": "templates.catalogue.assigned_dates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_tour_guide_field_report",
+      "name": "templates.tou_tour_guide_field_report.name",
+      "title": "Tour guide field report",
+      "code": "TOU-012",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "completed_itinerary",
+          "label": "templates.catalogue.completed_itinerary",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "guest_feedback",
+          "label": "templates.catalogue.guest_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "service_issues",
+          "label": "templates.catalogue.service_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_tour_vehicle_readiness",
+      "name": "templates.tou_tour_vehicle_readiness.name",
+      "title": "Tour vehicle readiness",
+      "code": "TOU-013",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_condition",
+          "label": "templates.catalogue.vehicle_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_supplies",
+          "label": "templates.catalogue.required_supplies",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_safety_checks",
+          "label": "templates.catalogue.approved_safety_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_visitor_attraction_ticket_record",
+      "name": "templates.tou_visitor_attraction_ticket_record.name",
+      "title": "Visitor attraction ticket record",
+      "code": "TOU-014",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "attraction",
+          "label": "templates.catalogue.attraction",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "ticket_quantity",
+          "label": "templates.catalogue.ticket_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "ticket_quantity_unit",
+          "label": "templates.catalogue.ticket_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visit_date",
+          "label": "templates.catalogue.visit_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_visitor_attraction_condition_inspection",
+      "name": "templates.tou_visitor_attraction_condition_inspection.name",
+      "title": "Visitor attraction condition inspection",
+      "code": "TOU-015",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "visitor_routes",
+          "label": "templates.catalogue.visitor_routes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "facilities",
+          "label": "templates.catalogue.facilities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_needs",
+          "label": "templates.catalogue.maintenance_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_nature_trail_condition_survey",
+      "name": "templates.tou_nature_trail_condition_survey.name",
+      "title": "Nature trail condition survey",
+      "code": "TOU-016",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "trail_section",
+          "label": "templates.catalogue.trail_section",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "surface_condition",
+          "label": "templates.catalogue.surface_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_hazards",
+          "label": "templates.catalogue.observed_hazards",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_campsite_registration",
+      "name": "templates.tou_campsite_registration.name",
+      "title": "Campsite registration",
+      "code": "TOU-017",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "stay_period",
+          "label": "templates.catalogue.stay_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "party_size",
+          "label": "templates.catalogue.party_size",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_requirements",
+          "label": "templates.catalogue.service_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_campsite_readiness_inspection",
+      "name": "templates.tou_campsite_readiness_inspection.name",
+      "title": "Campsite readiness inspection",
+      "code": "TOU-018",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "sanitation",
+          "label": "templates.catalogue.sanitation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_condition",
+          "label": "templates.catalogue.site_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessibility",
+          "label": "templates.catalogue.accessibility",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_adventure_activity_consent_administration",
+      "name": "templates.tou_adventure_activity_consent_administration.name",
+      "title": "Adventure activity consent administration",
+      "code": "TOU-019",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_activity_information",
+          "label": "templates.catalogue.approved_activity_information",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_choice",
+          "label": "templates.catalogue.participant_choice",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_operator",
+          "label": "templates.catalogue.qualified_operator",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_recreation_equipment_issue",
+      "name": "templates.tou_recreation_equipment_issue.name",
+      "title": "Recreation equipment issue",
+      "code": "TOU-020",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_identifier",
+          "label": "templates.catalogue.equipment_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient",
+          "label": "templates.catalogue.recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_due_date",
+          "label": "templates.catalogue.return_due_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_recreation_equipment_return_check",
+      "name": "templates.tou_recreation_equipment_return_check.name",
+      "title": "Recreation equipment return check",
+      "code": "TOU-021",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_reference",
+          "label": "templates.catalogue.equipment_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition_changes",
+          "label": "templates.catalogue.condition_changes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_need",
+          "label": "templates.catalogue.maintenance_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_tourism_community_consultation",
+      "name": "templates.tou_tourism_community_consultation.name",
+      "title": "Tourism community consultation",
+      "code": "TOU-022",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "community_priorities",
+          "label": "templates.catalogue.community_priorities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "tourism_impacts",
+          "label": "templates.catalogue.tourism_impacts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_actions",
+          "label": "templates.catalogue.agreed_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_visitor_experience_feedback",
+      "name": "templates.tou_visitor_experience_feedback.name",
+      "title": "Visitor experience feedback",
+      "code": "TOU-023",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "experience_rating",
+          "label": "templates.catalogue.experience_rating",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "very_poor",
+              "label": "templates.choices.rating.very_poor"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.rating.poor"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.rating.fair"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.rating.good"
+            },
+            {
+              "code": "excellent",
+              "label": "templates.choices.rating.excellent"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_feedback",
+          "label": "templates.catalogue.service_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "accessibility",
+          "label": "templates.catalogue.accessibility",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_travel_service_disruption_record",
+      "name": "templates.tou_travel_service_disruption_record.name",
+      "title": "Travel service disruption record",
+      "code": "TOU-024",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "confirmed_disruption",
+          "label": "templates.catalogue.confirmed_disruption",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_bookings",
+          "label": "templates.catalogue.affected_bookings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_actions",
+          "label": "templates.catalogue.approved_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_travel_refund_request",
+      "name": "templates.tou_travel_refund_request.name",
+      "title": "Travel refund request",
+      "code": "TOU-025",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "booking_reference",
+          "label": "templates.catalogue.booking_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "request_reason",
+          "label": "templates.catalogue.request_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_terms_ref",
+          "label": "templates.catalogue.agreed_terms_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_tour_supplier_evaluation",
+      "name": "templates.tou_tour_supplier_evaluation.name",
+      "title": "Tour supplier evaluation",
+      "code": "TOU-026",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "contracted_service",
+          "label": "templates.catalogue.contracted_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_delivery",
+          "label": "templates.catalogue.verified_delivery",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "guest_feedback",
+          "label": "templates.catalogue.guest_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_destination_information_source_register",
+      "name": "templates.tou_destination_information_source_register.name",
+      "title": "Destination information source register",
+      "code": "TOU-027",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "topic",
+          "label": "templates.catalogue.topic",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "official_source",
+          "label": "templates.catalogue.official_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "checked_date",
+          "label": "templates.catalogue.checked_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_responsible_tourism_evidence_review",
+      "name": "templates.tou_responsible_tourism_evidence_review.name",
+      "title": "Responsible tourism evidence review",
+      "code": "TOU-028",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "operator_claims",
+          "label": "templates.catalogue.operator_claims",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_evidence",
+          "label": "templates.catalogue.supporting_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "unverified_items",
+          "label": "templates.catalogue.unverified_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_tour_profitability_worksheet",
+      "name": "templates.tou_tour_profitability_worksheet.name",
+      "title": "Tour profitability worksheet",
+      "code": "TOU-029",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_revenue",
+          "label": "templates.catalogue.verified_revenue",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "verified_revenue_currency",
+          "label": "templates.catalogue.verified_revenue_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "direct_costs",
+          "label": "templates.catalogue.direct_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "allocation_assumptions",
+          "label": "templates.catalogue.allocation_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tou_travel_emergency_assistance_intake",
+      "name": "templates.tou_travel_emergency_assistance_intake.name",
+      "title": "Travel emergency assistance intake",
+      "code": "TOU-030",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tou",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_issue",
+          "label": "templates.catalogue.reported_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_contact",
+          "label": "templates.catalogue.safe_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_assistance",
+          "label": "templates.catalogue.authorized_assistance",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

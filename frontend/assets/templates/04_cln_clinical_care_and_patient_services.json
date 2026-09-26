@@ -1,0 +1,1782 @@
+{
+  "category": "CLN",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "cln_patient_registration_intake",
+      "name": "templates.cln_patient_registration_intake.name",
+      "title": "Patient registration intake",
+      "code": "CLN-001",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "patient_identifier",
+          "label": "templates.catalogue.patient_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_preferences",
+          "label": "templates.catalogue.contact_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "identity_verification",
+          "label": "templates.catalogue.identity_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_appointment_request_for_care",
+      "name": "templates.cln_appointment_request_for_care.name",
+      "title": "Appointment request for care",
+      "code": "CLN-002",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_service",
+          "label": "templates.catalogue.requested_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "preferred_date",
+          "label": "templates.catalogue.preferred_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_support",
+          "label": "templates.catalogue.access_support",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_clinical_encounter_documentation",
+      "name": "templates.cln_clinical_encounter_documentation.name",
+      "title": "Clinical encounter documentation",
+      "code": "CLN-003",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "presenting_concerns",
+          "label": "templates.catalogue.presenting_concerns",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "clinician_observations",
+          "label": "templates.catalogue.clinician_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "clinician_plan",
+          "label": "templates.catalogue.clinician_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_triage_observation_capture",
+      "name": "templates.cln_triage_observation_capture.name",
+      "title": "Triage observation capture",
+      "code": "CLN-004",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "arrival_time",
+          "label": "templates.catalogue.arrival_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_observation_fields",
+          "label": "templates.catalogue.approved_observation_fields",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "clinician_priority",
+          "label": "templates.catalogue.clinician_priority",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "emergency",
+              "label": "templates.choices.priority.emergency"
+            },
+            {
+              "code": "high",
+              "label": "templates.choices.priority.high"
+            },
+            {
+              "code": "medium",
+              "label": "templates.choices.priority.medium"
+            },
+            {
+              "code": "low",
+              "label": "templates.choices.priority.low"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_vital_signs_recording",
+      "name": "templates.cln_vital_signs_recording.name",
+      "title": "Vital signs recording",
+      "code": "CLN-005",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "measurement_value",
+          "label": "templates.catalogue.measurement_value",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_value_unit",
+          "label": "templates.catalogue.measurement_value_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "device_reference",
+          "label": "templates.catalogue.device_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_patient_history_questionnaire",
+      "name": "templates.cln_patient_history_questionnaire.name",
+      "title": "Patient history questionnaire",
+      "code": "CLN-006",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "history_topics",
+          "label": "templates.catalogue.history_topics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "patient_responses",
+          "label": "templates.catalogue.patient_responses",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reviewing_clinician",
+          "label": "templates.catalogue.reviewing_clinician",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_medication_reconciliation_evidence",
+      "name": "templates.cln_medication_reconciliation_evidence.name",
+      "title": "Medication reconciliation evidence",
+      "code": "CLN-007",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_medicines",
+          "label": "templates.catalogue.reported_medicines",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_records",
+          "label": "templates.catalogue.source_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "clinician_reconciliation",
+          "label": "templates.catalogue.clinician_reconciliation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_care_consent_record",
+      "name": "templates.cln_care_consent_record.name",
+      "title": "Care consent record",
+      "code": "CLN-008",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "proposed_procedure",
+          "label": "templates.catalogue.proposed_procedure",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "information_provided",
+          "label": "templates.catalogue.information_provided",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "patient_decision",
+          "label": "templates.catalogue.patient_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_nursing_shift_handover",
+      "name": "templates.cln_nursing_shift_handover.name",
+      "title": "Nursing shift handover",
+      "code": "CLN-009",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "care_updates",
+          "label": "templates.catalogue.care_updates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outstanding_tasks",
+          "label": "templates.catalogue.outstanding_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "receiving_team",
+          "label": "templates.catalogue.receiving_team",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_clinical_referral_document",
+      "name": "templates.cln_clinical_referral_document.name",
+      "title": "Clinical referral document",
+      "code": "CLN-010",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "referral_reason",
+          "label": "templates.catalogue.referral_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_findings",
+          "label": "templates.catalogue.verified_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "receiving_service",
+          "label": "templates.catalogue.receiving_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_referral_completion_tracking",
+      "name": "templates.cln_referral_completion_tracking.name",
+      "title": "Referral completion tracking",
+      "code": "CLN-011",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "referral_reference",
+          "label": "templates.catalogue.referral_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "appointment_status",
+          "label": "templates.catalogue.appointment_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "feedback_received",
+          "label": "templates.catalogue.feedback_received",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_discharge_documentation_draft",
+      "name": "templates.cln_discharge_documentation_draft.name",
+      "title": "Discharge documentation draft",
+      "code": "CLN-012",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_encounter_summary",
+          "label": "templates.catalogue.verified_encounter_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "approved_care_plan",
+          "label": "templates.catalogue.approved_care_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "followup_details",
+          "label": "templates.catalogue.followup_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_patient_follow_up_call",
+      "name": "templates.cln_patient_follow_up_call.name",
+      "title": "Patient follow-up call",
+      "code": "CLN-013",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "followup_purpose",
+          "label": "templates.catalogue.followup_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_progress",
+          "label": "templates.catalogue.reported_progress",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "clinician_escalation",
+          "label": "templates.catalogue.clinician_escalation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_home_care_visit",
+      "name": "templates.cln_home_care_visit.name",
+      "title": "Home care visit",
+      "code": "CLN-014",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "visit_objective",
+          "label": "templates.catalogue.visit_objective",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_care_needs",
+          "label": "templates.catalogue.observed_care_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_actions",
+          "label": "templates.catalogue.authorized_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_community_health_worker_visit",
+      "name": "templates.cln_community_health_worker_visit.name",
+      "title": "Community health worker visit",
+      "code": "CLN-015",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "household_consent",
+          "label": "templates.catalogue.household_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "approved_assessment",
+          "label": "templates.catalogue.approved_assessment",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "referral_needs",
+          "label": "templates.catalogue.referral_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_antenatal_visit_documentation",
+      "name": "templates.cln_antenatal_visit_documentation.name",
+      "title": "Antenatal visit documentation",
+      "code": "CLN-016",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "gestational_information",
+          "label": "templates.catalogue.gestational_information",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_observations",
+          "label": "templates.catalogue.authorized_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "clinician_plan",
+          "label": "templates.catalogue.clinician_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_child_growth_measurement",
+      "name": "templates.cln_child_growth_measurement.name",
+      "title": "Child growth measurement",
+      "code": "CLN-017",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "child_reference",
+          "label": "templates.catalogue.child_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_measurements",
+          "label": "templates.catalogue.observed_measurements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_immunization_administration_record",
+      "name": "templates.cln_immunization_administration_record.name",
+      "title": "Immunization administration record",
+      "code": "CLN-018",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "vaccine_reference",
+          "label": "templates.catalogue.vaccine_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "batch_number",
+          "label": "templates.catalogue.batch_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_administration",
+          "label": "templates.catalogue.authorized_administration",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_rehabilitation_progress_note",
+      "name": "templates.cln_rehabilitation_progress_note.name",
+      "title": "Rehabilitation progress note",
+      "code": "CLN-019",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "functional_goals",
+          "label": "templates.catalogue.functional_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "session_observations",
+          "label": "templates.catalogue.session_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "therapist_plan",
+          "label": "templates.catalogue.therapist_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_physiotherapy_session_record",
+      "name": "templates.cln_physiotherapy_session_record.name",
+      "title": "Physiotherapy session record",
+      "code": "CLN-020",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "treatment_plan_ref",
+          "label": "templates.catalogue.treatment_plan_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "activities_completed",
+          "label": "templates.catalogue.activities_completed",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "patient_feedback",
+          "label": "templates.catalogue.patient_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_dental_examination_documentation",
+      "name": "templates.cln_dental_examination_documentation.name",
+      "title": "Dental examination documentation",
+      "code": "CLN-021",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "tooth_reference",
+          "label": "templates.catalogue.tooth_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "clinician_findings",
+          "label": "templates.catalogue.clinician_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "approved_plan",
+          "label": "templates.catalogue.approved_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_vision_assessment_record",
+      "name": "templates.cln_vision_assessment_record.name",
+      "title": "Vision assessment record",
+      "code": "CLN-022",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "assessment_protocol",
+          "label": "templates.catalogue.assessment_protocol",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_reviewer",
+          "label": "templates.catalogue.qualified_reviewer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_hearing_assessment_record",
+      "name": "templates.cln_hearing_assessment_record.name",
+      "title": "Hearing assessment record",
+      "code": "CLN-023",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "test_method",
+          "label": "templates.catalogue.test_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_reviewer",
+          "label": "templates.catalogue.qualified_reviewer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_nutrition_assessment_intake",
+      "name": "templates.cln_nutrition_assessment_intake.name",
+      "title": "Nutrition assessment intake",
+      "code": "CLN-024",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "dietary_history",
+          "label": "templates.catalogue.dietary_history",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_anthropometry",
+          "label": "templates.catalogue.measured_anthropometry",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_mental_health_appointment_intake",
+      "name": "templates.cln_mental_health_appointment_intake.name",
+      "title": "Mental health appointment intake",
+      "code": "CLN-025",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "patient_stated_concerns",
+          "label": "templates.catalogue.patient_stated_concerns",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent_scope",
+          "label": "templates.catalogue.consent_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "clinician_followup",
+          "label": "templates.catalogue.clinician_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_counselling_session_administration",
+      "name": "templates.cln_counselling_session_administration.name",
+      "title": "Counselling session administration",
+      "code": "CLN-026",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "session_reference",
+          "label": "templates.catalogue.session_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attendance",
+          "label": "templates.catalogue.attendance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_followup",
+          "label": "templates.catalogue.agreed_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_palliative_care_coordination",
+      "name": "templates.cln_palliative_care_coordination.name",
+      "title": "Palliative care coordination",
+      "code": "CLN-027",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "patient_preferences",
+          "label": "templates.catalogue.patient_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "support_contacts",
+          "label": "templates.catalogue.support_contacts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_care_goals",
+          "label": "templates.catalogue.authorized_care_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_patient_experience_survey",
+      "name": "templates.cln_patient_experience_survey.name",
+      "title": "Patient experience survey",
+      "code": "CLN-028",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "care_experience",
+          "label": "templates.catalogue.care_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessibility_feedback",
+          "label": "templates.catalogue.accessibility_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "optional_contact",
+          "label": "templates.catalogue.optional_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_clinical_adverse_event_report",
+      "name": "templates.cln_clinical_adverse_event_report.name",
+      "title": "Clinical adverse event report",
+      "code": "CLN-029",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "event_description",
+          "label": "templates.catalogue.event_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "immediate_response",
+          "label": "templates.catalogue.immediate_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_review",
+          "label": "templates.catalogue.authorized_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_medication_administration_documentation",
+      "name": "templates.cln_medication_administration_documentation.name",
+      "title": "Medication administration documentation",
+      "code": "CLN-030",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_order_ref",
+          "label": "templates.catalogue.approved_order_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "administration_time",
+          "label": "templates.catalogue.administration_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "staff_confirmation",
+          "label": "templates.catalogue.staff_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_laboratory_test_request",
+      "name": "templates.cln_laboratory_test_request.name",
+      "title": "Laboratory test request",
+      "code": "CLN-031",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_test_order",
+          "label": "templates.catalogue.authorized_test_order",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "specimen_requirements",
+          "label": "templates.catalogue.specimen_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requesting_clinician",
+          "label": "templates.catalogue.requesting_clinician",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_imaging_request_intake",
+      "name": "templates.cln_imaging_request_intake.name",
+      "title": "Imaging request intake",
+      "code": "CLN-032",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_request",
+          "label": "templates.catalogue.authorized_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "clinical_question",
+          "label": "templates.catalogue.clinical_question",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_location",
+          "label": "templates.catalogue.service_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_patient_document_release_request",
+      "name": "templates.cln_patient_document_release_request.name",
+      "title": "Patient document release request",
+      "code": "CLN-033",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requester_authority",
+          "label": "templates.catalogue.requester_authority",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_records",
+          "label": "templates.catalogue.requested_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "release_scope",
+          "label": "templates.catalogue.release_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_clinical_chart_completeness_audit",
+      "name": "templates.cln_clinical_chart_completeness_audit.name",
+      "title": "Clinical chart completeness audit",
+      "code": "CLN-034",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "required_documentation",
+          "label": "templates.catalogue.required_documentation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "missing_sections",
+          "label": "templates.catalogue.missing_sections",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_actions",
+          "label": "templates.catalogue.review_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_care_pathway_adherence_review",
+      "name": "templates.cln_care_pathway_adherence_review.name",
+      "title": "Care pathway adherence review",
+      "code": "CLN-035",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_pathway_ref",
+          "label": "templates.catalogue.approved_pathway_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "documented_actions",
+          "label": "templates.catalogue.documented_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "clinician_exceptions",
+          "label": "templates.catalogue.clinician_exceptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cln_telehealth_encounter_administration",
+      "name": "templates.cln_telehealth_encounter_administration.name",
+      "title": "Telehealth encounter administration",
+      "code": "CLN-036",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cln",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "connection_consent",
+          "label": "templates.catalogue.connection_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "encounter_notes",
+          "label": "templates.catalogue.encounter_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "followup_channel",
+          "label": "templates.catalogue.followup_channel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

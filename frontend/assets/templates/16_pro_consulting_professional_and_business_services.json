@@ -1,0 +1,1444 @@
+{
+  "category": "PRO",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "pro_consulting_enquiry_intake",
+      "name": "templates.pro_consulting_enquiry_intake.name",
+      "title": "Consulting enquiry intake",
+      "code": "PRO-001",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "client_problem",
+          "label": "templates.catalogue.client_problem",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_support",
+          "label": "templates.catalogue.requested_support",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "desired_timeline",
+          "label": "templates.catalogue.desired_timeline",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_consulting_discovery_workshop",
+      "name": "templates.pro_consulting_discovery_workshop.name",
+      "title": "Consulting discovery workshop",
+      "code": "PRO-002",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "current_state",
+          "label": "templates.catalogue.current_state",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "constraints",
+          "label": "templates.catalogue.constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "success_criteria",
+          "label": "templates.catalogue.success_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_professional_services_engagement_brief",
+      "name": "templates.pro_professional_services_engagement_brief.name",
+      "title": "Professional services engagement brief",
+      "code": "PRO-003",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_scope",
+          "label": "templates.catalogue.agreed_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "deliverables",
+          "label": "templates.catalogue.deliverables",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "commercial_terms",
+          "label": "templates.catalogue.commercial_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_consultancy_diagnostic_assessment",
+      "name": "templates.pro_consultancy_diagnostic_assessment.name",
+      "title": "Consultancy diagnostic assessment",
+      "code": "PRO-004",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "assessment_dimensions",
+          "label": "templates.catalogue.assessment_dimensions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_evidence",
+          "label": "templates.catalogue.verified_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recommendations",
+          "label": "templates.catalogue.recommendations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_consulting_workplan",
+      "name": "templates.pro_consulting_workplan.name",
+      "title": "Consulting workplan",
+      "code": "PRO-005",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "workstreams",
+          "label": "templates.catalogue.workstreams",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "deliverables",
+          "label": "templates.catalogue.deliverables",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "client_dependencies",
+          "label": "templates.catalogue.client_dependencies",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_consultant_activity_timesheet",
+      "name": "templates.pro_consultant_activity_timesheet.name",
+      "title": "Consultant activity timesheet",
+      "code": "PRO-006",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "engagement_task",
+          "label": "templates.catalogue.engagement_task",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "hours",
+          "label": "templates.catalogue.hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "hours",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "billable_basis",
+          "label": "templates.catalogue.billable_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_consulting_deliverable_review",
+      "name": "templates.pro_consulting_deliverable_review.name",
+      "title": "Consulting deliverable review",
+      "code": "PRO-007",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "deliverable_version",
+          "label": "templates.catalogue.deliverable_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_criteria",
+          "label": "templates.catalogue.agreed_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "client_feedback",
+          "label": "templates.catalogue.client_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_client_engagement_status_report",
+      "name": "templates.pro_client_engagement_status_report.name",
+      "title": "Client engagement status report",
+      "code": "PRO-008",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "completed_work",
+          "label": "templates.catalogue.completed_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "open_decisions",
+          "label": "templates.catalogue.open_decisions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "next_steps",
+          "label": "templates.catalogue.next_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_business_process_mapping_capture",
+      "name": "templates.pro_business_process_mapping_capture.name",
+      "title": "Business process mapping capture",
+      "code": "PRO-009",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "process_steps",
+          "label": "templates.catalogue.process_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "roles",
+          "label": "templates.catalogue.roles",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_bottlenecks",
+          "label": "templates.catalogue.observed_bottlenecks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_business_process_improvement_plan",
+      "name": "templates.pro_business_process_improvement_plan.name",
+      "title": "Business process improvement plan",
+      "code": "PRO-010",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_problem",
+          "label": "templates.catalogue.verified_problem",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_changes",
+          "label": "templates.catalogue.proposed_changes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_operating_procedure_drafting",
+      "name": "templates.pro_operating_procedure_drafting.name",
+      "title": "Operating procedure drafting",
+      "code": "PRO-011",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_workflow",
+          "label": "templates.catalogue.approved_workflow",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "responsibilities",
+          "label": "templates.catalogue.responsibilities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "control_points",
+          "label": "templates.catalogue.control_points",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_organization_design_brief",
+      "name": "templates.pro_organization_design_brief.name",
+      "title": "Organization design brief",
+      "code": "PRO-012",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "business_objectives",
+          "label": "templates.catalogue.business_objectives",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "current_roles",
+          "label": "templates.catalogue.current_roles",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "design_constraints",
+          "label": "templates.catalogue.design_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_change_management_assessment",
+      "name": "templates.pro_change_management_assessment.name",
+      "title": "Change management assessment",
+      "code": "PRO-013",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "affected_groups",
+          "label": "templates.catalogue.affected_groups",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "readiness_evidence",
+          "label": "templates.catalogue.readiness_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "support_needs",
+          "label": "templates.catalogue.support_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_business_training_proposal",
+      "name": "templates.pro_business_training_proposal.name",
+      "title": "Business training proposal",
+      "code": "PRO-014",
+      "kind": "proposal",
+      "pack": "PROPOSAL",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "proposal_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_proposal"
+      ],
+      "fields": [
+        {
+          "field_key": "learning_needs",
+          "label": "templates.catalogue.learning_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_method",
+          "label": "templates.catalogue.delivery_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "commercial_offer",
+          "label": "templates.catalogue.commercial_offer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_professional_accreditation_evidence",
+      "name": "templates.pro_professional_accreditation_evidence.name",
+      "title": "Professional accreditation evidence",
+      "code": "PRO-015",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "required_competencies",
+          "label": "templates.catalogue.required_competencies",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_experience",
+          "label": "templates.catalogue.verified_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_certificates",
+          "label": "templates.catalogue.supporting_certificates",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_translation_service_request",
+      "name": "templates.pro_translation_service_request.name",
+      "title": "Translation service request",
+      "code": "PRO-016",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "source_document",
+          "label": "templates.catalogue.source_document",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "target_language",
+          "label": "templates.catalogue.target_language",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "terminology_requirements",
+          "label": "templates.catalogue.terminology_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_translation_quality_review",
+      "name": "templates.pro_translation_quality_review.name",
+      "title": "Translation quality review",
+      "code": "PRO-017",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "source_text",
+          "label": "templates.catalogue.source_text",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "translated_text",
+          "label": "templates.catalogue.translated_text",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reviewer_findings",
+          "label": "templates.catalogue.reviewer_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_interpretation_session_booking",
+      "name": "templates.pro_interpretation_session_booking.name",
+      "title": "Interpretation session booking",
+      "code": "PRO-018",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "languages",
+          "label": "templates.catalogue.languages",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "session_context",
+          "label": "templates.catalogue.session_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "confidentiality_requirements",
+          "label": "templates.catalogue.confidentiality_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_graphic_design_brief",
+      "name": "templates.pro_graphic_design_brief.name",
+      "title": "Graphic design brief",
+      "code": "PRO-019",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "design_purpose",
+          "label": "templates.catalogue.design_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "brand_assets",
+          "label": "templates.catalogue.brand_assets",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_content",
+          "label": "templates.catalogue.approved_content",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_brand_identity_approval",
+      "name": "templates.pro_brand_identity_approval.name",
+      "title": "Brand identity approval",
+      "code": "PRO-020",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "design_version",
+          "label": "templates.catalogue.design_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "brand_requirements",
+          "label": "templates.catalogue.brand_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "client_decision",
+          "label": "templates.catalogue.client_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_photography_commission_brief",
+      "name": "templates.pro_photography_commission_brief.name",
+      "title": "Photography commission brief",
+      "code": "PRO-021",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "shoot_purpose",
+          "label": "templates.catalogue.shoot_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "shot_list",
+          "label": "templates.catalogue.shot_list",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "usage_permissions",
+          "label": "templates.catalogue.usage_permissions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_photography_delivery_review",
+      "name": "templates.pro_photography_delivery_review.name",
+      "title": "Photography delivery review",
+      "code": "PRO-022",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_images",
+          "label": "templates.catalogue.agreed_images",
+          "type": "photo_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "technical_quality",
+          "label": "templates.catalogue.technical_quality",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "rights_metadata",
+          "label": "templates.catalogue.rights_metadata",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_architecture_design_brief",
+      "name": "templates.pro_architecture_design_brief.name",
+      "title": "Architecture design brief",
+      "code": "PRO-023",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "client_needs",
+          "label": "templates.catalogue.client_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_evidence",
+          "label": "templates.catalogue.site_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "professional_constraints",
+          "label": "templates.catalogue.professional_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_engineering_consultancy_inspection",
+      "name": "templates.pro_engineering_consultancy_inspection.name",
+      "title": "Engineering consultancy inspection",
+      "code": "PRO-024",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_scope",
+          "label": "templates.catalogue.authorized_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_evidence",
+          "label": "templates.catalogue.observed_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_findings",
+          "label": "templates.catalogue.qualified_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_quantity_surveying_measurement_sheet",
+      "name": "templates.pro_quantity_surveying_measurement_sheet.name",
+      "title": "Quantity surveying measurement sheet",
+      "code": "PRO-025",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "work_item",
+          "label": "templates.catalogue.work_item",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_length_mm",
+          "label": "templates.catalogue.measured_length_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_width_mm",
+          "label": "templates.catalogue.measured_width_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_height_mm",
+          "label": "templates.catalogue.measured_height_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_basis",
+          "label": "templates.catalogue.measurement_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_professional_valuation_evidence_review",
+      "name": "templates.pro_professional_valuation_evidence_review.name",
+      "title": "Professional valuation evidence review",
+      "code": "PRO-026",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "source_evidence",
+          "label": "templates.catalogue.source_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "method_assumptions",
+          "label": "templates.catalogue.method_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_reviewer",
+          "label": "templates.catalogue.qualified_reviewer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_business_registration_support_intake",
+      "name": "templates.pro_business_registration_support_intake.name",
+      "title": "Business registration support intake",
+      "code": "PRO-027",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_service",
+          "label": "templates.catalogue.requested_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "client_documents",
+          "label": "templates.catalogue.client_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "official_requirements_ref",
+          "label": "templates.catalogue.official_requirements_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_market_entry_research_brief",
+      "name": "templates.pro_market_entry_research_brief.name",
+      "title": "Market entry research brief",
+      "code": "PRO-028",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "research_questions",
+          "label": "templates.catalogue.research_questions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "target_market",
+          "label": "templates.catalogue.target_market",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_sources",
+          "label": "templates.catalogue.verified_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_business_continuity_consulting_report",
+      "name": "templates.pro_business_continuity_consulting_report.name",
+      "title": "Business continuity consulting report",
+      "code": "PRO-029",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "critical_processes",
+          "label": "templates.catalogue.critical_processes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "dependency_evidence",
+          "label": "templates.catalogue.dependency_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recommended_actions",
+          "label": "templates.catalogue.recommended_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "pro_professional_engagement_closure",
+      "name": "templates.pro_professional_engagement_closure.name",
+      "title": "Professional engagement closure",
+      "code": "PRO-030",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_pro",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "accepted_deliverables",
+          "label": "templates.catalogue.accepted_deliverables",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outstanding_obligations",
+          "label": "templates.catalogue.outstanding_obligations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "client_confirmation",
+          "label": "templates.catalogue.client_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

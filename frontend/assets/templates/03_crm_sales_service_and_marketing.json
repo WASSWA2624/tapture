@@ -1,0 +1,1693 @@
+{
+  "category": "CRM",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "crm_sales_lead_capture",
+      "name": "templates.crm_sales_lead_capture.name",
+      "title": "Sales lead capture",
+      "code": "CRM-001",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "lead_name",
+          "label": "templates.catalogue.lead_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "interest_area",
+          "label": "templates.catalogue.interest_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_permission",
+          "label": "templates.catalogue.contact_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_customer_account_profile",
+      "name": "templates.crm_customer_account_profile.name",
+      "title": "Customer account profile",
+      "code": "CRM-002",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "organization_details",
+          "label": "templates.catalogue.organization_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "buying_needs",
+          "label": "templates.catalogue.buying_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "account_owner",
+          "label": "templates.catalogue.account_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_customer_discovery_interview",
+      "name": "templates.crm_customer_discovery_interview.name",
+      "title": "Customer discovery interview",
+      "code": "CRM-003",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "business_problem",
+          "label": "templates.catalogue.business_problem",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "current_process",
+          "label": "templates.catalogue.current_process",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "success_criteria",
+          "label": "templates.catalogue.success_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_sales_opportunity_record",
+      "name": "templates.crm_sales_opportunity_record.name",
+      "title": "Sales opportunity record",
+      "code": "CRM-004",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "opportunity_value",
+          "label": "templates.catalogue.opportunity_value",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "opportunity_value_currency",
+          "label": "templates.catalogue.opportunity_value_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stage",
+          "label": "templates.catalogue.stage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expected_decision_date",
+          "label": "templates.catalogue.expected_decision_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_sales_visit_report",
+      "name": "templates.crm_sales_visit_report.name",
+      "title": "Sales visit report",
+      "code": "CRM-005",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "visit_objective",
+          "label": "templates.catalogue.visit_objective",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "customer_feedback",
+          "label": "templates.catalogue.customer_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "next_action",
+          "label": "templates.catalogue.next_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_product_demonstration_feedback",
+      "name": "templates.crm_product_demonstration_feedback.name",
+      "title": "Product demonstration feedback",
+      "code": "CRM-006",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "demonstrated_features",
+          "label": "templates.catalogue.demonstrated_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "customer_questions",
+          "label": "templates.catalogue.customer_questions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "fit_gaps",
+          "label": "templates.catalogue.fit_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_customer_quotation",
+      "name": "templates.crm_customer_quotation.name",
+      "title": "Customer quotation",
+      "code": "CRM-007",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "offered_items",
+          "label": "templates.catalogue.offered_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "price_terms",
+          "label": "templates.catalogue.price_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "validity_date",
+          "label": "templates.catalogue.validity_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_sales_proposal",
+      "name": "templates.crm_sales_proposal.name",
+      "title": "Sales proposal",
+      "code": "CRM-008",
+      "kind": "proposal",
+      "pack": "PROPOSAL",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "proposal_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_proposal"
+      ],
+      "fields": [
+        {
+          "field_key": "customer_needs",
+          "label": "templates.catalogue.customer_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_solution",
+          "label": "templates.catalogue.proposed_solution",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "commercial_offer",
+          "label": "templates.catalogue.commercial_offer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_sales_order_intake",
+      "name": "templates.crm_sales_order_intake.name",
+      "title": "Sales order intake",
+      "code": "CRM-009",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "ordered_products",
+          "label": "templates.catalogue.ordered_products",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantities",
+          "label": "templates.catalogue.quantities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_requirements",
+          "label": "templates.catalogue.delivery_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_customer_onboarding_checklist",
+      "name": "templates.crm_customer_onboarding_checklist.name",
+      "title": "Customer onboarding checklist",
+      "code": "CRM-010",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "setup_requirements",
+          "label": "templates.catalogue.setup_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "training_plan",
+          "label": "templates.catalogue.training_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_criteria",
+          "label": "templates.catalogue.acceptance_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_service_request_intake",
+      "name": "templates.crm_service_request_intake.name",
+      "title": "Service request intake",
+      "code": "CRM-011",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_service",
+          "label": "templates.catalogue.requested_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "urgency",
+          "label": "templates.catalogue.urgency",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "emergency",
+              "label": "templates.choices.priority.emergency"
+            },
+            {
+              "code": "high",
+              "label": "templates.choices.priority.high"
+            },
+            {
+              "code": "medium",
+              "label": "templates.choices.priority.medium"
+            },
+            {
+              "code": "low",
+              "label": "templates.choices.priority.low"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "preferred_channel",
+          "label": "templates.catalogue.preferred_channel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_customer_complaint_intake",
+      "name": "templates.crm_customer_complaint_intake.name",
+      "title": "Customer complaint intake",
+      "code": "CRM-012",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "complaint_details",
+          "label": "templates.catalogue.complaint_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "affected_order",
+          "label": "templates.catalogue.affected_order",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_remedy",
+          "label": "templates.catalogue.requested_remedy",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_support_ticket",
+      "name": "templates.crm_support_ticket.name",
+      "title": "Support ticket",
+      "code": "CRM-013",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "issue_summary",
+          "label": "templates.catalogue.issue_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "reproduction_details",
+          "label": "templates.catalogue.reproduction_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "service_impact",
+          "label": "templates.catalogue.service_impact",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_service_level_review",
+      "name": "templates.crm_service_level_review.name",
+      "title": "Service level review",
+      "code": "CRM-014",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "response_times",
+          "label": "templates.catalogue.response_times",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "resolution_times",
+          "label": "templates.catalogue.resolution_times",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contract_targets",
+          "label": "templates.catalogue.contract_targets",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_customer_satisfaction_survey",
+      "name": "templates.crm_customer_satisfaction_survey.name",
+      "title": "Customer satisfaction survey",
+      "code": "CRM-015",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "service_rating",
+          "label": "templates.catalogue.service_rating",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "very_poor",
+              "label": "templates.choices.rating.very_poor"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.rating.poor"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.rating.fair"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.rating.good"
+            },
+            {
+              "code": "excellent",
+              "label": "templates.choices.rating.excellent"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "feedback_reason",
+          "label": "templates.catalogue.feedback_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_request",
+          "label": "templates.catalogue.improvement_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_customer_retention_review",
+      "name": "templates.crm_customer_retention_review.name",
+      "title": "Customer retention review",
+      "code": "CRM-016",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "usage_history",
+          "label": "templates.catalogue.usage_history",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stated_concerns",
+          "label": "templates.catalogue.stated_concerns",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "retention_actions",
+          "label": "templates.catalogue.retention_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_account_management_plan",
+      "name": "templates.crm_account_management_plan.name",
+      "title": "Account management plan",
+      "code": "CRM-017",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "account_goals",
+          "label": "templates.catalogue.account_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stakeholder_map",
+          "label": "templates.catalogue.stakeholder_map",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "engagement_actions",
+          "label": "templates.catalogue.engagement_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_sales_pipeline_review",
+      "name": "templates.crm_sales_pipeline_review.name",
+      "title": "Sales pipeline review",
+      "code": "CRM-018",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "active_opportunities",
+          "label": "templates.catalogue.active_opportunities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stage_changes",
+          "label": "templates.catalogue.stage_changes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "forecast_assumptions",
+          "label": "templates.catalogue.forecast_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_market_research_interview",
+      "name": "templates.crm_market_research_interview.name",
+      "title": "Market research interview",
+      "code": "CRM-019",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "research_questions",
+          "label": "templates.catalogue.research_questions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_context",
+          "label": "templates.catalogue.participant_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_competitor_observation",
+      "name": "templates.crm_competitor_observation.name",
+      "title": "Competitor observation",
+      "code": "CRM-020",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "public_offer",
+          "label": "templates.catalogue.public_offer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_price",
+          "label": "templates.catalogue.observed_price",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "observed_price_currency",
+          "label": "templates.catalogue.observed_price_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_date",
+          "label": "templates.catalogue.source_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_retail_merchandising_visit",
+      "name": "templates.crm_retail_merchandising_visit.name",
+      "title": "Retail merchandising visit",
+      "code": "CRM-021",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "shelf_position",
+          "label": "templates.catalogue.shelf_position",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stock_presence",
+          "label": "templates.catalogue.stock_presence",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "display_condition",
+          "label": "templates.catalogue.display_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_promotional_activation_report",
+      "name": "templates.crm_promotional_activation_report.name",
+      "title": "Promotional activation report",
+      "code": "CRM-022",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "activation_location",
+          "label": "templates.catalogue.activation_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attendance_estimate",
+          "label": "templates.catalogue.attendance_estimate",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_results",
+          "label": "templates.catalogue.verified_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_marketing_campaign_brief",
+      "name": "templates.crm_marketing_campaign_brief.name",
+      "title": "Marketing campaign brief",
+      "code": "CRM-023",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "campaign_objective",
+          "label": "templates.catalogue.campaign_objective",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "audience",
+          "label": "templates.catalogue.audience",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "message_constraints",
+          "label": "templates.catalogue.message_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_content_creation_brief",
+      "name": "templates.crm_content_creation_brief.name",
+      "title": "Content creation brief",
+      "code": "CRM-024",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "content_purpose",
+          "label": "templates.catalogue.content_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_facts",
+          "label": "templates.catalogue.approved_facts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "brand_requirements",
+          "label": "templates.catalogue.brand_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_social_media_post_drafting",
+      "name": "templates.crm_social_media_post_drafting.name",
+      "title": "Social media post drafting",
+      "code": "CRM-025",
+      "kind": "communication",
+      "pack": "COMM",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "communication_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_comm"
+      ],
+      "fields": [
+        {
+          "field_key": "channel",
+          "label": "templates.catalogue.channel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_facts",
+          "label": "templates.catalogue.source_facts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "call_to_action",
+          "label": "templates.catalogue.call_to_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_case_study_interview",
+      "name": "templates.crm_case_study_interview.name",
+      "title": "Case study interview",
+      "code": "CRM-026",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "customer_problem",
+          "label": "templates.catalogue.customer_problem",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_intervention",
+          "label": "templates.catalogue.verified_intervention",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_outcome",
+          "label": "templates.catalogue.measured_outcome",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_customer_testimonial_permission",
+      "name": "templates.crm_customer_testimonial_permission.name",
+      "title": "Customer testimonial permission",
+      "code": "CRM-027",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_quote",
+          "label": "templates.catalogue.approved_quote",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "permitted_channels",
+          "label": "templates.catalogue.permitted_channels",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "permission_duration_days",
+          "label": "templates.catalogue.permission_duration_days",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_email_campaign_approval",
+      "name": "templates.crm_email_campaign_approval.name",
+      "title": "Email campaign approval",
+      "code": "CRM-028",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "recipient_permission",
+          "label": "templates.catalogue.recipient_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_copy",
+          "label": "templates.catalogue.approved_copy",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "unsubscribe_method",
+          "label": "templates.catalogue.unsubscribe_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_product_feedback_log",
+      "name": "templates.crm_product_feedback_log.name",
+      "title": "Product feedback log",
+      "code": "CRM-029",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "product_area",
+          "label": "templates.catalogue.product_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "user_feedback",
+          "label": "templates.catalogue.user_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "supporting_context",
+          "label": "templates.catalogue.supporting_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_website_content_intake",
+      "name": "templates.crm_website_content_intake.name",
+      "title": "Website content intake",
+      "code": "CRM-030",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "page_purpose",
+          "label": "templates.catalogue.page_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_copy",
+          "label": "templates.catalogue.approved_copy",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "media_rights",
+          "label": "templates.catalogue.media_rights",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_sales_territory_plan",
+      "name": "templates.crm_sales_territory_plan.name",
+      "title": "Sales territory plan",
+      "code": "CRM-031",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "territory_scope",
+          "label": "templates.catalogue.territory_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "account_priorities",
+          "label": "templates.catalogue.account_priorities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visit_schedule",
+          "label": "templates.catalogue.visit_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_customer_renewal_proposal",
+      "name": "templates.crm_customer_renewal_proposal.name",
+      "title": "Customer renewal proposal",
+      "code": "CRM-032",
+      "kind": "proposal",
+      "pack": "PROPOSAL",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "proposal_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_proposal"
+      ],
+      "fields": [
+        {
+          "field_key": "current_service",
+          "label": "templates.catalogue.current_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "renewal_terms",
+          "label": "templates.catalogue.renewal_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "documented_value",
+          "label": "templates.catalogue.documented_value",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "documented_value_currency",
+          "label": "templates.catalogue.documented_value_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_brand_asset_catalogue",
+      "name": "templates.crm_brand_asset_catalogue.name",
+      "title": "Brand asset catalogue",
+      "code": "CRM-033",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "asset_type",
+          "label": "templates.catalogue.asset_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_version",
+          "label": "templates.catalogue.approved_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "usage_restrictions",
+          "label": "templates.catalogue.usage_restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "crm_marketing_performance_report",
+      "name": "templates.crm_marketing_performance_report.name",
+      "title": "Marketing performance report",
+      "code": "CRM-034",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_crm",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "campaign_metrics",
+          "label": "templates.catalogue.campaign_metrics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attribution_limits",
+          "label": "templates.catalogue.attribution_limits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "lessons",
+          "label": "templates.catalogue.lessons",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

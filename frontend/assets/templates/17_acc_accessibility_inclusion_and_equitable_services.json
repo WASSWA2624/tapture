@@ -1,0 +1,1470 @@
+{
+  "category": "ACC",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "acc_accessibility_assessment_brief",
+      "name": "templates.acc_accessibility_assessment_brief.name",
+      "title": "Accessibility assessment brief",
+      "code": "ACC-001",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "assessment_scope",
+          "label": "templates.catalogue.assessment_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "user_groups",
+          "label": "templates.catalogue.user_groups",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_reviewer",
+          "label": "templates.catalogue.qualified_reviewer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_building_access_route_inspection",
+      "name": "templates.acc_building_access_route_inspection.name",
+      "title": "Building access route inspection",
+      "code": "ACC-002",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "route_features",
+          "label": "templates.catalogue.route_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_length_mm",
+          "label": "templates.catalogue.measured_length_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_width_mm",
+          "label": "templates.catalogue.measured_width_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_height_mm",
+          "label": "templates.catalogue.measured_height_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_barriers",
+          "label": "templates.catalogue.observed_barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_accessible_toilet_inspection",
+      "name": "templates.acc_accessible_toilet_inspection.name",
+      "title": "Accessible toilet inspection",
+      "code": "ACC-003",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "facility_features",
+          "label": "templates.catalogue.facility_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_clearances",
+          "label": "templates.catalogue.measured_clearances",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_accessible_room_feature_register",
+      "name": "templates.acc_accessible_room_feature_register.name",
+      "title": "Accessible room feature register",
+      "code": "ACC-004",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "room_reference",
+          "label": "templates.catalogue.room_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_features",
+          "label": "templates.catalogue.verified_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "photo_evidence",
+          "label": "templates.catalogue.photo_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_public_transport_accessibility_survey",
+      "name": "templates.acc_public_transport_accessibility_survey.name",
+      "title": "Public transport accessibility survey",
+      "code": "ACC-005",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "journey_stage",
+          "label": "templates.catalogue.journey_stage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_barriers",
+          "label": "templates.catalogue.observed_barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "voluntary_feedback",
+          "label": "templates.catalogue.voluntary_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_digital_accessibility_test_plan",
+      "name": "templates.acc_digital_accessibility_test_plan.name",
+      "title": "Digital accessibility test plan",
+      "code": "ACC-006",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "target_pages",
+          "label": "templates.catalogue.target_pages",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "applicable_criteria_ref",
+          "label": "templates.catalogue.applicable_criteria_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_methods",
+          "label": "templates.catalogue.test_methods",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_website_accessibility_findings",
+      "name": "templates.acc_website_accessibility_findings.name",
+      "title": "Website accessibility findings",
+      "code": "ACC-007",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "page_reference",
+          "label": "templates.catalogue.page_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_issue",
+          "label": "templates.catalogue.observed_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_evidence",
+          "label": "templates.catalogue.test_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_mobile_app_accessibility_findings",
+      "name": "templates.acc_mobile_app_accessibility_findings.name",
+      "title": "Mobile app accessibility findings",
+      "code": "ACC-008",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "screen_reference",
+          "label": "templates.catalogue.screen_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assistive_technology_context",
+          "label": "templates.catalogue.assistive_technology_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_issue",
+          "label": "templates.catalogue.observed_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_document_accessibility_checklist",
+      "name": "templates.acc_document_accessibility_checklist.name",
+      "title": "Document accessibility checklist",
+      "code": "ACC-009",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "document_structure",
+          "label": "templates.catalogue.document_structure",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reading_order",
+          "label": "templates.catalogue.reading_order",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "alternative_text",
+          "label": "templates.catalogue.alternative_text",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_image_alternative_text_review",
+      "name": "templates.acc_image_alternative_text_review.name",
+      "title": "Image alternative text review",
+      "code": "ACC-010",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "image_context",
+          "label": "templates.catalogue.image_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_text",
+          "label": "templates.catalogue.proposed_text",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "human_review",
+          "label": "templates.catalogue.human_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_video_caption_quality_review",
+      "name": "templates.acc_video_caption_quality_review.name",
+      "title": "Video caption quality review",
+      "code": "ACC-011",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "media_reference",
+          "label": "templates.catalogue.media_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "caption_timing",
+          "label": "templates.catalogue.caption_timing",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "content_accuracy",
+          "label": "templates.catalogue.content_accuracy",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_audio_description_production_brief",
+      "name": "templates.acc_audio_description_production_brief.name",
+      "title": "Audio description production brief",
+      "code": "ACC-012",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "visual_content",
+          "label": "templates.catalogue.visual_content",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "audience_needs",
+          "label": "templates.catalogue.audience_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_script",
+          "label": "templates.catalogue.approved_script",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_plain_language_content_review",
+      "name": "templates.acc_plain_language_content_review.name",
+      "title": "Plain language content review",
+      "code": "ACC-013",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "source_content",
+          "label": "templates.catalogue.source_content",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "comprehension_barriers",
+          "label": "templates.catalogue.comprehension_barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_revision",
+          "label": "templates.catalogue.proposed_revision",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_easy_read_document_brief",
+      "name": "templates.acc_easy_read_document_brief.name",
+      "title": "Easy-read document brief",
+      "code": "ACC-014",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "essential_messages",
+          "label": "templates.catalogue.essential_messages",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_visuals",
+          "label": "templates.catalogue.approved_visuals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "user_review",
+          "label": "templates.catalogue.user_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_sign_language_interpretation_booking",
+      "name": "templates.acc_sign_language_interpretation_booking.name",
+      "title": "Sign language interpretation booking",
+      "code": "ACC-015",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "language_variant",
+          "label": "templates.catalogue.language_variant",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "event_context",
+          "label": "templates.catalogue.event_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "confidentiality",
+          "label": "templates.catalogue.confidentiality",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_accessible_event_requirements",
+      "name": "templates.acc_accessible_event_requirements.name",
+      "title": "Accessible event requirements",
+      "code": "ACC-016",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "voluntary_functional_needs",
+          "label": "templates.catalogue.voluntary_functional_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_adjustments",
+          "label": "templates.catalogue.agreed_adjustments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_workplace_adjustment_tracking",
+      "name": "templates.acc_workplace_adjustment_tracking.name",
+      "title": "Workplace adjustment tracking",
+      "code": "ACC-017",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_adjustment",
+          "label": "templates.catalogue.agreed_adjustment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "responsible_owner",
+          "label": "templates.catalogue.responsible_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_date",
+          "label": "templates.catalogue.review_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_inclusive_recruitment_process_review",
+      "name": "templates.acc_inclusive_recruitment_process_review.name",
+      "title": "Inclusive recruitment process review",
+      "code": "ACC-018",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "job_related_criteria",
+          "label": "templates.catalogue.job_related_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "process_barriers",
+          "label": "templates.catalogue.process_barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_actions",
+          "label": "templates.catalogue.improvement_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_inclusive_service_feedback",
+      "name": "templates.acc_inclusive_service_feedback.name",
+      "title": "Inclusive service feedback",
+      "code": "ACC-019",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "voluntary_experience",
+          "label": "templates.catalogue.voluntary_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "barriers",
+          "label": "templates.catalogue.barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "suggested_changes",
+          "label": "templates.catalogue.suggested_changes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_assistive_technology_evaluation",
+      "name": "templates.acc_assistive_technology_evaluation.name",
+      "title": "Assistive technology evaluation",
+      "code": "ACC-020",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "user_stated_goal",
+          "label": "templates.catalogue.user_stated_goal",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "tested_options",
+          "label": "templates.catalogue.tested_options",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_feedback",
+          "label": "templates.catalogue.qualified_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_assistive_technology_loan_register",
+      "name": "templates.acc_assistive_technology_loan_register.name",
+      "title": "Assistive technology loan register",
+      "code": "ACC-021",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "device_identifier",
+          "label": "templates.catalogue.device_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consented_borrower",
+          "label": "templates.catalogue.consented_borrower",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_due_date",
+          "label": "templates.catalogue.return_due_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_braille_material_production_request",
+      "name": "templates.acc_braille_material_production_request.name",
+      "title": "Braille material production request",
+      "code": "ACC-022",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "source_document",
+          "label": "templates.catalogue.source_document",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "braille_requirements",
+          "label": "templates.catalogue.braille_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_review",
+          "label": "templates.catalogue.quality_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_tactile_signage_inventory",
+      "name": "templates.acc_tactile_signage_inventory.name",
+      "title": "Tactile signage inventory",
+      "code": "ACC-023",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "sign_location",
+          "label": "templates.catalogue.sign_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_features",
+          "label": "templates.catalogue.verified_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition",
+          "label": "templates.catalogue.condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_wayfinding_usability_study",
+      "name": "templates.acc_wayfinding_usability_study.name",
+      "title": "Wayfinding usability study",
+      "code": "ACC-024",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "consented_tasks",
+          "label": "templates.catalogue.consented_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_navigation",
+          "label": "templates.catalogue.observed_navigation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "barriers",
+          "label": "templates.catalogue.barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_inclusive_emergency_plan_review",
+      "name": "templates.acc_inclusive_emergency_plan_review.name",
+      "title": "Inclusive emergency plan review",
+      "code": "ACC-025",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "functional_support_requirements",
+          "label": "templates.catalogue.functional_support_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_plan",
+          "label": "templates.catalogue.approved_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "gaps",
+          "label": "templates.catalogue.gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_accessibility_remediation_tracker",
+      "name": "templates.acc_accessibility_remediation_tracker.name",
+      "title": "Accessibility remediation tracker",
+      "code": "ACC-026",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_issue",
+          "label": "templates.catalogue.verified_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_owner",
+          "label": "templates.catalogue.assigned_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "retest_evidence",
+          "label": "templates.catalogue.retest_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_accessibility_procurement_review",
+      "name": "templates.acc_accessibility_procurement_review.name",
+      "title": "Accessibility procurement review",
+      "code": "ACC-027",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "product_requirements",
+          "label": "templates.catalogue.product_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "vendor_evidence",
+          "label": "templates.catalogue.vendor_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "user_test_results",
+          "label": "templates.catalogue.user_test_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_disability_inclusion_program_report",
+      "name": "templates.acc_disability_inclusion_program_report.name",
+      "title": "Disability inclusion program report",
+      "code": "ACC-028",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "voluntary_aggregate_data",
+          "label": "templates.catalogue.voluntary_aggregate_data",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_improvements",
+          "label": "templates.catalogue.verified_improvements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "privacy_limits",
+          "label": "templates.catalogue.privacy_limits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_accessible_communication_preferences",
+      "name": "templates.acc_accessible_communication_preferences.name",
+      "title": "Accessible communication preferences",
+      "code": "ACC-029",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "chosen_formats",
+          "label": "templates.catalogue.chosen_formats",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_channels",
+          "label": "templates.catalogue.contact_channels",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "explicit_consent",
+          "label": "templates.catalogue.explicit_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "acc_accessibility_conformance_claim_review",
+      "name": "templates.acc_accessibility_conformance_claim_review.name",
+      "title": "Accessibility conformance claim review",
+      "code": "ACC-030",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_acc",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "claimed_scope",
+          "label": "templates.catalogue.claimed_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_evidence",
+          "label": "templates.catalogue.test_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_approval",
+          "label": "templates.catalogue.qualified_approval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

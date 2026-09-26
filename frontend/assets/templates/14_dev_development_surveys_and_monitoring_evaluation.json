@@ -1,0 +1,1662 @@
+{
+  "category": "DEV",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "dev_household_socioeconomic_survey",
+      "name": "templates.dev_household_socioeconomic_survey.name",
+      "title": "Household socioeconomic survey",
+      "code": "DEV-001",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "consented_household_code",
+          "label": "templates.catalogue.consented_household_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_questions",
+          "label": "templates.catalogue.approved_questions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_stratum",
+          "label": "templates.catalogue.sampling_stratum",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_community_baseline_assessment",
+      "name": "templates.dev_community_baseline_assessment.name",
+      "title": "Community baseline assessment",
+      "code": "DEV-002",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "baseline_topics",
+          "label": "templates.catalogue.baseline_topics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_method",
+          "label": "templates.catalogue.sampling_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_records",
+          "label": "templates.catalogue.response_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_program_indicator_definition",
+      "name": "templates.dev_program_indicator_definition.name",
+      "title": "Program indicator definition",
+      "code": "DEV-003",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "indicator_name",
+          "label": "templates.catalogue.indicator_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "calculation_method",
+          "label": "templates.catalogue.calculation_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_source",
+          "label": "templates.catalogue.data_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_indicator_measurement_submission",
+      "name": "templates.dev_indicator_measurement_submission.name",
+      "title": "Indicator measurement submission",
+      "code": "DEV-004",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "indicator_reference",
+          "label": "templates.catalogue.indicator_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_value_unit",
+          "label": "templates.catalogue.measured_value_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reporting_period",
+          "label": "templates.catalogue.reporting_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_monitoring_site_visit_checklist",
+      "name": "templates.dev_monitoring_site_visit_checklist.name",
+      "title": "Monitoring site visit checklist",
+      "code": "DEV-005",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "planned_outputs",
+          "label": "templates.catalogue.planned_outputs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_outputs",
+          "label": "templates.catalogue.observed_outputs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_evidence",
+          "label": "templates.catalogue.verification_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_baseline_indicator_collection",
+      "name": "templates.dev_baseline_indicator_collection.name",
+      "title": "Baseline indicator collection",
+      "code": "DEV-006",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "indicator_reference",
+          "label": "templates.catalogue.indicator_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "baseline_value",
+          "label": "templates.catalogue.baseline_value",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "baseline_value_unit",
+          "label": "templates.catalogue.baseline_value_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_method",
+          "label": "templates.catalogue.measurement_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_endline_indicator_collection",
+      "name": "templates.dev_endline_indicator_collection.name",
+      "title": "Endline indicator collection",
+      "code": "DEV-007",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "indicator_reference",
+          "label": "templates.catalogue.indicator_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "endline_value",
+          "label": "templates.catalogue.endline_value",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "endline_value_unit",
+          "label": "templates.catalogue.endline_value_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "comparability_notes",
+          "label": "templates.catalogue.comparability_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_midterm_evaluation_evidence",
+      "name": "templates.dev_midterm_evaluation_evidence.name",
+      "title": "Midterm evaluation evidence",
+      "code": "DEV-008",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "evaluation_questions",
+          "label": "templates.catalogue.evaluation_questions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_findings",
+          "label": "templates.catalogue.verified_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "limitations",
+          "label": "templates.catalogue.limitations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_program_outcome_harvesting",
+      "name": "templates.dev_program_outcome_harvesting.name",
+      "title": "Program outcome harvesting",
+      "code": "DEV-009",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_change",
+          "label": "templates.catalogue.reported_change",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "corroborating_sources",
+          "label": "templates.catalogue.corroborating_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contribution_limits",
+          "label": "templates.catalogue.contribution_limits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_most_significant_change_story",
+      "name": "templates.dev_most_significant_change_story.name",
+      "title": "Most significant change story",
+      "code": "DEV-010",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "participant_consent",
+          "label": "templates.catalogue.participant_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "participant_account",
+          "label": "templates.catalogue.participant_account",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "verification_notes",
+          "label": "templates.catalogue.verification_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_beneficiary_verification_sample",
+      "name": "templates.dev_beneficiary_verification_sample.name",
+      "title": "Beneficiary verification sample",
+      "code": "DEV-011",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "sampling_method",
+          "label": "templates.catalogue.sampling_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "eligibility_evidence",
+          "label": "templates.catalogue.eligibility_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_status",
+          "label": "templates.catalogue.verification_status",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "unverified",
+              "label": "templates.choices.verification_status.unverified"
+            },
+            {
+              "code": "verified",
+              "label": "templates.choices.verification_status.verified"
+            },
+            {
+              "code": "disputed",
+              "label": "templates.choices.verification_status.disputed"
+            },
+            {
+              "code": "not_applicable",
+              "label": "templates.choices.verification_status.not_applicable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_enumerators_recruitment_assessment",
+      "name": "templates.dev_enumerators_recruitment_assessment.name",
+      "title": "Enumerators recruitment assessment",
+      "code": "DEV-012",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "job_requirements",
+          "label": "templates.catalogue.job_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "demonstrated_skills",
+          "label": "templates.catalogue.demonstrated_skills",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "human_review",
+          "label": "templates.catalogue.human_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_enumerator_training_checklist",
+      "name": "templates.dev_enumerator_training_checklist.name",
+      "title": "Enumerator training checklist",
+      "code": "DEV-013",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "survey_protocol",
+          "label": "templates.catalogue.survey_protocol",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "practice_results",
+          "label": "templates.catalogue.practice_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorization",
+          "label": "templates.catalogue.authorization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_enumerator_daily_work_log",
+      "name": "templates.dev_enumerator_daily_work_log.name",
+      "title": "Enumerator daily work log",
+      "code": "DEV-014",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "assigned_area",
+          "label": "templates.catalogue.assigned_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_interviews",
+          "label": "templates.catalogue.completed_interviews",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "field_constraints",
+          "label": "templates.catalogue.field_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_survey_supervisor_spot_check",
+      "name": "templates.dev_survey_supervisor_spot_check.name",
+      "title": "Survey supervisor spot check",
+      "code": "DEV-015",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "sampled_interview",
+          "label": "templates.catalogue.sampled_interview",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_questions",
+          "label": "templates.catalogue.verification_questions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "discrepancies",
+          "label": "templates.catalogue.discrepancies",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_survey_back_check_record",
+      "name": "templates.dev_survey_back_check_record.name",
+      "title": "Survey back-check record",
+      "code": "DEV-016",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "consented_recontact",
+          "label": "templates.catalogue.consented_recontact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "original_record",
+          "label": "templates.catalogue.original_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_responses",
+          "label": "templates.catalogue.verified_responses",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_survey_refusal_log",
+      "name": "templates.dev_survey_refusal_log.name",
+      "title": "Survey refusal log",
+      "code": "DEV-017",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "nonidentifying_case_ref",
+          "label": "templates.catalogue.nonidentifying_case_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "voluntary_reason",
+          "label": "templates.catalogue.voluntary_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_limits",
+          "label": "templates.catalogue.contact_limits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_survey_translation_review",
+      "name": "templates.dev_survey_translation_review.name",
+      "title": "Survey translation review",
+      "code": "DEV-018",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "source_question",
+          "label": "templates.catalogue.source_question",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "translated_question",
+          "label": "templates.catalogue.translated_question",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reviewer_notes",
+          "label": "templates.catalogue.reviewer_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_survey_pilot_test",
+      "name": "templates.dev_survey_pilot_test.name",
+      "title": "Survey pilot test",
+      "code": "DEV-019",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "pilot_feedback",
+          "label": "templates.catalogue.pilot_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "question_issues",
+          "label": "templates.catalogue.question_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "revisions",
+          "label": "templates.catalogue.revisions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_community_focus_group",
+      "name": "templates.dev_community_focus_group.name",
+      "title": "Community focus group",
+      "code": "DEV-020",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "consented_participant_codes",
+          "label": "templates.catalogue.consented_participant_codes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "discussion_topics",
+          "label": "templates.catalogue.discussion_topics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_summary",
+          "label": "templates.catalogue.verified_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_key_informant_interview",
+      "name": "templates.dev_key_informant_interview.name",
+      "title": "Key informant interview",
+      "code": "DEV-021",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "informant_role",
+          "label": "templates.catalogue.informant_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "verified_statements",
+          "label": "templates.catalogue.verified_statements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_participatory_ranking_exercise",
+      "name": "templates.dev_participatory_ranking_exercise.name",
+      "title": "Participatory ranking exercise",
+      "code": "DEV-022",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "ranking_items",
+          "label": "templates.catalogue.ranking_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_choices",
+          "label": "templates.catalogue.participant_choices",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "method_notes",
+          "label": "templates.catalogue.method_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_project_beneficiary_satisfaction",
+      "name": "templates.dev_project_beneficiary_satisfaction.name",
+      "title": "Project beneficiary satisfaction",
+      "code": "DEV-023",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "service_experience",
+          "label": "templates.catalogue.service_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "voluntary_feedback",
+          "label": "templates.catalogue.voluntary_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "improvement_needs",
+          "label": "templates.catalogue.improvement_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_program_cost_effectiveness_inputs",
+      "name": "templates.dev_program_cost_effectiveness_inputs.name",
+      "title": "Program cost effectiveness inputs",
+      "code": "DEV-024",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_costs",
+          "label": "templates.catalogue.verified_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_outputs",
+          "label": "templates.catalogue.verified_outputs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "comparison_assumptions",
+          "label": "templates.catalogue.comparison_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_impact_evaluation_data_intake",
+      "name": "templates.dev_impact_evaluation_data_intake.name",
+      "title": "Impact evaluation data intake",
+      "code": "DEV-025",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "study_design_ref",
+          "label": "templates.catalogue.study_design_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "dataset_source",
+          "label": "templates.catalogue.dataset_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "privacy_controls",
+          "label": "templates.catalogue.privacy_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_monitoring_data_quality_audit",
+      "name": "templates.dev_monitoring_data_quality_audit.name",
+      "title": "Monitoring data quality audit",
+      "code": "DEV-026",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "completeness",
+          "label": "templates.catalogue.completeness",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consistency",
+          "label": "templates.catalogue.consistency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_verification",
+          "label": "templates.catalogue.source_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_partner_reporting_submission",
+      "name": "templates.dev_partner_reporting_submission.name",
+      "title": "Partner reporting submission",
+      "code": "DEV-027",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_indicators",
+          "label": "templates.catalogue.agreed_indicators",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_evidence",
+          "label": "templates.catalogue.supporting_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "implementation_issues",
+          "label": "templates.catalogue.implementation_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_donor_indicator_aggregation_review",
+      "name": "templates.dev_donor_indicator_aggregation_review.name",
+      "title": "Donor indicator aggregation review",
+      "code": "DEV-028",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "source_reports",
+          "label": "templates.catalogue.source_reports",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "aggregation_rules",
+          "label": "templates.catalogue.aggregation_rules",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "double_count_checks",
+          "label": "templates.catalogue.double_count_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_learning_agenda",
+      "name": "templates.dev_learning_agenda.name",
+      "title": "Learning agenda",
+      "code": "DEV-029",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "learning_questions",
+          "label": "templates.catalogue.learning_questions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "methods",
+          "label": "templates.catalogue.methods",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "decision_use",
+          "label": "templates.catalogue.decision_use",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_evaluation_terms_of_reference",
+      "name": "templates.dev_evaluation_terms_of_reference.name",
+      "title": "Evaluation terms of reference",
+      "code": "DEV-030",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "evaluation_scope",
+          "label": "templates.catalogue.evaluation_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "questions",
+          "label": "templates.catalogue.questions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "deliverable_requirements",
+          "label": "templates.catalogue.deliverable_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_evaluation_report",
+      "name": "templates.dev_evaluation_report.name",
+      "title": "Evaluation report",
+      "code": "DEV-031",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "methods",
+          "label": "templates.catalogue.methods",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_geographic_coverage_gap_analysis_inputs",
+      "name": "templates.dev_geographic_coverage_gap_analysis_inputs.name",
+      "title": "Geographic coverage gap analysis inputs",
+      "code": "DEV-032",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "service_locations",
+          "label": "templates.catalogue.service_locations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "target_population_source",
+          "label": "templates.catalogue.target_population_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "coverage_assumptions",
+          "label": "templates.catalogue.coverage_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_gender_and_inclusion_program_review",
+      "name": "templates.dev_gender_and_inclusion_program_review.name",
+      "title": "Gender and inclusion program review",
+      "code": "DEV-033",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "voluntary_aggregate_data",
+          "label": "templates.catalogue.voluntary_aggregate_data",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participation_barriers",
+          "label": "templates.catalogue.participation_barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "inclusive_actions",
+          "label": "templates.catalogue.inclusive_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "dev_sustainability_and_exit_plan",
+      "name": "templates.dev_sustainability_and_exit_plan.name",
+      "title": "Sustainability and exit plan",
+      "code": "DEV-034",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_dev",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "handover_capacity",
+          "label": "templates.catalogue.handover_capacity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "handover_capacity_unit",
+          "label": "templates.catalogue.handover_capacity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "ongoing_resources",
+          "label": "templates.catalogue.ongoing_resources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "exit_conditions",
+          "label": "templates.catalogue.exit_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

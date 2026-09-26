@@ -1,0 +1,1837 @@
+{
+  "category": "FIN",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "fin_invoice_ocr_intake",
+      "name": "templates.fin_invoice_ocr_intake.name",
+      "title": "Invoice OCR intake",
+      "code": "FIN-001",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "invoice_number",
+          "label": "templates.catalogue.invoice_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supplier_name",
+          "label": "templates.catalogue.supplier_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "invoice_date",
+          "label": "templates.catalogue.invoice_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "invoice_lines",
+          "label": "templates.catalogue.invoice_lines",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_receipt_ocr_intake",
+      "name": "templates.fin_receipt_ocr_intake.name",
+      "title": "Receipt OCR intake",
+      "code": "FIN-002",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "merchant_name",
+          "label": "templates.catalogue.merchant_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "receipt_date",
+          "label": "templates.catalogue.receipt_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "receipt_total",
+          "label": "templates.catalogue.receipt_total",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "receipt_total_currency",
+          "label": "templates.catalogue.receipt_total_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "payment_method",
+          "label": "templates.catalogue.payment_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_expense_claim",
+      "name": "templates.fin_expense_claim.name",
+      "title": "Expense claim",
+      "code": "FIN-003",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "expense_category",
+          "label": "templates.catalogue.expense_category",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "business_purpose",
+          "label": "templates.catalogue.business_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_receipts",
+          "label": "templates.catalogue.supporting_receipts",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_petty_cash_voucher",
+      "name": "templates.fin_petty_cash_voucher.name",
+      "title": "Petty cash voucher",
+      "code": "FIN-004",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "cash_recipient",
+          "label": "templates.catalogue.cash_recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expense_reason",
+          "label": "templates.catalogue.expense_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cash_amount",
+          "label": "templates.catalogue.cash_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "cash_currency",
+          "label": "templates.catalogue.cash_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_petty_cash_reconciliation",
+      "name": "templates.fin_petty_cash_reconciliation.name",
+      "title": "Petty cash reconciliation",
+      "code": "FIN-005",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "opening_float",
+          "label": "templates.catalogue.opening_float",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cash_on_hand",
+          "label": "templates.catalogue.cash_on_hand",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "cash_on_hand_currency",
+          "label": "templates.catalogue.cash_on_hand_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_vouchers",
+          "label": "templates.catalogue.approved_vouchers",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_accounts_payable_register",
+      "name": "templates.fin_accounts_payable_register.name",
+      "title": "Accounts payable register",
+      "code": "FIN-006",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "invoice_reference",
+          "label": "templates.catalogue.invoice_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "due_amount",
+          "label": "templates.catalogue.due_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "due_currency",
+          "label": "templates.catalogue.due_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "payment_due_date",
+          "label": "templates.catalogue.payment_due_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_accounts_receivable_register",
+      "name": "templates.fin_accounts_receivable_register.name",
+      "title": "Accounts receivable register",
+      "code": "FIN-007",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "customer_reference",
+          "label": "templates.catalogue.customer_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "invoice_balance",
+          "label": "templates.catalogue.invoice_balance",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "invoice_balance_currency",
+          "label": "templates.catalogue.invoice_balance_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "collection_status",
+          "label": "templates.catalogue.collection_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_payment_approval_request",
+      "name": "templates.fin_payment_approval_request.name",
+      "title": "Payment approval request",
+      "code": "FIN-008",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "payee",
+          "label": "templates.catalogue.payee",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "payment_amount",
+          "label": "templates.catalogue.payment_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "payment_currency",
+          "label": "templates.catalogue.payment_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approval_basis",
+          "label": "templates.catalogue.approval_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_payment_confirmation_record",
+      "name": "templates.fin_payment_confirmation_record.name",
+      "title": "Payment confirmation record",
+      "code": "FIN-009",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "payment_reference",
+          "label": "templates.catalogue.payment_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "settlement_date",
+          "label": "templates.catalogue.settlement_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "settled_amount",
+          "label": "templates.catalogue.settled_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "settled_currency",
+          "label": "templates.catalogue.settled_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_bank_statement_import",
+      "name": "templates.fin_bank_statement_import.name",
+      "title": "Bank statement import",
+      "code": "FIN-010",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "statement_period",
+          "label": "templates.catalogue.statement_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "statement_lines",
+          "label": "templates.catalogue.statement_lines",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "account_alias",
+          "label": "templates.catalogue.account_alias",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_bank_reconciliation",
+      "name": "templates.fin_bank_reconciliation.name",
+      "title": "Bank reconciliation",
+      "code": "FIN-011",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "bank_balance",
+          "label": "templates.catalogue.bank_balance",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "bank_balance_currency",
+          "label": "templates.catalogue.bank_balance_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "ledger_balance",
+          "label": "templates.catalogue.ledger_balance",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "ledger_balance_currency",
+          "label": "templates.catalogue.ledger_balance_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "unmatched_entries",
+          "label": "templates.catalogue.unmatched_entries",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_mobile_money_reconciliation",
+      "name": "templates.fin_mobile_money_reconciliation.name",
+      "title": "Mobile money reconciliation",
+      "code": "FIN-012",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "wallet_alias",
+          "label": "templates.catalogue.wallet_alias",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transaction_export",
+          "label": "templates.catalogue.transaction_export",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "unmatched_transfers",
+          "label": "templates.catalogue.unmatched_transfers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_cash_count_sheet",
+      "name": "templates.fin_cash_count_sheet.name",
+      "title": "Cash count sheet",
+      "code": "FIN-013",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "denomination_counts",
+          "label": "templates.catalogue.denomination_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expected_cash",
+          "label": "templates.catalogue.expected_cash",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "expected_cash_currency",
+          "label": "templates.catalogue.expected_cash_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "count_variance",
+          "label": "templates.catalogue.count_variance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_sales_daybook",
+      "name": "templates.fin_sales_daybook.name",
+      "title": "Sales daybook",
+      "code": "FIN-014",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "sales_date",
+          "label": "templates.catalogue.sales_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sales_documents",
+          "label": "templates.catalogue.sales_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "gross_sales",
+          "label": "templates.catalogue.gross_sales",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_purchase_daybook",
+      "name": "templates.fin_purchase_daybook.name",
+      "title": "Purchase daybook",
+      "code": "FIN-015",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "purchase_date",
+          "label": "templates.catalogue.purchase_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "purchase_documents",
+          "label": "templates.catalogue.purchase_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "net_purchases",
+          "label": "templates.catalogue.net_purchases",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_journal_entry_request",
+      "name": "templates.fin_journal_entry_request.name",
+      "title": "Journal entry request",
+      "code": "FIN-016",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "debit_lines",
+          "label": "templates.catalogue.debit_lines",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "credit_lines",
+          "label": "templates.catalogue.credit_lines",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "posting_reason",
+          "label": "templates.catalogue.posting_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_accruals_schedule",
+      "name": "templates.fin_accruals_schedule.name",
+      "title": "Accruals schedule",
+      "code": "FIN-017",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "service_period",
+          "label": "templates.catalogue.service_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accrued_amount",
+          "label": "templates.catalogue.accrued_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "accrued_currency",
+          "label": "templates.catalogue.accrued_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reversal_date",
+          "label": "templates.catalogue.reversal_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_prepayments_schedule",
+      "name": "templates.fin_prepayments_schedule.name",
+      "title": "Prepayments schedule",
+      "code": "FIN-018",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "prepaid_amount",
+          "label": "templates.catalogue.prepaid_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "prepaid_currency",
+          "label": "templates.catalogue.prepaid_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "coverage_period",
+          "label": "templates.catalogue.coverage_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "amortization_basis",
+          "label": "templates.catalogue.amortization_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_fixed_asset_depreciation_worksheet",
+      "name": "templates.fin_fixed_asset_depreciation_worksheet.name",
+      "title": "Fixed asset depreciation worksheet",
+      "code": "FIN-019",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "capitalized_cost",
+          "label": "templates.catalogue.capitalized_cost",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "capitalized_cost_currency",
+          "label": "templates.catalogue.capitalized_cost_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "useful_life",
+          "label": "templates.catalogue.useful_life",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "method_selection",
+          "label": "templates.catalogue.method_selection",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_budget_preparation_worksheet",
+      "name": "templates.fin_budget_preparation_worksheet.name",
+      "title": "Budget preparation worksheet",
+      "code": "FIN-020",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "budget_lines",
+          "label": "templates.catalogue.budget_lines",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assumptions",
+          "label": "templates.catalogue.assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "planning_period",
+          "label": "templates.catalogue.planning_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_budget_versus_actual_analysis",
+      "name": "templates.fin_budget_versus_actual_analysis.name",
+      "title": "Budget versus actual analysis",
+      "code": "FIN-021",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "budget_amount",
+          "label": "templates.catalogue.budget_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "budget_currency",
+          "label": "templates.catalogue.budget_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "actual_amount",
+          "label": "templates.catalogue.actual_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "actual_currency",
+          "label": "templates.catalogue.actual_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "variance_explanation",
+          "label": "templates.catalogue.variance_explanation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_cash_flow_forecast_inputs",
+      "name": "templates.fin_cash_flow_forecast_inputs.name",
+      "title": "Cash flow forecast inputs",
+      "code": "FIN-022",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "expected_receipts",
+          "label": "templates.catalogue.expected_receipts",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expected_payments",
+          "label": "templates.catalogue.expected_payments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "scenario_assumptions",
+          "label": "templates.catalogue.scenario_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_financial_close_checklist",
+      "name": "templates.fin_financial_close_checklist.name",
+      "title": "Financial close checklist",
+      "code": "FIN-023",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "close_tasks",
+          "label": "templates.catalogue.close_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reconciliation_evidence",
+          "label": "templates.catalogue.reconciliation_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "signoff_status",
+          "label": "templates.catalogue.signoff_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_travel_advance_request",
+      "name": "templates.fin_travel_advance_request.name",
+      "title": "Travel advance request",
+      "code": "FIN-024",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "trip_reference",
+          "label": "templates.catalogue.trip_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "estimated_costs",
+          "label": "templates.catalogue.estimated_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "advance_amount",
+          "label": "templates.catalogue.advance_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "advance_currency",
+          "label": "templates.catalogue.advance_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_advance_retirement_statement",
+      "name": "templates.fin_advance_retirement_statement.name",
+      "title": "Advance retirement statement",
+      "code": "FIN-025",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "advance_reference",
+          "label": "templates.catalogue.advance_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "actual_expenses",
+          "label": "templates.catalogue.actual_expenses",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "refund_or_balance",
+          "label": "templates.catalogue.refund_or_balance",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "refund_or_balance_currency",
+          "label": "templates.catalogue.refund_or_balance_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_payroll_input_collection",
+      "name": "templates.fin_payroll_input_collection.name",
+      "title": "Payroll input collection",
+      "code": "FIN-026",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "employee_reference",
+          "label": "templates.catalogue.employee_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pay_period",
+          "label": "templates.catalogue.pay_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_adjustments",
+          "label": "templates.catalogue.approved_adjustments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_tax_evidence_collection",
+      "name": "templates.fin_tax_evidence_collection.name",
+      "title": "Tax evidence collection",
+      "code": "FIN-027",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "jurisdiction",
+          "label": "templates.catalogue.jurisdiction",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "filing_period",
+          "label": "templates.catalogue.filing_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_transactions",
+          "label": "templates.catalogue.supporting_transactions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_donor_fund_reconciliation",
+      "name": "templates.fin_donor_fund_reconciliation.name",
+      "title": "Donor fund reconciliation",
+      "code": "FIN-028",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "grant_reference",
+          "label": "templates.catalogue.grant_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "eligible_expenditure",
+          "label": "templates.catalogue.eligible_expenditure",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "unspent_balance",
+          "label": "templates.catalogue.unspent_balance",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "unspent_balance_currency",
+          "label": "templates.catalogue.unspent_balance_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_cost_allocation_worksheet",
+      "name": "templates.fin_cost_allocation_worksheet.name",
+      "title": "Cost allocation worksheet",
+      "code": "FIN-029",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "cost_pool",
+          "label": "templates.catalogue.cost_pool",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "allocation_driver",
+          "label": "templates.catalogue.allocation_driver",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient_cost_centers",
+          "label": "templates.catalogue.recipient_cost_centers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_revenue_recognition_evidence",
+      "name": "templates.fin_revenue_recognition_evidence.name",
+      "title": "Revenue recognition evidence",
+      "code": "FIN-030",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "contract_reference",
+          "label": "templates.catalogue.contract_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_evidence",
+          "label": "templates.catalogue.delivery_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accounting_policy_ref",
+          "label": "templates.catalogue.accounting_policy_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_credit_note_request",
+      "name": "templates.fin_credit_note_request.name",
+      "title": "Credit note request",
+      "code": "FIN-031",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "original_invoice",
+          "label": "templates.catalogue.original_invoice",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "credit_reason",
+          "label": "templates.catalogue.credit_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "credit_amount",
+          "label": "templates.catalogue.credit_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "credit_currency",
+          "label": "templates.catalogue.credit_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_debt_collection_follow_up",
+      "name": "templates.fin_debt_collection_follow_up.name",
+      "title": "Debt collection follow-up",
+      "code": "FIN-032",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "debtor_reference",
+          "label": "templates.catalogue.debtor_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_outcome",
+          "label": "templates.catalogue.contact_outcome",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "promise_to_pay",
+          "label": "templates.catalogue.promise_to_pay",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_financial_performance_report",
+      "name": "templates.fin_financial_performance_report.name",
+      "title": "Financial performance report",
+      "code": "FIN-033",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "reporting_period",
+          "label": "templates.catalogue.reporting_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "financial_metrics",
+          "label": "templates.catalogue.financial_metrics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "management_commentary",
+          "label": "templates.catalogue.management_commentary",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_audit_confirmation_tracker",
+      "name": "templates.fin_audit_confirmation_tracker.name",
+      "title": "Audit confirmation tracker",
+      "code": "FIN-034",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "counterparty",
+          "label": "templates.catalogue.counterparty",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "confirmation_scope",
+          "label": "templates.catalogue.confirmation_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_status",
+          "label": "templates.catalogue.response_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_foreign_currency_transaction_record",
+      "name": "templates.fin_foreign_currency_transaction_record.name",
+      "title": "Foreign currency transaction record",
+      "code": "FIN-035",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "source_currency",
+          "label": "templates.catalogue.source_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "exchange_rate",
+          "label": "templates.catalogue.exchange_rate",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details",
+          "help": "Units of the quote currency per one unit of the base currency."
+        },
+        {
+          "field_key": "rate_source_date",
+          "label": "templates.catalogue.rate_source_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fin_financial_anomaly_review",
+      "name": "templates.fin_financial_anomaly_review.name",
+      "title": "Financial anomaly review",
+      "code": "FIN-036",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fin",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "flagged_transaction",
+          "label": "templates.catalogue.flagged_transaction",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_evidence",
+          "label": "templates.catalogue.supporting_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_outcome",
+          "label": "templates.catalogue.review_outcome",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

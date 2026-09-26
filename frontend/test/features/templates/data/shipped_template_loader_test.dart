@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -9,6 +10,7 @@ import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/templates/data/shipped_template_loader.dart';
 import 'package:tapture/features/templates/data/template_repository_impl.dart';
+import 'package:tapture/features/templates/domain/shipped_template_entry.dart';
 import 'package:tapture/features/templates/domain/template_repository.dart';
 
 void main() {
@@ -38,119 +40,42 @@ void main() {
   });
 
   test(
-    'library resolves inherited groups before a template is shown',
-    () async {
-      final List<TemplateDef> rows = _ok(await loader.library());
-      expect(rows, hasLength(TemplateAssets.library.length));
-
-      final TemplateDef generic = _named(rows, 'generic_item');
-      expect(generic.projectId, isNull);
-      expect(generic.source, 'shipped');
-      expect(generic.version, 1);
-      expect(generic.fields.length, greaterThan(10));
-      expect(
-        generic.fields
-            .where(
-              (FieldDef field) => const <String>{
-                'item_identifier',
-                'item_name',
-                'description_raw',
-                'description_refined',
-                'quantity_counted',
-                'unit_of_measure',
-                'condition_grade',
-                'status',
-                'notes_raw',
-                'notes_refined',
-              }.contains(field.fieldKey),
-            )
-            .length,
-        10,
-      );
-      expect(
-        generic.fields.map((FieldDef field) => field.fieldKey),
-        containsAll(<String>[
-          'record_uid',
-          'site_code',
-          'caption_raw',
-          'reviewed_date',
-          'item_name',
-        ]),
-      );
-      expect(generic.identityFieldKeys, <String>[
-        'item_identifier',
-        'item_name',
-        'site_code',
-      ]);
-      expect(
-        generic.fields.where((FieldDef field) => field.identity),
-        hasLength(3),
-      );
-    },
-  );
-
-  test('a derived template keeps parent fields and its own extras', () async {
-    final TemplateDef medical = _named(
-      _ok(await loader.library()),
-      'medical_equipment',
-    );
-    expect(
-      medical.fields.map((FieldDef field) => field.fieldKey),
-      containsAll(<String>['asset_tag', 'serial_number', 'device_type_name']),
-    );
-    expect(medical.kind, 'medical');
-  });
-
-  test(
     'copying writes a project-owned version 1 and leaves the asset',
     () async {
       final TemplateDef first = _ok(
         await loader.copyToProject(
-          templateKey: 'generic_item',
+          templateKey: 'uni_general_observation',
           projectId: 'project-1',
-          name: 'Site register',
+          name: 'Site observations',
         ),
       );
       expect(first.id, isNotEmpty);
       expect(first.projectId, 'project-1');
       expect(first.version, 1);
       expect(first.source, 'shipped');
-      expect(first.name, 'Site register');
-      expect(first.templateKey, 'generic_item');
-      expect(
-        first.fields.map((FieldDef field) => field.label),
-        isNot(contains(startsWith('templates.'))),
-      );
-      expect(
-        first.fields.map((FieldDef field) => field.fieldKey),
-        contains('item_name'),
-      );
+      expect(first.name, 'Site observations');
+      expect(first.templateKey, 'uni_general_observation');
 
-      final TemplateDef library = _named(
-        _ok(await loader.library()),
-        'generic_item',
+      final TemplateDef shipped = _ok(
+        await loader.template('uni_general_observation'),
       );
-      expect(library.projectId, isNull);
-      expect(library.name, startsWith('templates.'));
-      expect(library.fields.first.label, startsWith('templates.'));
-      expect(
-        await File(TemplateAssets.genericItem).readAsString(),
-        contains('"generic_item"'),
-      );
+      expect(shipped.projectId, isNull);
+      expect(shipped.name, startsWith('templates.'));
+      expect(shipped.fields.first.label, startsWith('templates.'));
     },
   );
 
   test('editing one copy leaves the library and a second copy alone', () async {
     final TemplateDef first = _ok(
       await loader.copyToProject(
-        templateKey: 'generic_item',
+        templateKey: 'uni_general_observation',
         projectId: 'project-1',
         name: 'First',
       ),
     );
     final TemplateDef second = _ok(
       await loader.copyToProject(
-        templateKey: 'generic_item',
+        templateKey: 'uni_general_observation',
         projectId: 'project-1',
         name: 'Second',
       ),
@@ -184,37 +109,247 @@ void main() {
     );
     expect(reloaded.fields.length, first.fields.length);
 
-    final TemplateDef library = _named(
-      _ok(await loader.library()),
-      'generic_item',
+    final TemplateDef shipped = _ok(
+      await loader.template('uni_general_observation'),
     );
     expect(
-      library.fields.map((FieldDef field) => field.fieldKey),
+      shipped.fields.map((FieldDef field) => field.fieldKey),
       isNot(contains('extra_note')),
     );
   });
 
-  test('a broken asset fails validation and writes nothing', () async {
+  test('a broken template fails validation and writes nothing', () async {
     final ShippedTemplateLoader broken = ShippedTemplateLoader(
       templates: repo,
       readAsset: (String path) async {
-        if (path == TemplateAssets.schema) {
-          return File(path).readAsString();
-        }
-        if (path == TemplateAssets.groups) {
-          return File(path).readAsString();
-        }
-        return '{"schema_version":2}';
+        final String text = await File(path).readAsString();
+        return path.endsWith('_uni_universal_capture_and_records.json')
+            ? text.replaceAll('"schema_version": 1', '"schema_version": 2')
+            : text;
       },
     );
-    final Result<List<TemplateDef>> result = await broken.library();
-    expect(result, isA<FailureResult<List<TemplateDef>>>());
+    final Result<TemplateDef> result = await broken.template(
+      'uni_general_observation',
+    );
+    expect(result, isA<FailureResult<TemplateDef>>());
+    final Result<TemplateDef> copied = await broken.copyToProject(
+      templateKey: 'uni_general_observation',
+      projectId: 'project-1',
+      name: 'Broken',
+    );
+    expect(copied, isA<FailureResult<TemplateDef>>());
     expect(await repo.watchByProject('project-1').first, isEmpty);
+  });
+
+  group('the library', () {
+    test('entries list every template in catalogue order', () async {
+      final List<ShippedTemplateEntry> catalogue = _ok(await loader.entries());
+      final Map<String, Object?> index = _json(TemplateAssets.catalogueIndex);
+
+      expect(index['template_count'], 2349);
+      expect(catalogue, hasLength(2349));
+      expect(
+        catalogue
+            .map((ShippedTemplateEntry entry) => entry.templateKey)
+            .toSet(),
+        hasLength(catalogue.length),
+      );
+      expect(
+        catalogue
+            .map((ShippedTemplateEntry entry) => entry.category.code)
+            .toSet(),
+        hasLength(72),
+      );
+      expect(
+        catalogue
+            .map((ShippedTemplateEntry entry) => entry.category.supergroupCode)
+            .toSet(),
+        hasLength(17),
+      );
+      for (final ShippedTemplateEntry entry in catalogue) {
+        expect(entry.title, isNotEmpty, reason: entry.templateKey);
+        expect(entry.code, matches(RegExp(r'^[A-Z]{2,4}-\d{3}$')));
+        expect(entry.kind, entry.recordType.kind);
+        expect(entry.fieldKeys, isNotEmpty, reason: entry.templateKey);
+        expect(entry.fieldCount, greaterThan(55), reason: entry.templateKey);
+        expect(<String>{
+          'internal',
+          'confidential',
+          'restricted',
+        }, contains(entry.privacy));
+        expect(<String>{'p0', 'p1', 'p2'}, contains(entry.rollout));
+      }
+      final ShippedTemplateEntry observation = catalogue.first;
+      expect(observation.templateKey, 'uni_general_observation');
+      expect(observation.code, 'UNI-001');
+      expect(observation.title, 'General observation');
+      expect(observation.recordType.code, 'OBS');
+      expect(observation.recordType.capture, isNotEmpty);
+      expect(observation.recordType.review, isNotEmpty);
+    });
+
+    test('a catalogue template resolves every group it inherits', () async {
+      final TemplateDef observation = _ok(
+        await loader.template('uni_general_observation'),
+      );
+      final List<String> keys = <String>[
+        for (final FieldDef field in observation.fields) field.fieldKey,
+      ];
+      final ShippedTemplateEntry entry = _ok(await loader.entries()).firstWhere(
+        (ShippedTemplateEntry row) =>
+            row.templateKey == 'uni_general_observation',
+      );
+
+      expect(observation.source, 'shipped');
+      expect(observation.version, 1);
+      expect(observation.projectId, isNull);
+      expect(observation.kind, 'observation');
+      expect(keys, hasLength(entry.fieldCount));
+      expect(keys.toSet(), hasLength(keys.length));
+      expect(
+        keys,
+        containsAllInOrder(<String>[
+          'record_uid',
+          'site_code',
+          'caption_raw',
+          'reviewed_date',
+          'organization_ref',
+          'observation_subject',
+          'observed_at',
+          'observation_category',
+          'observed_details',
+        ]),
+      );
+      expect(observation.identityFieldKeys, <String>[
+        'observation_subject',
+        'observed_at',
+      ]);
+      final FieldDef subject = _field(observation, 'observation_subject');
+      expect(subject.identity, isTrue);
+      expect(subject.requiredness, Requiredness.required);
+      expect(subject.group, 'observation');
+      final FieldDef observedAt = _field(observation, 'observed_at');
+      expect(observedAt.type, FieldType.dateTime);
+      expect(observedAt.autoFill, AutoFill.now);
+      final FieldDef context = _field(observation, 'organization_ref');
+      expect(context.stickable, isTrue);
+      expect(context.group, 'context');
+      expect(context.requiredness, Requiredness.recommended);
+      final FieldDef status = _field(observation, 'verification_status');
+      expect(status.type, FieldType.choice);
+      expect(status.options, hasLength(4));
+      final FieldDef details = _field(observation, 'observed_details');
+      expect(details.type, FieldType.longText);
+      expect(details.refine, isTrue);
+      expect(details.group, 'specific_details');
+      expect(details.requiredness, Requiredness.recommended);
+    });
+
+    test('money in a catalogue template comes with its currency', () async {
+      final TemplateDef invoice = _ok(
+        await loader.template('fin_invoice_ocr_intake'),
+      );
+      final FieldDef total = _field(invoice, 'total_amount');
+      expect(total.type, FieldType.currency);
+      expect(total.inputMode, InputMode.manualOnly);
+      expect(
+        invoice.fields.map((FieldDef field) => field.fieldKey),
+        contains('total_currency'),
+      );
+      expect(invoice.identityFieldKeys, <String>['transaction_reference']);
+    });
+
+    test('one template of every category resolves', () async {
+      final Map<String, ShippedTemplateEntry> firsts =
+          <String, ShippedTemplateEntry>{};
+      for (final ShippedTemplateEntry entry in _ok(await loader.entries())) {
+        firsts.putIfAbsent(entry.category.code, () => entry);
+      }
+      expect(firsts, hasLength(72));
+      for (final ShippedTemplateEntry entry in firsts.values) {
+        final TemplateDef template = _ok(
+          await loader.template(entry.templateKey),
+        );
+        expect(
+          template.fields,
+          hasLength(entry.fieldCount),
+          reason: entry.templateKey,
+        );
+        expect(
+          template.fields.where((FieldDef field) => field.identity),
+          isNotEmpty,
+          reason: entry.templateKey,
+        );
+      }
+    });
+
+    test('copying a catalogue template writes an editable copy', () async {
+      final TemplateDef copy = _ok(
+        await loader.copyToProject(
+          templateKey: 'uni_general_observation',
+          projectId: 'project-1',
+          name: 'General observation',
+        ),
+      );
+      expect(copy.id, isNotEmpty);
+      expect(copy.projectId, 'project-1');
+      expect(copy.version, 1);
+      expect(copy.name, 'General observation');
+      expect(copy.kind, 'observation');
+      expect(
+        copy.fields.map((FieldDef field) => field.label),
+        isNot(contains(startsWith('templates.'))),
+      );
+      expect(
+        _field(copy, 'observation_category').label,
+        'Observation category',
+      );
+      expect(
+        _field(copy, 'verification_status').options,
+        contains(
+          predicate<Object>(
+            (Object option) => option is Map && option['label'] == 'Verified',
+          ),
+        ),
+      );
+      expect(await repo.watchByProject('project-1').first, hasLength(1));
+    });
+
+    test('an unknown key is a validation failure and writes nothing', () async {
+      final Result<TemplateDef> missing = await loader.template('no_such_key');
+      expect(missing, isA<FailureResult<TemplateDef>>());
+      expect(
+        (missing as FailureResult<TemplateDef>).failure,
+        isA<ValidationFailure>(),
+      );
+      final Result<TemplateDef> copied = await loader.copyToProject(
+        templateKey: 'no_such_key',
+        projectId: 'project-1',
+        name: 'Nothing',
+      );
+      expect(copied, isA<FailureResult<TemplateDef>>());
+      expect(await repo.watchByProject('project-1').first, isEmpty);
+    });
+
+    test('a catalogue naming an unknown group fails to list', () async {
+      final ShippedTemplateLoader broken = ShippedTemplateLoader(
+        templates: repo,
+        readAsset: (String path) async {
+          final String text = await File(path).readAsString();
+          if (path == TemplateAssets.catalogueGroups) {
+            return '{}';
+          }
+          return text;
+        },
+      );
+      final Result<List<ShippedTemplateEntry>> result = await broken.entries();
+      expect(result, isA<FailureResult<List<ShippedTemplateEntry>>>());
+    });
   });
 
   test('copying without a name fails and writes nothing', () async {
     final Result<TemplateDef> result = await loader.copyToProject(
-      templateKey: 'generic_item',
+      templateKey: 'uni_general_observation',
       projectId: 'project-1',
       name: '   ',
     );
@@ -232,6 +367,10 @@ T _ok<T>(Result<T> result) {
   };
 }
 
-TemplateDef _named(List<TemplateDef> rows, String key) {
-  return rows.firstWhere((TemplateDef row) => row.templateKey == key);
+FieldDef _field(TemplateDef template, String key) {
+  return template.fields.firstWhere((FieldDef field) => field.fieldKey == key);
+}
+
+Map<String, Object?> _json(String path) {
+  return jsonDecode(File(path).readAsStringSync()) as Map<String, Object?>;
 }

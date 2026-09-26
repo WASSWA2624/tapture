@@ -1,0 +1,1578 @@
+{
+  "category": "ENE",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "ene_power_generation_asset_inventory",
+      "name": "templates.ene_power_generation_asset_inventory.name",
+      "title": "Power generation asset inventory",
+      "code": "ENE-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "asset_type",
+          "label": "templates.catalogue.asset_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "rated_capacity",
+          "label": "templates.catalogue.rated_capacity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "rated_capacity_unit",
+          "label": "templates.catalogue.rated_capacity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "commissioning_date",
+          "label": "templates.catalogue.commissioning_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_solar_site_feasibility_survey",
+      "name": "templates.ene_solar_site_feasibility_survey.name",
+      "title": "Solar site feasibility survey",
+      "code": "ENE-002",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "site_orientation",
+          "label": "templates.catalogue.site_orientation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "shading_observations",
+          "label": "templates.catalogue.shading_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "demand_evidence",
+          "label": "templates.catalogue.demand_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_solar_panel_inventory",
+      "name": "templates.ene_solar_panel_inventory.name",
+      "title": "Solar panel inventory",
+      "code": "ENE-003",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "panel_model",
+          "label": "templates.catalogue.panel_model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "rated_output",
+          "label": "templates.catalogue.rated_output",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_solar_installation_inspection",
+      "name": "templates.ene_solar_installation_inspection.name",
+      "title": "Solar installation inspection",
+      "code": "ENE-004",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_design",
+          "label": "templates.catalogue.approved_design",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_installation",
+          "label": "templates.catalogue.observed_installation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_test_ref",
+          "label": "templates.catalogue.qualified_test_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_solar_system_commissioning",
+      "name": "templates.ene_solar_system_commissioning.name",
+      "title": "Solar system commissioning",
+      "code": "ENE-005",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "commissioning_protocol",
+          "label": "templates.catalogue.commissioning_protocol",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_test_results",
+          "label": "templates.catalogue.verified_test_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_acceptance",
+          "label": "templates.catalogue.authorized_acceptance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_solar_generation_log",
+      "name": "templates.ene_solar_generation_log.name",
+      "title": "Solar generation log",
+      "code": "ENE-006",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "meter_reference",
+          "label": "templates.catalogue.meter_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "generation_interval",
+          "label": "templates.catalogue.generation_interval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "energy_reading",
+          "label": "templates.catalogue.energy_reading",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "kWh",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_solar_panel_cleaning_record",
+      "name": "templates.ene_solar_panel_cleaning_record.name",
+      "title": "Solar panel cleaning record",
+      "code": "ENE-007",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "array_identifier",
+          "label": "templates.catalogue.array_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cleaning_method_ref",
+          "label": "templates.catalogue.cleaning_method_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_evidence",
+          "label": "templates.catalogue.completion_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_inverter_fault_report",
+      "name": "templates.ene_inverter_fault_report.name",
+      "title": "Inverter fault report",
+      "code": "ENE-008",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "inverter_serial",
+          "label": "templates.catalogue.inverter_serial",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "displayed_error",
+          "label": "templates.catalogue.displayed_error",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_followup",
+          "label": "templates.catalogue.qualified_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_battery_storage_inventory",
+      "name": "templates.ene_battery_storage_inventory.name",
+      "title": "Battery storage inventory",
+      "code": "ENE-009",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "battery_model",
+          "label": "templates.catalogue.battery_model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "capacity_rating",
+          "label": "templates.catalogue.capacity_rating",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "The rating as printed, with its unit."
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_battery_system_inspection",
+      "name": "templates.ene_battery_system_inspection.name",
+      "title": "Battery system inspection",
+      "code": "ENE-010",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "system_identifier",
+          "label": "templates.catalogue.system_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_checks",
+          "label": "templates.catalogue.approved_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_status",
+          "label": "templates.catalogue.observed_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_electrical_load_survey",
+      "name": "templates.ene_electrical_load_survey.name",
+      "title": "Electrical load survey",
+      "code": "ENE-011",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "load_category",
+          "label": "templates.catalogue.load_category",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_demand",
+          "label": "templates.catalogue.measured_demand",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_period",
+          "label": "templates.catalogue.measurement_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_electricity_meter_reading",
+      "name": "templates.ene_electricity_meter_reading.name",
+      "title": "Electricity meter reading",
+      "code": "ENE-012",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "meter_identifier",
+          "label": "templates.catalogue.meter_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "displayed_reading",
+          "label": "templates.catalogue.displayed_reading",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reading_at",
+          "label": "templates.catalogue.reading_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_electricity_connection_request",
+      "name": "templates.ene_electricity_connection_request.name",
+      "title": "Electricity connection request",
+      "code": "ENE-013",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "service_location",
+          "label": "templates.catalogue.service_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_capacity",
+          "label": "templates.catalogue.requested_capacity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_capacity_unit",
+          "label": "templates.catalogue.requested_capacity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_documents",
+          "label": "templates.catalogue.supporting_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_electrical_service_outage",
+      "name": "templates.ene_electrical_service_outage.name",
+      "title": "Electrical service outage",
+      "code": "ENE-014",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "affected_service",
+          "label": "templates.catalogue.affected_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outage_start_at",
+          "label": "templates.catalogue.outage_start_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_restoration",
+          "label": "templates.catalogue.verified_restoration",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_power_quality_measurement",
+      "name": "templates.ene_power_quality_measurement.name",
+      "title": "Power quality measurement",
+      "code": "ENE-015",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "measurement_point",
+          "label": "templates.catalogue.measurement_point",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "instrument_reference",
+          "label": "templates.catalogue.instrument_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_parameters",
+          "label": "templates.catalogue.observed_parameters",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_transformer_condition_inspection",
+      "name": "templates.ene_transformer_condition_inspection.name",
+      "title": "Transformer condition inspection",
+      "code": "ENE-016",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "transformer_identifier",
+          "label": "templates.catalogue.transformer_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_checks",
+          "label": "templates.catalogue.approved_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_defects",
+          "label": "templates.catalogue.observed_defects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_distribution_pole_inspection",
+      "name": "templates.ene_distribution_pole_inspection.name",
+      "title": "Distribution pole inspection",
+      "code": "ENE-017",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "pole_identifier",
+          "label": "templates.catalogue.pole_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visible_condition",
+          "label": "templates.catalogue.visible_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_power_line_route_inspection",
+      "name": "templates.ene_power_line_route_inspection.name",
+      "title": "Power line route inspection",
+      "code": "ENE-018",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "line_segment",
+          "label": "templates.catalogue.line_segment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_constraints",
+          "label": "templates.catalogue.access_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_substation_maintenance_record",
+      "name": "templates.ene_substation_maintenance_record.name",
+      "title": "Substation maintenance record",
+      "code": "ENE-019",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "asset_identifier",
+          "label": "templates.catalogue.asset_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_work_order",
+          "label": "templates.catalogue.approved_work_order",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_evidence",
+          "label": "templates.catalogue.completion_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_generator_fuel_usage_log",
+      "name": "templates.ene_generator_fuel_usage_log.name",
+      "title": "Generator fuel usage log",
+      "code": "ENE-020",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "fuel_receipts",
+          "label": "templates.catalogue.fuel_receipts",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "fuel_issued",
+          "label": "templates.catalogue.fuel_issued",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operating_hours",
+          "label": "templates.catalogue.operating_hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "hours",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_generator_load_test_evidence",
+      "name": "templates.ene_generator_load_test_evidence.name",
+      "title": "Generator load test evidence",
+      "code": "ENE-021",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_test_plan",
+          "label": "templates.catalogue.approved_test_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "load_readings",
+          "label": "templates.catalogue.load_readings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_review",
+          "label": "templates.catalogue.authorized_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_wind_turbine_inventory",
+      "name": "templates.ene_wind_turbine_inventory.name",
+      "title": "Wind turbine inventory",
+      "code": "ENE-022",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "turbine_model",
+          "label": "templates.catalogue.turbine_model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_position",
+          "label": "templates.catalogue.site_position",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_wind_turbine_maintenance",
+      "name": "templates.ene_wind_turbine_maintenance.name",
+      "title": "Wind turbine maintenance",
+      "code": "ENE-023",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "turbine_identifier",
+          "label": "templates.catalogue.turbine_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_tasks",
+          "label": "templates.catalogue.approved_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_evidence",
+          "label": "templates.catalogue.service_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_hydropower_station_operations_log",
+      "name": "templates.ene_hydropower_station_operations_log.name",
+      "title": "Hydropower station operations log",
+      "code": "ENE-024",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "operating_period",
+          "label": "templates.catalogue.operating_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_observations",
+          "label": "templates.catalogue.approved_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "outage_notes",
+          "label": "templates.catalogue.outage_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_mini_grid_customer_registration",
+      "name": "templates.ene_mini_grid_customer_registration.name",
+      "title": "Mini-grid customer registration",
+      "code": "ENE-025",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "service_point",
+          "label": "templates.catalogue.service_point",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_preferences",
+          "label": "templates.catalogue.contact_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_service",
+          "label": "templates.catalogue.agreed_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_mini_grid_performance_review",
+      "name": "templates.ene_mini_grid_performance_review.name",
+      "title": "Mini-grid performance review",
+      "code": "ENE-026",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "generation_records",
+          "label": "templates.catalogue.generation_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_availability",
+          "label": "templates.catalogue.service_availability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_needs",
+          "label": "templates.catalogue.maintenance_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_energy_audit_field_worksheet",
+      "name": "templates.ene_energy_audit_field_worksheet.name",
+      "title": "Energy audit field worksheet",
+      "code": "ENE-027",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "energy_use_records",
+          "label": "templates.catalogue.energy_use_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "equipment_observations",
+          "label": "templates.catalogue.equipment_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_energy_efficiency_project_evidence",
+      "name": "templates.ene_energy_efficiency_project_evidence.name",
+      "title": "Energy efficiency project evidence",
+      "code": "ENE-028",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "baseline_consumption",
+          "label": "templates.catalogue.baseline_consumption",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "postchange_consumption",
+          "label": "templates.catalogue.postchange_consumption",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "comparison_limits",
+          "label": "templates.catalogue.comparison_limits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_ev_charging_station_inventory",
+      "name": "templates.ene_ev_charging_station_inventory.name",
+      "title": "EV charging station inventory",
+      "code": "ENE-029",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "charger_type",
+          "label": "templates.catalogue.charger_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "connector_types",
+          "label": "templates.catalogue.connector_types",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operational_status",
+          "label": "templates.catalogue.operational_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_ev_charging_session_reconciliation",
+      "name": "templates.ene_ev_charging_session_reconciliation.name",
+      "title": "EV charging session reconciliation",
+      "code": "ENE-030",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "session_reference",
+          "label": "templates.catalogue.session_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "energy_delivered",
+          "label": "templates.catalogue.energy_delivered",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "kWh",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "billing_reference",
+          "label": "templates.catalogue.billing_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_renewable_project_land_access_record",
+      "name": "templates.ene_renewable_project_land_access_record.name",
+      "title": "Renewable project land access record",
+      "code": "ENE-031",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "site_access_scope",
+          "label": "templates.catalogue.site_access_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "landholder_authority",
+          "label": "templates.catalogue.landholder_authority",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "conditions",
+          "label": "templates.catalogue.conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_energy_project_commissioning_dossier",
+      "name": "templates.ene_energy_project_commissioning_dossier.name",
+      "title": "Energy project commissioning dossier",
+      "code": "ENE-032",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_drawings",
+          "label": "templates.catalogue.approved_drawings",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_evidence",
+          "label": "templates.catalogue.test_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "handover_documents",
+          "label": "templates.catalogue.handover_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_energy_service_customer_complaint",
+      "name": "templates.ene_energy_service_customer_complaint.name",
+      "title": "Energy service customer complaint",
+      "code": "ENE-033",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_service_issue",
+          "label": "templates.catalogue.reported_service_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "meter_reference",
+          "label": "templates.catalogue.meter_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "resolution_request",
+          "label": "templates.catalogue.resolution_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ene_power_equipment_nameplate_ocr",
+      "name": "templates.ene_power_equipment_nameplate_ocr.name",
+      "title": "Power equipment nameplate OCR",
+      "code": "ENE-034",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ene",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "nameplate_image",
+          "label": "templates.catalogue.nameplate_image",
+          "type": "photo_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "printed_ratings",
+          "label": "templates.catalogue.printed_ratings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_identifiers",
+          "label": "templates.catalogue.verified_identifiers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

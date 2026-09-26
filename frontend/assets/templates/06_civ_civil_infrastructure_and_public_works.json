@@ -1,0 +1,1588 @@
+{
+  "category": "CIV",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "civ_road_asset_inventory",
+      "name": "templates.civ_road_asset_inventory.name",
+      "title": "Road asset inventory",
+      "code": "CIV-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "road_segment",
+          "label": "templates.catalogue.road_segment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "surface_type",
+          "label": "templates.catalogue.surface_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "segment_length",
+          "label": "templates.catalogue.segment_length",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "m",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_road_condition_survey",
+      "name": "templates.civ_road_condition_survey.name",
+      "title": "Road condition survey",
+      "code": "CIV-002",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "surface_distress",
+          "label": "templates.catalogue.surface_distress",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "drainage_condition",
+          "label": "templates.catalogue.drainage_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "location_reference",
+          "label": "templates.catalogue.location_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_pothole_observation",
+      "name": "templates.civ_pothole_observation.name",
+      "title": "Pothole observation",
+      "code": "CIV-003",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "pothole_location",
+          "label": "templates.catalogue.pothole_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "length_mm",
+          "label": "templates.catalogue.length_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "width_mm",
+          "label": "templates.catalogue.width_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "height_mm",
+          "label": "templates.catalogue.height_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "photo_evidence",
+          "label": "templates.catalogue.photo_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_road_maintenance_work_order",
+      "name": "templates.civ_road_maintenance_work_order.name",
+      "title": "Road maintenance work order",
+      "code": "CIV-004",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "affected_segment",
+          "label": "templates.catalogue.affected_segment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_work",
+          "label": "templates.catalogue.required_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_evidence",
+          "label": "templates.catalogue.completion_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_bridge_inventory",
+      "name": "templates.civ_bridge_inventory.name",
+      "title": "Bridge inventory",
+      "code": "CIV-005",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "bridge_type",
+          "label": "templates.catalogue.bridge_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "span_configuration",
+          "label": "templates.catalogue.span_configuration",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "structure_reference",
+          "label": "templates.catalogue.structure_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_bridge_visual_inspection",
+      "name": "templates.civ_bridge_visual_inspection.name",
+      "title": "Bridge visual inspection",
+      "code": "CIV-006",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "element_condition",
+          "label": "templates.catalogue.element_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_defects",
+          "label": "templates.catalogue.observed_defects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "engineer_review",
+          "label": "templates.catalogue.engineer_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_culvert_condition_inspection",
+      "name": "templates.civ_culvert_condition_inspection.name",
+      "title": "Culvert condition inspection",
+      "code": "CIV-007",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "culvert_length_mm",
+          "label": "templates.catalogue.culvert_length_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "culvert_width_mm",
+          "label": "templates.catalogue.culvert_width_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "culvert_height_mm",
+          "label": "templates.catalogue.culvert_height_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "blockage",
+          "label": "templates.catalogue.blockage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "structural_observations",
+          "label": "templates.catalogue.structural_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_drainage_channel_survey",
+      "name": "templates.civ_drainage_channel_survey.name",
+      "title": "Drainage channel survey",
+      "code": "CIV-008",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "channel_extent",
+          "label": "templates.catalogue.channel_extent",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sediment_condition",
+          "label": "templates.catalogue.sediment_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "obstructions",
+          "label": "templates.catalogue.obstructions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_streetlight_inventory",
+      "name": "templates.civ_streetlight_inventory.name",
+      "title": "Streetlight inventory",
+      "code": "CIV-009",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "pole_identifier",
+          "label": "templates.catalogue.pole_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "luminaire_type",
+          "label": "templates.catalogue.luminaire_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "power_supply",
+          "label": "templates.catalogue.power_supply",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_streetlight_outage_report",
+      "name": "templates.civ_streetlight_outage_report.name",
+      "title": "Streetlight outage report",
+      "code": "CIV-010",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "light_identifier",
+          "label": "templates.catalogue.light_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_fault",
+          "label": "templates.catalogue.reported_fault",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_status",
+          "label": "templates.catalogue.verification_status",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "unverified",
+              "label": "templates.choices.verification_status.unverified"
+            },
+            {
+              "code": "verified",
+              "label": "templates.choices.verification_status.verified"
+            },
+            {
+              "code": "disputed",
+              "label": "templates.choices.verification_status.disputed"
+            },
+            {
+              "code": "not_applicable",
+              "label": "templates.choices.verification_status.not_applicable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_traffic_sign_inventory",
+      "name": "templates.civ_traffic_sign_inventory.name",
+      "title": "Traffic sign inventory",
+      "code": "CIV-011",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "sign_type",
+          "label": "templates.catalogue.sign_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "location",
+          "label": "templates.catalogue.location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visibility_condition",
+          "label": "templates.catalogue.visibility_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_traffic_signal_inspection",
+      "name": "templates.civ_traffic_signal_inspection.name",
+      "title": "Traffic signal inspection",
+      "code": "CIV-012",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "signal_identifier",
+          "label": "templates.catalogue.signal_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_operation",
+          "label": "templates.catalogue.observed_operation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_test_ref",
+          "label": "templates.catalogue.authorized_test_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_sidewalk_accessibility_survey",
+      "name": "templates.civ_sidewalk_accessibility_survey.name",
+      "title": "Sidewalk accessibility survey",
+      "code": "CIV-013",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "path_width",
+          "label": "templates.catalogue.path_width",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "m",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "surface_condition",
+          "label": "templates.catalogue.surface_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "crossing_barriers",
+          "label": "templates.catalogue.crossing_barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_road_traffic_count",
+      "name": "templates.civ_road_traffic_count.name",
+      "title": "Road traffic count",
+      "code": "CIV-014",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "count_location",
+          "label": "templates.catalogue.count_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "vehicle_categories",
+          "label": "templates.catalogue.vehicle_categories",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "count_interval",
+          "label": "templates.catalogue.count_interval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_parking_utilization_survey",
+      "name": "templates.civ_parking_utilization_survey.name",
+      "title": "Parking utilization survey",
+      "code": "CIV-015",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "parking_zone",
+          "label": "templates.catalogue.parking_zone",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "available_spaces",
+          "label": "templates.catalogue.available_spaces",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "occupied_spaces",
+          "label": "templates.catalogue.occupied_spaces",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_public_space_condition_assessment",
+      "name": "templates.civ_public_space_condition_assessment.name",
+      "title": "Public space condition assessment",
+      "code": "CIV-016",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "space_features",
+          "label": "templates.catalogue.space_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_condition",
+          "label": "templates.catalogue.observed_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_needs",
+          "label": "templates.catalogue.maintenance_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_playground_equipment_inspection",
+      "name": "templates.civ_playground_equipment_inspection.name",
+      "title": "Playground equipment inspection",
+      "code": "CIV-017",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_identifier",
+          "label": "templates.catalogue.equipment_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_checklist",
+          "label": "templates.catalogue.approved_checklist",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "defect_restrictions",
+          "label": "templates.catalogue.defect_restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_retaining_wall_inspection",
+      "name": "templates.civ_retaining_wall_inspection.name",
+      "title": "Retaining wall inspection",
+      "code": "CIV-018",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "wall_reference",
+          "label": "templates.catalogue.wall_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visible_movement",
+          "label": "templates.catalogue.visible_movement",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "drainage_observations",
+          "label": "templates.catalogue.drainage_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_slope_condition_observation",
+      "name": "templates.civ_slope_condition_observation.name",
+      "title": "Slope condition observation",
+      "code": "CIV-019",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "slope_location",
+          "label": "templates.catalogue.slope_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visible_cracks",
+          "label": "templates.catalogue.visible_cracks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "water_observations",
+          "label": "templates.catalogue.water_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_tunnel_maintenance_inspection",
+      "name": "templates.civ_tunnel_maintenance_inspection.name",
+      "title": "Tunnel maintenance inspection",
+      "code": "CIV-020",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "tunnel_section",
+          "label": "templates.catalogue.tunnel_section",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "system_condition",
+          "label": "templates.catalogue.system_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restricted_defects",
+          "label": "templates.catalogue.restricted_defects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_urban_road_safety_audit_evidence",
+      "name": "templates.civ_urban_road_safety_audit_evidence.name",
+      "title": "Urban road safety audit evidence",
+      "code": "CIV-021",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "road_user_observations",
+          "label": "templates.catalogue.road_user_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "hazard_evidence",
+          "label": "templates.catalogue.hazard_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_public_works_service_request",
+      "name": "templates.civ_public_works_service_request.name",
+      "title": "Public works service request",
+      "code": "CIV-022",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "infrastructure_issue",
+          "label": "templates.catalogue.infrastructure_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "location",
+          "label": "templates.catalogue.location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_photos",
+          "label": "templates.catalogue.supporting_photos",
+          "type": "photo_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_infrastructure_project_prioritization",
+      "name": "templates.civ_infrastructure_project_prioritization.name",
+      "title": "Infrastructure project prioritization",
+      "code": "CIV-023",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "condition_evidence",
+          "label": "templates.catalogue.condition_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_criticality",
+          "label": "templates.catalogue.service_criticality",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cost_assumptions",
+          "label": "templates.catalogue.cost_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_infrastructure_lifecycle_plan",
+      "name": "templates.civ_infrastructure_lifecycle_plan.name",
+      "title": "Infrastructure lifecycle plan",
+      "code": "CIV-024",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "asset_population",
+          "label": "templates.catalogue.asset_population",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_needs",
+          "label": "templates.catalogue.maintenance_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "funding_scenarios",
+          "label": "templates.catalogue.funding_scenarios",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_road_works_progress_measurement",
+      "name": "templates.civ_road_works_progress_measurement.name",
+      "title": "Road works progress measurement",
+      "code": "CIV-025",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "work_chainage",
+          "label": "templates.catalogue.work_chainage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_quantities",
+          "label": "templates.catalogue.completed_quantities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_basis",
+          "label": "templates.catalogue.measurement_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_public_works_contractor_inspection",
+      "name": "templates.civ_public_works_contractor_inspection.name",
+      "title": "Public works contractor inspection",
+      "code": "CIV-026",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "contract_scope",
+          "label": "templates.catalogue.contract_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_delivery",
+          "label": "templates.catalogue.observed_delivery",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_findings",
+          "label": "templates.catalogue.quality_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_stormwater_outfall_inspection",
+      "name": "templates.civ_stormwater_outfall_inspection.name",
+      "title": "Stormwater outfall inspection",
+      "code": "CIV-027",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "outfall_location",
+          "label": "templates.catalogue.outfall_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "flow_observation",
+          "label": "templates.catalogue.flow_observation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "erosion_condition",
+          "label": "templates.catalogue.erosion_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_public_toilet_facility_inspection",
+      "name": "templates.civ_public_toilet_facility_inspection.name",
+      "title": "Public toilet facility inspection",
+      "code": "CIV-028",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "sanitation_condition",
+          "label": "templates.catalogue.sanitation_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "water_availability",
+          "label": "templates.catalogue.water_availability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessibility",
+          "label": "templates.catalogue.accessibility",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_road_reserve_encroachment_evidence",
+      "name": "templates.civ_road_reserve_encroachment_evidence.name",
+      "title": "Road reserve encroachment evidence",
+      "code": "CIV-029",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "location_reference",
+          "label": "templates.catalogue.location_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_occupation",
+          "label": "templates.catalogue.observed_occupation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_review",
+          "label": "templates.catalogue.authorized_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_utility_crossing_record",
+      "name": "templates.civ_utility_crossing_record.name",
+      "title": "Utility crossing record",
+      "code": "CIV-030",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "crossing_location",
+          "label": "templates.catalogue.crossing_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "utility_type",
+          "label": "templates.catalogue.utility_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_drawings",
+          "label": "templates.catalogue.approved_drawings",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_footbridge_accessibility_check",
+      "name": "templates.civ_footbridge_accessibility_check.name",
+      "title": "Footbridge accessibility check",
+      "code": "CIV-031",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "access_gradient",
+          "label": "templates.catalogue.access_gradient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "surface_condition",
+          "label": "templates.catalogue.surface_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "barriers",
+          "label": "templates.catalogue.barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "civ_public_infrastructure_service_report",
+      "name": "templates.civ_public_infrastructure_service_report.name",
+      "title": "Public infrastructure service report",
+      "code": "CIV-032",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_civ",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "condition_summary",
+          "label": "templates.catalogue.condition_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "urgent_repairs",
+          "label": "templates.catalogue.urgent_repairs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "planned_actions",
+          "label": "templates.catalogue.planned_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

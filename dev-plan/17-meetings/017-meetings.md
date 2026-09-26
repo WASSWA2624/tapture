@@ -74,6 +74,8 @@ class Meeting {
    specification's meeting template over the tables of 059; date and times come from the clock service and the
    location from the context state, so neither is typed. The meeting template ships as an asset beside the other
    shipped templates of 090 and is versioned the same way — a shipped asset, not a file this task invents a home for.
+   Since task 075 the shipped meeting templates are those of the Meeting record type (pack `MEET`, for example
+   MTG-006); the agenda, attendee, decision and action rows live in the tables of 059, not in the template.
    The create screen prefills date, start time, location and secretary from context and profile, leaving a meeting one
    tap from started. Attachments arrive through the document picker of 107, list their kind and size, and open from
    the meeting record; photographed handouts join the same list as picked files.

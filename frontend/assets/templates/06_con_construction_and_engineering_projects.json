@@ -1,0 +1,1824 @@
+{
+  "category": "CON",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "con_construction_site_establishment_checklist",
+      "name": "templates.con_construction_site_establishment_checklist.name",
+      "title": "Construction site establishment checklist",
+      "code": "CON-001",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "site_facilities",
+          "label": "templates.catalogue.site_facilities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_controls",
+          "label": "templates.catalogue.access_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "temporary_services",
+          "label": "templates.catalogue.temporary_services",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_construction_daily_site_diary",
+      "name": "templates.con_construction_daily_site_diary.name",
+      "title": "Construction daily site diary",
+      "code": "CON-002",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "work_performed",
+          "label": "templates.catalogue.work_performed",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "labor_counts",
+          "label": "templates.catalogue.labor_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "weather_observed",
+          "label": "templates.catalogue.weather_observed",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_site_progress_photograph_record",
+      "name": "templates.con_site_progress_photograph_record.name",
+      "title": "Site progress photograph record",
+      "code": "CON-003",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "work_location",
+          "label": "templates.catalogue.work_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "activity",
+          "label": "templates.catalogue.activity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "progress_caption",
+          "label": "templates.catalogue.progress_caption",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_construction_site_instruction",
+      "name": "templates.con_construction_site_instruction.name",
+      "title": "Construction site instruction",
+      "code": "CON-004",
+      "kind": "communication",
+      "pack": "COMM",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "communication_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_comm"
+      ],
+      "fields": [
+        {
+          "field_key": "instruction_details",
+          "label": "templates.catalogue.instruction_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "affected_work",
+          "label": "templates.catalogue.affected_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_issuer",
+          "label": "templates.catalogue.authorized_issuer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_request_for_information",
+      "name": "templates.con_request_for_information.name",
+      "title": "Request for information",
+      "code": "CON-005",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "drawing_reference",
+          "label": "templates.catalogue.drawing_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "technical_question",
+          "label": "templates.catalogue.technical_question",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_required_by",
+          "label": "templates.catalogue.response_required_by",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_drawing_register",
+      "name": "templates.con_drawing_register.name",
+      "title": "Drawing register",
+      "code": "CON-006",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "drawing_number",
+          "label": "templates.catalogue.drawing_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "revision",
+          "label": "templates.catalogue.revision",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approval_status",
+          "label": "templates.catalogue.approval_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_drawing_revision_comparison",
+      "name": "templates.con_drawing_revision_comparison.name",
+      "title": "Drawing revision comparison",
+      "code": "CON-007",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "prior_revision",
+          "label": "templates.catalogue.prior_revision",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "new_revision",
+          "label": "templates.catalogue.new_revision",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "engineer_verified_changes",
+          "label": "templates.catalogue.engineer_verified_changes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_material_submittal_request",
+      "name": "templates.con_material_submittal_request.name",
+      "title": "Material submittal request",
+      "code": "CON-008",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "proposed_material",
+          "label": "templates.catalogue.proposed_material",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "specification_reference",
+          "label": "templates.catalogue.specification_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_certificates",
+          "label": "templates.catalogue.supporting_certificates",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_material_delivery_inspection",
+      "name": "templates.con_material_delivery_inspection.name",
+      "title": "Material delivery inspection",
+      "code": "CON-009",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "delivery_reference",
+          "label": "templates.catalogue.delivery_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "material_condition",
+          "label": "templates.catalogue.material_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_result",
+          "label": "templates.catalogue.acceptance_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_concrete_pour_checklist",
+      "name": "templates.con_concrete_pour_checklist.name",
+      "title": "Concrete pour checklist",
+      "code": "CON-010",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_pour_plan",
+          "label": "templates.catalogue.approved_pour_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "prepour_checks",
+          "label": "templates.catalogue.prepour_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_release",
+          "label": "templates.catalogue.authorized_release",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_concrete_test_sample_record",
+      "name": "templates.con_concrete_test_sample_record.name",
+      "title": "Concrete test sample record",
+      "code": "CON-011",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "pour_reference",
+          "label": "templates.catalogue.pour_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_request",
+          "label": "templates.catalogue.test_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_reinforcement_inspection",
+      "name": "templates.con_reinforcement_inspection.name",
+      "title": "Reinforcement inspection",
+      "code": "CON-012",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "drawing_reference",
+          "label": "templates.catalogue.drawing_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_reinforcement",
+          "label": "templates.catalogue.observed_reinforcement",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "engineer_findings",
+          "label": "templates.catalogue.engineer_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_formwork_inspection",
+      "name": "templates.con_formwork_inspection.name",
+      "title": "Formwork inspection",
+      "code": "CON-013",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_design_ref",
+          "label": "templates.catalogue.approved_design_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_acceptance",
+          "label": "templates.catalogue.authorized_acceptance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_excavation_inspection",
+      "name": "templates.con_excavation_inspection.name",
+      "title": "Excavation inspection",
+      "code": "CON-014",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "work_zone",
+          "label": "templates.catalogue.work_zone",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_safety_plan",
+          "label": "templates.catalogue.approved_safety_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_controls",
+          "label": "templates.catalogue.observed_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_earthworks_quantity_survey",
+      "name": "templates.con_earthworks_quantity_survey.name",
+      "title": "Earthworks quantity survey",
+      "code": "CON-015",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "survey_points",
+          "label": "templates.catalogue.survey_points",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_method",
+          "label": "templates.catalogue.measurement_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "volume_basis",
+          "label": "templates.catalogue.volume_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_masonry_workmanship_inspection",
+      "name": "templates.con_masonry_workmanship_inspection.name",
+      "title": "Masonry workmanship inspection",
+      "code": "CON-016",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "specification_reference",
+          "label": "templates.catalogue.specification_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_work",
+          "label": "templates.catalogue.observed_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_roof_installation_inspection",
+      "name": "templates.con_roof_installation_inspection.name",
+      "title": "Roof installation inspection",
+      "code": "CON-017",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "roof_system",
+          "label": "templates.catalogue.roof_system",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "installation_criteria",
+          "label": "templates.catalogue.installation_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_defects",
+          "label": "templates.catalogue.observed_defects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_waterproofing_inspection",
+      "name": "templates.con_waterproofing_inspection.name",
+      "title": "Waterproofing inspection",
+      "code": "CON-018",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "application_area",
+          "label": "templates.catalogue.application_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_system",
+          "label": "templates.catalogue.approved_system",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_evidence",
+          "label": "templates.catalogue.test_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_electrical_installation_inspection",
+      "name": "templates.con_electrical_installation_inspection.name",
+      "title": "Electrical installation inspection",
+      "code": "CON-019",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "circuit_reference",
+          "label": "templates.catalogue.circuit_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_test_plan",
+          "label": "templates.catalogue.approved_test_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_test_results",
+          "label": "templates.catalogue.authorized_test_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_plumbing_installation_inspection",
+      "name": "templates.con_plumbing_installation_inspection.name",
+      "title": "Plumbing installation inspection",
+      "code": "CON-020",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "system_reference",
+          "label": "templates.catalogue.system_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_protocol",
+          "label": "templates.catalogue.test_protocol",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_hvac_commissioning_record",
+      "name": "templates.con_hvac_commissioning_record.name",
+      "title": "HVAC commissioning record",
+      "code": "CON-021",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "system_identifier",
+          "label": "templates.catalogue.system_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_test_procedure",
+          "label": "templates.catalogue.approved_test_procedure",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_results",
+          "label": "templates.catalogue.verified_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_construction_quality_nonconformance",
+      "name": "templates.con_construction_quality_nonconformance.name",
+      "title": "Construction quality nonconformance",
+      "code": "CON-022",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "nonconforming_work",
+          "label": "templates.catalogue.nonconforming_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "specification_ref",
+          "label": "templates.catalogue.specification_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "disposition_request",
+          "label": "templates.catalogue.disposition_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_site_corrective_action_tracker",
+      "name": "templates.con_site_corrective_action_tracker.name",
+      "title": "Site corrective action tracker",
+      "code": "CON-023",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "defect_reference",
+          "label": "templates.catalogue.defect_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "responsible_contractor",
+          "label": "templates.catalogue.responsible_contractor",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_status",
+          "label": "templates.catalogue.verification_status",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "unverified",
+              "label": "templates.choices.verification_status.unverified"
+            },
+            {
+              "code": "verified",
+              "label": "templates.choices.verification_status.verified"
+            },
+            {
+              "code": "disputed",
+              "label": "templates.choices.verification_status.disputed"
+            },
+            {
+              "code": "not_applicable",
+              "label": "templates.choices.verification_status.not_applicable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_construction_variation_request",
+      "name": "templates.con_construction_variation_request.name",
+      "title": "Construction variation request",
+      "code": "CON-024",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "changed_work",
+          "label": "templates.catalogue.changed_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity_impact",
+          "label": "templates.catalogue.quantity_impact",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cost_basis",
+          "label": "templates.catalogue.cost_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_bill_of_quantities_capture",
+      "name": "templates.con_bill_of_quantities_capture.name",
+      "title": "Bill of quantities capture",
+      "code": "CON-025",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "item_description",
+          "label": "templates.catalogue.item_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "quantity",
+          "label": "templates.catalogue.quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "unit",
+          "label": "templates.catalogue.unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "rate",
+          "label": "templates.catalogue.rate",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "The rate as quoted, with its basis."
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_interim_payment_measurement",
+      "name": "templates.con_interim_payment_measurement.name",
+      "title": "Interim payment measurement",
+      "code": "CON-026",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "work_item",
+          "label": "templates.catalogue.work_item",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_quantity",
+          "label": "templates.catalogue.completed_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_quantity_unit",
+          "label": "templates.catalogue.completed_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_evidence",
+          "label": "templates.catalogue.measurement_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_contractor_payment_certificate_draft",
+      "name": "templates.con_contractor_payment_certificate_draft.name",
+      "title": "Contractor payment certificate draft",
+      "code": "CON-027",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_measurements",
+          "label": "templates.catalogue.verified_measurements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contract_rates",
+          "label": "templates.catalogue.contract_rates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_deductions",
+          "label": "templates.catalogue.authorized_deductions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_construction_labor_attendance",
+      "name": "templates.con_construction_labor_attendance.name",
+      "title": "Construction labor attendance",
+      "code": "CON-028",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "crew_reference",
+          "label": "templates.catalogue.crew_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "work_date",
+          "label": "templates.catalogue.work_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_hours",
+          "label": "templates.catalogue.approved_hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "hours",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_subcontractor_work_allocation",
+      "name": "templates.con_subcontractor_work_allocation.name",
+      "title": "Subcontractor work allocation",
+      "code": "CON-029",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "subcontract_scope",
+          "label": "templates.catalogue.subcontract_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "work_front",
+          "label": "templates.catalogue.work_front",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "planned_dates",
+          "label": "templates.catalogue.planned_dates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_construction_equipment_utilization",
+      "name": "templates.con_construction_equipment_utilization.name",
+      "title": "Construction equipment utilization",
+      "code": "CON-030",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "plant_identifier",
+          "label": "templates.catalogue.plant_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operating_hours",
+          "label": "templates.catalogue.operating_hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "hours",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "idle_reasons",
+          "label": "templates.catalogue.idle_reasons",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_construction_waste_tracking",
+      "name": "templates.con_construction_waste_tracking.name",
+      "title": "Construction waste tracking",
+      "code": "CON-031",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "waste_stream",
+          "label": "templates.catalogue.waste_stream",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_quantity",
+          "label": "templates.catalogue.measured_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_quantity_unit",
+          "label": "templates.catalogue.measured_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "disposal_destination",
+          "label": "templates.catalogue.disposal_destination",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_site_safety_induction_record",
+      "name": "templates.con_site_safety_induction_record.name",
+      "title": "Site safety induction record",
+      "code": "CON-032",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "induction_topics",
+          "label": "templates.catalogue.induction_topics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attendance_confirmation",
+          "label": "templates.catalogue.attendance_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_authorization",
+          "label": "templates.catalogue.site_authorization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_practical_completion_inspection",
+      "name": "templates.con_practical_completion_inspection.name",
+      "title": "Practical completion inspection",
+      "code": "CON-033",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "completion_criteria",
+          "label": "templates.catalogue.completion_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outstanding_items",
+          "label": "templates.catalogue.outstanding_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "engineer_recommendation",
+          "label": "templates.catalogue.engineer_recommendation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_snag_or_punch_list",
+      "name": "templates.con_snag_or_punch_list.name",
+      "title": "Snag or punch list",
+      "code": "CON-034",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "defect_location",
+          "label": "templates.catalogue.defect_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_correction",
+          "label": "templates.catalogue.required_correction",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "closure_evidence",
+          "label": "templates.catalogue.closure_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_defects_liability_follow_up",
+      "name": "templates.con_defects_liability_follow_up.name",
+      "title": "Defects liability follow-up",
+      "code": "CON-035",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_defect",
+          "label": "templates.catalogue.reported_defect",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contract_responsibility",
+          "label": "templates.catalogue.contract_responsibility",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_resolution",
+          "label": "templates.catalogue.verified_resolution",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_as_built_information_capture",
+      "name": "templates.con_as_built_information_capture.name",
+      "title": "As-built information capture",
+      "code": "CON-036",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "installed_component",
+          "label": "templates.catalogue.installed_component",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_length_mm",
+          "label": "templates.catalogue.verified_length_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_width_mm",
+          "label": "templates.catalogue.verified_width_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_height_mm",
+          "label": "templates.catalogue.verified_height_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "drawing_update_ref",
+          "label": "templates.catalogue.drawing_update_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_construction_handover_dossier",
+      "name": "templates.con_construction_handover_dossier.name",
+      "title": "Construction handover dossier",
+      "code": "CON-037",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_as_builts",
+          "label": "templates.catalogue.approved_as_builts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_certificates",
+          "label": "templates.catalogue.test_certificates",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operation_manuals",
+          "label": "templates.catalogue.operation_manuals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "con_construction_project_completion_report",
+      "name": "templates.con_construction_project_completion_report.name",
+      "title": "Construction project completion report",
+      "code": "CON-038",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_con",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "completed_scope",
+          "label": "templates.catalogue.completed_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cost_summary",
+          "label": "templates.catalogue.cost_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "remaining_obligations",
+          "label": "templates.catalogue.remaining_obligations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

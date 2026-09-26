@@ -1,0 +1,476 @@
+{
+  "$comment": "Typed, atomic fields for the 26 shared archetype packs of resources/templates.md. Every catalogue template inherits its pack as a field group. `from` names the catalogue field a split or renamed field comes from; a pack field the catalogue lists must be covered by a key or a `from`. `required` is a suggested default only (§13.2). Edit here, then run `dart run tool/build_template_catalogue.dart`.",
+  "AGREEMENT": {
+    "kind": "agreement",
+    "identity": ["agreement_reference"],
+    "fields": [
+      {"key": "agreement_reference", "type": "text", "required": "REQUIRED"},
+      {"key": "agreement_title", "type": "text", "required": "REQUIRED"},
+      {"key": "first_party_name", "type": "text", "required": "REQUIRED", "from": "parties"},
+      {"key": "second_party_name", "type": "text", "required": "RECOMMENDED", "from": "parties"},
+      {"key": "other_parties", "type": "long_text", "required": "OPTIONAL", "from": "parties"},
+      {"key": "purpose", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "terms", "type": "long_text", "required": "RECOMMENDED", "refine": true},
+      {"key": "effective_date", "type": "date", "required": "REQUIRED"},
+      {"key": "expiry_date", "type": "date", "required": "RECOMMENDED"},
+      {"key": "agreement_status", "type": "choice", "required": "RECOMMENDED", "options": "agreement_status"},
+      {"key": "approval_evidence", "type": "document_reference", "required": "RECOMMENDED"},
+      {"key": "approved_by_name", "type": "text", "required": "OPTIONAL"},
+      {"key": "approval_date", "type": "date", "required": "OPTIONAL"},
+      {"key": "signatory_signature", "type": "signature", "required": "OPTIONAL"}
+    ]
+  },
+  "ASSESS": {
+    "kind": "assessment",
+    "identity": ["assessment_reference"],
+    "fields": [
+      {"key": "assessment_reference", "type": "text", "required": "REQUIRED"},
+      {"key": "assessment_date", "type": "date", "required": "REQUIRED", "auto_fill": "today"},
+      {"key": "assessment_objective", "type": "long_text", "required": "REQUIRED"},
+      {"key": "criteria_reference", "type": "text", "required": "RECOMMENDED"},
+      {"key": "evidence_items", "type": "document_reference", "required": "RECOMMENDED"},
+      {"key": "findings", "type": "long_text", "required": "RECOMMENDED", "refine": true},
+      {"key": "assumptions", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "risk_rating", "type": "choice", "required": "OPTIONAL", "options": "risk_rating"},
+      {"key": "review_conclusion", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "assessor_name", "type": "text", "required": "RECOMMENDED"}
+    ]
+  },
+  "ASSET": {
+    "kind": "asset",
+    "identity": ["item_identifier", "serial_number"],
+    "fields": [
+      {"key": "item_identifier", "type": "text", "required": "RECOMMENDED"},
+      {"key": "item_name", "type": "text", "required": "REQUIRED"},
+      {"key": "category", "type": "text", "required": "RECOMMENDED"},
+      {"key": "manufacturer_name", "type": "text", "required": "OPTIONAL", "from": "manufacturer"},
+      {"key": "model_number", "type": "text", "required": "OPTIONAL"},
+      {"key": "serial_number", "type": "text", "required": "RECOMMENDED"},
+      {"key": "barcode_value", "type": "barcode", "required": "OPTIONAL"},
+      {"key": "quantity_counted", "type": "number", "required": "OPTIONAL"},
+      {"key": "condition_grade", "type": "choice", "required": "RECOMMENDED", "options": "condition", "from": "condition"},
+      {"key": "condition_note", "type": "long_text", "required": "OPTIONAL", "from": "condition"},
+      {"key": "custodian_name", "type": "text", "required": "OPTIONAL", "from": "custodian"}
+    ]
+  },
+  "CASE": {
+    "kind": "case",
+    "identity": ["case_reference"],
+    "fields": [
+      {"key": "case_reference", "type": "text", "required": "REQUIRED"},
+      {"key": "case_opened_date", "type": "date", "required": "REQUIRED", "auto_fill": "today"},
+      {"key": "case_type", "type": "text", "required": "RECOMMENDED"},
+      {"key": "reported_details", "type": "long_text", "required": "REQUIRED", "refine": true},
+      {"key": "source_reference", "type": "text", "required": "OPTIONAL"},
+      {"key": "assigned_handler_name", "type": "text", "required": "RECOMMENDED", "from": "assigned_handler"},
+      {"key": "case_stage", "type": "choice", "required": "RECOMMENDED", "options": "case_stage"},
+      {"key": "priority", "type": "choice", "required": "OPTIONAL", "options": "priority"},
+      {"key": "followup_actions", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "next_followup_date", "type": "date", "required": "OPTIONAL"},
+      {"key": "closure_basis", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "closed_date", "type": "date", "required": "OPTIONAL"}
+    ]
+  },
+  "CHECK": {
+    "kind": "checklist",
+    "identity": ["check_reference"],
+    "fields": [
+      {"key": "check_reference", "type": "text", "required": "REQUIRED"},
+      {"key": "check_date", "type": "date", "required": "REQUIRED", "auto_fill": "today"},
+      {"key": "checklist_version", "type": "text", "required": "RECOMMENDED"},
+      {"key": "check_items", "type": "long_text", "required": "RECOMMENDED", "help": "One line per item checked, with its result."},
+      {"key": "items_checked_count", "type": "number", "required": "OPTIONAL"},
+      {"key": "items_failed_count", "type": "number", "required": "OPTIONAL"},
+      {"key": "observed_results", "type": "long_text", "required": "RECOMMENDED", "refine": true},
+      {"key": "overall_result", "type": "choice", "required": "RECOMMENDED", "options": "check_result"},
+      {"key": "exceptions", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "corrective_actions", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "corrective_action_due_date", "type": "date", "required": "OPTIONAL"},
+      {"key": "reviewer_name", "type": "text", "required": "RECOMMENDED", "from": "reviewer"},
+      {"key": "reviewer_signature", "type": "signature", "required": "OPTIONAL", "from": "reviewer"}
+    ]
+  },
+  "COMM": {
+    "kind": "communication",
+    "identity": ["communication_reference"],
+    "fields": [
+      {"key": "communication_reference", "type": "text", "required": "REQUIRED"},
+      {"key": "communication_channel", "type": "choice", "required": "RECOMMENDED", "options": "communication_channel"},
+      {"key": "audience", "type": "text", "required": "REQUIRED"},
+      {"key": "purpose", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "verified_facts", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "message_subject", "type": "text", "required": "RECOMMENDED"},
+      {"key": "message_body", "type": "long_text", "required": "REQUIRED", "refine": true},
+      {"key": "attachments", "type": "document_reference", "required": "OPTIONAL"},
+      {"key": "approved_sender_name", "type": "text", "required": "RECOMMENDED", "from": "approved_sender"},
+      {"key": "approval_date", "type": "date", "required": "OPTIONAL"},
+      {"key": "sent_date", "type": "date", "required": "OPTIONAL"}
+    ]
+  },
+  "DOC": {
+    "kind": "document",
+    "identity": ["document_reference", "approved_version"],
+    "fields": [
+      {"key": "document_reference", "type": "text", "required": "REQUIRED"},
+      {"key": "document_title", "type": "text", "required": "REQUIRED"},
+      {"key": "document_purpose", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "audience", "type": "text", "required": "RECOMMENDED"},
+      {"key": "required_sections", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "source_records", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "format_constraints", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "document_body_raw", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "document_body_refined", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "approved_version", "type": "text", "required": "RECOMMENDED"},
+      {"key": "approved_by_name", "type": "text", "required": "OPTIONAL"},
+      {"key": "approval_date", "type": "date", "required": "OPTIONAL"}
+    ]
+  },
+  "INCIDENT": {
+    "kind": "incident",
+    "identity": ["incident_reference"],
+    "fields": [
+      {"key": "incident_reference", "type": "text", "required": "REQUIRED"},
+      {"key": "event_date", "type": "date", "required": "REQUIRED", "from": "event_time"},
+      {"key": "event_time", "type": "time", "required": "RECOMMENDED"},
+      {"key": "event_location", "type": "text", "required": "REQUIRED"},
+      {"key": "incident_type", "type": "text", "required": "RECOMMENDED"},
+      {"key": "severity", "type": "choice", "required": "RECOMMENDED", "options": "severity"},
+      {"key": "factual_description", "type": "long_text", "required": "REQUIRED", "refine": true},
+      {"key": "immediate_action", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "affected_items", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "people_affected_count", "type": "number", "required": "OPTIONAL"},
+      {"key": "reported_by_name", "type": "text", "required": "RECOMMENDED"},
+      {"key": "assigned_reviewer_name", "type": "text", "required": "OPTIONAL", "from": "assigned_reviewer"},
+      {"key": "incident_status", "type": "choice", "required": "OPTIONAL", "options": "incident_status"}
+    ]
+  },
+  "INSPECT": {
+    "kind": "inspection",
+    "identity": ["inspection_reference"],
+    "fields": [
+      {"key": "inspection_reference", "type": "text", "required": "REQUIRED"},
+      {"key": "inspection_date", "type": "date", "required": "REQUIRED", "auto_fill": "today"},
+      {"key": "inspector_name", "type": "text", "required": "RECOMMENDED"},
+      {"key": "inspection_scope", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "criteria_reference", "type": "text", "required": "RECOMMENDED"},
+      {"key": "inspection_items", "type": "long_text", "required": "OPTIONAL", "help": "One line per item inspected, with what was found."},
+      {"key": "observed_condition", "type": "long_text", "required": "RECOMMENDED", "refine": true},
+      {"key": "condition_grade", "type": "choice", "required": "OPTIONAL", "options": "condition"},
+      {"key": "defects", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "defect_count", "type": "number", "required": "OPTIONAL"},
+      {"key": "recommended_actions", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "inspection_result", "type": "choice", "required": "RECOMMENDED", "options": "inspection_result"},
+      {"key": "next_inspection_date", "type": "date", "required": "OPTIONAL"}
+    ]
+  },
+  "LEARN": {
+    "kind": "learning",
+    "identity": ["learning_record_reference"],
+    "fields": [
+      {"key": "learning_record_reference", "type": "text", "required": "REQUIRED"},
+      {"key": "learning_objective", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "course_or_standard_ref", "type": "text", "required": "REQUIRED"},
+      {"key": "participant_name", "type": "text", "required": "REQUIRED", "from": "participant_refs"},
+      {"key": "participant_identifier", "type": "text", "required": "OPTIONAL", "from": "participant_refs"},
+      {"key": "start_date", "type": "date", "required": "OPTIONAL"},
+      {"key": "completion_date", "type": "date", "required": "RECOMMENDED"},
+      {"key": "completion_evidence", "type": "document_reference", "required": "RECOMMENDED"},
+      {"key": "assessment_result", "type": "choice", "required": "RECOMMENDED", "options": "competency_result"},
+      {"key": "assessment_score", "type": "decimal", "required": "OPTIONAL", "unit": "points"},
+      {"key": "assessor_name", "type": "text", "required": "RECOMMENDED", "from": "assessor"},
+      {"key": "certificate_number", "type": "text", "required": "OPTIONAL"},
+      {"key": "expiry_date", "type": "date", "required": "OPTIONAL"}
+    ]
+  },
+  "LOG": {
+    "kind": "log",
+    "identity": ["activity_date", "activity_type", "start_time"],
+    "fields": [
+      {"key": "activity_date", "type": "date", "required": "REQUIRED", "auto_fill": "today"},
+      {"key": "activity_type", "type": "text", "required": "REQUIRED"},
+      {"key": "start_time", "type": "time", "required": "RECOMMENDED", "auto_fill": "time"},
+      {"key": "end_time", "type": "time", "required": "OPTIONAL"},
+      {"key": "participants_or_operators", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "participants_count", "type": "number", "required": "OPTIONAL"},
+      {"key": "observations", "type": "long_text", "required": "RECOMMENDED", "refine": true},
+      {"key": "outcome", "type": "long_text", "required": "OPTIONAL"}
+    ]
+  },
+  "MAINT": {
+    "kind": "maintenance",
+    "identity": ["work_order_reference"],
+    "fields": [
+      {"key": "work_order_reference", "type": "text", "required": "REQUIRED"},
+      {"key": "asset_ref", "type": "text", "required": "REQUIRED"},
+      {"key": "reported_date", "type": "date", "required": "RECOMMENDED", "auto_fill": "today"},
+      {"key": "reported_problem", "type": "long_text", "required": "REQUIRED", "refine": true},
+      {"key": "priority", "type": "choice", "required": "RECOMMENDED", "options": "priority"},
+      {"key": "approved_work_scope", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "work_performed", "type": "long_text", "required": "RECOMMENDED", "refine": true},
+      {"key": "work_start_date", "type": "date", "required": "OPTIONAL"},
+      {"key": "work_completed_date", "type": "date", "required": "OPTIONAL"},
+      {"key": "labour_hours", "type": "decimal", "required": "OPTIONAL"},
+      {"key": "parts_used", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "maintenance_cost_amount", "type": "currency", "required": "OPTIONAL", "input_mode": "manual_only"},
+      {"key": "maintenance_cost_currency", "type": "text", "required": "OPTIONAL"},
+      {"key": "verification_results", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "technician_name", "type": "text", "required": "OPTIONAL"},
+      {"key": "next_due_date", "type": "date", "required": "RECOMMENDED", "from": "next_due"}
+    ]
+  },
+  "MEASURE": {
+    "kind": "measurement",
+    "identity": ["measurement_type", "measurement_date", "measurement_time"],
+    "fields": [
+      {"key": "measurement_type", "type": "text", "required": "REQUIRED"},
+      {"key": "measured_value", "type": "decimal", "required": "REQUIRED", "unit": "as_declared", "from": "value"},
+      {"key": "measurement_unit", "type": "text", "required": "REQUIRED", "from": "unit"},
+      {"key": "measurement_date", "type": "date", "required": "REQUIRED", "auto_fill": "today", "from": "measurement_time"},
+      {"key": "measurement_time", "type": "time", "required": "RECOMMENDED", "auto_fill": "time"},
+      {"key": "method_reference", "type": "text", "required": "RECOMMENDED"},
+      {"key": "instrument_ref", "type": "text", "required": "RECOMMENDED"},
+      {"key": "instrument_calibration_date", "type": "date", "required": "OPTIONAL"},
+      {"key": "measurement_uncertainty", "type": "decimal", "required": "OPTIONAL", "unit": "as_declared", "from": "uncertainty_or_quality"},
+      {"key": "quality_flag", "type": "choice", "required": "OPTIONAL", "options": "quality_flag", "from": "uncertainty_or_quality"},
+      {"key": "within_threshold", "type": "boolean", "required": "OPTIONAL"}
+    ]
+  },
+  "MEET": {
+    "kind": "meeting",
+    "identity": ["meeting_title", "meeting_date"],
+    "fields": [
+      {"key": "meeting_reference", "type": "text", "required": "RECOMMENDED"},
+      {"key": "meeting_title", "type": "text", "required": "REQUIRED"},
+      {"key": "meeting_date", "type": "date", "required": "REQUIRED", "auto_fill": "today", "from": "scheduled_time"},
+      {"key": "start_time", "type": "time", "required": "RECOMMENDED", "from": "scheduled_time"},
+      {"key": "end_time", "type": "time", "required": "OPTIONAL"},
+      {"key": "meeting_venue", "type": "text", "required": "OPTIONAL"},
+      {"key": "chairperson_name", "type": "text", "required": "OPTIONAL"},
+      {"key": "attendees", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "attendees_count", "type": "number", "required": "OPTIONAL"},
+      {"key": "agenda", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "discussion_notes", "type": "long_text", "required": "RECOMMENDED", "refine": true},
+      {"key": "decisions", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "actions", "type": "long_text", "required": "RECOMMENDED", "help": "One line per action: what, who, by when."},
+      {"key": "next_meeting_date", "type": "date", "required": "OPTIONAL"}
+    ]
+  },
+  "OBS": {
+    "kind": "observation",
+    "identity": ["observation_subject", "observed_at"],
+    "fields": [
+      {"key": "observation_subject", "type": "text", "required": "REQUIRED"},
+      {"key": "observed_at", "type": "date_time", "required": "REQUIRED", "auto_fill": "now"},
+      {"key": "factual_description", "type": "long_text", "required": "REQUIRED", "refine": true},
+      {"key": "media_refs", "type": "photo_reference", "required": "RECOMMENDED"},
+      {"key": "capture_context", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "observer_name", "type": "text", "required": "OPTIONAL", "auto_fill": "operator"},
+      {"key": "verification_status", "type": "choice", "required": "OPTIONAL", "options": "verification_status"},
+      {"key": "verification_notes", "type": "long_text", "required": "OPTIONAL"}
+    ]
+  },
+  "PLAN": {
+    "kind": "plan",
+    "identity": ["plan_reference"],
+    "fields": [
+      {"key": "plan_reference", "type": "text", "required": "REQUIRED"},
+      {"key": "plan_title", "type": "text", "required": "REQUIRED"},
+      {"key": "planning_objective", "type": "long_text", "required": "REQUIRED"},
+      {"key": "scope", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "activities", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "responsible_roles", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "start_date", "type": "date", "required": "RECOMMENDED", "from": "dates"},
+      {"key": "end_date", "type": "date", "required": "RECOMMENDED", "from": "dates"},
+      {"key": "milestones", "type": "long_text", "required": "OPTIONAL", "from": "dates"},
+      {"key": "dependencies", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "resources", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "budget_amount", "type": "currency", "required": "OPTIONAL", "input_mode": "manual_only"},
+      {"key": "budget_currency", "type": "text", "required": "OPTIONAL"},
+      {"key": "success_measures", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "plan_status", "type": "choice", "required": "OPTIONAL", "options": "plan_status"},
+      {"key": "plan_owner_name", "type": "text", "required": "OPTIONAL"}
+    ]
+  },
+  "PROFILE": {
+    "kind": "profile",
+    "identity": ["profile_reference", "display_name"],
+    "fields": [
+      {"key": "profile_reference", "type": "text", "required": "RECOMMENDED"},
+      {"key": "display_name", "type": "text", "required": "REQUIRED"},
+      {"key": "entity_type", "type": "choice", "required": "RECOMMENDED", "options": "entity_type"},
+      {"key": "phone_primary", "type": "text", "required": "OPTIONAL", "from": "contact_channels"},
+      {"key": "email_address", "type": "text", "required": "OPTIONAL", "from": "contact_channels"},
+      {"key": "preferred_contact_channel", "type": "choice", "required": "OPTIONAL", "options": "contact_channel", "from": "contact_channels"},
+      {"key": "service_context", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "source_documents", "type": "document_reference", "required": "OPTIONAL"},
+      {"key": "permission_scope", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "consent_status", "type": "choice", "required": "RECOMMENDED", "options": "consent_status"},
+      {"key": "consent_date", "type": "date", "required": "OPTIONAL"}
+    ]
+  },
+  "PROPOSAL": {
+    "kind": "proposal",
+    "identity": ["proposal_reference"],
+    "fields": [
+      {"key": "proposal_reference", "type": "text", "required": "REQUIRED"},
+      {"key": "proposal_title", "type": "text", "required": "REQUIRED"},
+      {"key": "funder_name", "type": "text", "required": "RECOMMENDED"},
+      {"key": "submission_deadline_date", "type": "date", "required": "RECOMMENDED"},
+      {"key": "opportunity_requirements", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "applicant_profile", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "project_objectives", "type": "long_text", "required": "REQUIRED"},
+      {"key": "methodology", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "workplan", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "budget_amount", "type": "currency", "required": "RECOMMENDED", "input_mode": "manual_only", "from": "budget"},
+      {"key": "budget_currency", "type": "text", "required": "RECOMMENDED", "from": "budget"},
+      {"key": "budget_narrative", "type": "long_text", "required": "OPTIONAL", "from": "budget"},
+      {"key": "supporting_evidence", "type": "document_reference", "required": "OPTIONAL"},
+      {"key": "required_annexes", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "proposal_status", "type": "choice", "required": "OPTIONAL", "options": "proposal_status"}
+    ]
+  },
+  "REG": {
+    "kind": "register",
+    "identity": ["entry_identifier"],
+    "fields": [
+      {"key": "entry_identifier", "type": "text", "required": "REQUIRED"},
+      {"key": "record_subject", "type": "text", "required": "REQUIRED"},
+      {"key": "category", "type": "text", "required": "RECOMMENDED"},
+      {"key": "effective_date", "type": "date", "required": "RECOMMENDED"},
+      {"key": "source_reference", "type": "text", "required": "RECOMMENDED"},
+      {"key": "responsible_role", "type": "text", "required": "OPTIONAL"},
+      {"key": "entry_status", "type": "choice", "required": "OPTIONAL", "options": "entry_status"},
+      {"key": "review_due_date", "type": "date", "required": "OPTIONAL", "from": "review_due"}
+    ]
+  },
+  "REPORT": {
+    "kind": "report",
+    "identity": ["report_reference"],
+    "fields": [
+      {"key": "report_reference", "type": "text", "required": "REQUIRED"},
+      {"key": "report_title", "type": "text", "required": "REQUIRED"},
+      {"key": "reporting_scope", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "period_start_date", "type": "date", "required": "RECOMMENDED", "from": "reporting_period"},
+      {"key": "period_end_date", "type": "date", "required": "RECOMMENDED", "from": "reporting_period"},
+      {"key": "source_records", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "verified_findings", "type": "long_text", "required": "RECOMMENDED", "refine": true},
+      {"key": "metrics", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "limitations", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "recommendations", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "prepared_by_name", "type": "text", "required": "OPTIONAL", "auto_fill": "operator"},
+      {"key": "approved_by_name", "type": "text", "required": "OPTIONAL"},
+      {"key": "approval_date", "type": "date", "required": "OPTIONAL"}
+    ]
+  },
+  "REQUEST": {
+    "kind": "request",
+    "identity": ["request_reference"],
+    "fields": [
+      {"key": "request_reference", "type": "text", "required": "REQUIRED"},
+      {"key": "request_date", "type": "date", "required": "REQUIRED", "auto_fill": "today"},
+      {"key": "requester_name", "type": "text", "required": "REQUIRED"},
+      {"key": "request_purpose", "type": "long_text", "required": "REQUIRED"},
+      {"key": "requested_items_or_actions", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "justification", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "required_by_date", "type": "date", "required": "RECOMMENDED", "from": "required_by"},
+      {"key": "estimated_cost_amount", "type": "currency", "required": "OPTIONAL", "input_mode": "manual_only"},
+      {"key": "estimated_cost_currency", "type": "text", "required": "OPTIONAL"},
+      {"key": "supporting_evidence", "type": "document_reference", "required": "OPTIONAL"},
+      {"key": "approver_name", "type": "text", "required": "RECOMMENDED", "from": "approver"},
+      {"key": "decision", "type": "choice", "required": "RECOMMENDED", "options": "decision", "input_mode": "manual_only"},
+      {"key": "decision_date", "type": "date", "required": "OPTIONAL"},
+      {"key": "decision_reason", "type": "long_text", "required": "OPTIONAL"}
+    ]
+  },
+  "SAMPLE": {
+    "kind": "sample",
+    "identity": ["sample_identifier"],
+    "fields": [
+      {"key": "sample_identifier", "type": "text", "required": "REQUIRED"},
+      {"key": "sample_barcode", "type": "barcode", "required": "OPTIONAL"},
+      {"key": "sample_type", "type": "text", "required": "REQUIRED"},
+      {"key": "collection_date", "type": "date", "required": "REQUIRED", "auto_fill": "today", "from": "collection_time"},
+      {"key": "collection_time", "type": "time", "required": "RECOMMENDED", "auto_fill": "time"},
+      {"key": "collection_location", "type": "text", "required": "RECOMMENDED"},
+      {"key": "collection_method", "type": "text", "required": "RECOMMENDED"},
+      {"key": "collected_by_name", "type": "text", "required": "RECOMMENDED", "auto_fill": "operator"},
+      {"key": "sample_condition", "type": "choice", "required": "OPTIONAL", "options": "sample_condition"},
+      {"key": "requested_tests", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "custody_events", "type": "long_text", "required": "RECOMMENDED", "help": "One line per hand-over: who, when and where."},
+      {"key": "received_date", "type": "date", "required": "OPTIONAL"},
+      {"key": "sample_status", "type": "choice", "required": "OPTIONAL", "options": "sample_status"}
+    ]
+  },
+  "SURVEY": {
+    "kind": "survey",
+    "identity": ["survey_version", "respondent_or_sample_code"],
+    "fields": [
+      {"key": "survey_version", "type": "text", "required": "REQUIRED"},
+      {"key": "respondent_or_sample_code", "type": "text", "required": "REQUIRED"},
+      {"key": "interview_date", "type": "date", "required": "REQUIRED", "auto_fill": "today"},
+      {"key": "interviewer_name", "type": "text", "required": "RECOMMENDED", "auto_fill": "operator"},
+      {"key": "consent_status", "type": "choice", "required": "REQUIRED", "options": "consent_status", "input_mode": "manual_only"},
+      {"key": "consent_scope", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "survey_questions", "type": "long_text", "required": "RECOMMENDED", "from": "questions_and_responses"},
+      {"key": "survey_responses", "type": "long_text", "required": "REQUIRED", "from": "questions_and_responses"},
+      {"key": "sampling_context", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "interview_language", "type": "text", "required": "OPTIONAL"},
+      {"key": "interview_outcome", "type": "choice", "required": "RECOMMENDED", "options": "interview_outcome"},
+      {"key": "interviewer_notes", "type": "long_text", "required": "OPTIONAL"}
+    ]
+  },
+  "TRACK": {
+    "kind": "tracker",
+    "identity": ["tracker_reference", "tracked_item"],
+    "fields": [
+      {"key": "tracker_reference", "type": "text", "required": "RECOMMENDED"},
+      {"key": "tracked_item", "type": "text", "required": "REQUIRED"},
+      {"key": "current_stage", "type": "choice", "required": "REQUIRED", "options": "progress_stage"},
+      {"key": "responsible_owner_name", "type": "text", "required": "RECOMMENDED", "from": "responsible_owner"},
+      {"key": "target_date", "type": "date", "required": "RECOMMENDED"},
+      {"key": "latest_update", "type": "long_text", "required": "RECOMMENDED", "refine": true},
+      {"key": "last_update_date", "type": "date", "required": "OPTIONAL", "auto_fill": "today"},
+      {"key": "completion_percent", "type": "percentage", "required": "OPTIONAL"},
+      {"key": "supporting_evidence", "type": "document_reference", "required": "OPTIONAL"},
+      {"key": "completion_criteria", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "completed_date", "type": "date", "required": "OPTIONAL"}
+    ]
+  },
+  "TRANS": {
+    "kind": "transaction",
+    "identity": ["transaction_reference"],
+    "fields": [
+      {"key": "transaction_reference", "type": "text", "required": "REQUIRED"},
+      {"key": "transaction_date", "type": "date", "required": "REQUIRED", "auto_fill": "today"},
+      {"key": "counterparty_name", "type": "text", "required": "RECOMMENDED", "from": "parties"},
+      {"key": "other_parties", "type": "long_text", "required": "OPTIONAL", "from": "parties"},
+      {"key": "line_items", "type": "long_text", "required": "RECOMMENDED", "help": "One line per item: description, quantity, unit and amount."},
+      {"key": "line_item_count", "type": "number", "required": "OPTIONAL", "from": "quantities"},
+      {"key": "quantity_total", "type": "decimal", "required": "OPTIONAL", "unit": "as_declared", "from": "quantities"},
+      {"key": "quantity_unit", "type": "text", "required": "OPTIONAL", "from": "unit_or_currency"},
+      {"key": "total_amount", "type": "currency", "required": "RECOMMENDED", "input_mode": "manual_only", "from": "totals"},
+      {"key": "total_currency", "type": "text", "required": "RECOMMENDED", "from": "unit_or_currency"},
+      {"key": "tax_amount", "type": "currency", "required": "OPTIONAL", "input_mode": "manual_only"},
+      {"key": "tax_currency", "type": "text", "required": "OPTIONAL"},
+      {"key": "source_documents", "type": "document_reference", "required": "RECOMMENDED"}
+    ]
+  },
+  "VISIT": {
+    "kind": "visit",
+    "identity": ["visited_site_or_party", "visit_date"],
+    "fields": [
+      {"key": "visit_reference", "type": "text", "required": "OPTIONAL"},
+      {"key": "visit_date", "type": "date", "required": "REQUIRED", "auto_fill": "today", "from": "visit_time"},
+      {"key": "visit_start_time", "type": "time", "required": "RECOMMENDED", "auto_fill": "time", "from": "visit_time"},
+      {"key": "visit_end_time", "type": "time", "required": "OPTIONAL"},
+      {"key": "visit_purpose", "type": "long_text", "required": "REQUIRED"},
+      {"key": "visited_site_or_party", "type": "text", "required": "REQUIRED"},
+      {"key": "visiting_team", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "people_met", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "observations", "type": "long_text", "required": "RECOMMENDED", "refine": true},
+      {"key": "discussion_notes", "type": "long_text", "required": "OPTIONAL"},
+      {"key": "agreed_actions", "type": "long_text", "required": "RECOMMENDED"},
+      {"key": "next_visit_date", "type": "date", "required": "OPTIONAL"}
+    ]
+  }
+}

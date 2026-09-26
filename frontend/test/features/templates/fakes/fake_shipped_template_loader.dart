@@ -5,10 +5,14 @@ import 'package:tapture/features/templates/templates.dart';
 /// In-memory [ShippedTemplateLoader] for widget tests that must not open
 /// assets or a database (FE-STATE-10).
 final class FakeShippedTemplateLoader implements ShippedTemplateLoader {
-  /// Templates [library] returns. Tests seed this instead of packing JSON.
+  /// Rows [entries] lists. Tests seed this instead of packing JSON.
+  final List<ShippedTemplateEntry> catalogue = <ShippedTemplateEntry>[];
+
+  /// Resolved templates [template] and [copyToProject] read, matched to
+  /// [catalogue] by key.
   final List<TemplateDef> rows = <TemplateDef>[];
 
-  /// When set, [library] returns this instead of [rows].
+  /// When set, [entries] and [template] return this instead.
   Failure? loadFailure;
 
   /// When set, [copyToProject] returns this instead of writing.
@@ -20,12 +24,28 @@ final class FakeShippedTemplateLoader implements ShippedTemplateLoader {
   int _next = 0;
 
   @override
-  Future<Result<List<TemplateDef>>> library() async {
+  Future<Result<List<ShippedTemplateEntry>>> entries() async {
     final Failure? forced = loadFailure;
     if (forced != null) {
-      return FailureResult<List<TemplateDef>>(forced);
+      return FailureResult<List<ShippedTemplateEntry>>(forced);
     }
-    return Success<List<TemplateDef>>(List<TemplateDef>.of(rows));
+    return Success<List<ShippedTemplateEntry>>(
+      List<ShippedTemplateEntry>.of(catalogue),
+    );
+  }
+
+  @override
+  Future<Result<TemplateDef>> template(String templateKey) async {
+    final Failure? forced = loadFailure;
+    if (forced != null) {
+      return FailureResult<TemplateDef>(forced);
+    }
+    for (final TemplateDef row in rows) {
+      if (row.templateKey == templateKey) {
+        return Success<TemplateDef>(row);
+      }
+    }
+    return const FailureResult<TemplateDef>(_notOnDevice);
   }
 
   @override
@@ -46,12 +66,7 @@ final class FakeShippedTemplateLoader implements ShippedTemplateLoader {
       }
     }
     if (source == null) {
-      return const FailureResult<TemplateDef>(
-        ValidationFailure(
-          message: 'That shipped template is not on this device.',
-          recoveryAction: 'Pick another template from the library.',
-        ),
-      );
+      return const FailureResult<TemplateDef>(_notOnDevice);
     }
     final TemplateDef stored = source.copyWith(
       id: 'template-${_next++}',
@@ -67,3 +82,8 @@ final class FakeShippedTemplateLoader implements ShippedTemplateLoader {
     return Success<TemplateDef>(stored);
   }
 }
+
+const ValidationFailure _notOnDevice = ValidationFailure(
+  message: 'That shipped template is not on this device.',
+  recoveryAction: 'Pick another template from the library.',
+);

@@ -1,0 +1,1503 @@
+{
+  "category": "LIF",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "lif_salon_appointment_booking",
+      "name": "templates.lif_salon_appointment_booking.name",
+      "title": "Salon appointment booking",
+      "code": "LIF-001",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_service",
+          "label": "templates.catalogue.requested_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "preferred_time",
+          "label": "templates.catalogue.preferred_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_permission",
+          "label": "templates.catalogue.contact_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_hair_service_consultation",
+      "name": "templates.lif_hair_service_consultation.name",
+      "title": "Hair service consultation",
+      "code": "LIF-002",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "client_preferences",
+          "label": "templates.catalogue.client_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "prior_service_information",
+          "label": "templates.catalogue.prior_service_information",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_salon_service_record",
+      "name": "templates.lif_salon_service_record.name",
+      "title": "Salon service record",
+      "code": "LIF-003",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_service",
+          "label": "templates.catalogue.agreed_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "products_used",
+          "label": "templates.catalogue.products_used",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "client_feedback",
+          "label": "templates.catalogue.client_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_salon_product_inventory",
+      "name": "templates.lif_salon_product_inventory.name",
+      "title": "Salon product inventory",
+      "code": "LIF-004",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "product_name",
+          "label": "templates.catalogue.product_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "batch_number",
+          "label": "templates.catalogue.batch_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expiry_date",
+          "label": "templates.catalogue.expiry_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_salon_tool_cleaning_record",
+      "name": "templates.lif_salon_tool_cleaning_record.name",
+      "title": "Salon tool cleaning record",
+      "code": "LIF-005",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "tool_reference",
+          "label": "templates.catalogue.tool_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_cleaning_method",
+          "label": "templates.catalogue.approved_cleaning_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification",
+          "label": "templates.catalogue.verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_barber_service_booking",
+      "name": "templates.lif_barber_service_booking.name",
+      "title": "Barber service booking",
+      "code": "LIF-006",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "service_type",
+          "label": "templates.catalogue.service_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "preferred_slot",
+          "label": "templates.catalogue.preferred_slot",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_permission",
+          "label": "templates.catalogue.contact_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_beauty_treatment_consent_administration",
+      "name": "templates.lif_beauty_treatment_consent_administration.name",
+      "title": "Beauty treatment consent administration",
+      "code": "LIF-007",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "service_information",
+          "label": "templates.catalogue.service_information",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "client_choice",
+          "label": "templates.catalogue.client_choice",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_provider",
+          "label": "templates.catalogue.qualified_provider",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_beauty_service_patch_test_documentation",
+      "name": "templates.lif_beauty_service_patch_test_documentation.name",
+      "title": "Beauty service patch-test documentation",
+      "code": "LIF-008",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "provider_approved_protocol",
+          "label": "templates.catalogue.provider_approved_protocol",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_nail_service_consultation",
+      "name": "templates.lif_nail_service_consultation.name",
+      "title": "Nail service consultation",
+      "code": "LIF-009",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "client_preferences",
+          "label": "templates.catalogue.client_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_design",
+          "label": "templates.catalogue.requested_design",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_consent",
+          "label": "templates.catalogue.service_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_spa_appointment_intake",
+      "name": "templates.lif_spa_appointment_intake.name",
+      "title": "Spa appointment intake",
+      "code": "LIF-010",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_service",
+          "label": "templates.catalogue.requested_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "functional_access_needs",
+          "label": "templates.catalogue.functional_access_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_permission",
+          "label": "templates.catalogue.contact_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_spa_service_preparation_checklist",
+      "name": "templates.lif_spa_service_preparation_checklist.name",
+      "title": "Spa service preparation checklist",
+      "code": "LIF-011",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "room_readiness",
+          "label": "templates.catalogue.room_readiness",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "equipment_condition",
+          "label": "templates.catalogue.equipment_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_hygiene_steps",
+          "label": "templates.catalogue.approved_hygiene_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_massage_appointment_administration",
+      "name": "templates.lif_massage_appointment_administration.name",
+      "title": "Massage appointment administration",
+      "code": "LIF-012",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "client_preferences",
+          "label": "templates.catalogue.client_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_information",
+          "label": "templates.catalogue.service_information",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_practitioner",
+          "label": "templates.catalogue.qualified_practitioner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_wellbeing_coaching_goals",
+      "name": "templates.lif_wellbeing_coaching_goals.name",
+      "title": "Wellbeing coaching goals",
+      "code": "LIF-013",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "client_stated_goals",
+          "label": "templates.catalogue.client_stated_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_activities",
+          "label": "templates.catalogue.agreed_activities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_date",
+          "label": "templates.catalogue.review_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_wellbeing_workshop_feedback",
+      "name": "templates.lif_wellbeing_workshop_feedback.name",
+      "title": "Wellbeing workshop feedback",
+      "code": "LIF-014",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "voluntary_experience",
+          "label": "templates.catalogue.voluntary_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessibility",
+          "label": "templates.catalogue.accessibility",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_suggestions",
+          "label": "templates.catalogue.improvement_suggestions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_beauty_product_complaint_intake",
+      "name": "templates.lif_beauty_product_complaint_intake.name",
+      "title": "Beauty product complaint intake",
+      "code": "LIF-015",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "product_reference",
+          "label": "templates.catalogue.product_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_issue",
+          "label": "templates.catalogue.reported_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_followup",
+          "label": "templates.catalogue.qualified_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_salon_customer_photo_permission",
+      "name": "templates.lif_salon_customer_photo_permission.name",
+      "title": "Salon customer photo permission",
+      "code": "LIF-016",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "photo_reference",
+          "label": "templates.catalogue.photo_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "permitted_channels",
+          "label": "templates.catalogue.permitted_channels",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "withdrawal_route",
+          "label": "templates.catalogue.withdrawal_route",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_tattoo_design_consultation",
+      "name": "templates.lif_tattoo_design_consultation.name",
+      "title": "Tattoo design consultation",
+      "code": "LIF-017",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "client_design_brief",
+          "label": "templates.catalogue.client_design_brief",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "placement_stated_by_client",
+          "label": "templates.catalogue.placement_stated_by_client",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_provider_review",
+          "label": "templates.catalogue.qualified_provider_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_tattoo_procedure_consent_administration",
+      "name": "templates.lif_tattoo_procedure_consent_administration.name",
+      "title": "Tattoo procedure consent administration",
+      "code": "LIF-018",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_service_information",
+          "label": "templates.catalogue.approved_service_information",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "client_decision",
+          "label": "templates.catalogue.client_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "authorized_provider",
+          "label": "templates.catalogue.authorized_provider",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_personal_styling_brief",
+      "name": "templates.lif_personal_styling_brief.name",
+      "title": "Personal styling brief",
+      "code": "LIF-019",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "client_preferences",
+          "label": "templates.catalogue.client_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "occasion",
+          "label": "templates.catalogue.occasion",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_budget",
+          "label": "templates.catalogue.agreed_budget",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "agreed_budget_currency",
+          "label": "templates.catalogue.agreed_budget_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_ceremony_planning_consultation",
+      "name": "templates.lif_ceremony_planning_consultation.name",
+      "title": "Ceremony planning consultation",
+      "code": "LIF-020",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "client_preferences",
+          "label": "templates.catalogue.client_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "confirmed_services",
+          "label": "templates.catalogue.confirmed_services",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "privacy_choices",
+          "label": "templates.catalogue.privacy_choices",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_funeral_service_request",
+      "name": "templates.lif_funeral_service_request.name",
+      "title": "Funeral service request",
+      "code": "LIF-021",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "family_authorized_contact",
+          "label": "templates.catalogue.family_authorized_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_services",
+          "label": "templates.catalogue.requested_services",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "official_document_checklist",
+          "label": "templates.catalogue.official_document_checklist",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_funeral_service_quotation",
+      "name": "templates.lif_funeral_service_quotation.name",
+      "title": "Funeral service quotation",
+      "code": "LIF-022",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_services",
+          "label": "templates.catalogue.agreed_services",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "itemized_costs",
+          "label": "templates.catalogue.itemized_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_customer",
+          "label": "templates.catalogue.authorized_customer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_memorial_announcement_drafting",
+      "name": "templates.lif_memorial_announcement_drafting.name",
+      "title": "Memorial announcement drafting",
+      "code": "LIF-023",
+      "kind": "communication",
+      "pack": "COMM",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "communication_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_comm"
+      ],
+      "fields": [
+        {
+          "field_key": "family_verified_facts",
+          "label": "templates.catalogue.family_verified_facts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_wording",
+          "label": "templates.catalogue.approved_wording",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "publication_permission",
+          "label": "templates.catalogue.publication_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_cemetery_plot_register",
+      "name": "templates.lif_cemetery_plot_register.name",
+      "title": "Cemetery plot register",
+      "code": "LIF-024",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "plot_identifier",
+          "label": "templates.catalogue.plot_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_rights_record",
+          "label": "templates.catalogue.authorized_rights_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restricted_contact",
+          "label": "templates.catalogue.restricted_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_burial_scheduling_administration",
+      "name": "templates.lif_burial_scheduling_administration.name",
+      "title": "Burial scheduling administration",
+      "code": "LIF-025",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "official_authorization_ref",
+          "label": "templates.catalogue.official_authorization_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "scheduled_service",
+          "label": "templates.catalogue.scheduled_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "family_preferences",
+          "label": "templates.catalogue.family_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_cemetery_condition_inspection",
+      "name": "templates.lif_cemetery_condition_inspection.name",
+      "title": "Cemetery condition inspection",
+      "code": "LIF-026",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "plot_or_facility",
+          "label": "templates.catalogue.plot_or_facility",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_need",
+          "label": "templates.catalogue.maintenance_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_bereavement_support_referral",
+      "name": "templates.lif_bereavement_support_referral.name",
+      "title": "Bereavement support referral",
+      "code": "LIF-027",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "voluntary_support_request",
+          "label": "templates.catalogue.voluntary_support_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "qualified_service",
+          "label": "templates.catalogue.qualified_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_estate_document_organization",
+      "name": "templates.lif_estate_document_organization.name",
+      "title": "Estate document organization",
+      "code": "LIF-028",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "document_category",
+          "label": "templates.catalogue.document_category",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "secure_reference",
+          "label": "templates.catalogue.secure_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_access",
+          "label": "templates.catalogue.authorized_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_executor_administration_checklist",
+      "name": "templates.lif_executor_administration_checklist.name",
+      "title": "Executor administration checklist",
+      "code": "LIF-029",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "jurisdiction",
+          "label": "templates.catalogue.jurisdiction",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "professional_instructions",
+          "label": "templates.catalogue.professional_instructions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_completion",
+          "label": "templates.catalogue.verified_completion",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lif_personal_services_quality_report",
+      "name": "templates.lif_personal_services_quality_report.name",
+      "title": "Personal services quality report",
+      "code": "LIF-030",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lif",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "deidentified_feedback",
+          "label": "templates.catalogue.deidentified_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "verified_service_issues",
+          "label": "templates.catalogue.verified_service_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_actions",
+          "label": "templates.catalogue.improvement_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

@@ -1,0 +1,1444 @@
+{
+  "category": "OIL",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "oil_fuel_storage_tank_register",
+      "name": "templates.oil_fuel_storage_tank_register.name",
+      "title": "Fuel storage tank register",
+      "code": "OIL-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "tank_identifier",
+          "label": "templates.catalogue.tank_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "product_type",
+          "label": "templates.catalogue.product_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "certified_capacity",
+          "label": "templates.catalogue.certified_capacity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "certified_capacity_unit",
+          "label": "templates.catalogue.certified_capacity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_fuel_tank_level_reading",
+      "name": "templates.oil_fuel_tank_level_reading.name",
+      "title": "Fuel tank level reading",
+      "code": "OIL-002",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "tank_reference",
+          "label": "templates.catalogue.tank_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_method",
+          "label": "templates.catalogue.measurement_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_level",
+          "label": "templates.catalogue.observed_level",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_fuel_delivery_receipt",
+      "name": "templates.oil_fuel_delivery_receipt.name",
+      "title": "Fuel delivery receipt",
+      "code": "OIL-003",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "supplier_reference",
+          "label": "templates.catalogue.supplier_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivered_volume",
+          "label": "templates.catalogue.delivered_volume",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "L",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_document",
+          "label": "templates.catalogue.delivery_document",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_fuel_dispatch_record",
+      "name": "templates.oil_fuel_dispatch_record.name",
+      "title": "Fuel dispatch record",
+      "code": "OIL-004",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "recipient_reference",
+          "label": "templates.catalogue.recipient_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issued_volume",
+          "label": "templates.catalogue.issued_volume",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "L",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "dispatch_authorization",
+          "label": "templates.catalogue.dispatch_authorization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_fuel_inventory_reconciliation",
+      "name": "templates.oil_fuel_inventory_reconciliation.name",
+      "title": "Fuel inventory reconciliation",
+      "code": "OIL-005",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "opening_stock",
+          "label": "templates.catalogue.opening_stock",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "opening_stock_unit",
+          "label": "templates.catalogue.opening_stock_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "receipts_recorded",
+          "label": "templates.catalogue.receipts_recorded",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issues_recorded",
+          "label": "templates.catalogue.issues_recorded",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "closing_measurement",
+          "label": "templates.catalogue.closing_measurement",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_fuel_sample_custody_record",
+      "name": "templates.oil_fuel_sample_custody_record.name",
+      "title": "Fuel sample custody record",
+      "code": "OIL-006",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "product_batch",
+          "label": "templates.catalogue.product_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "laboratory_request",
+          "label": "templates.catalogue.laboratory_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_fuel_quality_report_intake",
+      "name": "templates.oil_fuel_quality_report_intake.name",
+      "title": "Fuel quality report intake",
+      "code": "OIL-007",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "test_report_ref",
+          "label": "templates.catalogue.test_report_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_results",
+          "label": "templates.catalogue.reported_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_review",
+          "label": "templates.catalogue.authorized_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_retail_fuel_pump_inspection",
+      "name": "templates.oil_retail_fuel_pump_inspection.name",
+      "title": "Retail fuel pump inspection",
+      "code": "OIL-008",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "pump_identifier",
+          "label": "templates.catalogue.pump_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_checks",
+          "label": "templates.catalogue.approved_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_defects",
+          "label": "templates.catalogue.observed_defects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_fuel_dispenser_calibration_evidence",
+      "name": "templates.oil_fuel_dispenser_calibration_evidence.name",
+      "title": "Fuel dispenser calibration evidence",
+      "code": "OIL-009",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_test_ref",
+          "label": "templates.catalogue.authorized_test_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_volume",
+          "label": "templates.catalogue.observed_volume",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "L",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_result",
+          "label": "templates.catalogue.review_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_pipeline_asset_register",
+      "name": "templates.oil_pipeline_asset_register.name",
+      "title": "Pipeline asset register",
+      "code": "OIL-010",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "segment_identifier",
+          "label": "templates.catalogue.segment_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "material",
+          "label": "templates.catalogue.material",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_design_ref",
+          "label": "templates.catalogue.approved_design_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_pipeline_visual_patrol_observation",
+      "name": "templates.oil_pipeline_visual_patrol_observation.name",
+      "title": "Pipeline visual patrol observation",
+      "code": "OIL-011",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "segment_location",
+          "label": "templates.catalogue.segment_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_conditions",
+          "label": "templates.catalogue.observed_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_escalation",
+          "label": "templates.catalogue.authorized_escalation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_pipeline_maintenance_work_record",
+      "name": "templates.oil_pipeline_maintenance_work_record.name",
+      "title": "Pipeline maintenance work record",
+      "code": "OIL-012",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "asset_reference",
+          "label": "templates.catalogue.asset_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_evidence",
+          "label": "templates.catalogue.completion_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_gas_cylinder_inventory",
+      "name": "templates.oil_gas_cylinder_inventory.name",
+      "title": "Gas cylinder inventory",
+      "code": "OIL-013",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "cylinder_identifier",
+          "label": "templates.catalogue.cylinder_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "gas_type",
+          "label": "templates.catalogue.gas_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "inspection_due_date",
+          "label": "templates.catalogue.inspection_due_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_gas_cylinder_issue_and_return",
+      "name": "templates.oil_gas_cylinder_issue_and_return.name",
+      "title": "Gas cylinder issue and return",
+      "code": "OIL-014",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "cylinder_reference",
+          "label": "templates.catalogue.cylinder_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient",
+          "label": "templates.catalogue.recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_status",
+          "label": "templates.catalogue.return_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_gas_cylinder_condition_check",
+      "name": "templates.oil_gas_cylinder_condition_check.name",
+      "title": "Gas cylinder condition check",
+      "code": "OIL-015",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "label_reference",
+          "label": "templates.catalogue.label_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_reference",
+          "label": "templates.catalogue.test_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visible_condition",
+          "label": "templates.catalogue.visible_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_fuel_terminal_vehicle_entry",
+      "name": "templates.oil_fuel_terminal_vehicle_entry.name",
+      "title": "Fuel terminal vehicle entry",
+      "code": "OIL-016",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_reference",
+          "label": "templates.catalogue.vehicle_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_purpose",
+          "label": "templates.catalogue.authorized_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "entry_at",
+          "label": "templates.catalogue.entry_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "exit_at",
+          "label": "templates.catalogue.exit_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_fuel_tanker_inspection",
+      "name": "templates.oil_fuel_tanker_inspection.name",
+      "title": "Fuel tanker inspection",
+      "code": "OIL-017",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_identifier",
+          "label": "templates.catalogue.vehicle_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_safety_checklist",
+          "label": "templates.catalogue.approved_safety_checklist",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restriction_status",
+          "label": "templates.catalogue.restriction_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_fuel_spill_incident_report",
+      "name": "templates.oil_fuel_spill_incident_report.name",
+      "title": "Fuel spill incident report",
+      "code": "OIL-018",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "incident_location",
+          "label": "templates.catalogue.incident_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_extent",
+          "label": "templates.catalogue.observed_extent",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_response",
+          "label": "templates.catalogue.authorized_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_spill_response_equipment_check",
+      "name": "templates.oil_spill_response_equipment_check.name",
+      "title": "Spill response equipment check",
+      "code": "OIL-019",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "response_kit",
+          "label": "templates.catalogue.response_kit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "inventory_condition",
+          "label": "templates.catalogue.inventory_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "replenishment_need",
+          "label": "templates.catalogue.replenishment_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_fuel_facility_safety_induction",
+      "name": "templates.oil_fuel_facility_safety_induction.name",
+      "title": "Fuel facility safety induction",
+      "code": "OIL-020",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "site_rules",
+          "label": "templates.catalogue.site_rules",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "training_evidence",
+          "label": "templates.catalogue.training_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_access",
+          "label": "templates.catalogue.authorized_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_process_facility_permit_to_work_record",
+      "name": "templates.oil_process_facility_permit_to_work_record.name",
+      "title": "Process facility permit-to-work record",
+      "code": "OIL-021",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_work_scope",
+          "label": "templates.catalogue.authorized_work_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_controls",
+          "label": "templates.catalogue.approved_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "permit_issuer",
+          "label": "templates.catalogue.permit_issuer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_gas_detection_instrument_record",
+      "name": "templates.oil_gas_detection_instrument_record.name",
+      "title": "Gas detection instrument record",
+      "code": "OIL-022",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "instrument_model",
+          "label": "templates.catalogue.instrument_model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "calibration_status",
+          "label": "templates.catalogue.calibration_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_gas_detector_verification_log",
+      "name": "templates.oil_gas_detector_verification_log.name",
+      "title": "Gas detector verification log",
+      "code": "OIL-023",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_test_procedure",
+          "label": "templates.catalogue.approved_test_procedure",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_result",
+          "label": "templates.catalogue.observed_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_signoff",
+          "label": "templates.catalogue.qualified_signoff",
+          "type": "signature",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_oilfield_service_visit_report",
+      "name": "templates.oil_oilfield_service_visit_report.name",
+      "title": "Oilfield service visit report",
+      "code": "OIL-024",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_service_scope",
+          "label": "templates.catalogue.authorized_service_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_work",
+          "label": "templates.catalogue.completed_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "open_issues",
+          "label": "templates.catalogue.open_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_well_asset_document_register",
+      "name": "templates.oil_well_asset_document_register.name",
+      "title": "Well asset document register",
+      "code": "OIL-025",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "well_identifier",
+          "label": "templates.catalogue.well_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_documents",
+          "label": "templates.catalogue.authorized_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "revision_status",
+          "label": "templates.catalogue.revision_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_fuel_facility_emissions_evidence",
+      "name": "templates.oil_fuel_facility_emissions_evidence.name",
+      "title": "Fuel facility emissions evidence",
+      "code": "OIL-026",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "monitoring_point",
+          "label": "templates.catalogue.monitoring_point",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_method",
+          "label": "templates.catalogue.approved_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_results",
+          "label": "templates.catalogue.reported_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_fuel_transport_compliance_evidence",
+      "name": "templates.oil_fuel_transport_compliance_evidence.name",
+      "title": "Fuel transport compliance evidence",
+      "code": "OIL-027",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "jurisdiction",
+          "label": "templates.catalogue.jurisdiction",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorization_documents",
+          "label": "templates.catalogue.authorization_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_status",
+          "label": "templates.catalogue.verification_status",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "unverified",
+              "label": "templates.choices.verification_status.unverified"
+            },
+            {
+              "code": "verified",
+              "label": "templates.choices.verification_status.verified"
+            },
+            {
+              "code": "disputed",
+              "label": "templates.choices.verification_status.disputed"
+            },
+            {
+              "code": "not_applicable",
+              "label": "templates.choices.verification_status.not_applicable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_decommissioning_documentation_intake",
+      "name": "templates.oil_decommissioning_documentation_intake.name",
+      "title": "Decommissioning documentation intake",
+      "code": "OIL-028",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_plan",
+          "label": "templates.catalogue.approved_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_evidence",
+          "label": "templates.catalogue.completion_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "remaining_obligations",
+          "label": "templates.catalogue.remaining_obligations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_fuel_customer_account_reconciliation",
+      "name": "templates.oil_fuel_customer_account_reconciliation.name",
+      "title": "Fuel customer account reconciliation",
+      "code": "OIL-029",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "delivery_records",
+          "label": "templates.catalogue.delivery_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "invoices",
+          "label": "templates.catalogue.invoices",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "payment_balance",
+          "label": "templates.catalogue.payment_balance",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "payment_balance_currency",
+          "label": "templates.catalogue.payment_balance_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "oil_fuel_operations_shift_handover",
+      "name": "templates.oil_fuel_operations_shift_handover.name",
+      "title": "Fuel operations shift handover",
+      "code": "OIL-030",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_oil",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "stock_position",
+          "label": "templates.catalogue.stock_position",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "equipment_status",
+          "label": "templates.catalogue.equipment_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "open_safety_items",
+          "label": "templates.catalogue.open_safety_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

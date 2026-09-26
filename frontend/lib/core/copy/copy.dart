@@ -1860,7 +1860,89 @@ abstract final class Copy {
   static const String shippedAddedToProject = 'Added to this project';
 
   /// Search hint on the shipped template library.
-  static const String shippedLibrarySearchHint = 'Search templates';
+  static const String shippedLibrarySearchHint =
+      'Search by name, code, category or field';
+
+  /// Heading of a catalogue area. [code] and [title] are catalogue data.
+  static String shippedAreaTitle(String code, String title) => '$code · $title';
+
+  /// Heading of a catalogue category. [code] and [title] are catalogue data.
+  static String shippedCatalogueCategoryTitle(String code, String title) {
+    return '$code — $title';
+  }
+
+  /// Row subtitle of a catalogue template: its code, its record type and how
+  /// many fields it holds. [code] and [recordType] are catalogue data.
+  static String shippedCatalogueSubtitle(
+    String code,
+    String recordType,
+    int fields,
+  ) {
+    return '$code · $recordType · ${fieldsCount(fields)}';
+  }
+
+  /// Title of the shipped library's filter sheet.
+  static const String shippedFiltersTitle = 'Library filters';
+
+  /// The area facet of the shipped library's filters.
+  static const String shippedAreaFilter = 'Area';
+
+  /// The record-type facet of the shipped library's filters.
+  static const String shippedRecordTypeFilter = 'Record type';
+
+  /// The tier facet of the shipped library's filters.
+  static const String shippedTierFilter = 'Tier';
+
+  /// Operator-facing name of a catalogue rollout tier.
+  static String shippedTierLabel(String rollout) {
+    return switch (rollout) {
+      'p0' => 'Foundation',
+      'p1' => 'Expansion',
+      'p2' => 'Specialist',
+      _ => rollout,
+    };
+  }
+
+  /// Operator-facing name of a catalogue template's suggested privacy.
+  static String shippedPrivacyLabel(String privacy) {
+    return switch (privacy) {
+      'internal' => 'Internal',
+      'confidential' => 'Confidential',
+      'restricted' => 'Restricted',
+      _ => privacy,
+    };
+  }
+
+  /// Preview row naming the catalogue category a template sits in.
+  static const String shippedCategoryLabel = 'Category';
+
+  /// Preview row naming a catalogue template's record type.
+  static const String shippedRecordTypeLabel = 'Record type';
+
+  /// Preview row giving a catalogue template's privacy and tier.
+  static const String shippedPrivacyTierLabel = 'Suggested privacy and tier';
+
+  /// A catalogue template's suggested privacy beside its tier.
+  static String shippedPrivacyTier(String privacy, String rollout) {
+    return '${shippedPrivacyLabel(privacy)} · ${shippedTierLabel(rollout)}';
+  }
+
+  /// Preview row: how evidence for the record type is captured.
+  static const String shippedCaptureLabel = 'Capture';
+
+  /// Preview row: what AI may do for the record type.
+  static const String shippedAiAssistanceLabel = 'AI assistance';
+
+  /// Preview row: what the record type produces.
+  static const String shippedOutputsLabel = 'Outputs';
+
+  /// Preview row: what a reviewer checks before approval.
+  static const String shippedReviewLabel = 'Review';
+
+  /// Preview subtitle of one field: its type and suggested requiredness.
+  static String shippedFieldSubtitle(String type, String requiredness) {
+    return '${fieldTypeLabel(type)} · $requiredness';
+  }
 
   /// Empty result for the shipped library search.
   static String shippedLibraryNoMatch(String query) {
@@ -1873,49 +1955,6 @@ abstract final class Copy {
 
   /// What to change when the shipped library search matches nothing.
   static const String shippedLibraryNoMatchMessage = searchNoMatchMessage;
-
-  /// Heading of a shipped library group, keyed by the group's name.
-  static String shippedCategoryTitle(String category) {
-    return switch (category) {
-      'assets' => 'Assets and equipment',
-      'places' => 'Buildings and sites',
-      'operations' => 'Stock, inspection and maintenance',
-      'people' => 'People and households',
-      'nature' => 'Plants and animals',
-      'records' => 'Documents, meetings and events',
-      _ => 'General',
-    };
-  }
-
-  /// Operator-facing name of a packed template, keyed by [templateKey].
-  static String shippedTemplateName(String templateKey) {
-    return switch (templateKey) {
-      'equipment_asset' => 'Equipment / Asset',
-      'medical_equipment' => 'Medical equipment',
-      'ict_equipment' => 'ICT equipment',
-      'vehicle_plant' => 'Vehicle / Plant',
-      'furniture_fitting' => 'Furniture and fittings',
-      'building_facility' => 'Building / Facility',
-      'room_space' => 'Room / Space',
-      'utility_point' => 'Utility / Service point',
-      'stock_item' => 'Stock / Store',
-      'inspection_check' => 'Inspection / Compliance',
-      'work_order' => 'Maintenance / Work order',
-      'meter_reading' => 'Meter reading',
-      'person_beneficiary' => 'Person / Beneficiary',
-      'staff_member' => 'Staff / Workforce',
-      'household_survey' => 'Household / Dwelling',
-      'land_parcel' => 'Land / Plot / Parcel',
-      'plant_tree' => 'Plant / Tree survey',
-      'livestock_animal' => 'Livestock / Animal',
-      'document_record' => 'Document / Archive',
-      'meeting' => 'Meeting',
-      'event_activity' => 'Event / Activity',
-      'incident_report' => 'Incident / Issue',
-      'generic_item' => 'Generic',
-      _ => shippedLabel('templates.$templateKey.name'),
-    };
-  }
 
   /// Resolves a packed localisation key at render time (FE-L10N-07).
   static String shippedLabel(String key) {

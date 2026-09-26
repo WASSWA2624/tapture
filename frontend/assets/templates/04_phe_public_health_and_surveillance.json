@@ -1,0 +1,1438 @@
+{
+  "category": "PHE",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "phe_community_health_assessment",
+      "name": "templates.phe_community_health_assessment.name",
+      "title": "Community health assessment",
+      "code": "PHE-001",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "community_priorities",
+          "label": "templates.catalogue.community_priorities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_access",
+          "label": "templates.catalogue.service_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consented_responses",
+          "label": "templates.catalogue.consented_responses",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_health_facility_service_availability",
+      "name": "templates.phe_health_facility_service_availability.name",
+      "title": "Health facility service availability",
+      "code": "PHE-002",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "offered_services",
+          "label": "templates.catalogue.offered_services",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_hours",
+          "label": "templates.catalogue.service_hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "hours",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "resource_gaps",
+          "label": "templates.catalogue.resource_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_disease_surveillance_report_intake",
+      "name": "templates.phe_disease_surveillance_report_intake.name",
+      "title": "Disease surveillance report intake",
+      "code": "PHE-003",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_case_fields",
+          "label": "templates.catalogue.approved_case_fields",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reporting_source",
+          "label": "templates.catalogue.reporting_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_outbreak_field_investigation_log",
+      "name": "templates.phe_outbreak_field_investigation_log.name",
+      "title": "Outbreak field investigation log",
+      "code": "PHE-004",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_investigation_ref",
+          "label": "templates.catalogue.authorized_investigation_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_actions",
+          "label": "templates.catalogue.response_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_contact_follow_up_administration",
+      "name": "templates.phe_contact_follow_up_administration.name",
+      "title": "Contact follow-up administration",
+      "code": "PHE-005",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "pseudonymous_contact",
+          "label": "templates.catalogue.pseudonymous_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_followup_schedule",
+          "label": "templates.catalogue.approved_followup_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restricted_access",
+          "label": "templates.catalogue.restricted_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_vaccination_campaign_microplan",
+      "name": "templates.phe_vaccination_campaign_microplan.name",
+      "title": "Vaccination campaign microplan",
+      "code": "PHE-006",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "target_population_source",
+          "label": "templates.catalogue.target_population_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_sites",
+          "label": "templates.catalogue.delivery_sites",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "resource_requirements",
+          "label": "templates.catalogue.resource_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_vaccination_campaign_tally",
+      "name": "templates.phe_vaccination_campaign_tally.name",
+      "title": "Vaccination campaign tally",
+      "code": "PHE-007",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "session_reference",
+          "label": "templates.catalogue.session_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_counts",
+          "label": "templates.catalogue.authorized_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stock_reconciliation",
+          "label": "templates.catalogue.stock_reconciliation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_health_promotion_session_record",
+      "name": "templates.phe_health_promotion_session_record.name",
+      "title": "Health promotion session record",
+      "code": "PHE-008",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "session_topic",
+          "label": "templates.catalogue.session_topic",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "aggregate_attendance",
+          "label": "templates.catalogue.aggregate_attendance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "materials_used",
+          "label": "templates.catalogue.materials_used",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_community_health_volunteer_register",
+      "name": "templates.phe_community_health_volunteer_register.name",
+      "title": "Community health volunteer register",
+      "code": "PHE-009",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "volunteer_role",
+          "label": "templates.catalogue.volunteer_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_area",
+          "label": "templates.catalogue.assigned_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "training_status",
+          "label": "templates.catalogue.training_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_household_health_survey",
+      "name": "templates.phe_household_health_survey.name",
+      "title": "Household health survey",
+      "code": "PHE-010",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "consent_record",
+          "label": "templates.catalogue.consent_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_questions",
+          "label": "templates.catalogue.approved_questions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "household_reference",
+          "label": "templates.catalogue.household_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_nutrition_screening_campaign",
+      "name": "templates.phe_nutrition_screening_campaign.name",
+      "title": "Nutrition screening campaign",
+      "code": "PHE-011",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_protocol_ref",
+          "label": "templates.catalogue.approved_protocol_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_measurements",
+          "label": "templates.catalogue.observed_measurements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_referral",
+          "label": "templates.catalogue.qualified_referral",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_water_sanitation_health_survey",
+      "name": "templates.phe_water_sanitation_health_survey.name",
+      "title": "Water sanitation health survey",
+      "code": "PHE-012",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "water_access",
+          "label": "templates.catalogue.water_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sanitation_access",
+          "label": "templates.catalogue.sanitation_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_constraints",
+          "label": "templates.catalogue.reported_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_public_health_laboratory_referral",
+      "name": "templates.phe_public_health_laboratory_referral.name",
+      "title": "Public health laboratory referral",
+      "code": "PHE-013",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_sample_ref",
+          "label": "templates.catalogue.authorized_sample_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_service",
+          "label": "templates.catalogue.requested_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transport_conditions",
+          "label": "templates.catalogue.transport_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_disease_prevention_supplies_distribution",
+      "name": "templates.phe_disease_prevention_supplies_distribution.name",
+      "title": "Disease prevention supplies distribution",
+      "code": "PHE-014",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "distribution_site",
+          "label": "templates.catalogue.distribution_site",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "item_quantities",
+          "label": "templates.catalogue.item_quantities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "aggregate_recipients",
+          "label": "templates.catalogue.aggregate_recipients",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_maternal_health_program_monitoring",
+      "name": "templates.phe_maternal_health_program_monitoring.name",
+      "title": "Maternal health program monitoring",
+      "code": "PHE-015",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "aggregate_indicators",
+          "label": "templates.catalogue.aggregate_indicators",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_quality_notes",
+          "label": "templates.catalogue.data_quality_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "service_gaps",
+          "label": "templates.catalogue.service_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_child_health_program_monitoring",
+      "name": "templates.phe_child_health_program_monitoring.name",
+      "title": "Child health program monitoring",
+      "code": "PHE-016",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "aggregate_service_counts",
+          "label": "templates.catalogue.aggregate_service_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "coverage_denominator_source",
+          "label": "templates.catalogue.coverage_denominator_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "followup_actions",
+          "label": "templates.catalogue.followup_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_school_health_visit",
+      "name": "templates.phe_school_health_visit.name",
+      "title": "School health visit",
+      "code": "PHE-017",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "school_consent",
+          "label": "templates.catalogue.school_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "approved_activities",
+          "label": "templates.catalogue.approved_activities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "referrals_aggregated",
+          "label": "templates.catalogue.referrals_aggregated",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_occupational_health_outreach_record",
+      "name": "templates.phe_occupational_health_outreach_record.name",
+      "title": "Occupational health outreach record",
+      "code": "PHE-018",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "workplace_scope",
+          "label": "templates.catalogue.workplace_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_screening",
+          "label": "templates.catalogue.approved_screening",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "aggregate_findings",
+          "label": "templates.catalogue.aggregate_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_health_emergency_resource_mapping",
+      "name": "templates.phe_health_emergency_resource_mapping.name",
+      "title": "Health emergency resource mapping",
+      "code": "PHE-019",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "available_resources",
+          "label": "templates.catalogue.available_resources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "deployment_constraints",
+          "label": "templates.catalogue.deployment_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_date",
+          "label": "templates.catalogue.verification_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_public_health_rumor_verification",
+      "name": "templates.phe_public_health_rumor_verification.name",
+      "title": "Public health rumor verification",
+      "code": "PHE-020",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_claim",
+          "label": "templates.catalogue.reported_claim",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_sources",
+          "label": "templates.catalogue.verification_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_response",
+          "label": "templates.catalogue.approved_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_health_communication_message_approval",
+      "name": "templates.phe_health_communication_message_approval.name",
+      "title": "Health communication message approval",
+      "code": "PHE-021",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "proposed_message",
+          "label": "templates.catalogue.proposed_message",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_sources",
+          "label": "templates.catalogue.verified_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "clinical_approval",
+          "label": "templates.catalogue.clinical_approval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_community_feedback_on_health_services",
+      "name": "templates.phe_community_feedback_on_health_services.name",
+      "title": "Community feedback on health services",
+      "code": "PHE-022",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "service_experience",
+          "label": "templates.catalogue.service_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_barriers",
+          "label": "templates.catalogue.reported_barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "suggestions",
+          "label": "templates.catalogue.suggestions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_health_program_baseline_survey",
+      "name": "templates.phe_health_program_baseline_survey.name",
+      "title": "Health program baseline survey",
+      "code": "PHE-023",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "baseline_indicators",
+          "label": "templates.catalogue.baseline_indicators",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_method",
+          "label": "templates.catalogue.sampling_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_health_program_endline_survey",
+      "name": "templates.phe_health_program_endline_survey.name",
+      "title": "Health program endline survey",
+      "code": "PHE-024",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "outcome_indicators",
+          "label": "templates.catalogue.outcome_indicators",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "comparison_basis",
+          "label": "templates.catalogue.comparison_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_limitations",
+          "label": "templates.catalogue.data_limitations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_health_data_completeness_review",
+      "name": "templates.phe_health_data_completeness_review.name",
+      "title": "Health data completeness review",
+      "code": "PHE-025",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "expected_reports",
+          "label": "templates.catalogue.expected_reports",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "received_reports",
+          "label": "templates.catalogue.received_reports",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "missing_values",
+          "label": "templates.catalogue.missing_values",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_epidemiological_line_list_import_review",
+      "name": "templates.phe_epidemiological_line_list_import_review.name",
+      "title": "Epidemiological line-list import review",
+      "code": "PHE-026",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_variable_map",
+          "label": "templates.catalogue.approved_variable_map",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "deidentification",
+          "label": "templates.catalogue.deidentification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_quality_flags",
+          "label": "templates.catalogue.data_quality_flags",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_public_health_situation_report",
+      "name": "templates.phe_public_health_situation_report.name",
+      "title": "Public health situation report",
+      "code": "PHE-027",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_observations",
+          "label": "templates.catalogue.verified_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "response_capacity",
+          "label": "templates.catalogue.response_capacity",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "uncertainties",
+          "label": "templates.catalogue.uncertainties",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_health_supply_outreach_checklist",
+      "name": "templates.phe_health_supply_outreach_checklist.name",
+      "title": "Health supply outreach checklist",
+      "code": "PHE-028",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "session_supplies",
+          "label": "templates.catalogue.session_supplies",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cold_chain_evidence",
+          "label": "templates.catalogue.cold_chain_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_reconciliation",
+          "label": "templates.catalogue.return_reconciliation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_community_referral_directory",
+      "name": "templates.phe_community_referral_directory.name",
+      "title": "Community referral directory",
+      "code": "PHE-029",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "service_provider",
+          "label": "templates.catalogue.service_provider",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "available_support",
+          "label": "templates.catalogue.available_support",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_contact",
+          "label": "templates.catalogue.verified_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phe_health_program_supervision_checklist",
+      "name": "templates.phe_health_program_supervision_checklist.name",
+      "title": "Health program supervision checklist",
+      "code": "PHE-030",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phe",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "supervision_criteria",
+          "label": "templates.catalogue.supervision_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_practice",
+          "label": "templates.catalogue.observed_practice",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_improvements",
+          "label": "templates.catalogue.agreed_improvements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

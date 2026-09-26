@@ -1,0 +1,1531 @@
+{
+  "category": "ART",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "art_museum_object_accession",
+      "name": "templates.art_museum_object_accession.name",
+      "title": "Museum object accession",
+      "code": "ART-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "object_name",
+          "label": "templates.catalogue.object_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accession_number",
+          "label": "templates.catalogue.accession_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "provenance_evidence",
+          "label": "templates.catalogue.provenance_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_museum_object_condition_report",
+      "name": "templates.art_museum_object_condition_report.name",
+      "title": "Museum object condition report",
+      "code": "ART-002",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "object_reference",
+          "label": "templates.catalogue.object_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "conservator_notes",
+          "label": "templates.catalogue.conservator_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_artwork_photographic_record",
+      "name": "templates.art_artwork_photographic_record.name",
+      "title": "Artwork photographic record",
+      "code": "ART-003",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "artwork_reference",
+          "label": "templates.catalogue.artwork_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "view_description",
+          "label": "templates.catalogue.view_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "image_rights",
+          "label": "templates.catalogue.image_rights",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_artwork_provenance_research",
+      "name": "templates.art_artwork_provenance_research.name",
+      "title": "Artwork provenance research",
+      "code": "ART-004",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "ownership_history",
+          "label": "templates.catalogue.ownership_history",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sources",
+          "label": "templates.catalogue.sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "unresolved_gaps",
+          "label": "templates.catalogue.unresolved_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_collection_loan_request",
+      "name": "templates.art_collection_loan_request.name",
+      "title": "Collection loan request",
+      "code": "ART-005",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_objects",
+          "label": "templates.catalogue.requested_objects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "loan_purpose",
+          "label": "templates.catalogue.loan_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "care_requirements",
+          "label": "templates.catalogue.care_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_collection_loan_agreement_brief",
+      "name": "templates.art_collection_loan_agreement_brief.name",
+      "title": "Collection loan agreement brief",
+      "code": "ART-006",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "object_list",
+          "label": "templates.catalogue.object_list",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "loan_period",
+          "label": "templates.catalogue.loan_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "handling_conditions",
+          "label": "templates.catalogue.handling_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_museum_object_movement",
+      "name": "templates.art_museum_object_movement.name",
+      "title": "Museum object movement",
+      "code": "ART-007",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "object_reference",
+          "label": "templates.catalogue.object_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "origin",
+          "label": "templates.catalogue.origin",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "destination",
+          "label": "templates.catalogue.destination",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custodian",
+          "label": "templates.catalogue.custodian",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_artwork_conservation_treatment_record",
+      "name": "templates.art_artwork_conservation_treatment_record.name",
+      "title": "Artwork conservation treatment record",
+      "code": "ART-008",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_treatment",
+          "label": "templates.catalogue.approved_treatment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "materials_used",
+          "label": "templates.catalogue.materials_used",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "conservator_review",
+          "label": "templates.catalogue.conservator_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_conservation_environmental_monitoring",
+      "name": "templates.art_conservation_environmental_monitoring.name",
+      "title": "Conservation environmental monitoring",
+      "code": "ART-009",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "gallery_or_storage",
+          "label": "templates.catalogue.gallery_or_storage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "temperature",
+          "label": "templates.catalogue.temperature",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "degC",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "humidity_percent",
+          "label": "templates.catalogue.humidity_percent",
+          "type": "percentage",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_exhibition_planning",
+      "name": "templates.art_exhibition_planning.name",
+      "title": "Exhibition planning",
+      "code": "ART-010",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "theme",
+          "label": "templates.catalogue.theme",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "object_selection",
+          "label": "templates.catalogue.object_selection",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visitor_experience",
+          "label": "templates.catalogue.visitor_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_exhibition_installation_checklist",
+      "name": "templates.art_exhibition_installation_checklist.name",
+      "title": "Exhibition installation checklist",
+      "code": "ART-011",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "display_layout",
+          "label": "templates.catalogue.display_layout",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "object_security",
+          "label": "templates.catalogue.object_security",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "environmental_controls",
+          "label": "templates.catalogue.environmental_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_gallery_artwork_consignment",
+      "name": "templates.art_gallery_artwork_consignment.name",
+      "title": "Gallery artwork consignment",
+      "code": "ART-012",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "artwork_reference",
+          "label": "templates.catalogue.artwork_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "commercial_terms",
+          "label": "templates.catalogue.commercial_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_conditions",
+          "label": "templates.catalogue.return_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_artwork_sale_documentation",
+      "name": "templates.art_artwork_sale_documentation.name",
+      "title": "Artwork sale documentation",
+      "code": "ART-013",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "artwork_reference",
+          "label": "templates.catalogue.artwork_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_buyer",
+          "label": "templates.catalogue.verified_buyer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_terms",
+          "label": "templates.catalogue.agreed_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_artist_profile",
+      "name": "templates.art_artist_profile.name",
+      "title": "Artist profile",
+      "code": "ART-014",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "artist_biography",
+          "label": "templates.catalogue.artist_biography",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_portfolio",
+          "label": "templates.catalogue.verified_portfolio",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "publication_permission",
+          "label": "templates.catalogue.publication_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_artist_residency_application",
+      "name": "templates.art_artist_residency_application.name",
+      "title": "Artist residency application",
+      "code": "ART-015",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "practice_statement",
+          "label": "templates.catalogue.practice_statement",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "project_proposal",
+          "label": "templates.catalogue.project_proposal",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "support_requirements",
+          "label": "templates.catalogue.support_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_cultural_grant_proposal",
+      "name": "templates.art_cultural_grant_proposal.name",
+      "title": "Cultural grant proposal",
+      "code": "ART-016",
+      "kind": "proposal",
+      "pack": "PROPOSAL",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "proposal_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_proposal"
+      ],
+      "fields": [
+        {
+          "field_key": "artistic_objective",
+          "label": "templates.catalogue.artistic_objective",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "community_relevance",
+          "label": "templates.catalogue.community_relevance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "budget",
+          "label": "templates.catalogue.budget",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_heritage_site_documentation",
+      "name": "templates.art_heritage_site_documentation.name",
+      "title": "Heritage site documentation",
+      "code": "ART-017",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "site_reference",
+          "label": "templates.catalogue.site_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "historical_sources",
+          "label": "templates.catalogue.historical_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_restrictions",
+          "label": "templates.catalogue.access_restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_heritage_building_condition_survey",
+      "name": "templates.art_heritage_building_condition_survey.name",
+      "title": "Heritage building condition survey",
+      "code": "ART-018",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "heritage_elements",
+          "label": "templates.catalogue.heritage_elements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_damage",
+          "label": "templates.catalogue.observed_damage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_archaeological_field_context_record",
+      "name": "templates.art_archaeological_field_context_record.name",
+      "title": "Archaeological field context record",
+      "code": "ART-019",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_excavation_ref",
+          "label": "templates.catalogue.authorized_excavation_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "context_description",
+          "label": "templates.catalogue.context_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "location",
+          "label": "templates.catalogue.location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_archaeological_find_register",
+      "name": "templates.art_archaeological_find_register.name",
+      "title": "Archaeological find register",
+      "code": "ART-020",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "find_identifier",
+          "label": "templates.catalogue.find_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "context_reference",
+          "label": "templates.catalogue.context_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custody",
+          "label": "templates.catalogue.custody",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_oral_history_consent",
+      "name": "templates.art_oral_history_consent.name",
+      "title": "Oral history consent",
+      "code": "ART-021",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "recording_purpose",
+          "label": "templates.catalogue.recording_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attribution_choices",
+          "label": "templates.catalogue.attribution_choices",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_restrictions",
+          "label": "templates.catalogue.access_restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_oral_history_interview",
+      "name": "templates.art_oral_history_interview.name",
+      "title": "Oral history interview",
+      "code": "ART-022",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "consented_narrative",
+          "label": "templates.catalogue.consented_narrative",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "verified_metadata",
+          "label": "templates.catalogue.verified_metadata",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transcript_review",
+          "label": "templates.catalogue.transcript_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_intangible_heritage_documentation",
+      "name": "templates.art_intangible_heritage_documentation.name",
+      "title": "Intangible heritage documentation",
+      "code": "ART-023",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "community_authorization",
+          "label": "templates.catalogue.community_authorization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "practice_description",
+          "label": "templates.catalogue.practice_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "usage_restrictions",
+          "label": "templates.catalogue.usage_restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_cultural_event_production_plan",
+      "name": "templates.art_cultural_event_production_plan.name",
+      "title": "Cultural event production plan",
+      "code": "ART-024",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "program",
+          "label": "templates.catalogue.program",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "performer_agreements",
+          "label": "templates.catalogue.performer_agreements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "logistics",
+          "label": "templates.catalogue.logistics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_performing_arts_rehearsal_log",
+      "name": "templates.art_performing_arts_rehearsal_log.name",
+      "title": "Performing arts rehearsal log",
+      "code": "ART-025",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "production_reference",
+          "label": "templates.catalogue.production_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "rehearsal_goals",
+          "label": "templates.catalogue.rehearsal_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "director_notes",
+          "label": "templates.catalogue.director_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_theatre_costume_inventory",
+      "name": "templates.art_theatre_costume_inventory.name",
+      "title": "Theatre costume inventory",
+      "code": "ART-026",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "costume_identifier",
+          "label": "templates.catalogue.costume_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "production_reference",
+          "label": "templates.catalogue.production_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition",
+          "label": "templates.catalogue.condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_library_accession_record",
+      "name": "templates.art_library_accession_record.name",
+      "title": "Library accession record",
+      "code": "ART-027",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "title",
+          "label": "templates.catalogue.title",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "creator",
+          "label": "templates.catalogue.creator",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "catalogue_identifier",
+          "label": "templates.catalogue.catalogue_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_library_lending_transaction",
+      "name": "templates.art_library_lending_transaction.name",
+      "title": "Library lending transaction",
+      "code": "ART-028",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "item_reference",
+          "label": "templates.catalogue.item_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "borrower_alias",
+          "label": "templates.catalogue.borrower_alias",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_date",
+          "label": "templates.catalogue.return_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_archive_collection_finding_aid",
+      "name": "templates.art_archive_collection_finding_aid.name",
+      "title": "Archive collection finding aid",
+      "code": "ART-029",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "collection_scope",
+          "label": "templates.catalogue.collection_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "range_start_date",
+          "label": "templates.catalogue.range_start_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "range_end_date",
+          "label": "templates.catalogue.range_end_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_conditions",
+          "label": "templates.catalogue.access_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_archive_digitization_quality_check",
+      "name": "templates.art_archive_digitization_quality_check.name",
+      "title": "Archive digitization quality check",
+      "code": "ART-030",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "source_item",
+          "label": "templates.catalogue.source_item",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "image_completeness",
+          "label": "templates.catalogue.image_completeness",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "metadata_accuracy",
+          "label": "templates.catalogue.metadata_accuracy",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_cultural_tourism_visitor_feedback",
+      "name": "templates.art_cultural_tourism_visitor_feedback.name",
+      "title": "Cultural tourism visitor feedback",
+      "code": "ART-031",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "visitor_experience",
+          "label": "templates.catalogue.visitor_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "interpretation_feedback",
+          "label": "templates.catalogue.interpretation_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "accessibility",
+          "label": "templates.catalogue.accessibility",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "art_collection_inventory_reconciliation",
+      "name": "templates.art_collection_inventory_reconciliation.name",
+      "title": "Collection inventory reconciliation",
+      "code": "ART-032",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_art",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "expected_objects",
+          "label": "templates.catalogue.expected_objects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_objects",
+          "label": "templates.catalogue.verified_objects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "discrepancies",
+          "label": "templates.catalogue.discrepancies",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

@@ -1,0 +1,1512 @@
+{
+  "category": "FAC",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "fac_cleaning_service_booking",
+      "name": "templates.fac_cleaning_service_booking.name",
+      "title": "Cleaning service booking",
+      "code": "FAC-001",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "site_type",
+          "label": "templates.catalogue.site_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cleaning_scope",
+          "label": "templates.catalogue.cleaning_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "preferred_schedule",
+          "label": "templates.catalogue.preferred_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_cleaning_site_survey",
+      "name": "templates.fac_cleaning_site_survey.name",
+      "title": "Cleaning site survey",
+      "code": "FAC-002",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "area_length_mm",
+          "label": "templates.catalogue.area_length_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "area_width_mm",
+          "label": "templates.catalogue.area_width_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "area_height_mm",
+          "label": "templates.catalogue.area_height_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "surface_types",
+          "label": "templates.catalogue.surface_types",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_constraints",
+          "label": "templates.catalogue.access_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_cleaning_quotation",
+      "name": "templates.fac_cleaning_quotation.name",
+      "title": "Cleaning quotation",
+      "code": "FAC-003",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_scope",
+          "label": "templates.catalogue.agreed_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_frequency",
+          "label": "templates.catalogue.service_frequency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pricing_basis",
+          "label": "templates.catalogue.pricing_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_cleaning_task_checklist",
+      "name": "templates.fac_cleaning_task_checklist.name",
+      "title": "Cleaning task checklist",
+      "code": "FAC-004",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "assigned_zones",
+          "label": "templates.catalogue.assigned_zones",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_tasks",
+          "label": "templates.catalogue.required_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification",
+          "label": "templates.catalogue.verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_deep_cleaning_completion_report",
+      "name": "templates.fac_deep_cleaning_completion_report.name",
+      "title": "Deep cleaning completion report",
+      "code": "FAC-005",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "completed_work",
+          "label": "templates.catalogue.completed_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "before_after_photos",
+          "label": "templates.catalogue.before_after_photos",
+          "type": "photo_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "remaining_issues",
+          "label": "templates.catalogue.remaining_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_cleaning_materials_issue",
+      "name": "templates.fac_cleaning_materials_issue.name",
+      "title": "Cleaning materials issue",
+      "code": "FAC-006",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "material_item",
+          "label": "templates.catalogue.material_item",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issued_quantity",
+          "label": "templates.catalogue.issued_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issued_quantity_unit",
+          "label": "templates.catalogue.issued_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_job",
+          "label": "templates.catalogue.assigned_job",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_pest_management_service_intake",
+      "name": "templates.fac_pest_management_service_intake.name",
+      "title": "Pest management service intake",
+      "code": "FAC-007",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_signs",
+          "label": "templates.catalogue.reported_signs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_conditions",
+          "label": "templates.catalogue.site_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_provider",
+          "label": "templates.catalogue.qualified_provider",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_pest_management_inspection",
+      "name": "templates.fac_pest_management_inspection.name",
+      "title": "Pest management inspection",
+      "code": "FAC-008",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_evidence",
+          "label": "templates.catalogue.observed_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_areas",
+          "label": "templates.catalogue.affected_areas",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_plan",
+          "label": "templates.catalogue.authorized_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_pest_management_service_record",
+      "name": "templates.fac_pest_management_service_record.name",
+      "title": "Pest management service record",
+      "code": "FAC-009",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_treatment_ref",
+          "label": "templates.catalogue.approved_treatment_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_products",
+          "label": "templates.catalogue.authorized_products",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_evidence",
+          "label": "templates.catalogue.completion_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_grounds_maintenance_plan",
+      "name": "templates.fac_grounds_maintenance_plan.name",
+      "title": "Grounds maintenance plan",
+      "code": "FAC-010",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "landscape_zones",
+          "label": "templates.catalogue.landscape_zones",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_tasks",
+          "label": "templates.catalogue.required_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_schedule",
+          "label": "templates.catalogue.service_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_gardening_service_visit",
+      "name": "templates.fac_gardening_service_visit.name",
+      "title": "Gardening service visit",
+      "code": "FAC-011",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "completed_tasks",
+          "label": "templates.catalogue.completed_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "plant_condition",
+          "label": "templates.catalogue.plant_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "followup_needs",
+          "label": "templates.catalogue.followup_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_landscape_design_brief",
+      "name": "templates.fac_landscape_design_brief.name",
+      "title": "Landscape design brief",
+      "code": "FAC-012",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "site_constraints",
+          "label": "templates.catalogue.site_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "client_preferences",
+          "label": "templates.catalogue.client_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_budget",
+          "label": "templates.catalogue.approved_budget",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "approved_budget_currency",
+          "label": "templates.catalogue.approved_budget_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_appliance_repair_intake",
+      "name": "templates.fac_appliance_repair_intake.name",
+      "title": "Appliance repair intake",
+      "code": "FAC-013",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "appliance_model",
+          "label": "templates.catalogue.appliance_model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "serial_number",
+          "label": "templates.catalogue.serial_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_fault",
+          "label": "templates.catalogue.reported_fault",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_appliance_diagnostic_record",
+      "name": "templates.fac_appliance_diagnostic_record.name",
+      "title": "Appliance diagnostic record",
+      "code": "FAC-014",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_tests",
+          "label": "templates.catalogue.authorized_tests",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "technician_findings",
+          "label": "templates.catalogue.technician_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_appliance_repair_work_order",
+      "name": "templates.fac_appliance_repair_work_order.name",
+      "title": "Appliance repair work order",
+      "code": "FAC-015",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_repair",
+          "label": "templates.catalogue.approved_repair",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_result",
+          "label": "templates.catalogue.verification_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_repair_customer_approval",
+      "name": "templates.fac_repair_customer_approval.name",
+      "title": "Repair customer approval",
+      "code": "FAC-016",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "proposed_work",
+          "label": "templates.catalogue.proposed_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_price",
+          "label": "templates.catalogue.agreed_price",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "agreed_price_currency",
+          "label": "templates.catalogue.agreed_price_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approval_at",
+          "label": "templates.catalogue.approval_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_plumbing_service_request",
+      "name": "templates.fac_plumbing_service_request.name",
+      "title": "Plumbing service request",
+      "code": "FAC-017",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_issue",
+          "label": "templates.catalogue.reported_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_fixture",
+          "label": "templates.catalogue.affected_fixture",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_arrangements",
+          "label": "templates.catalogue.access_arrangements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_electrical_repair_request",
+      "name": "templates.fac_electrical_repair_request.name",
+      "title": "Electrical repair request",
+      "code": "FAC-018",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_symptoms",
+          "label": "templates.catalogue.reported_symptoms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_details",
+          "label": "templates.catalogue.site_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "qualified_technician",
+          "label": "templates.catalogue.qualified_technician",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_locksmith_service_authorization",
+      "name": "templates.fac_locksmith_service_authorization.name",
+      "title": "Locksmith service authorization",
+      "code": "FAC-019",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "requester_authority",
+          "label": "templates.catalogue.requester_authority",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_scope",
+          "label": "templates.catalogue.authorized_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_evidence",
+          "label": "templates.catalogue.verification_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_home_improvement_job_survey",
+      "name": "templates.fac_home_improvement_job_survey.name",
+      "title": "Home improvement job survey",
+      "code": "FAC-020",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_work",
+          "label": "templates.catalogue.requested_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_length_mm",
+          "label": "templates.catalogue.measured_length_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_width_mm",
+          "label": "templates.catalogue.measured_width_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_height_mm",
+          "label": "templates.catalogue.measured_height_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_constraints",
+          "label": "templates.catalogue.site_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_painting_job_measurement",
+      "name": "templates.fac_painting_job_measurement.name",
+      "title": "Painting job measurement",
+      "code": "FAC-021",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "surface_areas",
+          "label": "templates.catalogue.surface_areas",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "surface_condition",
+          "label": "templates.catalogue.surface_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_basis",
+          "label": "templates.catalogue.measurement_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_moving_service_inventory",
+      "name": "templates.fac_moving_service_inventory.name",
+      "title": "Moving service inventory",
+      "code": "FAC-022",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "item_description",
+          "label": "templates.catalogue.item_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "condition",
+          "label": "templates.catalogue.condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "handling_requirements",
+          "label": "templates.catalogue.handling_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_moving_service_quotation",
+      "name": "templates.fac_moving_service_quotation.name",
+      "title": "Moving service quotation",
+      "code": "FAC-023",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "move_locations",
+          "label": "templates.catalogue.move_locations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "item_inventory",
+          "label": "templates.catalogue.item_inventory",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pricing_assumptions",
+          "label": "templates.catalogue.pricing_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_moving_day_handover",
+      "name": "templates.fac_moving_day_handover.name",
+      "title": "Moving day handover",
+      "code": "FAC-024",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "loaded_items",
+          "label": "templates.catalogue.loaded_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition_evidence",
+          "label": "templates.catalogue.condition_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient_confirmation",
+          "label": "templates.catalogue.recipient_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_storage_service_intake",
+      "name": "templates.fac_storage_service_intake.name",
+      "title": "Storage service intake",
+      "code": "FAC-025",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "stored_items",
+          "label": "templates.catalogue.stored_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_period",
+          "label": "templates.catalogue.storage_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_terms",
+          "label": "templates.catalogue.access_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_laundry_service_intake",
+      "name": "templates.fac_laundry_service_intake.name",
+      "title": "Laundry service intake",
+      "code": "FAC-026",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "item_counts",
+          "label": "templates.catalogue.item_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "special_instructions",
+          "label": "templates.catalogue.special_instructions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "collection_due_date",
+          "label": "templates.catalogue.collection_due_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_dry_cleaning_condition_record",
+      "name": "templates.fac_dry_cleaning_condition_record.name",
+      "title": "Dry cleaning condition record",
+      "code": "FAC-027",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "garment_reference",
+          "label": "templates.catalogue.garment_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "existing_marks",
+          "label": "templates.catalogue.existing_marks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "customer_acknowledgement",
+          "label": "templates.catalogue.customer_acknowledgement",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_waste_pickup_service_booking",
+      "name": "templates.fac_waste_pickup_service_booking.name",
+      "title": "Waste pickup service booking",
+      "code": "FAC-028",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "waste_type",
+          "label": "templates.catalogue.waste_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "estimated_quantity",
+          "label": "templates.catalogue.estimated_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "estimated_quantity_unit",
+          "label": "templates.catalogue.estimated_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pickup_location",
+          "label": "templates.catalogue.pickup_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_home_services_quality_feedback",
+      "name": "templates.fac_home_services_quality_feedback.name",
+      "title": "Home services quality feedback",
+      "code": "FAC-029",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "service_reference",
+          "label": "templates.catalogue.service_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "customer_feedback",
+          "label": "templates.catalogue.customer_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "requested_followup",
+          "label": "templates.catalogue.requested_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fac_facilities_service_contract_review",
+      "name": "templates.fac_facilities_service_contract_review.name",
+      "title": "Facilities service contract review",
+      "code": "FAC-030",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fac",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_scope",
+          "label": "templates.catalogue.agreed_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_delivery",
+          "label": "templates.catalogue.verified_delivery",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "performance_gaps",
+          "label": "templates.catalogue.performance_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

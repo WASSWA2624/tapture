@@ -1,0 +1,1782 @@
+{
+  "category": "LOG",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "log_shipment_booking",
+      "name": "templates.log_shipment_booking.name",
+      "title": "Shipment booking",
+      "code": "LOG-001",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "origin",
+          "label": "templates.catalogue.origin",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "destination",
+          "label": "templates.catalogue.destination",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cargo_description",
+          "label": "templates.catalogue.cargo_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_shipping_instruction_intake",
+      "name": "templates.log_shipping_instruction_intake.name",
+      "title": "Shipping instruction intake",
+      "code": "LOG-002",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "shipper_details",
+          "label": "templates.catalogue.shipper_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "consignee_details",
+          "label": "templates.catalogue.consignee_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "handling_requirements",
+          "label": "templates.catalogue.handling_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_cargo_packing_list",
+      "name": "templates.log_cargo_packing_list.name",
+      "title": "Cargo packing list",
+      "code": "LOG-003",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "package_identifiers",
+          "label": "templates.catalogue.package_identifiers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contents",
+          "label": "templates.catalogue.contents",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "gross_weight_kg",
+          "label": "templates.catalogue.gross_weight_kg",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "length_mm",
+          "label": "templates.catalogue.length_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "width_mm",
+          "label": "templates.catalogue.width_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "height_mm",
+          "label": "templates.catalogue.height_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_freight_quotation",
+      "name": "templates.log_freight_quotation.name",
+      "title": "Freight quotation",
+      "code": "LOG-004",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "route",
+          "label": "templates.catalogue.route",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "charge_components",
+          "label": "templates.catalogue.charge_components",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quotation_assumptions",
+          "label": "templates.catalogue.quotation_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_freight_rate_comparison",
+      "name": "templates.log_freight_rate_comparison.name",
+      "title": "Freight rate comparison",
+      "code": "LOG-005",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "carrier_offers",
+          "label": "templates.catalogue.carrier_offers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_conditions",
+          "label": "templates.catalogue.service_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "normalized_cost",
+          "label": "templates.catalogue.normalized_cost",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "normalized_cost_currency",
+          "label": "templates.catalogue.normalized_cost_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_dispatch_planning",
+      "name": "templates.log_dispatch_planning.name",
+      "title": "Dispatch planning",
+      "code": "LOG-006",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "shipments",
+          "label": "templates.catalogue.shipments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "loading_sequence",
+          "label": "templates.catalogue.loading_sequence",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "vehicle_capacity",
+          "label": "templates.catalogue.vehicle_capacity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "vehicle_capacity_unit",
+          "label": "templates.catalogue.vehicle_capacity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_loading_supervision_record",
+      "name": "templates.log_loading_supervision_record.name",
+      "title": "Loading supervision record",
+      "code": "LOG-007",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "cargo_condition",
+          "label": "templates.catalogue.cargo_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "loading_checks",
+          "label": "templates.catalogue.loading_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "seal_number",
+          "label": "templates.catalogue.seal_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_shipment_condition_photography",
+      "name": "templates.log_shipment_condition_photography.name",
+      "title": "Shipment condition photography",
+      "code": "LOG-008",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "package_reference",
+          "label": "templates.catalogue.package_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visible_condition",
+          "label": "templates.catalogue.visible_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "image_viewpoint",
+          "label": "templates.catalogue.image_viewpoint",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_shipment_tracking_event",
+      "name": "templates.log_shipment_tracking_event.name",
+      "title": "Shipment tracking event",
+      "code": "LOG-009",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "event_type",
+          "label": "templates.catalogue.event_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "event_location",
+          "label": "templates.catalogue.event_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "event_at",
+          "label": "templates.catalogue.event_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_shipment_exception_report",
+      "name": "templates.log_shipment_exception_report.name",
+      "title": "Shipment exception report",
+      "code": "LOG-010",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "exception_type",
+          "label": "templates.catalogue.exception_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_cargo",
+          "label": "templates.catalogue.affected_cargo",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_actions",
+          "label": "templates.catalogue.response_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_delivery_appointment_coordination",
+      "name": "templates.log_delivery_appointment_coordination.name",
+      "title": "Delivery appointment coordination",
+      "code": "LOG-011",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "delivery_site",
+          "label": "templates.catalogue.delivery_site",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "available_window",
+          "label": "templates.catalogue.available_window",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_constraints",
+          "label": "templates.catalogue.site_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_delivery_route_execution",
+      "name": "templates.log_delivery_route_execution.name",
+      "title": "Delivery route execution",
+      "code": "LOG-012",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "planned_stops",
+          "label": "templates.catalogue.planned_stops",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "actual_visits",
+          "label": "templates.catalogue.actual_visits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_outcomes",
+          "label": "templates.catalogue.delivery_outcomes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_last_mile_delivery_proof",
+      "name": "templates.log_last_mile_delivery_proof.name",
+      "title": "Last-mile delivery proof",
+      "code": "LOG-013",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "order_reference",
+          "label": "templates.catalogue.order_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient_confirmation",
+          "label": "templates.catalogue.recipient_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_at",
+          "label": "templates.catalogue.delivery_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_failed_delivery_record",
+      "name": "templates.log_failed_delivery_record.name",
+      "title": "Failed delivery record",
+      "code": "LOG-014",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "failure_reason",
+          "label": "templates.catalogue.failure_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_attempts",
+          "label": "templates.catalogue.contact_attempts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "redelivery_plan",
+          "label": "templates.catalogue.redelivery_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_cargo_damage_survey",
+      "name": "templates.log_cargo_damage_survey.name",
+      "title": "Cargo damage survey",
+      "code": "LOG-015",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "cargo_reference",
+          "label": "templates.catalogue.cargo_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_damage",
+          "label": "templates.catalogue.observed_damage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "survey_limitations",
+          "label": "templates.catalogue.survey_limitations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_cargo_shortage_report",
+      "name": "templates.log_cargo_shortage_report.name",
+      "title": "Cargo shortage report",
+      "code": "LOG-016",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "expected_quantity",
+          "label": "templates.catalogue.expected_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expected_quantity_unit",
+          "label": "templates.catalogue.expected_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "received_quantity",
+          "label": "templates.catalogue.received_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "received_quantity_unit",
+          "label": "templates.catalogue.received_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evidence",
+          "label": "templates.catalogue.evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_freight_claim_intake",
+      "name": "templates.log_freight_claim_intake.name",
+      "title": "Freight claim intake",
+      "code": "LOG-017",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "shipment_reference",
+          "label": "templates.catalogue.shipment_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "claimed_loss",
+          "label": "templates.catalogue.claimed_loss",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "claimed_loss_currency",
+          "label": "templates.catalogue.claimed_loss_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_documents",
+          "label": "templates.catalogue.supporting_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_cold_chain_shipment_monitoring",
+      "name": "templates.log_cold_chain_shipment_monitoring.name",
+      "title": "Cold chain shipment monitoring",
+      "code": "LOG-018",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "shipment_reference",
+          "label": "templates.catalogue.shipment_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "temperature_series",
+          "label": "templates.catalogue.temperature_series",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "excursion_review",
+          "label": "templates.catalogue.excursion_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_shipment_data_logger_register",
+      "name": "templates.log_shipment_data_logger_register.name",
+      "title": "Shipment data logger register",
+      "code": "LOG-019",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "logger_identifier",
+          "label": "templates.catalogue.logger_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "shipment_assignment",
+          "label": "templates.catalogue.shipment_assignment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "calibration_status",
+          "label": "templates.catalogue.calibration_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_customs_declaration_evidence_intake",
+      "name": "templates.log_customs_declaration_evidence_intake.name",
+      "title": "Customs declaration evidence intake",
+      "code": "LOG-020",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "jurisdiction",
+          "label": "templates.catalogue.jurisdiction",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "shipment_documents",
+          "label": "templates.catalogue.shipment_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "broker_review",
+          "label": "templates.catalogue.broker_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_commercial_invoice_verification",
+      "name": "templates.log_commercial_invoice_verification.name",
+      "title": "Commercial invoice verification",
+      "code": "LOG-021",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "invoice_fields",
+          "label": "templates.catalogue.invoice_fields",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "shipment_match",
+          "label": "templates.catalogue.shipment_match",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_discrepancies",
+          "label": "templates.catalogue.verified_discrepancies",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_certificate_of_origin_evidence",
+      "name": "templates.log_certificate_of_origin_evidence.name",
+      "title": "Certificate of origin evidence",
+      "code": "LOG-022",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "certificate_reference",
+          "label": "templates.catalogue.certificate_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issuing_source",
+          "label": "templates.catalogue.issuing_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_result",
+          "label": "templates.catalogue.verification_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_import_clearance_tracker",
+      "name": "templates.log_import_clearance_tracker.name",
+      "title": "Import clearance tracker",
+      "code": "LOG-023",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "required_steps",
+          "label": "templates.catalogue.required_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "document_status",
+          "label": "templates.catalogue.document_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_agent",
+          "label": "templates.catalogue.authorized_agent",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_export_readiness_checklist",
+      "name": "templates.log_export_readiness_checklist.name",
+      "title": "Export readiness checklist",
+      "code": "LOG-024",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "required_documents",
+          "label": "templates.catalogue.required_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "product_requirements_ref",
+          "label": "templates.catalogue.product_requirements_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_review",
+          "label": "templates.catalogue.authorized_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_bonded_warehouse_movement",
+      "name": "templates.log_bonded_warehouse_movement.name",
+      "title": "Bonded warehouse movement",
+      "code": "LOG-025",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "authorization_ref",
+          "label": "templates.catalogue.authorization_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cargo_movement",
+          "label": "templates.catalogue.cargo_movement",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "balance_reconciliation",
+          "label": "templates.catalogue.balance_reconciliation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_container_inventory",
+      "name": "templates.log_container_inventory.name",
+      "title": "Container inventory",
+      "code": "LOG-026",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "container_number",
+          "label": "templates.catalogue.container_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "container_type",
+          "label": "templates.catalogue.container_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "current_location",
+          "label": "templates.catalogue.current_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_container_condition_inspection",
+      "name": "templates.log_container_condition_inspection.name",
+      "title": "Container condition inspection",
+      "code": "LOG-027",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "container_identifier",
+          "label": "templates.catalogue.container_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "seal_integrity",
+          "label": "templates.catalogue.seal_integrity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visible_damage",
+          "label": "templates.catalogue.visible_damage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_container_detention_tracking",
+      "name": "templates.log_container_detention_tracking.name",
+      "title": "Container detention tracking",
+      "code": "LOG-028",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "free_time_basis",
+          "label": "templates.catalogue.free_time_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "event_dates",
+          "label": "templates.catalogue.event_dates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "charge_review",
+          "label": "templates.catalogue.charge_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_pallet_exchange_record",
+      "name": "templates.log_pallet_exchange_record.name",
+      "title": "Pallet exchange record",
+      "code": "LOG-029",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "pallets_sent",
+          "label": "templates.catalogue.pallets_sent",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pallets_returned",
+          "label": "templates.catalogue.pallets_returned",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "balance",
+          "label": "templates.catalogue.balance",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "balance_currency",
+          "label": "templates.catalogue.balance_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_courier_parcel_intake",
+      "name": "templates.log_courier_parcel_intake.name",
+      "title": "Courier parcel intake",
+      "code": "LOG-030",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "parcel_reference",
+          "label": "templates.catalogue.parcel_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sender_consent",
+          "label": "templates.catalogue.sender_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "destination_details",
+          "label": "templates.catalogue.destination_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_postal_delivery_exception",
+      "name": "templates.log_postal_delivery_exception.name",
+      "title": "Postal delivery exception",
+      "code": "LOG-031",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "mail_item_reference",
+          "label": "templates.catalogue.mail_item_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "exception",
+          "label": "templates.catalogue.exception",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_resolution",
+          "label": "templates.catalogue.authorized_resolution",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_reverse_logistics_collection",
+      "name": "templates.log_reverse_logistics_collection.name",
+      "title": "Reverse logistics collection",
+      "code": "LOG-032",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "return_items",
+          "label": "templates.catalogue.return_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pickup_location",
+          "label": "templates.catalogue.pickup_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_authorization",
+          "label": "templates.catalogue.return_authorization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_distribution_campaign_plan",
+      "name": "templates.log_distribution_campaign_plan.name",
+      "title": "Distribution campaign plan",
+      "code": "LOG-033",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "delivery_targets",
+          "label": "templates.catalogue.delivery_targets",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stock_allocation",
+          "label": "templates.catalogue.stock_allocation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transport_schedule",
+          "label": "templates.catalogue.transport_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_logistics_cost_reconciliation",
+      "name": "templates.log_logistics_cost_reconciliation.name",
+      "title": "Logistics cost reconciliation",
+      "code": "LOG-034",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "quoted_charges",
+          "label": "templates.catalogue.quoted_charges",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "actual_charges",
+          "label": "templates.catalogue.actual_charges",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "variance_reasons",
+          "label": "templates.catalogue.variance_reasons",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_carrier_service_review",
+      "name": "templates.log_carrier_service_review.name",
+      "title": "Carrier service review",
+      "code": "LOG-035",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "delivery_performance",
+          "label": "templates.catalogue.delivery_performance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "claims_evidence",
+          "label": "templates.catalogue.claims_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_actions",
+          "label": "templates.catalogue.improvement_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "log_shipment_document_bundle",
+      "name": "templates.log_shipment_document_bundle.name",
+      "title": "Shipment document bundle",
+      "code": "LOG-036",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_log",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_shipment_data",
+          "label": "templates.catalogue.verified_shipment_data",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_forms",
+          "label": "templates.catalogue.required_forms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evidence_index",
+          "label": "templates.catalogue.evidence_index",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

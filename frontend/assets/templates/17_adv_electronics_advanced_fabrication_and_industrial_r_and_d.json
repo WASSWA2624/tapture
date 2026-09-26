@@ -1,0 +1,1550 @@
+{
+  "category": "ADV",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "adv_electronic_component_catalogue",
+      "name": "templates.adv_electronic_component_catalogue.name",
+      "title": "Electronic component catalogue",
+      "code": "ADV-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "part_number",
+          "label": "templates.catalogue.part_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "manufacturer",
+          "label": "templates.catalogue.manufacturer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_specification",
+          "label": "templates.catalogue.approved_specification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_electronic_component_incoming_inspection",
+      "name": "templates.adv_electronic_component_incoming_inspection.name",
+      "title": "Electronic component incoming inspection",
+      "code": "ADV-002",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "component_lot",
+          "label": "templates.catalogue.component_lot",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "marking_verification",
+          "label": "templates.catalogue.marking_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_findings",
+          "label": "templates.catalogue.quality_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_circuit_board_revision_register",
+      "name": "templates.adv_circuit_board_revision_register.name",
+      "title": "Circuit board revision register",
+      "code": "ADV-003",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "board_identifier",
+          "label": "templates.catalogue.board_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "design_revision",
+          "label": "templates.catalogue.design_revision",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approval_status",
+          "label": "templates.catalogue.approval_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_circuit_board_assembly_traveler",
+      "name": "templates.adv_circuit_board_assembly_traveler.name",
+      "title": "Circuit board assembly traveler",
+      "code": "ADV-004",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "assembly_batch",
+          "label": "templates.catalogue.assembly_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_operations",
+          "label": "templates.catalogue.approved_operations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "inspection_signoffs",
+          "label": "templates.catalogue.inspection_signoffs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_electronics_test_fixture_inventory",
+      "name": "templates.adv_electronics_test_fixture_inventory.name",
+      "title": "Electronics test fixture inventory",
+      "code": "ADV-005",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "fixture_identifier",
+          "label": "templates.catalogue.fixture_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "compatible_products",
+          "label": "templates.catalogue.compatible_products",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "calibration_status",
+          "label": "templates.catalogue.calibration_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_functional_electronics_test_record",
+      "name": "templates.adv_functional_electronics_test_record.name",
+      "title": "Functional electronics test record",
+      "code": "ADV-006",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_test_plan",
+          "label": "templates.catalogue.approved_test_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_outputs",
+          "label": "templates.catalogue.observed_outputs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_decision",
+          "label": "templates.catalogue.quality_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_electronic_serial_number_capture",
+      "name": "templates.adv_electronic_serial_number_capture.name",
+      "title": "Electronic serial number capture",
+      "code": "ADV-007",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "label_image",
+          "label": "templates.catalogue.label_image",
+          "type": "photo_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "printed_serial",
+          "label": "templates.catalogue.printed_serial",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "human_confirmation",
+          "label": "templates.catalogue.human_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_electronics_rework_authorization",
+      "name": "templates.adv_electronics_rework_authorization.name",
+      "title": "Electronics rework authorization",
+      "code": "ADV-008",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "defect_reference",
+          "label": "templates.catalogue.defect_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_rework_method",
+          "label": "templates.catalogue.approved_rework_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_signoff",
+          "label": "templates.catalogue.qualified_signoff",
+          "type": "signature",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_electronics_burn_in_evidence",
+      "name": "templates.adv_electronics_burn_in_evidence.name",
+      "title": "Electronics burn-in evidence",
+      "code": "ADV-009",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_test_conditions",
+          "label": "templates.catalogue.approved_test_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "duration",
+          "label": "templates.catalogue.duration",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "minutes",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_electronic_failure_analysis_intake",
+      "name": "templates.adv_electronic_failure_analysis_intake.name",
+      "title": "Electronic failure analysis intake",
+      "code": "ADV-010",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "failed_sample",
+          "label": "templates.catalogue.failed_sample",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "failure_context",
+          "label": "templates.catalogue.failure_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_analysis",
+          "label": "templates.catalogue.authorized_analysis",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_cleanroom_access_training",
+      "name": "templates.adv_cleanroom_access_training.name",
+      "title": "Cleanroom access training",
+      "code": "ADV-011",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_procedure",
+          "label": "templates.catalogue.approved_procedure",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "competency_evidence",
+          "label": "templates.catalogue.competency_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_scope",
+          "label": "templates.catalogue.access_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_cleanroom_environmental_monitoring",
+      "name": "templates.adv_cleanroom_environmental_monitoring.name",
+      "title": "Cleanroom environmental monitoring",
+      "code": "ADV-012",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "sampling_location",
+          "label": "templates.catalogue.sampling_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_parameters",
+          "label": "templates.catalogue.approved_parameters",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_cleanroom_gowning_checklist",
+      "name": "templates.adv_cleanroom_gowning_checklist.name",
+      "title": "Cleanroom gowning checklist",
+      "code": "ADV-013",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_gowning_steps",
+          "label": "templates.catalogue.approved_gowning_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification",
+          "label": "templates.catalogue.verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "deviation",
+          "label": "templates.catalogue.deviation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_semiconductor_wafer_lot_tracking",
+      "name": "templates.adv_semiconductor_wafer_lot_tracking.name",
+      "title": "Semiconductor wafer lot tracking",
+      "code": "ADV-014",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "wafer_lot",
+          "label": "templates.catalogue.wafer_lot",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_process_stage",
+          "label": "templates.catalogue.approved_process_stage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custody",
+          "label": "templates.catalogue.custody",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_semiconductor_process_deviation",
+      "name": "templates.adv_semiconductor_process_deviation.name",
+      "title": "Semiconductor process deviation",
+      "code": "ADV-015",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_process_ref",
+          "label": "templates.catalogue.approved_process_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_deviation",
+          "label": "templates.catalogue.observed_deviation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_disposition",
+          "label": "templates.catalogue.quality_disposition",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_semiconductor_metrology_result_intake",
+      "name": "templates.adv_semiconductor_metrology_result_intake.name",
+      "title": "Semiconductor metrology result intake",
+      "code": "ADV-016",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "sample_reference",
+          "label": "templates.catalogue.sample_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_method",
+          "label": "templates.catalogue.measurement_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_results",
+          "label": "templates.catalogue.qualified_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_additive_manufacturing_build_request",
+      "name": "templates.adv_additive_manufacturing_build_request.name",
+      "title": "Additive manufacturing build request",
+      "code": "ADV-017",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_design",
+          "label": "templates.catalogue.approved_design",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "material_specification",
+          "label": "templates.catalogue.material_specification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_criteria",
+          "label": "templates.catalogue.acceptance_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_3d_printer_asset_inventory",
+      "name": "templates.adv_3d_printer_asset_inventory.name",
+      "title": "3D printer asset inventory",
+      "code": "ADV-018",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "printer_model",
+          "label": "templates.catalogue.printer_model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_status",
+          "label": "templates.catalogue.maintenance_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_additive_manufacturing_material_lot",
+      "name": "templates.adv_additive_manufacturing_material_lot.name",
+      "title": "Additive manufacturing material lot",
+      "code": "ADV-019",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "material_type",
+          "label": "templates.catalogue.material_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "lot_number",
+          "label": "templates.catalogue.lot_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualification_evidence",
+          "label": "templates.catalogue.qualification_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_3d_print_build_record",
+      "name": "templates.adv_3d_print_build_record.name",
+      "title": "3D print build record",
+      "code": "ADV-020",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "design_revision",
+          "label": "templates.catalogue.design_revision",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "material_lot",
+          "label": "templates.catalogue.material_lot",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_build_profile",
+          "label": "templates.catalogue.approved_build_profile",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_printed_part_dimensional_inspection",
+      "name": "templates.adv_printed_part_dimensional_inspection.name",
+      "title": "Printed part dimensional inspection",
+      "code": "ADV-021",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_length_mm",
+          "label": "templates.catalogue.approved_length_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_width_mm",
+          "label": "templates.catalogue.approved_width_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_height_mm",
+          "label": "templates.catalogue.approved_height_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_values",
+          "label": "templates.catalogue.measured_values",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_review",
+          "label": "templates.catalogue.quality_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_printed_part_post_processing_record",
+      "name": "templates.adv_printed_part_post_processing_record.name",
+      "title": "Printed part post-processing record",
+      "code": "ADV-022",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_process",
+          "label": "templates.catalogue.approved_process",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_steps",
+          "label": "templates.catalogue.completed_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "inspection_result",
+          "label": "templates.catalogue.inspection_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_robotics_equipment_acceptance",
+      "name": "templates.adv_robotics_equipment_acceptance.name",
+      "title": "Robotics equipment acceptance",
+      "code": "ADV-023",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_specification",
+          "label": "templates.catalogue.approved_specification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_tests",
+          "label": "templates.catalogue.authorized_tests",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance",
+          "label": "templates.catalogue.acceptance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_robot_maintenance_record",
+      "name": "templates.adv_robot_maintenance_record.name",
+      "title": "Robot maintenance record",
+      "code": "ADV-024",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "robot_identifier",
+          "label": "templates.catalogue.robot_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_service_tasks",
+          "label": "templates.catalogue.approved_service_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_verification",
+          "label": "templates.catalogue.qualified_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_industrial_automation_change_review",
+      "name": "templates.adv_industrial_automation_change_review.name",
+      "title": "Industrial automation change review",
+      "code": "ADV-025",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "proposed_change",
+          "label": "templates.catalogue.proposed_change",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_test_evidence",
+          "label": "templates.catalogue.authorized_test_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approval",
+          "label": "templates.catalogue.approval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_prototype_design_review",
+      "name": "templates.adv_prototype_design_review.name",
+      "title": "Prototype design review",
+      "code": "ADV-026",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "prototype_version",
+          "label": "templates.catalogue.prototype_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requirements",
+          "label": "templates.catalogue.requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_test_evidence",
+          "label": "templates.catalogue.verified_test_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_prototype_experiment_log",
+      "name": "templates.adv_prototype_experiment_log.name",
+      "title": "Prototype experiment log",
+      "code": "ADV-027",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "test_objective",
+          "label": "templates.catalogue.test_objective",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "controlled_conditions",
+          "label": "templates.catalogue.controlled_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_materials_characterization_sample",
+      "name": "templates.adv_materials_characterization_sample.name",
+      "title": "Materials characterization sample",
+      "code": "ADV-028",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "material_identifier",
+          "label": "templates.catalogue.material_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sample_preparation_ref",
+          "label": "templates.catalogue.sample_preparation_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_request",
+          "label": "templates.catalogue.test_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_composite_fabrication_batch_record",
+      "name": "templates.adv_composite_fabrication_batch_record.name",
+      "title": "Composite fabrication batch record",
+      "code": "ADV-029",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "material_lots",
+          "label": "templates.catalogue.material_lots",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_process",
+          "label": "templates.catalogue.approved_process",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_evidence",
+          "label": "templates.catalogue.quality_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_precision_manufacturing_calibration",
+      "name": "templates.adv_precision_manufacturing_calibration.name",
+      "title": "Precision manufacturing calibration",
+      "code": "ADV-030",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "instrument_reference",
+          "label": "templates.catalogue.instrument_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reference_standard",
+          "label": "templates.catalogue.reference_standard",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_advanced_product_traceability_dossier",
+      "name": "templates.adv_advanced_product_traceability_dossier.name",
+      "title": "Advanced product traceability dossier",
+      "code": "ADV-031",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_component_history",
+          "label": "templates.catalogue.verified_component_history",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_evidence",
+          "label": "templates.catalogue.test_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_release",
+          "label": "templates.catalogue.approved_release",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "adv_industrial_r_and_d_intellectual_property_log",
+      "name": "templates.adv_industrial_r_and_d_intellectual_property_log.name",
+      "title": "Industrial R&D intellectual property log",
+      "code": "ADV-032",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_adv",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "development_record",
+          "label": "templates.catalogue.development_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contributors",
+          "label": "templates.catalogue.contributors",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_disclosure",
+          "label": "templates.catalogue.authorized_disclosure",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

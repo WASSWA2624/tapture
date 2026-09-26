@@ -1,0 +1,1700 @@
+{
+  "category": "SWE",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "swe_software_idea_intake",
+      "name": "templates.swe_software_idea_intake.name",
+      "title": "Software idea intake",
+      "code": "SWE-001",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "user_problem",
+          "label": "templates.catalogue.user_problem",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_capability",
+          "label": "templates.catalogue.proposed_capability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expected_value",
+          "label": "templates.catalogue.expected_value",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expected_value_unit",
+          "label": "templates.catalogue.expected_value_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_product_requirements_document",
+      "name": "templates.swe_product_requirements_document.name",
+      "title": "Product requirements document",
+      "code": "SWE-002",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "target_users",
+          "label": "templates.catalogue.target_users",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "functional_requirements",
+          "label": "templates.catalogue.functional_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_criteria",
+          "label": "templates.catalogue.acceptance_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_user_story",
+      "name": "templates.swe_user_story.name",
+      "title": "User story",
+      "code": "SWE-003",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "user_role",
+          "label": "templates.catalogue.user_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "desired_action",
+          "label": "templates.catalogue.desired_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_criteria",
+          "label": "templates.catalogue.acceptance_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_feature_request",
+      "name": "templates.swe_feature_request.name",
+      "title": "Feature request",
+      "code": "SWE-004",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_behavior",
+          "label": "templates.catalogue.requested_behavior",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "user_evidence",
+          "label": "templates.catalogue.user_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "priority_rationale",
+          "label": "templates.catalogue.priority_rationale",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_product_discovery_interview",
+      "name": "templates.swe_product_discovery_interview.name",
+      "title": "Product discovery interview",
+      "code": "SWE-005",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "current_workflow",
+          "label": "templates.catalogue.current_workflow",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "user_pain_points",
+          "label": "templates.catalogue.user_pain_points",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "desired_outcomes",
+          "label": "templates.catalogue.desired_outcomes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_user_research_observation",
+      "name": "templates.swe_user_research_observation.name",
+      "title": "User research observation",
+      "code": "SWE-006",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "consented_session",
+          "label": "templates.catalogue.consented_session",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_behavior",
+          "label": "templates.catalogue.observed_behavior",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "researcher_notes",
+          "label": "templates.catalogue.researcher_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_wireframe_review_brief",
+      "name": "templates.swe_wireframe_review_brief.name",
+      "title": "Wireframe review brief",
+      "code": "SWE-007",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "design_version",
+          "label": "templates.catalogue.design_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_questions",
+          "label": "templates.catalogue.review_questions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "usability_findings",
+          "label": "templates.catalogue.usability_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_usability_test_script",
+      "name": "templates.swe_usability_test_script.name",
+      "title": "Usability test script",
+      "code": "SWE-008",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "test_tasks",
+          "label": "templates.catalogue.test_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_consent",
+          "label": "templates.catalogue.participant_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_usability_test_findings",
+      "name": "templates.swe_usability_test_findings.name",
+      "title": "Usability test findings",
+      "code": "SWE-009",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_evidence",
+          "label": "templates.catalogue.supporting_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "design_recommendations",
+          "label": "templates.catalogue.design_recommendations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_software_architecture_decision_record",
+      "name": "templates.swe_software_architecture_decision_record.name",
+      "title": "Software architecture decision record",
+      "code": "SWE-010",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "decision_context",
+          "label": "templates.catalogue.decision_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "options",
+          "label": "templates.catalogue.options",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "chosen_approach",
+          "label": "templates.catalogue.chosen_approach",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_system_design_specification",
+      "name": "templates.swe_system_design_specification.name",
+      "title": "System design specification",
+      "code": "SWE-011",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "requirements",
+          "label": "templates.catalogue.requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "components",
+          "label": "templates.catalogue.components",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "interfaces",
+          "label": "templates.catalogue.interfaces",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "tradeoffs",
+          "label": "templates.catalogue.tradeoffs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_api_specification_intake",
+      "name": "templates.swe_api_specification_intake.name",
+      "title": "API specification intake",
+      "code": "SWE-012",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "endpoint_purpose",
+          "label": "templates.catalogue.endpoint_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "request_schema",
+          "label": "templates.catalogue.request_schema",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_schema",
+          "label": "templates.catalogue.response_schema",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_database_schema_change_request",
+      "name": "templates.swe_database_schema_change_request.name",
+      "title": "Database schema change request",
+      "code": "SWE-013",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "proposed_change",
+          "label": "templates.catalogue.proposed_change",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "migration_plan",
+          "label": "templates.catalogue.migration_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "compatibility_impact",
+          "label": "templates.catalogue.compatibility_impact",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_software_task_backlog",
+      "name": "templates.swe_software_task_backlog.name",
+      "title": "Software task backlog",
+      "code": "SWE-014",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "work_item",
+          "label": "templates.catalogue.work_item",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_criteria",
+          "label": "templates.catalogue.acceptance_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "dependencies",
+          "label": "templates.catalogue.dependencies",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_sprint_planning_record",
+      "name": "templates.swe_sprint_planning_record.name",
+      "title": "Sprint planning record",
+      "code": "SWE-015",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "sprint_goal",
+          "label": "templates.catalogue.sprint_goal",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "selected_work",
+          "label": "templates.catalogue.selected_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "capacity_assumptions",
+          "label": "templates.catalogue.capacity_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_software_defect_report",
+      "name": "templates.swe_software_defect_report.name",
+      "title": "Software defect report",
+      "code": "SWE-016",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "reproduction_steps",
+          "label": "templates.catalogue.reproduction_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expected_behavior",
+          "label": "templates.catalogue.expected_behavior",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "actual_behavior",
+          "label": "templates.catalogue.actual_behavior",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_test_case_definition",
+      "name": "templates.swe_test_case_definition.name",
+      "title": "Test case definition",
+      "code": "SWE-017",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "preconditions",
+          "label": "templates.catalogue.preconditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_steps",
+          "label": "templates.catalogue.test_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expected_result",
+          "label": "templates.catalogue.expected_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_test_execution_record",
+      "name": "templates.swe_test_execution_record.name",
+      "title": "Test execution record",
+      "code": "SWE-018",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "test_case_ref",
+          "label": "templates.catalogue.test_case_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "actual_result",
+          "label": "templates.catalogue.actual_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evidence",
+          "label": "templates.catalogue.evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_automated_test_failure_triage",
+      "name": "templates.swe_automated_test_failure_triage.name",
+      "title": "Automated test failure triage",
+      "code": "SWE-019",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "test_run",
+          "label": "templates.catalogue.test_run",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "failure_evidence",
+          "label": "templates.catalogue.failure_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "resolution_status",
+          "label": "templates.catalogue.resolution_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_release_readiness_review",
+      "name": "templates.swe_release_readiness_review.name",
+      "title": "Release readiness review",
+      "code": "SWE-020",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "quality_gates",
+          "label": "templates.catalogue.quality_gates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "known_issues",
+          "label": "templates.catalogue.known_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "go_live_approval",
+          "label": "templates.catalogue.go_live_approval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_release_notes_draft",
+      "name": "templates.swe_release_notes_draft.name",
+      "title": "Release notes draft",
+      "code": "SWE-021",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_changes",
+          "label": "templates.catalogue.verified_changes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "known_limitations",
+          "label": "templates.catalogue.known_limitations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "upgrade_guidance",
+          "label": "templates.catalogue.upgrade_guidance",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_deployment_execution_log",
+      "name": "templates.swe_deployment_execution_log.name",
+      "title": "Deployment execution log",
+      "code": "SWE-022",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "release_version",
+          "label": "templates.catalogue.release_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "target_environment",
+          "label": "templates.catalogue.target_environment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "deployment_outcome",
+          "label": "templates.catalogue.deployment_outcome",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_production_incident_timeline",
+      "name": "templates.swe_production_incident_timeline.name",
+      "title": "Production incident timeline",
+      "code": "SWE-023",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "event_at",
+          "label": "templates.catalogue.event_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_symptoms",
+          "label": "templates.catalogue.observed_symptoms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_actions",
+          "label": "templates.catalogue.verified_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_post_incident_review",
+      "name": "templates.swe_post_incident_review.name",
+      "title": "Post-incident review",
+      "code": "SWE-024",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_timeline",
+          "label": "templates.catalogue.verified_timeline",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contributing_factors",
+          "label": "templates.catalogue.contributing_factors",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_actions",
+          "label": "templates.catalogue.improvement_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_technical_debt_register",
+      "name": "templates.swe_technical_debt_register.name",
+      "title": "Technical debt register",
+      "code": "SWE-025",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "debt_description",
+          "label": "templates.catalogue.debt_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "impact_evidence",
+          "label": "templates.catalogue.impact_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "remediation_option",
+          "label": "templates.catalogue.remediation_option",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_code_review_checklist",
+      "name": "templates.swe_code_review_checklist.name",
+      "title": "Code review checklist",
+      "code": "SWE-026",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "review_scope",
+          "label": "templates.catalogue.review_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_criteria",
+          "label": "templates.catalogue.quality_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_findings",
+          "label": "templates.catalogue.review_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_software_license_inventory",
+      "name": "templates.swe_software_license_inventory.name",
+      "title": "Software license inventory",
+      "code": "SWE-027",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "package_name",
+          "label": "templates.catalogue.package_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "license_reference",
+          "label": "templates.catalogue.license_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "usage_scope",
+          "label": "templates.catalogue.usage_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_open_source_component_review",
+      "name": "templates.swe_open_source_component_review.name",
+      "title": "Open source component review",
+      "code": "SWE-028",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "component_version",
+          "label": "templates.catalogue.component_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "license_evidence",
+          "label": "templates.catalogue.license_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "security_review_ref",
+          "label": "templates.catalogue.security_review_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_ai_use_case_assessment",
+      "name": "templates.swe_ai_use_case_assessment.name",
+      "title": "AI use-case assessment",
+      "code": "SWE-029",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "intended_use",
+          "label": "templates.catalogue.intended_use",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_users",
+          "label": "templates.catalogue.affected_users",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "failure_consequences",
+          "label": "templates.catalogue.failure_consequences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_ai_dataset_intake",
+      "name": "templates.swe_ai_dataset_intake.name",
+      "title": "AI dataset intake",
+      "code": "SWE-030",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "dataset_origin",
+          "label": "templates.catalogue.dataset_origin",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "usage_rights",
+          "label": "templates.catalogue.usage_rights",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_quality_notes",
+          "label": "templates.catalogue.data_quality_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_ai_model_evaluation_run",
+      "name": "templates.swe_ai_model_evaluation_run.name",
+      "title": "AI model evaluation run",
+      "code": "SWE-031",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "model_version",
+          "label": "templates.catalogue.model_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evaluation_dataset",
+          "label": "templates.catalogue.evaluation_dataset",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_metrics",
+          "label": "templates.catalogue.observed_metrics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_ai_extraction_quality_review",
+      "name": "templates.swe_ai_extraction_quality_review.name",
+      "title": "AI extraction quality review",
+      "code": "SWE-032",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "source_samples",
+          "label": "templates.catalogue.source_samples",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "field_errors",
+          "label": "templates.catalogue.field_errors",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "human_correction_rates",
+          "label": "templates.catalogue.human_correction_rates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_ai_prompt_version_register",
+      "name": "templates.swe_ai_prompt_version_register.name",
+      "title": "AI prompt version register",
+      "code": "SWE-033",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "prompt_template",
+          "label": "templates.catalogue.prompt_template",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "model_configuration",
+          "label": "templates.catalogue.model_configuration",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approval_status",
+          "label": "templates.catalogue.approval_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_ai_output_review_record",
+      "name": "templates.swe_ai_output_review_record.name",
+      "title": "AI output review record",
+      "code": "SWE-034",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "source_evidence",
+          "label": "templates.catalogue.source_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "generated_output",
+          "label": "templates.catalogue.generated_output",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reviewer_corrections",
+          "label": "templates.catalogue.reviewer_corrections",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_software_documentation_request",
+      "name": "templates.swe_software_documentation_request.name",
+      "title": "Software documentation request",
+      "code": "SWE-035",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "documentation_goal",
+          "label": "templates.catalogue.documentation_goal",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_behavior",
+          "label": "templates.catalogue.verified_behavior",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "audience",
+          "label": "templates.catalogue.audience",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "swe_product_roadmap",
+      "name": "templates.swe_product_roadmap.name",
+      "title": "Product roadmap",
+      "code": "SWE-036",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_swe",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "outcome_goals",
+          "label": "templates.catalogue.outcome_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "planned_capabilities",
+          "label": "templates.catalogue.planned_capabilities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

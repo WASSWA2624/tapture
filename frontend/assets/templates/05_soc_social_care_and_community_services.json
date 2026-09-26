@@ -1,0 +1,1534 @@
+{
+  "category": "SOC",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "soc_social_service_intake",
+      "name": "templates.soc_social_service_intake.name",
+      "title": "Social service intake",
+      "code": "SOC-001",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "client_stated_needs",
+          "label": "templates.catalogue.client_stated_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent_scope",
+          "label": "templates.catalogue.consent_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "preferred_contact",
+          "label": "templates.catalogue.preferred_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_household_needs_assessment",
+      "name": "templates.soc_household_needs_assessment.name",
+      "title": "Household needs assessment",
+      "code": "SOC-002",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "household_priorities",
+          "label": "templates.catalogue.household_priorities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "available_support",
+          "label": "templates.catalogue.available_support",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_gaps",
+          "label": "templates.catalogue.service_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_social_worker_home_visit",
+      "name": "templates.soc_social_worker_home_visit.name",
+      "title": "Social worker home visit",
+      "code": "SOC-003",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "visit_consent",
+          "label": "templates.catalogue.visit_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "observed_needs",
+          "label": "templates.catalogue.observed_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_individual_support_plan",
+      "name": "templates.soc_individual_support_plan.name",
+      "title": "Individual support plan",
+      "code": "SOC-004",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "client_goals",
+          "label": "templates.catalogue.client_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_services",
+          "label": "templates.catalogue.agreed_services",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_date",
+          "label": "templates.catalogue.review_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_service_referral_form",
+      "name": "templates.soc_service_referral_form.name",
+      "title": "Service referral form",
+      "code": "SOC-005",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "consented_referral_purpose",
+          "label": "templates.catalogue.consented_referral_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "receiving_service",
+          "label": "templates.catalogue.receiving_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_details",
+          "label": "templates.catalogue.minimum_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_referral_follow_up_record",
+      "name": "templates.soc_referral_follow_up_record.name",
+      "title": "Referral follow-up record",
+      "code": "SOC-006",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "referral_reference",
+          "label": "templates.catalogue.referral_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_access_status",
+          "label": "templates.catalogue.service_access_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "followup_action",
+          "label": "templates.catalogue.followup_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_case_conference_notes",
+      "name": "templates.soc_case_conference_notes.name",
+      "title": "Case conference notes",
+      "code": "SOC-007",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_participants",
+          "label": "templates.catalogue.authorized_participants",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "case_goals",
+          "label": "templates.catalogue.case_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_responsibilities",
+          "label": "templates.catalogue.agreed_responsibilities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_child_protection_concern_record",
+      "name": "templates.soc_child_protection_concern_record.name",
+      "title": "Child protection concern record",
+      "code": "SOC-008",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "minimum_necessary_concern",
+          "label": "templates.catalogue.minimum_necessary_concern",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "immediate_safety_action",
+          "label": "templates.catalogue.immediate_safety_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_handler",
+          "label": "templates.catalogue.authorized_handler",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_adult_safeguarding_concern_record",
+      "name": "templates.soc_adult_safeguarding_concern_record.name",
+      "title": "Adult safeguarding concern record",
+      "code": "SOC-009",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_concern",
+          "label": "templates.catalogue.reported_concern",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "person_preferences",
+          "label": "templates.catalogue.person_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_response",
+          "label": "templates.catalogue.authorized_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_disability_support_intake",
+      "name": "templates.soc_disability_support_intake.name",
+      "title": "Disability support intake",
+      "code": "SOC-010",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "functional_support_needs",
+          "label": "templates.catalogue.functional_support_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_services",
+          "label": "templates.catalogue.requested_services",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_assistive_device_needs_assessment",
+      "name": "templates.soc_assistive_device_needs_assessment.name",
+      "title": "Assistive device needs assessment",
+      "code": "SOC-011",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "functional_goal",
+          "label": "templates.catalogue.functional_goal",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "device_requirements",
+          "label": "templates.catalogue.device_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_reviewer",
+          "label": "templates.catalogue.qualified_reviewer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_assistive_device_issue_and_return",
+      "name": "templates.soc_assistive_device_issue_and_return.name",
+      "title": "Assistive device issue and return",
+      "code": "SOC-012",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "device_identifier",
+          "label": "templates.catalogue.device_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient_reference",
+          "label": "templates.catalogue.recipient_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "training_record",
+          "label": "templates.catalogue.training_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_older_person_welfare_visit",
+      "name": "templates.soc_older_person_welfare_visit.name",
+      "title": "Older person welfare visit",
+      "code": "SOC-013",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "self_reported_needs",
+          "label": "templates.catalogue.self_reported_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "support_availability",
+          "label": "templates.catalogue.support_availability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_followup",
+          "label": "templates.catalogue.agreed_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_caregiver_support_assessment",
+      "name": "templates.soc_caregiver_support_assessment.name",
+      "title": "Caregiver support assessment",
+      "code": "SOC-014",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "caregiver_priorities",
+          "label": "templates.catalogue.caregiver_priorities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "support_gaps",
+          "label": "templates.catalogue.support_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "referral_preferences",
+          "label": "templates.catalogue.referral_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_family_support_agreement",
+      "name": "templates.soc_family_support_agreement.name",
+      "title": "Family support agreement",
+      "code": "SOC-015",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_goals",
+          "label": "templates.catalogue.agreed_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "support_roles",
+          "label": "templates.catalogue.support_roles",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_schedule",
+          "label": "templates.catalogue.review_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_youth_mentoring_enrollment",
+      "name": "templates.soc_youth_mentoring_enrollment.name",
+      "title": "Youth mentoring enrollment",
+      "code": "SOC-016",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "participant_goals",
+          "label": "templates.catalogue.participant_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "guardian_authority_when_needed",
+          "label": "templates.catalogue.guardian_authority_when_needed",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "mentor_assignment",
+          "label": "templates.catalogue.mentor_assignment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_mentoring_session_log",
+      "name": "templates.soc_mentoring_session_log.name",
+      "title": "Mentoring session log",
+      "code": "SOC-017",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "session_goal",
+          "label": "templates.catalogue.session_goal",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "activities",
+          "label": "templates.catalogue.activities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_next_steps",
+          "label": "templates.catalogue.agreed_next_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_homelessness_support_intake",
+      "name": "templates.soc_homelessness_support_intake.name",
+      "title": "Homelessness support intake",
+      "code": "SOC-018",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_support",
+          "label": "templates.catalogue.requested_support",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_contact",
+          "label": "templates.catalogue.safe_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_referrals",
+          "label": "templates.catalogue.service_referrals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_shelter_occupancy_register",
+      "name": "templates.soc_shelter_occupancy_register.name",
+      "title": "Shelter occupancy register",
+      "code": "SOC-019",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "resident_pseudonymous_ref",
+          "label": "templates.catalogue.resident_pseudonymous_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "admission_date",
+          "label": "templates.catalogue.admission_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_access",
+          "label": "templates.catalogue.authorized_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_food_assistance_application",
+      "name": "templates.soc_food_assistance_application.name",
+      "title": "Food assistance application",
+      "code": "SOC-020",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "published_eligibility",
+          "label": "templates.catalogue.published_eligibility",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "applicant_evidence",
+          "label": "templates.catalogue.applicant_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "support_requested",
+          "label": "templates.catalogue.support_requested",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_emergency_welfare_assistance",
+      "name": "templates.soc_emergency_welfare_assistance.name",
+      "title": "Emergency welfare assistance",
+      "code": "SOC-021",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "immediate_need",
+          "label": "templates.catalogue.immediate_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_verification",
+          "label": "templates.catalogue.minimum_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_support",
+          "label": "templates.catalogue.approved_support",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_livelihood_support_assessment",
+      "name": "templates.soc_livelihood_support_assessment.name",
+      "title": "Livelihood support assessment",
+      "code": "SOC-022",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "existing_skills",
+          "label": "templates.catalogue.existing_skills",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stated_constraints",
+          "label": "templates.catalogue.stated_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "preferred_pathways",
+          "label": "templates.catalogue.preferred_pathways",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_community_mediation_intake",
+      "name": "templates.soc_community_mediation_intake.name",
+      "title": "Community mediation intake",
+      "code": "SOC-023",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "disputed_issue",
+          "label": "templates.catalogue.disputed_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "party_consent",
+          "label": "templates.catalogue.party_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "desired_resolution",
+          "label": "templates.catalogue.desired_resolution",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_community_accessibility_survey",
+      "name": "templates.soc_community_accessibility_survey.name",
+      "title": "Community accessibility survey",
+      "code": "SOC-024",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "access_barriers",
+          "label": "templates.catalogue.access_barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "location_details",
+          "label": "templates.catalogue.location_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "participant_suggestions",
+          "label": "templates.catalogue.participant_suggestions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_social_program_attendance",
+      "name": "templates.soc_social_program_attendance.name",
+      "title": "Social program attendance",
+      "code": "SOC-025",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "session_ref",
+          "label": "templates.catalogue.session_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_code",
+          "label": "templates.catalogue.participant_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attendance_status",
+          "label": "templates.catalogue.attendance_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_service_satisfaction_feedback",
+      "name": "templates.soc_service_satisfaction_feedback.name",
+      "title": "Service satisfaction feedback",
+      "code": "SOC-026",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "service_experience",
+          "label": "templates.catalogue.service_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "respect_observations",
+          "label": "templates.catalogue.respect_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_observations",
+          "label": "templates.catalogue.access_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_suggestions",
+          "label": "templates.catalogue.improvement_suggestions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_case_progress_review",
+      "name": "templates.soc_case_progress_review.name",
+      "title": "Case progress review",
+      "code": "SOC-027",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_goals",
+          "label": "templates.catalogue.agreed_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "client_feedback",
+          "label": "templates.catalogue.client_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "updated_actions",
+          "label": "templates.catalogue.updated_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_case_closure_summary",
+      "name": "templates.soc_case_closure_summary.name",
+      "title": "Case closure summary",
+      "code": "SOC-028",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "support_provided",
+          "label": "templates.catalogue.support_provided",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "client_agreement",
+          "label": "templates.catalogue.client_agreement",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "remaining_referrals",
+          "label": "templates.catalogue.remaining_referrals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_volunteer_welfare_visit_log",
+      "name": "templates.soc_volunteer_welfare_visit_log.name",
+      "title": "Volunteer welfare visit log",
+      "code": "SOC-029",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_visit_scope",
+          "label": "templates.catalogue.authorized_visit_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "escalation_needs",
+          "label": "templates.catalogue.escalation_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_safeguarding_training_record",
+      "name": "templates.soc_safeguarding_training_record.name",
+      "title": "Safeguarding training record",
+      "code": "SOC-030",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "training_version",
+          "label": "templates.catalogue.training_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "role_authorization",
+          "label": "templates.catalogue.role_authorization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_social_care_incident_report",
+      "name": "templates.soc_social_care_incident_report.name",
+      "title": "Social care incident report",
+      "code": "SOC-031",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "event_summary",
+          "label": "templates.catalogue.event_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "immediate_response",
+          "label": "templates.catalogue.immediate_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restricted_review",
+          "label": "templates.catalogue.restricted_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "soc_community_support_directory",
+      "name": "templates.soc_community_support_directory.name",
+      "title": "Community support directory",
+      "code": "SOC-032",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_soc",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "service_type",
+          "label": "templates.catalogue.service_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "eligibility_information",
+          "label": "templates.catalogue.eligibility_information",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_contacts",
+          "label": "templates.catalogue.verified_contacts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

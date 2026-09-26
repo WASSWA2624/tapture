@@ -1,0 +1,1477 @@
+{
+  "category": "AQU",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "aqu_fish_farm_registration",
+      "name": "templates.aqu_fish_farm_registration.name",
+      "title": "Fish farm registration",
+      "code": "AQU-001",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "farm_system",
+          "label": "templates.catalogue.farm_system",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "species",
+          "label": "templates.catalogue.species",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "water_source",
+          "label": "templates.catalogue.water_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_pond_inventory",
+      "name": "templates.aqu_pond_inventory.name",
+      "title": "Pond inventory",
+      "code": "AQU-002",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "pond_identifier",
+          "label": "templates.catalogue.pond_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pond_area",
+          "label": "templates.catalogue.pond_area",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "sqm",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "construction_type",
+          "label": "templates.catalogue.construction_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_aquaculture_stocking_record",
+      "name": "templates.aqu_aquaculture_stocking_record.name",
+      "title": "Aquaculture stocking record",
+      "code": "AQU-003",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "species",
+          "label": "templates.catalogue.species",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "fingerling_count",
+          "label": "templates.catalogue.fingerling_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stocking_date",
+          "label": "templates.catalogue.stocking_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_fingerling_supplier_verification",
+      "name": "templates.aqu_fingerling_supplier_verification.name",
+      "title": "Fingerling supplier verification",
+      "code": "AQU-004",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "supplier_reference",
+          "label": "templates.catalogue.supplier_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "health_documents",
+          "label": "templates.catalogue.health_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_condition",
+          "label": "templates.catalogue.delivery_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_pond_water_quality_log",
+      "name": "templates.aqu_pond_water_quality_log.name",
+      "title": "Pond water quality log",
+      "code": "AQU-005",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "sample_location",
+          "label": "templates.catalogue.sample_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_parameters",
+          "label": "templates.catalogue.measured_parameters",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "instrument_reference",
+          "label": "templates.catalogue.instrument_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_fish_feeding_log",
+      "name": "templates.aqu_fish_feeding_log.name",
+      "title": "Fish feeding log",
+      "code": "AQU-006",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "feed_batch",
+          "label": "templates.catalogue.feed_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity",
+          "label": "templates.catalogue.quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity_unit",
+          "label": "templates.catalogue.quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "feeding_time",
+          "label": "templates.catalogue.feeding_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_fish_growth_sampling",
+      "name": "templates.aqu_fish_growth_sampling.name",
+      "title": "Fish growth sampling",
+      "code": "AQU-007",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "sample_size",
+          "label": "templates.catalogue.sample_size",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_weights",
+          "label": "templates.catalogue.measured_weights",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_method",
+          "label": "templates.catalogue.sampling_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_fish_mortality_observation",
+      "name": "templates.aqu_fish_mortality_observation.name",
+      "title": "Fish mortality observation",
+      "code": "AQU-008",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_mortality",
+          "label": "templates.catalogue.observed_mortality",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pond_conditions",
+          "label": "templates.catalogue.pond_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expert_followup",
+          "label": "templates.catalogue.expert_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_aquaculture_health_visit",
+      "name": "templates.aqu_aquaculture_health_visit.name",
+      "title": "Aquaculture health visit",
+      "code": "AQU-009",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_concerns",
+          "label": "templates.catalogue.reported_concerns",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_findings",
+          "label": "templates.catalogue.qualified_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "authorized_actions",
+          "label": "templates.catalogue.authorized_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_pond_maintenance_record",
+      "name": "templates.aqu_pond_maintenance_record.name",
+      "title": "Pond maintenance record",
+      "code": "AQU-010",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "pond_defect",
+          "label": "templates.catalogue.pond_defect",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_work",
+          "label": "templates.catalogue.maintenance_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_evidence",
+          "label": "templates.catalogue.completion_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_fish_harvest_record",
+      "name": "templates.aqu_fish_harvest_record.name",
+      "title": "Fish harvest record",
+      "code": "AQU-011",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "harvest_batch",
+          "label": "templates.catalogue.harvest_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "harvest_weight",
+          "label": "templates.catalogue.harvest_weight",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "kg",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "harvest_date",
+          "label": "templates.catalogue.harvest_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_fish_cold_chain_dispatch",
+      "name": "templates.aqu_fish_cold_chain_dispatch.name",
+      "title": "Fish cold chain dispatch",
+      "code": "AQU-012",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "product_batch",
+          "label": "templates.catalogue.product_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "temperature_evidence",
+          "label": "templates.catalogue.temperature_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "destination",
+          "label": "templates.catalogue.destination",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_aquaculture_production_cost_review",
+      "name": "templates.aqu_aquaculture_production_cost_review.name",
+      "title": "Aquaculture production cost review",
+      "code": "AQU-013",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "feed_cost",
+          "label": "templates.catalogue.feed_cost",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "feed_cost_currency",
+          "label": "templates.catalogue.feed_cost_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stocking_cost",
+          "label": "templates.catalogue.stocking_cost",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "stocking_cost_currency",
+          "label": "templates.catalogue.stocking_cost_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "harvest_revenue",
+          "label": "templates.catalogue.harvest_revenue",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "harvest_revenue_currency",
+          "label": "templates.catalogue.harvest_revenue_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_fishing_vessel_registration_evidence",
+      "name": "templates.aqu_fishing_vessel_registration_evidence.name",
+      "title": "Fishing vessel registration evidence",
+      "code": "AQU-014",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "vessel_identifier",
+          "label": "templates.catalogue.vessel_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "ownership_documents",
+          "label": "templates.catalogue.ownership_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_operating_area",
+          "label": "templates.catalogue.authorized_operating_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_fishing_trip_log",
+      "name": "templates.aqu_fishing_trip_log.name",
+      "title": "Fishing trip log",
+      "code": "AQU-015",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "trip_dates",
+          "label": "templates.catalogue.trip_dates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_area",
+          "label": "templates.catalogue.authorized_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_catch",
+          "label": "templates.catalogue.reported_catch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_fish_landing_record",
+      "name": "templates.aqu_fish_landing_record.name",
+      "title": "Fish landing record",
+      "code": "AQU-016",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "species_reported",
+          "label": "templates.catalogue.species_reported",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "catch_weight",
+          "label": "templates.catalogue.catch_weight",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "kg",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "landing_site",
+          "label": "templates.catalogue.landing_site",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_catch_traceability_record",
+      "name": "templates.aqu_catch_traceability_record.name",
+      "title": "Catch traceability record",
+      "code": "AQU-017",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "catch_reference",
+          "label": "templates.catalogue.catch_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "landing_evidence",
+          "label": "templates.catalogue.landing_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "downstream_batch",
+          "label": "templates.catalogue.downstream_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_fishing_gear_inventory",
+      "name": "templates.aqu_fishing_gear_inventory.name",
+      "title": "Fishing gear inventory",
+      "code": "AQU-018",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "gear_type",
+          "label": "templates.catalogue.gear_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "gear_identifier",
+          "label": "templates.catalogue.gear_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition",
+          "label": "templates.catalogue.condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_fish_landing_site_inspection",
+      "name": "templates.aqu_fish_landing_site_inspection.name",
+      "title": "Fish landing site inspection",
+      "code": "AQU-019",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "handling_conditions",
+          "label": "templates.catalogue.handling_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cold_storage",
+          "label": "templates.catalogue.cold_storage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sanitation",
+          "label": "templates.catalogue.sanitation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_fisheries_compliance_observation",
+      "name": "templates.aqu_fisheries_compliance_observation.name",
+      "title": "Fisheries compliance observation",
+      "code": "AQU-020",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_activity",
+          "label": "templates.catalogue.observed_activity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "location",
+          "label": "templates.catalogue.location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_review",
+          "label": "templates.catalogue.authorized_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_marine_aquaculture_cage_inspection",
+      "name": "templates.aqu_marine_aquaculture_cage_inspection.name",
+      "title": "Marine aquaculture cage inspection",
+      "code": "AQU-021",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "cage_identifier",
+          "label": "templates.catalogue.cage_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "net_condition",
+          "label": "templates.catalogue.net_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "mooring_observations",
+          "label": "templates.catalogue.mooring_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_apiary_registration",
+      "name": "templates.aqu_apiary_registration.name",
+      "title": "Apiary registration",
+      "code": "AQU-022",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "apiary_location",
+          "label": "templates.catalogue.apiary_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "hive_count",
+          "label": "templates.catalogue.hive_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operator_contact",
+          "label": "templates.catalogue.operator_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_beehive_inventory",
+      "name": "templates.aqu_beehive_inventory.name",
+      "title": "Beehive inventory",
+      "code": "AQU-023",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "hive_type",
+          "label": "templates.catalogue.hive_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "hive_identifier",
+          "label": "templates.catalogue.hive_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "colony_status",
+          "label": "templates.catalogue.colony_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_beehive_inspection",
+      "name": "templates.aqu_beehive_inspection.name",
+      "title": "Beehive inspection",
+      "code": "AQU-024",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "colony_observations",
+          "label": "templates.catalogue.colony_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "hive_condition",
+          "label": "templates.catalogue.hive_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_advice",
+          "label": "templates.catalogue.qualified_advice",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_honey_harvest_record",
+      "name": "templates.aqu_honey_harvest_record.name",
+      "title": "Honey harvest record",
+      "code": "AQU-025",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "hive_reference",
+          "label": "templates.catalogue.hive_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "harvest_quantity",
+          "label": "templates.catalogue.harvest_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "harvest_quantity_unit",
+          "label": "templates.catalogue.harvest_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "batch_identifier",
+          "label": "templates.catalogue.batch_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_honey_processing_batch",
+      "name": "templates.aqu_honey_processing_batch.name",
+      "title": "Honey processing batch",
+      "code": "AQU-026",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "input_batches",
+          "label": "templates.catalogue.input_batches",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "processing_method",
+          "label": "templates.catalogue.processing_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "output_lot",
+          "label": "templates.catalogue.output_lot",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_apiary_health_observation",
+      "name": "templates.aqu_apiary_health_observation.name",
+      "title": "Apiary health observation",
+      "code": "AQU-027",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_symptoms",
+          "label": "templates.catalogue.observed_symptoms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_hives",
+          "label": "templates.catalogue.affected_hives",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expert_followup",
+          "label": "templates.catalogue.expert_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_beekeeping_training_visit",
+      "name": "templates.aqu_beekeeping_training_visit.name",
+      "title": "Beekeeping training visit",
+      "code": "AQU-028",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "training_topic",
+          "label": "templates.catalogue.training_topic",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant",
+          "label": "templates.catalogue.participant",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "practice_observation",
+          "label": "templates.catalogue.practice_observation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_aquaculture_environmental_monitoring",
+      "name": "templates.aqu_aquaculture_environmental_monitoring.name",
+      "title": "Aquaculture environmental monitoring",
+      "code": "AQU-029",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "discharge_point",
+          "label": "templates.catalogue.discharge_point",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_parameters",
+          "label": "templates.catalogue.approved_parameters",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_results",
+          "label": "templates.catalogue.test_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aqu_fisheries_market_survey",
+      "name": "templates.aqu_fisheries_market_survey.name",
+      "title": "Fisheries market survey",
+      "code": "AQU-030",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aqu",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "species",
+          "label": "templates.catalogue.species",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_prices",
+          "label": "templates.catalogue.observed_prices",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "market_date",
+          "label": "templates.catalogue.market_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

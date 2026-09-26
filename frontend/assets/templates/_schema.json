@@ -28,8 +28,28 @@
       "type": "string",
       "description": "Localisation key, not an English string (FE-L10N-01)."
     },
+    "title": {
+      "type": "string",
+      "description": "Catalogue templates only: the display name, catalogue data rather than UI text (FE-L10N-07)."
+    },
+    "code": {
+      "type": "string",
+      "description": "Catalogue templates only: the catalogue code, for example UNI-001."
+    },
     "kind": {
       "type": "string"
+    },
+    "pack": {
+      "type": "string",
+      "description": "Catalogue templates only: the record type whose pack group it inherits."
+    },
+    "privacy": {
+      "enum": ["internal", "confidential", "restricted"],
+      "description": "Catalogue templates only: suggested privacy."
+    },
+    "rollout": {
+      "enum": ["p0", "p1", "p2"],
+      "description": "Catalogue templates only: suggested tier (foundation, expansion, specialist)."
     },
     "identity_fields": {
       "type": "array",
@@ -116,6 +136,22 @@
         },
         "help": {
           "type": "string"
+        },
+        "input_mode": {
+          "enum": ["any", "manual_only", "ai_allowed", "auto"],
+          "description": "Who may fill the field (§12.2). Defaults to the group's mode, else any."
+        },
+        "auto_fill": {
+          "enum": ["now", "today", "time", "sequence", "operator", "device", "gps", "context"],
+          "description": "System fill source (§12.2)."
+        },
+        "refine": {
+          "type": "boolean",
+          "description": "Keep an AI-refined companion value beside the raw one (§32)."
+        },
+        "stickable": {
+          "type": "boolean",
+          "description": "May be pinned as context and carried to the next record (§20)."
         }
       }
     }

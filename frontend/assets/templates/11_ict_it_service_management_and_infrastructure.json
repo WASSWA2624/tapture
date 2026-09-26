@@ -1,0 +1,1612 @@
+{
+  "category": "ICT",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "ict_it_hardware_inventory",
+      "name": "templates.ict_it_hardware_inventory.name",
+      "title": "IT hardware inventory",
+      "code": "ICT-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "device_type",
+          "label": "templates.catalogue.device_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "manufacturer",
+          "label": "templates.catalogue.manufacturer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_computer_provisioning_request",
+      "name": "templates.ict_computer_provisioning_request.name",
+      "title": "Computer provisioning request",
+      "code": "ICT-002",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "user_role",
+          "label": "templates.catalogue.user_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_software",
+          "label": "templates.catalogue.required_software",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_access",
+          "label": "templates.catalogue.approved_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_it_asset_assignment",
+      "name": "templates.ict_it_asset_assignment.name",
+      "title": "IT asset assignment",
+      "code": "ICT-003",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "device_reference",
+          "label": "templates.catalogue.device_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_user",
+          "label": "templates.catalogue.assigned_user",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custody_acknowledgement",
+          "label": "templates.catalogue.custody_acknowledgement",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_laptop_return_inspection",
+      "name": "templates.ict_laptop_return_inspection.name",
+      "title": "Laptop return inspection",
+      "code": "ICT-004",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "device_reference",
+          "label": "templates.catalogue.device_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition",
+          "label": "templates.catalogue.condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_handling_status",
+          "label": "templates.catalogue.data_handling_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_server_inventory",
+      "name": "templates.ict_server_inventory.name",
+      "title": "Server inventory",
+      "code": "ICT-005",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "server_role",
+          "label": "templates.catalogue.server_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "hardware_or_cloud_ref",
+          "label": "templates.catalogue.hardware_or_cloud_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_owner",
+          "label": "templates.catalogue.service_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_network_device_inventory",
+      "name": "templates.ict_network_device_inventory.name",
+      "title": "Network device inventory",
+      "code": "ICT-006",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "device_type",
+          "label": "templates.catalogue.device_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "model",
+          "label": "templates.catalogue.model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "management_owner",
+          "label": "templates.catalogue.management_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_software_installation_request",
+      "name": "templates.ict_software_installation_request.name",
+      "title": "Software installation request",
+      "code": "ICT-007",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "software_name",
+          "label": "templates.catalogue.software_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "business_justification",
+          "label": "templates.catalogue.business_justification",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "license_evidence",
+          "label": "templates.catalogue.license_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_it_support_incident",
+      "name": "templates.ict_it_support_incident.name",
+      "title": "IT support incident",
+      "code": "ICT-008",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "affected_service",
+          "label": "templates.catalogue.affected_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_symptoms",
+          "label": "templates.catalogue.reported_symptoms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "business_impact",
+          "label": "templates.catalogue.business_impact",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_it_service_request",
+      "name": "templates.ict_it_service_request.name",
+      "title": "IT service request",
+      "code": "ICT-009",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_service",
+          "label": "templates.catalogue.requested_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "beneficiary",
+          "label": "templates.catalogue.beneficiary",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approval_basis",
+          "label": "templates.catalogue.approval_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_user_access_request",
+      "name": "templates.ict_user_access_request.name",
+      "title": "User access request",
+      "code": "ICT-010",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_role",
+          "label": "templates.catalogue.requested_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "business_need",
+          "label": "templates.catalogue.business_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approver",
+          "label": "templates.catalogue.approver",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_user_account_closure_checklist",
+      "name": "templates.ict_user_account_closure_checklist.name",
+      "title": "User account closure checklist",
+      "code": "ICT-011",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "account_reference",
+          "label": "templates.catalogue.account_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_removed",
+          "label": "templates.catalogue.access_removed",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_handover",
+          "label": "templates.catalogue.data_handover",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_password_reset_administration",
+      "name": "templates.ict_password_reset_administration.name",
+      "title": "Password reset administration",
+      "code": "ICT-012",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "user_reference",
+          "label": "templates.catalogue.user_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_verification_method",
+          "label": "templates.catalogue.approved_verification_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_status",
+          "label": "templates.catalogue.completion_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_it_change_request",
+      "name": "templates.ict_it_change_request.name",
+      "title": "IT change request",
+      "code": "ICT-013",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "change_scope",
+          "label": "templates.catalogue.change_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_evidence",
+          "label": "templates.catalogue.test_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "rollback_plan",
+          "label": "templates.catalogue.rollback_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_change_advisory_meeting_record",
+      "name": "templates.ict_change_advisory_meeting_record.name",
+      "title": "Change advisory meeting record",
+      "code": "ICT-014",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "proposed_changes",
+          "label": "templates.catalogue.proposed_changes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "risk_reviews",
+          "label": "templates.catalogue.risk_reviews",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approval_decisions",
+          "label": "templates.catalogue.approval_decisions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_configuration_management_record",
+      "name": "templates.ict_configuration_management_record.name",
+      "title": "Configuration management record",
+      "code": "ICT-015",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "configuration_item",
+          "label": "templates.catalogue.configuration_item",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "relationships",
+          "label": "templates.catalogue.relationships",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_baseline",
+          "label": "templates.catalogue.approved_baseline",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_it_problem_investigation",
+      "name": "templates.ict_it_problem_investigation.name",
+      "title": "IT problem investigation",
+      "code": "ICT-016",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "recurring_symptoms",
+          "label": "templates.catalogue.recurring_symptoms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_incidents",
+          "label": "templates.catalogue.supporting_incidents",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_cause",
+          "label": "templates.catalogue.verified_cause",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_service_catalogue_entry",
+      "name": "templates.ict_service_catalogue_entry.name",
+      "title": "Service catalogue entry",
+      "code": "ICT-017",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "service_description",
+          "label": "templates.catalogue.service_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "request_conditions",
+          "label": "templates.catalogue.request_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_owner",
+          "label": "templates.catalogue.service_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_service_availability_report",
+      "name": "templates.ict_service_availability_report.name",
+      "title": "Service availability report",
+      "code": "ICT-018",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "measurement_period",
+          "label": "templates.catalogue.measurement_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "uptime_basis",
+          "label": "templates.catalogue.uptime_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outage_evidence",
+          "label": "templates.catalogue.outage_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_it_backup_job_log",
+      "name": "templates.ict_it_backup_job_log.name",
+      "title": "IT backup job log",
+      "code": "ICT-019",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "backup_scope",
+          "label": "templates.catalogue.backup_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "job_result",
+          "label": "templates.catalogue.job_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_status",
+          "label": "templates.catalogue.verification_status",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "unverified",
+              "label": "templates.choices.verification_status.unverified"
+            },
+            {
+              "code": "verified",
+              "label": "templates.choices.verification_status.verified"
+            },
+            {
+              "code": "disputed",
+              "label": "templates.choices.verification_status.disputed"
+            },
+            {
+              "code": "not_applicable",
+              "label": "templates.choices.verification_status.not_applicable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_backup_restore_test",
+      "name": "templates.ict_backup_restore_test.name",
+      "title": "Backup restore test",
+      "code": "ICT-020",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "restore_scope",
+          "label": "templates.catalogue.restore_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_result",
+          "label": "templates.catalogue.test_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recovery_limitations",
+          "label": "templates.catalogue.recovery_limitations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_disaster_recovery_exercise",
+      "name": "templates.ict_disaster_recovery_exercise.name",
+      "title": "Disaster recovery exercise",
+      "code": "ICT-021",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "recovery_scenario",
+          "label": "templates.catalogue.recovery_scenario",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_recovery",
+          "label": "templates.catalogue.observed_recovery",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_actions",
+          "label": "templates.catalogue.improvement_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_data_center_rack_inventory",
+      "name": "templates.ict_data_center_rack_inventory.name",
+      "title": "Data center rack inventory",
+      "code": "ICT-022",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "rack_position",
+          "label": "templates.catalogue.rack_position",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "installed_assets",
+          "label": "templates.catalogue.installed_assets",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "power_allocation",
+          "label": "templates.catalogue.power_allocation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_data_center_environment_log",
+      "name": "templates.ict_data_center_environment_log.name",
+      "title": "Data center environment log",
+      "code": "ICT-023",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "sensor_reference",
+          "label": "templates.catalogue.sensor_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "temperature",
+          "label": "templates.catalogue.temperature",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "degC",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "humidity_percent",
+          "label": "templates.catalogue.humidity_percent",
+          "type": "percentage",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_network_cable_test_record",
+      "name": "templates.ict_network_cable_test_record.name",
+      "title": "Network cable test record",
+      "code": "ICT-024",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "cable_identifier",
+          "label": "templates.catalogue.cable_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_method",
+          "label": "templates.catalogue.test_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_result",
+          "label": "templates.catalogue.observed_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_network_site_survey",
+      "name": "templates.ict_network_site_survey.name",
+      "title": "Network site survey",
+      "code": "ICT-025",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "coverage_requirements",
+          "label": "templates.catalogue.coverage_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_constraints",
+          "label": "templates.catalogue.site_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_conditions",
+          "label": "templates.catalogue.observed_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_cloud_resource_ownership_review",
+      "name": "templates.ict_cloud_resource_ownership_review.name",
+      "title": "Cloud resource ownership review",
+      "code": "ICT-026",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "resource_inventory",
+          "label": "templates.catalogue.resource_inventory",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "business_owner",
+          "label": "templates.catalogue.business_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "usage_evidence",
+          "label": "templates.catalogue.usage_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_cloud_cost_allocation_review",
+      "name": "templates.ict_cloud_cost_allocation_review.name",
+      "title": "Cloud cost allocation review",
+      "code": "ICT-027",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "billing_data",
+          "label": "templates.catalogue.billing_data",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "allocation_tags",
+          "label": "templates.catalogue.allocation_tags",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "unallocated_costs",
+          "label": "templates.catalogue.unallocated_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_it_procurement_specification",
+      "name": "templates.ict_it_procurement_specification.name",
+      "title": "IT procurement specification",
+      "code": "ICT-028",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "performance_requirements",
+          "label": "templates.catalogue.performance_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "compatibility_needs",
+          "label": "templates.catalogue.compatibility_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "support_terms",
+          "label": "templates.catalogue.support_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_endpoint_patch_review",
+      "name": "templates.ict_endpoint_patch_review.name",
+      "title": "Endpoint patch review",
+      "code": "ICT-029",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "device_population",
+          "label": "templates.catalogue.device_population",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_patch_baseline",
+          "label": "templates.catalogue.approved_patch_baseline",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_it_supplier_service_review",
+      "name": "templates.ict_it_supplier_service_review.name",
+      "title": "IT supplier service review",
+      "code": "ICT-030",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "contract_targets",
+          "label": "templates.catalogue.contract_targets",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "performance_evidence",
+          "label": "templates.catalogue.performance_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_actions",
+          "label": "templates.catalogue.improvement_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_technology_lifecycle_plan",
+      "name": "templates.ict_technology_lifecycle_plan.name",
+      "title": "Technology lifecycle plan",
+      "code": "ICT-031",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "supported_assets",
+          "label": "templates.catalogue.supported_assets",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "replacement_needs",
+          "label": "templates.catalogue.replacement_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "funding_assumptions",
+          "label": "templates.catalogue.funding_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_it_operational_handover",
+      "name": "templates.ict_it_operational_handover.name",
+      "title": "IT operational handover",
+      "code": "ICT-032",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "service_configuration",
+          "label": "templates.catalogue.service_configuration",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "runbooks",
+          "label": "templates.catalogue.runbooks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "support_contacts",
+          "label": "templates.catalogue.support_contacts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_it_knowledge_base_article",
+      "name": "templates.ict_it_knowledge_base_article.name",
+      "title": "IT knowledge base article",
+      "code": "ICT-033",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_issue",
+          "label": "templates.catalogue.verified_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_resolution",
+          "label": "templates.catalogue.approved_resolution",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "validation_steps",
+          "label": "templates.catalogue.validation_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ict_data_migration_reconciliation",
+      "name": "templates.ict_data_migration_reconciliation.name",
+      "title": "Data migration reconciliation",
+      "code": "ICT-034",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ict",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "source_counts",
+          "label": "templates.catalogue.source_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "target_counts",
+          "label": "templates.catalogue.target_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "exceptions",
+          "label": "templates.catalogue.exceptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

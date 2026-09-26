@@ -1,0 +1,1449 @@
+{
+  "category": "PHM",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "phm_pharmaceutical_product_catalogue",
+      "name": "templates.phm_pharmaceutical_product_catalogue.name",
+      "title": "Pharmaceutical product catalogue",
+      "code": "PHM-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "product_name",
+          "label": "templates.catalogue.product_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "strength",
+          "label": "templates.catalogue.strength",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "dosage_form",
+          "label": "templates.catalogue.dosage_form",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "registration_reference",
+          "label": "templates.catalogue.registration_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_medicine_stock_receipt",
+      "name": "templates.phm_medicine_stock_receipt.name",
+      "title": "Medicine stock receipt",
+      "code": "PHM-002",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "supplier_reference",
+          "label": "templates.catalogue.supplier_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "batch_number",
+          "label": "templates.catalogue.batch_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expiry_date",
+          "label": "templates.catalogue.expiry_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_medicine_dispensing_documentation",
+      "name": "templates.phm_medicine_dispensing_documentation.name",
+      "title": "Medicine dispensing documentation",
+      "code": "PHM-003",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_order_ref",
+          "label": "templates.catalogue.authorized_order_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "dispensed_quantity",
+          "label": "templates.catalogue.dispensed_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "dispensed_quantity_unit",
+          "label": "templates.catalogue.dispensed_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_dispenser",
+          "label": "templates.catalogue.authorized_dispenser",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_medication_stock_count",
+      "name": "templates.phm_medication_stock_count.name",
+      "title": "Medication stock count",
+      "code": "PHM-004",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "product_batch",
+          "label": "templates.catalogue.product_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "book_quantity",
+          "label": "templates.catalogue.book_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "book_quantity_unit",
+          "label": "templates.catalogue.book_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "physical_quantity",
+          "label": "templates.catalogue.physical_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "physical_quantity_unit",
+          "label": "templates.catalogue.physical_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_controlled_medicine_accountability",
+      "name": "templates.phm_controlled_medicine_accountability.name",
+      "title": "Controlled medicine accountability",
+      "code": "PHM-005",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_transaction",
+          "label": "templates.catalogue.authorized_transaction",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity_balance",
+          "label": "templates.catalogue.quantity_balance",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity_balance_unit",
+          "label": "templates.catalogue.quantity_balance_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restricted_access_role",
+          "label": "templates.catalogue.restricted_access_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_medicine_expiry_review",
+      "name": "templates.phm_medicine_expiry_review.name",
+      "title": "Medicine expiry review",
+      "code": "PHM-006",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "expiry_window",
+          "label": "templates.catalogue.expiry_window",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stock_quantity",
+          "label": "templates.catalogue.stock_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stock_quantity_unit",
+          "label": "templates.catalogue.stock_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_disposition",
+          "label": "templates.catalogue.approved_disposition",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_medicine_recall_tracking",
+      "name": "templates.phm_medicine_recall_tracking.name",
+      "title": "Medicine recall tracking",
+      "code": "PHM-007",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "recall_reference",
+          "label": "templates.catalogue.recall_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_batches",
+          "label": "templates.catalogue.affected_batches",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "retrieval_status",
+          "label": "templates.catalogue.retrieval_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_pharmacovigilance_report_intake",
+      "name": "templates.phm_pharmacovigilance_report_intake.name",
+      "title": "Pharmacovigilance report intake",
+      "code": "PHM-008",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "suspected_product",
+          "label": "templates.catalogue.suspected_product",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_event",
+          "label": "templates.catalogue.reported_event",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_drug_information_request",
+      "name": "templates.phm_drug_information_request.name",
+      "title": "Drug information request",
+      "code": "PHM-009",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "question",
+          "label": "templates.catalogue.question",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requester_role",
+          "label": "templates.catalogue.requester_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_response",
+          "label": "templates.catalogue.authorized_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_pharmacy_storage_inspection",
+      "name": "templates.phm_pharmacy_storage_inspection.name",
+      "title": "Pharmacy storage inspection",
+      "code": "PHM-010",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "storage_conditions",
+          "label": "templates.catalogue.storage_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "segregation_controls",
+          "label": "templates.catalogue.segregation_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "temperature_records",
+          "label": "templates.catalogue.temperature_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_medicine_cold_chain_shipment",
+      "name": "templates.phm_medicine_cold_chain_shipment.name",
+      "title": "Medicine cold chain shipment",
+      "code": "PHM-011",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "shipment_reference",
+          "label": "templates.catalogue.shipment_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "temperature_evidence",
+          "label": "templates.catalogue.temperature_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "excursion_review",
+          "label": "templates.catalogue.excursion_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_prescription_document_capture",
+      "name": "templates.phm_prescription_document_capture.name",
+      "title": "Prescription document capture",
+      "code": "PHM-012",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "prescription_image",
+          "label": "templates.catalogue.prescription_image",
+          "type": "photo_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_prescriber",
+          "label": "templates.catalogue.authorized_prescriber",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "human_verified_fields",
+          "label": "templates.catalogue.human_verified_fields",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_pharmacy_supplier_qualification",
+      "name": "templates.phm_pharmacy_supplier_qualification.name",
+      "title": "Pharmacy supplier qualification",
+      "code": "PHM-013",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "authorization_evidence",
+          "label": "templates.catalogue.authorization_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_history",
+          "label": "templates.catalogue.quality_history",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_date",
+          "label": "templates.catalogue.verification_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_pharmacy_stockout_record",
+      "name": "templates.phm_pharmacy_stockout_record.name",
+      "title": "Pharmacy stockout record",
+      "code": "PHM-014",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "product_unavailable",
+          "label": "templates.catalogue.product_unavailable",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stockout_period",
+          "label": "templates.catalogue.stockout_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_alternative_process",
+          "label": "templates.catalogue.approved_alternative_process",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_medicine_donation_screening",
+      "name": "templates.phm_medicine_donation_screening.name",
+      "title": "Medicine donation screening",
+      "code": "PHM-015",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "donor_batch_list",
+          "label": "templates.catalogue.donor_batch_list",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "remaining_shelf_life",
+          "label": "templates.catalogue.remaining_shelf_life",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_criteria_ref",
+          "label": "templates.catalogue.acceptance_criteria_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_pharmaceutical_batch_documentation_index",
+      "name": "templates.phm_pharmaceutical_batch_documentation_index.name",
+      "title": "Pharmaceutical batch documentation index",
+      "code": "PHM-016",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "batch_documents",
+          "label": "templates.catalogue.batch_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_versions",
+          "label": "templates.catalogue.approved_versions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_status",
+          "label": "templates.catalogue.review_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_manufacturing_batch_deviation",
+      "name": "templates.phm_manufacturing_batch_deviation.name",
+      "title": "Manufacturing batch deviation",
+      "code": "PHM-017",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "batch_reference",
+          "label": "templates.catalogue.batch_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "deviation",
+          "label": "templates.catalogue.deviation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_disposition",
+          "label": "templates.catalogue.quality_disposition",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_product_stability_study_log",
+      "name": "templates.phm_product_stability_study_log.name",
+      "title": "Product stability study log",
+      "code": "PHM-018",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "storage_condition",
+          "label": "templates.catalogue.storage_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "timepoint",
+          "label": "templates.catalogue.timepoint",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_results",
+          "label": "templates.catalogue.authorized_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_packaging_artwork_approval",
+      "name": "templates.phm_packaging_artwork_approval.name",
+      "title": "Packaging artwork approval",
+      "code": "PHM-019",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "artwork_version",
+          "label": "templates.catalogue.artwork_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_label_text",
+          "label": "templates.catalogue.approved_label_text",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_signatures",
+          "label": "templates.catalogue.review_signatures",
+          "type": "signature",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_pharmaceutical_label_ocr_verification",
+      "name": "templates.phm_pharmaceutical_label_ocr_verification.name",
+      "title": "Pharmaceutical label OCR verification",
+      "code": "PHM-020",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "printed_label",
+          "label": "templates.catalogue.printed_label",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_master",
+          "label": "templates.catalogue.approved_master",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "differences",
+          "label": "templates.catalogue.differences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_quality_release_authorization",
+      "name": "templates.phm_quality_release_authorization.name",
+      "title": "Quality release authorization",
+      "code": "PHM-021",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "batch_evidence",
+          "label": "templates.catalogue.batch_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_review",
+          "label": "templates.catalogue.quality_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_release",
+          "label": "templates.catalogue.authorized_release",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_product_complaint_investigation",
+      "name": "templates.phm_product_complaint_investigation.name",
+      "title": "Product complaint investigation",
+      "code": "PHM-022",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "complaint_reference",
+          "label": "templates.catalogue.complaint_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "batch_traceability",
+          "label": "templates.catalogue.batch_traceability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "investigation_findings",
+          "label": "templates.catalogue.investigation_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_clinical_study_site_readiness",
+      "name": "templates.phm_clinical_study_site_readiness.name",
+      "title": "Clinical study site readiness",
+      "code": "PHM-023",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_protocol_ref",
+          "label": "templates.catalogue.approved_protocol_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "staff_authorizations",
+          "label": "templates.catalogue.staff_authorizations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_resources",
+          "label": "templates.catalogue.site_resources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_clinical_study_participant_administration",
+      "name": "templates.phm_clinical_study_participant_administration.name",
+      "title": "Clinical study participant administration",
+      "code": "PHM-024",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "pseudonymous_participant",
+          "label": "templates.catalogue.pseudonymous_participant",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent_version",
+          "label": "templates.catalogue.consent_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visit_schedule",
+          "label": "templates.catalogue.visit_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_clinical_study_visit_tracking",
+      "name": "templates.phm_clinical_study_visit_tracking.name",
+      "title": "Clinical study visit tracking",
+      "code": "PHM-025",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "protocol_visit",
+          "label": "templates.catalogue.protocol_visit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visit_window",
+          "label": "templates.catalogue.visit_window",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_status",
+          "label": "templates.catalogue.completion_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_clinical_research_consent_tracking",
+      "name": "templates.phm_clinical_research_consent_tracking.name",
+      "title": "Clinical research consent tracking",
+      "code": "PHM-026",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_consent_version",
+          "label": "templates.catalogue.approved_consent_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_choice",
+          "label": "templates.catalogue.participant_choice",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "withdrawal_status",
+          "label": "templates.catalogue.withdrawal_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_research_adverse_event_documentation",
+      "name": "templates.phm_research_adverse_event_documentation.name",
+      "title": "Research adverse event documentation",
+      "code": "PHM-027",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "event_reference",
+          "label": "templates.catalogue.event_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "protocol_reporting_route",
+          "label": "templates.catalogue.protocol_reporting_route",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_investigational_product_accountability",
+      "name": "templates.phm_investigational_product_accountability.name",
+      "title": "Investigational product accountability",
+      "code": "PHM-028",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "study_reference",
+          "label": "templates.catalogue.study_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_issue",
+          "label": "templates.catalogue.authorized_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reconciliation_balance",
+          "label": "templates.catalogue.reconciliation_balance",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "reconciliation_balance_currency",
+          "label": "templates.catalogue.reconciliation_balance_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_regulatory_submission_evidence_index",
+      "name": "templates.phm_regulatory_submission_evidence_index.name",
+      "title": "Regulatory submission evidence index",
+      "code": "PHM-029",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "submission_module",
+          "label": "templates.catalogue.submission_module",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_document",
+          "label": "templates.catalogue.source_document",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "version",
+          "label": "templates.catalogue.version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "phm_pharmacy_service_quality_report",
+      "name": "templates.phm_pharmacy_service_quality_report.name",
+      "title": "Pharmacy service quality report",
+      "code": "PHM-030",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_phm",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "service_activity",
+          "label": "templates.catalogue.service_activity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "documented_issues",
+          "label": "templates.catalogue.documented_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_actions",
+          "label": "templates.catalogue.improvement_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

@@ -813,847 +813,91 @@ review                  (§33, §37, §42)
 
 ### 13.4 The library
 
-| # | Template | Key | Shipped for |
-| --- | --- | --- | --- |
-| 1 | **Equipment / Asset** | `equipment_asset` | General fixed-asset and equipment registers |
-| 2 | **Medical Equipment** | `medical_equipment` | Health-facility inventories, biomedical maintenance |
-| 3 | **ICT Equipment** | `ict_equipment` | Computers, network and audio-visual hardware |
-| 4 | **Vehicle / Plant** | `vehicle_plant` | Fleet, generators, agricultural and construction plant |
-| 5 | **Furniture & Fittings** | `furniture_fitting` | Desks, chairs, cabinets, beds, shelving |
-| 6 | **Building / Facility** | `building_facility` | Whole-building condition and facility surveys |
-| 7 | **Room / Space** | `room_space` | Room-by-room assessment inside a building |
-| 8 | **Utility / Service Point** | `utility_point` | Boreholes, tanks, transformers, solar arrays, pumps |
-| 9 | **Stock / Store Item** | `stock_item` | Stock counts, store verification, expiry checks |
-| 10 | **Inspection / Compliance** | `inspection_check` | Checklists scored against a standard |
-| 11 | **Maintenance / Work Order** | `work_order` | Faults reported, work done, parts and cost |
-| 12 | **Meter Reading** | `meter_reading` | Electricity, water, fuel and hour-meter readings |
-| 13 | **Person / Beneficiary** | `person_beneficiary` | Registration, enrolment, distribution lists |
-| 14 | **Staff / Workforce** | `staff_member` | Establishment audits, attendance and qualification checks |
-| 15 | **Household / Dwelling** | `household_survey` | Household composition, dwelling and service access |
-| 16 | **Land / Plot / Parcel** | `land_parcel` | Tenure, area, use and encroachment |
-| 17 | **Plant / Tree Survey** | `plant_tree` | Species, health and growth measurement |
-| 18 | **Livestock / Animal** | `livestock_animal` | Herd registers, health and vaccination |
-| 19 | **Document / Archive Record** | `document_record` | File registries, archive and retention surveys |
-| 20 | **Meeting** | `meeting` | Minutes, attendance, decisions and actions (§28) |
-| 21 | **Event / Activity** | `event_activity` | Trainings, outreaches, distributions, campaigns |
-| 22 | **Incident / Issue** | `incident_report` | Accidents, damage, theft, breakdowns, complaints |
-| 23 | **Generic Item** | `generic_item` | Anything, in seconds, refined afterwards |
+The library is the catalogue of `resources/templates.md`: 2,349 templates in 72 categories under 17 areas, from
+universal capture and asset registers to clinical care, fisheries, elections and advanced fabrication. The areas are
+01 Cross-sector foundations, 02 Business and governance, 03 Collaboration and delivery, 04 Health and life sciences, 05 Education research and care, 06 Buildings land and infrastructure, 07 Agriculture and natural resources, 08 Production and industry, 09 Energy utilities and environment, 10 Transport and supply chains, 11 Digital systems and communications, 12 Finance public administration and law, 13 Risk resilience and sustainability, 14 Social impact culture and information, 15 Commerce hospitality and recreation, 16 Professional specialist and personal services, 17 Specialist and emerging domains.
 
-**Generic Item** exists so that a user can begin capturing anything within seconds and refine the template afterwards.
-Templates 2, 3, 4 and 5 are *derived* from Equipment / Asset (§11.1): they inherit its columns and add their own, so
-a mixed register still exports one consistent asset sheet where the templates overlap.
+A template is composed, not written out in full, so the same column means the same thing everywhere:
+
+```text
+record_admin  location_context  evidence  review      the four groups of §13.3
+context_<category>                                    the category's shared context, stickable (§20)
+pack_<record type>                                    the fields every template of its record type shares
+own starter fields                                    what makes this template different
+```
+
+Every template has one of 26 record types. Its pack names the identity fields (§40), the choice lists and the
+suggested requiredness, and carries the record type's guidance: how it is captured, what AI may do, what it produces
+and what a reviewer checks.
+
+| Pack | Record type | Kind | Templates | Identity |
+| --- | --- | --- | ---: | --- |
+| ASSESS | Assessment / analysis | `assessment` | 214 | `assessment_reference` |
+| REQUEST | Request / approval workflow | `request` | 214 | `request_reference` |
+| CHECK | Checklist / verification | `checklist` | 184 | `check_reference` |
+| REG | Register / master data | `register` | 184 | `entry_identifier` |
+| INSPECT | Inspection / field form | `inspection` | 174 | `inspection_reference` |
+| PLAN | Plan / schedule | `plan` | 141 | `plan_reference` |
+| DOC | Generated document | `document` | 125 | `document_reference` · `approved_version` |
+| TRANS | Transaction / repeated line items | `transaction` | 124 | `transaction_reference` |
+| LOG | Activity / event log | `log` | 122 | `activity_date` · `activity_type` · `start_time` |
+| MEASURE | Measurement / calculation | `measurement` | 115 | `measurement_type` · `measurement_date` · `measurement_time` |
+| ASSET | Register / master data | `asset` | 101 | `item_identifier` · `serial_number` |
+| CASE | Case-management workflow | `case` | 87 | `case_reference` |
+| REPORT | Generated report | `report` | 73 | `report_reference` |
+| SURVEY | Survey / questionnaire | `survey` | 63 | `survey_version` · `respondent_or_sample_code` |
+| OBS | Observation / evidence capture | `observation` | 61 | `observation_subject` · `observed_at` |
+| INCIDENT | Incident workflow | `incident` | 57 | `incident_reference` |
+| MEET | Meeting / collaboration | `meeting` | 48 | `meeting_title` · `meeting_date` |
+| PROFILE | Profile / intake | `profile` | 48 | `profile_reference` · `display_name` |
+| AGREEMENT | Agreement / approval | `agreement` | 40 | `agreement_reference` |
+| TRACK | Tracker / follow-up | `tracker` | 35 | `tracker_reference` · `tracked_item` |
+| MAINT | Maintenance workflow | `maintenance` | 33 | `work_order_reference` |
+| VISIT | Visit / field workflow | `visit` | 31 | `visited_site_or_party` · `visit_date` |
+| SAMPLE | Sample / chain-of-custody | `sample` | 25 | `sample_identifier` |
+| LEARN | Learning / competency record | `learning` | 20 | `learning_record_reference` |
+| PROPOSAL | Proposal-generation workflow | `proposal` | 16 | `proposal_reference` |
+| COMM | Communication draft | `communication` | 14 | `communication_reference` |
+
+A resolved template holds 62 to 72 columns, every one atomic (§13.1): money comes with its currency, a stated measure
+with its unit, sizes split into length, width and height, and a date is one date. Starter fields ship RECOMMENDED,
+category context RECOMMENDED, and only what identifies the record and makes it meaningful REQUIRED (§13.2).
+
+The library lists the templates by area and category, each row with its code, record type and column count. Search
+matches a template's name, code, category, area, record type and its own field labels; filters narrow by area, record
+type and tier (foundation, expansion, specialist). The preview shows the category, record type, suggested privacy and
+tier, the guidance, and every resolved column under its group with its type and suggested requiredness; adding it
+writes an editable copy into the project at version 1.
+
+A new user who has not chosen a template yet starts from the universal ones: **UNI-001 General observation** captures
+anything within seconds, and is refined afterwards like any other template.
 
 ### 13.5 Template definitions
 
-#### 1. Equipment / Asset — `equipment_asset`
+Template definitions are data, not code. `resources/template-library.md` lists every template with its code, key,
+record type, privacy, tier and own fields, every pack's fields with their types, units and suggested requiredness,
+and every category's context fields. As an example, **UNI-001 General observation** (`uni_general_observation`)
+resolves to:
 
 ```text
-identity        asset_tag*  asset_tag_scheme  serial_number+  alternate_tag
-                barcode_value  barcode_symbology
-description     item_name*  item_description_raw  item_description_refined
-                category*  sub_category  asset_class
-make            manufacturer_name+  brand_name  model_name+  model_number  part_number
-                year_of_manufacture  country_of_origin
-technical       power_source  voltage_v  current_a  power_rating_w  frequency_hz  phase_count
-                capacity_value  capacity_unit
-                length_mm  width_mm  height_mm  weight_kg  colour  material_primary
-quantity        quantity_counted*  unit_of_measure*  quantity_serviceable  quantity_unserviceable
-acquisition     supplier_id  supplier_name  purchase_order_number  invoice_number
-                acquisition_date  acquisition_method  funding_source  donor_name
-                purchase_cost_amount  purchase_cost_currency
-                current_value_amount  current_value_currency
-                depreciation_rate_percent  useful_life_years  expected_replacement_date
-warranty        warranty_start_date  warranty_end_date  warranty_provider_name  warranty_reference
-service         service_provider_name  service_contract_number  service_interval_months
-                last_service_date  next_service_due_date
-custody         owning_department  custodian_name  custodian_staff_number  date_assigned
-                installation_date  commissioning_date
-condition       condition_grade*  condition_score_percent  condition_note_raw
-                functional_status*  in_use_status  utilisation_percent
-fault           fault_present  fault_category  fault_description_raw  fault_description_refined
-                downtime_since_date  downtime_days
-action          action_required+  action_priority  target_completion_date
-                estimated_cost_amount  estimated_cost_currency
-                recommendation_raw  recommendation_refined
-disposal        disposal_status  disposal_date  disposal_method  disposal_reference  disposal_value_amount
+record_admin      the fourteen admin columns of §13.3                          (AUTO)
+location_context  country … site_code+ site_name+ … gps_latitude gps_longitude …
+evidence          photo_count  primary_photo_filename … caption_raw  caption_refined …
+review            confidence_overall … approved_by_user_id  approved_date  rejection_reason
+context           organization_ref+  project_ref+  subject_ref+                 (stickable)
+observation       observation_subject*  observed_at*  factual_description*  media_refs+
+                  capture_context  observer_name  verification_status  verification_notes
+specific_details  observation_category+  observed_details+
 
-identity keys   asset_tag  |  serial_number + manufacturer_name
-choices         condition_grade      A / B / C / D / E  (Excellent · Good · Fair · Poor · Scrap)
-                functional_status    Functional · Partially functional · Not functional · Not assessed
-                in_use_status        In use · Idle · In store · Under repair · Decommissioned
-                acquisition_method   Purchased · Donated · Transferred · Leased · Constructed · Unknown
-                action_required      None · Service · Repair · Replace · Dispose · Investigate
-                power_source         Mains · Generator · Solar · Battery · Manual · Fuel · Not applicable
+identity keys     observation_subject + observed_at
 ```
 
-#### 2. Medical Equipment — `medical_equipment` *(extends Equipment / Asset)*
-
-```text
-nomenclature    device_type_name*  umdns_code  gmdn_code  device_category
-regulatory      risk_class+  regulatory_registration_number  ce_fda_marked  certificate_expiry_date
-clinical        clinical_department*  clinical_specialty  patient_contact_type  criticality_level
-requirements    requires_water  requires_medical_gas  medical_gas_type  requires_ups  requires_air_conditioning
-                ambient_temp_min_c  ambient_temp_max_c  floor_loading_kg_per_sqm  installation_area_sqm
-performance     throughput_value  throughput_unit  cycles_completed  hours_run
-calibration     calibration_required  last_calibration_date  calibration_due_date
-                calibration_certificate_number  calibration_provider_name
-safety          electrical_safety_test_date  electrical_safety_result  next_safety_test_date
-ppm             ppm_required  ppm_interval_months  last_ppm_date  next_ppm_date  ppm_provider_name
-consumables     consumable_name  consumable_part_number  consumable_availability  reagent_dependency
-training        user_training_provided  user_training_date  trained_operator_count
-                manual_available  manual_language
-
-identity keys   asset_tag  |  serial_number + manufacturer_name
-choices         risk_class               I · IIa · IIb · III
-                patient_contact_type     None · Surface · Invasive · Implantable
-                consumable_availability  Available · Partially available · Unavailable · Not applicable
-                criticality_level        Life support · Critical · Important · Routine
-```
-
-#### 3. ICT Equipment — `ict_equipment` *(extends Equipment / Asset)*
-
-```text
-identity        asset_tag*  serial_number*  service_tag  imei_number
-                mac_address_ethernet  mac_address_wifi
-classification  device_type*  form_factor
-processor       processor_brand  processor_model  processor_speed_ghz  processor_core_count
-memory_storage  ram_gb+  ram_type  ram_slots_used  ram_slots_total
-                storage_type  storage_capacity_gb  storage_free_gb  secondary_storage_capacity_gb
-display         screen_size_inches  screen_resolution  touchscreen_present  gpu_model  gpu_memory_gb
-power           battery_present  battery_health_percent  psu_rating_w  ups_connected
-software        operating_system_name+  operating_system_version  os_build
-                os_licence_type  os_licence_key_held  os_activation_status
-                office_suite_name  office_suite_version  office_licence_type
-                antivirus_name  antivirus_expiry_date  last_patched_date
-network         hostname  domain_joined  domain_name  ip_address  ip_assignment
-                vlan_id  network_port_number  patch_panel_reference  switch_name
-security        disk_encryption_enabled  bios_password_set  remote_management_enabled
-                data_wipe_required  data_wipe_date
-assignment      assigned_user_name+  assigned_user_staff_number  assigned_department
-                date_issued  return_due_date  issue_form_reference
-peripherals     monitor_count  keyboard_present  mouse_present  docking_station_present  printer_shared
-
-identity keys   asset_tag  |  serial_number  |  service_tag
-choices         device_type   Desktop · Laptop · Tablet · Phone · Server · Printer · Scanner ·
-                              Copier · Switch · Router · Access point · Firewall · UPS ·
-                              Projector · Display · Camera · Storage · Other
-                ip_assignment Static · DHCP · Not connected
-                storage_type  HDD · SSD · NVMe · eMMC · Hybrid
-```
-
-#### 4. Vehicle / Plant — `vehicle_plant` *(extends Equipment / Asset)*
-
-```text
-identity        registration_number*  vin_chassis_number+  engine_number  fleet_number
-                logbook_number  registration_expiry_date
-classification  vehicle_category*  body_type  ownership_type
-make            make_name*  model_name*  variant_trim  year_of_manufacture  year_of_registration
-                colour_primary  colour_secondary
-powertrain      fuel_type*  engine_capacity_cc  engine_power_kw  transmission_type  drive_type
-                axle_count  tank_capacity_l  battery_voltage_v
-capacity        seating_capacity  standing_capacity  payload_capacity_kg  gross_weight_kg
-                tare_weight_kg  load_bed_length_mm  towing_capacity_kg
-usage           odometer_reading  odometer_unit  odometer_read_date
-                engine_hours  engine_hours_read_date
-                fuel_consumption_l_per_100km  monthly_distance_km
-compliance      insurance_provider_name  insurance_policy_number  insurance_expiry_date
-                road_licence_number  road_licence_expiry_date
-                inspection_certificate_number  inspection_expiry_date
-                operating_permit_type  operating_permit_expiry_date
-tyres           tyre_size  tyre_condition_grade  tyre_replacement_due  spare_tyre_present
-                jack_present  tool_kit_present
-condition       body_condition_grade*  interior_condition_grade  mechanical_condition_grade
-                electrical_condition_grade  windscreen_intact  lights_functional  brakes_functional
-                defect_description_raw  defect_description_refined
-service         last_service_date  last_service_odometer  next_service_due_date  next_service_due_odometer
-                service_provider_name
-assignment      assigned_driver_name  assigned_driver_licence_number  assigned_department
-                station_location_code  parking_location
-status          operational_status*  off_road_since_date  off_road_reason
-
-identity keys   registration_number  |  vin_chassis_number
-choices         vehicle_category    Car · Station wagon · 4x4 · Pickup · Van · Minibus · Bus · Truck ·
-                                    Tipper · Tractor · Trailer · Motorcycle · Tricycle · Bicycle ·
-                                    Ambulance · Generator · Excavator · Grader · Forklift · Boat · Other
-                fuel_type           Petrol · Diesel · Electric · Hybrid · LPG · Solar · Manual
-                operational_status  Operational · Grounded · Under repair · Awaiting disposal · Disposed
-```
-
-#### 5. Furniture & Fittings — `furniture_fitting` *(extends Equipment / Asset)*
-
-```text
-identity        asset_tag  item_name*  category*  sub_category
-build           material_primary*  material_secondary  finish_type  finish_colour
-                upholstery_material  upholstery_colour
-dimensions      length_mm  width_mm  height_mm  seat_height_mm  weight_kg
-configuration   seat_capacity  drawer_count  shelf_count  door_count  leaf_count
-                lockable  key_available  castors_present  adjustable_height
-quantity        quantity_counted*  unit_of_measure*
-                quantity_serviceable+  quantity_repairable  quantity_unserviceable  quantity_missing
-condition       condition_grade*  damage_type  damage_extent  damage_description_raw
-                stability_safe  pest_damage_present  water_damage_present
-action          action_required  estimated_repair_cost_amount  estimated_repair_cost_currency
-                replacement_cost_amount  replacement_cost_currency
-acquisition     supplier_name  acquisition_date  unit_cost_amount  unit_cost_currency
-
-identity keys   asset_tag  |  item_name + room_code
-choices         category         Desk · Table · Chair · Bench · Stool · Cabinet · Cupboard · Shelf ·
-                                 Bookcase · Bed · Mattress · Locker · Notice board · Curtain ·
-                                 Blind · Carpet · Other
-                material_primary Wood · Metal · Plastic · Glass · Upholstered · Composite · Concrete
-                damage_type      None · Broken leg · Broken seat · Torn upholstery · Missing part ·
-                                 Cracked surface · Rust · Rot · Loose joint · Other
-```
-
-#### 6. Building / Facility — `building_facility`
-
-```text
-identity        building_code*  building_name*  alternate_name  facility_code  facility_name
-                ownership_type+  owner_name  title_deed_number  custodian_organisation
-classification  building_use*  construction_type  storeys_above_ground+  storeys_below_ground
-                room_count  unit_count  block_designation
-dimensions      gross_floor_area_sqm  footprint_area_sqm  plot_area_sqm
-                building_length_m  building_width_m  eaves_height_m  ridge_height_m
-age             construction_year  commissioning_date  last_renovation_year  design_life_years
-foundation      foundation_type  foundation_condition_grade  foundation_defect_note_raw
-frame           frame_material  frame_condition_grade
-walls           wall_material*  wall_thickness_mm  wall_finish_internal  wall_finish_external
-                wall_condition_grade*  crack_severity  damp_present
-roof            roof_structure_material  roof_covering_material*  roof_pitch_type
-                roof_condition_grade*  leakage_present  gutters_present  gutter_condition_grade
-                ceiling_material  ceiling_condition_grade
-floors          floor_material*  floor_finish  floor_condition_grade*  floor_level_even
-openings        door_material  door_count  door_lockable_count  door_condition_grade
-                window_material  window_count  window_panes_broken_count  window_condition_grade
-                burglar_proofing_present  mosquito_screening_present
-circulation     staircase_present  staircase_material  staircase_condition_grade  handrail_present
-                corridor_width_m  veranda_present  veranda_condition_grade
-electrical      electricity_connected*  electricity_source  supply_reliability
-                wiring_type  wiring_condition_grade  distribution_board_condition_grade
-                light_point_count  light_points_working  socket_count  sockets_working
-                earthing_present  lightning_arrestor_present  backup_power_present  backup_power_type
-                solar_installed  solar_capacity_kw  solar_battery_present
-water           water_connected*  water_source_main  water_supply_reliability
-                plumbing_condition_grade  water_storage_capacity_l  tank_count  tank_condition_grade
-                tap_count  taps_working  water_quality_tested  water_treatment_present
-sanitation      toilet_type*  toilet_stance_count_male  toilet_stance_count_female
-                toilet_stance_count_pwd  toilet_stance_count_staff  toilet_stances_working
-                sanitation_condition_grade  handwashing_facility_present  handwashing_soap_present
-                bathroom_count  septic_tank_present  septic_tank_condition_grade
-                sewer_connected  drainage_type  drainage_condition_grade
-waste           waste_disposal_method  waste_storage_present  incinerator_present
-                incinerator_condition_grade  placenta_pit_present
-connectivity    internet_connected  internet_connection_type  network_points_count  phone_line_present
-fire_safety     fire_extinguisher_count  fire_extinguishers_serviced  fire_extinguisher_expiry_date
-                fire_exit_count  fire_exit_unobstructed  emergency_lighting_present
-                fire_alarm_present  fire_assembly_point_present  first_aid_kit_present
-security        perimeter_fence_present  fence_material  fence_condition_grade
-                gate_present  gate_lockable  security_lighting_present  guard_post_present
-                cctv_present  cctv_camera_count
-accessibility   ramp_present  ramp_gradient_compliant  accessible_entrance_present
-                accessible_toilet_present  handrail_accessible_present  lift_present
-                lift_functional  tactile_guidance_present  accessibility_condition_grade
-occupancy       occupancy_status*  occupant_organisation  designed_capacity_persons
-                current_occupancy_persons  vacant_since_date
-assessment      overall_condition_grade*  condition_score_percent  structural_risk_level
-                habitable  intervention_required+  intervention_priority
-                estimated_cost_amount  estimated_cost_currency
-                recommendation_raw  recommendation_refined  target_completion_date
-
-identity keys   building_code  |  facility_code + building_name
-choices         ownership_type          Government · Private · Community · Religious · Leased · Unknown
-                construction_type       Permanent · Semi-permanent · Temporary · Prefabricated
-                building_use            Office · Classroom · Ward · Clinic · Laboratory · Store ·
-                                        Workshop · Residence · Hall · Kitchen · Toilet block ·
-                                        Market · Warehouse · Other
-                condition_grade         A / B / C / D / E
-                intervention_required   None · Routine maintenance · Minor repair · Major repair ·
-                                        Rehabilitation · Demolition · New construction
-                toilet_type             Flush to sewer · Flush to septic · VIP latrine · Pit latrine ·
-                                        Ecosan · None
-                occupancy_status        In use · Partially used · Vacant · Under construction · Condemned
-```
-
-#### 7. Room / Space — `room_space`
-
-```text
-identity        room_code*  room_name*  room_number  building_code*  floor_code+  block_designation
-use             room_function*  department  occupancy_status  shared_use
-dimensions      length_m  width_m  height_m  floor_area_sqm  volume_cbm
-                door_count  window_count  window_area_sqm  natural_light_adequate
-finishes        floor_finish_material  floor_condition_grade
-                wall_finish_material  wall_condition_grade  wall_paint_condition
-                ceiling_finish_material  ceiling_condition_grade  ceiling_height_adequate
-services        light_point_count  light_points_working  socket_count  sockets_working
-                switch_count  data_point_count  fan_count  fans_working
-                air_conditioner_count  air_conditioners_working  heater_count
-                water_point_present  sink_count  sinks_working  drain_present
-                natural_ventilation_adequate  extractor_fan_present
-capacity        designed_capacity_persons  current_occupancy_persons
-                seat_count  desk_count  bed_count  workstation_count
-safety          fire_extinguisher_present  emergency_exit_present  exit_signage_present
-                lockable  security_grille_present
-condition       overall_condition_grade*  cleanliness_grade  defect_type
-                defect_description_raw  defect_description_refined
-action          action_required  action_priority  estimated_cost_amount  estimated_cost_currency
-
-identity keys   room_code  |  building_code + room_number
-choices         room_function  Office · Classroom · Laboratory · Ward · Consultation · Theatre ·
-                               Store · Kitchen · Toilet · Bathroom · Corridor · Reception ·
-                               Meeting room · Server room · Workshop · Residence · Other
-```
-
-#### 8. Utility / Service Point — `utility_point`
-
-```text
-identity        structure_tag*  structure_type*  reference_number  scheme_name
-installation    installation_date  installer_name  funding_source  contractor_name
-                manufacturer_name  model_name  design_standard
-technical       capacity_value  capacity_unit  depth_m  diameter_mm  static_water_level_m
-                yield_l_per_hour  pump_type  pump_power_kw  head_m
-                voltage_v  phase_count  power_rating_kva  storage_capacity_l  pipe_length_m
-                panel_count  panel_rating_w  battery_capacity_ah  inverter_rating_kva
-service_area    households_served_count  persons_served_count  institutions_served_count
-                distance_to_furthest_user_m  service_hours_per_day  queue_time_minutes
-quality         water_quality_tested  water_quality_test_date  water_quality_result
-                turbidity_ntu  ph_value  chlorine_residual_mgl  ecoli_detected
-status          functional_status*  functionality_verified_date  seasonal_reliability
-                breakdown_since_date  breakdown_cause  days_non_functional
-                previous_repair_date  repair_history_note_raw
-management      management_arrangement  committee_present  committee_active
-                caretaker_name  caretaker_trained  caretaker_contact
-                user_fee_charged  fee_amount  fee_currency  fee_period  fee_collection_rate_percent
-                spare_parts_accessible  maintenance_fund_present  maintenance_fund_balance_amount
-protection      apron_present  apron_condition_grade  drainage_channel_present  soak_pit_present
-                fencing_present  fence_condition_grade  vandalism_evident  contamination_risk_nearby
-condition       condition_grade*  action_required  action_priority
-                estimated_cost_amount  estimated_cost_currency  recommendation_raw
-
-identity keys   structure_tag  |  structure_type + gps_latitude + gps_longitude
-choices         structure_type          Borehole · Shallow well · Protected spring · Water tank ·
-                                        Standpipe · Kiosk · Pump house · Transformer · Power pole ·
-                                        Solar array · Generator · Septic tank · Culvert · Mast · Other
-                management_arrangement  Community committee · Private operator · Local government ·
-                                        Institution · Utility company · None
-                functional_status       Functional · Partially functional · Not functional · Abandoned
-```
-
-#### 9. Stock / Store Item — `stock_item`
-
-```text
-identity        item_code*  barcode_value  item_name*  item_description  generic_name
-                category*  sub_category  programme_code
-packaging       unit_of_measure*  pack_size  pack_unit  units_per_pack  volume_per_unit  weight_per_unit_kg
-batch           batch_number+  lot_number  manufacture_date  expiry_date+  shelf_life_months
-                days_to_expiry  manufacturer_name  country_of_origin
-quantity        opening_balance  quantity_received  quantity_issued  quantity_returned
-                quantity_counted*  quantity_expected  variance_quantity  variance_percent
-                quantity_damaged  quantity_expired  quantity_quarantined  quantity_usable
-valuation       unit_cost_amount  unit_cost_currency  total_value_amount  total_value_currency
-                selling_price_amount
-storage         store_code+  store_name  shelf_bin_location  pallet_number
-                storage_temperature_requirement  storage_condition_observed
-                cold_chain_required  temperature_reading_c  temperature_read_at
-                temperature_excursion_recorded  humidity_percent
-                stacked_correctly  fefo_applied  pest_evidence_present  segregated_correctly
-supply          supplier_id  supplier_name  grn_number  requisition_number  waybill_number
-                date_received  source_of_funds  donation_reference
-consumption     average_monthly_consumption  reorder_level  maximum_level  minimum_level
-                days_of_stock_remaining  last_issue_date  last_receipt_date
-status          stock_status*  action_required  disposal_required  disposal_reason
-                remarks_raw  remarks_refined
-verification    counted_by_name  counted_date  verified_by_name  verified_date  count_method
-
-identity keys   item_code + batch_number + store_code
-choices         stock_status                    In stock · Low stock · Out of stock · Overstocked · Expired
-                storage_temperature_requirement Ambient · Cool (15-25C) · Cold (2-8C) · Frozen · Controlled
-                storage_condition_observed      Compliant · Partially compliant · Non-compliant
-                count_method                    Physical count · Weight · Estimate · System balance
-```
-
-#### 10. Inspection / Compliance — `inspection_check`
-
-```text
-inspection      inspection_reference*  inspection_date*  inspection_type
-                inspector_name*  inspector_staff_number  inspector_organisation  inspector_role
-                accompanying_officer_name  inspection_start_time  inspection_end_time
-subject         subject_type*  subject_identifier*  subject_name  subject_location_code
-                subject_owner_name  subject_contact_phone
-framework       standard_name*  standard_version  standard_clause_reference*
-                checklist_code  checklist_version  requirement_text*  requirement_category
-                requirement_weight  is_critical_requirement
-finding         compliance_status*  observation_raw*  observation_refined
-                score_awarded  score_maximum  score_percent
-                evidence_type  evidence_reference  evidence_photo_filename
-                measurement_value  measurement_unit  threshold_value  within_threshold
-risk            risk_category  likelihood_rating  severity_rating  risk_score  risk_level
-                immediate_danger  work_stopped
-action          corrective_action_raw  corrective_action_refined  action_owner_name  action_owner_role
-                action_priority  target_completion_date  estimated_cost_amount  estimated_cost_currency
-                enforcement_notice_issued  notice_reference  penalty_amount  penalty_currency
-history         previous_inspection_date  previous_finding_reference  previous_compliance_status
-                repeat_finding  follow_up_required  follow_up_date  closed_date  closed_by_name
-signoff         inspector_signature  responsible_person_name  responsible_person_signature  signoff_date
-
-identity keys   inspection_reference + standard_clause_reference
-choices         compliance_status  Compliant · Partially compliant · Non-compliant ·
-                                   Not applicable · Not assessed
-                inspection_type    Routine · Follow-up · Ad hoc · Complaint · Licensing · Handover
-                risk_level         Low · Medium · High · Critical
-```
-
-#### 11. Maintenance / Work Order — `work_order`
-
-```text
-identity        work_order_number*  request_reference  work_order_type*  priority*
-asset           asset_tag*  asset_name  asset_location_code  asset_serial_number
-request         reported_date*  reported_time  reported_by_name  reported_by_role  reported_by_contact
-                fault_reported_raw*  fault_reported_refined  fault_category  fault_first_noticed_date
-                asset_stopped  safety_risk_present
-assignment      assigned_date  assigned_to_name  assigned_to_organisation  assignment_type
-                scheduled_start_date  scheduled_completion_date
-diagnosis       inspected_date  technician_name  technician_qualification
-                fault_confirmed  root_cause_raw  root_cause_refined  failure_mode  failure_cause_category
-work            work_started_date  work_started_time  work_completed_date  work_completed_time
-                labour_hours  technician_count  work_done_raw  work_done_refined
-                tools_used  external_support_required
-parts           part_name  part_number  part_quantity  part_unit_cost_amount  part_source
-                parts_awaited  parts_expected_date
-cost            labour_cost_amount  parts_cost_amount  transport_cost_amount  other_cost_amount
-                total_cost_amount  cost_currency  invoice_number  quotation_reference
-                warranty_claim  warranty_claim_reference
-outcome         outcome_status*  asset_status_after*  downtime_hours  downtime_days
-                recurrence_expected  preventive_recommendation_raw  next_service_due_date
-signoff         completed_by_name  completed_by_signature  accepted_by_name  accepted_by_role
-                accepted_by_signature  acceptance_date  satisfaction_rating
-
-identity keys   work_order_number
-choices         work_order_type    Corrective · Preventive · Predictive · Installation ·
-                                   Inspection · Calibration · Decommissioning
-                priority           Emergency · High · Medium · Low
-                outcome_status     Resolved · Partially resolved · Referred · Awaiting parts ·
-                                   Awaiting funds · Beyond economic repair · Cancelled
-                asset_status_after Functional · Partially functional · Not functional · Condemned
-```
-
-#### 12. Meter Reading — `meter_reading`
-
-```text
-identity        meter_number*  meter_type*  meter_serial_number  utility_account_number
-                tariff_code  meter_brand  meter_model  digit_count  multiplier_factor
-location        site_code*  building_code  meter_location_description  meter_accessible
-reading         previous_reading_value  previous_reading_date
-                current_reading_value*  current_reading_date*  current_reading_time
-                reading_unit*  reading_source*  reading_photo_filename
-                consumption_value  consumption_period_days  average_daily_consumption
-                meter_rollover_occurred  estimated_reading
-condition       meter_condition_grade  meter_seal_intact  seal_number  display_legible
-                tamper_suspected  tamper_evidence_note_raw  bypass_suspected
-                anomaly_detected  anomaly_note_raw  anomaly_note_refined
-billing         tariff_rate_amount  tariff_currency  billed_amount  billed_currency
-                billing_period_start_date  billing_period_end_date
-                payment_status  outstanding_balance_amount  last_payment_date
-                prepaid_units_purchased  prepaid_balance_units
-verification    read_by_name*  verified_by_name  verified_date
-
-identity keys   meter_number + current_reading_date
-choices         meter_type      Electricity · Water · Gas · Fuel · Steam · Hour meter · Solar production
-                reading_source  Manual read · Photo OCR · Automatic · Customer reported · Estimated
-                payment_status  Paid · Partially paid · Unpaid · Prepaid · In arrears
-```
-
-#### 13. Person / Beneficiary — `person_beneficiary`
-
-> Personal data. §60.3 applies: consent is captured, GPS stays off unless the project enables it, and face blurring
-> and redaction are available on export.
-
-```text
-identity        person_uid*  name_prefix  given_name*  middle_name  family_name*
-                preferred_name  name_suffix  name_in_local_script
-demographics    sex*  date_of_birth+  age_years  age_estimated  age_group
-                marital_status  nationality  ethnicity_group  religion
-                language_primary  language_secondary  literacy_level
-identification  id_type  id_number  id_issue_date  id_expiry_date  id_verified  id_photo_filename
-                secondary_id_type  secondary_id_number
-contact         phone_primary  phone_secondary  phone_owner  email_address
-                alternate_contact_name  alternate_contact_phone  alternate_contact_relationship
-address         country  region_state  district  subcounty_division  parish_ward
-                village_street  plot_house_number  postal_address  landmark_description
-                residence_duration_years  residence_status
-household       household_id  household_role  household_size  dependants_count
-                head_of_household_name  relationship_to_head
-socioeconomic   education_level  years_of_schooling  occupation  employment_status  employer_name
-                monthly_income_amount  income_currency  income_source_main  income_regularity
-                bank_account_present  mobile_money_number_held
-vulnerability   disability_status  disability_type  disability_severity  assistive_device_used
-                chronic_illness_present  chronic_illness_type  pregnant  lactating
-                vulnerability_category  orphan_status  displacement_status  refugee_status
-programme       beneficiary_category*  programme_code  registration_number  enrolment_date+
-                referral_source  entitlement_type  status*  exit_date  exit_reason
-benefit         benefit_type  benefit_quantity  benefit_unit  benefit_value_amount  benefit_currency
-                distribution_date  distribution_point  collected_by_name  collected_by_relationship
-                collection_signature  proxy_authorised
-consent         consent_given*  consent_date  consent_method  consent_document_filename
-                photo_consent_given  data_sharing_consent_given  data_retention_until_date
-                guardian_consent_required  guardian_name  guardian_relationship
-evidence        portrait_photo_filename  signature_image_filename  fingerprint_captured  biometric_reference
-
-identity keys   person_uid  |  id_type + id_number  |  given_name + family_name + date_of_birth
-choices         sex               Female · Male · Other · Prefer not to say
-                id_type           National ID · Passport · Voter card · Refugee card ·
-                                  Driving licence · Birth certificate · None
-                status            Active · Inactive · Pending verification · Exited · Deceased
-                disability_status None · Some difficulty · A lot of difficulty · Cannot do at all
-                consent_method    Written · Verbal · Digital signature · Thumbprint
-```
-
-#### 14. Staff / Workforce — `staff_member`
-
-```text
-identity        staff_number*  given_name*  middle_name  family_name*  sex  date_of_birth
-                national_id_number  photo_filename
-employment      job_title*  position_code  cadre_grade  salary_scale  department*
-                duty_station_code+  duty_station_name  reporting_supervisor_staff_number
-                employment_type*  appointment_date  contract_start_date  contract_end_date
-                probation_end_date  years_of_service  retirement_date
-payroll         payroll_number  basic_salary_amount  salary_currency  allowance_amount
-                payment_method  bank_name  pay_status  last_paid_date
-qualification   highest_qualification+  qualification_field  awarding_institution  qualification_year
-                additional_qualification  qualification_verified  certificate_photo_filename
-registration    professional_body_name  registration_number  registration_issue_date
-                registration_expiry_date  licence_status  practising_certificate_present
-posting         post_established  post_filled  post_vacant_since_date  acting_capacity
-                secondment_organisation  deployment_location_code
-presence        attendance_status*  verification_method  verification_date  verification_time
-                absence_reason  absence_start_date  expected_return_date
-                leave_type  leave_balance_days  duty_roster_shift
-training        last_training_name  last_training_date  training_days_last_year  training_need_identified
-performance     last_appraisal_date  appraisal_rating  disciplinary_case_open
-contact         phone_primary  email_address  residence_district
-                next_of_kin_name  next_of_kin_relationship  next_of_kin_phone
-
-identity keys   staff_number  |  national_id_number
-choices         employment_type    Permanent · Contract · Temporary · Casual · Volunteer ·
-                                   Seconded · Intern
-                attendance_status  Present · Absent without leave · On approved leave ·
-                                   On duty elsewhere · On training · Suspended · Post vacant
-                verification_method Physically seen · Signed register · Biometric · Supervisor confirmed
-```
-
-#### 15. Household / Dwelling — `household_survey`
-
-```text
-identity        household_id*  survey_round  enumeration_area_code
-                head_given_name*  head_family_name*  head_sex+  head_age_years
-                head_marital_status  head_education_level  head_occupation  head_phone
-composition     household_size*  members_male  members_female
-                males_under_5  females_under_5  males_5_17  females_5_17
-                males_18_59  females_18_59  males_60_plus  females_60_plus
-                pregnant_women_count  lactating_women_count  infants_under_1_count
-                persons_with_disability_count  chronically_ill_count  orphans_count
-                children_in_school_count  children_out_of_school_count
-dwelling        tenure_status*  monthly_rent_amount  rent_currency
-                dwelling_type  rooms_count  sleeping_rooms_count  persons_per_sleeping_room
-                wall_material*  roof_material*  floor_material*  window_count
-                dwelling_condition_grade  year_built  overcrowded
-water           water_source_main*  water_source_secondary  water_distance_m
-                water_collection_time_minutes  water_collector_role
-                water_treatment_method  water_storage_container_type  water_payment_amount
-sanitation      toilet_facility_type*  toilet_shared  toilet_shared_household_count
-                toilet_distance_m  handwashing_facility_present  handwashing_soap_present
-                waste_disposal_method  waste_water_disposal_method
-energy          lighting_source_main*  cooking_fuel_main*  cooking_location
-                stove_type  electricity_connected  electricity_hours_per_day  solar_owned
-assets          owns_radio  owns_television  owns_mobile_phone  owns_smartphone
-                owns_refrigerator  owns_bicycle  owns_motorcycle  owns_car  owns_cart
-                owns_plough  owns_sewing_machine  bank_account_present  mobile_money_used
-land_livestock  land_owned_area  land_area_unit  land_cultivated_area  land_tenure_type
-                cattle_count  goat_count  sheep_count  pig_count  poultry_count
-livelihood      income_source_main*  income_source_secondary  monthly_income_amount  income_currency
-                monthly_expenditure_amount  food_expenditure_share_percent
-                meals_per_day_adults  meals_per_day_children  food_security_status
-                received_aid_last_year  aid_type  coping_strategy_used
-health          distance_to_health_facility_km  mosquito_nets_count  net_use_last_night
-                birth_last_year  birth_attended_by_skilled  child_immunisation_up_to_date
-interview       interviewed_person_name  interviewed_person_role  consent_given*
-                interview_start_time  interview_end_time  interview_language
-
-identity keys   household_id  |  head_given_name + head_family_name + village_street
-choices         tenure_status         Owned · Rented · Provided free · Institutional · Squatting
-                water_source_main     Piped into dwelling · Piped to yard · Public tap · Borehole ·
-                                      Protected well · Unprotected well · Protected spring ·
-                                      Unprotected spring · Rainwater · Tanker · Surface water · Bottled
-                toilet_facility_type  Flush to sewer · Flush to septic · VIP latrine ·
-                                      Pit latrine with slab · Pit latrine without slab ·
-                                      Composting · Bucket · Open defecation
-                food_security_status  Food secure · Mildly insecure · Moderately insecure · Severely insecure
-```
-
-#### 16. Land / Plot / Parcel — `land_parcel`
-
-```text
-identity        parcel_number*  title_number  block_number  plot_number
-                survey_reference  cadastral_sheet_number  local_reference_name
-tenure          tenure_type*  registered_owner_name+  owner_type  owner_id_number
-                owner_contact_phone  co_owner_name  acquisition_method  acquisition_date
-                lease_start_date  lease_end_date  lease_term_years  annual_ground_rent_amount
-                ownership_evidence_type  ownership_document_filename  title_registered
-                dispute_present  dispute_type  dispute_description_raw  dispute_parties
-measurement     area_value*  area_unit*  perimeter_m  corner_point_count
-                boundary_capture_method  boundary_file_reference  boundary_marked
-                boundary_marker_type  boundary_dispute_present
-                north_neighbour_name  south_neighbour_name  east_neighbour_name  west_neighbour_name
-access          road_access_present  access_road_type  access_road_condition
-                distance_to_main_road_m  distance_to_town_km  right_of_way_present
-physical        terrain_type  slope_percent  soil_type  soil_depth_cm  drainage_status
-                flood_risk_level  erosion_present  rock_outcrop_present
-                water_source_present  water_source_type  vegetation_cover_type  tree_cover_percent
-use             current_land_use*  previous_land_use  planned_land_use  zoning_classification
-                developed  development_type  structures_present_count  structure_description_raw
-                cultivated_area_value  crop_type_main  fallow_area_value
-                encroachment_present  encroachment_type  encroachment_area_value
-services        electricity_available  water_supply_available  sewer_available  telecom_coverage
-valuation       valuation_amount  valuation_currency  valuation_date  valuation_method  valuer_name
-                rateable_value_amount  annual_rates_amount  rates_payment_status  rates_arrears_amount
-
-identity keys   parcel_number  |  title_number  |  block_number + plot_number
-choices         tenure_type       Freehold · Leasehold · Customary · Mailo · Public · Communal ·
-                                  Licence · Informal
-                current_land_use  Residential · Commercial · Industrial · Institutional ·
-                                  Agricultural · Grazing · Forest · Wetland · Recreational ·
-                                  Road reserve · Vacant · Mixed
-                area_unit         Hectare · Acre · Square metre · Square foot · Decimal
-```
-
-#### 17. Plant / Tree Survey — `plant_tree`
-
-```text
-identity        specimen_tag*  species_scientific_name*  species_common_name+  species_local_name
-                botanical_family  variety_cultivar  species_identified_by  identification_confidence
-                indigenous_status  conservation_status
-location        plot_code  transect_code  row_number  position_in_row  spacing_within_row_m
-                spacing_between_rows_m  gps_latitude  gps_longitude  altitude_m
-counting        count_observed*  count_method  plot_area_sqm  density_per_hectare
-measurement     height_m  diameter_breast_height_cm  basal_diameter_cm  crown_diameter_m
-                crown_height_m  stem_count  bole_height_m  volume_estimate_cbm
-                age_years  age_estimated  age_determination_method
-condition       health_status*  vigour_score  defoliation_percent  dieback_percent
-                leaf_colour_normal  wilting_present  stem_damage_present  bark_damage_present
-                lean_angle_degrees  hollow_present  deadwood_present
-pests           pest_present  pest_name  pest_severity  affected_part
-                disease_present  disease_name  disease_severity  disease_symptoms_raw
-                damage_cause  damage_extent_percent
-phenology       growth_stage  flowering  fruiting  fruit_count_estimate  seeding
-                yield_estimate_value  yield_estimate_unit  harvest_date_expected
-management      planting_date  planting_material_source  nursery_name  survival_status
-                irrigation_method  irrigation_frequency  fertiliser_applied  fertiliser_type
-                pruning_done  pruning_required  weeding_done  mulching_present
-                protection_present  protection_type
-action          action_required  action_priority  removal_recommended  removal_reason
-                treatment_recommended_raw  target_completion_date
-
-identity keys   specimen_tag  |  plot_code + row_number + position_in_row
-choices         health_status  Healthy · Stressed · Diseased · Severely damaged · Dead · Removed
-                growth_stage   Seedling · Sapling · Juvenile · Mature · Over-mature · Senescent
-                count_method   Total count · Sample plot · Transect · Estimate
-```
-
-#### 18. Livestock / Animal — `livestock_animal`
-
-```text
-identity        animal_tag*  tag_type  microchip_number  brand_mark  herd_flock_id
-                animal_name  registration_number
-classification  species*  breed+  breed_purity  sex*  castrated
-                date_of_birth  age_months  age_estimated  age_determination_method
-physical        colour_primary  colour_markings  horn_status  weight_kg  weight_method
-                body_condition_score  height_at_withers_cm  heart_girth_cm  dentition_class
-production      production_purpose*  milk_yield_l_per_day  milking_frequency_per_day
-                eggs_per_week  wool_yield_kg  draught_use  feed_conversion_ratio
-breeding        breeding_status  parity_count  last_service_date  service_method  sire_tag
-                pregnancy_status  pregnancy_confirmed_date  expected_delivery_date
-                last_calving_date  calving_interval_days  offspring_alive_count  offspring_dead_count
-health          health_status*  temperature_c  clinical_signs_raw  clinical_signs_refined
-                disease_suspected  disease_confirmed  diagnostic_test_done  test_result
-                treatment_given_raw  treatment_date  drug_name  dosage  withdrawal_period_days
-                veterinarian_name  quarantine_status  quarantine_until_date
-vaccination     vaccination_up_to_date  last_vaccination_date  vaccine_name  vaccine_batch_number
-                next_vaccination_due_date  last_deworming_date  dewormer_name
-                last_tick_control_date  tick_burden_score
-husbandry       housing_type  grazing_system  feed_type_main  feed_supplement_used
-                water_source  water_access_frequency  stocking_density_per_hectare
-ownership       owner_name*  owner_contact_phone  owner_id_number  owner_group_name
-                acquisition_method  acquisition_date  purchase_price_amount  price_currency
-movement        movement_permit_number  origin_location  destination_location  movement_date
-                movement_reason  transport_method
-disposal        disposal_status  disposal_date  disposal_reason  sale_price_amount
-                mortality_date  mortality_cause  postmortem_done
-
-identity keys   animal_tag  |  microchip_number  |  herd_flock_id + animal_name
-choices         species             Cattle · Goat · Sheep · Pig · Poultry · Donkey · Horse ·
-                                    Camel · Rabbit · Fish · Bee colony · Dog · Other
-                health_status       Healthy · Sick · Under treatment · Recovering · Quarantined · Dead
-                production_purpose  Dairy · Beef · Dual purpose · Breeding · Draught · Layer ·
-                                    Broiler · Wool · Pet · Other
-                pregnancy_status    Not pregnant · Pregnant · Unknown · Not applicable
-```
-
-#### 19. Document / Archive Record — `document_record`
-
-```text
-identity        document_reference*  file_number  accession_number  barcode_value  volume_number
-description     document_title*  document_type*  document_date+  document_number
-                author_name  author_role  issuing_organisation  recipient_name  recipient_organisation
-                subject_summary_raw  subject_summary_refined  keywords
-                language  page_count  has_attachments  attachment_count  related_document_reference
-physical        format*  medium_type  paper_size  binding_type  medium_condition_grade
-                legibility  ink_fading_present  tears_present  mould_present  pest_damage_present
-                storage_location_code  box_number  shelf_reference  room_code
-digitisation    scanned  scan_filename  scan_format  scan_resolution_dpi  scan_colour_mode
-                scan_date  scanned_by_name  scan_quality_verified  file_size_mb
-                ocr_performed  ocr_text_raw  ocr_confidence  searchable_text_present
-governance      confidentiality_level*  access_restriction_note  data_subject_present
-                retention_class  retention_period_years  retention_until_date
-                disposal_action  disposal_authorised_by  disposal_date  legal_hold
-                vital_record  copy_held_elsewhere  copy_location
-custody         current_custodian_name  custodian_department  date_received_into_custody
-                issued_out  issued_to_name  issued_date  return_due_date  returned_date
-
-identity keys   document_reference  |  file_number + volume_number
-choices         document_type         Contract · Agreement · Invoice · Receipt · Report · Certificate ·
-                                      Letter · Memo · Minutes · Policy · Map · Drawing · Register ·
-                                      Personnel file · Title deed · Photograph · Other
-                format                Paper · Digital born · Digitised · Microfilm · Photograph · Audio · Video
-                confidentiality_level Public · Internal · Confidential · Restricted · Secret
-                disposal_action       Retain permanently · Review · Destroy · Transfer to archive
-```
-
-#### 20. Meeting — `meeting`
-
-The Meeting template is the field shape behind Meeting Mode (§28); its lists (agenda items, attendees, decisions,
-actions) are child rows rather than columns, and they export as separate sheets (§28.4).
-
-```text
-identity        meeting_reference*  meeting_title*  meeting_type  series_name  meeting_number
-schedule        meeting_date*  start_time+  end_time  duration_minutes  quorum_met
-place           venue_name+  venue_type  meeting_mode  virtual_platform  virtual_link_present
-officers        chairperson_name*  chairperson_title  secretary_name*  secretary_title
-                facilitator_name  rapporteur_name
-attendance      attendees_expected_count  attendees_present_count+  attendees_male  attendees_female
-                apologies_count  observers_count  attendance_sheet_filename  attendance_photo_filename
-content         agenda_adopted  previous_minutes_confirmed  previous_minutes_reference
-                objective_raw  objective_refined
-                discussion_raw*  discussion_refined  minutes_document_filename
-outcome         decision_count  action_count  budget_discussed_amount  budget_currency
-                next_meeting_date  next_meeting_venue  meeting_closed_time
-approval        minutes_prepared_by_name  minutes_prepared_date
-                minutes_approved_by_name  minutes_approved_date  chairperson_signature
-
-child rows      agenda_item     item_number*  item_title*  presenter_name  time_allocated_minutes
-                                discussion_raw  discussion_refined  outcome_summary
-                attendee        given_name*  family_name*  title  organisation  department
-                                phone  email_address  attendance_type  signature_present  arrival_time
-                apology         given_name  family_name  organisation  reason
-                decision        decision_number*  decision_text_raw*  decision_text_refined
-                                agenda_item_number  decision_type  voting_for  voting_against
-                                voting_abstain  unanimous
-                action_item     action_number*  action_text_raw*  action_text_refined
-                                owner_name*  owner_organisation  due_date+  priority
-                                status  completion_date  dependency_note
-
-identity keys   meeting_reference  |  series_name + meeting_date
-choices         meeting_type   Board · Management · Committee · Community · Technical ·
-                               Review · Planning · Consultation · Emergency · Other
-                meeting_mode   In person · Virtual · Hybrid
-                attendance_type Full · Partial · Late arrival · Early departure
-```
-
-#### 21. Event / Activity — `event_activity`
-
-```text
-identity        activity_code*  activity_title*  activity_type*  programme_code  project_code
-schedule        start_date*  start_time  end_date  end_time  duration_hours  session_count
-                planned_start_date  delayed  delay_reason
-place           venue_name*  venue_type  catchment_area  location context fields  gps_latitude  gps_longitude
-organisation    organiser_name+  organiser_organisation  implementing_partner  collaborating_partner
-                funding_source  donor_name  budget_amount  budget_currency
-                actual_cost_amount  cost_currency  cost_variance_amount
-participation   participants_planned  participants_actual*
-                participants_male  participants_female  participants_other_sex
-                participants_under_18  participants_18_35  participants_36_59  participants_60_plus
-                participants_with_disability  participants_new  participants_returning
-                attendance_sheet_filename  registration_method
-facilitation    facilitator_name  facilitator_organisation  facilitator_count
-                resource_person_name  language_used  interpretation_provided
-content         objective_raw*  objective_refined  topics_covered  methodology_used
-                materials_used  curriculum_reference  session_duration_minutes
-distribution    item_distributed_name  item_quantity  item_unit  item_value_amount  item_currency
-                distribution_list_filename  recipients_count
-outcome         outcome_raw  outcome_refined  knowledge_assessment_done  pre_test_average_score
-                post_test_average_score  satisfaction_rating  participants_certified_count
-                challenges_raw  challenges_refined  lessons_learned_raw
-follow_up       follow_up_required  follow_up_action_raw  follow_up_owner_name  follow_up_date
-                next_activity_date  report_submitted  report_filename
-
-identity keys   activity_code  |  activity_title + start_date + venue_name
-choices         activity_type  Training · Workshop · Meeting · Outreach · Distribution · Campaign ·
-                               Screening · Demonstration · Supervision visit · Launch ·
-                               Community dialogue · Other
-                venue_type     Office · Community hall · School · Health facility · Place of worship ·
-                               Open ground · Household · Online · Other
-```
-
-#### 22. Incident / Issue — `incident_report`
-
-```text
-identity        incident_reference*  incident_type*  incident_category  severity*  reportable_externally
-when_where      occurred_date*  occurred_time  discovered_date  discovered_time
-                reported_date*  reported_time  location context fields
-                exact_location_description  gps_latitude  gps_longitude  weather_conditions
-                light_conditions  activity_at_time
-people          reported_by_name*  reported_by_role  reported_by_contact
-                persons_involved_count  persons_injured_count  injury_severity  fatalities_count
-                first_aid_given  hospitalisation_required  hospital_name
-                witness_name  witness_contact  witness_statement_raw
-subject         asset_tag  asset_name  asset_damage_extent  property_damaged_description_raw
-                estimated_loss_amount  loss_currency  environmental_release_occurred
-                substance_released  quantity_released  quantity_released_unit
-description     incident_description_raw*  incident_description_refined
-                immediate_cause_raw  root_cause_raw  root_cause_refined
-                contributing_factor  unsafe_act_identified  unsafe_condition_identified
-                ppe_in_use  procedure_followed  training_adequate
-response        immediate_action_raw*  area_secured  work_stopped  emergency_services_notified
-                emergency_service_type  police_case_number  insurance_notified
-                insurance_claim_number  claim_amount  claim_currency
-investigation   investigation_required  investigator_name  investigation_start_date
-                investigation_completed_date  investigation_findings_raw  investigation_report_filename
-action          corrective_action_raw  corrective_action_refined  preventive_action_raw
-                action_owner_name  action_priority  target_completion_date
-                action_completed_date  effectiveness_verified
-status          status*  closed_date  closed_by_name  recurrence_count  similar_incident_reference
-
-identity keys   incident_reference  |  occurred_date + occurred_time + location
-choices         incident_type  Accident · Injury · Near miss · Property damage · Theft · Vandalism ·
-                               Breakdown · Fire · Environmental · Security · Data breach ·
-                               Complaint · Other
-                severity       Negligible · Minor · Moderate · Major · Catastrophic
-                status         Open · Under investigation · Action pending · Closed · Reopened
-```
-
-#### 23. Generic Item — `generic_item`
-
-Ten columns, so that capture can start before anyone has decided what the template should be. Every added column is
-created as `OPTIONAL` text unless the user says otherwise, and the template can be promoted to any of the above
-(§11.1, "derived") once the shape is clear.
-
-```text
-identity        item_identifier  item_name*
-description     category  description_raw  description_refined
-quantity        quantity_counted  unit_of_measure
-condition       condition_grade  status
-notes           notes_raw  notes_refined
-
-identity keys   item_identifier  |  item_name + site_code
-```
+The assets under `frontend/assets/templates/` (one file per category, the index `_catalogue.json` and the pack and
+context groups in `_catalogue_groups.json`) and `resources/template-library.md` are generated from
+`resources/templates.md` by `frontend/tool/build_template_catalogue.dart`, with the typed packs and per-field
+corrections beside it in `frontend/tool/template_catalogue/`. `_schema.json` and the groups of §13.3 in
+`_groups.json` are kept by hand. The template checker holds every template to §13.1, and a test fails when the
+committed assets drift from the source.
 
 ### 13.6 What a user does with these
 
@@ -1666,9 +910,9 @@ Derive                   copy a template, rename it, edit it — the original is
 Replace                  import a spreadsheet instead, and map its columns to fields (§11.2)
 ```
 
-A project that trims Building / Facility to twelve required columns and Equipment / Asset to eight is using the
-library correctly. The columns exist so that nobody has to invent them under a tin roof at two in the afternoon; they
-are not a demand that every one of them be filled.
+A project that trims a building condition inspection to twelve required columns and an equipment register to eight
+is using the library correctly. The columns exist so that nobody has to invent them under a tin roof at two in the
+afternoon; they are not a demand that every one of them be filled.
 
 ## 14. Multi-Template Projects & Automatic Template Detection
 
@@ -2160,8 +1404,9 @@ A meeting is a record built on a Meeting template, with extra structure.
 
 ### 28.1 Fields
 
-Meeting Mode is a capture screen over the shipped `meeting` template, whose columns and child rows are listed in
-full in §13.5. In outline:
+Meeting Mode is a capture screen over a template of the Meeting record type (pack `MEET`, for example MTG-006 Meeting
+notes capture), whose columns are listed in §13.5. The pack carries the header, attendees, agenda, discussion,
+decisions and actions; Meeting Mode keeps the repeating parts below as rows of its own tables. In outline:
 
 ```text
 Meeting          reference, title, type, date, start and end time, venue, mode
@@ -3278,7 +2523,7 @@ Concrete, testable rules that keep the interface extremely simple.
 1. **One primary action per screen**, rendered as the largest control.
 2. **Four navigation destinations**, never more.
 3. **A record can be created in three taps**: Capture → shutter → Save.
-4. **No mandatory setup beyond signing in.** A new user can capture within 30 seconds of the first sign-in, using a shipped template and the Generic Item fallback.
+4. **No mandatory setup beyond signing in.** A new user can capture within 30 seconds of the first sign-in, using a shipped template, with General observation (UNI-001) as the universal fallback.
 5. **One sign-in per device, then never again in the field.** The account is required (Part XI), but the session and the role grant are cached, so nobody meets a login screen with a vehicle waiting (§70.4). No onboarding tour, no dashboard.
 6. **Everything advanced is behind "Advanced"** or in More; the default screens show only what a field worker needs.
 7. **Defaults are always sensible**: today's date, the current context, the last template, the last camera settings.

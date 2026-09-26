@@ -1,0 +1,1852 @@
+{
+  "category": "AGR",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "agr_farmer_registration",
+      "name": "templates.agr_farmer_registration.name",
+      "title": "Farmer registration",
+      "code": "AGR-001",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "farmer_contact",
+          "label": "templates.catalogue.farmer_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "farm_location",
+          "label": "templates.catalogue.farm_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent_scope",
+          "label": "templates.catalogue.consent_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_farm_profile",
+      "name": "templates.agr_farm_profile.name",
+      "title": "Farm profile",
+      "code": "AGR-002",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "farm_area",
+          "label": "templates.catalogue.farm_area",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "ha",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "enterprise_types",
+          "label": "templates.catalogue.enterprise_types",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "water_sources",
+          "label": "templates.catalogue.water_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_crop_plot_registration",
+      "name": "templates.agr_crop_plot_registration.name",
+      "title": "Crop plot registration",
+      "code": "AGR-003",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "crop_type",
+          "label": "templates.catalogue.crop_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "plot_area",
+          "label": "templates.catalogue.plot_area",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "ha",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "planting_season",
+          "label": "templates.catalogue.planting_season",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_soil_sample_collection",
+      "name": "templates.agr_soil_sample_collection.name",
+      "title": "Soil sample collection",
+      "code": "AGR-004",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "sampling_depth",
+          "label": "templates.catalogue.sampling_depth",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "m",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_pattern",
+          "label": "templates.catalogue.sampling_pattern",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_soil_test_result_intake",
+      "name": "templates.agr_soil_test_result_intake.name",
+      "title": "Soil test result intake",
+      "code": "AGR-005",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "laboratory_reference",
+          "label": "templates.catalogue.laboratory_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_results",
+          "label": "templates.catalogue.reported_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agronomist_review",
+          "label": "templates.catalogue.agronomist_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_land_preparation_log",
+      "name": "templates.agr_land_preparation_log.name",
+      "title": "Land preparation log",
+      "code": "AGR-006",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "field_operations",
+          "label": "templates.catalogue.field_operations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "equipment_used",
+          "label": "templates.catalogue.equipment_used",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operation_dates",
+          "label": "templates.catalogue.operation_dates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_planting_record",
+      "name": "templates.agr_planting_record.name",
+      "title": "Planting record",
+      "code": "AGR-007",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "seed_variety",
+          "label": "templates.catalogue.seed_variety",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "planting_date",
+          "label": "templates.catalogue.planting_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "planted_area",
+          "label": "templates.catalogue.planted_area",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "ha",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_seed_lot_inventory",
+      "name": "templates.agr_seed_lot_inventory.name",
+      "title": "Seed lot inventory",
+      "code": "AGR-008",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "seed_lot",
+          "label": "templates.catalogue.seed_lot",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "certification_reference",
+          "label": "templates.catalogue.certification_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "germination_evidence",
+          "label": "templates.catalogue.germination_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_seed_distribution_register",
+      "name": "templates.agr_seed_distribution_register.name",
+      "title": "Seed distribution register",
+      "code": "AGR-009",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "recipient_reference",
+          "label": "templates.catalogue.recipient_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "seed_lot",
+          "label": "templates.catalogue.seed_lot",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity",
+          "label": "templates.catalogue.quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_crop_input_application_log",
+      "name": "templates.agr_crop_input_application_log.name",
+      "title": "Crop input application log",
+      "code": "AGR-010",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "input_product",
+          "label": "templates.catalogue.input_product",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_application_ref",
+          "label": "templates.catalogue.approved_application_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "applied_quantity",
+          "label": "templates.catalogue.applied_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "applied_quantity_unit",
+          "label": "templates.catalogue.applied_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_fertilizer_stock_and_use",
+      "name": "templates.agr_fertilizer_stock_and_use.name",
+      "title": "Fertilizer stock and use",
+      "code": "AGR-011",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "fertilizer_type",
+          "label": "templates.catalogue.fertilizer_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity_issued",
+          "label": "templates.catalogue.quantity_issued",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "plot_reference",
+          "label": "templates.catalogue.plot_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_irrigation_event_log",
+      "name": "templates.agr_irrigation_event_log.name",
+      "title": "Irrigation event log",
+      "code": "AGR-012",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "irrigation_method",
+          "label": "templates.catalogue.irrigation_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "duration",
+          "label": "templates.catalogue.duration",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "minutes",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "water_volume_basis",
+          "label": "templates.catalogue.water_volume_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_crop_scouting_observation",
+      "name": "templates.agr_crop_scouting_observation.name",
+      "title": "Crop scouting observation",
+      "code": "AGR-013",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "crop_stage",
+          "label": "templates.catalogue.crop_stage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_symptoms",
+          "label": "templates.catalogue.observed_symptoms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "photo_evidence",
+          "label": "templates.catalogue.photo_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_pest_observation_record",
+      "name": "templates.agr_pest_observation_record.name",
+      "title": "Pest observation record",
+      "code": "AGR-014",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_organism",
+          "label": "templates.catalogue.observed_organism",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "symptom_location",
+          "label": "templates.catalogue.symptom_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expert_verification",
+          "label": "templates.catalogue.expert_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_crop_disease_observation",
+      "name": "templates.agr_crop_disease_observation.name",
+      "title": "Crop disease observation",
+      "code": "AGR-015",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "visible_symptoms",
+          "label": "templates.catalogue.visible_symptoms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_area",
+          "label": "templates.catalogue.affected_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_assessment",
+          "label": "templates.catalogue.qualified_assessment",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_weed_survey",
+      "name": "templates.agr_weed_survey.name",
+      "title": "Weed survey",
+      "code": "AGR-016",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "weed_observations",
+          "label": "templates.catalogue.weed_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "coverage_estimate",
+          "label": "templates.catalogue.coverage_estimate",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "plot_conditions",
+          "label": "templates.catalogue.plot_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_agronomy_advisory_visit",
+      "name": "templates.agr_agronomy_advisory_visit.name",
+      "title": "Agronomy advisory visit",
+      "code": "AGR-017",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "farmer_questions",
+          "label": "templates.catalogue.farmer_questions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "field_observations",
+          "label": "templates.catalogue.field_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "approved_advice",
+          "label": "templates.catalogue.approved_advice",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_crop_growth_measurement",
+      "name": "templates.agr_crop_growth_measurement.name",
+      "title": "Crop growth measurement",
+      "code": "AGR-018",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "measurement_protocol",
+          "label": "templates.catalogue.measurement_protocol",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampled_plants",
+          "label": "templates.catalogue.sampled_plants",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_values",
+          "label": "templates.catalogue.observed_values",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_harvest_readiness_assessment",
+      "name": "templates.agr_harvest_readiness_assessment.name",
+      "title": "Harvest readiness assessment",
+      "code": "AGR-019",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "crop_maturity_evidence",
+          "label": "templates.catalogue.crop_maturity_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "weather_constraints",
+          "label": "templates.catalogue.weather_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "harvest_plan",
+          "label": "templates.catalogue.harvest_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_harvest_collection_record",
+      "name": "templates.agr_harvest_collection_record.name",
+      "title": "Harvest collection record",
+      "code": "AGR-020",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "harvest_date",
+          "label": "templates.catalogue.harvest_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "crop_quantity",
+          "label": "templates.catalogue.crop_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "crop_quantity_unit",
+          "label": "templates.catalogue.crop_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_grade_basis",
+          "label": "templates.catalogue.quality_grade_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_yield_estimation_worksheet",
+      "name": "templates.agr_yield_estimation_worksheet.name",
+      "title": "Yield estimation worksheet",
+      "code": "AGR-021",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "sample_area",
+          "label": "templates.catalogue.sample_area",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "sqm",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sample_yield",
+          "label": "templates.catalogue.sample_yield",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sample_yield_unit",
+          "label": "templates.catalogue.sample_yield_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "extrapolation_assumptions",
+          "label": "templates.catalogue.extrapolation_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_post_harvest_loss_assessment",
+      "name": "templates.agr_post_harvest_loss_assessment.name",
+      "title": "Post-harvest loss assessment",
+      "code": "AGR-022",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "loss_stage",
+          "label": "templates.catalogue.loss_stage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_loss",
+          "label": "templates.catalogue.measured_loss",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_causes",
+          "label": "templates.catalogue.reported_causes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_farm_storage_inspection",
+      "name": "templates.agr_farm_storage_inspection.name",
+      "title": "Farm storage inspection",
+      "code": "AGR-023",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "storage_structure",
+          "label": "templates.catalogue.storage_structure",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "moisture_evidence",
+          "label": "templates.catalogue.moisture_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pest_signs",
+          "label": "templates.catalogue.pest_signs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_produce_grading_record",
+      "name": "templates.agr_produce_grading_record.name",
+      "title": "Produce grading record",
+      "code": "AGR-024",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "grading_criteria",
+          "label": "templates.catalogue.grading_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sample_findings",
+          "label": "templates.catalogue.sample_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "assigned_grade",
+          "label": "templates.catalogue.assigned_grade",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_crop_sale_record",
+      "name": "templates.agr_crop_sale_record.name",
+      "title": "Crop sale record",
+      "code": "AGR-025",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "buyer",
+          "label": "templates.catalogue.buyer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivered_quantity",
+          "label": "templates.catalogue.delivered_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivered_quantity_unit",
+          "label": "templates.catalogue.delivered_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_price",
+          "label": "templates.catalogue.agreed_price",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "agreed_price_currency",
+          "label": "templates.catalogue.agreed_price_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_farm_expense_log",
+      "name": "templates.agr_farm_expense_log.name",
+      "title": "Farm expense log",
+      "code": "AGR-026",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "expense_item",
+          "label": "templates.catalogue.expense_item",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cost",
+          "label": "templates.catalogue.cost",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "cost_currency",
+          "label": "templates.catalogue.cost_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "production_activity",
+          "label": "templates.catalogue.production_activity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_farm_profitability_worksheet",
+      "name": "templates.agr_farm_profitability_worksheet.name",
+      "title": "Farm profitability worksheet",
+      "code": "AGR-027",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "production_costs",
+          "label": "templates.catalogue.production_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sales_revenue",
+          "label": "templates.catalogue.sales_revenue",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "sales_revenue_currency",
+          "label": "templates.catalogue.sales_revenue_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "allocation_assumptions",
+          "label": "templates.catalogue.allocation_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_farm_labor_task_sheet",
+      "name": "templates.agr_farm_labor_task_sheet.name",
+      "title": "Farm labor task sheet",
+      "code": "AGR-028",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "task",
+          "label": "templates.catalogue.task",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "crew_hours",
+          "label": "templates.catalogue.crew_hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "hours",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_area",
+          "label": "templates.catalogue.completed_area",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "ha",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_farmer_training_attendance",
+      "name": "templates.agr_farmer_training_attendance.name",
+      "title": "Farmer training attendance",
+      "code": "AGR-029",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "training_topic",
+          "label": "templates.catalogue.training_topic",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_reference",
+          "label": "templates.catalogue.participant_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "practice_followup",
+          "label": "templates.catalogue.practice_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_cooperative_member_production_plan",
+      "name": "templates.agr_cooperative_member_production_plan.name",
+      "title": "Cooperative member production plan",
+      "code": "AGR-030",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "member_commitments",
+          "label": "templates.catalogue.member_commitments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expected_volume",
+          "label": "templates.catalogue.expected_volume",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "L",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_period",
+          "label": "templates.catalogue.delivery_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_contract_farming_agreement_brief",
+      "name": "templates.agr_contract_farming_agreement_brief.name",
+      "title": "Contract farming agreement brief",
+      "code": "AGR-031",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "crop_specification",
+          "label": "templates.catalogue.crop_specification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_commitments",
+          "label": "templates.catalogue.delivery_commitments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pricing_terms",
+          "label": "templates.catalogue.pricing_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_organic_production_evidence",
+      "name": "templates.agr_organic_production_evidence.name",
+      "title": "Organic production evidence",
+      "code": "AGR-032",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "claimed_standard_ref",
+          "label": "templates.catalogue.claimed_standard_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "input_records",
+          "label": "templates.catalogue.input_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "traceability_evidence",
+          "label": "templates.catalogue.traceability_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_greenhouse_climate_log",
+      "name": "templates.agr_greenhouse_climate_log.name",
+      "title": "Greenhouse climate log",
+      "code": "AGR-033",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "temperature",
+          "label": "templates.catalogue.temperature",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "degC",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "humidity_percent",
+          "label": "templates.catalogue.humidity_percent",
+          "type": "percentage",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_location",
+          "label": "templates.catalogue.measurement_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_greenhouse_infrastructure_inspection",
+      "name": "templates.agr_greenhouse_infrastructure_inspection.name",
+      "title": "Greenhouse infrastructure inspection",
+      "code": "AGR-034",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "cover_condition",
+          "label": "templates.catalogue.cover_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "irrigation_condition",
+          "label": "templates.catalogue.irrigation_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "ventilation_observations",
+          "label": "templates.catalogue.ventilation_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_agricultural_machinery_hire_record",
+      "name": "templates.agr_agricultural_machinery_hire_record.name",
+      "title": "Agricultural machinery hire record",
+      "code": "AGR-035",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "machine_reference",
+          "label": "templates.catalogue.machine_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_hours",
+          "label": "templates.catalogue.service_hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "hours",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_fee",
+          "label": "templates.catalogue.agreed_fee",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "agreed_fee_currency",
+          "label": "templates.catalogue.agreed_fee_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_crop_insurance_damage_evidence",
+      "name": "templates.agr_crop_insurance_damage_evidence.name",
+      "title": "Crop insurance damage evidence",
+      "code": "AGR-036",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "affected_plot",
+          "label": "templates.catalogue.affected_plot",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_damage",
+          "label": "templates.catalogue.observed_damage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "event_context",
+          "label": "templates.catalogue.event_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_agricultural_extension_impact_survey",
+      "name": "templates.agr_agricultural_extension_impact_survey.name",
+      "title": "Agricultural extension impact survey",
+      "code": "AGR-037",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "practices_adopted",
+          "label": "templates.catalogue.practices_adopted",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_results",
+          "label": "templates.catalogue.reported_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_limits",
+          "label": "templates.catalogue.verification_limits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "agr_farm_seasonal_planning",
+      "name": "templates.agr_farm_seasonal_planning.name",
+      "title": "Farm seasonal planning",
+      "code": "AGR-038",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_agr",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "crop_choices",
+          "label": "templates.catalogue.crop_choices",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "input_requirements",
+          "label": "templates.catalogue.input_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cash_requirements",
+          "label": "templates.catalogue.cash_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

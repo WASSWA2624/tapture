@@ -27,6 +27,7 @@ frontend/        the Flutter application
 backend/         the required minimal server (specification Part XI)
   .rules/        11 rule files: structure, coding, API, data, security, the relay boundary,
                  AI proxy, observability, testing, deployment, workflow
+resources/       the planning template catalogue and the generated list of every shipped template
 dev-plan/        281 implementation prompts, in build order
 branding/        the identity: logos, app icons, splash, palette, and the generator that draws them
   tool/          one geometry definition; every asset is regenerated from it
@@ -38,6 +39,8 @@ app-write-up.md  the product and technical specification
 ## Documentation
 
 - [app-write-up.md](app-write-up.md) — the full product and technical specification.
+- [resources/template-library.md](resources/template-library.md) — every shipped template, all 2,349, with their
+  codes, keys, record types and fields (generated; see §13.4–13.5).
 - [dev-plan/README.md](dev-plan/README.md) — how the build is sequenced, and where to start.
 - [dev-plan/INDEX.md](dev-plan/INDEX.md) — all 281 tasks in one list.
 - [dev-plan/STANDARD.md](dev-plan/STANDARD.md) — the standing prompt every task inherits.

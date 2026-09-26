@@ -1,0 +1,1768 @@
+{
+  "category": "GOV",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "gov_citizen_service_request",
+      "name": "templates.gov_citizen_service_request.name",
+      "title": "Citizen service request",
+      "code": "GOV-001",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "service_type",
+          "label": "templates.catalogue.service_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "request_details",
+          "label": "templates.catalogue.request_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "preferred_contact",
+          "label": "templates.catalogue.preferred_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_municipal_complaint_intake",
+      "name": "templates.gov_municipal_complaint_intake.name",
+      "title": "Municipal complaint intake",
+      "code": "GOV-002",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_issue",
+          "label": "templates.catalogue.reported_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "location",
+          "label": "templates.catalogue.location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_resolution",
+          "label": "templates.catalogue.requested_resolution",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_public_service_appointment",
+      "name": "templates.gov_public_service_appointment.name",
+      "title": "Public service appointment",
+      "code": "GOV-003",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_service",
+          "label": "templates.catalogue.requested_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "preferred_date",
+          "label": "templates.catalogue.preferred_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_needs",
+          "label": "templates.catalogue.access_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_business_license_application_intake",
+      "name": "templates.gov_business_license_application_intake.name",
+      "title": "Business license application intake",
+      "code": "GOV-004",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "business_details",
+          "label": "templates.catalogue.business_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "requested_activity",
+          "label": "templates.catalogue.requested_activity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_documents",
+          "label": "templates.catalogue.supporting_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_license_renewal_checklist",
+      "name": "templates.gov_license_renewal_checklist.name",
+      "title": "License renewal checklist",
+      "code": "GOV-005",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "license_reference",
+          "label": "templates.catalogue.license_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_evidence",
+          "label": "templates.catalogue.required_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_status",
+          "label": "templates.catalogue.verification_status",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "unverified",
+              "label": "templates.choices.verification_status.unverified"
+            },
+            {
+              "code": "verified",
+              "label": "templates.choices.verification_status.verified"
+            },
+            {
+              "code": "disputed",
+              "label": "templates.choices.verification_status.disputed"
+            },
+            {
+              "code": "not_applicable",
+              "label": "templates.choices.verification_status.not_applicable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_municipal_inspection_assignment",
+      "name": "templates.gov_municipal_inspection_assignment.name",
+      "title": "Municipal inspection assignment",
+      "code": "GOV-006",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "inspection_scope",
+          "label": "templates.catalogue.inspection_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_list",
+          "label": "templates.catalogue.site_list",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_inspectors",
+          "label": "templates.catalogue.authorized_inspectors",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_business_premises_inspection",
+      "name": "templates.gov_business_premises_inspection.name",
+      "title": "Business premises inspection",
+      "code": "GOV-007",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_inspection_criteria",
+          "label": "templates.catalogue.approved_inspection_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_conditions",
+          "label": "templates.catalogue.observed_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "findings",
+          "label": "templates.catalogue.findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_public_market_stall_allocation",
+      "name": "templates.gov_public_market_stall_allocation.name",
+      "title": "Public market stall allocation",
+      "code": "GOV-008",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "market_reference",
+          "label": "templates.catalogue.market_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stall_preference",
+          "label": "templates.catalogue.stall_preference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "published_criteria",
+          "label": "templates.catalogue.published_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_market_stall_occupancy_register",
+      "name": "templates.gov_market_stall_occupancy_register.name",
+      "title": "Market stall occupancy register",
+      "code": "GOV-009",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "stall_identifier",
+          "label": "templates.catalogue.stall_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_occupant",
+          "label": "templates.catalogue.authorized_occupant",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "occupancy_period",
+          "label": "templates.catalogue.occupancy_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_municipal_fee_payment_record",
+      "name": "templates.gov_municipal_fee_payment_record.name",
+      "title": "Municipal fee payment record",
+      "code": "GOV-010",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "service_reference",
+          "label": "templates.catalogue.service_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_fee",
+          "label": "templates.catalogue.approved_fee",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "approved_fee_currency",
+          "label": "templates.catalogue.approved_fee_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "receipt_reference",
+          "label": "templates.catalogue.receipt_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_local_revenue_reconciliation",
+      "name": "templates.gov_local_revenue_reconciliation.name",
+      "title": "Local revenue reconciliation",
+      "code": "GOV-011",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "assessed_fees",
+          "label": "templates.catalogue.assessed_fees",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "receipts",
+          "label": "templates.catalogue.receipts",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "variance_notes",
+          "label": "templates.catalogue.variance_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_public_asset_verification",
+      "name": "templates.gov_public_asset_verification.name",
+      "title": "Public asset verification",
+      "code": "GOV-012",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "asset_reference",
+          "label": "templates.catalogue.asset_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "physical_presence",
+          "label": "templates.catalogue.physical_presence",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition",
+          "label": "templates.catalogue.condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_public_works_complaint_resolution",
+      "name": "templates.gov_public_works_complaint_resolution.name",
+      "title": "Public works complaint resolution",
+      "code": "GOV-013",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_issue",
+          "label": "templates.catalogue.reported_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "work_evidence",
+          "label": "templates.catalogue.work_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "citizen_feedback",
+          "label": "templates.catalogue.citizen_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_public_consultation_submission",
+      "name": "templates.gov_public_consultation_submission.name",
+      "title": "Public consultation submission",
+      "code": "GOV-014",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "consultation_topic",
+          "label": "templates.catalogue.consultation_topic",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "submitted_view",
+          "label": "templates.catalogue.submitted_view",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "publication_permission",
+          "label": "templates.catalogue.publication_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_community_development_planning",
+      "name": "templates.gov_community_development_planning.name",
+      "title": "Community development planning",
+      "code": "GOV-015",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "community_priorities",
+          "label": "templates.catalogue.community_priorities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_projects",
+          "label": "templates.catalogue.proposed_projects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "funding_assumptions",
+          "label": "templates.catalogue.funding_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_municipal_meeting_minutes",
+      "name": "templates.gov_municipal_meeting_minutes.name",
+      "title": "Municipal meeting minutes",
+      "code": "GOV-016",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "agenda_items",
+          "label": "templates.catalogue.agenda_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_decisions",
+          "label": "templates.catalogue.authorized_decisions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "action_owners",
+          "label": "templates.catalogue.action_owners",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_government_program_beneficiary_intake",
+      "name": "templates.gov_government_program_beneficiary_intake.name",
+      "title": "Government program beneficiary intake",
+      "code": "GOV-017",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "published_eligibility",
+          "label": "templates.catalogue.published_eligibility",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_evidence",
+          "label": "templates.catalogue.minimum_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_public_grant_disbursement_record",
+      "name": "templates.gov_public_grant_disbursement_record.name",
+      "title": "Public grant disbursement record",
+      "code": "GOV-018",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "award_reference",
+          "label": "templates.catalogue.award_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_amount",
+          "label": "templates.catalogue.approved_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "approved_currency",
+          "label": "templates.catalogue.approved_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_recipient",
+          "label": "templates.catalogue.verified_recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_public_project_monitoring_visit",
+      "name": "templates.gov_public_project_monitoring_visit.name",
+      "title": "Public project monitoring visit",
+      "code": "GOV-019",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_scope",
+          "label": "templates.catalogue.approved_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_progress",
+          "label": "templates.catalogue.observed_progress",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "community_feedback",
+          "label": "templates.catalogue.community_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_public_expenditure_evidence_review",
+      "name": "templates.gov_public_expenditure_evidence_review.name",
+      "title": "Public expenditure evidence review",
+      "code": "GOV-020",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "budget_reference",
+          "label": "templates.catalogue.budget_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "payment_evidence",
+          "label": "templates.catalogue.payment_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_verification",
+          "label": "templates.catalogue.delivery_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_public_procurement_disclosure_draft",
+      "name": "templates.gov_public_procurement_disclosure_draft.name",
+      "title": "Public procurement disclosure draft",
+      "code": "GOV-021",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_award_data",
+          "label": "templates.catalogue.approved_award_data",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "disclosure_scope",
+          "label": "templates.catalogue.disclosure_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "redaction_review",
+          "label": "templates.catalogue.redaction_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_citizen_information_request",
+      "name": "templates.gov_citizen_information_request.name",
+      "title": "Citizen information request",
+      "code": "GOV-022",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_information",
+          "label": "templates.catalogue.requested_information",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_scope",
+          "label": "templates.catalogue.response_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "applicable_process_ref",
+          "label": "templates.catalogue.applicable_process_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_public_record_digitization",
+      "name": "templates.gov_public_record_digitization.name",
+      "title": "Public record digitization",
+      "code": "GOV-023",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "source_record",
+          "label": "templates.catalogue.source_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "document_date",
+          "label": "templates.catalogue.document_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_metadata",
+          "label": "templates.catalogue.verified_metadata",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_official_correspondence_register",
+      "name": "templates.gov_official_correspondence_register.name",
+      "title": "Official correspondence register",
+      "code": "GOV-024",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "correspondence_reference",
+          "label": "templates.catalogue.correspondence_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sender_or_recipient",
+          "label": "templates.catalogue.sender_or_recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "action_required",
+          "label": "templates.catalogue.action_required",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_official_letter_drafting",
+      "name": "templates.gov_official_letter_drafting.name",
+      "title": "Official letter drafting",
+      "code": "GOV-025",
+      "kind": "communication",
+      "pack": "COMM",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "communication_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_comm"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_signatory",
+          "label": "templates.catalogue.authorized_signatory",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_permit_application_document_review",
+      "name": "templates.gov_permit_application_document_review.name",
+      "title": "Permit application document review",
+      "code": "GOV-026",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "permit_type",
+          "label": "templates.catalogue.permit_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_documents",
+          "label": "templates.catalogue.required_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reviewer_findings",
+          "label": "templates.catalogue.reviewer_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_public_building_occupancy_permit_evidence",
+      "name": "templates.gov_public_building_occupancy_permit_evidence.name",
+      "title": "Public building occupancy permit evidence",
+      "code": "GOV-027",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_requirements",
+          "label": "templates.catalogue.approved_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "inspection_evidence",
+          "label": "templates.catalogue.inspection_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_decision",
+          "label": "templates.catalogue.authorized_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_social_protection_payment_reconciliation",
+      "name": "templates.gov_social_protection_payment_reconciliation.name",
+      "title": "Social protection payment reconciliation",
+      "code": "GOV-028",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_beneficiary_refs",
+          "label": "templates.catalogue.authorized_beneficiary_refs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "payment_records",
+          "label": "templates.catalogue.payment_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "exceptions",
+          "label": "templates.catalogue.exceptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_service_delivery_performance_scorecard",
+      "name": "templates.gov_service_delivery_performance_scorecard.name",
+      "title": "Service delivery performance scorecard",
+      "code": "GOV-029",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "published_service_targets",
+          "label": "templates.catalogue.published_service_targets",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_results",
+          "label": "templates.catalogue.verified_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "citizen_feedback",
+          "label": "templates.catalogue.citizen_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_government_audit_response_tracker",
+      "name": "templates.gov_government_audit_response_tracker.name",
+      "title": "Government audit response tracker",
+      "code": "GOV-030",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "audit_finding",
+          "label": "templates.catalogue.audit_finding",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "responsible_department",
+          "label": "templates.catalogue.responsible_department",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_evidence",
+          "label": "templates.catalogue.response_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_local_disaster_resource_register",
+      "name": "templates.gov_local_disaster_resource_register.name",
+      "title": "Local disaster resource register",
+      "code": "GOV-031",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "resource_type",
+          "label": "templates.catalogue.resource_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "available_capacity",
+          "label": "templates.catalogue.available_capacity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "available_capacity_unit",
+          "label": "templates.catalogue.available_capacity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_contact",
+          "label": "templates.catalogue.verified_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_civil_registration_appointment_intake",
+      "name": "templates.gov_civil_registration_appointment_intake.name",
+      "title": "Civil registration appointment intake",
+      "code": "GOV-032",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "service_type",
+          "label": "templates.catalogue.service_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_applicant_details",
+          "label": "templates.catalogue.minimum_applicant_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "document_checklist",
+          "label": "templates.catalogue.document_checklist",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_municipal_boundary_service_query",
+      "name": "templates.gov_municipal_boundary_service_query.name",
+      "title": "Municipal boundary service query",
+      "code": "GOV-033",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "location_reference",
+          "label": "templates.catalogue.location_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "query_type",
+          "label": "templates.catalogue.query_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "official_source_required",
+          "label": "templates.catalogue.official_source_required",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_public_grievance_appeal_intake",
+      "name": "templates.gov_public_grievance_appeal_intake.name",
+      "title": "Public grievance appeal intake",
+      "code": "GOV-034",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "original_decision_ref",
+          "label": "templates.catalogue.original_decision_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "appeal_grounds",
+          "label": "templates.catalogue.appeal_grounds",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_evidence",
+          "label": "templates.catalogue.supporting_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_government_facility_handover",
+      "name": "templates.gov_government_facility_handover.name",
+      "title": "Government facility handover",
+      "code": "GOV-035",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "facility_inventory",
+          "label": "templates.catalogue.facility_inventory",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "handover_conditions",
+          "label": "templates.catalogue.handover_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_signatures",
+          "label": "templates.catalogue.authorized_signatures",
+          "type": "signature",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gov_public_service_accessibility_assessment",
+      "name": "templates.gov_public_service_accessibility_assessment.name",
+      "title": "Public service accessibility assessment",
+      "code": "GOV-036",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gov",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "service_journey",
+          "label": "templates.catalogue.service_journey",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_barriers",
+          "label": "templates.catalogue.observed_barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_actions",
+          "label": "templates.catalogue.improvement_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

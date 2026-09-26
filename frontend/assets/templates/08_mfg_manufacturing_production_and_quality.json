@@ -1,0 +1,1710 @@
+{
+  "category": "MFG",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "mfg_manufactured_product_master",
+      "name": "templates.mfg_manufactured_product_master.name",
+      "title": "Manufactured product master",
+      "code": "MFG-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "product_code",
+          "label": "templates.catalogue.product_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_specification",
+          "label": "templates.catalogue.approved_specification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "revision",
+          "label": "templates.catalogue.revision",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_bill_of_materials",
+      "name": "templates.mfg_bill_of_materials.name",
+      "title": "Bill of materials",
+      "code": "MFG-002",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "parent_product",
+          "label": "templates.catalogue.parent_product",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "component_items",
+          "label": "templates.catalogue.component_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "component_quantities",
+          "label": "templates.catalogue.component_quantities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_manufacturing_route_sheet",
+      "name": "templates.mfg_manufacturing_route_sheet.name",
+      "title": "Manufacturing route sheet",
+      "code": "MFG-003",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "operation_sequence",
+          "label": "templates.catalogue.operation_sequence",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "work_centers",
+          "label": "templates.catalogue.work_centers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_process_ref",
+          "label": "templates.catalogue.approved_process_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_production_order",
+      "name": "templates.mfg_production_order.name",
+      "title": "Production order",
+      "code": "MFG-004",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "product_reference",
+          "label": "templates.catalogue.product_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "order_quantity",
+          "label": "templates.catalogue.order_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "order_quantity_unit",
+          "label": "templates.catalogue.order_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_completion",
+          "label": "templates.catalogue.required_completion",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_production_shift_report",
+      "name": "templates.mfg_production_shift_report.name",
+      "title": "Production shift report",
+      "code": "MFG-005",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "produced_quantity",
+          "label": "templates.catalogue.produced_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "produced_quantity_unit",
+          "label": "templates.catalogue.produced_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "rejected_quantity",
+          "label": "templates.catalogue.rejected_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "rejected_quantity_unit",
+          "label": "templates.catalogue.rejected_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "line_constraints",
+          "label": "templates.catalogue.line_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_operator_production_log",
+      "name": "templates.mfg_operator_production_log.name",
+      "title": "Operator production log",
+      "code": "MFG-006",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "operation",
+          "label": "templates.catalogue.operation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_quantity",
+          "label": "templates.catalogue.completed_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_quantity_unit",
+          "label": "templates.catalogue.completed_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "work_duration",
+          "label": "templates.catalogue.work_duration",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "minutes",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_machine_setup_verification",
+      "name": "templates.mfg_machine_setup_verification.name",
+      "title": "Machine setup verification",
+      "code": "MFG-007",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_setup",
+          "label": "templates.catalogue.approved_setup",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_settings",
+          "label": "templates.catalogue.observed_settings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_release",
+          "label": "templates.catalogue.authorized_release",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_first_article_inspection",
+      "name": "templates.mfg_first_article_inspection.name",
+      "title": "First article inspection",
+      "code": "MFG-008",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "drawing_revision",
+          "label": "templates.catalogue.drawing_revision",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_characteristics",
+          "label": "templates.catalogue.measured_characteristics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_acceptance",
+          "label": "templates.catalogue.quality_acceptance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_in_process_quality_check",
+      "name": "templates.mfg_in_process_quality_check.name",
+      "title": "In-process quality check",
+      "code": "MFG-009",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "sample_reference",
+          "label": "templates.catalogue.sample_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "inspection_criteria",
+          "label": "templates.catalogue.inspection_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_finished_goods_inspection",
+      "name": "templates.mfg_finished_goods_inspection.name",
+      "title": "Finished goods inspection",
+      "code": "MFG-010",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "product_batch",
+          "label": "templates.catalogue.product_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_plan_ref",
+          "label": "templates.catalogue.sampling_plan_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_decision",
+          "label": "templates.catalogue.acceptance_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_dimensional_inspection_sheet",
+      "name": "templates.mfg_dimensional_inspection_sheet.name",
+      "title": "Dimensional inspection sheet",
+      "code": "MFG-011",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "characteristic",
+          "label": "templates.catalogue.characteristic",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "nominal_dimension",
+          "label": "templates.catalogue.nominal_dimension",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "mm",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_dimension",
+          "label": "templates.catalogue.measured_dimension",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "mm",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_process_parameter_log",
+      "name": "templates.mfg_process_parameter_log.name",
+      "title": "Process parameter log",
+      "code": "MFG-012",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "parameter_name",
+          "label": "templates.catalogue.parameter_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_value",
+          "label": "templates.catalogue.observed_value",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_value_unit",
+          "label": "templates.catalogue.observed_value_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_limit_ref",
+          "label": "templates.catalogue.approved_limit_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_manufacturing_defect_report",
+      "name": "templates.mfg_manufacturing_defect_report.name",
+      "title": "Manufacturing defect report",
+      "code": "MFG-013",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "defect_type",
+          "label": "templates.catalogue.defect_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_quantity",
+          "label": "templates.catalogue.affected_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_quantity_unit",
+          "label": "templates.catalogue.affected_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "containment_action",
+          "label": "templates.catalogue.containment_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_nonconforming_material_disposition",
+      "name": "templates.mfg_nonconforming_material_disposition.name",
+      "title": "Nonconforming material disposition",
+      "code": "MFG-014",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "material_reference",
+          "label": "templates.catalogue.material_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "nonconformance",
+          "label": "templates.catalogue.nonconformance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_decision",
+          "label": "templates.catalogue.quality_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_scrap_tracking",
+      "name": "templates.mfg_scrap_tracking.name",
+      "title": "Scrap tracking",
+      "code": "MFG-015",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "scrap_material",
+          "label": "templates.catalogue.scrap_material",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "scrap_quantity",
+          "label": "templates.catalogue.scrap_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "scrap_quantity_unit",
+          "label": "templates.catalogue.scrap_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reason_code",
+          "label": "templates.catalogue.reason_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_rework_instruction_request",
+      "name": "templates.mfg_rework_instruction_request.name",
+      "title": "Rework instruction request",
+      "code": "MFG-016",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "defective_item",
+          "label": "templates.catalogue.defective_item",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_rework",
+          "label": "templates.catalogue.proposed_rework",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "engineering_approval",
+          "label": "templates.catalogue.engineering_approval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_production_downtime_report",
+      "name": "templates.mfg_production_downtime_report.name",
+      "title": "Production downtime report",
+      "code": "MFG-017",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "machine_identifier",
+          "label": "templates.catalogue.machine_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stop_duration",
+          "label": "templates.catalogue.stop_duration",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "minutes",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stop_reason",
+          "label": "templates.catalogue.stop_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_production_changeover_log",
+      "name": "templates.mfg_production_changeover_log.name",
+      "title": "Production changeover log",
+      "code": "MFG-018",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "previous_product",
+          "label": "templates.catalogue.previous_product",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "next_product",
+          "label": "templates.catalogue.next_product",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "changeover_duration",
+          "label": "templates.catalogue.changeover_duration",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "minutes",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_tooling_inventory",
+      "name": "templates.mfg_tooling_inventory.name",
+      "title": "Tooling inventory",
+      "code": "MFG-019",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "tool_identifier",
+          "label": "templates.catalogue.tool_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "compatible_process",
+          "label": "templates.catalogue.compatible_process",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "tool_condition",
+          "label": "templates.catalogue.tool_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_tooling_life_monitoring",
+      "name": "templates.mfg_tooling_life_monitoring.name",
+      "title": "Tooling life monitoring",
+      "code": "MFG-020",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "tool_usage_count",
+          "label": "templates.catalogue.tool_usage_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "inspection_findings",
+          "label": "templates.catalogue.inspection_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "replacement_trigger_ref",
+          "label": "templates.catalogue.replacement_trigger_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_machine_lubrication_record",
+      "name": "templates.mfg_machine_lubrication_record.name",
+      "title": "Machine lubrication record",
+      "code": "MFG-021",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "lubrication_point",
+          "label": "templates.catalogue.lubrication_point",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_material",
+          "label": "templates.catalogue.approved_material",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_date",
+          "label": "templates.catalogue.completion_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_factory_preventive_maintenance_plan",
+      "name": "templates.mfg_factory_preventive_maintenance_plan.name",
+      "title": "Factory preventive maintenance plan",
+      "code": "MFG-022",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_population",
+          "label": "templates.catalogue.equipment_population",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_tasks",
+          "label": "templates.catalogue.maintenance_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "due_schedule",
+          "label": "templates.catalogue.due_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_production_capacity_assessment",
+      "name": "templates.mfg_production_capacity_assessment.name",
+      "title": "Production capacity assessment",
+      "code": "MFG-023",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "available_hours",
+          "label": "templates.catalogue.available_hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "hours",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cycle_time_evidence",
+          "label": "templates.catalogue.cycle_time_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "constraint_assumptions",
+          "label": "templates.catalogue.constraint_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_overall_equipment_effectiveness_inputs",
+      "name": "templates.mfg_overall_equipment_effectiveness_inputs.name",
+      "title": "Overall equipment effectiveness inputs",
+      "code": "MFG-024",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "planned_runtime",
+          "label": "templates.catalogue.planned_runtime",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "actual_runtime",
+          "label": "templates.catalogue.actual_runtime",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_counts",
+          "label": "templates.catalogue.quality_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_work_instruction_drafting",
+      "name": "templates.mfg_work_instruction_drafting.name",
+      "title": "Work instruction drafting",
+      "code": "MFG-025",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_task_steps",
+          "label": "templates.catalogue.approved_task_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_checks",
+          "label": "templates.catalogue.quality_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safety_references",
+          "label": "templates.catalogue.safety_references",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_engineering_change_request",
+      "name": "templates.mfg_engineering_change_request.name",
+      "title": "Engineering change request",
+      "code": "MFG-026",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "affected_design",
+          "label": "templates.catalogue.affected_design",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_change",
+          "label": "templates.catalogue.proposed_change",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_requirements",
+          "label": "templates.catalogue.verification_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_product_traceability_genealogy",
+      "name": "templates.mfg_product_traceability_genealogy.name",
+      "title": "Product traceability genealogy",
+      "code": "MFG-027",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "input_batches",
+          "label": "templates.catalogue.input_batches",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "process_run",
+          "label": "templates.catalogue.process_run",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "output_batch",
+          "label": "templates.catalogue.output_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_supplier_material_certificate_review",
+      "name": "templates.mfg_supplier_material_certificate_review.name",
+      "title": "Supplier material certificate review",
+      "code": "MFG-028",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "certificate_ref",
+          "label": "templates.catalogue.certificate_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "specification_match",
+          "label": "templates.catalogue.specification_match",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_status",
+          "label": "templates.catalogue.verification_status",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "unverified",
+              "label": "templates.choices.verification_status.unverified"
+            },
+            {
+              "code": "verified",
+              "label": "templates.choices.verification_status.verified"
+            },
+            {
+              "code": "disputed",
+              "label": "templates.choices.verification_status.disputed"
+            },
+            {
+              "code": "not_applicable",
+              "label": "templates.choices.verification_status.not_applicable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_factory_energy_consumption_log",
+      "name": "templates.mfg_factory_energy_consumption_log.name",
+      "title": "Factory energy consumption log",
+      "code": "MFG-029",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "meter_reference",
+          "label": "templates.catalogue.meter_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consumption_interval",
+          "label": "templates.catalogue.consumption_interval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_readings",
+          "label": "templates.catalogue.observed_readings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_manufacturing_safety_observation",
+      "name": "templates.mfg_manufacturing_safety_observation.name",
+      "title": "Manufacturing safety observation",
+      "code": "MFG-030",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "workstation",
+          "label": "templates.catalogue.workstation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_hazard",
+          "label": "templates.catalogue.observed_hazard",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "immediate_action",
+          "label": "templates.catalogue.immediate_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_packaging_line_clearance",
+      "name": "templates.mfg_packaging_line_clearance.name",
+      "title": "Packaging line clearance",
+      "code": "MFG-031",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "previous_batch_materials",
+          "label": "templates.catalogue.previous_batch_materials",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "current_batch_labels",
+          "label": "templates.catalogue.current_batch_labels",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_release",
+          "label": "templates.catalogue.authorized_release",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_production_planning_board",
+      "name": "templates.mfg_production_planning_board.name",
+      "title": "Production planning board",
+      "code": "MFG-032",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "work_orders",
+          "label": "templates.catalogue.work_orders",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "line_assignments",
+          "label": "templates.catalogue.line_assignments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "material_constraints",
+          "label": "templates.catalogue.material_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_customer_quality_complaint_review",
+      "name": "templates.mfg_customer_quality_complaint_review.name",
+      "title": "Customer quality complaint review",
+      "code": "MFG-033",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "complaint_reference",
+          "label": "templates.catalogue.complaint_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "traceability_evidence",
+          "label": "templates.catalogue.traceability_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_findings",
+          "label": "templates.catalogue.quality_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mfg_factory_audit_report",
+      "name": "templates.mfg_factory_audit_report.name",
+      "title": "Factory audit report",
+      "code": "MFG-034",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mfg",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "audit_scope",
+          "label": "templates.catalogue.audit_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "corrective_actions",
+          "label": "templates.catalogue.corrective_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

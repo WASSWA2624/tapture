@@ -1,0 +1,281 @@
+{
+  "$comment": "Choice lists and per-field corrections for the catalogue generator. `option_sets` are the choice lists a pack or an inferred field names; each code becomes a `templates.choices.<set>.<code>` label. `overrides` replace what the generator infers for one catalogue field key: a list of one field renames or retypes it, a list of several splits it into atomic columns (§13.1). Edit here, then run `dart run tool/build_template_catalogue.dart`.",
+  "option_sets": {
+    "agreement_status": ["draft", "under_review", "signed", "active", "expired", "terminated"],
+    "case_stage": ["received", "assessment", "in_progress", "referred", "resolved", "closed"],
+    "check_result": ["pass", "pass_with_exceptions", "fail", "not_checked"],
+    "communication_channel": ["email", "letter", "sms", "phone_call", "notice", "social_media", "press_release", "in_person"],
+    "competency_result": ["competent", "not_yet_competent", "passed", "failed", "attended_only"],
+    "condition": ["new", "good", "fair", "poor", "unserviceable"],
+    "confirmation": ["confirmed", "pending", "not_confirmed"],
+    "consent_status": ["given", "refused", "withdrawn", "not_asked"],
+    "contact_channel": ["phone", "sms", "email", "in_person", "post", "other"],
+    "decision": ["pending", "approved", "approved_with_conditions", "deferred", "rejected"],
+    "entity_type": ["person", "household", "organisation", "business", "group", "other"],
+    "entry_status": ["active", "inactive", "superseded", "archived"],
+    "incident_status": ["open", "under_investigation", "action_pending", "closed", "reopened"],
+    "inspection_result": ["pass", "pass_with_conditions", "fail", "not_inspected"],
+    "interview_outcome": ["completed", "partial", "refused", "not_at_home", "other"],
+    "plan_status": ["draft", "approved", "in_progress", "completed", "cancelled"],
+    "priority": ["emergency", "high", "medium", "low"],
+    "progress_stage": ["not_started", "in_progress", "blocked", "completed", "cancelled"],
+    "proposal_status": ["drafting", "internal_review", "submitted", "awarded", "declined"],
+    "quality_flag": ["valid", "estimated", "suspect", "rejected"],
+    "rating": ["very_poor", "poor", "fair", "good", "excellent"],
+    "risk_rating": ["low", "medium", "high", "critical"],
+    "sample_condition": ["acceptable", "compromised", "rejected"],
+    "sample_status": ["collected", "in_transit", "received", "tested", "disposed"],
+    "severity": ["negligible", "minor", "moderate", "major", "critical"],
+    "verification_status": ["unverified", "verified", "disputed", "not_applicable"]
+  },
+  "overrides": {
+    "accuracy_and_source": [
+      {"key": "accuracy_note", "type": "long_text"},
+      {"key": "information_source", "type": "text"}
+    ],
+    "activity_end": [
+      {"key": "activity_end_at", "type": "date_time"}
+    ],
+    "activity_start": [
+      {"key": "activity_start_at", "type": "date_time"}
+    ],
+    "adaptive_capacity": [
+      {"key": "adaptive_capacity", "type": "long_text"}
+    ],
+    "address": [
+      {"key": "street_address", "type": "text", "help": "House, plot and street only; the location fields hold the rest."}
+    ],
+    "agreed_rate": [
+      {"key": "agreed_rate_amount", "type": "currency", "input_mode": "manual_only"},
+      {"key": "agreed_rate_currency", "type": "text"},
+      {"key": "agreed_rate_basis", "type": "text", "help": "Per hour, day, unit or item."}
+    ],
+    "amount_due": [
+      {"key": "due_amount", "type": "currency", "input_mode": "manual_only"},
+      {"key": "due_currency", "type": "text"}
+    ],
+    "approval_limit": [
+      {"key": "approval_limit", "type": "currency", "input_mode": "manual_only"},
+      {"key": "approval_limit_currency", "type": "text"}
+    ],
+    "budget_ceiling": [
+      {"key": "budget_ceiling", "type": "currency", "input_mode": "manual_only"},
+      {"key": "budget_ceiling_currency", "type": "text"}
+    ],
+    "capacity_rating": [
+      {"key": "capacity_rating", "type": "text", "help": "The rating as printed, with its unit."}
+    ],
+    "caption_and_rights": [
+      {"key": "caption_text", "type": "long_text"},
+      {"key": "usage_rights", "type": "long_text"}
+    ],
+    "cash_contribution": [
+      {"key": "cash_contribution", "type": "currency", "input_mode": "manual_only"},
+      {"key": "cash_contribution_currency", "type": "text"}
+    ],
+    "cash_float": [
+      {"key": "cash_float", "type": "currency", "input_mode": "manual_only"},
+      {"key": "cash_float_currency", "type": "text"}
+    ],
+    "cash_on_hand": [
+      {"key": "cash_on_hand", "type": "currency", "input_mode": "manual_only"},
+      {"key": "cash_on_hand_currency", "type": "text"}
+    ],
+    "claimed_loss": [
+      {"key": "claimed_loss", "type": "currency", "input_mode": "manual_only"},
+      {"key": "claimed_loss_currency", "type": "text"}
+    ],
+    "closing_odometer": [
+      {"key": "closing_odometer_km", "type": "decimal"}
+    ],
+    "code_value": [
+      {"key": "code_value", "type": "barcode"}
+    ],
+    "consent_and_purpose": [
+      {"key": "consent_status", "type": "choice", "options": "consent_status", "input_mode": "manual_only"},
+      {"key": "consent_purpose", "type": "long_text"}
+    ],
+    "consent_and_safeguarding": [
+      {"key": "consent_status", "type": "choice", "options": "consent_status", "input_mode": "manual_only"},
+      {"key": "safeguarding_notes", "type": "long_text"}
+    ],
+    "counted_cash": [
+      {"key": "counted_cash", "type": "currency", "input_mode": "manual_only"},
+      {"key": "counted_cash_currency", "type": "text"}
+    ],
+    "date_range": [
+      {"key": "range_start_date", "type": "date"},
+      {"key": "range_end_date", "type": "date"}
+    ],
+    "departure_and_arrival": [
+      {"key": "departure_at", "type": "date_time"},
+      {"key": "arrival_at", "type": "date_time"}
+    ],
+    "distance_traveled": [
+      {"key": "distance_traveled_km", "type": "decimal"}
+    ],
+    "doors_and_circulation": [
+      {"key": "doors_condition", "type": "long_text"},
+      {"key": "circulation_condition", "type": "long_text"}
+    ],
+    "energy_delivered": [
+      {"key": "energy_delivered", "type": "decimal", "unit": "kWh"}
+    ],
+    "energy_reading": [
+      {"key": "energy_reading", "type": "decimal", "unit": "kWh"}
+    ],
+    "entry_and_exit": [
+      {"key": "entry_at", "type": "date_time"},
+      {"key": "exit_at", "type": "date_time"}
+    ],
+    "evidence_and_verification": [
+      {"key": "supporting_evidence", "type": "document_reference"},
+      {"key": "verification_notes", "type": "long_text"}
+    ],
+    "exchange_rate": [
+      {"key": "exchange_rate", "type": "decimal", "unit": "as_declared", "help": "Units of the quote currency per one unit of the base currency."}
+    ],
+    "expected_cash": [
+      {"key": "expected_cash", "type": "currency", "input_mode": "manual_only"},
+      {"key": "expected_cash_currency", "type": "text"}
+    ],
+    "height_estimate": [
+      {"key": "height_estimate_m", "type": "decimal"}
+    ],
+    "hour_meter": [
+      {"key": "hour_meter_hours", "type": "decimal"}
+    ],
+    "humidity": [
+      {"key": "humidity_percent", "type": "percentage"}
+    ],
+    "label_and_test_ref": [
+      {"key": "label_reference", "type": "text"},
+      {"key": "test_reference", "type": "text"}
+    ],
+    "lead_time": [
+      {"key": "lead_time_days", "type": "number"}
+    ],
+    "load_and_task": [
+      {"key": "load_description", "type": "long_text"},
+      {"key": "task_description", "type": "long_text"}
+    ],
+    "measured_dimension": [
+      {"key": "measured_dimension", "type": "decimal", "unit": "mm"}
+    ],
+    "minimum_stock": [
+      {"key": "minimum_stock", "type": "decimal", "unit": "as_declared"},
+      {"key": "minimum_stock_unit", "type": "text"}
+    ],
+    "media_sequence": [
+      {"key": "media_sequence", "type": "photo_reference", "help": "The photos and clips in the order they were taken."}
+    ],
+    "missing_evidence": [
+      {"key": "missing_evidence", "type": "long_text"}
+    ],
+    "nominal_dimension": [
+      {"key": "nominal_dimension", "type": "decimal", "unit": "mm"}
+    ],
+    "observed_number": [
+      {"key": "observed_number", "type": "number"}
+    ],
+    "odometer": [
+      {"key": "odometer_km", "type": "decimal"}
+    ],
+    "opening_odometer": [
+      {"key": "opening_odometer_km", "type": "decimal"}
+    ],
+    "opening_stock": [
+      {"key": "opening_stock", "type": "decimal", "unit": "as_declared"},
+      {"key": "opening_stock_unit", "type": "text"}
+    ],
+    "outage_end": [
+      {"key": "outage_end_at", "type": "date_time"}
+    ],
+    "outage_start": [
+      {"key": "outage_start_at", "type": "date_time"}
+    ],
+    "parts_and_labor": [
+      {"key": "parts_used", "type": "long_text"},
+      {"key": "labour_hours", "type": "decimal"}
+    ],
+    "permission_duration": [
+      {"key": "permission_duration_days", "type": "number"}
+    ],
+    "procurement_lead_time": [
+      {"key": "procurement_lead_time_days", "type": "number"}
+    ],
+    "quantity_at_risk": [
+      {"key": "quantity_at_risk", "type": "decimal", "unit": "as_declared"},
+      {"key": "quantity_at_risk_unit", "type": "text"}
+    ],
+    "quantity_balance": [
+      {"key": "quantity_balance", "type": "decimal", "unit": "as_declared"},
+      {"key": "quantity_balance_unit", "type": "text"}
+    ],
+    "rainfall_amount": [
+      {"key": "rainfall_mm", "type": "decimal"}
+    ],
+    "rate": [
+      {"key": "rate", "type": "text", "help": "The rate as quoted, with its basis."}
+    ],
+    "receipts_and_issues": [
+      {"key": "receipts_recorded", "type": "long_text"},
+      {"key": "issues_recorded", "type": "long_text"}
+    ],
+    "requested_duration": [
+      {"key": "requested_duration_days", "type": "number"}
+    ],
+    "respect_and_access": [
+      {"key": "respect_observations", "type": "long_text"},
+      {"key": "access_observations", "type": "long_text"}
+    ],
+    "response_capacity": [
+      {"key": "response_capacity", "type": "long_text"}
+    ],
+    "retention_and_sharing": [
+      {"key": "retention_period", "type": "text"},
+      {"key": "sharing_permissions", "type": "long_text"}
+    ],
+    "return_odometer": [
+      {"key": "return_odometer_km", "type": "decimal"}
+    ],
+    "service_volume": [
+      {"key": "service_volume_count", "type": "number"}
+    ],
+    "stock_balance": [
+      {"key": "stock_balance", "type": "decimal", "unit": "as_declared"},
+      {"key": "stock_balance_unit", "type": "text"}
+    ],
+    "team_capacity": [
+      {"key": "team_capacity", "type": "long_text"}
+    ],
+    "temperature_reading": [
+      {"key": "temperature_reading", "type": "decimal", "unit": "degC"}
+    ],
+    "temperature_series": [
+      {"key": "temperature_series", "type": "long_text"}
+    ],
+    "time_and_location": [
+      {"key": "event_at", "type": "date_time"},
+      {"key": "event_location", "type": "text"}
+    ],
+    "validity_and_scope": [
+      {"key": "validity_end_date", "type": "date"},
+      {"key": "validity_scope", "type": "long_text"}
+    ],
+    "verified_time_and_place": [
+      {"key": "verified_at", "type": "date_time"},
+      {"key": "verified_place", "type": "text"}
+    ],
+    "water_and_sanitation": [
+      {"key": "water_access", "type": "long_text"},
+      {"key": "sanitation_access", "type": "long_text"}
+    ],
+    "weights_and_dimensions": [
+      {"key": "gross_weight_kg", "type": "decimal"},
+      {"key": "length_mm", "type": "decimal"},
+      {"key": "width_mm", "type": "decimal"},
+      {"key": "height_mm", "type": "decimal"}
+    ]
+  }
+}

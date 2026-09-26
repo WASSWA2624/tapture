@@ -1,0 +1,5068 @@
+{
+  "context_uni": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "project_ref",
+        "label": "templates.catalogue.project_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "subject_ref",
+        "label": "templates.catalogue.subject_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_ast": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "site_ref",
+        "label": "templates.catalogue.site_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "asset_ref",
+        "label": "templates.catalogue.asset_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_inv": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "warehouse_ref",
+        "label": "templates.catalogue.warehouse_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "item_ref",
+        "label": "templates.catalogue.item_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_prc": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "procurement_ref",
+        "label": "templates.catalogue.procurement_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "supplier_ref",
+        "label": "templates.catalogue.supplier_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_fin": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "accounting_period",
+        "label": "templates.catalogue.accounting_period",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "currency_code",
+        "label": "templates.catalogue.currency_code",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_aud": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "audit_or_review_ref",
+        "label": "templates.catalogue.audit_or_review_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "process_owner",
+        "label": "templates.catalogue.process_owner",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_leg": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "matter_ref",
+        "label": "templates.catalogue.matter_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "jurisdiction",
+        "label": "templates.catalogue.jurisdiction",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_hr": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "department_ref",
+        "label": "templates.catalogue.department_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "person_ref",
+        "label": "templates.catalogue.person_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_mgt": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "program_ref",
+        "label": "templates.catalogue.program_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "project_ref",
+        "label": "templates.catalogue.project_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_mtg": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "event_ref",
+        "label": "templates.catalogue.event_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "organizer_ref",
+        "label": "templates.catalogue.organizer_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_grt": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "opportunity_ref",
+        "label": "templates.catalogue.opportunity_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "funding_source_ref",
+        "label": "templates.catalogue.funding_source_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_crm": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "customer_or_account_ref",
+        "label": "templates.catalogue.customer_or_account_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "campaign_ref",
+        "label": "templates.catalogue.campaign_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_hop": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "facility_ref",
+        "label": "templates.catalogue.facility_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "department_ref",
+        "label": "templates.catalogue.department_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "service_unit",
+        "label": "templates.catalogue.service_unit",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_cln": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "facility_ref",
+        "label": "templates.catalogue.facility_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "patient_pseudonymous_ref",
+        "label": "templates.catalogue.patient_pseudonymous_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "encounter_ref",
+        "label": "templates.catalogue.encounter_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_lab": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "laboratory_ref",
+        "label": "templates.catalogue.laboratory_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "sample_or_run_ref",
+        "label": "templates.catalogue.sample_or_run_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "method_ref",
+        "label": "templates.catalogue.method_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_phm": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "product_ref",
+        "label": "templates.catalogue.product_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "batch_ref",
+        "label": "templates.catalogue.batch_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_phe": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "program_ref",
+        "label": "templates.catalogue.program_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "reporting_area",
+        "label": "templates.catalogue.reporting_area",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "reporting_period",
+        "label": "templates.catalogue.reporting_period",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_edu": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "institution_ref",
+        "label": "templates.catalogue.institution_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "class_or_course_ref",
+        "label": "templates.catalogue.class_or_course_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "academic_period",
+        "label": "templates.catalogue.academic_period",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_hed": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "institution_ref",
+        "label": "templates.catalogue.institution_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "program_ref",
+        "label": "templates.catalogue.program_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "academic_period",
+        "label": "templates.catalogue.academic_period",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_res": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "research_project_ref",
+        "label": "templates.catalogue.research_project_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "study_ref",
+        "label": "templates.catalogue.study_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "protocol_version",
+        "label": "templates.catalogue.protocol_version",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_soc": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "service_organization_ref",
+        "label": "templates.catalogue.service_organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "case_ref",
+        "label": "templates.catalogue.case_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "service_area",
+        "label": "templates.catalogue.service_area",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_rea": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "property_ref",
+        "label": "templates.catalogue.property_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "site_ref",
+        "label": "templates.catalogue.site_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "inspection_or_valuation_date",
+        "label": "templates.catalogue.inspection_or_valuation_date",
+        "type": "date",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_con": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "project_ref",
+        "label": "templates.catalogue.project_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "site_ref",
+        "label": "templates.catalogue.site_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "work_package_ref",
+        "label": "templates.catalogue.work_package_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_civ": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "infrastructure_ref",
+        "label": "templates.catalogue.infrastructure_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "network_or_corridor_ref",
+        "label": "templates.catalogue.network_or_corridor_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "inspection_date",
+        "label": "templates.catalogue.inspection_date",
+        "type": "date",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_gis": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "survey_project_ref",
+        "label": "templates.catalogue.survey_project_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "parcel_or_feature_ref",
+        "label": "templates.catalogue.parcel_or_feature_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "coordinate_reference_system",
+        "label": "templates.catalogue.coordinate_reference_system",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_agr": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "farm_ref",
+        "label": "templates.catalogue.farm_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "plot_ref",
+        "label": "templates.catalogue.plot_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "production_season",
+        "label": "templates.catalogue.production_season",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_liv": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "farm_or_care_site_ref",
+        "label": "templates.catalogue.farm_or_care_site_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "animal_or_herd_ref",
+        "label": "templates.catalogue.animal_or_herd_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "production_period",
+        "label": "templates.catalogue.production_period",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_aqu": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "enterprise_ref",
+        "label": "templates.catalogue.enterprise_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "production_site_ref",
+        "label": "templates.catalogue.production_site_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "production_cycle",
+        "label": "templates.catalogue.production_cycle",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_for": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "landscape_ref",
+        "label": "templates.catalogue.landscape_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "management_unit_ref",
+        "label": "templates.catalogue.management_unit_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "survey_period",
+        "label": "templates.catalogue.survey_period",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_mfg": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "plant_ref",
+        "label": "templates.catalogue.plant_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "production_line_ref",
+        "label": "templates.catalogue.production_line_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "product_or_batch_ref",
+        "label": "templates.catalogue.product_or_batch_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_fod": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "food_business_ref",
+        "label": "templates.catalogue.food_business_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "production_site_ref",
+        "label": "templates.catalogue.production_site_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "batch_ref",
+        "label": "templates.catalogue.batch_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_tex": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "workshop_or_factory_ref",
+        "label": "templates.catalogue.workshop_or_factory_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "order_ref",
+        "label": "templates.catalogue.order_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "product_style_ref",
+        "label": "templates.catalogue.product_style_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_min": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "site_ref",
+        "label": "templates.catalogue.site_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "operation_ref",
+        "label": "templates.catalogue.operation_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "geological_or_material_ref",
+        "label": "templates.catalogue.geological_or_material_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_ene": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "operator_ref",
+        "label": "templates.catalogue.operator_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "energy_site_ref",
+        "label": "templates.catalogue.energy_site_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "asset_or_meter_ref",
+        "label": "templates.catalogue.asset_or_meter_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_oil": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "operator_ref",
+        "label": "templates.catalogue.operator_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "facility_ref",
+        "label": "templates.catalogue.facility_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "asset_or_shipment_ref",
+        "label": "templates.catalogue.asset_or_shipment_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_wat": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "service_provider_ref",
+        "label": "templates.catalogue.service_provider_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "system_ref",
+        "label": "templates.catalogue.system_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "site_or_sampling_point",
+        "label": "templates.catalogue.site_or_sampling_point",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_wst": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "operator_ref",
+        "label": "templates.catalogue.operator_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "service_area_ref",
+        "label": "templates.catalogue.service_area_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "material_stream",
+        "label": "templates.catalogue.material_stream",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_flt": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "fleet_ref",
+        "label": "templates.catalogue.fleet_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "vehicle_ref",
+        "label": "templates.catalogue.vehicle_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "trip_or_service_ref",
+        "label": "templates.catalogue.trip_or_service_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_log": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "operator_ref",
+        "label": "templates.catalogue.operator_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "shipment_ref",
+        "label": "templates.catalogue.shipment_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "customer_ref",
+        "label": "templates.catalogue.customer_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_avi": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "operator_ref",
+        "label": "templates.catalogue.operator_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "aircraft_or_airport_ref",
+        "label": "templates.catalogue.aircraft_or_airport_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "operation_ref",
+        "label": "templates.catalogue.operation_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_mar": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "operator_ref",
+        "label": "templates.catalogue.operator_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "vessel_or_port_ref",
+        "label": "templates.catalogue.vessel_or_port_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "voyage_ref",
+        "label": "templates.catalogue.voyage_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_rai": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "operator_ref",
+        "label": "templates.catalogue.operator_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "network_ref",
+        "label": "templates.catalogue.network_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "vehicle_or_station_ref",
+        "label": "templates.catalogue.vehicle_or_station_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_swe": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "product_or_project_ref",
+        "label": "templates.catalogue.product_or_project_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "release_ref",
+        "label": "templates.catalogue.release_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_ict": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "service_ref",
+        "label": "templates.catalogue.service_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "configuration_item_ref",
+        "label": "templates.catalogue.configuration_item_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_cyb": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "authorized_scope_ref",
+        "label": "templates.catalogue.authorized_scope_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "system_or_dataset_ref",
+        "label": "templates.catalogue.system_or_dataset_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_tel": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "operator_ref",
+        "label": "templates.catalogue.operator_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "network_site_ref",
+        "label": "templates.catalogue.network_site_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "service_or_asset_ref",
+        "label": "templates.catalogue.service_or_asset_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_bnk": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "institution_ref",
+        "label": "templates.catalogue.institution_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "case_or_account_alias",
+        "label": "templates.catalogue.case_or_account_alias",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "product_ref",
+        "label": "templates.catalogue.product_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_ins": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "insurer_or_broker_ref",
+        "label": "templates.catalogue.insurer_or_broker_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "policy_alias",
+        "label": "templates.catalogue.policy_alias",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "claim_or_survey_ref",
+        "label": "templates.catalogue.claim_or_survey_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_gov": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "authority_ref",
+        "label": "templates.catalogue.authority_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "service_area",
+        "label": "templates.catalogue.service_area",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "application_or_case_ref",
+        "label": "templates.catalogue.application_or_case_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_jus": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "authorized_organization_ref",
+        "label": "templates.catalogue.authorized_organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "case_ref",
+        "label": "templates.catalogue.case_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "restricted_jurisdiction",
+        "label": "templates.catalogue.restricted_jurisdiction",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_env": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_or_program_ref",
+        "label": "templates.catalogue.organization_or_program_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "site_ref",
+        "label": "templates.catalogue.site_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "monitoring_period",
+        "label": "templates.catalogue.monitoring_period",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_emr": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "response_organization_ref",
+        "label": "templates.catalogue.response_organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "incident_ref",
+        "label": "templates.catalogue.incident_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "affected_area",
+        "label": "templates.catalogue.affected_area",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_fir": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "facility_ref",
+        "label": "templates.catalogue.facility_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "inspection_or_event_ref",
+        "label": "templates.catalogue.inspection_or_event_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_osh": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "worksite_ref",
+        "label": "templates.catalogue.worksite_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "activity_or_case_ref",
+        "label": "templates.catalogue.activity_or_case_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_npo": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "program_ref",
+        "label": "templates.catalogue.program_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "community_or_partner_ref",
+        "label": "templates.catalogue.community_or_partner_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_dev": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "program_ref",
+        "label": "templates.catalogue.program_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "survey_or_indicator_ref",
+        "label": "templates.catalogue.survey_or_indicator_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "geographic_scope",
+        "label": "templates.catalogue.geographic_scope",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_med": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "story_or_production_ref",
+        "label": "templates.catalogue.story_or_production_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "publication_channel",
+        "label": "templates.catalogue.publication_channel",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_art": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "institution_or_collection_ref",
+        "label": "templates.catalogue.institution_or_collection_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "object_or_program_ref",
+        "label": "templates.catalogue.object_or_program_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "location_ref",
+        "label": "templates.catalogue.location_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_ret": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "business_ref",
+        "label": "templates.catalogue.business_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "store_or_channel_ref",
+        "label": "templates.catalogue.store_or_channel_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "product_or_order_ref",
+        "label": "templates.catalogue.product_or_order_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_hos": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "business_ref",
+        "label": "templates.catalogue.business_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "property_or_outlet_ref",
+        "label": "templates.catalogue.property_or_outlet_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "booking_or_service_ref",
+        "label": "templates.catalogue.booking_or_service_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_tou": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "operator_ref",
+        "label": "templates.catalogue.operator_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "trip_or_experience_ref",
+        "label": "templates.catalogue.trip_or_experience_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "destination_scope",
+        "label": "templates.catalogue.destination_scope",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_spo": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "team_or_program_ref",
+        "label": "templates.catalogue.team_or_program_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "event_or_session_ref",
+        "label": "templates.catalogue.event_or_session_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_pro": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "service_firm_ref",
+        "label": "templates.catalogue.service_firm_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "client_ref",
+        "label": "templates.catalogue.client_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "engagement_ref",
+        "label": "templates.catalogue.engagement_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_fac": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "service_provider_ref",
+        "label": "templates.catalogue.service_provider_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "customer_or_site_ref",
+        "label": "templates.catalogue.customer_or_site_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "job_ref",
+        "label": "templates.catalogue.job_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_per": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "owner_ref",
+        "label": "templates.catalogue.owner_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "household_or_personal_project_ref",
+        "label": "templates.catalogue.household_or_personal_project_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "privacy_scope",
+        "label": "templates.catalogue.privacy_scope",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_fai": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "program_or_event_ref",
+        "label": "templates.catalogue.program_or_event_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "voluntary_participant_ref",
+        "label": "templates.catalogue.voluntary_participant_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_lif": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "provider_ref",
+        "label": "templates.catalogue.provider_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "consented_client_ref",
+        "label": "templates.catalogue.consented_client_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "service_ref",
+        "label": "templates.catalogue.service_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_sci": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "research_or_operator_ref",
+        "label": "templates.catalogue.research_or_operator_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "instrument_or_site_ref",
+        "label": "templates.catalogue.instrument_or_site_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "campaign_ref",
+        "label": "templates.catalogue.campaign_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_acc": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "organization_ref",
+        "label": "templates.catalogue.organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "service_or_site_ref",
+        "label": "templates.catalogue.service_or_site_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "assessment_ref",
+        "label": "templates.catalogue.assessment_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_ele": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "authorized_body_ref",
+        "label": "templates.catalogue.authorized_body_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "event_ref",
+        "label": "templates.catalogue.event_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "administrative_area",
+        "label": "templates.catalogue.administrative_area",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_def": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "authorized_organization_ref",
+        "label": "templates.catalogue.authorized_organization_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "program_ref",
+        "label": "templates.catalogue.program_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "administrative_case_ref",
+        "label": "templates.catalogue.administrative_case_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "context_adv": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "facility_ref",
+        "label": "templates.catalogue.facility_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "product_or_experiment_ref",
+        "label": "templates.catalogue.product_or_experiment_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      },
+      {
+        "field_key": "batch_or_serial_ref",
+        "label": "templates.catalogue.batch_or_serial_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "context",
+        "stickable": true
+      }
+    ]
+  },
+  "pack_agreement": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "agreement_reference",
+        "label": "templates.catalogue.agreement_reference",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "agreement"
+      },
+      {
+        "field_key": "agreement_title",
+        "label": "templates.catalogue.agreement_title",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "agreement"
+      },
+      {
+        "field_key": "first_party_name",
+        "label": "templates.catalogue.first_party_name",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "agreement"
+      },
+      {
+        "field_key": "second_party_name",
+        "label": "templates.catalogue.second_party_name",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "agreement"
+      },
+      {
+        "field_key": "other_parties",
+        "label": "templates.catalogue.other_parties",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "agreement"
+      },
+      {
+        "field_key": "purpose",
+        "label": "templates.catalogue.purpose",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "agreement"
+      },
+      {
+        "field_key": "terms",
+        "label": "templates.catalogue.terms",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "agreement",
+        "refine": true
+      },
+      {
+        "field_key": "effective_date",
+        "label": "templates.catalogue.effective_date",
+        "type": "date",
+        "required": "REQUIRED",
+        "group": "agreement"
+      },
+      {
+        "field_key": "expiry_date",
+        "label": "templates.catalogue.expiry_date",
+        "type": "date",
+        "required": "RECOMMENDED",
+        "group": "agreement"
+      },
+      {
+        "field_key": "agreement_status",
+        "label": "templates.catalogue.agreement_status",
+        "type": "choice",
+        "required": "RECOMMENDED",
+        "options": [
+          {
+            "code": "draft",
+            "label": "templates.choices.agreement_status.draft"
+          },
+          {
+            "code": "under_review",
+            "label": "templates.choices.agreement_status.under_review"
+          },
+          {
+            "code": "signed",
+            "label": "templates.choices.agreement_status.signed"
+          },
+          {
+            "code": "active",
+            "label": "templates.choices.agreement_status.active"
+          },
+          {
+            "code": "expired",
+            "label": "templates.choices.agreement_status.expired"
+          },
+          {
+            "code": "terminated",
+            "label": "templates.choices.agreement_status.terminated"
+          }
+        ],
+        "group": "agreement"
+      },
+      {
+        "field_key": "approval_evidence",
+        "label": "templates.catalogue.approval_evidence",
+        "type": "document_reference",
+        "required": "RECOMMENDED",
+        "group": "agreement"
+      },
+      {
+        "field_key": "approved_by_name",
+        "label": "templates.catalogue.approved_by_name",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "agreement"
+      },
+      {
+        "field_key": "approval_date",
+        "label": "templates.catalogue.approval_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "agreement"
+      },
+      {
+        "field_key": "signatory_signature",
+        "label": "templates.catalogue.signatory_signature",
+        "type": "signature",
+        "required": "OPTIONAL",
+        "group": "agreement"
+      }
+    ]
+  },
+  "pack_assess": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "assessment_reference",
+        "label": "templates.catalogue.assessment_reference",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "assessment"
+      },
+      {
+        "field_key": "assessment_date",
+        "label": "templates.catalogue.assessment_date",
+        "type": "date",
+        "required": "REQUIRED",
+        "group": "assessment",
+        "auto_fill": "today"
+      },
+      {
+        "field_key": "assessment_objective",
+        "label": "templates.catalogue.assessment_objective",
+        "type": "long_text",
+        "required": "REQUIRED",
+        "group": "assessment"
+      },
+      {
+        "field_key": "criteria_reference",
+        "label": "templates.catalogue.criteria_reference",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "assessment"
+      },
+      {
+        "field_key": "evidence_items",
+        "label": "templates.catalogue.evidence_items",
+        "type": "document_reference",
+        "required": "RECOMMENDED",
+        "group": "assessment"
+      },
+      {
+        "field_key": "findings",
+        "label": "templates.catalogue.findings",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "assessment",
+        "refine": true
+      },
+      {
+        "field_key": "assumptions",
+        "label": "templates.catalogue.assumptions",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "assessment"
+      },
+      {
+        "field_key": "risk_rating",
+        "label": "templates.catalogue.risk_rating",
+        "type": "choice",
+        "required": "OPTIONAL",
+        "options": [
+          {
+            "code": "low",
+            "label": "templates.choices.risk_rating.low"
+          },
+          {
+            "code": "medium",
+            "label": "templates.choices.risk_rating.medium"
+          },
+          {
+            "code": "high",
+            "label": "templates.choices.risk_rating.high"
+          },
+          {
+            "code": "critical",
+            "label": "templates.choices.risk_rating.critical"
+          }
+        ],
+        "group": "assessment"
+      },
+      {
+        "field_key": "review_conclusion",
+        "label": "templates.catalogue.review_conclusion",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "assessment"
+      },
+      {
+        "field_key": "assessor_name",
+        "label": "templates.catalogue.assessor_name",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "assessment"
+      }
+    ]
+  },
+  "pack_asset": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "item_identifier",
+        "label": "templates.catalogue.item_identifier",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "asset"
+      },
+      {
+        "field_key": "item_name",
+        "label": "templates.catalogue.item_name",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "asset"
+      },
+      {
+        "field_key": "category",
+        "label": "templates.catalogue.category",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "asset"
+      },
+      {
+        "field_key": "manufacturer_name",
+        "label": "templates.catalogue.manufacturer_name",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "asset"
+      },
+      {
+        "field_key": "model_number",
+        "label": "templates.catalogue.model_number",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "asset"
+      },
+      {
+        "field_key": "serial_number",
+        "label": "templates.catalogue.serial_number",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "asset"
+      },
+      {
+        "field_key": "barcode_value",
+        "label": "templates.catalogue.barcode_value",
+        "type": "barcode",
+        "required": "OPTIONAL",
+        "group": "asset"
+      },
+      {
+        "field_key": "quantity_counted",
+        "label": "templates.catalogue.quantity_counted",
+        "type": "number",
+        "required": "OPTIONAL",
+        "group": "asset"
+      },
+      {
+        "field_key": "condition_grade",
+        "label": "templates.catalogue.condition_grade",
+        "type": "choice",
+        "required": "RECOMMENDED",
+        "options": [
+          {
+            "code": "new",
+            "label": "templates.choices.condition.new"
+          },
+          {
+            "code": "good",
+            "label": "templates.choices.condition.good"
+          },
+          {
+            "code": "fair",
+            "label": "templates.choices.condition.fair"
+          },
+          {
+            "code": "poor",
+            "label": "templates.choices.condition.poor"
+          },
+          {
+            "code": "unserviceable",
+            "label": "templates.choices.condition.unserviceable"
+          }
+        ],
+        "group": "asset"
+      },
+      {
+        "field_key": "condition_note",
+        "label": "templates.catalogue.condition_note",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "asset"
+      },
+      {
+        "field_key": "custodian_name",
+        "label": "templates.catalogue.custodian_name",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "asset"
+      }
+    ]
+  },
+  "pack_case": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "case_reference",
+        "label": "templates.catalogue.case_reference",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "case"
+      },
+      {
+        "field_key": "case_opened_date",
+        "label": "templates.catalogue.case_opened_date",
+        "type": "date",
+        "required": "REQUIRED",
+        "group": "case",
+        "auto_fill": "today"
+      },
+      {
+        "field_key": "case_type",
+        "label": "templates.catalogue.case_type",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "case"
+      },
+      {
+        "field_key": "reported_details",
+        "label": "templates.catalogue.reported_details",
+        "type": "long_text",
+        "required": "REQUIRED",
+        "group": "case",
+        "refine": true
+      },
+      {
+        "field_key": "source_reference",
+        "label": "templates.catalogue.source_reference",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "case"
+      },
+      {
+        "field_key": "assigned_handler_name",
+        "label": "templates.catalogue.assigned_handler_name",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "case"
+      },
+      {
+        "field_key": "case_stage",
+        "label": "templates.catalogue.case_stage",
+        "type": "choice",
+        "required": "RECOMMENDED",
+        "options": [
+          {
+            "code": "received",
+            "label": "templates.choices.case_stage.received"
+          },
+          {
+            "code": "assessment",
+            "label": "templates.choices.case_stage.assessment"
+          },
+          {
+            "code": "in_progress",
+            "label": "templates.choices.case_stage.in_progress"
+          },
+          {
+            "code": "referred",
+            "label": "templates.choices.case_stage.referred"
+          },
+          {
+            "code": "resolved",
+            "label": "templates.choices.case_stage.resolved"
+          },
+          {
+            "code": "closed",
+            "label": "templates.choices.case_stage.closed"
+          }
+        ],
+        "group": "case"
+      },
+      {
+        "field_key": "priority",
+        "label": "templates.catalogue.priority",
+        "type": "choice",
+        "required": "OPTIONAL",
+        "options": [
+          {
+            "code": "emergency",
+            "label": "templates.choices.priority.emergency"
+          },
+          {
+            "code": "high",
+            "label": "templates.choices.priority.high"
+          },
+          {
+            "code": "medium",
+            "label": "templates.choices.priority.medium"
+          },
+          {
+            "code": "low",
+            "label": "templates.choices.priority.low"
+          }
+        ],
+        "group": "case"
+      },
+      {
+        "field_key": "followup_actions",
+        "label": "templates.catalogue.followup_actions",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "case"
+      },
+      {
+        "field_key": "next_followup_date",
+        "label": "templates.catalogue.next_followup_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "case"
+      },
+      {
+        "field_key": "closure_basis",
+        "label": "templates.catalogue.closure_basis",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "case"
+      },
+      {
+        "field_key": "closed_date",
+        "label": "templates.catalogue.closed_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "case"
+      }
+    ]
+  },
+  "pack_check": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "check_reference",
+        "label": "templates.catalogue.check_reference",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "checklist"
+      },
+      {
+        "field_key": "check_date",
+        "label": "templates.catalogue.check_date",
+        "type": "date",
+        "required": "REQUIRED",
+        "group": "checklist",
+        "auto_fill": "today"
+      },
+      {
+        "field_key": "checklist_version",
+        "label": "templates.catalogue.checklist_version",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "checklist"
+      },
+      {
+        "field_key": "check_items",
+        "label": "templates.catalogue.check_items",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "checklist",
+        "help": "One line per item checked, with its result."
+      },
+      {
+        "field_key": "items_checked_count",
+        "label": "templates.catalogue.items_checked_count",
+        "type": "number",
+        "required": "OPTIONAL",
+        "group": "checklist"
+      },
+      {
+        "field_key": "items_failed_count",
+        "label": "templates.catalogue.items_failed_count",
+        "type": "number",
+        "required": "OPTIONAL",
+        "group": "checklist"
+      },
+      {
+        "field_key": "observed_results",
+        "label": "templates.catalogue.observed_results",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "checklist",
+        "refine": true
+      },
+      {
+        "field_key": "overall_result",
+        "label": "templates.catalogue.overall_result",
+        "type": "choice",
+        "required": "RECOMMENDED",
+        "options": [
+          {
+            "code": "pass",
+            "label": "templates.choices.check_result.pass"
+          },
+          {
+            "code": "pass_with_exceptions",
+            "label": "templates.choices.check_result.pass_with_exceptions"
+          },
+          {
+            "code": "fail",
+            "label": "templates.choices.check_result.fail"
+          },
+          {
+            "code": "not_checked",
+            "label": "templates.choices.check_result.not_checked"
+          }
+        ],
+        "group": "checklist"
+      },
+      {
+        "field_key": "exceptions",
+        "label": "templates.catalogue.exceptions",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "checklist"
+      },
+      {
+        "field_key": "corrective_actions",
+        "label": "templates.catalogue.corrective_actions",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "checklist"
+      },
+      {
+        "field_key": "corrective_action_due_date",
+        "label": "templates.catalogue.corrective_action_due_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "checklist"
+      },
+      {
+        "field_key": "reviewer_name",
+        "label": "templates.catalogue.reviewer_name",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "checklist"
+      },
+      {
+        "field_key": "reviewer_signature",
+        "label": "templates.catalogue.reviewer_signature",
+        "type": "signature",
+        "required": "OPTIONAL",
+        "group": "checklist"
+      }
+    ]
+  },
+  "pack_comm": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "communication_reference",
+        "label": "templates.catalogue.communication_reference",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "communication"
+      },
+      {
+        "field_key": "communication_channel",
+        "label": "templates.catalogue.communication_channel",
+        "type": "choice",
+        "required": "RECOMMENDED",
+        "options": [
+          {
+            "code": "email",
+            "label": "templates.choices.communication_channel.email"
+          },
+          {
+            "code": "letter",
+            "label": "templates.choices.communication_channel.letter"
+          },
+          {
+            "code": "sms",
+            "label": "templates.choices.communication_channel.sms"
+          },
+          {
+            "code": "phone_call",
+            "label": "templates.choices.communication_channel.phone_call"
+          },
+          {
+            "code": "notice",
+            "label": "templates.choices.communication_channel.notice"
+          },
+          {
+            "code": "social_media",
+            "label": "templates.choices.communication_channel.social_media"
+          },
+          {
+            "code": "press_release",
+            "label": "templates.choices.communication_channel.press_release"
+          },
+          {
+            "code": "in_person",
+            "label": "templates.choices.communication_channel.in_person"
+          }
+        ],
+        "group": "communication"
+      },
+      {
+        "field_key": "audience",
+        "label": "templates.catalogue.audience",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "communication"
+      },
+      {
+        "field_key": "purpose",
+        "label": "templates.catalogue.purpose",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "communication"
+      },
+      {
+        "field_key": "verified_facts",
+        "label": "templates.catalogue.verified_facts",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "communication"
+      },
+      {
+        "field_key": "message_subject",
+        "label": "templates.catalogue.message_subject",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "communication"
+      },
+      {
+        "field_key": "message_body",
+        "label": "templates.catalogue.message_body",
+        "type": "long_text",
+        "required": "REQUIRED",
+        "group": "communication",
+        "refine": true
+      },
+      {
+        "field_key": "attachments",
+        "label": "templates.catalogue.attachments",
+        "type": "document_reference",
+        "required": "OPTIONAL",
+        "group": "communication"
+      },
+      {
+        "field_key": "approved_sender_name",
+        "label": "templates.catalogue.approved_sender_name",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "communication"
+      },
+      {
+        "field_key": "approval_date",
+        "label": "templates.catalogue.approval_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "communication"
+      },
+      {
+        "field_key": "sent_date",
+        "label": "templates.catalogue.sent_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "communication"
+      }
+    ]
+  },
+  "pack_doc": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "document_reference",
+        "label": "templates.catalogue.document_reference",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "document"
+      },
+      {
+        "field_key": "document_title",
+        "label": "templates.catalogue.document_title",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "document"
+      },
+      {
+        "field_key": "document_purpose",
+        "label": "templates.catalogue.document_purpose",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "document"
+      },
+      {
+        "field_key": "audience",
+        "label": "templates.catalogue.audience",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "document"
+      },
+      {
+        "field_key": "required_sections",
+        "label": "templates.catalogue.required_sections",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "document"
+      },
+      {
+        "field_key": "source_records",
+        "label": "templates.catalogue.source_records",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "document"
+      },
+      {
+        "field_key": "format_constraints",
+        "label": "templates.catalogue.format_constraints",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "document"
+      },
+      {
+        "field_key": "document_body_raw",
+        "label": "templates.catalogue.document_body_raw",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "document"
+      },
+      {
+        "field_key": "document_body_refined",
+        "label": "templates.catalogue.document_body_refined",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "document"
+      },
+      {
+        "field_key": "approved_version",
+        "label": "templates.catalogue.approved_version",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "document"
+      },
+      {
+        "field_key": "approved_by_name",
+        "label": "templates.catalogue.approved_by_name",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "document"
+      },
+      {
+        "field_key": "approval_date",
+        "label": "templates.catalogue.approval_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "document"
+      }
+    ]
+  },
+  "pack_incident": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "incident_reference",
+        "label": "templates.catalogue.incident_reference",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "incident"
+      },
+      {
+        "field_key": "event_date",
+        "label": "templates.catalogue.event_date",
+        "type": "date",
+        "required": "REQUIRED",
+        "group": "incident"
+      },
+      {
+        "field_key": "event_time",
+        "label": "templates.catalogue.event_time",
+        "type": "time",
+        "required": "RECOMMENDED",
+        "group": "incident"
+      },
+      {
+        "field_key": "event_location",
+        "label": "templates.catalogue.event_location",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "incident"
+      },
+      {
+        "field_key": "incident_type",
+        "label": "templates.catalogue.incident_type",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "incident"
+      },
+      {
+        "field_key": "severity",
+        "label": "templates.catalogue.severity",
+        "type": "choice",
+        "required": "RECOMMENDED",
+        "options": [
+          {
+            "code": "negligible",
+            "label": "templates.choices.severity.negligible"
+          },
+          {
+            "code": "minor",
+            "label": "templates.choices.severity.minor"
+          },
+          {
+            "code": "moderate",
+            "label": "templates.choices.severity.moderate"
+          },
+          {
+            "code": "major",
+            "label": "templates.choices.severity.major"
+          },
+          {
+            "code": "critical",
+            "label": "templates.choices.severity.critical"
+          }
+        ],
+        "group": "incident"
+      },
+      {
+        "field_key": "factual_description",
+        "label": "templates.catalogue.factual_description",
+        "type": "long_text",
+        "required": "REQUIRED",
+        "group": "incident",
+        "refine": true
+      },
+      {
+        "field_key": "immediate_action",
+        "label": "templates.catalogue.immediate_action",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "incident"
+      },
+      {
+        "field_key": "affected_items",
+        "label": "templates.catalogue.affected_items",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "incident"
+      },
+      {
+        "field_key": "people_affected_count",
+        "label": "templates.catalogue.people_affected_count",
+        "type": "number",
+        "required": "OPTIONAL",
+        "group": "incident"
+      },
+      {
+        "field_key": "reported_by_name",
+        "label": "templates.catalogue.reported_by_name",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "incident"
+      },
+      {
+        "field_key": "assigned_reviewer_name",
+        "label": "templates.catalogue.assigned_reviewer_name",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "incident"
+      },
+      {
+        "field_key": "incident_status",
+        "label": "templates.catalogue.incident_status",
+        "type": "choice",
+        "required": "OPTIONAL",
+        "options": [
+          {
+            "code": "open",
+            "label": "templates.choices.incident_status.open"
+          },
+          {
+            "code": "under_investigation",
+            "label": "templates.choices.incident_status.under_investigation"
+          },
+          {
+            "code": "action_pending",
+            "label": "templates.choices.incident_status.action_pending"
+          },
+          {
+            "code": "closed",
+            "label": "templates.choices.incident_status.closed"
+          },
+          {
+            "code": "reopened",
+            "label": "templates.choices.incident_status.reopened"
+          }
+        ],
+        "group": "incident"
+      }
+    ]
+  },
+  "pack_inspect": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "inspection_reference",
+        "label": "templates.catalogue.inspection_reference",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "inspection"
+      },
+      {
+        "field_key": "inspection_date",
+        "label": "templates.catalogue.inspection_date",
+        "type": "date",
+        "required": "REQUIRED",
+        "group": "inspection",
+        "auto_fill": "today"
+      },
+      {
+        "field_key": "inspector_name",
+        "label": "templates.catalogue.inspector_name",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "inspection"
+      },
+      {
+        "field_key": "inspection_scope",
+        "label": "templates.catalogue.inspection_scope",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "inspection"
+      },
+      {
+        "field_key": "criteria_reference",
+        "label": "templates.catalogue.criteria_reference",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "inspection"
+      },
+      {
+        "field_key": "inspection_items",
+        "label": "templates.catalogue.inspection_items",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "inspection",
+        "help": "One line per item inspected, with what was found."
+      },
+      {
+        "field_key": "observed_condition",
+        "label": "templates.catalogue.observed_condition",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "inspection",
+        "refine": true
+      },
+      {
+        "field_key": "condition_grade",
+        "label": "templates.catalogue.condition_grade",
+        "type": "choice",
+        "required": "OPTIONAL",
+        "options": [
+          {
+            "code": "new",
+            "label": "templates.choices.condition.new"
+          },
+          {
+            "code": "good",
+            "label": "templates.choices.condition.good"
+          },
+          {
+            "code": "fair",
+            "label": "templates.choices.condition.fair"
+          },
+          {
+            "code": "poor",
+            "label": "templates.choices.condition.poor"
+          },
+          {
+            "code": "unserviceable",
+            "label": "templates.choices.condition.unserviceable"
+          }
+        ],
+        "group": "inspection"
+      },
+      {
+        "field_key": "defects",
+        "label": "templates.catalogue.defects",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "inspection"
+      },
+      {
+        "field_key": "defect_count",
+        "label": "templates.catalogue.defect_count",
+        "type": "number",
+        "required": "OPTIONAL",
+        "group": "inspection"
+      },
+      {
+        "field_key": "recommended_actions",
+        "label": "templates.catalogue.recommended_actions",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "inspection"
+      },
+      {
+        "field_key": "inspection_result",
+        "label": "templates.catalogue.inspection_result",
+        "type": "choice",
+        "required": "RECOMMENDED",
+        "options": [
+          {
+            "code": "pass",
+            "label": "templates.choices.inspection_result.pass"
+          },
+          {
+            "code": "pass_with_conditions",
+            "label": "templates.choices.inspection_result.pass_with_conditions"
+          },
+          {
+            "code": "fail",
+            "label": "templates.choices.inspection_result.fail"
+          },
+          {
+            "code": "not_inspected",
+            "label": "templates.choices.inspection_result.not_inspected"
+          }
+        ],
+        "group": "inspection"
+      },
+      {
+        "field_key": "next_inspection_date",
+        "label": "templates.catalogue.next_inspection_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "inspection"
+      }
+    ]
+  },
+  "pack_learn": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "learning_record_reference",
+        "label": "templates.catalogue.learning_record_reference",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "learning"
+      },
+      {
+        "field_key": "learning_objective",
+        "label": "templates.catalogue.learning_objective",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "learning"
+      },
+      {
+        "field_key": "course_or_standard_ref",
+        "label": "templates.catalogue.course_or_standard_ref",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "learning"
+      },
+      {
+        "field_key": "participant_name",
+        "label": "templates.catalogue.participant_name",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "learning"
+      },
+      {
+        "field_key": "participant_identifier",
+        "label": "templates.catalogue.participant_identifier",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "learning"
+      },
+      {
+        "field_key": "start_date",
+        "label": "templates.catalogue.start_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "learning"
+      },
+      {
+        "field_key": "completion_date",
+        "label": "templates.catalogue.completion_date",
+        "type": "date",
+        "required": "RECOMMENDED",
+        "group": "learning"
+      },
+      {
+        "field_key": "completion_evidence",
+        "label": "templates.catalogue.completion_evidence",
+        "type": "document_reference",
+        "required": "RECOMMENDED",
+        "group": "learning"
+      },
+      {
+        "field_key": "assessment_result",
+        "label": "templates.catalogue.assessment_result",
+        "type": "choice",
+        "required": "RECOMMENDED",
+        "options": [
+          {
+            "code": "competent",
+            "label": "templates.choices.competency_result.competent"
+          },
+          {
+            "code": "not_yet_competent",
+            "label": "templates.choices.competency_result.not_yet_competent"
+          },
+          {
+            "code": "passed",
+            "label": "templates.choices.competency_result.passed"
+          },
+          {
+            "code": "failed",
+            "label": "templates.choices.competency_result.failed"
+          },
+          {
+            "code": "attended_only",
+            "label": "templates.choices.competency_result.attended_only"
+          }
+        ],
+        "group": "learning"
+      },
+      {
+        "field_key": "assessment_score",
+        "label": "templates.catalogue.assessment_score",
+        "type": "decimal",
+        "required": "OPTIONAL",
+        "unit": "points",
+        "group": "learning"
+      },
+      {
+        "field_key": "assessor_name",
+        "label": "templates.catalogue.assessor_name",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "learning"
+      },
+      {
+        "field_key": "certificate_number",
+        "label": "templates.catalogue.certificate_number",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "learning"
+      },
+      {
+        "field_key": "expiry_date",
+        "label": "templates.catalogue.expiry_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "learning"
+      }
+    ]
+  },
+  "pack_log": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "activity_date",
+        "label": "templates.catalogue.activity_date",
+        "type": "date",
+        "required": "REQUIRED",
+        "group": "log",
+        "auto_fill": "today"
+      },
+      {
+        "field_key": "activity_type",
+        "label": "templates.catalogue.activity_type",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "log"
+      },
+      {
+        "field_key": "start_time",
+        "label": "templates.catalogue.start_time",
+        "type": "time",
+        "required": "RECOMMENDED",
+        "group": "log",
+        "auto_fill": "time"
+      },
+      {
+        "field_key": "end_time",
+        "label": "templates.catalogue.end_time",
+        "type": "time",
+        "required": "OPTIONAL",
+        "group": "log"
+      },
+      {
+        "field_key": "participants_or_operators",
+        "label": "templates.catalogue.participants_or_operators",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "log"
+      },
+      {
+        "field_key": "participants_count",
+        "label": "templates.catalogue.participants_count",
+        "type": "number",
+        "required": "OPTIONAL",
+        "group": "log"
+      },
+      {
+        "field_key": "observations",
+        "label": "templates.catalogue.observations",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "log",
+        "refine": true
+      },
+      {
+        "field_key": "outcome",
+        "label": "templates.catalogue.outcome",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "log"
+      }
+    ]
+  },
+  "pack_maint": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "work_order_reference",
+        "label": "templates.catalogue.work_order_reference",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "maintenance"
+      },
+      {
+        "field_key": "asset_ref",
+        "label": "templates.catalogue.asset_ref",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "maintenance"
+      },
+      {
+        "field_key": "reported_date",
+        "label": "templates.catalogue.reported_date",
+        "type": "date",
+        "required": "RECOMMENDED",
+        "group": "maintenance",
+        "auto_fill": "today"
+      },
+      {
+        "field_key": "reported_problem",
+        "label": "templates.catalogue.reported_problem",
+        "type": "long_text",
+        "required": "REQUIRED",
+        "group": "maintenance",
+        "refine": true
+      },
+      {
+        "field_key": "priority",
+        "label": "templates.catalogue.priority",
+        "type": "choice",
+        "required": "RECOMMENDED",
+        "options": [
+          {
+            "code": "emergency",
+            "label": "templates.choices.priority.emergency"
+          },
+          {
+            "code": "high",
+            "label": "templates.choices.priority.high"
+          },
+          {
+            "code": "medium",
+            "label": "templates.choices.priority.medium"
+          },
+          {
+            "code": "low",
+            "label": "templates.choices.priority.low"
+          }
+        ],
+        "group": "maintenance"
+      },
+      {
+        "field_key": "approved_work_scope",
+        "label": "templates.catalogue.approved_work_scope",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "maintenance"
+      },
+      {
+        "field_key": "work_performed",
+        "label": "templates.catalogue.work_performed",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "maintenance",
+        "refine": true
+      },
+      {
+        "field_key": "work_start_date",
+        "label": "templates.catalogue.work_start_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "maintenance"
+      },
+      {
+        "field_key": "work_completed_date",
+        "label": "templates.catalogue.work_completed_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "maintenance"
+      },
+      {
+        "field_key": "labour_hours",
+        "label": "templates.catalogue.labour_hours",
+        "type": "decimal",
+        "required": "OPTIONAL",
+        "group": "maintenance"
+      },
+      {
+        "field_key": "parts_used",
+        "label": "templates.catalogue.parts_used",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "maintenance"
+      },
+      {
+        "field_key": "maintenance_cost_amount",
+        "label": "templates.catalogue.maintenance_cost_amount",
+        "type": "currency",
+        "required": "OPTIONAL",
+        "group": "maintenance",
+        "input_mode": "manual_only"
+      },
+      {
+        "field_key": "maintenance_cost_currency",
+        "label": "templates.catalogue.maintenance_cost_currency",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "maintenance"
+      },
+      {
+        "field_key": "verification_results",
+        "label": "templates.catalogue.verification_results",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "maintenance"
+      },
+      {
+        "field_key": "technician_name",
+        "label": "templates.catalogue.technician_name",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "maintenance"
+      },
+      {
+        "field_key": "next_due_date",
+        "label": "templates.catalogue.next_due_date",
+        "type": "date",
+        "required": "RECOMMENDED",
+        "group": "maintenance"
+      }
+    ]
+  },
+  "pack_measure": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "measurement_type",
+        "label": "templates.catalogue.measurement_type",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "measurement"
+      },
+      {
+        "field_key": "measured_value",
+        "label": "templates.catalogue.measured_value",
+        "type": "decimal",
+        "required": "REQUIRED",
+        "unit": "as_declared",
+        "group": "measurement"
+      },
+      {
+        "field_key": "measurement_unit",
+        "label": "templates.catalogue.measurement_unit",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "measurement"
+      },
+      {
+        "field_key": "measurement_date",
+        "label": "templates.catalogue.measurement_date",
+        "type": "date",
+        "required": "REQUIRED",
+        "group": "measurement",
+        "auto_fill": "today"
+      },
+      {
+        "field_key": "measurement_time",
+        "label": "templates.catalogue.measurement_time",
+        "type": "time",
+        "required": "RECOMMENDED",
+        "group": "measurement",
+        "auto_fill": "time"
+      },
+      {
+        "field_key": "method_reference",
+        "label": "templates.catalogue.method_reference",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "measurement"
+      },
+      {
+        "field_key": "instrument_ref",
+        "label": "templates.catalogue.instrument_ref",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "measurement"
+      },
+      {
+        "field_key": "instrument_calibration_date",
+        "label": "templates.catalogue.instrument_calibration_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "measurement"
+      },
+      {
+        "field_key": "measurement_uncertainty",
+        "label": "templates.catalogue.measurement_uncertainty",
+        "type": "decimal",
+        "required": "OPTIONAL",
+        "unit": "as_declared",
+        "group": "measurement"
+      },
+      {
+        "field_key": "quality_flag",
+        "label": "templates.catalogue.quality_flag",
+        "type": "choice",
+        "required": "OPTIONAL",
+        "options": [
+          {
+            "code": "valid",
+            "label": "templates.choices.quality_flag.valid"
+          },
+          {
+            "code": "estimated",
+            "label": "templates.choices.quality_flag.estimated"
+          },
+          {
+            "code": "suspect",
+            "label": "templates.choices.quality_flag.suspect"
+          },
+          {
+            "code": "rejected",
+            "label": "templates.choices.quality_flag.rejected"
+          }
+        ],
+        "group": "measurement"
+      },
+      {
+        "field_key": "within_threshold",
+        "label": "templates.catalogue.within_threshold",
+        "type": "boolean",
+        "required": "OPTIONAL",
+        "group": "measurement"
+      }
+    ]
+  },
+  "pack_meet": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "meeting_reference",
+        "label": "templates.catalogue.meeting_reference",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "meeting"
+      },
+      {
+        "field_key": "meeting_title",
+        "label": "templates.catalogue.meeting_title",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "meeting"
+      },
+      {
+        "field_key": "meeting_date",
+        "label": "templates.catalogue.meeting_date",
+        "type": "date",
+        "required": "REQUIRED",
+        "group": "meeting",
+        "auto_fill": "today"
+      },
+      {
+        "field_key": "start_time",
+        "label": "templates.catalogue.start_time",
+        "type": "time",
+        "required": "RECOMMENDED",
+        "group": "meeting"
+      },
+      {
+        "field_key": "end_time",
+        "label": "templates.catalogue.end_time",
+        "type": "time",
+        "required": "OPTIONAL",
+        "group": "meeting"
+      },
+      {
+        "field_key": "meeting_venue",
+        "label": "templates.catalogue.meeting_venue",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "meeting"
+      },
+      {
+        "field_key": "chairperson_name",
+        "label": "templates.catalogue.chairperson_name",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "meeting"
+      },
+      {
+        "field_key": "attendees",
+        "label": "templates.catalogue.attendees",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "meeting"
+      },
+      {
+        "field_key": "attendees_count",
+        "label": "templates.catalogue.attendees_count",
+        "type": "number",
+        "required": "OPTIONAL",
+        "group": "meeting"
+      },
+      {
+        "field_key": "agenda",
+        "label": "templates.catalogue.agenda",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "meeting"
+      },
+      {
+        "field_key": "discussion_notes",
+        "label": "templates.catalogue.discussion_notes",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "meeting",
+        "refine": true
+      },
+      {
+        "field_key": "decisions",
+        "label": "templates.catalogue.decisions",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "meeting"
+      },
+      {
+        "field_key": "actions",
+        "label": "templates.catalogue.actions",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "meeting",
+        "help": "One line per action: what, who, by when."
+      },
+      {
+        "field_key": "next_meeting_date",
+        "label": "templates.catalogue.next_meeting_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "meeting"
+      }
+    ]
+  },
+  "pack_obs": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "observation_subject",
+        "label": "templates.catalogue.observation_subject",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "observation"
+      },
+      {
+        "field_key": "observed_at",
+        "label": "templates.catalogue.observed_at",
+        "type": "date_time",
+        "required": "REQUIRED",
+        "group": "observation",
+        "auto_fill": "now"
+      },
+      {
+        "field_key": "factual_description",
+        "label": "templates.catalogue.factual_description",
+        "type": "long_text",
+        "required": "REQUIRED",
+        "group": "observation",
+        "refine": true
+      },
+      {
+        "field_key": "media_refs",
+        "label": "templates.catalogue.media_refs",
+        "type": "photo_reference",
+        "required": "RECOMMENDED",
+        "group": "observation"
+      },
+      {
+        "field_key": "capture_context",
+        "label": "templates.catalogue.capture_context",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "observation"
+      },
+      {
+        "field_key": "observer_name",
+        "label": "templates.catalogue.observer_name",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "observation",
+        "auto_fill": "operator"
+      },
+      {
+        "field_key": "verification_status",
+        "label": "templates.catalogue.verification_status",
+        "type": "choice",
+        "required": "OPTIONAL",
+        "options": [
+          {
+            "code": "unverified",
+            "label": "templates.choices.verification_status.unverified"
+          },
+          {
+            "code": "verified",
+            "label": "templates.choices.verification_status.verified"
+          },
+          {
+            "code": "disputed",
+            "label": "templates.choices.verification_status.disputed"
+          },
+          {
+            "code": "not_applicable",
+            "label": "templates.choices.verification_status.not_applicable"
+          }
+        ],
+        "group": "observation"
+      },
+      {
+        "field_key": "verification_notes",
+        "label": "templates.catalogue.verification_notes",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "observation"
+      }
+    ]
+  },
+  "pack_plan": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "plan_reference",
+        "label": "templates.catalogue.plan_reference",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "plan"
+      },
+      {
+        "field_key": "plan_title",
+        "label": "templates.catalogue.plan_title",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "plan"
+      },
+      {
+        "field_key": "planning_objective",
+        "label": "templates.catalogue.planning_objective",
+        "type": "long_text",
+        "required": "REQUIRED",
+        "group": "plan"
+      },
+      {
+        "field_key": "scope",
+        "label": "templates.catalogue.scope",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "plan"
+      },
+      {
+        "field_key": "activities",
+        "label": "templates.catalogue.activities",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "plan"
+      },
+      {
+        "field_key": "responsible_roles",
+        "label": "templates.catalogue.responsible_roles",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "plan"
+      },
+      {
+        "field_key": "start_date",
+        "label": "templates.catalogue.start_date",
+        "type": "date",
+        "required": "RECOMMENDED",
+        "group": "plan"
+      },
+      {
+        "field_key": "end_date",
+        "label": "templates.catalogue.end_date",
+        "type": "date",
+        "required": "RECOMMENDED",
+        "group": "plan"
+      },
+      {
+        "field_key": "milestones",
+        "label": "templates.catalogue.milestones",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "plan"
+      },
+      {
+        "field_key": "dependencies",
+        "label": "templates.catalogue.dependencies",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "plan"
+      },
+      {
+        "field_key": "resources",
+        "label": "templates.catalogue.resources",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "plan"
+      },
+      {
+        "field_key": "budget_amount",
+        "label": "templates.catalogue.budget_amount",
+        "type": "currency",
+        "required": "OPTIONAL",
+        "group": "plan",
+        "input_mode": "manual_only"
+      },
+      {
+        "field_key": "budget_currency",
+        "label": "templates.catalogue.budget_currency",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "plan"
+      },
+      {
+        "field_key": "success_measures",
+        "label": "templates.catalogue.success_measures",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "plan"
+      },
+      {
+        "field_key": "plan_status",
+        "label": "templates.catalogue.plan_status",
+        "type": "choice",
+        "required": "OPTIONAL",
+        "options": [
+          {
+            "code": "draft",
+            "label": "templates.choices.plan_status.draft"
+          },
+          {
+            "code": "approved",
+            "label": "templates.choices.plan_status.approved"
+          },
+          {
+            "code": "in_progress",
+            "label": "templates.choices.plan_status.in_progress"
+          },
+          {
+            "code": "completed",
+            "label": "templates.choices.plan_status.completed"
+          },
+          {
+            "code": "cancelled",
+            "label": "templates.choices.plan_status.cancelled"
+          }
+        ],
+        "group": "plan"
+      },
+      {
+        "field_key": "plan_owner_name",
+        "label": "templates.catalogue.plan_owner_name",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "plan"
+      }
+    ]
+  },
+  "pack_profile": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "profile_reference",
+        "label": "templates.catalogue.profile_reference",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "profile"
+      },
+      {
+        "field_key": "display_name",
+        "label": "templates.catalogue.display_name",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "profile"
+      },
+      {
+        "field_key": "entity_type",
+        "label": "templates.catalogue.entity_type",
+        "type": "choice",
+        "required": "RECOMMENDED",
+        "options": [
+          {
+            "code": "person",
+            "label": "templates.choices.entity_type.person"
+          },
+          {
+            "code": "household",
+            "label": "templates.choices.entity_type.household"
+          },
+          {
+            "code": "organisation",
+            "label": "templates.choices.entity_type.organisation"
+          },
+          {
+            "code": "business",
+            "label": "templates.choices.entity_type.business"
+          },
+          {
+            "code": "group",
+            "label": "templates.choices.entity_type.group"
+          },
+          {
+            "code": "other",
+            "label": "templates.choices.entity_type.other"
+          }
+        ],
+        "group": "profile"
+      },
+      {
+        "field_key": "phone_primary",
+        "label": "templates.catalogue.phone_primary",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "profile"
+      },
+      {
+        "field_key": "email_address",
+        "label": "templates.catalogue.email_address",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "profile"
+      },
+      {
+        "field_key": "preferred_contact_channel",
+        "label": "templates.catalogue.preferred_contact_channel",
+        "type": "choice",
+        "required": "OPTIONAL",
+        "options": [
+          {
+            "code": "phone",
+            "label": "templates.choices.contact_channel.phone"
+          },
+          {
+            "code": "sms",
+            "label": "templates.choices.contact_channel.sms"
+          },
+          {
+            "code": "email",
+            "label": "templates.choices.contact_channel.email"
+          },
+          {
+            "code": "in_person",
+            "label": "templates.choices.contact_channel.in_person"
+          },
+          {
+            "code": "post",
+            "label": "templates.choices.contact_channel.post"
+          },
+          {
+            "code": "other",
+            "label": "templates.choices.contact_channel.other"
+          }
+        ],
+        "group": "profile"
+      },
+      {
+        "field_key": "service_context",
+        "label": "templates.catalogue.service_context",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "profile"
+      },
+      {
+        "field_key": "source_documents",
+        "label": "templates.catalogue.source_documents",
+        "type": "document_reference",
+        "required": "OPTIONAL",
+        "group": "profile"
+      },
+      {
+        "field_key": "permission_scope",
+        "label": "templates.catalogue.permission_scope",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "profile"
+      },
+      {
+        "field_key": "consent_status",
+        "label": "templates.catalogue.consent_status",
+        "type": "choice",
+        "required": "RECOMMENDED",
+        "options": [
+          {
+            "code": "given",
+            "label": "templates.choices.consent_status.given"
+          },
+          {
+            "code": "refused",
+            "label": "templates.choices.consent_status.refused"
+          },
+          {
+            "code": "withdrawn",
+            "label": "templates.choices.consent_status.withdrawn"
+          },
+          {
+            "code": "not_asked",
+            "label": "templates.choices.consent_status.not_asked"
+          }
+        ],
+        "group": "profile"
+      },
+      {
+        "field_key": "consent_date",
+        "label": "templates.catalogue.consent_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "profile"
+      }
+    ]
+  },
+  "pack_proposal": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "proposal_reference",
+        "label": "templates.catalogue.proposal_reference",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "proposal"
+      },
+      {
+        "field_key": "proposal_title",
+        "label": "templates.catalogue.proposal_title",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "proposal"
+      },
+      {
+        "field_key": "funder_name",
+        "label": "templates.catalogue.funder_name",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "proposal"
+      },
+      {
+        "field_key": "submission_deadline_date",
+        "label": "templates.catalogue.submission_deadline_date",
+        "type": "date",
+        "required": "RECOMMENDED",
+        "group": "proposal"
+      },
+      {
+        "field_key": "opportunity_requirements",
+        "label": "templates.catalogue.opportunity_requirements",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "proposal"
+      },
+      {
+        "field_key": "applicant_profile",
+        "label": "templates.catalogue.applicant_profile",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "proposal"
+      },
+      {
+        "field_key": "project_objectives",
+        "label": "templates.catalogue.project_objectives",
+        "type": "long_text",
+        "required": "REQUIRED",
+        "group": "proposal"
+      },
+      {
+        "field_key": "methodology",
+        "label": "templates.catalogue.methodology",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "proposal"
+      },
+      {
+        "field_key": "workplan",
+        "label": "templates.catalogue.workplan",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "proposal"
+      },
+      {
+        "field_key": "budget_amount",
+        "label": "templates.catalogue.budget_amount",
+        "type": "currency",
+        "required": "RECOMMENDED",
+        "group": "proposal",
+        "input_mode": "manual_only"
+      },
+      {
+        "field_key": "budget_currency",
+        "label": "templates.catalogue.budget_currency",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "proposal"
+      },
+      {
+        "field_key": "budget_narrative",
+        "label": "templates.catalogue.budget_narrative",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "proposal"
+      },
+      {
+        "field_key": "supporting_evidence",
+        "label": "templates.catalogue.supporting_evidence",
+        "type": "document_reference",
+        "required": "OPTIONAL",
+        "group": "proposal"
+      },
+      {
+        "field_key": "required_annexes",
+        "label": "templates.catalogue.required_annexes",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "proposal"
+      },
+      {
+        "field_key": "proposal_status",
+        "label": "templates.catalogue.proposal_status",
+        "type": "choice",
+        "required": "OPTIONAL",
+        "options": [
+          {
+            "code": "drafting",
+            "label": "templates.choices.proposal_status.drafting"
+          },
+          {
+            "code": "internal_review",
+            "label": "templates.choices.proposal_status.internal_review"
+          },
+          {
+            "code": "submitted",
+            "label": "templates.choices.proposal_status.submitted"
+          },
+          {
+            "code": "awarded",
+            "label": "templates.choices.proposal_status.awarded"
+          },
+          {
+            "code": "declined",
+            "label": "templates.choices.proposal_status.declined"
+          }
+        ],
+        "group": "proposal"
+      }
+    ]
+  },
+  "pack_reg": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "entry_identifier",
+        "label": "templates.catalogue.entry_identifier",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "register"
+      },
+      {
+        "field_key": "record_subject",
+        "label": "templates.catalogue.record_subject",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "register"
+      },
+      {
+        "field_key": "category",
+        "label": "templates.catalogue.category",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "register"
+      },
+      {
+        "field_key": "effective_date",
+        "label": "templates.catalogue.effective_date",
+        "type": "date",
+        "required": "RECOMMENDED",
+        "group": "register"
+      },
+      {
+        "field_key": "source_reference",
+        "label": "templates.catalogue.source_reference",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "register"
+      },
+      {
+        "field_key": "responsible_role",
+        "label": "templates.catalogue.responsible_role",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "register"
+      },
+      {
+        "field_key": "entry_status",
+        "label": "templates.catalogue.entry_status",
+        "type": "choice",
+        "required": "OPTIONAL",
+        "options": [
+          {
+            "code": "active",
+            "label": "templates.choices.entry_status.active"
+          },
+          {
+            "code": "inactive",
+            "label": "templates.choices.entry_status.inactive"
+          },
+          {
+            "code": "superseded",
+            "label": "templates.choices.entry_status.superseded"
+          },
+          {
+            "code": "archived",
+            "label": "templates.choices.entry_status.archived"
+          }
+        ],
+        "group": "register"
+      },
+      {
+        "field_key": "review_due_date",
+        "label": "templates.catalogue.review_due_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "register"
+      }
+    ]
+  },
+  "pack_report": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "report_reference",
+        "label": "templates.catalogue.report_reference",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "report"
+      },
+      {
+        "field_key": "report_title",
+        "label": "templates.catalogue.report_title",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "report"
+      },
+      {
+        "field_key": "reporting_scope",
+        "label": "templates.catalogue.reporting_scope",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "report"
+      },
+      {
+        "field_key": "period_start_date",
+        "label": "templates.catalogue.period_start_date",
+        "type": "date",
+        "required": "RECOMMENDED",
+        "group": "report"
+      },
+      {
+        "field_key": "period_end_date",
+        "label": "templates.catalogue.period_end_date",
+        "type": "date",
+        "required": "RECOMMENDED",
+        "group": "report"
+      },
+      {
+        "field_key": "source_records",
+        "label": "templates.catalogue.source_records",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "report"
+      },
+      {
+        "field_key": "verified_findings",
+        "label": "templates.catalogue.verified_findings",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "report",
+        "refine": true
+      },
+      {
+        "field_key": "metrics",
+        "label": "templates.catalogue.metrics",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "report"
+      },
+      {
+        "field_key": "limitations",
+        "label": "templates.catalogue.limitations",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "report"
+      },
+      {
+        "field_key": "recommendations",
+        "label": "templates.catalogue.recommendations",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "report"
+      },
+      {
+        "field_key": "prepared_by_name",
+        "label": "templates.catalogue.prepared_by_name",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "report",
+        "auto_fill": "operator"
+      },
+      {
+        "field_key": "approved_by_name",
+        "label": "templates.catalogue.approved_by_name",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "report"
+      },
+      {
+        "field_key": "approval_date",
+        "label": "templates.catalogue.approval_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "report"
+      }
+    ]
+  },
+  "pack_request": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "request_reference",
+        "label": "templates.catalogue.request_reference",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "request"
+      },
+      {
+        "field_key": "request_date",
+        "label": "templates.catalogue.request_date",
+        "type": "date",
+        "required": "REQUIRED",
+        "group": "request",
+        "auto_fill": "today"
+      },
+      {
+        "field_key": "requester_name",
+        "label": "templates.catalogue.requester_name",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "request"
+      },
+      {
+        "field_key": "request_purpose",
+        "label": "templates.catalogue.request_purpose",
+        "type": "long_text",
+        "required": "REQUIRED",
+        "group": "request"
+      },
+      {
+        "field_key": "requested_items_or_actions",
+        "label": "templates.catalogue.requested_items_or_actions",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "request"
+      },
+      {
+        "field_key": "justification",
+        "label": "templates.catalogue.justification",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "request"
+      },
+      {
+        "field_key": "required_by_date",
+        "label": "templates.catalogue.required_by_date",
+        "type": "date",
+        "required": "RECOMMENDED",
+        "group": "request"
+      },
+      {
+        "field_key": "estimated_cost_amount",
+        "label": "templates.catalogue.estimated_cost_amount",
+        "type": "currency",
+        "required": "OPTIONAL",
+        "group": "request",
+        "input_mode": "manual_only"
+      },
+      {
+        "field_key": "estimated_cost_currency",
+        "label": "templates.catalogue.estimated_cost_currency",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "request"
+      },
+      {
+        "field_key": "supporting_evidence",
+        "label": "templates.catalogue.supporting_evidence",
+        "type": "document_reference",
+        "required": "OPTIONAL",
+        "group": "request"
+      },
+      {
+        "field_key": "approver_name",
+        "label": "templates.catalogue.approver_name",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "request"
+      },
+      {
+        "field_key": "decision",
+        "label": "templates.catalogue.decision",
+        "type": "choice",
+        "required": "RECOMMENDED",
+        "options": [
+          {
+            "code": "pending",
+            "label": "templates.choices.decision.pending"
+          },
+          {
+            "code": "approved",
+            "label": "templates.choices.decision.approved"
+          },
+          {
+            "code": "approved_with_conditions",
+            "label": "templates.choices.decision.approved_with_conditions"
+          },
+          {
+            "code": "deferred",
+            "label": "templates.choices.decision.deferred"
+          },
+          {
+            "code": "rejected",
+            "label": "templates.choices.decision.rejected"
+          }
+        ],
+        "group": "request",
+        "input_mode": "manual_only"
+      },
+      {
+        "field_key": "decision_date",
+        "label": "templates.catalogue.decision_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "request"
+      },
+      {
+        "field_key": "decision_reason",
+        "label": "templates.catalogue.decision_reason",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "request"
+      }
+    ]
+  },
+  "pack_sample": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "sample_identifier",
+        "label": "templates.catalogue.sample_identifier",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "sample"
+      },
+      {
+        "field_key": "sample_barcode",
+        "label": "templates.catalogue.sample_barcode",
+        "type": "barcode",
+        "required": "OPTIONAL",
+        "group": "sample"
+      },
+      {
+        "field_key": "sample_type",
+        "label": "templates.catalogue.sample_type",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "sample"
+      },
+      {
+        "field_key": "collection_date",
+        "label": "templates.catalogue.collection_date",
+        "type": "date",
+        "required": "REQUIRED",
+        "group": "sample",
+        "auto_fill": "today"
+      },
+      {
+        "field_key": "collection_time",
+        "label": "templates.catalogue.collection_time",
+        "type": "time",
+        "required": "RECOMMENDED",
+        "group": "sample",
+        "auto_fill": "time"
+      },
+      {
+        "field_key": "collection_location",
+        "label": "templates.catalogue.collection_location",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "sample"
+      },
+      {
+        "field_key": "collection_method",
+        "label": "templates.catalogue.collection_method",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "sample"
+      },
+      {
+        "field_key": "collected_by_name",
+        "label": "templates.catalogue.collected_by_name",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "sample",
+        "auto_fill": "operator"
+      },
+      {
+        "field_key": "sample_condition",
+        "label": "templates.catalogue.sample_condition",
+        "type": "choice",
+        "required": "OPTIONAL",
+        "options": [
+          {
+            "code": "acceptable",
+            "label": "templates.choices.sample_condition.acceptable"
+          },
+          {
+            "code": "compromised",
+            "label": "templates.choices.sample_condition.compromised"
+          },
+          {
+            "code": "rejected",
+            "label": "templates.choices.sample_condition.rejected"
+          }
+        ],
+        "group": "sample"
+      },
+      {
+        "field_key": "requested_tests",
+        "label": "templates.catalogue.requested_tests",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "sample"
+      },
+      {
+        "field_key": "custody_events",
+        "label": "templates.catalogue.custody_events",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "sample",
+        "help": "One line per hand-over: who, when and where."
+      },
+      {
+        "field_key": "received_date",
+        "label": "templates.catalogue.received_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "sample"
+      },
+      {
+        "field_key": "sample_status",
+        "label": "templates.catalogue.sample_status",
+        "type": "choice",
+        "required": "OPTIONAL",
+        "options": [
+          {
+            "code": "collected",
+            "label": "templates.choices.sample_status.collected"
+          },
+          {
+            "code": "in_transit",
+            "label": "templates.choices.sample_status.in_transit"
+          },
+          {
+            "code": "received",
+            "label": "templates.choices.sample_status.received"
+          },
+          {
+            "code": "tested",
+            "label": "templates.choices.sample_status.tested"
+          },
+          {
+            "code": "disposed",
+            "label": "templates.choices.sample_status.disposed"
+          }
+        ],
+        "group": "sample"
+      }
+    ]
+  },
+  "pack_survey": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "survey_version",
+        "label": "templates.catalogue.survey_version",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "survey"
+      },
+      {
+        "field_key": "respondent_or_sample_code",
+        "label": "templates.catalogue.respondent_or_sample_code",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "survey"
+      },
+      {
+        "field_key": "interview_date",
+        "label": "templates.catalogue.interview_date",
+        "type": "date",
+        "required": "REQUIRED",
+        "group": "survey",
+        "auto_fill": "today"
+      },
+      {
+        "field_key": "interviewer_name",
+        "label": "templates.catalogue.interviewer_name",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "survey",
+        "auto_fill": "operator"
+      },
+      {
+        "field_key": "consent_status",
+        "label": "templates.catalogue.consent_status",
+        "type": "choice",
+        "required": "REQUIRED",
+        "options": [
+          {
+            "code": "given",
+            "label": "templates.choices.consent_status.given"
+          },
+          {
+            "code": "refused",
+            "label": "templates.choices.consent_status.refused"
+          },
+          {
+            "code": "withdrawn",
+            "label": "templates.choices.consent_status.withdrawn"
+          },
+          {
+            "code": "not_asked",
+            "label": "templates.choices.consent_status.not_asked"
+          }
+        ],
+        "group": "survey",
+        "input_mode": "manual_only"
+      },
+      {
+        "field_key": "consent_scope",
+        "label": "templates.catalogue.consent_scope",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "survey"
+      },
+      {
+        "field_key": "survey_questions",
+        "label": "templates.catalogue.survey_questions",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "survey"
+      },
+      {
+        "field_key": "survey_responses",
+        "label": "templates.catalogue.survey_responses",
+        "type": "long_text",
+        "required": "REQUIRED",
+        "group": "survey"
+      },
+      {
+        "field_key": "sampling_context",
+        "label": "templates.catalogue.sampling_context",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "survey"
+      },
+      {
+        "field_key": "interview_language",
+        "label": "templates.catalogue.interview_language",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "survey"
+      },
+      {
+        "field_key": "interview_outcome",
+        "label": "templates.catalogue.interview_outcome",
+        "type": "choice",
+        "required": "RECOMMENDED",
+        "options": [
+          {
+            "code": "completed",
+            "label": "templates.choices.interview_outcome.completed"
+          },
+          {
+            "code": "partial",
+            "label": "templates.choices.interview_outcome.partial"
+          },
+          {
+            "code": "refused",
+            "label": "templates.choices.interview_outcome.refused"
+          },
+          {
+            "code": "not_at_home",
+            "label": "templates.choices.interview_outcome.not_at_home"
+          },
+          {
+            "code": "other",
+            "label": "templates.choices.interview_outcome.other"
+          }
+        ],
+        "group": "survey"
+      },
+      {
+        "field_key": "interviewer_notes",
+        "label": "templates.catalogue.interviewer_notes",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "survey"
+      }
+    ]
+  },
+  "pack_track": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "tracker_reference",
+        "label": "templates.catalogue.tracker_reference",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "tracker"
+      },
+      {
+        "field_key": "tracked_item",
+        "label": "templates.catalogue.tracked_item",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "tracker"
+      },
+      {
+        "field_key": "current_stage",
+        "label": "templates.catalogue.current_stage",
+        "type": "choice",
+        "required": "REQUIRED",
+        "options": [
+          {
+            "code": "not_started",
+            "label": "templates.choices.progress_stage.not_started"
+          },
+          {
+            "code": "in_progress",
+            "label": "templates.choices.progress_stage.in_progress"
+          },
+          {
+            "code": "blocked",
+            "label": "templates.choices.progress_stage.blocked"
+          },
+          {
+            "code": "completed",
+            "label": "templates.choices.progress_stage.completed"
+          },
+          {
+            "code": "cancelled",
+            "label": "templates.choices.progress_stage.cancelled"
+          }
+        ],
+        "group": "tracker"
+      },
+      {
+        "field_key": "responsible_owner_name",
+        "label": "templates.catalogue.responsible_owner_name",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "tracker"
+      },
+      {
+        "field_key": "target_date",
+        "label": "templates.catalogue.target_date",
+        "type": "date",
+        "required": "RECOMMENDED",
+        "group": "tracker"
+      },
+      {
+        "field_key": "latest_update",
+        "label": "templates.catalogue.latest_update",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "tracker",
+        "refine": true
+      },
+      {
+        "field_key": "last_update_date",
+        "label": "templates.catalogue.last_update_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "tracker",
+        "auto_fill": "today"
+      },
+      {
+        "field_key": "completion_percent",
+        "label": "templates.catalogue.completion_percent",
+        "type": "percentage",
+        "required": "OPTIONAL",
+        "group": "tracker"
+      },
+      {
+        "field_key": "supporting_evidence",
+        "label": "templates.catalogue.supporting_evidence",
+        "type": "document_reference",
+        "required": "OPTIONAL",
+        "group": "tracker"
+      },
+      {
+        "field_key": "completion_criteria",
+        "label": "templates.catalogue.completion_criteria",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "tracker"
+      },
+      {
+        "field_key": "completed_date",
+        "label": "templates.catalogue.completed_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "tracker"
+      }
+    ]
+  },
+  "pack_trans": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "transaction_reference",
+        "label": "templates.catalogue.transaction_reference",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "transaction"
+      },
+      {
+        "field_key": "transaction_date",
+        "label": "templates.catalogue.transaction_date",
+        "type": "date",
+        "required": "REQUIRED",
+        "group": "transaction",
+        "auto_fill": "today"
+      },
+      {
+        "field_key": "counterparty_name",
+        "label": "templates.catalogue.counterparty_name",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "transaction"
+      },
+      {
+        "field_key": "other_parties",
+        "label": "templates.catalogue.other_parties",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "transaction"
+      },
+      {
+        "field_key": "line_items",
+        "label": "templates.catalogue.line_items",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "transaction",
+        "help": "One line per item: description, quantity, unit and amount."
+      },
+      {
+        "field_key": "line_item_count",
+        "label": "templates.catalogue.line_item_count",
+        "type": "number",
+        "required": "OPTIONAL",
+        "group": "transaction"
+      },
+      {
+        "field_key": "quantity_total",
+        "label": "templates.catalogue.quantity_total",
+        "type": "decimal",
+        "required": "OPTIONAL",
+        "unit": "as_declared",
+        "group": "transaction"
+      },
+      {
+        "field_key": "quantity_unit",
+        "label": "templates.catalogue.quantity_unit",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "transaction"
+      },
+      {
+        "field_key": "total_amount",
+        "label": "templates.catalogue.total_amount",
+        "type": "currency",
+        "required": "RECOMMENDED",
+        "group": "transaction",
+        "input_mode": "manual_only"
+      },
+      {
+        "field_key": "total_currency",
+        "label": "templates.catalogue.total_currency",
+        "type": "text",
+        "required": "RECOMMENDED",
+        "group": "transaction"
+      },
+      {
+        "field_key": "tax_amount",
+        "label": "templates.catalogue.tax_amount",
+        "type": "currency",
+        "required": "OPTIONAL",
+        "group": "transaction",
+        "input_mode": "manual_only"
+      },
+      {
+        "field_key": "tax_currency",
+        "label": "templates.catalogue.tax_currency",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "transaction"
+      },
+      {
+        "field_key": "source_documents",
+        "label": "templates.catalogue.source_documents",
+        "type": "document_reference",
+        "required": "RECOMMENDED",
+        "group": "transaction"
+      }
+    ]
+  },
+  "pack_visit": {
+    "input_mode": "any",
+    "fields": [
+      {
+        "field_key": "visit_reference",
+        "label": "templates.catalogue.visit_reference",
+        "type": "text",
+        "required": "OPTIONAL",
+        "group": "visit"
+      },
+      {
+        "field_key": "visit_date",
+        "label": "templates.catalogue.visit_date",
+        "type": "date",
+        "required": "REQUIRED",
+        "group": "visit",
+        "auto_fill": "today"
+      },
+      {
+        "field_key": "visit_start_time",
+        "label": "templates.catalogue.visit_start_time",
+        "type": "time",
+        "required": "RECOMMENDED",
+        "group": "visit",
+        "auto_fill": "time"
+      },
+      {
+        "field_key": "visit_end_time",
+        "label": "templates.catalogue.visit_end_time",
+        "type": "time",
+        "required": "OPTIONAL",
+        "group": "visit"
+      },
+      {
+        "field_key": "visit_purpose",
+        "label": "templates.catalogue.visit_purpose",
+        "type": "long_text",
+        "required": "REQUIRED",
+        "group": "visit"
+      },
+      {
+        "field_key": "visited_site_or_party",
+        "label": "templates.catalogue.visited_site_or_party",
+        "type": "text",
+        "required": "REQUIRED",
+        "group": "visit"
+      },
+      {
+        "field_key": "visiting_team",
+        "label": "templates.catalogue.visiting_team",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "visit"
+      },
+      {
+        "field_key": "people_met",
+        "label": "templates.catalogue.people_met",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "visit"
+      },
+      {
+        "field_key": "observations",
+        "label": "templates.catalogue.observations",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "visit",
+        "refine": true
+      },
+      {
+        "field_key": "discussion_notes",
+        "label": "templates.catalogue.discussion_notes",
+        "type": "long_text",
+        "required": "OPTIONAL",
+        "group": "visit"
+      },
+      {
+        "field_key": "agreed_actions",
+        "label": "templates.catalogue.agreed_actions",
+        "type": "long_text",
+        "required": "RECOMMENDED",
+        "group": "visit"
+      },
+      {
+        "field_key": "next_visit_date",
+        "label": "templates.catalogue.next_visit_date",
+        "type": "date",
+        "required": "OPTIONAL",
+        "group": "visit"
+      }
+    ]
+  }
+}

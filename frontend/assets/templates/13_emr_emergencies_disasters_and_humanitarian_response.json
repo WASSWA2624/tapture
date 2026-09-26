@@ -1,0 +1,1566 @@
+{
+  "category": "EMR",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "emr_emergency_incident_intake",
+      "name": "templates.emr_emergency_incident_intake.name",
+      "title": "Emergency incident intake",
+      "code": "EMR-001",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "event_type",
+          "label": "templates.catalogue.event_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_location",
+          "label": "templates.catalogue.reported_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_initial_facts",
+          "label": "templates.catalogue.verified_initial_facts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_rapid_needs_assessment",
+      "name": "templates.emr_rapid_needs_assessment.name",
+      "title": "Rapid needs assessment",
+      "code": "EMR-002",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "priority_needs",
+          "label": "templates.catalogue.priority_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_scope",
+          "label": "templates.catalogue.sampling_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_limitations",
+          "label": "templates.catalogue.data_limitations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_disaster_damage_field_assessment",
+      "name": "templates.emr_disaster_damage_field_assessment.name",
+      "title": "Disaster damage field assessment",
+      "code": "EMR-003",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "affected_asset",
+          "label": "templates.catalogue.affected_asset",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_damage",
+          "label": "templates.catalogue.observed_damage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_emergency_household_assistance_intake",
+      "name": "templates.emr_emergency_household_assistance_intake.name",
+      "title": "Emergency household assistance intake",
+      "code": "EMR-004",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "minimum_household_details",
+          "label": "templates.catalogue.minimum_household_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "stated_needs",
+          "label": "templates.catalogue.stated_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_displacement_site_profile",
+      "name": "templates.emr_displacement_site_profile.name",
+      "title": "Displacement site profile",
+      "code": "EMR-005",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "site_location",
+          "label": "templates.catalogue.site_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "aggregate_population",
+          "label": "templates.catalogue.aggregate_population",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_gaps",
+          "label": "templates.catalogue.service_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_shelter_site_readiness_inspection",
+      "name": "templates.emr_shelter_site_readiness_inspection.name",
+      "title": "Shelter site readiness inspection",
+      "code": "EMR-006",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "capacity",
+          "label": "templates.catalogue.capacity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "capacity_unit",
+          "label": "templates.catalogue.capacity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "water_access",
+          "label": "templates.catalogue.water_access",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sanitation_access",
+          "label": "templates.catalogue.sanitation_access",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessibility",
+          "label": "templates.catalogue.accessibility",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_emergency_shelter_occupancy",
+      "name": "templates.emr_emergency_shelter_occupancy.name",
+      "title": "Emergency shelter occupancy",
+      "code": "EMR-007",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "household_code",
+          "label": "templates.catalogue.household_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_space",
+          "label": "templates.catalogue.assigned_space",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restricted_access",
+          "label": "templates.catalogue.restricted_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_relief_item_distribution_plan",
+      "name": "templates.emr_relief_item_distribution_plan.name",
+      "title": "Relief item distribution plan",
+      "code": "EMR-008",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "published_allocation_criteria",
+          "label": "templates.catalogue.published_allocation_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stock",
+          "label": "templates.catalogue.stock",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "distribution_sites",
+          "label": "templates.catalogue.distribution_sites",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_relief_distribution_verification",
+      "name": "templates.emr_relief_distribution_verification.name",
+      "title": "Relief distribution verification",
+      "code": "EMR-009",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "recipient_code",
+          "label": "templates.catalogue.recipient_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issued_items",
+          "label": "templates.catalogue.issued_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acknowledgement",
+          "label": "templates.catalogue.acknowledgement",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_relief_stock_tracking",
+      "name": "templates.emr_relief_stock_tracking.name",
+      "title": "Relief stock tracking",
+      "code": "EMR-010",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "item_type",
+          "label": "templates.catalogue.item_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stock_quantity",
+          "label": "templates.catalogue.stock_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stock_quantity_unit",
+          "label": "templates.catalogue.stock_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_location",
+          "label": "templates.catalogue.storage_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_emergency_volunteer_registration",
+      "name": "templates.emr_emergency_volunteer_registration.name",
+      "title": "Emergency volunteer registration",
+      "code": "EMR-011",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "skills",
+          "label": "templates.catalogue.skills",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "availability",
+          "label": "templates.catalogue.availability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safeguarding_notes",
+          "label": "templates.catalogue.safeguarding_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_emergency_team_deployment_record",
+      "name": "templates.emr_emergency_team_deployment_record.name",
+      "title": "Emergency team deployment record",
+      "code": "EMR-012",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_assignment",
+          "label": "templates.catalogue.authorized_assignment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "team_capacity",
+          "label": "templates.catalogue.team_capacity",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "deployment_period",
+          "label": "templates.catalogue.deployment_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_emergency_vehicle_readiness",
+      "name": "templates.emr_emergency_vehicle_readiness.name",
+      "title": "Emergency vehicle readiness",
+      "code": "EMR-013",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_status",
+          "label": "templates.catalogue.vehicle_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_supplies",
+          "label": "templates.catalogue.required_supplies",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "communications_check",
+          "label": "templates.catalogue.communications_check",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_emergency_equipment_inventory",
+      "name": "templates.emr_emergency_equipment_inventory.name",
+      "title": "Emergency equipment inventory",
+      "code": "EMR-014",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_type",
+          "label": "templates.catalogue.equipment_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operational_status",
+          "label": "templates.catalogue.operational_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custodian",
+          "label": "templates.catalogue.custodian",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_search_and_rescue_administrative_log",
+      "name": "templates.emr_search_and_rescue_administrative_log.name",
+      "title": "Search and rescue administrative log",
+      "code": "EMR-015",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_task_reference",
+          "label": "templates.catalogue.authorized_task_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "team_status",
+          "label": "templates.catalogue.team_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_updates",
+          "label": "templates.catalogue.verified_updates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_evacuation_assistance_request",
+      "name": "templates.emr_evacuation_assistance_request.name",
+      "title": "Evacuation assistance request",
+      "code": "EMR-016",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "self_reported_support_need",
+          "label": "templates.catalogue.self_reported_support_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_contact",
+          "label": "templates.catalogue.safe_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_coordinator",
+          "label": "templates.catalogue.authorized_coordinator",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_evacuation_center_registration",
+      "name": "templates.emr_evacuation_center_registration.name",
+      "title": "Evacuation center registration",
+      "code": "EMR-017",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "household_code",
+          "label": "templates.catalogue.household_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_support_needs",
+          "label": "templates.catalogue.minimum_support_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "privacy_controls",
+          "label": "templates.catalogue.privacy_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_family_reunification_service_intake",
+      "name": "templates.emr_family_reunification_service_intake.name",
+      "title": "Family reunification service intake",
+      "code": "EMR-018",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "consented_request",
+          "label": "templates.catalogue.consented_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_identifiers",
+          "label": "templates.catalogue.minimum_identifiers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_provider",
+          "label": "templates.catalogue.authorized_provider",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_humanitarian_referral_record",
+      "name": "templates.emr_humanitarian_referral_record.name",
+      "title": "Humanitarian referral record",
+      "code": "EMR-019",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_support",
+          "label": "templates.catalogue.requested_support",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent_scope",
+          "label": "templates.catalogue.consent_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "receiving_service",
+          "label": "templates.catalogue.receiving_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_emergency_medical_transport_coordination",
+      "name": "templates.emr_emergency_medical_transport_coordination.name",
+      "title": "Emergency medical transport coordination",
+      "code": "EMR-020",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_care_request",
+          "label": "templates.catalogue.authorized_care_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transport_need",
+          "label": "templates.catalogue.transport_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "handover_contact",
+          "label": "templates.catalogue.handover_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_incident_coordination_meeting",
+      "name": "templates.emr_incident_coordination_meeting.name",
+      "title": "Incident coordination meeting",
+      "code": "EMR-021",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_situation",
+          "label": "templates.catalogue.verified_situation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "resource_gaps",
+          "label": "templates.catalogue.resource_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_actions",
+          "label": "templates.catalogue.agreed_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_emergency_situation_report",
+      "name": "templates.emr_emergency_situation_report.name",
+      "title": "Emergency situation report",
+      "code": "EMR-022",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_facts",
+          "label": "templates.catalogue.verified_facts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_actions",
+          "label": "templates.catalogue.response_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "information_gaps",
+          "label": "templates.catalogue.information_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_resource_request_and_allocation",
+      "name": "templates.emr_resource_request_and_allocation.name",
+      "title": "Resource request and allocation",
+      "code": "EMR-023",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "required_resource",
+          "label": "templates.catalogue.required_resource",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operational_need",
+          "label": "templates.catalogue.operational_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approval_status",
+          "label": "templates.catalogue.approval_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_emergency_procurement_justification",
+      "name": "templates.emr_emergency_procurement_justification.name",
+      "title": "Emergency procurement justification",
+      "code": "EMR-024",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "urgent_need",
+          "label": "templates.catalogue.urgent_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_exception_basis",
+          "label": "templates.catalogue.approved_exception_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_evidence",
+          "label": "templates.catalogue.supporting_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_relief_logistics_handover",
+      "name": "templates.emr_relief_logistics_handover.name",
+      "title": "Relief logistics handover",
+      "code": "EMR-025",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "shipment_reference",
+          "label": "templates.catalogue.shipment_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "item_counts",
+          "label": "templates.catalogue.item_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient_confirmation",
+          "label": "templates.catalogue.recipient_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_humanitarian_feedback_complaint",
+      "name": "templates.emr_humanitarian_feedback_complaint.name",
+      "title": "Humanitarian feedback complaint",
+      "code": "EMR-026",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_issue",
+          "label": "templates.catalogue.reported_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_contact",
+          "label": "templates.catalogue.safe_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "confidential_handling",
+          "label": "templates.catalogue.confidential_handling",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_emergency_cash_assistance_reconciliation",
+      "name": "templates.emr_emergency_cash_assistance_reconciliation.name",
+      "title": "Emergency cash assistance reconciliation",
+      "code": "EMR-027",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_recipient_codes",
+          "label": "templates.catalogue.authorized_recipient_codes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "payment_evidence",
+          "label": "templates.catalogue.payment_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "exceptions",
+          "label": "templates.catalogue.exceptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_post_disaster_building_screening_evidence",
+      "name": "templates.emr_post_disaster_building_screening_evidence.name",
+      "title": "Post-disaster building screening evidence",
+      "code": "EMR-028",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_screening_protocol",
+          "label": "templates.catalogue.approved_screening_protocol",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_conditions",
+          "label": "templates.catalogue.observed_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_decision",
+          "label": "templates.catalogue.qualified_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_recovery_planning_consultation",
+      "name": "templates.emr_recovery_planning_consultation.name",
+      "title": "Recovery planning consultation",
+      "code": "EMR-029",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "community_priorities",
+          "label": "templates.catalogue.community_priorities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recovery_options",
+          "label": "templates.catalogue.recovery_options",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_actions",
+          "label": "templates.catalogue.agreed_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_emergency_response_after_action_review",
+      "name": "templates.emr_emergency_response_after_action_review.name",
+      "title": "Emergency response after-action review",
+      "code": "EMR-030",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_timeline",
+          "label": "templates.catalogue.verified_timeline",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_gaps",
+          "label": "templates.catalogue.response_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_plan",
+          "label": "templates.catalogue.improvement_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_disaster_preparedness_exercise",
+      "name": "templates.emr_disaster_preparedness_exercise.name",
+      "title": "Disaster preparedness exercise",
+      "code": "EMR-031",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "exercise_scenario",
+          "label": "templates.catalogue.exercise_scenario",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_performance",
+          "label": "templates.catalogue.observed_performance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "lessons",
+          "label": "templates.catalogue.lessons",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "emr_emergency_contact_directory",
+      "name": "templates.emr_emergency_contact_directory.name",
+      "title": "Emergency contact directory",
+      "code": "EMR-032",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_emr",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_contact_role",
+          "label": "templates.catalogue.authorized_contact_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_channel",
+          "label": "templates.catalogue.verified_channel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_date",
+          "label": "templates.catalogue.review_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

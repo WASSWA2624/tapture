@@ -1,0 +1,1391 @@
+{
+  "category": "TEL",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "tel_telecom_tower_asset_inventory",
+      "name": "templates.tel_telecom_tower_asset_inventory.name",
+      "title": "Telecom tower asset inventory",
+      "code": "TEL-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "tower_identifier",
+          "label": "templates.catalogue.tower_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "tower_type",
+          "label": "templates.catalogue.tower_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_coordinates",
+          "label": "templates.catalogue.site_coordinates",
+          "type": "gps_location",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_telecom_site_acquisition_evidence",
+      "name": "templates.tel_telecom_site_acquisition_evidence.name",
+      "title": "Telecom site acquisition evidence",
+      "code": "TEL-002",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "site_reference",
+          "label": "templates.catalogue.site_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_agreements",
+          "label": "templates.catalogue.access_agreements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorization_documents",
+          "label": "templates.catalogue.authorization_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_telecom_site_condition_inspection",
+      "name": "templates.tel_telecom_site_condition_inspection.name",
+      "title": "Telecom site condition inspection",
+      "code": "TEL-003",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "site_structure",
+          "label": "templates.catalogue.site_structure",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "equipment_shelter",
+          "label": "templates.catalogue.equipment_shelter",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_defects",
+          "label": "templates.catalogue.observed_defects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_tower_maintenance_work_record",
+      "name": "templates.tel_tower_maintenance_work_record.name",
+      "title": "Tower maintenance work record",
+      "code": "TEL-004",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_work_order",
+          "label": "templates.catalogue.approved_work_order",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_tasks",
+          "label": "templates.catalogue.completed_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_signoff",
+          "label": "templates.catalogue.qualified_signoff",
+          "type": "signature",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_telecom_power_system_log",
+      "name": "templates.tel_telecom_power_system_log.name",
+      "title": "Telecom power system log",
+      "code": "TEL-005",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "power_source",
+          "label": "templates.catalogue.power_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "energy_readings",
+          "label": "templates.catalogue.energy_readings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outage_records",
+          "label": "templates.catalogue.outage_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_telecom_battery_condition_record",
+      "name": "templates.tel_telecom_battery_condition_record.name",
+      "title": "Telecom battery condition record",
+      "code": "TEL-006",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "battery_bank",
+          "label": "templates.catalogue.battery_bank",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_checks",
+          "label": "templates.catalogue.approved_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_status",
+          "label": "templates.catalogue.observed_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_radio_equipment_inventory",
+      "name": "templates.tel_radio_equipment_inventory.name",
+      "title": "Radio equipment inventory",
+      "code": "TEL-007",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_model",
+          "label": "templates.catalogue.equipment_model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_site",
+          "label": "templates.catalogue.assigned_site",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_antenna_installation_evidence",
+      "name": "templates.tel_antenna_installation_evidence.name",
+      "title": "Antenna installation evidence",
+      "code": "TEL-008",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_design_ref",
+          "label": "templates.catalogue.approved_design_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "installation_photos",
+          "label": "templates.catalogue.installation_photos",
+          "type": "photo_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_acceptance",
+          "label": "templates.catalogue.authorized_acceptance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_fiber_cable_route_survey",
+      "name": "templates.tel_fiber_cable_route_survey.name",
+      "title": "Fiber cable route survey",
+      "code": "TEL-009",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "route_geometry",
+          "label": "templates.catalogue.route_geometry",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "Coordinates as WKT or GeoJSON."
+        },
+        {
+          "field_key": "survey_method",
+          "label": "templates.catalogue.survey_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "physical_constraints",
+          "label": "templates.catalogue.physical_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_fiber_splice_record",
+      "name": "templates.tel_fiber_splice_record.name",
+      "title": "Fiber splice record",
+      "code": "TEL-010",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "splice_identifier",
+          "label": "templates.catalogue.splice_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "fiber_mapping",
+          "label": "templates.catalogue.fiber_mapping",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_reference",
+          "label": "templates.catalogue.test_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_fiber_link_test_evidence",
+      "name": "templates.tel_fiber_link_test_evidence.name",
+      "title": "Fiber link test evidence",
+      "code": "TEL-011",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "link_reference",
+          "label": "templates.catalogue.link_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_test_method",
+          "label": "templates.catalogue.approved_test_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_fiber_cut_incident_report",
+      "name": "templates.tel_fiber_cut_incident_report.name",
+      "title": "Fiber cut incident report",
+      "code": "TEL-012",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "affected_link",
+          "label": "templates.catalogue.affected_link",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "damage_location",
+          "label": "templates.catalogue.damage_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restoration_actions",
+          "label": "templates.catalogue.restoration_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_telecom_customer_installation_survey",
+      "name": "templates.tel_telecom_customer_installation_survey.name",
+      "title": "Telecom customer installation survey",
+      "code": "TEL-013",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "service_location",
+          "label": "templates.catalogue.service_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "connectivity_requirements",
+          "label": "templates.catalogue.connectivity_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "installation_constraints",
+          "label": "templates.catalogue.installation_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_broadband_service_activation",
+      "name": "templates.tel_broadband_service_activation.name",
+      "title": "Broadband service activation",
+      "code": "TEL-014",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "customer_reference",
+          "label": "templates.catalogue.customer_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "installation_checks",
+          "label": "templates.catalogue.installation_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "customer_acceptance",
+          "label": "templates.catalogue.customer_acceptance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_connectivity_speed_test_log",
+      "name": "templates.tel_connectivity_speed_test_log.name",
+      "title": "Connectivity speed test log",
+      "code": "TEL-015",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "test_endpoint",
+          "label": "templates.catalogue.test_endpoint",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_conditions",
+          "label": "templates.catalogue.test_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_metrics",
+          "label": "templates.catalogue.observed_metrics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_wireless_coverage_field_survey",
+      "name": "templates.tel_wireless_coverage_field_survey.name",
+      "title": "Wireless coverage field survey",
+      "code": "TEL-016",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "measurement_location",
+          "label": "templates.catalogue.measurement_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "device_method",
+          "label": "templates.catalogue.device_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_signal_metrics",
+          "label": "templates.catalogue.observed_signal_metrics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_telecom_outage_ticket",
+      "name": "templates.tel_telecom_outage_ticket.name",
+      "title": "Telecom outage ticket",
+      "code": "TEL-017",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "affected_service",
+          "label": "templates.catalogue.affected_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_symptoms",
+          "label": "templates.catalogue.reported_symptoms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restoration_status",
+          "label": "templates.catalogue.restoration_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_telecom_field_technician_report",
+      "name": "templates.tel_telecom_field_technician_report.name",
+      "title": "Telecom field technician report",
+      "code": "TEL-018",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "assigned_job",
+          "label": "templates.catalogue.assigned_job",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_work",
+          "label": "templates.catalogue.completed_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "unresolved_issues",
+          "label": "templates.catalogue.unresolved_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_network_cabinet_inventory",
+      "name": "templates.tel_network_cabinet_inventory.name",
+      "title": "Network cabinet inventory",
+      "code": "TEL-019",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "cabinet_identifier",
+          "label": "templates.catalogue.cabinet_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "installed_components",
+          "label": "templates.catalogue.installed_components",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_position",
+          "label": "templates.catalogue.site_position",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_telecom_spare_module_tracking",
+      "name": "templates.tel_telecom_spare_module_tracking.name",
+      "title": "Telecom spare module tracking",
+      "code": "TEL-020",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "module_identifier",
+          "label": "templates.catalogue.module_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issue_or_return",
+          "label": "templates.catalogue.issue_or_return",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "work_order_ref",
+          "label": "templates.catalogue.work_order_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_telecom_site_access_request",
+      "name": "templates.tel_telecom_site_access_request.name",
+      "title": "Telecom site access request",
+      "code": "TEL-021",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_task",
+          "label": "templates.catalogue.authorized_task",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_access_window",
+          "label": "templates.catalogue.requested_access_window",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_personnel",
+          "label": "templates.catalogue.approved_personnel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_telecom_service_complaint",
+      "name": "templates.tel_telecom_service_complaint.name",
+      "title": "Telecom service complaint",
+      "code": "TEL-022",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "customer_service_ref",
+          "label": "templates.catalogue.customer_service_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_issue",
+          "label": "templates.catalogue.reported_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "resolution_request",
+          "label": "templates.catalogue.resolution_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_telecom_equipment_decommissioning",
+      "name": "templates.tel_telecom_equipment_decommissioning.name",
+      "title": "Telecom equipment decommissioning",
+      "code": "TEL-023",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_scope",
+          "label": "templates.catalogue.approved_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_handling",
+          "label": "templates.catalogue.data_handling",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "asset_return",
+          "label": "templates.catalogue.asset_return",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_telecom_rollout_progress_tracker",
+      "name": "templates.tel_telecom_rollout_progress_tracker.name",
+      "title": "Telecom rollout progress tracker",
+      "code": "TEL-024",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "rollout_site",
+          "label": "templates.catalogue.rollout_site",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "milestones",
+          "label": "templates.catalogue.milestones",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_evidence",
+          "label": "templates.catalogue.acceptance_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_telecom_contractor_quality_check",
+      "name": "templates.tel_telecom_contractor_quality_check.name",
+      "title": "Telecom contractor quality check",
+      "code": "TEL-025",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "contracted_work",
+          "label": "templates.catalogue.contracted_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "installation_evidence",
+          "label": "templates.catalogue.installation_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_community_connectivity_needs_survey",
+      "name": "templates.tel_community_connectivity_needs_survey.name",
+      "title": "Community connectivity needs survey",
+      "code": "TEL-026",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "service_access",
+          "label": "templates.catalogue.service_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affordability_feedback",
+          "label": "templates.catalogue.affordability_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "location_scope",
+          "label": "templates.catalogue.location_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_public_wi_fi_location_register",
+      "name": "templates.tel_public_wi_fi_location_register.name",
+      "title": "Public Wi-Fi location register",
+      "code": "TEL-027",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "site_reference",
+          "label": "templates.catalogue.site_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_hours",
+          "label": "templates.catalogue.service_hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "hours",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "privacy_notice",
+          "label": "templates.catalogue.privacy_notice",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_internet_service_billing_reconciliation",
+      "name": "templates.tel_internet_service_billing_reconciliation.name",
+      "title": "Internet service billing reconciliation",
+      "code": "TEL-028",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "service_period",
+          "label": "templates.catalogue.service_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "invoiced_charges",
+          "label": "templates.catalogue.invoiced_charges",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_service_changes",
+          "label": "templates.catalogue.verified_service_changes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_telecom_licensing_evidence_index",
+      "name": "templates.tel_telecom_licensing_evidence_index.name",
+      "title": "Telecom licensing evidence index",
+      "code": "TEL-029",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "jurisdiction",
+          "label": "templates.catalogue.jurisdiction",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorization_reference",
+          "label": "templates.catalogue.authorization_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "validity_period",
+          "label": "templates.catalogue.validity_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tel_telecom_operational_handover",
+      "name": "templates.tel_telecom_operational_handover.name",
+      "title": "Telecom operational handover",
+      "code": "TEL-030",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tel",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_network_records",
+          "label": "templates.catalogue.approved_network_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "support_contacts",
+          "label": "templates.catalogue.support_contacts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "open_issues",
+          "label": "templates.catalogue.open_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

@@ -1,0 +1,1453 @@
+{
+  "category": "FOR",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "for_forest_compartment_register",
+      "name": "templates.for_forest_compartment_register.name",
+      "title": "Forest compartment register",
+      "code": "FOR-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "compartment_geometry",
+          "label": "templates.catalogue.compartment_geometry",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "Coordinates as WKT or GeoJSON."
+        },
+        {
+          "field_key": "forest_type",
+          "label": "templates.catalogue.forest_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "management_status",
+          "label": "templates.catalogue.management_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_tree_inventory",
+      "name": "templates.for_tree_inventory.name",
+      "title": "Tree inventory",
+      "code": "FOR-002",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "tree_identifier",
+          "label": "templates.catalogue.tree_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_species",
+          "label": "templates.catalogue.verified_species",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_location",
+          "label": "templates.catalogue.measurement_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_tree_measurement_record",
+      "name": "templates.for_tree_measurement_record.name",
+      "title": "Tree measurement record",
+      "code": "FOR-003",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "diameter_measurement",
+          "label": "templates.catalogue.diameter_measurement",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "height_estimate_m",
+          "label": "templates.catalogue.height_estimate_m",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_method",
+          "label": "templates.catalogue.measurement_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_forest_condition_assessment",
+      "name": "templates.for_forest_condition_assessment.name",
+      "title": "Forest condition assessment",
+      "code": "FOR-004",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "canopy_observations",
+          "label": "templates.catalogue.canopy_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "disturbance_signs",
+          "label": "templates.catalogue.disturbance_signs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_method",
+          "label": "templates.catalogue.sampling_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_forest_regeneration_survey",
+      "name": "templates.for_forest_regeneration_survey.name",
+      "title": "Forest regeneration survey",
+      "code": "FOR-005",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "plot_size",
+          "label": "templates.catalogue.plot_size",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "seedling_counts",
+          "label": "templates.catalogue.seedling_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "species_verification",
+          "label": "templates.catalogue.species_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_tree_nursery_inventory",
+      "name": "templates.for_tree_nursery_inventory.name",
+      "title": "Tree nursery inventory",
+      "code": "FOR-006",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "species",
+          "label": "templates.catalogue.species",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "seedling_batch",
+          "label": "templates.catalogue.seedling_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "available_count",
+          "label": "templates.catalogue.available_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_seedling_production_log",
+      "name": "templates.for_seedling_production_log.name",
+      "title": "Seedling production log",
+      "code": "FOR-007",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "seed_source",
+          "label": "templates.catalogue.seed_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "propagation_date",
+          "label": "templates.catalogue.propagation_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "survival_count",
+          "label": "templates.catalogue.survival_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_tree_planting_event_record",
+      "name": "templates.for_tree_planting_event_record.name",
+      "title": "Tree planting event record",
+      "code": "FOR-008",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "planting_site",
+          "label": "templates.catalogue.planting_site",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "species",
+          "label": "templates.catalogue.species",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "planted_count",
+          "label": "templates.catalogue.planted_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_tree_survival_monitoring",
+      "name": "templates.for_tree_survival_monitoring.name",
+      "title": "Tree survival monitoring",
+      "code": "FOR-009",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "planted_cohort",
+          "label": "templates.catalogue.planted_cohort",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampled_survivors",
+          "label": "templates.catalogue.sampled_survivors",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "survey_method",
+          "label": "templates.catalogue.survey_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_forest_harvesting_authorization_evidence",
+      "name": "templates.for_forest_harvesting_authorization_evidence.name",
+      "title": "Forest harvesting authorization evidence",
+      "code": "FOR-010",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "permit_reference",
+          "label": "templates.catalogue.permit_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_scope",
+          "label": "templates.catalogue.approved_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "professional_review",
+          "label": "templates.catalogue.professional_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_timber_log_traceability",
+      "name": "templates.for_timber_log_traceability.name",
+      "title": "Timber log traceability",
+      "code": "FOR-011",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "log_identifier",
+          "label": "templates.catalogue.log_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_evidence",
+          "label": "templates.catalogue.source_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transport_reference",
+          "label": "templates.catalogue.transport_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_timber_volume_measurement",
+      "name": "templates.for_timber_volume_measurement.name",
+      "title": "Timber volume measurement",
+      "code": "FOR-012",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "log_length_mm",
+          "label": "templates.catalogue.log_length_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "log_width_mm",
+          "label": "templates.catalogue.log_width_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "log_height_mm",
+          "label": "templates.catalogue.log_height_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "calculation_method",
+          "label": "templates.catalogue.calculation_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "volume_unit",
+          "label": "templates.catalogue.volume_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_forest_patrol_observation",
+      "name": "templates.for_forest_patrol_observation.name",
+      "title": "Forest patrol observation",
+      "code": "FOR-013",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "patrol_area",
+          "label": "templates.catalogue.patrol_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_activity",
+          "label": "templates.catalogue.observed_activity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evidence_photos",
+          "label": "templates.catalogue.evidence_photos",
+          "type": "photo_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_forest_fire_observation",
+      "name": "templates.for_forest_fire_observation.name",
+      "title": "Forest fire observation",
+      "code": "FOR-014",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_location",
+          "label": "templates.catalogue.observed_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "fire_context",
+          "label": "templates.catalogue.fire_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_response_contact",
+          "label": "templates.catalogue.authorized_response_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_forest_pest_observation",
+      "name": "templates.for_forest_pest_observation.name",
+      "title": "Forest pest observation",
+      "code": "FOR-015",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_damage",
+          "label": "templates.catalogue.observed_damage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_species",
+          "label": "templates.catalogue.affected_species",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expert_identification",
+          "label": "templates.catalogue.expert_identification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_protected_area_facility_inspection",
+      "name": "templates.for_protected_area_facility_inspection.name",
+      "title": "Protected area facility inspection",
+      "code": "FOR-016",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "facility_condition",
+          "label": "templates.catalogue.facility_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visitor_impacts",
+          "label": "templates.catalogue.visitor_impacts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_needs",
+          "label": "templates.catalogue.maintenance_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_biodiversity_species_observation",
+      "name": "templates.for_biodiversity_species_observation.name",
+      "title": "Biodiversity species observation",
+      "code": "FOR-017",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "proposed_species",
+          "label": "templates.catalogue.proposed_species",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observation_evidence",
+          "label": "templates.catalogue.observation_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expert_verification",
+          "label": "templates.catalogue.expert_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_wildlife_camera_trap_register",
+      "name": "templates.for_wildlife_camera_trap_register.name",
+      "title": "Wildlife camera trap register",
+      "code": "FOR-018",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "camera_identifier",
+          "label": "templates.catalogue.camera_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "deployment_location",
+          "label": "templates.catalogue.deployment_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_restrictions",
+          "label": "templates.catalogue.access_restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_camera_trap_media_review",
+      "name": "templates.for_camera_trap_media_review.name",
+      "title": "Camera trap media review",
+      "code": "FOR-019",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "media_reference",
+          "label": "templates.catalogue.media_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "species_candidate",
+          "label": "templates.catalogue.species_candidate",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "human_verification",
+          "label": "templates.catalogue.human_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_wildlife_population_survey",
+      "name": "templates.for_wildlife_population_survey.name",
+      "title": "Wildlife population survey",
+      "code": "FOR-020",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "survey_method",
+          "label": "templates.catalogue.survey_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "survey_effort",
+          "label": "templates.catalogue.survey_effort",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_counts",
+          "label": "templates.catalogue.observed_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_habitat_condition_survey",
+      "name": "templates.for_habitat_condition_survey.name",
+      "title": "Habitat condition survey",
+      "code": "FOR-021",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "habitat_features",
+          "label": "templates.catalogue.habitat_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "disturbance_evidence",
+          "label": "templates.catalogue.disturbance_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_locations",
+          "label": "templates.catalogue.sampling_locations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_invasive_species_observation",
+      "name": "templates.for_invasive_species_observation.name",
+      "title": "Invasive species observation",
+      "code": "FOR-022",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "proposed_species",
+          "label": "templates.catalogue.proposed_species",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "extent",
+          "label": "templates.catalogue.extent",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expert_verification",
+          "label": "templates.catalogue.expert_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_human_wildlife_conflict_intake",
+      "name": "templates.for_human_wildlife_conflict_intake.name",
+      "title": "Human wildlife conflict intake",
+      "code": "FOR-023",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_event",
+          "label": "templates.catalogue.reported_event",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_livelihoods",
+          "label": "templates.catalogue.affected_livelihoods",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_followup",
+          "label": "templates.catalogue.authorized_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_wildlife_rehabilitation_record",
+      "name": "templates.for_wildlife_rehabilitation_record.name",
+      "title": "Wildlife rehabilitation record",
+      "code": "FOR-024",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "animal_reference",
+          "label": "templates.catalogue.animal_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_assessment",
+          "label": "templates.catalogue.qualified_assessment",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "care_plan",
+          "label": "templates.catalogue.care_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_conservation_community_consultation",
+      "name": "templates.for_conservation_community_consultation.name",
+      "title": "Conservation community consultation",
+      "code": "FOR-025",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "community_priorities",
+          "label": "templates.catalogue.community_priorities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "conservation_concerns",
+          "label": "templates.catalogue.conservation_concerns",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_actions",
+          "label": "templates.catalogue.agreed_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_forest_carbon_measurement_inputs",
+      "name": "templates.for_forest_carbon_measurement_inputs.name",
+      "title": "Forest carbon measurement inputs",
+      "code": "FOR-026",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "plot_measurements",
+          "label": "templates.catalogue.plot_measurements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "methodology_ref",
+          "label": "templates.catalogue.methodology_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "uncertainty_notes",
+          "label": "templates.catalogue.uncertainty_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_restoration_site_baseline",
+      "name": "templates.for_restoration_site_baseline.name",
+      "title": "Restoration site baseline",
+      "code": "FOR-027",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "site_conditions",
+          "label": "templates.catalogue.site_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reference_ecosystem",
+          "label": "templates.catalogue.reference_ecosystem",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restoration_objectives",
+          "label": "templates.catalogue.restoration_objectives",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_restoration_progress_monitoring",
+      "name": "templates.for_restoration_progress_monitoring.name",
+      "title": "Restoration progress monitoring",
+      "code": "FOR-028",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "progress_indicators",
+          "label": "templates.catalogue.progress_indicators",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_method",
+          "label": "templates.catalogue.measurement_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_conservation_grant_activity_report",
+      "name": "templates.for_conservation_grant_activity_report.name",
+      "title": "Conservation grant activity report",
+      "code": "FOR-029",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "funded_actions",
+          "label": "templates.catalogue.funded_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_outputs",
+          "label": "templates.catalogue.verified_outputs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "implementation_issues",
+          "label": "templates.catalogue.implementation_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "for_sensitive_species_location_access_review",
+      "name": "templates.for_sensitive_species_location_access_review.name",
+      "title": "Sensitive species location access review",
+      "code": "FOR-030",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_for",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_data",
+          "label": "templates.catalogue.requested_data",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "legitimate_purpose",
+          "label": "templates.catalogue.legitimate_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_restrictions",
+          "label": "templates.catalogue.access_restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

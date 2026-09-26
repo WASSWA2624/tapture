@@ -1,0 +1,1557 @@
+{
+  "category": "OSH",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "osh_workplace_hazard_observation",
+      "name": "templates.osh_workplace_hazard_observation.name",
+      "title": "Workplace hazard observation",
+      "code": "OSH-001",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_hazard",
+          "label": "templates.catalogue.observed_hazard",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "work_location",
+          "label": "templates.catalogue.work_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "immediate_action",
+          "label": "templates.catalogue.immediate_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_workplace_risk_assessment",
+      "name": "templates.osh_workplace_risk_assessment.name",
+      "title": "Workplace risk assessment",
+      "code": "OSH-002",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "task_scope",
+          "label": "templates.catalogue.task_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "hazards",
+          "label": "templates.catalogue.hazards",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_control_measures",
+          "label": "templates.catalogue.approved_control_measures",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_job_safety_analysis_record",
+      "name": "templates.osh_job_safety_analysis_record.name",
+      "title": "Job safety analysis record",
+      "code": "OSH-003",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_task_steps",
+          "label": "templates.catalogue.authorized_task_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "hazards",
+          "label": "templates.catalogue.hazards",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "competent_review",
+          "label": "templates.catalogue.competent_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_work_permit_administration",
+      "name": "templates.osh_work_permit_administration.name",
+      "title": "Work permit administration",
+      "code": "OSH-004",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_work_scope",
+          "label": "templates.catalogue.authorized_work_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_controls",
+          "label": "templates.catalogue.approved_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "permit_issuer",
+          "label": "templates.catalogue.permit_issuer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_toolbox_talk_attendance",
+      "name": "templates.osh_toolbox_talk_attendance.name",
+      "title": "Toolbox talk attendance",
+      "code": "OSH-005",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_topic",
+          "label": "templates.catalogue.approved_topic",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_list",
+          "label": "templates.catalogue.participant_list",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "questions_raised",
+          "label": "templates.catalogue.questions_raised",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_safety_induction_checklist",
+      "name": "templates.osh_safety_induction_checklist.name",
+      "title": "Safety induction checklist",
+      "code": "OSH-006",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "induction_topics",
+          "label": "templates.catalogue.induction_topics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "understanding_check",
+          "label": "templates.catalogue.understanding_check",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_access",
+          "label": "templates.catalogue.authorized_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_personal_protective_equipment_issue",
+      "name": "templates.osh_personal_protective_equipment_issue.name",
+      "title": "Personal protective equipment issue",
+      "code": "OSH-007",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_item",
+          "label": "templates.catalogue.equipment_item",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient_reference",
+          "label": "templates.catalogue.recipient_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issue_date",
+          "label": "templates.catalogue.issue_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_protective_equipment_inspection",
+      "name": "templates.osh_protective_equipment_inspection.name",
+      "title": "Protective equipment inspection",
+      "code": "OSH-008",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_identifier",
+          "label": "templates.catalogue.equipment_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "manufacturer_criteria",
+          "label": "templates.catalogue.manufacturer_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition",
+          "label": "templates.catalogue.condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_workplace_incident_report",
+      "name": "templates.osh_workplace_incident_report.name",
+      "title": "Workplace incident report",
+      "code": "OSH-009",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "event_details",
+          "label": "templates.catalogue.event_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "immediate_response",
+          "label": "templates.catalogue.immediate_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_investigation",
+          "label": "templates.catalogue.authorized_investigation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_near_miss_report",
+      "name": "templates.osh_near_miss_report.name",
+      "title": "Near-miss report",
+      "code": "OSH-010",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "event_description",
+          "label": "templates.catalogue.event_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "potential_harm",
+          "label": "templates.catalogue.potential_harm",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "preventive_actions",
+          "label": "templates.catalogue.preventive_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_incident_witness_statement",
+      "name": "templates.osh_incident_witness_statement.name",
+      "title": "Incident witness statement",
+      "code": "OSH-011",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "firsthand_observations",
+          "label": "templates.catalogue.firsthand_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "statement_date",
+          "label": "templates.catalogue.statement_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "confirmation",
+          "label": "templates.catalogue.confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_safety_incident_investigation",
+      "name": "templates.osh_safety_incident_investigation.name",
+      "title": "Safety incident investigation",
+      "code": "OSH-012",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_evidence",
+          "label": "templates.catalogue.verified_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contributing_factors",
+          "label": "templates.catalogue.contributing_factors",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "corrective_actions",
+          "label": "templates.catalogue.corrective_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_corrective_action_effectiveness_review",
+      "name": "templates.osh_corrective_action_effectiveness_review.name",
+      "title": "Corrective action effectiveness review",
+      "code": "OSH-013",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "implemented_control",
+          "label": "templates.catalogue.implemented_control",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_evidence",
+          "label": "templates.catalogue.verification_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "remaining_risk",
+          "label": "templates.catalogue.remaining_risk",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "low",
+              "label": "templates.choices.risk_rating.low"
+            },
+            {
+              "code": "medium",
+              "label": "templates.choices.risk_rating.medium"
+            },
+            {
+              "code": "high",
+              "label": "templates.choices.risk_rating.high"
+            },
+            {
+              "code": "critical",
+              "label": "templates.choices.risk_rating.critical"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_workplace_safety_inspection",
+      "name": "templates.osh_workplace_safety_inspection.name",
+      "title": "Workplace safety inspection",
+      "code": "OSH-014",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_inspection_items",
+          "label": "templates.catalogue.approved_inspection_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_findings",
+          "label": "templates.catalogue.observed_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "action_owners",
+          "label": "templates.catalogue.action_owners",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_ergonomic_workstation_assessment",
+      "name": "templates.osh_ergonomic_workstation_assessment.name",
+      "title": "Ergonomic workstation assessment",
+      "code": "OSH-015",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "task_demands",
+          "label": "templates.catalogue.task_demands",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_posture",
+          "label": "templates.catalogue.observed_posture",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_recommendations",
+          "label": "templates.catalogue.qualified_recommendations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_manual_handling_task_review",
+      "name": "templates.osh_manual_handling_task_review.name",
+      "title": "Manual handling task review",
+      "code": "OSH-016",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "load_description",
+          "label": "templates.catalogue.load_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "task_description",
+          "label": "templates.catalogue.task_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "work_conditions",
+          "label": "templates.catalogue.work_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "competent_review",
+          "label": "templates.catalogue.competent_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_workplace_exposure_monitoring",
+      "name": "templates.osh_workplace_exposure_monitoring.name",
+      "title": "Workplace exposure monitoring",
+      "code": "OSH-017",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_sampling_method",
+          "label": "templates.catalogue.approved_sampling_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "instrument_reference",
+          "label": "templates.catalogue.instrument_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_results",
+          "label": "templates.catalogue.qualified_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_occupational_noise_monitoring",
+      "name": "templates.osh_occupational_noise_monitoring.name",
+      "title": "Occupational noise monitoring",
+      "code": "OSH-018",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "exposure_location",
+          "label": "templates.catalogue.exposure_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_duration",
+          "label": "templates.catalogue.measurement_duration",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "minutes",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_occupational_dust_sampling",
+      "name": "templates.osh_occupational_dust_sampling.name",
+      "title": "Occupational dust sampling",
+      "code": "OSH-019",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "sampling_location",
+          "label": "templates.catalogue.sampling_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_method",
+          "label": "templates.catalogue.sampling_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "laboratory_request",
+          "label": "templates.catalogue.laboratory_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_chemical_safety_sheet_register",
+      "name": "templates.osh_chemical_safety_sheet_register.name",
+      "title": "Chemical safety sheet register",
+      "code": "OSH-020",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "substance_identifier",
+          "label": "templates.catalogue.substance_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sheet_version",
+          "label": "templates.catalogue.sheet_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_date",
+          "label": "templates.catalogue.review_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_chemical_use_risk_review",
+      "name": "templates.osh_chemical_use_risk_review.name",
+      "title": "Chemical use risk review",
+      "code": "OSH-021",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_use",
+          "label": "templates.catalogue.authorized_use",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safety_sheet_ref",
+          "label": "templates.catalogue.safety_sheet_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "competent_controls",
+          "label": "templates.catalogue.competent_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_lifting_equipment_inspection_evidence",
+      "name": "templates.osh_lifting_equipment_inspection_evidence.name",
+      "title": "Lifting equipment inspection evidence",
+      "code": "OSH-022",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_identifier",
+          "label": "templates.catalogue.equipment_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_test_record",
+          "label": "templates.catalogue.qualified_test_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restrictions",
+          "label": "templates.catalogue.restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_working_at_height_authorization_evidence",
+      "name": "templates.osh_working_at_height_authorization_evidence.name",
+      "title": "Working at height authorization evidence",
+      "code": "OSH-023",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_work_plan",
+          "label": "templates.catalogue.approved_work_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "competency_evidence",
+          "label": "templates.catalogue.competency_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_permit",
+          "label": "templates.catalogue.authorized_permit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_confined_space_authorization_evidence",
+      "name": "templates.osh_confined_space_authorization_evidence.name",
+      "title": "Confined space authorization evidence",
+      "code": "OSH-024",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_permit",
+          "label": "templates.catalogue.approved_permit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_assessment",
+          "label": "templates.catalogue.qualified_assessment",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_controls",
+          "label": "templates.catalogue.authorized_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_contractor_safety_prequalification",
+      "name": "templates.osh_contractor_safety_prequalification.name",
+      "title": "Contractor safety prequalification",
+      "code": "OSH-025",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "contract_scope",
+          "label": "templates.catalogue.contract_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safety_evidence",
+          "label": "templates.catalogue.safety_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_gaps",
+          "label": "templates.catalogue.verified_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_safety_committee_meeting",
+      "name": "templates.osh_safety_committee_meeting.name",
+      "title": "Safety committee meeting",
+      "code": "OSH-026",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "safety_topics",
+          "label": "templates.catalogue.safety_topics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_incidents",
+          "label": "templates.catalogue.verified_incidents",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_actions",
+          "label": "templates.catalogue.agreed_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_workplace_wellbeing_survey",
+      "name": "templates.osh_workplace_wellbeing_survey.name",
+      "title": "Workplace wellbeing survey",
+      "code": "OSH-027",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "voluntary_feedback",
+          "label": "templates.catalogue.voluntary_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "work_conditions",
+          "label": "templates.catalogue.work_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "support_suggestions",
+          "label": "templates.catalogue.support_suggestions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_return_to_work_coordination",
+      "name": "templates.osh_return_to_work_coordination.name",
+      "title": "Return-to-work coordination",
+      "code": "OSH-028",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "functional_work_limits",
+          "label": "templates.catalogue.functional_work_limits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_adjustments",
+          "label": "templates.catalogue.agreed_adjustments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_review",
+          "label": "templates.catalogue.authorized_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_occupational_health_referral_administration",
+      "name": "templates.osh_occupational_health_referral_administration.name",
+      "title": "Occupational health referral administration",
+      "code": "OSH-029",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "work_related_support_need",
+          "label": "templates.catalogue.work_related_support_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "qualified_recipient",
+          "label": "templates.catalogue.qualified_recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_quality_improvement_suggestion",
+      "name": "templates.osh_quality_improvement_suggestion.name",
+      "title": "Quality improvement suggestion",
+      "code": "OSH-030",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_problem",
+          "label": "templates.catalogue.observed_problem",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_improvement",
+          "label": "templates.catalogue.proposed_improvement",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_safety_performance_report",
+      "name": "templates.osh_safety_performance_report.name",
+      "title": "Safety performance report",
+      "code": "OSH-031",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_activity_counts",
+          "label": "templates.catalogue.verified_activity_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "incident_metrics",
+          "label": "templates.catalogue.incident_metrics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_limits",
+          "label": "templates.catalogue.measurement_limits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "osh_workplace_emergency_exercise",
+      "name": "templates.osh_workplace_emergency_exercise.name",
+      "title": "Workplace emergency exercise",
+      "code": "OSH-032",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_osh",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_scenario",
+          "label": "templates.catalogue.approved_scenario",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_response",
+          "label": "templates.catalogue.observed_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "lessons",
+          "label": "templates.catalogue.lessons",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

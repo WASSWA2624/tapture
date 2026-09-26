@@ -1,0 +1,1411 @@
+{
+  "category": "FIR",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "fir_fire_extinguisher_inventory",
+      "name": "templates.fir_fire_extinguisher_inventory.name",
+      "title": "Fire extinguisher inventory",
+      "code": "FIR-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "extinguisher_type",
+          "label": "templates.catalogue.extinguisher_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "asset_tag",
+          "label": "templates.catalogue.asset_tag",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_due_date",
+          "label": "templates.catalogue.service_due_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_fire_extinguisher_inspection",
+      "name": "templates.fir_fire_extinguisher_inspection.name",
+      "title": "Fire extinguisher inspection",
+      "code": "FIR-002",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_checklist",
+          "label": "templates.catalogue.approved_checklist",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visible_condition",
+          "label": "templates.catalogue.visible_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_status",
+          "label": "templates.catalogue.service_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_fire_alarm_equipment_register",
+      "name": "templates.fir_fire_alarm_equipment_register.name",
+      "title": "Fire alarm equipment register",
+      "code": "FIR-003",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "device_type",
+          "label": "templates.catalogue.device_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "device_identifier",
+          "label": "templates.catalogue.device_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "zone",
+          "label": "templates.catalogue.zone",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_fire_alarm_test_evidence",
+      "name": "templates.fir_fire_alarm_test_evidence.name",
+      "title": "Fire alarm test evidence",
+      "code": "FIR-004",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_test_procedure",
+          "label": "templates.catalogue.approved_test_procedure",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_signoff",
+          "label": "templates.catalogue.authorized_signoff",
+          "type": "signature",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_fire_door_inspection",
+      "name": "templates.fir_fire_door_inspection.name",
+      "title": "Fire door inspection",
+      "code": "FIR-005",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "door_identifier",
+          "label": "templates.catalogue.door_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_criteria",
+          "label": "templates.catalogue.approved_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_defects",
+          "label": "templates.catalogue.observed_defects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_emergency_exit_route_check",
+      "name": "templates.fir_emergency_exit_route_check.name",
+      "title": "Emergency exit route check",
+      "code": "FIR-006",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "route_reference",
+          "label": "templates.catalogue.route_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "obstructions",
+          "label": "templates.catalogue.obstructions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "signage_condition",
+          "label": "templates.catalogue.signage_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_emergency_lighting_test",
+      "name": "templates.fir_emergency_lighting_test.name",
+      "title": "Emergency lighting test",
+      "code": "FIR-007",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "light_identifier",
+          "label": "templates.catalogue.light_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_test",
+          "label": "templates.catalogue.approved_test",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_result",
+          "label": "templates.catalogue.observed_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_fire_hose_and_hydrant_inventory",
+      "name": "templates.fir_fire_hose_and_hydrant_inventory.name",
+      "title": "Fire hose and hydrant inventory",
+      "code": "FIR-008",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "asset_identifier",
+          "label": "templates.catalogue.asset_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "location",
+          "label": "templates.catalogue.location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_status",
+          "label": "templates.catalogue.service_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_fire_suppression_service_evidence",
+      "name": "templates.fir_fire_suppression_service_evidence.name",
+      "title": "Fire suppression service evidence",
+      "code": "FIR-009",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "system_reference",
+          "label": "templates.catalogue.system_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_service_record",
+          "label": "templates.catalogue.qualified_service_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restrictions",
+          "label": "templates.catalogue.restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_fire_risk_assessment_intake",
+      "name": "templates.fir_fire_risk_assessment_intake.name",
+      "title": "Fire risk assessment intake",
+      "code": "FIR-010",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "site_information",
+          "label": "templates.catalogue.site_information",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_hazards",
+          "label": "templates.catalogue.observed_hazards",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_assessor",
+          "label": "templates.catalogue.qualified_assessor",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_fire_evacuation_drill_record",
+      "name": "templates.fir_fire_evacuation_drill_record.name",
+      "title": "Fire evacuation drill record",
+      "code": "FIR-011",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "drill_scenario",
+          "label": "templates.catalogue.drill_scenario",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evacuation_observations",
+          "label": "templates.catalogue.evacuation_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "improvements",
+          "label": "templates.catalogue.improvements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_fire_warden_training_register",
+      "name": "templates.fir_fire_warden_training_register.name",
+      "title": "Fire warden training register",
+      "code": "FIR-012",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "training_scope",
+          "label": "templates.catalogue.training_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant",
+          "label": "templates.catalogue.participant",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualification_evidence",
+          "label": "templates.catalogue.qualification_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_fire_incident_report",
+      "name": "templates.fir_fire_incident_report.name",
+      "title": "Fire incident report",
+      "code": "FIR-013",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_event_details",
+          "label": "templates.catalogue.verified_event_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "damage_observations",
+          "label": "templates.catalogue.damage_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "authorized_review",
+          "label": "templates.catalogue.authorized_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_fire_prevention_inspection",
+      "name": "templates.fir_fire_prevention_inspection.name",
+      "title": "Fire prevention inspection",
+      "code": "FIR-014",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_criteria",
+          "label": "templates.catalogue.approved_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_conditions",
+          "label": "templates.catalogue.observed_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "corrective_actions",
+          "label": "templates.catalogue.corrective_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_building_security_assessment",
+      "name": "templates.fir_building_security_assessment.name",
+      "title": "Building security assessment",
+      "code": "FIR-015",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_scope",
+          "label": "templates.catalogue.authorized_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_controls",
+          "label": "templates.catalogue.access_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_gaps",
+          "label": "templates.catalogue.observed_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_visitor_access_authorization",
+      "name": "templates.fir_visitor_access_authorization.name",
+      "title": "Visitor access authorization",
+      "code": "FIR-016",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "visit_purpose",
+          "label": "templates.catalogue.visit_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "host_approval",
+          "label": "templates.catalogue.host_approval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_period",
+          "label": "templates.catalogue.access_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_visitor_badge_issue_and_return",
+      "name": "templates.fir_visitor_badge_issue_and_return.name",
+      "title": "Visitor badge issue and return",
+      "code": "FIR-017",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "badge_identifier",
+          "label": "templates.catalogue.badge_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visitor_reference",
+          "label": "templates.catalogue.visitor_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_status",
+          "label": "templates.catalogue.return_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_key_custody_register",
+      "name": "templates.fir_key_custody_register.name",
+      "title": "Key custody register",
+      "code": "FIR-018",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "key_identifier",
+          "label": "templates.catalogue.key_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_holder",
+          "label": "templates.catalogue.authorized_holder",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_due_date",
+          "label": "templates.catalogue.return_due_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_access_card_issue_request",
+      "name": "templates.fir_access_card_issue_request.name",
+      "title": "Access card issue request",
+      "code": "FIR-019",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_access",
+          "label": "templates.catalogue.requested_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "business_need",
+          "label": "templates.catalogue.business_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approver",
+          "label": "templates.catalogue.approver",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_access_control_fault_report",
+      "name": "templates.fir_access_control_fault_report.name",
+      "title": "Access control fault report",
+      "code": "FIR-020",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "device_reference",
+          "label": "templates.catalogue.device_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_fault",
+          "label": "templates.catalogue.reported_fault",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_service",
+          "label": "templates.catalogue.authorized_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_security_guard_shift_handover",
+      "name": "templates.fir_security_guard_shift_handover.name",
+      "title": "Security guard shift handover",
+      "code": "FIR-021",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "site_status",
+          "label": "templates.catalogue.site_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_incidents",
+          "label": "templates.catalogue.verified_incidents",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pending_tasks",
+          "label": "templates.catalogue.pending_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_security_patrol_checkpoint_record",
+      "name": "templates.fir_security_patrol_checkpoint_record.name",
+      "title": "Security patrol checkpoint record",
+      "code": "FIR-022",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_checkpoint",
+          "label": "templates.catalogue.authorized_checkpoint",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visit_time",
+          "label": "templates.catalogue.visit_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_conditions",
+          "label": "templates.catalogue.observed_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_perimeter_condition_inspection",
+      "name": "templates.fir_perimeter_condition_inspection.name",
+      "title": "Perimeter condition inspection",
+      "code": "FIR-023",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "inspection_zone",
+          "label": "templates.catalogue.inspection_zone",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visible_damage",
+          "label": "templates.catalogue.visible_damage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "repair_need",
+          "label": "templates.catalogue.repair_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_cctv_equipment_inventory",
+      "name": "templates.fir_cctv_equipment_inventory.name",
+      "title": "CCTV equipment inventory",
+      "code": "FIR-024",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "device_identifier",
+          "label": "templates.catalogue.device_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_purpose",
+          "label": "templates.catalogue.approved_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "retention_policy_ref",
+          "label": "templates.catalogue.retention_policy_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_cctv_access_review",
+      "name": "templates.fir_cctv_access_review.name",
+      "title": "CCTV access review",
+      "code": "FIR-025",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_users",
+          "label": "templates.catalogue.authorized_users",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "legitimate_need",
+          "label": "templates.catalogue.legitimate_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_decision",
+          "label": "templates.catalogue.review_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_security_incident_evidence_intake",
+      "name": "templates.fir_security_incident_evidence_intake.name",
+      "title": "Security incident evidence intake",
+      "code": "FIR-026",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "factual_event",
+          "label": "templates.catalogue.factual_event",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_media",
+          "label": "templates.catalogue.supporting_media",
+          "type": "photo_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restricted_access",
+          "label": "templates.catalogue.restricted_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_lost_key_incident_record",
+      "name": "templates.fir_lost_key_incident_record.name",
+      "title": "Lost key incident record",
+      "code": "FIR-027",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "key_reference",
+          "label": "templates.catalogue.key_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "last_known_custody",
+          "label": "templates.catalogue.last_known_custody",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_response",
+          "label": "templates.catalogue.authorized_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_facility_emergency_contact_verification",
+      "name": "templates.fir_facility_emergency_contact_verification.name",
+      "title": "Facility emergency contact verification",
+      "code": "FIR-028",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "contact_role",
+          "label": "templates.catalogue.contact_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_channel",
+          "label": "templates.catalogue.verified_channel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_date",
+          "label": "templates.catalogue.verification_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_security_contractor_performance_review",
+      "name": "templates.fir_security_contractor_performance_review.name",
+      "title": "Security contractor performance review",
+      "code": "FIR-029",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "contract_scope",
+          "label": "templates.catalogue.contract_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_service_records",
+          "label": "templates.catalogue.verified_service_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issues",
+          "label": "templates.catalogue.issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fir_fire_safety_compliance_evidence_pack",
+      "name": "templates.fir_fire_safety_compliance_evidence_pack.name",
+      "title": "Fire safety compliance evidence pack",
+      "code": "FIR-030",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fir",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "applicable_requirements_ref",
+          "label": "templates.catalogue.applicable_requirements_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_inspections",
+          "label": "templates.catalogue.verified_inspections",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "open_gaps",
+          "label": "templates.catalogue.open_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

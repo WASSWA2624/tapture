@@ -1,0 +1,1579 @@
+{
+  "category": "NPO",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "npo_nonprofit_organization_profile",
+      "name": "templates.npo_nonprofit_organization_profile.name",
+      "title": "Nonprofit organization profile",
+      "code": "NPO-001",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "mission",
+          "label": "templates.catalogue.mission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "registered_scope",
+          "label": "templates.catalogue.registered_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_programs",
+          "label": "templates.catalogue.verified_programs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_community_organization_registration",
+      "name": "templates.npo_community_organization_registration.name",
+      "title": "Community organization registration",
+      "code": "NPO-002",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "group_purpose",
+          "label": "templates.catalogue.group_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_contacts",
+          "label": "templates.catalogue.authorized_contacts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "membership_rules",
+          "label": "templates.catalogue.membership_rules",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_beneficiary_registration_with_consent",
+      "name": "templates.npo_beneficiary_registration_with_consent.name",
+      "title": "Beneficiary registration with consent",
+      "code": "NPO-003",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "minimum_eligibility_details",
+          "label": "templates.catalogue.minimum_eligibility_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "consent_scope",
+          "label": "templates.catalogue.consent_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_contact",
+          "label": "templates.catalogue.safe_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_program_eligibility_review",
+      "name": "templates.npo_program_eligibility_review.name",
+      "title": "Program eligibility review",
+      "code": "NPO-004",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "published_criteria",
+          "label": "templates.catalogue.published_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "submitted_evidence",
+          "label": "templates.catalogue.submitted_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "human_decision",
+          "label": "templates.catalogue.human_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_beneficiary_service_record",
+      "name": "templates.npo_beneficiary_service_record.name",
+      "title": "Beneficiary service record",
+      "code": "NPO-005",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "participant_code",
+          "label": "templates.catalogue.participant_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivered_service",
+          "label": "templates.catalogue.delivered_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification",
+          "label": "templates.catalogue.verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_community_outreach_visit",
+      "name": "templates.npo_community_outreach_visit.name",
+      "title": "Community outreach visit",
+      "code": "NPO-006",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "visit_objective",
+          "label": "templates.catalogue.visit_objective",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "community_feedback",
+          "label": "templates.catalogue.community_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_volunteer_application",
+      "name": "templates.npo_volunteer_application.name",
+      "title": "Volunteer application",
+      "code": "NPO-007",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "volunteer_interests",
+          "label": "templates.catalogue.volunteer_interests",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_skills",
+          "label": "templates.catalogue.verified_skills",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "availability",
+          "label": "templates.catalogue.availability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_volunteer_onboarding",
+      "name": "templates.npo_volunteer_onboarding.name",
+      "title": "Volunteer onboarding",
+      "code": "NPO-008",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "role_requirements",
+          "label": "templates.catalogue.role_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safeguarding_briefing",
+          "label": "templates.catalogue.safeguarding_briefing",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_volunteer_assignment",
+      "name": "templates.npo_volunteer_assignment.name",
+      "title": "Volunteer assignment",
+      "code": "NPO-009",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_activity",
+          "label": "templates.catalogue.approved_activity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_role",
+          "label": "templates.catalogue.assigned_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supervisor",
+          "label": "templates.catalogue.supervisor",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_volunteer_hours_log",
+      "name": "templates.npo_volunteer_hours_log.name",
+      "title": "Volunteer hours log",
+      "code": "NPO-010",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "activity",
+          "label": "templates.catalogue.activity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_hours",
+          "label": "templates.catalogue.verified_hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "hours",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supervisor_confirmation",
+          "label": "templates.catalogue.supervisor_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_volunteer_expense_claim",
+      "name": "templates.npo_volunteer_expense_claim.name",
+      "title": "Volunteer expense claim",
+      "code": "NPO-011",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_activity",
+          "label": "templates.catalogue.approved_activity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expense_evidence",
+          "label": "templates.catalogue.expense_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "claimed_amount",
+          "label": "templates.catalogue.claimed_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "claimed_currency",
+          "label": "templates.catalogue.claimed_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_volunteer_performance_feedback",
+      "name": "templates.npo_volunteer_performance_feedback.name",
+      "title": "Volunteer performance feedback",
+      "code": "NPO-012",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_role",
+          "label": "templates.catalogue.agreed_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_contributions",
+          "label": "templates.catalogue.observed_contributions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "development_feedback",
+          "label": "templates.catalogue.development_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_volunteer_recognition_letter",
+      "name": "templates.npo_volunteer_recognition_letter.name",
+      "title": "Volunteer recognition letter",
+      "code": "NPO-013",
+      "kind": "communication",
+      "pack": "COMM",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "communication_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_comm"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_contributions",
+          "label": "templates.catalogue.verified_contributions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_message",
+          "label": "templates.catalogue.approved_message",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient_permission",
+          "label": "templates.catalogue.recipient_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_partner_organization_due_diligence",
+      "name": "templates.npo_partner_organization_due_diligence.name",
+      "title": "Partner organization due diligence",
+      "code": "NPO-014",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "registration_evidence",
+          "label": "templates.catalogue.registration_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_capacity",
+          "label": "templates.catalogue.delivery_capacity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_capacity_unit",
+          "label": "templates.catalogue.delivery_capacity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safeguarding_controls",
+          "label": "templates.catalogue.safeguarding_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_partner_agreement_drafting",
+      "name": "templates.npo_partner_agreement_drafting.name",
+      "title": "Partner agreement drafting",
+      "code": "NPO-015",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "shared_objective",
+          "label": "templates.catalogue.shared_objective",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "responsibilities",
+          "label": "templates.catalogue.responsibilities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reporting_commitments",
+          "label": "templates.catalogue.reporting_commitments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_community_project_intake",
+      "name": "templates.npo_community_project_intake.name",
+      "title": "Community project intake",
+      "code": "NPO-016",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "community_need",
+          "label": "templates.catalogue.community_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_activity",
+          "label": "templates.catalogue.proposed_activity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "local_support",
+          "label": "templates.catalogue.local_support",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_program_activity_planning",
+      "name": "templates.npo_program_activity_planning.name",
+      "title": "Program activity planning",
+      "code": "NPO-017",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "target_outputs",
+          "label": "templates.catalogue.target_outputs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_team",
+          "label": "templates.catalogue.assigned_team",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_program_activity_report",
+      "name": "templates.npo_program_activity_report.name",
+      "title": "Program activity report",
+      "code": "NPO-018",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "completed_activities",
+          "label": "templates.catalogue.completed_activities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_attendance",
+          "label": "templates.catalogue.verified_attendance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_nonprofit_board_governance_checklist",
+      "name": "templates.npo_nonprofit_board_governance_checklist.name",
+      "title": "Nonprofit board governance checklist",
+      "code": "NPO-019",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "governance_documents",
+          "label": "templates.catalogue.governance_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "oversight_records",
+          "label": "templates.catalogue.oversight_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "open_gaps",
+          "label": "templates.catalogue.open_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_membership_application",
+      "name": "templates.npo_membership_application.name",
+      "title": "Membership application",
+      "code": "NPO-020",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "membership_category",
+          "label": "templates.catalogue.membership_category",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "published_requirements",
+          "label": "templates.catalogue.published_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_permission",
+          "label": "templates.catalogue.contact_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_membership_contribution_record",
+      "name": "templates.npo_membership_contribution_record.name",
+      "title": "Membership contribution record",
+      "code": "NPO-021",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "member_reference",
+          "label": "templates.catalogue.member_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contribution_type",
+          "label": "templates.catalogue.contribution_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "amount_or_quantity",
+          "label": "templates.catalogue.amount_or_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "amount_or_quantity_unit",
+          "label": "templates.catalogue.amount_or_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_community_meeting_attendance",
+      "name": "templates.npo_community_meeting_attendance.name",
+      "title": "Community meeting attendance",
+      "code": "NPO-022",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "meeting_reference",
+          "label": "templates.catalogue.meeting_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimal_attendee_details",
+          "label": "templates.catalogue.minimal_attendee_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_charitable_goods_donation_intake",
+      "name": "templates.npo_charitable_goods_donation_intake.name",
+      "title": "Charitable goods donation intake",
+      "code": "NPO-023",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "donor_reference",
+          "label": "templates.catalogue.donor_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "donated_items",
+          "label": "templates.catalogue.donated_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "usage_restrictions",
+          "label": "templates.catalogue.usage_restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_donation_distribution_record",
+      "name": "templates.npo_donation_distribution_record.name",
+      "title": "Donation distribution record",
+      "code": "NPO-024",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "recipient_code",
+          "label": "templates.catalogue.recipient_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issued_items",
+          "label": "templates.catalogue.issued_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acknowledgement",
+          "label": "templates.catalogue.acknowledgement",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_donor_relationship_note",
+      "name": "templates.npo_donor_relationship_note.name",
+      "title": "Donor relationship note",
+      "code": "NPO-025",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "consented_contact",
+          "label": "templates.catalogue.consented_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "discussion_summary",
+          "label": "templates.catalogue.discussion_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "agreed_followup",
+          "label": "templates.catalogue.agreed_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_donor_visit_report",
+      "name": "templates.npo_donor_visit_report.name",
+      "title": "Donor visit report",
+      "code": "NPO-026",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "visit_scope",
+          "label": "templates.catalogue.visit_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_program_evidence",
+          "label": "templates.catalogue.verified_program_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "followup_requests",
+          "label": "templates.catalogue.followup_requests",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_safeguarding_incident_referral",
+      "name": "templates.npo_safeguarding_incident_referral.name",
+      "title": "Safeguarding incident referral",
+      "code": "NPO-027",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "minimum_necessary_details",
+          "label": "templates.catalogue.minimum_necessary_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "authorized_handler",
+          "label": "templates.catalogue.authorized_handler",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_contact",
+          "label": "templates.catalogue.safe_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_nonprofit_complaint_mechanism_intake",
+      "name": "templates.npo_nonprofit_complaint_mechanism_intake.name",
+      "title": "Nonprofit complaint mechanism intake",
+      "code": "NPO-028",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_concern",
+          "label": "templates.catalogue.reported_concern",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "confidentiality_preferences",
+          "label": "templates.catalogue.confidentiality_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_route",
+          "label": "templates.catalogue.response_route",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_community_feedback_analysis",
+      "name": "templates.npo_community_feedback_analysis.name",
+      "title": "Community feedback analysis",
+      "code": "NPO-029",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "deidentified_feedback",
+          "label": "templates.catalogue.deidentified_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "themes",
+          "label": "templates.catalogue.themes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evidence_limits",
+          "label": "templates.catalogue.evidence_limits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_nonprofit_annual_report",
+      "name": "templates.npo_nonprofit_annual_report.name",
+      "title": "Nonprofit annual report",
+      "code": "NPO-030",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_activities",
+          "label": "templates.catalogue.verified_activities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "financial_summary_sources",
+          "label": "templates.catalogue.financial_summary_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "governance_information",
+          "label": "templates.catalogue.governance_information",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_social_enterprise_business_plan",
+      "name": "templates.npo_social_enterprise_business_plan.name",
+      "title": "Social enterprise business plan",
+      "code": "NPO-031",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "social_objectives",
+          "label": "templates.catalogue.social_objectives",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "revenue_model",
+          "label": "templates.catalogue.revenue_model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "impact_measures",
+          "label": "templates.catalogue.impact_measures",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "npo_community_resource_directory",
+      "name": "templates.npo_community_resource_directory.name",
+      "title": "Community resource directory",
+      "code": "NPO-032",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_npo",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "resource_type",
+          "label": "templates.catalogue.resource_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "availability",
+          "label": "templates.catalogue.availability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_provider",
+          "label": "templates.catalogue.verified_provider",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

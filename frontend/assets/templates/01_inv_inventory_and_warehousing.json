@@ -1,0 +1,1733 @@
+{
+  "category": "INV",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "inv_stock_item_master",
+      "name": "templates.inv_stock_item_master.name",
+      "title": "Stock item master",
+      "code": "INV-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "stock_code",
+          "label": "templates.catalogue.stock_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "unit_of_measure",
+          "label": "templates.catalogue.unit_of_measure",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reorder_level",
+          "label": "templates.catalogue.reorder_level",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_goods_received_note",
+      "name": "templates.inv_goods_received_note.name",
+      "title": "Goods received note",
+      "code": "INV-002",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "supplier_delivery_ref",
+          "label": "templates.catalogue.supplier_delivery_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "received_quantity",
+          "label": "templates.catalogue.received_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "received_quantity_unit",
+          "label": "templates.catalogue.received_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accepted_quantity",
+          "label": "templates.catalogue.accepted_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accepted_quantity_unit",
+          "label": "templates.catalogue.accepted_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_goods_issue_voucher",
+      "name": "templates.inv_goods_issue_voucher.name",
+      "title": "Goods issue voucher",
+      "code": "INV-003",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "requesting_unit",
+          "label": "templates.catalogue.requesting_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issued_quantity",
+          "label": "templates.catalogue.issued_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issued_quantity_unit",
+          "label": "templates.catalogue.issued_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issue_purpose",
+          "label": "templates.catalogue.issue_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_stock_transfer_note",
+      "name": "templates.inv_stock_transfer_note.name",
+      "title": "Stock transfer note",
+      "code": "INV-004",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "source_bin",
+          "label": "templates.catalogue.source_bin",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "destination_bin",
+          "label": "templates.catalogue.destination_bin",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transfer_quantity",
+          "label": "templates.catalogue.transfer_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transfer_quantity_unit",
+          "label": "templates.catalogue.transfer_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_cycle_count_sheet",
+      "name": "templates.inv_cycle_count_sheet.name",
+      "title": "Cycle count sheet",
+      "code": "INV-005",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "book_quantity",
+          "label": "templates.catalogue.book_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "book_quantity_unit",
+          "label": "templates.catalogue.book_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "counted_quantity",
+          "label": "templates.catalogue.counted_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "counted_quantity_unit",
+          "label": "templates.catalogue.counted_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "variance_reason",
+          "label": "templates.catalogue.variance_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_full_stocktake_worksheet",
+      "name": "templates.inv_full_stocktake_worksheet.name",
+      "title": "Full stocktake worksheet",
+      "code": "INV-006",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "count_zone",
+          "label": "templates.catalogue.count_zone",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "count_team",
+          "label": "templates.catalogue.count_team",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reconciliation_status",
+          "label": "templates.catalogue.reconciliation_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_stock_adjustment_request",
+      "name": "templates.inv_stock_adjustment_request.name",
+      "title": "Stock adjustment request",
+      "code": "INV-007",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "adjustment_quantity",
+          "label": "templates.catalogue.adjustment_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "adjustment_quantity_unit",
+          "label": "templates.catalogue.adjustment_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "adjustment_reason",
+          "label": "templates.catalogue.adjustment_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_batch_and_lot_traceability",
+      "name": "templates.inv_batch_and_lot_traceability.name",
+      "title": "Batch and lot traceability",
+      "code": "INV-008",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "batch_number",
+          "label": "templates.catalogue.batch_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "production_date",
+          "label": "templates.catalogue.production_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expiry_date",
+          "label": "templates.catalogue.expiry_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_expiry_monitoring_register",
+      "name": "templates.inv_expiry_monitoring_register.name",
+      "title": "Expiry monitoring register",
+      "code": "INV-009",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "expiry_date",
+          "label": "templates.catalogue.expiry_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity_at_risk",
+          "label": "templates.catalogue.quantity_at_risk",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity_at_risk_unit",
+          "label": "templates.catalogue.quantity_at_risk_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "disposition_action",
+          "label": "templates.catalogue.disposition_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_reorder_proposal",
+      "name": "templates.inv_reorder_proposal.name",
+      "title": "Reorder proposal",
+      "code": "INV-010",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "available_quantity",
+          "label": "templates.catalogue.available_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "available_quantity_unit",
+          "label": "templates.catalogue.available_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "lead_time_days",
+          "label": "templates.catalogue.lead_time_days",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recommended_order",
+          "label": "templates.catalogue.recommended_order",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_bin_location_register",
+      "name": "templates.inv_bin_location_register.name",
+      "title": "Bin location register",
+      "code": "INV-011",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "bin_code",
+          "label": "templates.catalogue.bin_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_capacity",
+          "label": "templates.catalogue.storage_capacity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_capacity_unit",
+          "label": "templates.catalogue.storage_capacity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_conditions",
+          "label": "templates.catalogue.storage_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_stock_reservation",
+      "name": "templates.inv_stock_reservation.name",
+      "title": "Stock reservation",
+      "code": "INV-012",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "reserved_quantity",
+          "label": "templates.catalogue.reserved_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reserved_quantity_unit",
+          "label": "templates.catalogue.reserved_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "beneficiary_order",
+          "label": "templates.catalogue.beneficiary_order",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reservation_expiry_date",
+          "label": "templates.catalogue.reservation_expiry_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_picking_list",
+      "name": "templates.inv_picking_list.name",
+      "title": "Picking list",
+      "code": "INV-013",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "order_reference",
+          "label": "templates.catalogue.order_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pick_locations",
+          "label": "templates.catalogue.pick_locations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "picked_quantity",
+          "label": "templates.catalogue.picked_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "picked_quantity_unit",
+          "label": "templates.catalogue.picked_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_packing_verification",
+      "name": "templates.inv_packing_verification.name",
+      "title": "Packing verification",
+      "code": "INV-014",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "package_contents",
+          "label": "templates.catalogue.package_contents",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "packing_standard",
+          "label": "templates.catalogue.packing_standard",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "seal_reference",
+          "label": "templates.catalogue.seal_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_dispatch_manifest",
+      "name": "templates.inv_dispatch_manifest.name",
+      "title": "Dispatch manifest",
+      "code": "INV-015",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "shipment_reference",
+          "label": "templates.catalogue.shipment_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "package_count",
+          "label": "templates.catalogue.package_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "carrier",
+          "label": "templates.catalogue.carrier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_proof_of_delivery",
+      "name": "templates.inv_proof_of_delivery.name",
+      "title": "Proof of delivery",
+      "code": "INV-016",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "delivered_items",
+          "label": "templates.catalogue.delivered_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient_confirmation",
+          "label": "templates.catalogue.recipient_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_exception",
+          "label": "templates.catalogue.delivery_exception",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_return_merchandise_authorization",
+      "name": "templates.inv_return_merchandise_authorization.name",
+      "title": "Return merchandise authorization",
+      "code": "INV-017",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "original_sale_ref",
+          "label": "templates.catalogue.original_sale_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_reason",
+          "label": "templates.catalogue.return_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_condition",
+          "label": "templates.catalogue.return_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_damaged_stock_report",
+      "name": "templates.inv_damaged_stock_report.name",
+      "title": "Damaged stock report",
+      "code": "INV-018",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "damage_type",
+          "label": "templates.catalogue.damage_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_quantity",
+          "label": "templates.catalogue.affected_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_quantity_unit",
+          "label": "templates.catalogue.affected_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "isolation_location",
+          "label": "templates.catalogue.isolation_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_obsolete_stock_review",
+      "name": "templates.inv_obsolete_stock_review.name",
+      "title": "Obsolete stock review",
+      "code": "INV-019",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "last_movement_date",
+          "label": "templates.catalogue.last_movement_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "remaining_quantity",
+          "label": "templates.catalogue.remaining_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "remaining_quantity_unit",
+          "label": "templates.catalogue.remaining_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "writeoff_proposal",
+          "label": "templates.catalogue.writeoff_proposal",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_consignment_stock_register",
+      "name": "templates.inv_consignment_stock_register.name",
+      "title": "Consignment stock register",
+      "code": "INV-020",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "stock_owner",
+          "label": "templates.catalogue.stock_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consignee",
+          "label": "templates.catalogue.consignee",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "settlement_terms",
+          "label": "templates.catalogue.settlement_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_vendor_managed_inventory_check",
+      "name": "templates.inv_vendor_managed_inventory_check.name",
+      "title": "Vendor-managed inventory check",
+      "code": "INV-021",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "vendor_reference",
+          "label": "templates.catalogue.vendor_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "shelf_quantity",
+          "label": "templates.catalogue.shelf_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "shelf_quantity_unit",
+          "label": "templates.catalogue.shelf_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "replenishment_need",
+          "label": "templates.catalogue.replenishment_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_cold_storage_temperature_log",
+      "name": "templates.inv_cold_storage_temperature_log.name",
+      "title": "Cold storage temperature log",
+      "code": "INV-022",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "storage_unit",
+          "label": "templates.catalogue.storage_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "temperature_reading",
+          "label": "templates.catalogue.temperature_reading",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "degC",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptable_range_ref",
+          "label": "templates.catalogue.acceptable_range_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_warehouse_housekeeping_inspection",
+      "name": "templates.inv_warehouse_housekeeping_inspection.name",
+      "title": "Warehouse housekeeping inspection",
+      "code": "INV-023",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "aisle_condition",
+          "label": "templates.catalogue.aisle_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stacking_condition",
+          "label": "templates.catalogue.stacking_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pest_evidence",
+          "label": "templates.catalogue.pest_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_warehouse_capacity_survey",
+      "name": "templates.inv_warehouse_capacity_survey.name",
+      "title": "Warehouse capacity survey",
+      "code": "INV-024",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "usable_volume",
+          "label": "templates.catalogue.usable_volume",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "L",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "occupied_volume",
+          "label": "templates.catalogue.occupied_volume",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "L",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_constraints",
+          "label": "templates.catalogue.storage_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_inventory_valuation_worksheet",
+      "name": "templates.inv_inventory_valuation_worksheet.name",
+      "title": "Inventory valuation worksheet",
+      "code": "INV-025",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "valuation_method",
+          "label": "templates.catalogue.valuation_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "unit_cost",
+          "label": "templates.catalogue.unit_cost",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "unit_cost_currency",
+          "label": "templates.catalogue.unit_cost_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "valuation_date",
+          "label": "templates.catalogue.valuation_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_stock_discrepancy_investigation",
+      "name": "templates.inv_stock_discrepancy_investigation.name",
+      "title": "Stock discrepancy investigation",
+      "code": "INV-026",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "discrepancy_reference",
+          "label": "templates.catalogue.discrepancy_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "movement_history",
+          "label": "templates.catalogue.movement_history",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "findings",
+          "label": "templates.catalogue.findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_inventory_replenishment_schedule",
+      "name": "templates.inv_inventory_replenishment_schedule.name",
+      "title": "Inventory replenishment schedule",
+      "code": "INV-027",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "item_priority",
+          "label": "templates.catalogue.item_priority",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "emergency",
+              "label": "templates.choices.priority.emergency"
+            },
+            {
+              "code": "high",
+              "label": "templates.choices.priority.high"
+            },
+            {
+              "code": "medium",
+              "label": "templates.choices.priority.medium"
+            },
+            {
+              "code": "low",
+              "label": "templates.choices.priority.low"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_window",
+          "label": "templates.catalogue.delivery_window",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "order_batch",
+          "label": "templates.catalogue.order_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_chemical_storage_register",
+      "name": "templates.inv_chemical_storage_register.name",
+      "title": "Chemical storage register",
+      "code": "INV-028",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "substance_identifier",
+          "label": "templates.catalogue.substance_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safety_sheet_ref",
+          "label": "templates.catalogue.safety_sheet_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_compatibility",
+          "label": "templates.catalogue.storage_compatibility",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_reusable_container_tracking",
+      "name": "templates.inv_reusable_container_tracking.name",
+      "title": "Reusable container tracking",
+      "code": "INV-029",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "container_identifier",
+          "label": "templates.catalogue.container_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "current_holder",
+          "label": "templates.catalogue.current_holder",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_cycle",
+          "label": "templates.catalogue.return_cycle",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_pallet_and_load_inspection",
+      "name": "templates.inv_pallet_and_load_inspection.name",
+      "title": "Pallet and load inspection",
+      "code": "INV-030",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "load_weight",
+          "label": "templates.catalogue.load_weight",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "kg",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pallet_condition",
+          "label": "templates.catalogue.pallet_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stability_checks",
+          "label": "templates.catalogue.stability_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_warehouse_incident_report",
+      "name": "templates.inv_warehouse_incident_report.name",
+      "title": "Warehouse incident report",
+      "code": "INV-031",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "incident_area",
+          "label": "templates.catalogue.incident_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_goods",
+          "label": "templates.catalogue.affected_goods",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_stock_ageing_report",
+      "name": "templates.inv_stock_ageing_report.name",
+      "title": "Stock ageing report",
+      "code": "INV-032",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "age_bands",
+          "label": "templates.catalogue.age_bands",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stock_value",
+          "label": "templates.catalogue.stock_value",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "stock_value_currency",
+          "label": "templates.catalogue.stock_value_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "slow_moving_items",
+          "label": "templates.catalogue.slow_moving_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_inventory_demand_forecast_inputs",
+      "name": "templates.inv_inventory_demand_forecast_inputs.name",
+      "title": "Inventory demand forecast inputs",
+      "code": "INV-033",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "historical_demand",
+          "label": "templates.catalogue.historical_demand",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "seasonal_assumptions",
+          "label": "templates.catalogue.seasonal_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "forecast_horizon",
+          "label": "templates.catalogue.forecast_horizon",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "inv_stock_quarantine_release",
+      "name": "templates.inv_stock_quarantine_release.name",
+      "title": "Stock quarantine release",
+      "code": "INV-034",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_inv",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "quarantine_reason",
+          "label": "templates.catalogue.quarantine_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "release_evidence",
+          "label": "templates.catalogue.release_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_authorization",
+          "label": "templates.catalogue.quality_authorization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

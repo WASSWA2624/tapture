@@ -1,0 +1,1431 @@
+{
+  "category": "FAI",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "fai_faith_community_voluntary_registration",
+      "name": "templates.fai_faith_community_voluntary_registration.name",
+      "title": "Faith community voluntary registration",
+      "code": "FAI-001",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "chosen_contact_details",
+          "label": "templates.catalogue.chosen_contact_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "participation_preferences",
+          "label": "templates.catalogue.participation_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "explicit_consent",
+          "label": "templates.catalogue.explicit_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_congregation_event_registration",
+      "name": "templates.fai_congregation_event_registration.name",
+      "title": "Congregation event registration",
+      "code": "FAI-002",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "event_reference",
+          "label": "templates.catalogue.event_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attendance_preferences",
+          "label": "templates.catalogue.attendance_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_faith_community_meeting_agenda",
+      "name": "templates.fai_faith_community_meeting_agenda.name",
+      "title": "Faith community meeting agenda",
+      "code": "FAI-003",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "agenda_topics",
+          "label": "templates.catalogue.agenda_topics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "item_owners",
+          "label": "templates.catalogue.item_owners",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_materials",
+          "label": "templates.catalogue.approved_materials",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_faith_community_meeting_minutes",
+      "name": "templates.fai_faith_community_meeting_minutes.name",
+      "title": "Faith community meeting minutes",
+      "code": "FAI-004",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_discussion",
+          "label": "templates.catalogue.verified_discussion",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_decisions",
+          "label": "templates.catalogue.authorized_decisions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "actions",
+          "label": "templates.catalogue.actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_community_service_volunteer_roster",
+      "name": "templates.fai_community_service_volunteer_roster.name",
+      "title": "Community service volunteer roster",
+      "code": "FAI-005",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "service_activity",
+          "label": "templates.catalogue.service_activity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "volunteer_roles",
+          "label": "templates.catalogue.volunteer_roles",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "availability",
+          "label": "templates.catalogue.availability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_faith_community_facility_inventory",
+      "name": "templates.fai_faith_community_facility_inventory.name",
+      "title": "Faith community facility inventory",
+      "code": "FAI-006",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "asset_type",
+          "label": "templates.catalogue.asset_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "location",
+          "label": "templates.catalogue.location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custodian",
+          "label": "templates.catalogue.custodian",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_place_of_worship_maintenance_inspection",
+      "name": "templates.fai_place_of_worship_maintenance_inspection.name",
+      "title": "Place of worship maintenance inspection",
+      "code": "FAI-007",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "building_condition",
+          "label": "templates.catalogue.building_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "equipment_status",
+          "label": "templates.catalogue.equipment_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessibility",
+          "label": "templates.catalogue.accessibility",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_faith_community_donation_record",
+      "name": "templates.fai_faith_community_donation_record.name",
+      "title": "Faith community donation record",
+      "code": "FAI-008",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "donor_preference",
+          "label": "templates.catalogue.donor_preference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "donation_amount",
+          "label": "templates.catalogue.donation_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "donation_currency",
+          "label": "templates.catalogue.donation_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restricted_purpose",
+          "label": "templates.catalogue.restricted_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_anonymous_donation_reconciliation",
+      "name": "templates.fai_anonymous_donation_reconciliation.name",
+      "title": "Anonymous donation reconciliation",
+      "code": "FAI-009",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "counted_contributions",
+          "label": "templates.catalogue.counted_contributions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "banking_evidence",
+          "label": "templates.catalogue.banking_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "independent_confirmation",
+          "label": "templates.catalogue.independent_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_community_charity_distribution",
+      "name": "templates.fai_community_charity_distribution.name",
+      "title": "Community charity distribution",
+      "code": "FAI-010",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "recipient_code",
+          "label": "templates.catalogue.recipient_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issued_support",
+          "label": "templates.catalogue.issued_support",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acknowledgement",
+          "label": "templates.catalogue.acknowledgement",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_pastoral_appointment_request",
+      "name": "templates.fai_pastoral_appointment_request.name",
+      "title": "Pastoral appointment request",
+      "code": "FAI-011",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "voluntary_request",
+          "label": "templates.catalogue.voluntary_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "preferred_contact",
+          "label": "templates.catalogue.preferred_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "confidentiality",
+          "label": "templates.catalogue.confidentiality",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_confidential_pastoral_care_administration",
+      "name": "templates.fai_confidential_pastoral_care_administration.name",
+      "title": "Confidential pastoral care administration",
+      "code": "FAI-012",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "appointment_reference",
+          "label": "templates.catalogue.appointment_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attendance",
+          "label": "templates.catalogue.attendance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_followup",
+          "label": "templates.catalogue.agreed_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_religious_education_session_plan",
+      "name": "templates.fai_religious_education_session_plan.name",
+      "title": "Religious education session plan",
+      "code": "FAI-013",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "learning_topics",
+          "label": "templates.catalogue.learning_topics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "age_appropriate_materials",
+          "label": "templates.catalogue.age_appropriate_materials",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_teacher",
+          "label": "templates.catalogue.approved_teacher",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_religious_education_attendance",
+      "name": "templates.fai_religious_education_attendance.name",
+      "title": "Religious education attendance",
+      "code": "FAI-014",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "participant_code",
+          "label": "templates.catalogue.participant_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "session_reference",
+          "label": "templates.catalogue.session_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "guardian_consent_when_needed",
+          "label": "templates.catalogue.guardian_consent_when_needed",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_community_youth_event_permission",
+      "name": "templates.fai_community_youth_event_permission.name",
+      "title": "Community youth event permission",
+      "code": "FAI-015",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "event_information",
+          "label": "templates.catalogue.event_information",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "guardian_decision",
+          "label": "templates.catalogue.guardian_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "safeguarding_contact",
+          "label": "templates.catalogue.safeguarding_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_ceremony_booking_request",
+      "name": "templates.fai_ceremony_booking_request.name",
+      "title": "Ceremony booking request",
+      "code": "FAI-016",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "ceremony_type",
+          "label": "templates.catalogue.ceremony_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "preferred_date",
+          "label": "templates.catalogue.preferred_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "organizer_contact",
+          "label": "templates.catalogue.organizer_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_ceremony_program_drafting",
+      "name": "templates.fai_ceremony_program_drafting.name",
+      "title": "Ceremony program drafting",
+      "code": "FAI-017",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_sequence",
+          "label": "templates.catalogue.approved_sequence",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_permissions",
+          "label": "templates.catalogue.participant_permissions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "venue_details",
+          "label": "templates.catalogue.venue_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_marriage_preparation_administration",
+      "name": "templates.fai_marriage_preparation_administration.name",
+      "title": "Marriage preparation administration",
+      "code": "FAI-018",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_sessions",
+          "label": "templates.catalogue.requested_sessions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participants_consent",
+          "label": "templates.catalogue.participants_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "schedule",
+          "label": "templates.catalogue.schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_funeral_service_planning",
+      "name": "templates.fai_funeral_service_planning.name",
+      "title": "Funeral service planning",
+      "code": "FAI-019",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "family_preferences",
+          "label": "templates.catalogue.family_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "confirmed_services",
+          "label": "templates.catalogue.confirmed_services",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "privacy_choices",
+          "label": "templates.catalogue.privacy_choices",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_memorial_tribute_drafting_brief",
+      "name": "templates.fai_memorial_tribute_drafting_brief.name",
+      "title": "Memorial tribute drafting brief",
+      "code": "FAI-020",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "family_approved_facts",
+          "label": "templates.catalogue.family_approved_facts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "selected_memories",
+          "label": "templates.catalogue.selected_memories",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "publication_permission",
+          "label": "templates.catalogue.publication_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_community_hall_booking",
+      "name": "templates.fai_community_hall_booking.name",
+      "title": "Community hall booking",
+      "code": "FAI-021",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "event_purpose",
+          "label": "templates.catalogue.event_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "booking_period",
+          "label": "templates.catalogue.booking_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "use_conditions",
+          "label": "templates.catalogue.use_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_faith_organization_budget",
+      "name": "templates.fai_faith_organization_budget.name",
+      "title": "Faith organization budget",
+      "code": "FAI-022",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "expected_contributions",
+          "label": "templates.catalogue.expected_contributions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "planned_services",
+          "label": "templates.catalogue.planned_services",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_costs",
+          "label": "templates.catalogue.approved_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_community_leadership_election_administration",
+      "name": "templates.fai_community_leadership_election_administration.name",
+      "title": "Community leadership election administration",
+      "code": "FAI-023",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "association_rules",
+          "label": "templates.catalogue.association_rules",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "voting_schedule",
+          "label": "templates.catalogue.voting_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "privacy_controls",
+          "label": "templates.catalogue.privacy_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_faith_organization_safeguarding_report",
+      "name": "templates.fai_faith_organization_safeguarding_report.name",
+      "title": "Faith organization safeguarding report",
+      "code": "FAI-024",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "minimum_concern",
+          "label": "templates.catalogue.minimum_concern",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_handler",
+          "label": "templates.catalogue.authorized_handler",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_contact",
+          "label": "templates.catalogue.safe_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_faith_community_annual_activity_report",
+      "name": "templates.fai_faith_community_annual_activity_report.name",
+      "title": "Faith community annual activity report",
+      "code": "FAI-025",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_activities",
+          "label": "templates.catalogue.verified_activities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "financial_sources",
+          "label": "templates.catalogue.financial_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_publication",
+          "label": "templates.catalogue.approved_publication",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_interfaith_dialogue_record",
+      "name": "templates.fai_interfaith_dialogue_record.name",
+      "title": "Interfaith dialogue record",
+      "code": "FAI-026",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "voluntary_participants",
+          "label": "templates.catalogue.voluntary_participants",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "discussion_topics",
+          "label": "templates.catalogue.discussion_topics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_actions",
+          "label": "templates.catalogue.agreed_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_religious_heritage_oral_history",
+      "name": "templates.fai_religious_heritage_oral_history.name",
+      "title": "Religious heritage oral history",
+      "code": "FAI-027",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "community_permission",
+          "label": "templates.catalogue.community_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recorded_account",
+          "label": "templates.catalogue.recorded_account",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "access_conditions",
+          "label": "templates.catalogue.access_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fai_community_welfare_referral",
+      "name": "templates.fai_community_welfare_referral.name",
+      "title": "Community welfare referral",
+      "code": "FAI-028",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fai",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "consented_support_need",
+          "label": "templates.catalogue.consented_support_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "receiving_service",
+          "label": "templates.catalogue.receiving_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_details",
+          "label": "templates.catalogue.minimum_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

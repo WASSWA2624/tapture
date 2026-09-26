@@ -1,0 +1,1685 @@
+{
+  "category": "LIV",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "liv_livestock_owner_registration",
+      "name": "templates.liv_livestock_owner_registration.name",
+      "title": "Livestock owner registration",
+      "code": "LIV-001",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "owner_contact",
+          "label": "templates.catalogue.owner_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "farm_type",
+          "label": "templates.catalogue.farm_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_animal_identification_record",
+      "name": "templates.liv_animal_identification_record.name",
+      "title": "Animal identification record",
+      "code": "LIV-002",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "species",
+          "label": "templates.catalogue.species",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "breed",
+          "label": "templates.catalogue.breed",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "tag_identifier",
+          "label": "templates.catalogue.tag_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_herd_inventory",
+      "name": "templates.liv_herd_inventory.name",
+      "title": "Herd inventory",
+      "code": "LIV-003",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "animal_category",
+          "label": "templates.catalogue.animal_category",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "head_count",
+          "label": "templates.catalogue.head_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "herd_location",
+          "label": "templates.catalogue.herd_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_animal_birth_record",
+      "name": "templates.liv_animal_birth_record.name",
+      "title": "Animal birth record",
+      "code": "LIV-004",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "offspring_identifier",
+          "label": "templates.catalogue.offspring_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "birth_date",
+          "label": "templates.catalogue.birth_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "parent_reference",
+          "label": "templates.catalogue.parent_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_animal_movement_permit_evidence",
+      "name": "templates.liv_animal_movement_permit_evidence.name",
+      "title": "Animal movement permit evidence",
+      "code": "LIV-005",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "origin",
+          "label": "templates.catalogue.origin",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "destination",
+          "label": "templates.catalogue.destination",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_documents",
+          "label": "templates.catalogue.authorized_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_animal_purchase_record",
+      "name": "templates.liv_animal_purchase_record.name",
+      "title": "Animal purchase record",
+      "code": "LIV-006",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "seller",
+          "label": "templates.catalogue.seller",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "animal_identifiers",
+          "label": "templates.catalogue.animal_identifiers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "purchase_terms",
+          "label": "templates.catalogue.purchase_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_animal_sale_record",
+      "name": "templates.liv_animal_sale_record.name",
+      "title": "Animal sale record",
+      "code": "LIV-007",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "buyer",
+          "label": "templates.catalogue.buyer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "animal_identifiers",
+          "label": "templates.catalogue.animal_identifiers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sale_terms",
+          "label": "templates.catalogue.sale_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_veterinary_visit_record",
+      "name": "templates.liv_veterinary_visit_record.name",
+      "title": "Veterinary visit record",
+      "code": "LIV-008",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_concerns",
+          "label": "templates.catalogue.reported_concerns",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "veterinarian_findings",
+          "label": "templates.catalogue.veterinarian_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "authorized_plan",
+          "label": "templates.catalogue.authorized_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_animal_health_observation",
+      "name": "templates.liv_animal_health_observation.name",
+      "title": "Animal health observation",
+      "code": "LIV-009",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_symptoms",
+          "label": "templates.catalogue.observed_symptoms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observation_time",
+          "label": "templates.catalogue.observation_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "veterinary_referral",
+          "label": "templates.catalogue.veterinary_referral",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_veterinary_treatment_documentation",
+      "name": "templates.liv_veterinary_treatment_documentation.name",
+      "title": "Veterinary treatment documentation",
+      "code": "LIV-010",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_veterinary_order",
+          "label": "templates.catalogue.authorized_veterinary_order",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "administration_record",
+          "label": "templates.catalogue.administration_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_date",
+          "label": "templates.catalogue.review_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_animal_vaccination_documentation",
+      "name": "templates.liv_animal_vaccination_documentation.name",
+      "title": "Animal vaccination documentation",
+      "code": "LIV-011",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "vaccine_reference",
+          "label": "templates.catalogue.vaccine_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "batch_number",
+          "label": "templates.catalogue.batch_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_provider",
+          "label": "templates.catalogue.authorized_provider",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_animal_breeding_record",
+      "name": "templates.liv_animal_breeding_record.name",
+      "title": "Animal breeding record",
+      "code": "LIV-012",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "breeding_event",
+          "label": "templates.catalogue.breeding_event",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "parent_identifiers",
+          "label": "templates.catalogue.parent_identifiers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_procedure_ref",
+          "label": "templates.catalogue.authorized_procedure_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_pregnancy_check_record",
+      "name": "templates.liv_pregnancy_check_record.name",
+      "title": "Pregnancy check record",
+      "code": "LIV-013",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "assessment_method",
+          "label": "templates.catalogue.assessment_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "veterinarian_findings",
+          "label": "templates.catalogue.veterinarian_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "followup",
+          "label": "templates.catalogue.followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_animal_growth_monitoring",
+      "name": "templates.liv_animal_growth_monitoring.name",
+      "title": "Animal growth monitoring",
+      "code": "LIV-014",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "weigh_date",
+          "label": "templates.catalogue.weigh_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "weight",
+          "label": "templates.catalogue.weight",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "kg",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_method",
+          "label": "templates.catalogue.measurement_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_dairy_milk_collection",
+      "name": "templates.liv_dairy_milk_collection.name",
+      "title": "Dairy milk collection",
+      "code": "LIV-015",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "collection_date",
+          "label": "templates.catalogue.collection_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "milk_volume",
+          "label": "templates.catalogue.milk_volume",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "L",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_test_ref",
+          "label": "templates.catalogue.quality_test_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_milk_quality_sample_record",
+      "name": "templates.liv_milk_quality_sample_record.name",
+      "title": "Milk quality sample record",
+      "code": "LIV-016",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "milk_batch",
+          "label": "templates.catalogue.milk_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_time",
+          "label": "templates.catalogue.sampling_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_request",
+          "label": "templates.catalogue.test_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_feed_inventory",
+      "name": "templates.liv_feed_inventory.name",
+      "title": "Feed inventory",
+      "code": "LIV-017",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "feed_type",
+          "label": "templates.catalogue.feed_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "batch_number",
+          "label": "templates.catalogue.batch_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "available_quantity",
+          "label": "templates.catalogue.available_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "available_quantity_unit",
+          "label": "templates.catalogue.available_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_feed_distribution_log",
+      "name": "templates.liv_feed_distribution_log.name",
+      "title": "Feed distribution log",
+      "code": "LIV-018",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "animal_group",
+          "label": "templates.catalogue.animal_group",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "feed_quantity",
+          "label": "templates.catalogue.feed_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "feed_quantity_unit",
+          "label": "templates.catalogue.feed_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "feeding_plan_ref",
+          "label": "templates.catalogue.feeding_plan_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_pasture_condition_survey",
+      "name": "templates.liv_pasture_condition_survey.name",
+      "title": "Pasture condition survey",
+      "code": "LIV-019",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "pasture_area",
+          "label": "templates.catalogue.pasture_area",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "ha",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_cover",
+          "label": "templates.catalogue.observed_cover",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "grazing_pressure",
+          "label": "templates.catalogue.grazing_pressure",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_grazing_rotation_plan",
+      "name": "templates.liv_grazing_rotation_plan.name",
+      "title": "Grazing rotation plan",
+      "code": "LIV-020",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "paddock_sequence",
+          "label": "templates.catalogue.paddock_sequence",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "planned_dates",
+          "label": "templates.catalogue.planned_dates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stocking_assumptions",
+          "label": "templates.catalogue.stocking_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_poultry_flock_record",
+      "name": "templates.liv_poultry_flock_record.name",
+      "title": "Poultry flock record",
+      "code": "LIV-021",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "flock_identifier",
+          "label": "templates.catalogue.flock_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "bird_type",
+          "label": "templates.catalogue.bird_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "placement_date",
+          "label": "templates.catalogue.placement_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_poultry_egg_collection",
+      "name": "templates.liv_poultry_egg_collection.name",
+      "title": "Poultry egg collection",
+      "code": "LIV-022",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "collection_date",
+          "label": "templates.catalogue.collection_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "egg_count",
+          "label": "templates.catalogue.egg_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "grading_notes",
+          "label": "templates.catalogue.grading_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_poultry_mortality_record",
+      "name": "templates.liv_poultry_mortality_record.name",
+      "title": "Poultry mortality record",
+      "code": "LIV-023",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "flock_reference",
+          "label": "templates.catalogue.flock_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_count",
+          "label": "templates.catalogue.observed_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "veterinary_followup",
+          "label": "templates.catalogue.veterinary_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_animal_housing_inspection",
+      "name": "templates.liv_animal_housing_inspection.name",
+      "title": "Animal housing inspection",
+      "code": "LIV-024",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "housing_condition",
+          "label": "templates.catalogue.housing_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "water_access",
+          "label": "templates.catalogue.water_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "welfare_observations",
+          "label": "templates.catalogue.welfare_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_animal_welfare_assessment",
+      "name": "templates.liv_animal_welfare_assessment.name",
+      "title": "Animal welfare assessment",
+      "code": "LIV-025",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_welfare_criteria",
+          "label": "templates.catalogue.approved_welfare_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_evidence",
+          "label": "templates.catalogue.observed_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_animal_disease_reporting_intake",
+      "name": "templates.liv_animal_disease_reporting_intake.name",
+      "title": "Animal disease reporting intake",
+      "code": "LIV-026",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_event",
+          "label": "templates.catalogue.reported_event",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_group",
+          "label": "templates.catalogue.affected_group",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_reporting_route",
+          "label": "templates.catalogue.authorized_reporting_route",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_livestock_farm_biosecurity_checklist",
+      "name": "templates.liv_livestock_farm_biosecurity_checklist.name",
+      "title": "Livestock farm biosecurity checklist",
+      "code": "LIV-027",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "site_controls",
+          "label": "templates.catalogue.site_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visitor_log",
+          "label": "templates.catalogue.visitor_log",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_gaps",
+          "label": "templates.catalogue.observed_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_pet_clinic_registration",
+      "name": "templates.liv_pet_clinic_registration.name",
+      "title": "Pet clinic registration",
+      "code": "LIV-028",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "animal_name",
+          "label": "templates.catalogue.animal_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "owner_contact",
+          "label": "templates.catalogue.owner_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "care_consent",
+          "label": "templates.catalogue.care_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_pet_boarding_intake",
+      "name": "templates.liv_pet_boarding_intake.name",
+      "title": "Pet boarding intake",
+      "code": "LIV-029",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "boarding_dates",
+          "label": "templates.catalogue.boarding_dates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "care_instructions",
+          "label": "templates.catalogue.care_instructions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "emergency_authorization",
+          "label": "templates.catalogue.emergency_authorization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_animal_shelter_intake",
+      "name": "templates.liv_animal_shelter_intake.name",
+      "title": "Animal shelter intake",
+      "code": "LIV-030",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "animal_identifier",
+          "label": "templates.catalogue.animal_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "intake_circumstances",
+          "label": "templates.catalogue.intake_circumstances",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_care_plan",
+          "label": "templates.catalogue.authorized_care_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_animal_adoption_application",
+      "name": "templates.liv_animal_adoption_application.name",
+      "title": "Animal adoption application",
+      "code": "LIV-031",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "applicant_contact",
+          "label": "templates.catalogue.applicant_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "care_arrangements",
+          "label": "templates.catalogue.care_arrangements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_notes",
+          "label": "templates.catalogue.review_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_animal_transport_welfare_check",
+      "name": "templates.liv_animal_transport_welfare_check.name",
+      "title": "Animal transport welfare check",
+      "code": "LIV-032",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_condition",
+          "label": "templates.catalogue.vehicle_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "journey_plan",
+          "label": "templates.catalogue.journey_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "welfare_observations",
+          "label": "templates.catalogue.welfare_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_livestock_production_summary",
+      "name": "templates.liv_livestock_production_summary.name",
+      "title": "Livestock production summary",
+      "code": "LIV-033",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "production_metrics",
+          "label": "templates.catalogue.production_metrics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "documented_losses",
+          "label": "templates.catalogue.documented_losses",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "management_actions",
+          "label": "templates.catalogue.management_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "liv_veterinary_medicine_accountability",
+      "name": "templates.liv_veterinary_medicine_accountability.name",
+      "title": "Veterinary medicine accountability",
+      "code": "LIV-034",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_liv",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "product_batch",
+          "label": "templates.catalogue.product_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_use",
+          "label": "templates.catalogue.authorized_use",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stock_balance",
+          "label": "templates.catalogue.stock_balance",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stock_balance_unit",
+          "label": "templates.catalogue.stock_balance_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}
