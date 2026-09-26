@@ -106,9 +106,40 @@ class _GalleryBody extends StatelessWidget {
             ),
           ],
         ),
+        const SizedBox(height: Space.x4),
+        const AppSectionHeader(title: 'Checkbox and a turned photo'),
+        Wrap(
+          spacing: Space.x4,
+          runSpacing: Space.x4,
+          children: <Widget>[
+            AppPhotoThumb(
+              photo: const PhotoAsset(sha256: 'g', hasCaption: true),
+              size: edge,
+              onTap: _ignore,
+              onSelectedChanged: _ignoreBool,
+            ),
+            AppPhotoThumb(
+              photo: const PhotoAsset(sha256: 'h'),
+              size: edge,
+              selected: true,
+              onTap: _ignore,
+              onSelectedChanged: _ignoreBool,
+            ),
+            AppPhotoThumb(
+              photo: const PhotoAsset(
+                sha256: 'i',
+                thumbPath: '/missing/turned_96.jpg',
+              ),
+              size: edge,
+              quarterTurns: 1,
+            ),
+          ],
+        ),
       ],
     );
   }
 }
 
 void _ignore() {}
+
+void _ignoreBool(bool _) {}

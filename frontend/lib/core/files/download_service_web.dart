@@ -44,6 +44,9 @@ final class _BrowserDownloads implements DownloadService {
   bool get canDownloadCopy => true;
 
   @override
+  bool get canShareToApps => false;
+
+  @override
   Future<Result<void>> openExternally({
     required String fileName,
     required Uint8List bytes,

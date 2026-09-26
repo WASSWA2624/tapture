@@ -24,7 +24,8 @@ abstract interface class DownloadService {
   /// [onOpenFolder] stand in for the location line and Open folder.
   /// [canChooseLocation], [onSaveAs] and [saveAsCancel] stand in for Save
   /// to a folder. [canOpenExternally], [canDownloadCopy] and
-  /// [onOpenExternally] stand in for Open with. The fake never writes a
+  /// [onOpenExternally] stand in for Open with, and [canShareToApps] for a
+  /// platform share sheet. The fake never writes a
   /// file and never receives a stored path (FE-TEST-03, FE-SEC-08).
   factory DownloadService.fake({
     void Function(String fileName, Uint8List bytes, String mimeType)? onSave,
@@ -38,6 +39,7 @@ abstract interface class DownloadService {
     void Function(String fileName, Uint8List bytes, String mimeType)? onSaveAs,
     bool canOpenExternally = false,
     bool canDownloadCopy = false,
+    bool canShareToApps = false,
     bool openCancel = false,
     bool openNoHandler = false,
     bool openPermissionDenied = false,
@@ -56,6 +58,7 @@ abstract interface class DownloadService {
       onSaveAs: onSaveAs,
       canOpenExternally: canOpenExternally,
       canDownloadCopy: canDownloadCopy,
+      canShareToApps: canShareToApps,
       openCancel: openCancel,
       openNoHandler: openNoHandler,
       openPermissionDenied: openPermissionDenied,
@@ -104,6 +107,10 @@ abstract interface class DownloadService {
   /// uses this so the menu still offers a way out of the app.
   bool get canDownloadCopy;
 
+  /// Whether [openExternally] opens the system share sheet, which lists
+  /// every installed app that takes the file (Android and iOS).
+  bool get canShareToApps;
+
   /// Hands a copy of [bytes] named [fileName] to another app, or saves it
   /// where the platform cannot open one. Never takes a stored path.
   Future<Result<void>> openExternally({
@@ -132,6 +139,7 @@ final class _FakeDownloadService implements DownloadService {
     required this._onSaveAs,
     required this.canOpenExternally,
     required this.canDownloadCopy,
+    required this.canShareToApps,
     required this._openCancel,
     required this._openNoHandler,
     required this._openPermissionDenied,
@@ -166,6 +174,9 @@ final class _FakeDownloadService implements DownloadService {
 
   @override
   final bool canDownloadCopy;
+
+  @override
+  final bool canShareToApps;
 
   @override
   Future<Result<void>> openFolder() async {

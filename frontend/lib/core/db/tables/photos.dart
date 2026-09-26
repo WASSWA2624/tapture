@@ -74,6 +74,16 @@ class Photos extends Table with MergeColumns {
   ];
 }
 
+/// SQL condition on a photos row aliased `p`: true for a photo the capture
+/// tray shows, one that is not tombstoned and not replaced by a live derived
+/// version, since the newest edit in a chain is the active photo.
+const String activePhotoCondition =
+    "NOT EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'photos' "
+    'AND t.entity_id = p.id) '
+    'AND NOT EXISTS (SELECT 1 FROM photos d WHERE d.derived_from = p.id '
+    'AND NOT EXISTS (SELECT 1 FROM tombstones td '
+    "WHERE td.entity_type = 'photos' AND td.entity_id = d.id))";
+
 /// Inserts or updates a photo. A second row with the same project and hash is
 /// refused by the unique index, not by a check in this function.
 Future<Result<Photo>> upsertPhoto(

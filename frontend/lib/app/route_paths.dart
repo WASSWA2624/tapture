@@ -105,6 +105,10 @@ abstract final class RoutePaths {
   }) => '${templateField(templateId, fieldKey, projectId: projectId)}/lookup';
   static String projectRecords(String projectId) =>
       '${project(projectId)}/records';
+
+  /// One record's page inside its project.
+  static String projectRecord(String projectId, String recordId) =>
+      '${projectRecords(projectId)}/${Uri.encodeComponent(recordId)}';
   static String projectQueue(String projectId) => '${project(projectId)}/queue';
   static String projectExports(String projectId) =>
       '${project(projectId)}/exports';

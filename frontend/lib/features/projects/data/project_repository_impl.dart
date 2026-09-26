@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
+import 'package:tapture/core/db/tables/photos.dart';
 import 'package:tapture/core/db/tables/projects.dart' as projects_db;
 import 'package:tapture/core/db/tables/record_fields.dart';
 import 'package:tapture/core/db/tables/reference.dart';
@@ -265,31 +266,6 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   }
 
   @override
-  Stream<ProjectHomeCounts> watchHome(String projectId) {
-    return _db
-        .customSelect(
-          'SELECT '
-          '(SELECT COUNT(*) FROM records WHERE project_id = ? AND '
-          "status = 'needsReview') AS review, "
-          '(SELECT COUNT(*) FROM records WHERE project_id = ? AND '
-          "status IN ('draft', 'captured', 'CAPTURED', 'queued', 'processing')) "
-          'AS process, '
-          '(SELECT COUNT(*) FROM records WHERE project_id = ? AND '
-          "status = 'approved') AS to_export, "
-          '(SELECT COUNT(*) FROM exports WHERE project_id = ?) AS to_share',
-          variables: <Variable<String>>[
-            Variable<String>(projectId),
-            Variable<String>(projectId),
-            Variable<String>(projectId),
-            Variable<String>(projectId),
-          ],
-          readsFrom: <TableInfo<dynamic, dynamic>>{_db.records, _db.exports},
-        )
-        .watch()
-        .map(_homeCounts);
-  }
-
-  @override
   Stream<List<ProjectRecordRow>> watchRecords(
     String projectId, {
     required List<String> statuses,
@@ -298,19 +274,25 @@ final class ProjectRepositoryImpl implements ProjectRepository {
       return Stream<List<ProjectRecordRow>>.value(const <ProjectRecordRow>[]);
     }
     final String marks = List<String>.filled(statuses.length, '?').join(', ');
+    const String first =
+        'FROM photos p WHERE p.record_id = r.id AND $activePhotoCondition '
+        'ORDER BY p.sort_order, p.captured_at DESC, p.id LIMIT 1';
     return _db
         .customSelect(
           'SELECT r.id AS id, r.template_id AS template_id, '
           'r.status AS status, '
-          '(SELECT COUNT(*) FROM photos p WHERE p.record_id = r.id) '
-          'AS photo_count, '
-          '(SELECT p.relative_path FROM photos p WHERE p.record_id = r.id '
-          'ORDER BY p.sort_order, p.id LIMIT 1) AS thumb_path, '
+          '(SELECT COUNT(*) FROM photos p WHERE p.record_id = r.id '
+          'AND $activePhotoCondition) AS photo_count, '
+          '(SELECT p.sha256 $first) AS thumb_sha, '
+          "(SELECT 'projects/' || pr.folder_name || '/' || p.relative_path "
+          '$first) AS thumb_path, '
+          '(SELECT ifnull(p.rotation_degrees, 0) $first) AS thumb_turn, '
           '(SELECT group_concat(f.field_key || char(31) || '
           "ifnull(f.value_raw,'') || char(31) || ifnull(f.value_refined,'') "
           "|| char(31) || ifnull(f.value_final,''), char(30)) "
           'FROM record_fields f WHERE f.record_id = r.id) AS field_blob '
-          'FROM records r WHERE r.project_id = ? '
+          'FROM records r JOIN projects pr ON pr.id = r.project_id '
+          'WHERE r.project_id = ? '
           'AND r.status IN ($marks) '
           'ORDER BY r.created_at, r.id',
           variables: <Variable<Object>>[
@@ -319,7 +301,9 @@ final class ProjectRepositoryImpl implements ProjectRepository {
           ],
           readsFrom: <TableInfo<dynamic, dynamic>>{
             _db.records,
+            _db.projects,
             _db.photos,
+            _db.tombstones,
             _db.recordFields,
           },
         )
@@ -332,10 +316,121 @@ final class ProjectRepositoryImpl implements ProjectRepository {
                 templateId: row.read<String>('template_id'),
                 status: row.read<String>('status'),
                 photoCount: row.read<int>('photo_count'),
-                thumbPath: row.read<String?>('thumb_path'),
+                thumb: _photoRef(
+                  sha256: row.read<String?>('thumb_sha'),
+                  storagePath: row.read<String?>('thumb_path'),
+                  degrees: row.read<int?>('thumb_turn'),
+                ),
                 fields: _recordFields(row.read<String?>('field_blob')),
               ),
           ],
+        );
+  }
+
+  @override
+  Stream<ProjectRecordDetail?> watchRecord(String recordId) {
+    return _db
+        .customSelect(
+          'SELECT r.id AS id, r.template_id AS template_id, '
+          'r.status AS status, r.captured_at AS captured_at, '
+          'pr.folder_name AS folder, '
+          '(SELECT COUNT(*) FROM photos p WHERE p.record_id = r.id '
+          'AND $activePhotoCondition) AS photo_count, '
+          '(SELECT group_concat(f.field_key || char(31) || '
+          "ifnull(f.value_raw,'') || char(31) || ifnull(f.value_refined,'') "
+          "|| char(31) || ifnull(f.value_final,''), char(30)) "
+          'FROM record_fields f WHERE f.record_id = r.id) AS field_blob, '
+          "(SELECT ${_latestCaption('record', 'r.id')}) AS caption, "
+          '(SELECT COUNT(DISTINCT o.attachment_id) FROM attachment_owners o '
+          'JOIN attachments a ON a.id = o.attachment_id '
+          "WHERE o.owner_type = 'record' AND o.owner_id = r.id "
+          "AND a.kind = 'audio') AS audio "
+          'FROM records r JOIN projects pr ON pr.id = r.project_id '
+          "WHERE r.id = ? AND r.status NOT IN ('archived', 'deleted')",
+          variables: <Variable<Object>>[Variable<String>(recordId)],
+          readsFrom: <TableInfo<dynamic, dynamic>>{
+            _db.records,
+            _db.projects,
+            _db.photos,
+            _db.tombstones,
+            _db.recordFields,
+            _db.captions,
+            _db.attachments,
+            _db.attachmentOwners,
+          },
+        )
+        .watch()
+        .asyncMap((List<QueryRow> rows) async {
+          if (rows.isEmpty) {
+            return null;
+          }
+          final QueryRow row = rows.single;
+          final String folder = row.read<String>('folder');
+          final List<QueryRow> photos = await _db
+              .customSelect(
+                'SELECT p.sha256 AS sha, p.relative_path AS path, '
+                'p.rotation_degrees AS turn, '
+                "(SELECT ${_latestCaption('photo', 'p.id')}) AS caption "
+                'FROM photos p WHERE p.record_id = ? '
+                'AND $activePhotoCondition '
+                'ORDER BY p.sort_order, p.captured_at DESC, p.id',
+                variables: <Variable<Object>>[Variable<String>(recordId)],
+              )
+              .get();
+          final List<RecordPhotoCaption> shown = <RecordPhotoCaption>[
+            for (final QueryRow photo in photos)
+              (
+                photo: _photoRef(
+                  sha256: photo.read<String>('sha'),
+                  storagePath: 'projects/$folder/${photo.read<String>('path')}',
+                  degrees: photo.read<int?>('turn'),
+                )!,
+                caption: photo.read<String?>('caption') ?? '',
+              ),
+          ];
+          return (
+            row: (
+              id: row.read<String>('id'),
+              templateId: row.read<String>('template_id'),
+              status: row.read<String>('status'),
+              photoCount: row.read<int>('photo_count'),
+              thumb: shown.isEmpty ? null : shown.first.photo,
+              fields: _recordFields(row.read<String?>('field_blob')),
+            ),
+            caption: row.read<String?>('caption') ?? '',
+            photos: shown,
+            audioClips: row.read<int>('audio'),
+            capturedAt: row.read<DateTime>('captured_at'),
+          );
+        });
+  }
+
+  @override
+  Stream<Map<String, int>> watchTemplateRecordCounts(
+    String projectId, {
+    required List<String> statuses,
+  }) {
+    if (statuses.isEmpty) {
+      return Stream<Map<String, int>>.value(const <String, int>{});
+    }
+    final String marks = List<String>.filled(statuses.length, '?').join(', ');
+    return _db
+        .customSelect(
+          'SELECT template_id, COUNT(*) AS records FROM records '
+          'WHERE project_id = ? AND status IN ($marks) '
+          'GROUP BY template_id',
+          variables: <Variable<Object>>[
+            Variable<String>(projectId),
+            for (final String status in statuses) Variable<String>(status),
+          ],
+          readsFrom: <TableInfo<dynamic, dynamic>>{_db.records},
+        )
+        .watch()
+        .map(
+          (List<QueryRow> rows) => <String, int>{
+            for (final QueryRow row in rows)
+              row.read<String>('template_id'): row.read<int>('records'),
+          },
         );
   }
 
@@ -894,6 +989,29 @@ final Provider<ProjectRepository> projectRepositoryProvider =
 /// Source of a value a person typed, the same tag capture writes.
 const String _typedSource = 'TYPED';
 
+/// The body of a subquery for the newest live caption of [ownerType] row
+/// [ownerId]: the refined text when one was written, the raw text otherwise.
+/// A refined `''` is a caption someone deleted.
+String _latestCaption(String ownerType, String ownerId) {
+  return 'coalesce(c.text_refined, c.text_raw) FROM captions c '
+      "WHERE c.owner_type = '$ownerType' AND c.owner_id = $ownerId "
+      "AND NOT EXISTS (SELECT 1 FROM tombstones tc WHERE tc.entity_type = "
+      "'captions' AND tc.entity_id = c.id) "
+      'ORDER BY c.created_at DESC, c.id DESC LIMIT 1';
+}
+
+RecordPhotoRef? _photoRef({
+  required String? sha256,
+  required String? storagePath,
+  required int? degrees,
+}) {
+  if (sha256 == null || storagePath == null) {
+    return null;
+  }
+  final int turns = ((((degrees ?? 0) % 360) + 360) % 360) ~/ 90;
+  return (sha256: sha256, storagePath: storagePath, quarterTurns: turns);
+}
+
 List<ProjectRecordFieldValue> _recordFields(String? blob) {
   if (blob == null || blob.isEmpty) {
     return const <ProjectRecordFieldValue>[];
@@ -928,16 +1046,24 @@ final class _EmptyProjectRepository implements ProjectRepository {
   }
 
   @override
-  Stream<ProjectHomeCounts> watchHome(String projectId) {
-    return Stream<ProjectHomeCounts>.value(emptyProjectHomeCounts);
-  }
-
-  @override
   Stream<List<ProjectRecordRow>> watchRecords(
     String projectId, {
     required List<String> statuses,
   }) {
     return Stream<List<ProjectRecordRow>>.value(const <ProjectRecordRow>[]);
+  }
+
+  @override
+  Stream<ProjectRecordDetail?> watchRecord(String recordId) {
+    return Stream<ProjectRecordDetail?>.value(null);
+  }
+
+  @override
+  Stream<Map<String, int>> watchTemplateRecordCounts(
+    String projectId, {
+    required List<String> statuses,
+  }) {
+    return Stream<Map<String, int>>.value(const <String, int>{});
   }
 
   @override
@@ -1018,16 +1144,6 @@ ProjectListRow _listRow({
     recordCount: row.read<int>(recordCount) ?? 0,
     unprocessedCount: row.read<int>(unprocessedCount) ?? 0,
     lastWorkedAt: _later(project.updatedAt, fromRecords),
-  );
-}
-
-ProjectHomeCounts _homeCounts(List<QueryRow> rows) {
-  final QueryRow row = rows.single;
-  return (
-    review: row.read<int>('review'),
-    process: row.read<int>('process'),
-    toExport: row.read<int>('to_export'),
-    toShare: row.read<int>('to_share'),
   );
 }
 

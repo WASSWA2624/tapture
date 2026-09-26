@@ -9,7 +9,6 @@ import 'package:tapture/features/projects/domain/project_repository.dart';
 final class FakeProjectRepository implements ProjectRepository {
   final Map<String, Project> _rows = <String, Project>{};
   final Map<String, _ListCounts> _counts = <String, _ListCounts>{};
-  final Map<String, ProjectHomeCounts> _home = <String, ProjectHomeCounts>{};
   final StreamController<void> _changes = StreamController<void>.broadcast();
   int _created = 0;
 
@@ -66,22 +65,6 @@ final class FakeProjectRepository implements ProjectRepository {
     _emit();
   }
 
-  void seedHomeCounts(
-    String id, {
-    int review = 0,
-    int process = 0,
-    int toExport = 0,
-    int toShare = 0,
-  }) {
-    _home[id] = (
-      review: review,
-      process: process,
-      toExport: toExport,
-      toShare: toShare,
-    );
-    _emit();
-  }
-
   /// Releases the watch stream. Tests call this from `tearDown`.
   void dispose() {
     _changes.close();
@@ -95,11 +78,6 @@ final class FakeProjectRepository implements ProjectRepository {
   @override
   Stream<List<ProjectListRow>> watchList({bool includeArchived = false}) {
     return _watch(() => _listSnapshot(includeArchived));
-  }
-
-  @override
-  Stream<ProjectHomeCounts> watchHome(String projectId) {
-    return _watch(() => _home[projectId] ?? emptyProjectHomeCounts);
   }
 
   @override
@@ -120,6 +98,63 @@ final class FakeProjectRepository implements ProjectRepository {
     });
   }
 
+  final Map<String, ProjectRecordDetail> _details =
+      <String, ProjectRecordDetail>{};
+
+  /// Seeds what [watchRecord] returns for the detail's record, and the row
+  /// [watchRecords] lists for [projectId].
+  void seedDetail(String projectId, ProjectRecordDetail detail) {
+    _details[detail.row.id] = detail;
+    final List<ProjectRecordRow> rows = _records.putIfAbsent(
+      projectId,
+      () => <ProjectRecordRow>[],
+    )..removeWhere((ProjectRecordRow row) => row.id == detail.row.id);
+    rows.add(detail.row);
+    _emit();
+  }
+
+  @override
+  Stream<ProjectRecordDetail?> watchRecord(String recordId) {
+    return _watch(() {
+      for (final List<ProjectRecordRow> rows in _records.values) {
+        for (final ProjectRecordRow row in rows) {
+          if (row.id != recordId) {
+            continue;
+          }
+          if (row.status == 'archived' || row.status == 'deleted') {
+            return null;
+          }
+          final ProjectRecordDetail? seeded = _details[recordId];
+          return (
+            row: row,
+            caption: seeded?.caption ?? '',
+            photos: seeded?.photos ?? const <RecordPhotoCaption>[],
+            audioClips: seeded?.audioClips ?? 0,
+            capturedAt: seeded?.capturedAt ?? DateTime.utc(2026, 9, 25, 16),
+          );
+        }
+      }
+      return null;
+    });
+  }
+
+  @override
+  Stream<Map<String, int>> watchTemplateRecordCounts(
+    String projectId, {
+    required List<String> statuses,
+  }) {
+    return _watch(() {
+      final Map<String, int> counts = <String, int>{};
+      for (final ProjectRecordRow row
+          in _records[projectId] ?? const <ProjectRecordRow>[]) {
+        if (statuses.contains(row.status)) {
+          counts[row.templateId] = (counts[row.templateId] ?? 0) + 1;
+        }
+      }
+      return counts;
+    });
+  }
+
   @override
   Future<Result<void>> archiveRecord(String recordId) async {
     for (final MapEntry<String, List<ProjectRecordRow>> entry
@@ -136,7 +171,7 @@ final class FakeProjectRepository implements ProjectRepository {
         templateId: current.templateId,
         status: 'archived',
         photoCount: current.photoCount,
-        thumbPath: current.thumbPath,
+        thumb: current.thumb,
         fields: current.fields,
       );
       _emit();
@@ -173,7 +208,7 @@ final class FakeProjectRepository implements ProjectRepository {
         templateId: current.templateId,
         status: current.status,
         photoCount: current.photoCount,
-        thumbPath: current.thumbPath,
+        thumb: current.thumb,
         fields: <ProjectRecordFieldValue>[
           for (final ProjectRecordFieldValue field in current.fields)
             if (field.fieldKey == fieldKey)
@@ -228,7 +263,7 @@ final class FakeProjectRepository implements ProjectRepository {
         templateId: current.templateId,
         status: current.status,
         photoCount: current.photoCount,
-        thumbPath: current.thumbPath,
+        thumb: current.thumb,
         fields: <ProjectRecordFieldValue>[
           ...current.fields,
           (fieldKey: fieldKey, raw: value, refined: '', approved: ''),

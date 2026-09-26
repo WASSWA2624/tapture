@@ -1,6 +1,6 @@
 # Tapture — task index
 
-67 implementation prompts across 25 phases. Work top to bottom.
+68 implementation prompts across 25 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task. Phases 01 to 25 are one
 task each except phase 23, which still holds the leftover field-feedback extras. Old numbers are listed in
@@ -185,6 +185,7 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 - [ ] [065 — Place the audio record control in the caption field](23-hardening/065-place-audio-record-in-caption.md)
 - [ ] [066 — Resolve project, capture and export feedback](23-hardening/066-resolve-project-capture-feedback.md)
 - [ ] [067 — Resolve project, template and capture feedback](23-hardening/067-resolve-project-template-capture-feedback.md)
+- [ ] [068 — Resolve project, record, capture and export feedback](23-hardening/068-resolve-project-record-capture-export-feedback.md)
 
 ## 24 — The minimal backend
 

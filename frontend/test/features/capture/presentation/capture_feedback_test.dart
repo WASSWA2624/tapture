@@ -13,9 +13,11 @@ import 'package:tapture/core/db/database_provider.dart';
 import 'package:tapture/core/db/tables/device_profile.dart';
 import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/files/text_store.dart';
+import 'package:tapture/core/network/offline_now.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/fields/dictation_scope.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
@@ -135,48 +137,110 @@ void main() {
     expect(find.text(Copy.capturePhotoCount(1)), findsWidgets);
   });
 
-  testWidgets('a caption can target one photo, the selection, and all', (
+  testWidgets('offline holds Save and process and keeps Save raw', (
     WidgetTester tester,
   ) async {
-    final FakePhotoRepository photos = FakePhotoRepository();
-    addTearDown(photos.dispose);
-    final TextStore store = TextStore.memory();
     await tester.pumpWidget(
       _scope(
         const CaptureScreen(projectId: 'p1'),
         extras: <Override>[
-          photoRepositoryProvider.overrideWith((Ref _) => photos),
-          capturePersistenceProvider.overrideWith(
-            (Ref ref) => CapturePersistenceImpl(photos: photos, store: store),
-          ),
+          offlineNowProvider.overrideWith((Ref ref) => ref.watch(_offline)),
         ],
       ),
     );
     await tester.pumpAndSettle();
-    final CaptureController controller = ProviderScope.containerOf(
+    final ProviderContainer container = ProviderScope.containerOf(
       tester.element(find.byType(CaptureScreen)),
-    ).read(captureControllerProvider('p1').notifier);
-    for (final String id in <String>['a', 'b', 'c']) {
-      await controller.addPhoto(_draft(id));
-    }
+    );
+
+    AppPrimaryAction process() =>
+        tester.widget<AppPrimaryAction>(find.byType(AppPrimaryAction));
+    AppButton raw() => tester.widget<AppButton>(
+      find.widgetWithText(AppButton, Copy.captureSaveRaw),
+    );
+
+    expect(process().onPressed, isNull);
+    expect(find.text(Copy.captureProcessNeedsNetwork), findsOneWidget);
+    expect(raw().onPressed, isNotNull);
+
+    container.read(_offline.notifier).set(false);
     await tester.pumpAndSettle();
+    expect(process().onPressed, isNotNull);
+    expect(find.text(Copy.captureProcessNeedsNetwork), findsNothing);
+  });
+
+  for (final ({String name, Size size, double scale}) layout
+      in <({String name, Size size, double scale})>[
+        (name: '200 percent text', size: const Size(393, 886), scale: 2),
+        (name: 'landscape', size: const Size(886, 393), scale: 1),
+      ]) {
+    testWidgets('offline in ${layout.name} keeps the caption and both saves '
+        'on screen', (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = layout.size;
+      tester.platformDispatcher.textScaleFactorTestValue = layout.scale;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await tester.pumpWidget(
+        _scope(
+          const CaptureScreen(projectId: 'p1'),
+          extras: <Override>[offlineNowProvider.overrideWith((Ref _) => true)],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      for (final Finder shown in <Finder>[
+        find.text(Copy.captureProcessNeedsNetwork),
+        find.byType(AppPrimaryAction),
+        find.widgetWithText(AppButton, Copy.captureSaveRaw),
+      ]) {
+        final Rect rect = tester.getRect(shown);
+        expect(rect.top, greaterThanOrEqualTo(0));
+        expect(rect.bottom, lessThanOrEqualTo(layout.size.height));
+      }
+    });
+  }
+
+  testWidgets('one photo takes the typed caption', (WidgetTester tester) async {
+    final _CaptionHarness harness = await _CaptionHarness.open(tester, <String>[
+      'a',
+    ]);
+    await harness.type('Boiler');
+    expect(harness.session.captions['a'], 'Boiler');
+  });
+
+  testWidgets('with none ticked a caption fills every photo, and ticks narrow '
+      'it', (WidgetTester tester) async {
+    final _CaptionHarness harness = await _CaptionHarness.open(tester, <String>[
+      'a',
+      'b',
+      'c',
+    ]);
+    await harness.type('Site');
+    expect(harness.session.captions['a'], 'Site');
+    expect(harness.session.captions['b'], 'Site');
+    expect(harness.session.captions['c'], 'Site');
+
+    await tester.tap(find.byType(Checkbox).at(1));
+    await tester.pumpAndSettle();
+    expect(harness.fieldText, 'Site');
+    await harness.type('Pump');
+    expect(harness.session.captions['a'], 'Site');
+    expect(harness.session.captions['b'], 'Pump');
+    expect(harness.session.captions['c'], 'Site');
+
     await tester.longPress(find.byKey(const ValueKey<String>('photo-thumb-a')));
-    await tester.longPress(find.byKey(const ValueKey<String>('photo-thumb-b')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey<String>('photo-thumb-a')));
+    expect(harness.fieldText, '');
+
+    await tester.tap(find.byType(Checkbox).first);
+    await tester.tap(find.byType(Checkbox).at(1));
     await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip(Copy.capturePhotoCaption));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text(Copy.captionScopeAll(3)));
-    await tester.enterText(find.byType(TextField).last, 'lab');
-    await tester.tap(find.text(Copy.captureSaved));
-    await tester.pumpAndSettle();
-    final CaptureSession session = ProviderScope.containerOf(
-      tester.element(find.byType(CaptureScreen)),
-    ).read(captureControllerProvider('p1'));
-    expect(session.captions['a'], 'lab');
-    expect(session.captions['b'], 'lab');
-    expect(session.captions['c'], 'lab');
+    expect(harness.fieldText, '');
+    expect(find.widgetWithText(TextButton, 'Caption'), findsNothing);
+    expect(find.text('Photo caption'), findsNothing);
   });
 
   testWidgets('resume restores a stored session', (WidgetTester tester) async {
@@ -315,69 +379,6 @@ void main() {
       findsOneWidget,
     );
   });
-
-  testWidgets(
-    'a selection is the default caption and none captions the latest',
-    (WidgetTester tester) async {
-      final FakePhotoRepository photos = FakePhotoRepository();
-      addTearDown(photos.dispose);
-      await tester.pumpWidget(
-        _scope(
-          const CaptureScreen(projectId: 'p1'),
-          extras: <Override>[
-            photoRepositoryProvider.overrideWith((Ref _) => photos),
-            capturePersistenceProvider.overrideWith(
-              (Ref ref) => CapturePersistenceImpl(
-                photos: photos,
-                store: TextStore.memory(),
-              ),
-            ),
-          ],
-        ),
-      );
-      await tester.pumpAndSettle();
-      final CaptureController controller = ProviderScope.containerOf(
-        tester.element(find.byType(CaptureScreen)),
-      ).read(captureControllerProvider('p1').notifier);
-      for (final String id in <String>['a', 'b', 'c']) {
-        await controller.addPhoto(_draft(id));
-      }
-      await tester.pumpAndSettle();
-      await tester.longPress(
-        find.byKey(const ValueKey<String>('photo-thumb-a')),
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(
-        find.widgetWithText(AppButton, Copy.capturePhotoCaption),
-      );
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField).last, 'one');
-      await tester.tap(find.text(Copy.captureSaved));
-      await tester.pumpAndSettle();
-      CaptureSession session = ProviderScope.containerOf(
-        tester.element(find.byType(CaptureScreen)),
-      ).read(captureControllerProvider('p1'));
-      expect(session.captions['a'], 'one');
-      expect(session.captions['c'], isNull);
-
-      await tester.longPress(
-        find.byKey(const ValueKey<String>('photo-thumb-a')),
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(
-        find.widgetWithText(AppButton, Copy.capturePhotoCaption),
-      );
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField).last, 'last');
-      await tester.tap(find.text(Copy.captureSaved));
-      await tester.pumpAndSettle();
-      session = ProviderScope.containerOf(
-        tester.element(find.byType(CaptureScreen)),
-      ).read(captureControllerProvider('p1'));
-      expect(session.captions['a'], 'one');
-      expect(session.captions['c'], 'last');
-    },
-  );
 
   testWidgets('add photo is one sheet with both icon buttons', (
     WidgetTester tester,
@@ -573,6 +574,73 @@ void main() {
     await recorder.stop();
     await tester.pump();
   });
+}
+
+/// Capture with [ids] in the tray, typed into through the caption field.
+final class _CaptionHarness {
+  _CaptionHarness._(this._tester);
+
+  final WidgetTester _tester;
+
+  static Future<_CaptionHarness> open(
+    WidgetTester tester,
+    List<String> ids,
+  ) async {
+    final FakePhotoRepository photos = FakePhotoRepository();
+    addTearDown(photos.dispose);
+    await tester.pumpWidget(
+      _scope(
+        const CaptureScreen(projectId: 'p1'),
+        extras: <Override>[
+          photoRepositoryProvider.overrideWith((Ref _) => photos),
+          capturePersistenceProvider.overrideWith(
+            (Ref ref) => CapturePersistenceImpl(
+              photos: photos,
+              store: TextStore.memory(),
+            ),
+          ),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+    final CaptureController controller = ProviderScope.containerOf(
+      tester.element(find.byType(CaptureScreen)),
+    ).read(captureControllerProvider('p1').notifier);
+    for (final String id in ids) {
+      await controller.addPhoto(_draft(id));
+    }
+    await tester.pumpAndSettle();
+    return _CaptionHarness._(tester);
+  }
+
+  Finder get _field => find.byWidgetPredicate(
+    (Widget widget) =>
+        widget is TextField &&
+        widget.decoration?.labelText == Copy.captureRecordCaption,
+  );
+
+  String get fieldText =>
+      _tester.widget<TextField>(_field).controller?.text ?? '';
+
+  CaptureSession get session => ProviderScope.containerOf(
+    _tester.element(find.byType(CaptureScreen)),
+  ).read(captureControllerProvider('p1'));
+
+  Future<void> type(String text) async {
+    await _tester.enterText(_field, text);
+    await _tester.pumpAndSettle();
+  }
+}
+
+/// A switchable offline flag, so a test can bring the device back online.
+final NotifierProvider<_OfflineFlag, bool> _offline =
+    NotifierProvider<_OfflineFlag, bool>(_OfflineFlag.new);
+
+final class _OfflineFlag extends Notifier<bool> {
+  @override
+  bool build() => true;
+
+  void set(bool value) => state = value;
 }
 
 Override _oneCaptureTemplate() {

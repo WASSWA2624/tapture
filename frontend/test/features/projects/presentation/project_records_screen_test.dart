@@ -24,7 +24,7 @@ void main() {
         templateId: 't1',
         status: 'captured',
         photoCount: 2,
-        thumbPath: null,
+        thumb: null,
         fields: <ProjectRecordFieldValue>[],
       ),
       (
@@ -32,7 +32,7 @@ void main() {
         templateId: 't1',
         status: 'approved',
         photoCount: 1,
-        thumbPath: null,
+        thumb: null,
         fields: <ProjectRecordFieldValue>[],
       ),
     ]);

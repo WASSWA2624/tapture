@@ -7,18 +7,6 @@ enum CaptionApplyMode {
   replace,
 }
 
-/// Which photos a caption write targets.
-enum CaptionScope {
-  /// The photo the sheet was opened from.
-  thisPhoto,
-
-  /// The current multi-selection.
-  selected,
-
-  /// Every photo in the session.
-  all,
-}
-
 /// One independent caption row to persist.
 final class CaptionWrite {
   /// Creates a write.
@@ -40,21 +28,6 @@ final class CaptionWrite {
 
 /// Builds per-photo caption rows for a scope (task 012 captions).
 abstract final class CaptionApply {
-  /// Resolves [scope] to photo ids from [allIds] / [selectedIds] / [thisId].
-  static List<String> resolveIds({
-    required CaptionScope scope,
-    required String? thisId,
-    required List<String> selectedIds,
-    required List<String> allIds,
-  }) {
-    return switch (scope) {
-      CaptionScope.thisPhoto =>
-        thisId == null || thisId.isEmpty ? const <String>[] : <String>[thisId],
-      CaptionScope.selected => List<String>.of(selectedIds),
-      CaptionScope.all => List<String>.of(allIds),
-    };
-  }
-
   /// Builds one [CaptionWrite] per photo. Append joins with a newline;
   /// replace keeps [previous] recoverable.
   static List<CaptionWrite> apply({
@@ -73,6 +46,38 @@ abstract final class CaptionApply {
           previousText: mode == CaptionApplyMode.replace ? existing[id] : null,
         ),
     ];
+  }
+
+  /// Photos a caption goes to: the selected ones among [visibleIds], in
+  /// tray order, and every visible photo when none is selected. One photo
+  /// is therefore always its own target.
+  static List<String> targets({
+    required List<String> visibleIds,
+    required Set<String> selectedIds,
+  }) {
+    final List<String> selected = <String>[
+      for (final String id in visibleIds)
+        if (selectedIds.contains(id)) id,
+    ];
+    return selected.isEmpty ? List<String>.of(visibleIds) : selected;
+  }
+
+  /// The caption every one of [ids] shares, or `''` when they differ or
+  /// there are none. The caption field shows this for its targets.
+  static String sharedText({
+    required List<String> ids,
+    required Map<String, String> captions,
+  }) {
+    if (ids.isEmpty) {
+      return '';
+    }
+    final String first = captions[ids.first] ?? '';
+    for (final String id in ids.skip(1)) {
+      if ((captions[id] ?? '') != first) {
+        return '';
+      }
+    }
+    return first;
   }
 
   static String _append(String previous, String next) {

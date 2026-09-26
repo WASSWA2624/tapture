@@ -7,6 +7,7 @@ import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/tables/exports.dart';
+import 'package:tapture/core/db/tables/photos.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/export/xlsx_book.dart';
@@ -212,6 +213,80 @@ final class ExportRepositoryImpl implements ExportRepository {
           bytes: bytes,
         ));
     }
+  }
+
+  @override
+  Stream<ExportSummary> watchSummary(String projectId) {
+    // The same records exportProject writes: every status but deleted.
+    const String written = 'r.project_id = ? AND r.status != ?';
+    List<Variable<Object>> scope() => <Variable<Object>>[
+      Variable<String>(projectId),
+      const Variable<String>('deleted'),
+    ];
+    return _db
+        .customSelect(
+          'SELECT '
+          '(SELECT name FROM projects WHERE id = ?) AS project_name, '
+          '(SELECT COUNT(*) FROM records r WHERE $written) AS records, '
+          '(SELECT COUNT(*) FROM records r WHERE $written AND r.status IN '
+          "('draft', 'captured', 'CAPTURED', 'queued', 'processing')) "
+          'AS unprocessed, '
+          '(SELECT COUNT(*) FROM records r WHERE $written '
+          "AND r.status = 'needsReview') AS needs_review, "
+          '(SELECT COUNT(*) FROM records r WHERE $written '
+          "AND r.status = 'approved') AS approved, "
+          '(SELECT COUNT(*) FROM photos p JOIN records r ON r.id = p.record_id '
+          'WHERE $written AND $activePhotoCondition) AS photos, '
+          '(SELECT COUNT(DISTINCT o.attachment_id) FROM attachment_owners o '
+          'JOIN attachments a ON a.id = o.attachment_id '
+          'JOIN records r ON r.id = o.owner_id '
+          "WHERE o.owner_type = 'record' AND a.kind = 'audio' AND $written) "
+          'AS audio, '
+          '(SELECT MIN(r.captured_at) FROM records r WHERE $written) AS first, '
+          '(SELECT MAX(r.captured_at) FROM records r WHERE $written) AS last',
+          variables: <Variable<Object>>[
+            Variable<String>(projectId),
+            for (int block = 0; block < 8; block++) ...scope(),
+          ],
+          readsFrom: <TableInfo<dynamic, dynamic>>{
+            _db.projects,
+            _db.records,
+            _db.photos,
+            _db.tombstones,
+            _db.attachments,
+            _db.attachmentOwners,
+            _db.templates,
+          },
+        )
+        .watchSingle()
+        .asyncMap((QueryRow row) async {
+          final List<QueryRow> templates = await _db
+              .customSelect(
+                'SELECT t.name AS name, COUNT(*) AS records FROM records r '
+                'JOIN templates t ON t.id = r.template_id WHERE $written '
+                'GROUP BY r.template_id ORDER BY records DESC, t.name',
+                variables: scope(),
+              )
+              .get();
+          return (
+            projectName: row.read<String?>('project_name') ?? '',
+            records: row.read<int>('records'),
+            photos: row.read<int>('photos'),
+            audioClips: row.read<int>('audio'),
+            unprocessed: row.read<int>('unprocessed'),
+            needsReview: row.read<int>('needs_review'),
+            approved: row.read<int>('approved'),
+            templates: <ExportTemplateCount>[
+              for (final QueryRow template in templates)
+                (
+                  name: template.read<String>('name'),
+                  records: template.read<int>('records'),
+                ),
+            ],
+            firstCapturedAt: row.read<DateTime?>('first'),
+            lastCapturedAt: row.read<DateTime?>('last'),
+          );
+        });
   }
 
   Future<void> _discard(String relativePath) async {

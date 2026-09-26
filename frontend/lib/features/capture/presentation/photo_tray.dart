@@ -17,7 +17,6 @@ final class PhotoTray extends StatelessWidget {
     this.onTap,
     this.onLongPress,
     this.onRemove,
-    this.onCaption,
     this.selectedIds = const <String>{},
     this.captions = const <String, String>{},
     this.thumbPaths = const <String, String>{},
@@ -34,14 +33,12 @@ final class PhotoTray extends StatelessWidget {
   /// Opens viewer / type sheet.
   final ValueChanged<PhotoDraft>? onTap;
 
-  /// Enters multi-select.
+  /// Toggles a photo in or out of the selection, from a long press and
+  /// from its checkbox alike (FE-CONS-10).
   final ValueChanged<PhotoDraft>? onLongPress;
 
   /// Removes one draft. Separate from [onTap].
   final ValueChanged<PhotoDraft>? onRemove;
-
-  /// Opens the caption for one photo. Separate from [onTap].
-  final ValueChanged<PhotoDraft>? onCaption;
 
   /// Selected photo ids.
   final Set<String> selectedIds;
@@ -74,7 +71,7 @@ final class PhotoTray extends StatelessWidget {
       children: <Widget>[
         Text(Copy.capturePhotoCount(photos.length)),
         SizedBox(
-          height: Space.x12 * 2 + Sizes.minTapTarget,
+          height: Space.x12 * 2,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: photos.length + 1,
@@ -96,51 +93,43 @@ final class PhotoTray extends StatelessWidget {
               final bool missing = missingIds.contains(photo.id);
               return Padding(
                 padding: const EdgeInsetsDirectional.only(end: Space.x2),
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(
-                      width: edge,
-                      height: edge,
-                      child: Stack(
-                        children: <Widget>[
-                          RotatedBox(
-                            quarterTurns: _quarterTurns(photo.rotationDegrees),
-                            child: AppPhotoThumb(
-                              key: ValueKey<String>('photo-thumb-${photo.id}'),
-                              photo: PhotoAsset(
-                                sha256: photo.sha256,
-                                thumbPath: missing ? 'missing' : (thumb ?? ''),
-                                photoType: _photoType(photo.photoType),
-                                hasCaption: hasCaption,
-                              ),
-                              size: edge,
-                              selected: selectedIds.contains(photo.id),
-                              statusLabel: photo.processingState == 'ready'
-                                  ? null
-                                  : Copy.capturePhotoProcessing,
-                              onTap: () => onTap?.call(photo),
-                              onLongPress: () => onLongPress?.call(photo),
-                            ),
-                          ),
-                          PositionedDirectional(
-                            top: 0,
-                            end: 0,
-                            child: AppIconButton(
-                              icon: AppIcons.close,
-                              outlined: false,
-                              tooltip: Copy.captureRemovePhoto,
-                              semanticLabel: Copy.captureRemovePhoto,
-                              onPressed: () => onRemove?.call(photo),
-                            ),
-                          ),
-                        ],
+                child: SizedBox(
+                  width: edge,
+                  height: edge,
+                  child: Stack(
+                    children: <Widget>[
+                      // No type badge: the checkbox takes that corner and
+                      // the preview names the type (D6).
+                      AppPhotoThumb(
+                        key: ValueKey<String>('photo-thumb-${photo.id}'),
+                        photo: PhotoAsset(
+                          sha256: photo.sha256,
+                          thumbPath: missing ? 'missing' : (thumb ?? ''),
+                          hasCaption: hasCaption,
+                        ),
+                        size: edge,
+                        quarterTurns: _quarterTurns(photo.rotationDegrees),
+                        selected: selectedIds.contains(photo.id),
+                        statusLabel: photo.processingState == 'ready'
+                            ? null
+                            : Copy.capturePhotoProcessing,
+                        onTap: () => onTap?.call(photo),
+                        onLongPress: () => onLongPress?.call(photo),
+                        onSelectedChanged: (bool _) => onLongPress?.call(photo),
                       ),
-                    ),
-                    TextButton(
-                      onPressed: () => onCaption?.call(photo),
-                      child: const Text(Copy.captureCaptionAction),
-                    ),
-                  ],
+                      PositionedDirectional(
+                        top: 0,
+                        end: 0,
+                        child: AppIconButton(
+                          icon: AppIcons.close,
+                          outlined: false,
+                          tooltip: Copy.captureRemovePhoto,
+                          semanticLabel: Copy.captureRemovePhoto,
+                          onPressed: () => onRemove?.call(photo),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
@@ -153,15 +142,6 @@ final class PhotoTray extends StatelessWidget {
 
 int _quarterTurns(int degrees) {
   return (((degrees % 360) + 360) % 360) ~/ 90;
-}
-
-PhotoType _photoType(String raw) {
-  for (final PhotoType type in PhotoType.values) {
-    if (type.name == raw) {
-      return type;
-    }
-  }
-  return PhotoType.other;
 }
 
 class _AddPhotoTarget extends StatelessWidget {

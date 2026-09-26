@@ -50,7 +50,11 @@ final class ProjectRecordsScreen extends ConsumerWidget {
             itemCount: rows.length,
             itemBuilder: (BuildContext context, int index) {
               final ProjectRecordRow row = rows[index];
-              return CapturedItemTile(row: row, position: index + 1);
+              return CapturedItemTile(
+                projectId: projectId,
+                row: row,
+                position: index + 1,
+              );
             },
           );
         },

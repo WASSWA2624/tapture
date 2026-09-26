@@ -13,6 +13,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
+import 'package:tapture/core/network/offline_now.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
@@ -40,7 +41,6 @@ import 'package:tapture/features/capture/presentation/capture_recovery_prompt.da
 import 'package:tapture/features/capture/presentation/capture_target_fields.dart';
 import 'package:tapture/features/capture/presentation/gallery_picker.dart';
 import 'package:tapture/features/capture/presentation/inline_fields_section.dart';
-import 'package:tapture/features/capture/presentation/photo_caption_sheet.dart';
 import 'package:tapture/features/capture/presentation/photo_crop_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_doodle_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_tray.dart';
@@ -232,6 +232,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       });
     }
     final bool needsChoice = ready && templateId == null;
+    final bool offline = ref.watch(offlineNowProvider);
     const String title = Copy.navCapture;
     final Widget? banner = widget.headroom;
     return AppPage(
@@ -255,7 +256,10 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
           AppPrimaryAction(
             label: Copy.captureSaveAndAnalyse,
             busy: uiState.saving,
-            onPressed: ready
+            // Processing waits for a network; Save raw keeps capture
+            // unblocked meanwhile (D3).
+            caption: offline ? Copy.captureProcessNeedsNetwork : null,
+            onPressed: ready && !offline
                 ? (widget.onSaveAndAnalyse ?? () => unawaited(_save(true)))
                 : null,
           ),
@@ -294,34 +298,18 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                     .removePhoto(photo.id),
               );
             },
-            onCaption: (PhotoDraft photo) =>
-                unawaited(_caption(session, photo, onlyThisPhoto: true)),
           ),
           _blockGap,
-          if (_activePhotos(session).isNotEmpty) ...<Widget>[
-            AppButton(
-              label: Copy.capturePhotoCaption,
-              variant: AppButtonVariant.secondary,
-              expand: true,
-              onPressed: ready
-                  ? () {
-                      final List<PhotoDraft> visible = _activePhotos(session);
-                      final PhotoDraft target = _selected.isEmpty
-                          ? visible.last
-                          : visible.firstWhere(
-                              (PhotoDraft photo) =>
-                                  _selected.contains(photo.id),
-                              orElse: () => visible.last,
-                            );
-                      unawaited(_caption(session, target));
-                    }
-                  : null,
-            ),
-            _blockGap,
-          ],
           RecordCaptionField(
             enabled: ready,
-            value: session.recordCaption,
+            // The field shows what its targets share, so the next keystroke
+            // never copies one photo's caption onto another (FBK0000132).
+            value: _captionTargets(session).isEmpty
+                ? session.recordCaption
+                : CaptionApply.sharedText(
+                    ids: _captionTargets(session),
+                    captions: session.captions,
+                  ),
             onChanged: (String text) async {
               final Result<void> result = await controller.setCaption(
                 null,
@@ -330,13 +318,9 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               if (result is FailureResult<void>) {
                 return false;
               }
-              final List<PhotoDraft> visible = _activePhotos(session);
-              final List<String> ids = _selected.isEmpty
-                  ? <String>[for (final PhotoDraft photo in visible) photo.id]
-                  : <String>[
-                      for (final PhotoDraft photo in visible)
-                        if (_selected.contains(photo.id)) photo.id,
-                    ];
+              final List<String> ids = _captionTargets(
+                ref.read(captureControllerProvider(_projectId())),
+              );
               if (ids.isEmpty) {
                 return true;
               }
@@ -500,6 +484,17 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     }
   }
 
+  /// Photos a caption goes to: the ticked ones, and all of them when none
+  /// is ticked (FBK0000132).
+  List<String> _captionTargets(CaptureSession session) {
+    return CaptionApply.targets(
+      visibleIds: <String>[
+        for (final PhotoDraft photo in _activePhotos(session)) photo.id,
+      ],
+      selectedIds: _selected,
+    );
+  }
+
   List<PhotoDraft> _activePhotos(CaptureSession session) {
     final Result<List<PhotoDraft>> selected = PhotoDerivation.select(
       session.photos,
@@ -538,6 +533,20 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               initialIndex: index < 0 ? 0 : index,
               images: _bytes,
               missingIds: _missing,
+              captions: session.captions,
+              onCaptionChanged: (PhotoDraft current, String text) async {
+                final Result<void> saved = await controller
+                    .applyCaptions(<CaptionWrite>[
+                      CaptionWrite(
+                        photoId: current.id,
+                        text: text,
+                        previousText: ref
+                            .read(captureControllerProvider(_projectId()))
+                            .captions[current.id],
+                      ),
+                    ]);
+                return saved is Success<void>;
+              },
               loadBytes: _readPhoto,
               onRotate: (PhotoDraft current, int degrees) async {
                 final Result<void> saved = await controller.updatePhoto(
@@ -551,10 +560,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                   );
                 }
                 return saved is Success<void>;
-              },
-              onCaption: (PhotoDraft current) {
-                Navigator.of(routeContext).pop();
-                unawaited(_caption(session, current));
               },
               onCrop: (PhotoDraft current) {
                 unawaited(_crop(routeContext, current));
@@ -576,78 +581,15 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     );
   }
 
-  Future<void> _caption(
-    CaptureSession session,
-    PhotoDraft photo, {
-    bool onlyThisPhoto = false,
-  }) async {
-    final _CaptureUiState uiState = ref.read(_captureUiProvider(_projectId()));
-    final Project? project = ref.read(currentProjectDetailsProvider);
-    await showAppSheet<void>(
-      context,
-      title: Copy.capturePhotoCaption,
-      contentSized: true,
-      builder: (BuildContext sheetContext) {
-        return PhotoCaptionSheet(
-          initial: session.captions[photo.id] ?? '',
-          selectedCount: _selected.length,
-          allCount: session.photos.length,
-          showScope: !onlyThisPhoto,
-          initialScope: onlyThisPhoto
-              ? CaptionScope.thisPhoto
-              : (_selected.isEmpty
-                    ? CaptionScope.thisPhoto
-                    : CaptionScope.selected),
-          audio: project == null
-              ? null
-              : AudioRecorder(
-                  recorder: ref.read(audioRecorderServiceProvider),
-                  relativePath:
-                      'projects/${project.folderName}/audio/${uiState.audioId}.wav',
-                  onCompleted: (AudioRecording recording) {
-                    Navigator.of(sheetContext).pop();
-                    unawaited(_audioStopped(recording, onlyPhotoId: photo.id));
-                  },
-                ),
-          onSave: (String text, CaptionScope scope) async {
-            final List<String> ids = switch (scope) {
-              CaptionScope.thisPhoto => <String>[photo.id],
-              CaptionScope.selected => _selected.toList(),
-              CaptionScope.all => <String>[
-                for (final PhotoDraft row in session.photos) row.id,
-              ],
-            };
-            final Result<void> result = await ref
-                .read(captureControllerProvider(_projectId()).notifier)
-                .applyCaptions(<CaptionWrite>[
-                  for (final String id in ids)
-                    CaptionWrite(
-                      photoId: id,
-                      text: text,
-                      previousText: session.captions[id],
-                    ),
-                ]);
-            return result.fold((Failure _) => false, (_) => true);
-          },
-        );
-      },
-    );
-  }
-
-  Future<void> _audioStopped(
-    AudioRecording recording, {
-    String? onlyPhotoId,
-  }) async {
+  Future<void> _audioStopped(AudioRecording recording) async {
     final _CaptureUiState uiState = ref.read(_captureUiProvider(_projectId()));
     final CaptureSession session = ref.read(
       captureControllerProvider(_projectId()),
     );
     final List<PhotoDraft> visible = _activePhotos(session);
-    final List<String> photoIds = onlyPhotoId != null
-        ? <String>[onlyPhotoId]
-        : (_selected.isEmpty
-              ? <String>[for (final PhotoDraft photo in visible) photo.id]
-              : _selected.toList(growable: false));
+    final List<String> photoIds = _selected.isEmpty
+        ? <String>[for (final PhotoDraft photo in visible) photo.id]
+        : _selected.toList(growable: false);
     final int audioSegment = recording.relativePath.indexOf('audio/');
     final String projectPath = audioSegment < 0
         ? 'audio/${uiState.audioId}.wav'

@@ -12,6 +12,28 @@ import 'package:tapture/core/permissions/permissions_service.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  test('only the share-sheet platforms say they reach other apps', () {
+    final Directory folder = _tempFolder();
+    expect(
+      androidDownloads(
+        channel: const MethodChannel('tapture/test-share'),
+        fallback: folderDownloads(() async => folder, useShare: true),
+      ).canShareToApps,
+      isTrue,
+    );
+    expect(
+      folderDownloads(
+        () async => folder,
+        taptureSubfolder: false,
+        useShare: true,
+      ).canShareToApps,
+      isTrue,
+    );
+    expect(folderDownloads(() async => folder).canShareToApps, isFalse);
+    expect(DownloadService.fake().canShareToApps, isFalse);
+    expect(DownloadService.fake(canShareToApps: true).canShareToApps, isTrue);
+  });
+
   test(
     'the folder writer saves into Tapture and numbers a second file',
     () async {

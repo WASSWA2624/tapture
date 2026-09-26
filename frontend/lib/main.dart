@@ -27,6 +27,7 @@ import 'core/ids/uuid_service.dart';
 import 'core/lifecycle/lifecycle.dart';
 import 'core/logging/logger.dart';
 import 'core/network/connectivity_service.dart';
+import 'core/network/offline_now.dart';
 import 'core/security/secure_storage.dart';
 import 'core/time/clock.dart';
 import 'core/widgets/fields/field_editor.dart';
@@ -43,7 +44,6 @@ import 'features/processing/presentation/queue_providers.dart';
 import 'features/projects/data/project_openable_file_lookup_factory.dart';
 import 'features/projects/data/project_repository_impl.dart';
 import 'features/projects/presentation/current_project.dart';
-import 'features/projects/presentation/project_export_screen.dart';
 import 'features/projects/presentation/project_open_externally_action.dart'
     show projectOpenableFileLookupProvider;
 import 'features/reference/data/reference_repository_impl.dart';
@@ -90,7 +90,7 @@ Future<void> _run() async {
     offlineStoreProvider.overrideWith((Ref _) => offlineStore),
     projectSettingsStoreProvider.overrideWith((Ref _) => offlineStore),
     storageRootProvider.overrideWith((Ref _) => storageRoot),
-    projectExportOfflineProvider.overrideWith((Ref ref) {
+    offlineNowProvider.overrideWith((Ref ref) {
       final AsyncValue<NetworkState> state = ref.watch(networkStateProvider);
       return state.asData?.value == NetworkState.offline;
     }),

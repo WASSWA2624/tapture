@@ -48,12 +48,19 @@ abstract interface class ProjectRepository {
   /// not a query per row. Archived rows appear only when requested.
   Stream<List<ProjectListRow>> watchList({bool includeArchived = false});
 
-  /// Pending Review, Process, Export and Share counts for [projectId].
-  /// Derived from live watches, never stored (FE-STATE-06).
-  Stream<ProjectHomeCounts> watchHome(String projectId);
-
   /// Records on [projectId] whose status is one of [statuses], oldest first.
   Stream<List<ProjectRecordRow>> watchRecords(
+    String projectId, {
+    required List<String> statuses,
+  });
+
+  /// One live record with its photos, captions and audio, or null once it
+  /// is archived, deleted or not on this device.
+  Stream<ProjectRecordDetail?> watchRecord(String recordId);
+
+  /// How many records on [projectId] use each template, counting records
+  /// whose status is one of [statuses]. Keyed by template id.
+  Stream<Map<String, int>> watchTemplateRecordCounts(
     String projectId, {
     required List<String> statuses,
   });
@@ -88,15 +95,6 @@ typedef ProjectListRow = ({
   DateTime lastWorkedAt,
 });
 
-/// Pending work on the open-project home. Named as counts so it is not
-/// an `*Item` (FE-CODE-03).
-typedef ProjectHomeCounts = ({
-  int review,
-  int process,
-  int toExport,
-  int toShare,
-});
-
 /// One field value on a captured record, for search and edit.
 typedef ProjectRecordFieldValue = ({
   String fieldKey,
@@ -105,23 +103,38 @@ typedef ProjectRecordFieldValue = ({
   String approved,
 });
 
-/// One captured record shown on the project records list.
+/// One stored photo, located for a thumbnail. [storagePath] is relative to
+/// the storage root; [quarterTurns] is the saved rotation.
+typedef RecordPhotoRef = ({
+  String sha256,
+  String storagePath,
+  int quarterTurns,
+});
+
+/// One captured record shown on the project records list. [thumb] is the
+/// record's first live photo, in its newest derived version.
 typedef ProjectRecordRow = ({
   String id,
   String templateId,
   String status,
   int photoCount,
-  String? thumbPath,
+  RecordPhotoRef? thumb,
   List<ProjectRecordFieldValue> fields,
 });
 
-/// Empty home counts. Shared by the empty stand-in and tests.
-const ProjectHomeCounts emptyProjectHomeCounts = (
-  review: 0,
-  process: 0,
-  toExport: 0,
-  toShare: 0,
-);
+/// One photo on a record page, with its caption (`''` when none).
+typedef RecordPhotoCaption = ({RecordPhotoRef photo, String caption});
+
+/// One record as its page shows it. [caption] is the record caption, the
+/// refined text when there is one; [photos] are the live photos in tray
+/// order.
+typedef ProjectRecordDetail = ({
+  ProjectRecordRow row,
+  String caption,
+  List<RecordPhotoCaption> photos,
+  int audioClips,
+  DateTime capturedAt,
+});
 
 /// Records and files a project delete would hide. Named as counts so
 /// it is not an `*Item` (FE-CODE-03).

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -15,12 +16,13 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/download_service.dart';
-import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/files/photo_thumbnails.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_photo_thumb.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
-import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
@@ -68,31 +70,18 @@ void main() {
     expect(find.byType(AppPrimaryAction), findsNothing);
   });
 
-  testWidgets('a populated home shows context, counts and one primary action', (
+  testWidgets('a populated home shows the search and one primary action', (
     WidgetTester tester,
   ) async {
     final FakeProjectRepository repo = FakeProjectRepository();
     addTearDown(repo.dispose);
     _ok(await repo.create(aProject(name: 'Alpha')));
-    repo.seedHomeCounts(
-      'project-1',
-      review: 2,
-      process: 3,
-      toExport: 1,
-      toShare: 4,
-    );
-    await _pump(
-      tester,
-      repo: repo,
-      openProjectId: 'project-1',
-      contextLabel: 'Ward 1',
-    );
+    await _pump(tester, repo: repo, openProjectId: 'project-1');
     await tester.pump();
     await tester.pump();
 
     expect(find.text('Alpha'), findsWidgets);
-    expect(find.text('Ward 1'), findsOneWidget);
-    _expectCountCards(tester);
+    expect(find.byKey(const ValueKey<String>('home-search')), findsOneWidget);
     expect(find.byType(AppPrimaryAction), findsOneWidget);
     expect(find.text(Copy.captureStart), findsOneWidget);
     expect(find.text(Copy.captureNeedsTemplate), findsOneWidget);
@@ -100,7 +89,6 @@ void main() {
       tester.widget<AppPrimaryAction>(find.byType(AppPrimaryAction)).onPressed,
       isNull,
     );
-    expect(find.text(Copy.unprocessedCount(0)), findsNothing);
 
     final Size screen = tester.getSize(find.byType(MaterialApp));
     final Offset action = tester.getCenter(find.byType(AppPrimaryAction));
@@ -119,7 +107,7 @@ void main() {
         templateId: 't1',
         status: 'captured',
         photoCount: 1,
-        thumbPath: null,
+        thumb: null,
         fields: <ProjectRecordFieldValue>[],
       ),
     ]);
@@ -128,29 +116,6 @@ void main() {
     await tester.pump();
     expect(find.text(Copy.captureMore), findsOneWidget);
     expect(find.text(Copy.captureStart), findsNothing);
-  });
-
-  testWidgets('association failure stays visible and retryable', (
-    WidgetTester tester,
-  ) async {
-    await _pumpPopulated(
-      tester,
-      overrides: <Override>[
-        projectHomeAssociationsProvider.overrideWith(
-          (Ref _) => const AsyncError<ProjectHomeAssociations>(
-            StorageFailure(
-              message: 'Associations unavailable.',
-              recoveryAction: 'Retry.',
-            ),
-            StackTrace.empty,
-          ),
-        ),
-      ],
-    );
-    await tester.pumpAndSettle();
-
-    expect(find.text(Copy.projectAssociationCountUnavailable), findsOneWidget);
-    expect(find.text(Copy.projectAssociationRetry), findsOneWidget);
   });
 
   testWidgets('a failed load renders through AsyncValueView', (
@@ -177,7 +142,7 @@ void main() {
     expect(find.byType(AppPrimaryAction), findsNothing);
   });
 
-  testWidgets('each count opens its filtered list', (
+  testWidgets("capture opens this project's capture route", (
     WidgetTester tester,
   ) async {
     final FakeProjectRepository repo = FakeProjectRepository();
@@ -186,59 +151,19 @@ void main() {
     addTearDown(templates.dispose);
     _ok(await repo.create(aProject(name: 'Alpha')));
     _ok(await templates.save(aTemplate(projectId: 'project-1')));
-    repo.seedHomeCounts(
-      'project-1',
-      review: 2,
-      process: 3,
-      toExport: 1,
-      toShare: 4,
+    final GoRouter router = await _pump(
+      tester,
+      repo: repo,
+      openProjectId: 'project-1',
+      overrides: <Override>[
+        templateRepositoryProvider.overrideWith((Ref _) => templates),
+      ],
     );
-
-    Future<void> expectOpens({
-      required Finder tap,
-      required String path,
-      String? filter,
-    }) async {
-      final GoRouter router = await _pump(
-        tester,
-        repo: repo,
-        openProjectId: 'project-1',
-        overrides: <Override>[
-          templateRepositoryProvider.overrideWith((Ref _) => templates),
-        ],
-      );
-      await tester.pump();
-      await tester.pump();
-      await tester.tap(tap);
-      await tester.pumpAndSettle();
-      expect(router.state.uri.path, path);
-      expect(router.state.uri.queryParameters[AppRoutes.filterQuery], filter);
-    }
-
-    await expectOpens(
-      tap: find.byKey(const ValueKey<String>('home-review')),
-      path: AppRoutes.projectRecords('project-1'),
-      filter: AppRoutes.reviewFilter,
-    );
-    await expectOpens(
-      tap: find.byKey(const ValueKey<String>('home-process')),
-      path: AppRoutes.projectQueue('project-1'),
-      filter: AppRoutes.processFilter,
-    );
-    await expectOpens(
-      tap: find.byKey(const ValueKey<String>('home-export')),
-      path: AppRoutes.projectRecords('project-1'),
-      filter: AppRoutes.exportFilter,
-    );
-    await expectOpens(
-      tap: find.byKey(const ValueKey<String>('home-share')),
-      path: AppRoutes.projectExports('project-1'),
-      filter: AppRoutes.shareFilter,
-    );
-    await expectOpens(
-      tap: find.text(Copy.captureStart),
-      path: AppRoutes.capture('project-1'),
-    );
+    await tester.pump();
+    await tester.pump();
+    await tester.tap(find.text(Copy.captureStart));
+    await tester.pumpAndSettle();
+    expect(router.state.uri.path, AppRoutes.capture('project-1'));
   });
 
   testWidgets('each home menu item reaches its route', (
@@ -313,17 +238,11 @@ void main() {
     expect(find.text(Copy.contextPinnedTitle), findsWidgets);
   });
 
-  for (final ({double width, double gutter}) layout
-      in <({double width, double gutter})>[
-        (width: 393, gutter: Space.x4),
-        (width: 800, gutter: Space.x4),
-        (width: 1200, gutter: Space.x5),
-      ]) {
+  for (final double width in <double>[393, 800, 1200]) {
     testWidgets(
-      'at ${layout.width} dp the template label, radios, caption and cards '
-      'share one start with no frame',
+      'at $width dp the home has no count cards, template list or context',
       (WidgetTester tester) async {
-        _setSurface(tester, Size(layout.width, 886));
+        _setSurface(tester, Size(width, 886));
         final FakeTemplateRepository templates = FakeTemplateRepository();
         addTearDown(templates.dispose);
         _ok(await templates.save(aTemplate(id: 't1', name: 'Assets')));
@@ -336,28 +255,25 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        final double body = tester
-            .getTopLeft(find.byType(ProjectHomeScreen))
-            .dx;
-        final double label = tester.getTopLeft(find.text(Copy.navTemplates)).dx;
-        final double radio = tester
-            .getTopLeft(find.byType(Radio<String>).first)
-            .dx;
-        final double caption = tester.getTopLeft(find.text('Ward 1')).dx;
-        final double card = tester
-            .getTopLeft(find.byKey(const ValueKey<String>('home-review')))
-            .dx;
-        expect(label - body, closeTo(layout.gutter, 1));
-        expect(radio, closeTo(label, 1));
-        expect(caption, closeTo(label, 1));
-        expect(card, closeTo(label, 1));
-        expect(
-          find.descendant(
-            of: find.byType(AppRadioGroup<String>),
-            matching: find.byType(Divider),
-          ),
-          findsNothing,
-        );
+        for (final String gone in <String>[
+          'Needs review',
+          'Ready to process',
+          'Ready to export',
+          'Exports to share',
+          Copy.statusNoContext,
+          'Assets',
+          'Rooms',
+        ]) {
+          expect(find.text(gone), findsNothing, reason: gone);
+        }
+        expect(find.byType(Radio<String>), findsNothing);
+        expect(find.text(Copy.navTemplates), findsNothing);
+        expect(find.text(Copy.captureStart), findsOneWidget);
+        await tester.tap(find.byType(AppOverflowMenu));
+        await tester.pumpAndSettle();
+        expect(find.text(Copy.navTemplates), findsOneWidget);
+        expect(find.text(Copy.contextHierarchyTitle), findsOneWidget);
+        expect(find.text(Copy.projectExport), findsOneWidget);
       },
     );
   }
@@ -370,38 +286,22 @@ void main() {
       addTearDown(repo.dispose);
       _ok(await repo.create(aProject(name: 'Alpha')));
       repo.seedRecords('project-1', <ProjectRecordRow>[
-        for (int i = 0; i < 12; i++)
-          (
-            id: 'r$i',
-            templateId: 't1',
-            status: 'captured',
-            photoCount: 0,
-            thumbPath: null,
-            fields: <ProjectRecordFieldValue>[
-              (fieldKey: 'name', raw: 'Item $i', refined: '', approved: ''),
-            ],
-          ),
+        for (int i = 0; i < 12; i++) _record('r$i', name: 'Item $i'),
       ]);
-      await _pump(
-        tester,
-        repo: repo,
-        openProjectId: 'project-1',
-        contextLabel: 'Ward 1',
-      );
+      await _pump(tester, repo: repo, openProjectId: 'project-1');
       await tester.pumpAndSettle();
 
       final Finder search = find.byKey(const ValueKey<String>('home-search'));
       final double top = tester.getTopLeft(search).dy;
-      expect(top, lessThan(tester.getTopLeft(find.text('Ward 1')).dy));
+      expect(top, lessThan(tester.getTopLeft(find.text('Item 0')).dy));
       final double titleRow = tester
           .getBottomLeft(find.byType(AppOverflowMenu))
           .dy;
       expect(top - titleRow, lessThanOrEqualTo(Space.x2));
 
-      await tester.drag(find.text('Ward 1'), const Offset(0, -600));
+      await tester.drag(find.text('Item 0'), const Offset(0, -600));
       await tester.pumpAndSettle();
       expect(tester.getTopLeft(search).dy, top);
-      expect(tester.getTopLeft(find.text('Ward 1')).dy, lessThan(top));
 
       await tester.enterText(
         find.descendant(of: search, matching: find.byType(EditableText)),
@@ -412,6 +312,120 @@ void main() {
       expect(find.text('Item 2'), findsNothing);
     },
   );
+
+  testWidgets('the search says it looks through records', (
+    WidgetTester tester,
+  ) async {
+    await _pumpPopulated(tester);
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.projectRecordsSearchHint), findsWidgets);
+  });
+
+  testWidgets('a search miss names the query, and clearing it restores rows', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    repo.seedRecords('project-1', <ProjectRecordRow>[
+      _record('r1', name: 'Pump house'),
+    ]);
+    await _pump(tester, repo: repo, openProjectId: 'project-1');
+    await tester.pumpAndSettle();
+    final Finder field = find.descendant(
+      of: find.byKey(const ValueKey<String>('home-search')),
+      matching: find.byType(EditableText),
+    );
+
+    await tester.enterText(field, 'buildin');
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text(Copy.projectRecordsNoMatch('buildin')), findsOneWidget);
+    expect(find.text(Copy.searchNoMatchMessage), findsOneWidget);
+    expect(find.text(Copy.projectRecordsEmptyHeadline), findsNothing);
+
+    await tester.enterText(field, '');
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Pump house'), findsOneWidget);
+    expect(find.text(Copy.projectRecordsNoMatch('buildin')), findsNothing);
+  });
+
+  testWidgets('a project with no records keeps its empty state', (
+    WidgetTester tester,
+  ) async {
+    await _pumpPopulated(tester);
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.projectRecordsEmptyHeadline), findsOneWidget);
+  });
+
+  testWidgets('a record row shows its photo from the thumbnail cache', (
+    WidgetTester tester,
+  ) async {
+    final Directory dir = Directory.systemTemp.createTempSync('tapture-row-');
+    addTearDown(() => dir.deleteSync(recursive: true));
+    final File thumb = File('${dir.path}/thumb.png')
+      ..writeAsBytesSync(_onePixelPng);
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    repo.seedRecords('project-1', <ProjectRecordRow>[
+      _record(
+        'r1',
+        name: 'With photo',
+        thumb: (
+          sha256: 'sha-1',
+          storagePath: 'projects/test-project/photos/a.jpg',
+          quarterTurns: 1,
+        ),
+      ),
+      _record(
+        'r2',
+        name: 'Photo gone',
+        thumb: (
+          sha256: 'sha-2',
+          storagePath: 'projects/test-project/photos/gone.jpg',
+          quarterTurns: 0,
+        ),
+      ),
+    ]);
+    await _pump(
+      tester,
+      repo: repo,
+      openProjectId: 'project-1',
+      overrides: <Override>[
+        photoThumbnailsProvider.overrideWith(
+          (Ref _) => PhotoThumbnails.fake(<String, String>{
+            'projects/test-project/photos/a.jpg': thumb.path,
+          }),
+        ),
+      ],
+    );
+    await tester.pumpAndSettle();
+
+    final Finder first = find.ancestor(
+      of: find.text('With photo'),
+      matching: find.byType(AppListTile),
+    );
+    expect(
+      find.descendant(of: first, matching: find.byType(Image)),
+      findsOneWidget,
+    );
+    expect(
+      tester
+          .widget<AppPhotoThumb>(
+            find.descendant(of: first, matching: find.byType(AppPhotoThumb)),
+          )
+          .quarterTurns,
+      1,
+    );
+    final Finder second = find.ancestor(
+      of: find.text('Photo gone'),
+      matching: find.byType(AppListTile),
+    );
+    expect(
+      find.descendant(of: second, matching: find.text(Copy.missingPhoto)),
+      findsOneWidget,
+    );
+  });
 
   for (final ({String name, Size size, double scale}) layout
       in <({String name, Size size, double scale})>[
@@ -566,147 +580,6 @@ void main() {
       }
     },
   );
-
-  testWidgets('count cards form a 2×2 grid at 393 dp', (
-    WidgetTester tester,
-  ) async {
-    _setSurface(tester, const Size(393, 886));
-    await _pumpPopulated(tester);
-    _expectCountCards(tester);
-    expect(_cardTop(tester, 'home-review'), _cardTop(tester, 'home-process'));
-    expect(_cardTop(tester, 'home-export'), _cardTop(tester, 'home-share'));
-    expect(
-      _cardTop(tester, 'home-export'),
-      greaterThan(_cardTop(tester, 'home-review')),
-    );
-    expect(_cardLeft(tester, 'home-review'), _cardLeft(tester, 'home-export'));
-    expect(
-      _cardLeft(tester, 'home-process'),
-      greaterThan(_cardLeft(tester, 'home-review')),
-    );
-  });
-
-  testWidgets('count cards sit in one row at 800 dp and 1200 dp', (
-    WidgetTester tester,
-  ) async {
-    for (final Size size in <Size>[
-      const Size(800, 1200),
-      const Size(1200, 800),
-    ]) {
-      _setSurface(tester, size);
-      await _pumpPopulated(tester);
-      _expectCountCards(tester);
-      expect(_cardTop(tester, 'home-review'), _cardTop(tester, 'home-process'));
-      expect(_cardTop(tester, 'home-review'), _cardTop(tester, 'home-export'));
-      expect(_cardTop(tester, 'home-review'), _cardTop(tester, 'home-share'));
-      expect(
-        _cardLeft(tester, 'home-process'),
-        greaterThan(_cardLeft(tester, 'home-review')),
-      );
-      expect(
-        _cardLeft(tester, 'home-export'),
-        greaterThan(_cardLeft(tester, 'home-process')),
-      );
-      expect(
-        _cardLeft(tester, 'home-share'),
-        greaterThan(_cardLeft(tester, 'home-export')),
-      );
-      await tester.pumpWidget(const SizedBox.shrink());
-    }
-  });
-
-  testWidgets(
-    'count cards do not overflow in landscape or at 200 percent text',
-    (WidgetTester tester) async {
-      _setSurface(tester, const Size(800, 400));
-      await _pumpPopulated(tester);
-      expect(tester.takeException(), isNull);
-      _expectCountCards(tester);
-      await tester.pumpWidget(const SizedBox.shrink());
-
-      tester.platformDispatcher.textScaleFactorTestValue = 2;
-      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-      _setSurface(tester, const Size(360, 800));
-      await _pumpPopulated(tester);
-      expect(tester.takeException(), isNull);
-      _expectCountCards(tester);
-    },
-  );
-
-  testWidgets('popping a count list returns to the home with counts intact', (
-    WidgetTester tester,
-  ) async {
-    final List<({String key, String path, String filter})> cards =
-        <({String key, String path, String filter})>[
-          (
-            key: 'home-review',
-            path: AppRoutes.projectRecords('project-1'),
-            filter: AppRoutes.reviewFilter,
-          ),
-          (
-            key: 'home-process',
-            path: AppRoutes.projectQueue('project-1'),
-            filter: AppRoutes.processFilter,
-          ),
-          (
-            key: 'home-export',
-            path: AppRoutes.projectRecords('project-1'),
-            filter: AppRoutes.exportFilter,
-          ),
-          (
-            key: 'home-share',
-            path: AppRoutes.projectExports('project-1'),
-            filter: AppRoutes.shareFilter,
-          ),
-        ];
-
-    for (final Size size in <Size>[
-      const Size(400, 800),
-      const Size(800, 400),
-      const Size(800, 1200),
-      const Size(1200, 800),
-    ]) {
-      _setSurface(tester, size);
-      final GoRouter router = await _pumpPopulated(tester);
-      await tester.tap(find.byKey(const ValueKey<String>('home-review')));
-      await tester.pumpAndSettle();
-      expect(router.state.uri.path, AppRoutes.projectRecords('project-1'));
-      await tester.tap(find.byType(AppIconButton));
-      await tester.pumpAndSettle();
-      expect(router.state.uri.path, AppRoutes.project('project-1'));
-      _expectCountCards(tester);
-      await tester.pumpWidget(const SizedBox.shrink());
-    }
-
-    tester.platformDispatcher.textScaleFactorTestValue = 2;
-    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    _setSurface(tester, const Size(400, 800));
-    for (final ({String key, String path, String filter}) card in cards) {
-      final GoRouter router = await _pumpPopulated(tester);
-      await tester.tap(find.byKey(ValueKey<String>(card.key)));
-      await tester.pumpAndSettle();
-      expect(router.state.uri.path, card.path);
-      expect(
-        router.state.uri.queryParameters[AppRoutes.filterQuery],
-        card.filter,
-      );
-      expect(find.byType(AppIconButton), findsOneWidget);
-      expect(find.byType(AppIconButton), meetsTapTarget());
-      expect(
-        find.byType(AppIconButton),
-        hasSemanticLabel(
-          MaterialLocalizations.of(
-            tester.element(find.byType(AppIconButton)),
-          ).backButtonTooltip,
-        ),
-      );
-      await tester.tap(find.byType(AppIconButton));
-      await tester.pumpAndSettle();
-      expect(router.state.uri.path, AppRoutes.project('project-1'));
-      _expectCountCards(tester);
-      await tester.pumpWidget(const SizedBox.shrink());
-    }
-  });
 }
 
 List<Override> _openableOverrides({DownloadService? downloads}) {
@@ -731,7 +604,6 @@ Future<GoRouter> _pump(
   WidgetTester tester, {
   FakeProjectRepository? repo,
   String? openProjectId,
-  String? contextLabel,
   List<Override> overrides = const <Override>[],
   AppThemeMode mode = AppThemeMode.light,
 }) async {
@@ -829,8 +701,6 @@ Future<GoRouter> _pump(
               },
             ),
           ),
-        if (contextLabel != null)
-          projectHomeContextProvider.overrideWith((Ref _) => contextLabel),
         ...overrides,
       ],
       child: MaterialApp.router(
@@ -855,18 +725,10 @@ Future<GoRouter> _pumpPopulated(
   final FakeProjectRepository repo = FakeProjectRepository();
   addTearDown(repo.dispose);
   _ok(await repo.create(aProject(name: 'Alpha')));
-  repo.seedHomeCounts(
-    'project-1',
-    review: 2,
-    process: 3,
-    toExport: 1,
-    toShare: 4,
-  );
   final GoRouter router = await _pump(
     tester,
     repo: repo,
     openProjectId: 'project-1',
-    contextLabel: 'Ward 1',
     overrides: overrides,
     mode: mode,
   );
@@ -891,40 +753,93 @@ void _setSurface(WidgetTester tester, Size size) {
   });
 }
 
-void _expectCountCards(WidgetTester tester) {
-  expect(find.text(Copy.homeReview), findsOneWidget);
-  expect(find.text(Copy.homeProcess), findsOneWidget);
-  expect(find.text(Copy.homeExport), findsOneWidget);
-  expect(find.text(Copy.homeShare), findsOneWidget);
-  expect(find.text(Copy.homeReviewPending(2)), findsOneWidget);
-  expect(find.text(Copy.homeProcessPending(3)), findsOneWidget);
-  expect(find.text(Copy.homeExportPending(1)), findsOneWidget);
-  expect(find.text(Copy.homeSharePending(4)), findsOneWidget);
-  expect(
-    find.byKey(const ValueKey<String>('home-review')),
-    hasSemanticLabel(Copy.homeReviewPending(2)),
-  );
-  expect(
-    find.byKey(const ValueKey<String>('home-process')),
-    hasSemanticLabel(Copy.homeProcessPending(3)),
-  );
-  expect(
-    find.byKey(const ValueKey<String>('home-export')),
-    hasSemanticLabel(Copy.homeExportPending(1)),
-  );
-  expect(
-    find.byKey(const ValueKey<String>('home-share')),
-    hasSemanticLabel(Copy.homeSharePending(4)),
+ProjectRecordRow _record(String id, {String? name, RecordPhotoRef? thumb}) {
+  return (
+    id: id,
+    templateId: 't1',
+    status: 'captured',
+    photoCount: thumb == null ? 0 : 1,
+    thumb: thumb,
+    fields: <ProjectRecordFieldValue>[
+      if (name != null)
+        (fieldKey: 'name', raw: name, refined: '', approved: ''),
+    ],
   );
 }
 
-double _cardTop(WidgetTester tester, String key) {
-  return tester.getTopLeft(find.byKey(ValueKey<String>(key))).dy;
-}
-
-double _cardLeft(WidgetTester tester, String key) {
-  return tester.getTopLeft(find.byKey(ValueKey<String>(key))).dx;
-}
+/// A valid 1×1 PNG, so the thumbnail decodes without an error placeholder.
+final Uint8List _onePixelPng = Uint8List.fromList(<int>[
+  0x89,
+  0x50,
+  0x4E,
+  0x47,
+  0x0D,
+  0x0A,
+  0x1A,
+  0x0A,
+  0x00,
+  0x00,
+  0x00,
+  0x0D,
+  0x49,
+  0x48,
+  0x44,
+  0x52,
+  0x00,
+  0x00,
+  0x00,
+  0x01,
+  0x00,
+  0x00,
+  0x00,
+  0x01,
+  0x08,
+  0x06,
+  0x00,
+  0x00,
+  0x00,
+  0x1F,
+  0x15,
+  0xC4,
+  0x89,
+  0x00,
+  0x00,
+  0x00,
+  0x0D,
+  0x49,
+  0x44,
+  0x41,
+  0x54,
+  0x78,
+  0x9C,
+  0x63,
+  0xF8,
+  0xCF,
+  0xC0,
+  0xF0,
+  0x1F,
+  0x00,
+  0x05,
+  0x00,
+  0x01,
+  0xFF,
+  0x89,
+  0x99,
+  0x3D,
+  0x1D,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x49,
+  0x45,
+  0x4E,
+  0x44,
+  0xAE,
+  0x42,
+  0x60,
+  0x82,
+]);
 
 T _ok<T>(Result<T> result) {
   return switch (result) {

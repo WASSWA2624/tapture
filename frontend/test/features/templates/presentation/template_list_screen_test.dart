@@ -16,10 +16,14 @@ import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
+import 'package:tapture/features/projects/domain/project_repository.dart';
+import 'package:tapture/features/projects/projects.dart';
+import 'package:tapture/features/settings/settings.dart';
 import 'package:tapture/features/templates/domain/template_def.dart';
 import 'package:tapture/features/templates/presentation/template_list_screen.dart';
 
 import '../../../support/factories.dart';
+import '../../projects/fakes/fake_project_repository.dart';
 
 void main() {
   testWidgets('loading renders through AsyncValueView', (
@@ -191,6 +195,57 @@ void main() {
     expect(find.text('fields'), findsOneWidget);
   });
 
+  testWidgets('each row counts the live records the project holds for it', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    await repo.create(aProject());
+    repo.seedRecords('project-1', <ProjectRecordRow>[
+      _record('r1', 'template-2', 'captured'),
+      _record('r2', 'template-2', 'approved'),
+      _record('r3', 'template-1', 'archived'),
+    ]);
+    await _pump(
+      tester,
+      overrides: <Override>[
+        projectRepositoryProvider.overrideWith((Ref _) => repo),
+        projectSettingsStoreProvider.overrideWith(
+          (Ref _) => SettingsStore.fake(
+            stored: <String, Object?>{
+              SettingKeys.openProjectId.name: 'project-1',
+            },
+          ),
+        ),
+        templateListProvider.overrideWith(
+          (Ref _) => Stream<List<TemplateDef>>.value(<TemplateDef>[
+            aTemplate(id: 'template-1', name: 'Blank'),
+            aTemplate(id: 'template-2', name: 'Assets'),
+          ]),
+        ),
+      ],
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(Copy.templateListSubtitle(fields: 0, records: 2)),
+      findsOneWidget,
+    );
+    expect(
+      find.text(Copy.templateListSubtitle(fields: 0, records: 0)),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byType(AppOverflowMenu).last);
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.templatesDelete), findsNothing);
+    await tester.tapAt(Offset.zero);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(AppOverflowMenu).first);
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.templatesDelete), findsOneWidget);
+  });
+
   testWidgets('delete is omitted when a record uses the template', (
     WidgetTester tester,
   ) async {
@@ -217,6 +272,17 @@ void main() {
     expect(find.text(Copy.templatesImport), findsOneWidget);
     expect(find.text(Copy.templatesDelete), findsNothing);
   });
+}
+
+ProjectRecordRow _record(String id, String templateId, String status) {
+  return (
+    id: id,
+    templateId: templateId,
+    status: status,
+    photoCount: 0,
+    thumb: null,
+    fields: const <ProjectRecordFieldValue>[],
+  );
 }
 
 Future<void> _pump(

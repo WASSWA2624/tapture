@@ -4,6 +4,7 @@ import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/outdoor_theme.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
 
@@ -16,6 +17,21 @@ void main() {
         await expectLater(
           find.byType(AppPage),
           matchesGoldenFile('goldens/app_choice_field_${mode.name}.png'),
+        );
+      });
+      testWidgets('no-match sheet in ${mode.name}', (
+        WidgetTester tester,
+      ) async {
+        await _pumpGallery(tester, mode.theme);
+        await tester.tap(find.text('Sheet empty'));
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextField), 'Zulu');
+        await tester.pump();
+        await expectLater(
+          find.byType(AppBottomSheet),
+          matchesGoldenFile(
+            'goldens/app_choice_field_no_match_${mode.name}.png',
+          ),
         );
       });
     }

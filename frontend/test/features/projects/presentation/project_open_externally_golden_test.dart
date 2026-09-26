@@ -90,13 +90,6 @@ Future<void> _pump(
   final FakeProjectRepository repo = FakeProjectRepository();
   addTearDown(repo.dispose);
   _ok(await repo.create(aProject(name: 'Alpha')));
-  repo.seedHomeCounts(
-    'project-1',
-    review: 2,
-    process: 3,
-    toExport: 1,
-    toShare: 4,
-  );
   final GoRouter router = GoRouter(
     initialLocation: surface == _Surface.home
         ? AppRoutes.project('project-1')
@@ -132,7 +125,6 @@ Future<void> _pump(
             },
           ),
         ),
-        projectHomeContextProvider.overrideWith((Ref _) => 'Ward 1'),
         downloadServiceProvider.overrideWith(
           (Ref _) => DownloadService.fake(canOpenExternally: true),
         ),

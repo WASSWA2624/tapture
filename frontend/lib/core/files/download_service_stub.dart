@@ -51,6 +51,9 @@ final class _NoDownloads implements DownloadService {
   bool get canDownloadCopy => false;
 
   @override
+  bool get canShareToApps => false;
+
+  @override
   Future<Result<void>> openExternally({
     required String fileName,
     required Uint8List bytes,

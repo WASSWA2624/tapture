@@ -15,6 +15,15 @@ final class FakeExportRepository implements ExportRepository {
   final String? displayName;
 
   final Map<String, ExportEntry> _rows = <String, ExportEntry>{};
+
+  /// What [watchSummary] reports for every project.
+  ExportSummary get summary => _summary;
+  set summary(ExportSummary value) {
+    _summary = value;
+    _emit();
+  }
+
+  ExportSummary _summary = emptyExportSummary;
   final StreamController<void> _changes = StreamController<void>.broadcast();
   int _next = 0;
 
@@ -108,6 +117,19 @@ final class FakeExportRepository implements ExportRepository {
       fileName: displayName ?? '$id.xlsx',
       bytes: Uint8List(0),
     ));
+  }
+
+  @override
+  Stream<ExportSummary> watchSummary(String projectId) {
+    return Stream<ExportSummary>.multi((
+      MultiStreamController<ExportSummary> listener,
+    ) {
+      listener.add(_summary);
+      final StreamSubscription<void> sub = _changes.stream.listen((_) {
+        listener.add(_summary);
+      });
+      listener.onCancel = sub.cancel;
+    });
   }
 
   List<ExportEntry> _ownedBy(String projectId) {

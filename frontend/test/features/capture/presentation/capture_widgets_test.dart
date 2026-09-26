@@ -17,7 +17,6 @@ import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
-import 'package:tapture/features/capture/domain/caption_apply.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/presentation/audio_recorder.dart';
 import 'package:tapture/features/capture/presentation/barcode_continuous_mode.dart';
@@ -25,7 +24,6 @@ import 'package:tapture/features/capture/presentation/barcode_scanner_screen.dar
 import 'package:tapture/features/capture/presentation/camera_controls.dart';
 import 'package:tapture/features/capture/presentation/camera_permission_gate.dart';
 import 'package:tapture/features/capture/presentation/camera_view.dart';
-import 'package:tapture/features/capture/presentation/caption_scope_selector.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
 import 'package:tapture/features/capture/presentation/capture_recovery_prompt.dart';
 import 'package:tapture/features/capture/presentation/capture_screen.dart';
@@ -35,7 +33,6 @@ import 'package:tapture/features/capture/presentation/document_picker.dart';
 import 'package:tapture/features/capture/presentation/gallery_picker.dart';
 import 'package:tapture/features/capture/presentation/inline_fields_section.dart';
 import 'package:tapture/features/capture/presentation/mic_permission_gate.dart';
-import 'package:tapture/features/capture/presentation/photo_caption_sheet.dart';
 import 'package:tapture/features/capture/presentation/photo_crop_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_multi_select.dart';
 import 'package:tapture/features/capture/presentation/photo_reorder.dart';
@@ -367,7 +364,9 @@ void main() {
       draft('b', type: 'serial', order: 1),
     ];
     await tester.pumpWidget(wrap(PhotoTray(photos: photos, onAdd: () {})));
-    expect(find.text(Copy.photoFront), findsWidgets);
+    // The tray draws no type badge: the checkbox has that corner (D6).
+    expect(find.text(Copy.photoFront), findsNothing);
+    expect(find.byType(Checkbox), findsNWidgets(2));
     await tester.pumpWidget(
       wrap(PhotoReorder(photos: photos, onReorder: (_) {})),
     );
@@ -425,30 +424,6 @@ void main() {
       );
       await tester.enterText(find.byType(TextField), 'hi');
       await tester.pump();
-
-      await tester.pumpWidget(
-        wrap(
-          PhotoCaptionSheet(
-            initial: 'existing',
-            onSave: (String _, CaptionScope _) async => true,
-          ),
-        ),
-      );
-      expect(find.text(Copy.capturePhotoCaption), findsWidgets);
-
-      await tester.pumpWidget(
-        wrap(
-          CaptionScopeSelector(
-            scope: CaptionScope.thisPhoto,
-            thisCount: 1,
-            selectedCount: 3,
-            allCount: 7,
-            onChanged: (_) {},
-          ),
-        ),
-      );
-      expect(find.text(Copy.captionScopeSelected(3)), findsOneWidget);
-      expect(find.text(Copy.captionScopeAll(7)), findsOneWidget);
 
       await tester.pumpWidget(
         wrap(
@@ -582,7 +557,7 @@ void main() {
   ) async {
     PhotoDraft? tapped;
     PhotoDraft? removed;
-    var captions = 0;
+    final List<String> toggled = <String>[];
     await tester.pumpWidget(
       wrap(
         PhotoTray(
@@ -590,34 +565,123 @@ void main() {
           onAdd: () {},
           onTap: (PhotoDraft photo) => tapped = photo,
           onRemove: (PhotoDraft photo) => removed = photo,
-          onCaption: (PhotoDraft _) => captions++,
+          onLongPress: (PhotoDraft photo) => toggled.add(photo.id),
         ),
       ),
     );
     expect(find.text(Copy.capturePhotosSection), findsNothing);
+    expect(find.text('Caption'), findsNothing);
     await tester.tap(find.byKey(const ValueKey<String>('photo-thumb-a')));
     expect(tapped?.id, 'a');
     await tester.tap(find.byTooltip(Copy.captureRemovePhoto).first);
     expect(removed?.id, 'a');
-    expect(tapped?.id, 'a');
-    await tester.tap(find.text(Copy.captureCaptionAction).first);
-    expect(captions, 1);
+    await tester.tap(find.byType(Checkbox).last);
+    await tester.longPress(find.byKey(const ValueKey<String>('photo-thumb-a')));
+    expect(toggled, <String>['b', 'a']);
     expect(tapped?.id, 'a');
   });
 
-  testWidgets('a per-photo caption sheet hides the scope chooser', (
+  for (final int turns in <int>[0, 1]) {
+    testWidgets('with $turns quarter turns the checkbox and remove control '
+        'are 48dp and apart', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        wrap(
+          PhotoTray(
+            photos: <PhotoDraft>[
+              draft('a').copyWith(rotationDegrees: turns * 90),
+            ],
+            onAdd: () {},
+            onLongPress: (_) {},
+            selectedIds: const <String>{'a'},
+          ),
+        ),
+      );
+      final Rect box = tester.getRect(find.byType(Checkbox));
+      final Rect remove = tester.getRect(
+        find.byTooltip(Copy.captureRemovePhoto),
+      );
+      final Rect thumb = tester.getRect(
+        find.byKey(const ValueKey<String>('photo-thumb-a')),
+      );
+      expect(tester.getSize(find.byType(Checkbox)).shortestSide, 48);
+      expect(remove.shortestSide, greaterThanOrEqualTo(48));
+      expect(box.overlaps(remove), isFalse);
+      expect(box.topLeft, thumb.topLeft);
+      expect(remove.topRight, thumb.topRight);
+      expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, isTrue);
+      expect(find.bySemanticsLabel(Copy.photoSelect), findsOneWidget);
+    });
+  }
+
+  testWidgets('the preview shows a caption to edit and delete with undo', (
     WidgetTester tester,
   ) async {
+    final Map<String, String> writes = <String, String>{};
     await tester.pumpWidget(
       wrap(
-        PhotoCaptionSheet(
-          initial: '',
-          showScope: false,
-          onSave: (String _, CaptionScope _) async => true,
+        PhotoViewerScreen(
+          photos: <PhotoDraft>[draft('a')],
+          captions: const <String, String>{'a': 'Boiler room'},
+          onCaptionChanged: (PhotoDraft photo, String text) async {
+            writes[photo.id] = text;
+            return true;
+          },
         ),
       ),
     );
-    expect(find.byType(CaptionScopeSelector), findsNothing);
-    expect(find.text(Copy.capturePhotoCaption), findsWidgets);
+    await tester.pumpAndSettle();
+    expect(find.text('Boiler room'), findsOneWidget);
+    expect(find.byTooltip(Copy.photoCrop), findsOneWidget);
+    expect(find.byTooltip(Copy.photoRotate), findsOneWidget);
+
+    await tester.tap(find.text(Copy.photoCaptionEdit));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).last, 'Pump room');
+    await tester.tap(find.text(Copy.save));
+    await tester.pumpAndSettle();
+    expect(writes['a'], 'Pump room');
+    expect(find.text('Pump room'), findsOneWidget);
+
+    await tester.tap(find.text(Copy.photoCaptionDelete));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.photoCaptionDelete).last);
+    await tester.pumpAndSettle();
+    expect(writes['a'], '');
+    expect(find.text(Copy.photoNoCaption), findsOneWidget);
+    expect(find.text(Copy.photoCaptionDelete), findsNothing);
+
+    await tester.tap(find.text(Copy.undo));
+    await tester.pumpAndSettle();
+    expect(writes['a'], 'Pump room');
+    expect(find.text('Pump room'), findsOneWidget);
   });
+
+  for (final ({String name, Size size, double scale}) layout
+      in <({String name, Size size, double scale})>[
+        (name: '200 percent text', size: const Size(393, 886), scale: 2),
+        (name: 'landscape', size: const Size(886, 393), scale: 1),
+      ]) {
+    testWidgets('in ${layout.name} the preview caption stays on screen', (
+      WidgetTester tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = layout.size;
+      tester.platformDispatcher.textScaleFactorTestValue = layout.scale;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await tester.pumpWidget(
+        wrap(
+          PhotoViewerScreen(
+            photos: <PhotoDraft>[draft('a')],
+            captions: const <String, String>{'a': 'Boiler room'},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      final Rect edit = tester.getRect(find.text(Copy.photoCaptionEdit));
+      expect(edit.bottom, lessThanOrEqualTo(layout.size.height));
+    });
+  }
 }

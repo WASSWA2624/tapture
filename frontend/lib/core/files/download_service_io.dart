@@ -162,6 +162,9 @@ final class _FolderDownloads implements DownloadService {
   bool get canDownloadCopy => false;
 
   @override
+  bool get canShareToApps => _useShare;
+
+  @override
   Future<Result<String?>> saveAs({
     required String fileName,
     required Uint8List bytes,
@@ -257,6 +260,9 @@ final class _ChannelDownloads implements DownloadService {
 
   @override
   bool get canDownloadCopy => false;
+
+  @override
+  bool get canShareToApps => _fallback.canShareToApps;
 
   @override
   Future<Result<void>> openExternally({

@@ -9,6 +9,7 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
+import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import 'choice.dart';
 
@@ -336,21 +337,29 @@ class _ChoiceSheetState<T> extends State<_ChoiceSheet<T>> {
           ),
         ),
         Expanded(
-          child: ListView.builder(
-            itemCount: visible.length,
-            itemBuilder: (BuildContext context, int index) {
-              final Choice<T> option = visible[index];
-              final bool selected = option.value == widget.value;
-              return AppListTile(
-                title: option.label,
-                selected: selected,
-                leading: option.icon == null
-                    ? null
-                    : Icon(option.icon, color: colors.onSurface),
-                onTap: () => widget.onPick(option.value),
-              );
-            },
-          ),
+          child: visible.isEmpty
+              ? SingleChildScrollView(
+                  child: AppEmptyState(
+                    icon: AppIcons.searchEmpty,
+                    headline: Copy.choiceNoMatch(_query),
+                    message: Copy.searchNoMatchMessage,
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: visible.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final Choice<T> option = visible[index];
+                    final bool selected = option.value == widget.value;
+                    return AppListTile(
+                      title: option.label,
+                      selected: selected,
+                      leading: option.icon == null
+                          ? null
+                          : Icon(option.icon, color: colors.onSurface),
+                      onTap: () => widget.onPick(option.value),
+                    );
+                  },
+                ),
         ),
       ],
     );

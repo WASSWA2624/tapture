@@ -4,7 +4,12 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/db/app_database.dart' hide Project;
+import 'package:tapture/core/db/tables/attachment_owners.dart';
+import 'package:tapture/core/db/tables/attachments.dart';
+import 'package:tapture/core/db/tables/photos.dart';
 import 'package:tapture/core/db/tables/records.dart';
+import 'package:tapture/core/db/tables/templates.dart';
+import 'package:tapture/core/db/tables/tombstones.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/file_writer.dart';
@@ -95,6 +100,104 @@ void main() {
     expect(harness.exportDir.existsSync(), isFalse);
   });
 
+  test('the summary counts what the workbook writes', () async {
+    final _Harness harness = await _Harness.open();
+    addTearDown(harness.close);
+    final AppDatabase db = harness.db;
+    final FixedClock clock = FixedClock(DateTime.utc(2026, 9, 24, 8));
+    final IdService ids = UuidV7Service.sequence(clock);
+    for (final String kind in <String>['assets', 'rooms']) {
+      _ok(
+        await upsertTemplate(
+          db,
+          row: TemplatesCompanion(
+            id: Value<String>(kind),
+            projectId: const Value<String?>('project-1'),
+            name: Value<String>(kind == 'assets' ? 'Assets' : 'Rooms'),
+            kind: const Value<String>('generic'),
+            source: const Value<String>('built'),
+          ),
+          clock: clock,
+          deviceId: 'device-test',
+          ids: ids,
+        ),
+      );
+    }
+    await harness.record('captured', id: 'r1', templateId: 'assets');
+    await harness.record('approved', id: 'r2', templateId: 'assets');
+    await harness.record(
+      'archived',
+      id: 'r3',
+      templateId: 'rooms',
+      at: DateTime.utc(2026, 9, 25, 16),
+    );
+    await harness.record('deleted', id: 'r4', templateId: 'rooms');
+    await harness.photo('p1', recordId: 'r1');
+    await harness.photo('p2', recordId: 'r2');
+    await harness.photo('gone', recordId: 'r2');
+    await harness.photo('p4', recordId: 'r4');
+    await writeTombstone(
+      db,
+      entityType: 'photos',
+      entityId: 'gone',
+      reason: 'operator-delete',
+      clock: clock,
+      deviceId: 'device-test',
+    );
+    _ok(
+      await upsertAttachment(
+        db,
+        row: const AttachmentsCompanion(
+          id: Value<String>('clip-1'),
+          projectId: Value<String>('project-1'),
+          relativePath: Value<String>('audio/clip-1.wav'),
+          mimeType: Value<String>('audio/wav'),
+          fileSize: Value<int>(4),
+          sha256: Value<String>('clip-sha'),
+          kind: Value<AttachmentKind>(AttachmentKind.audio),
+        ),
+        clock: clock,
+        deviceId: 'device-test',
+        ids: ids,
+      ),
+    );
+    await db
+        .into(db.attachmentOwners)
+        .insert(
+          AttachmentOwnersCompanion(
+            id: const Value<String>('owner-1'),
+            attachmentId: const Value<String>('clip-1'),
+            ownerType: const Value<AttachmentOwnerType>(
+              AttachmentOwnerType.record,
+            ),
+            ownerId: const Value<String>('r1'),
+            sortOrder: const Value<int>(0),
+            createdAt: Value<DateTime>(clock.nowUtc()),
+            updatedAt: Value<DateTime>(clock.nowUtc()),
+            updatedByDevice: const Value<String>('device-test'),
+            rev: const Value<int>(1),
+          ),
+        );
+
+    final ExportSummary summary = await harness.repo
+        .watchSummary('project-1')
+        .first;
+
+    expect(summary.projectName, 'Test project');
+    expect(summary.records, 3);
+    expect(summary.photos, 2);
+    expect(summary.audioClips, 1);
+    expect(summary.unprocessed, 1);
+    expect(summary.needsReview, 0);
+    expect(summary.approved, 1);
+    expect(summary.templates, <ExportTemplateCount>[
+      (name: 'Assets', records: 2),
+      (name: 'Rooms', records: 1),
+    ]);
+    expect(summary.firstCapturedAt?.toUtc(), DateTime.utc(2026, 9, 24, 8));
+    expect(summary.lastCapturedAt?.toUtc(), DateTime.utc(2026, 9, 25, 16));
+  });
+
   test('cancellation deletes a partial file and writes no row', () async {
     final CancellationToken cancel = CancellationToken();
     final _Harness harness = await _Harness.open(
@@ -174,24 +277,59 @@ final class _Harness {
 
   File file(String name) => File('${exportDir.path}/$name');
 
-  Future<void> record(String status) async {
+  Future<void> record(
+    String status, {
+    String? id,
+    String templateId = 'template-1',
+    DateTime? at,
+  }) async {
     _ok(
       await upsertRecord(
         db,
         row: RecordsCompanion(
+          id: id == null ? const Value<String>.absent() : Value<String>(id),
           projectId: const Value<String>('project-1'),
-          templateId: const Value<String>('template-1'),
+          templateId: Value<String>(templateId),
           status: Value<String>(status),
           processingMode: const Value<String>('manual'),
           contextJson: const Value<String>('{}'),
-          identityHash: Value<String>('hash-$status'),
+          identityHash: Value<String>('hash-${id ?? status}'),
           source: const Value<String>('capture'),
-          capturedAt: Value<DateTime>(DateTime.utc(2026, 9, 24, 8)),
+          capturedAt: Value<DateTime>(at ?? DateTime.utc(2026, 9, 24, 8)),
           capturedBy: const Value<String>('Ada'),
         ),
         clock: FixedClock(DateTime.utc(2026, 9, 24, 8)),
         deviceId: 'device-test',
         ids: UuidV7Service.sequence(FixedClock(DateTime.utc(2026, 9, 24, 8))),
+      ),
+    );
+  }
+
+  Future<void> photo(String id, {required String recordId}) async {
+    final FixedClock clock = FixedClock(DateTime.utc(2026, 9, 24, 8));
+    _ok(
+      await upsertPhoto(
+        db,
+        row: PhotosCompanion(
+          id: Value<String>(id),
+          projectId: const Value<String>('project-1'),
+          recordId: Value<String?>(recordId),
+          captureSessionId: const Value<String>('session-1'),
+          originalFilename: Value<String>('$id.jpg'),
+          storedFilename: Value<String>('$id.jpg'),
+          relativePath: Value<String>('photos/$id.jpg'),
+          photoType: const Value<String>('other'),
+          sortOrder: const Value<int>(0),
+          width: const Value<int>(1),
+          height: const Value<int>(1),
+          fileSize: const Value<int>(1),
+          mimeType: const Value<String>('image/jpeg'),
+          sha256: Value<String>('sha-$id'),
+          capturedAt: Value<DateTime>(clock.nowUtc()),
+        ),
+        clock: clock,
+        deviceId: 'device-test',
+        ids: UuidV7Service.sequence(clock),
       ),
     );
   }

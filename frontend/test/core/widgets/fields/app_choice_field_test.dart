@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
@@ -142,6 +143,29 @@ void main() {
     await tester.pump();
     expect(find.text('Option 199'), findsOneWidget);
     expect(find.text('Option 0'), findsNothing);
+  });
+
+  testWidgets('a search miss names the query, and clearing it restores rows', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      AppChoiceField<String>(label: 'Grade', options: four, onChanged: (_) {}),
+      size: const Size(400, 800),
+    );
+    await tester.tap(find.byType(AppChoiceField<String>));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField), 'zulu');
+    await tester.pump();
+    expect(find.text(Copy.choiceNoMatch('zulu')), findsOneWidget);
+    expect(find.text(Copy.searchNoMatchMessage), findsOneWidget);
+    expect(find.text('Alpha'), findsNothing);
+
+    await tester.enterText(find.byType(TextField), '');
+    await tester.pump();
+    expect(find.text('Alpha'), findsOneWidget);
+    expect(find.text(Copy.choiceNoMatch('zulu')), findsNothing);
   });
 
   testWidgets('a segmented field stays usable at 200 percent text scale', (

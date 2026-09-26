@@ -64,7 +64,7 @@ class _RecordEditSheetState extends ConsumerState<RecordEditSheet> {
   @override
   Widget build(BuildContext context) {
     final AsyncValue<TemplateDef?> template = ref.watch(
-      _recordTemplateProvider(widget.row.templateId),
+      recordTemplateProvider(widget.row.templateId),
     );
     final RecordEditState state = ref.watch(
       recordEditControllerProvider(widget.row.id),
@@ -72,7 +72,7 @@ class _RecordEditSheetState extends ConsumerState<RecordEditSheet> {
     return AsyncValueView<TemplateDef?>(
       value: template,
       onRetry: () =>
-          ref.invalidate(_recordTemplateProvider(widget.row.templateId)),
+          ref.invalidate(recordTemplateProvider(widget.row.templateId)),
       data: (TemplateDef? loaded) {
         final List<RecordEditEntry> entries = recordEditEntries(
           template: loaded,
@@ -250,7 +250,7 @@ TextInputType? _keyboardFor(FieldType type) {
 const int _noteLines = 4;
 
 /// The template a record was captured with; null when it was removed.
-final _recordTemplateProvider = FutureProvider.autoDispose
+final recordTemplateProvider = FutureProvider.autoDispose
     .family<TemplateDef?, String>((Ref ref, String templateId) async {
       final Result<TemplateDef?> loaded = await ref
           .watch(templateRepositoryProvider)

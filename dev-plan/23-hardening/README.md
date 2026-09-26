@@ -47,3 +47,4 @@ Task 023, then 026–064 (40). Task 023 is one prompt for the hardening pass; 02
 - [ ] [065 — Place the audio record control in the caption field](065-place-audio-record-in-caption.md)
 - [ ] [066 — Resolve project, capture and export feedback](066-resolve-project-capture-feedback.md)
 - [ ] [067 — Resolve project, template and capture feedback](067-resolve-project-template-capture-feedback.md)
+- [ ] [068 — Resolve project, record, capture and export feedback](068-resolve-project-record-capture-export-feedback.md)

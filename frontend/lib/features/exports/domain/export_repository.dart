@@ -24,7 +24,42 @@ abstract interface class ExportRepository {
     String projectId, {
     required CancellationToken cancel,
   });
+
+  /// What an export of [projectId] would hold: the records [exportProject]
+  /// writes, with their photos, audio, statuses, templates and dates.
+  Stream<ExportSummary> watchSummary(String projectId);
 }
+
+/// Records written with one template, by the template's stored name.
+typedef ExportTemplateCount = ({String name, int records});
+
+/// The project an export would write. [records] is the workbook's row count.
+typedef ExportSummary = ({
+  String projectName,
+  int records,
+  int photos,
+  int audioClips,
+  int unprocessed,
+  int needsReview,
+  int approved,
+  List<ExportTemplateCount> templates,
+  DateTime? firstCapturedAt,
+  DateTime? lastCapturedAt,
+});
+
+/// A summary of a project with nothing to export.
+const ExportSummary emptyExportSummary = (
+  projectName: '',
+  records: 0,
+  photos: 0,
+  audioClips: 0,
+  unprocessed: 0,
+  needsReview: 0,
+  approved: 0,
+  templates: <ExportTemplateCount>[],
+  firstCapturedAt: null,
+  lastCapturedAt: null,
+);
 
 /// One completed or in-progress export of a project.
 typedef ExportEntry = ({

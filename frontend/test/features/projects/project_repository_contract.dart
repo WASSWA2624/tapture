@@ -26,11 +26,16 @@ void runProjectRepositoryContract(ProjectRepository Function() repository) {
     expect(rows.single.lastWorkedAt, rows.single.project.updatedAt);
   });
 
-  test('watchHome on a new project is zero pending counts', () async {
+  test('a new project counts no records for any template', () async {
     final ProjectRepository repo = repository();
     _ok(await repo.create(aProject(name: 'Alpha')));
-    final ProjectHomeCounts counts = await repo.watchHome('project-1').first;
-    expect(counts, emptyProjectHomeCounts);
+    final Map<String, int> counts = await repo
+        .watchTemplateRecordCounts(
+          'project-1',
+          statuses: const <String>['captured'],
+        )
+        .first;
+    expect(counts, isEmpty);
   });
 
   test('watchAll hides archived rows unless includeArchived is set', () async {

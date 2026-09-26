@@ -72,6 +72,64 @@ void main() {
     });
   });
 
+  group('caption targets', () {
+    const List<String> tray = <String>['a', 'b', 'c'];
+
+    test('one photo is its own target', () {
+      expect(
+        CaptionApply.targets(
+          visibleIds: const <String>['a'],
+          selectedIds: const <String>{},
+        ),
+        <String>['a'],
+      );
+    });
+
+    test('with none selected every visible photo is a target', () {
+      expect(
+        CaptionApply.targets(visibleIds: tray, selectedIds: const <String>{}),
+        tray,
+      );
+    });
+
+    test('a selection narrows the targets and keeps tray order', () {
+      expect(
+        CaptionApply.targets(
+          visibleIds: tray,
+          selectedIds: const <String>{'c', 'a', 'gone'},
+        ),
+        <String>['a', 'c'],
+      );
+    });
+
+    test('shared text is the caption all targets hold', () {
+      const Map<String, String> captions = <String, String>{
+        'a': 'Site',
+        'b': 'Site',
+        'c': 'Pump',
+      };
+      expect(
+        CaptionApply.sharedText(
+          ids: const <String>['a', 'b'],
+          captions: captions,
+        ),
+        'Site',
+      );
+      expect(CaptionApply.sharedText(ids: tray, captions: captions), '');
+      expect(
+        CaptionApply.sharedText(ids: const <String>[], captions: captions),
+        '',
+      );
+      expect(
+        CaptionApply.sharedText(
+          ids: const <String>['a', 'x'],
+          captions: captions,
+        ),
+        '',
+      );
+    });
+  });
+
   group('caption_apply', () {
     test('append replace independence', () {
       final List<CaptionWrite> writes = CaptionApply.apply(

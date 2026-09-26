@@ -58,7 +58,7 @@ ProjectRecordRow _row({List<ProjectRecordFieldValue>? fields}) {
     templateId: 'template-1',
     status: 'captured',
     photoCount: 1,
-    thumbPath: null,
+    thumb: null,
     fields: fields ?? const <ProjectRecordFieldValue>[],
   );
 }
@@ -145,7 +145,7 @@ void main() {
           templateId: 'removed-template',
           status: 'captured',
           photoCount: 0,
-          thumbPath: null,
+          thumb: null,
           fields: const <ProjectRecordFieldValue>[],
         ),
       );

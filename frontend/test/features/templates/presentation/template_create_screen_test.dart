@@ -95,6 +95,146 @@ void main() {
     );
     expect(_present(await templates.byId(stored.id)).fields, hasLength(1));
   });
+
+  testWidgets('several rows save as fields in order with unique keys', (
+    WidgetTester tester,
+  ) async {
+    final FakeTemplateRepository templates = FakeTemplateRepository();
+    addTearDown(templates.dispose);
+    await _pump(tester, templates: templates, openProject: true);
+
+    await tester.enterText(find.byType(TextField).first, 'Assets');
+    await tester.enterText(_labelField(0), 'Asset tag');
+    await _addRow(tester);
+    await tester.enterText(_labelField(1), 'Asset tag');
+    await _addRow(tester);
+    await tester.enterText(_labelField(2), 'Room');
+    await _addRow(tester);
+    final Finder required = find.text(Copy.fieldRequired).at(2);
+    await tester.ensureVisible(required);
+    await tester.tap(required);
+    await tester.pump();
+    await _create(tester);
+
+    final TemplateDef stored = _present(await templates.byId('template-0'));
+    expect(
+      stored.fields.map((FieldDef field) => field.fieldKey).toList(),
+      <String>['asset_tag', 'asset_tag_2', 'room'],
+    );
+    expect(
+      stored.fields.map((FieldDef field) => field.sortOrder).toList(),
+      <int>[0, 1, 2],
+    );
+    expect(stored.fields[2].requiredness, Requiredness.required);
+    expect(stored.fields[0].requiredness, Requiredness.optional);
+  });
+
+  testWidgets('a removed row is not saved', (WidgetTester tester) async {
+    final FakeTemplateRepository templates = FakeTemplateRepository();
+    addTearDown(templates.dispose);
+    await _pump(tester, templates: templates, openProject: true);
+
+    await tester.enterText(find.byType(TextField).first, 'Assets');
+    await tester.enterText(_labelField(0), 'Serial');
+    await _addRow(tester);
+    await tester.enterText(_labelField(1), 'Colour');
+    final Finder remove = find.byTooltip(Copy.templateFieldRowRemove).first;
+    await tester.ensureVisible(remove);
+    await tester.pumpAndSettle();
+    await tester.tap(remove);
+    await tester.pump();
+    await _create(tester);
+
+    final TemplateDef stored = _present(await templates.byId('template-0'));
+    expect(stored.fields.single.label, 'Colour');
+  });
+
+  testWidgets('a label with two facts warns once, then saves on keep anyway', (
+    WidgetTester tester,
+  ) async {
+    final FakeTemplateRepository templates = FakeTemplateRepository();
+    addTearDown(templates.dispose);
+    await _pump(tester, templates: templates, openProject: true);
+
+    await tester.enterText(find.byType(TextField).first, 'Assets');
+    await tester.enterText(_labelField(0), 'Make and model');
+    await _create(tester);
+    expect(templates.count, 0);
+    expect(find.text(Copy.fieldTwoFactsWarning), findsWidgets);
+
+    final Finder keep = find.text(Copy.fieldKeepAnyway);
+    await tester.ensureVisible(keep);
+    await tester.pumpAndSettle();
+    await tester.tap(keep);
+    await tester.pump();
+    await _create(tester);
+    expect(templates.count, 1);
+  });
+
+  testWidgets('a failed create keeps every row', (WidgetTester tester) async {
+    final FakeTemplateRepository templates = FakeTemplateRepository()
+      ..saveFailure = const StorageFailure(
+        message: 'The template could not be saved on this device.',
+        recoveryAction: 'Free space, then try again.',
+      );
+    addTearDown(templates.dispose);
+    await _pump(tester, templates: templates, openProject: true);
+
+    await tester.enterText(find.byType(TextField).first, 'Assets');
+    await tester.enterText(_labelField(0), 'Serial');
+    await _addRow(tester);
+    await tester.enterText(_labelField(1), 'Colour');
+    await _create(tester);
+
+    expect(templates.count, 0);
+    expect(find.text('Serial'), findsOneWidget);
+    expect(find.text('Colour'), findsOneWidget);
+  });
+
+  for (final ({String name, Size size, double scale}) layout
+      in <({String name, Size size, double scale})>[
+        (name: '200 percent text', size: const Size(393, 886), scale: 2),
+        (name: 'landscape', size: const Size(886, 393), scale: 1),
+      ]) {
+    testWidgets('in ${layout.name} the rows and Create stay reachable', (
+      WidgetTester tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = layout.size;
+      tester.platformDispatcher.textScaleFactorTestValue = layout.scale;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      final FakeTemplateRepository templates = FakeTemplateRepository();
+      addTearDown(templates.dispose);
+      await _pump(tester, templates: templates, openProject: true);
+      await _addRow(tester);
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      await tester.ensureVisible(find.text(Copy.templatesAddField));
+      expect(find.text(Copy.templateFieldRowTitle(2)), findsOneWidget);
+      final Rect create = tester.getRect(find.byType(AppPrimaryAction));
+      expect(create.bottom, lessThanOrEqualTo(layout.size.height));
+    });
+  }
+}
+
+/// Label text fields in page order: the name first, then one per row.
+Finder _labelField(int row) => find.byType(TextField).at(row + 1);
+
+Future<void> _addRow(WidgetTester tester) async {
+  final Finder add = find.text(Copy.templatesAddField);
+  await tester.ensureVisible(add);
+  await tester.pumpAndSettle();
+  await tester.tap(add);
+  await tester.pump();
+}
+
+Future<void> _create(WidgetTester tester) async {
+  await tester.tap(find.byType(AppPrimaryAction));
+  await tester.pump();
+  await tester.pump();
 }
 
 Future<void> _pump(

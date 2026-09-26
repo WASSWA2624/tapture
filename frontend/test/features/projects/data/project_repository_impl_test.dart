@@ -5,7 +5,6 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/db/app_database.dart' hide Project;
 import 'package:tapture/core/db/app_database.dart' as sqlite show Project;
-import 'package:tapture/core/db/tables/exports.dart';
 import 'package:tapture/core/db/tables/photos.dart';
 import 'package:tapture/core/db/tables/projects.dart' as projects_db;
 import 'package:tapture/core/db/tables/records.dart';
@@ -13,6 +12,7 @@ import 'package:tapture/core/db/tables/reference.dart';
 import 'package:tapture/core/db/tables/template_fields.dart';
 import 'package:tapture/core/db/tables/template_rows.dart';
 import 'package:tapture/core/db/tables/templates.dart';
+import 'package:tapture/core/db/tables/tombstones.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/project_folders.dart';
@@ -99,82 +99,6 @@ void main() {
     expect(row.recordCount, 2);
     expect(row.unprocessedCount, 1);
     expect(row.lastWorkedAt.toUtc(), t0.add(const Duration(hours: 2)));
-  });
-
-  test('watchHome derives pending counts from records and exports', () async {
-    final IdService ids = UuidV7Service.sequence(clock);
-    _ok(await repo.create(aProject()));
-    _ok(await repo.create(aProject(id: 'other', name: 'Other')));
-    Future<void> addRecord(String status, String hash) async {
-      _ok(
-        await upsertRecord(
-          db,
-          row: RecordsCompanion(
-            projectId: const Value<String>('project-1'),
-            templateId: const Value<String>('template-1'),
-            status: Value<String>(status),
-            processingMode: const Value<String>('manual'),
-            contextJson: const Value<String>('{}'),
-            identityHash: Value<String>(hash),
-            source: const Value<String>('capture'),
-            capturedAt: Value<DateTime>(t0),
-            capturedBy: const Value<String>('Ada'),
-          ),
-          clock: clock,
-          deviceId: 'device-test',
-          ids: ids,
-        ),
-      );
-    }
-
-    await addRecord('needsReview', 'hash-review');
-    await addRecord('queued', 'hash-queued');
-    await addRecord('processing', 'hash-processing');
-    await addRecord('approved', 'hash-approved');
-    await addRecord('captured', 'hash-captured');
-    await addRecord('draft', 'hash-draft');
-    await addRecord('CAPTURED', 'hash-captured-upper');
-    _ok(
-      await upsertRecord(
-        db,
-        row: RecordsCompanion(
-          projectId: const Value<String>('other'),
-          templateId: const Value<String>('template-1'),
-          status: const Value<String>('needsReview'),
-          processingMode: const Value<String>('manual'),
-          contextJson: const Value<String>('{}'),
-          identityHash: const Value<String>('hash-other'),
-          source: const Value<String>('capture'),
-          capturedAt: Value<DateTime>(t0),
-          capturedBy: const Value<String>('Ada'),
-        ),
-        clock: clock,
-        deviceId: 'device-test',
-        ids: ids,
-      ),
-    );
-    _ok(
-      await completeExport(
-        db,
-        produce: () async => ExportsCompanion(
-          projectId: const Value<String>('project-1'),
-          formats: Value<String>(jsonEncode(<String>['xlsx'])),
-          filters: Value<String>(jsonEncode(<String, String>{})),
-          recordCount: const Value<int>(1),
-          filePath: const Value<String>('exports/v1.xlsx'),
-          fileHash: const Value<String>('hash-file'),
-          createdBy: const Value<String>('Ada'),
-        ),
-        clock: clock,
-        deviceId: 'device-test',
-        ids: ids,
-      ),
-    );
-    final ProjectHomeCounts counts = (await repo.watchHome('project-1').first);
-    expect(counts.review, 1);
-    expect(counts.process, 5);
-    expect(counts.toExport, 1);
-    expect(counts.toShare, 1);
   });
 
   test('createReady writes the row, folder tree and default context', () async {
@@ -711,6 +635,116 @@ void main() {
     },
   );
 
+  test(
+    'a record row shows its first live photo in its newest edit, turned',
+    () async {
+      _ok(await repo.create(aProject()));
+      final IdService ids = UuidV7Service.sequence(clock);
+      _ok(
+        await upsertRecord(
+          db,
+          row: _recordRow(id: 'record-1', hash: 'hash-thumb'),
+          clock: clock,
+          deviceId: 'device-test',
+          ids: ids,
+        ),
+      );
+      Future<void> addPhoto(
+        String id, {
+        required int sortOrder,
+        String? derivedFrom,
+        int? rotation,
+        Duration after = Duration.zero,
+      }) async {
+        _ok(
+          await upsertPhoto(
+            db,
+            row: _photoRow(
+              id,
+              recordId: 'record-1',
+              sortOrder: sortOrder,
+              derivedFrom: derivedFrom,
+              rotation: rotation,
+              capturedAt: t0.add(after),
+            ),
+            clock: clock,
+            deviceId: 'device-test',
+            ids: ids,
+          ),
+        );
+      }
+
+      await addPhoto('removed', sortOrder: 0);
+      await addPhoto('original', sortOrder: 1);
+      await addPhoto(
+        'cropped',
+        sortOrder: 1,
+        derivedFrom: 'original',
+        rotation: 450,
+        after: const Duration(minutes: 1),
+      );
+      await addPhoto('second', sortOrder: 2);
+      await writeTombstone(
+        db,
+        entityType: 'photos',
+        entityId: 'removed',
+        reason: 'operator-delete',
+        clock: clock,
+        deviceId: 'device-test',
+      );
+
+      final ProjectRecordRow row =
+          (await repo
+                  .watchRecords(
+                    'project-1',
+                    statuses: const <String>['captured'],
+                  )
+                  .first)
+              .single;
+      expect(row.thumb?.sha256, 'sha-cropped');
+      expect(
+        row.thumb?.storagePath,
+        'projects/test-project/photos/cropped.jpg',
+      );
+      expect(row.thumb?.quarterTurns, 1);
+      expect(row.photoCount, 2);
+    },
+  );
+
+  test('template counts group live records and skip archived ones', () async {
+    _ok(await repo.create(aProject()));
+    final IdService ids = UuidV7Service.sequence(clock);
+    Future<void> add(String id, String templateId, String status) async {
+      _ok(
+        await upsertRecord(
+          db,
+          row: _recordRow(
+            id: id,
+            hash: 'hash-$id',
+            status: status,
+            templateId: templateId,
+          ),
+          clock: clock,
+          deviceId: 'device-test',
+          ids: ids,
+        ),
+      );
+    }
+
+    await add('r1', 'assets', 'captured');
+    await add('r2', 'assets', 'approved');
+    await add('r3', 'rooms', 'captured');
+    await add('r4', 'rooms', 'archived');
+
+    final Map<String, int> counts = await repo
+        .watchTemplateRecordCounts(
+          'project-1',
+          statuses: const <String>['captured', 'approved'],
+        )
+        .first;
+    expect(counts, <String, int>{'assets': 2, 'rooms': 1});
+  });
+
   test('presentation under projects imports no core/db', () {
     final Directory presentation = Directory(
       'lib/features/projects/presentation',
@@ -738,6 +772,55 @@ T _ok<T>(Result<T> result) {
       failure.message,
     ),
   };
+}
+
+RecordsCompanion _recordRow({
+  required String id,
+  required String hash,
+  String status = 'captured',
+  String templateId = 'template-1',
+}) {
+  return RecordsCompanion(
+    id: Value<String>(id),
+    projectId: const Value<String>('project-1'),
+    templateId: Value<String>(templateId),
+    status: Value<String>(status),
+    processingMode: const Value<String>('manual'),
+    contextJson: const Value<String>('{}'),
+    identityHash: Value<String>(hash),
+    source: const Value<String>('capture'),
+    capturedAt: Value<DateTime>(DateTime.utc(2026, 9, 17, 8)),
+    capturedBy: const Value<String>('Ada'),
+  );
+}
+
+PhotosCompanion _photoRow(
+  String id, {
+  required String recordId,
+  required int sortOrder,
+  required DateTime capturedAt,
+  String? derivedFrom,
+  int? rotation,
+}) {
+  return PhotosCompanion(
+    id: Value<String>(id),
+    projectId: const Value<String>('project-1'),
+    recordId: Value<String?>(recordId),
+    captureSessionId: const Value<String>('session-1'),
+    originalFilename: Value<String>('$id.jpg'),
+    storedFilename: Value<String>('$id.jpg'),
+    relativePath: Value<String>('photos/$id.jpg'),
+    photoType: const Value<String>('other'),
+    sortOrder: Value<int>(sortOrder),
+    width: const Value<int>(1),
+    height: const Value<int>(1),
+    fileSize: const Value<int>(1),
+    mimeType: const Value<String>('image/jpeg'),
+    sha256: Value<String>('sha-$id'),
+    capturedAt: Value<DateTime>(capturedAt),
+    derivedFrom: Value<String?>(derivedFrom),
+    rotationDegrees: Value<int?>(rotation),
+  );
 }
 
 Failure _failure<T>(Result<T> result) {

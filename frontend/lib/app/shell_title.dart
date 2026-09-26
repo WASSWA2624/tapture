@@ -131,7 +131,7 @@ String _projectLeaf(List<String> segments) {
     'templates' => Copy.navTemplates,
     'records' => Copy.navRecords,
     'queue' => Copy.navQueue,
-    'exports' => Copy.homeExport,
+    'exports' => Copy.projectExportTitle,
     'datasets' => Copy.navDatasets,
     'edit' => Copy.projectEditTitle,
     'settings' => Copy.projectSettingsTitle,

@@ -238,12 +238,24 @@ final StreamProvider<List<TemplateDef>> templateListProvider =
       return ref.watch(templateRepositoryProvider).watchByProject(projectId);
     });
 
-/// How many records use each template id. Defaults to none until the records
-/// feature watches captures; tests override this map.
+/// How many records use each template id: the records the project home
+/// lists. Empty while loading, after a failure and with no project open.
 final Provider<Map<String, int>> templateRecordCountsProvider =
-    Provider<Map<String, int>>((Ref _) {
-      return const <String, int>{};
+    Provider<Map<String, int>>((Ref ref) {
+      return ref.watch(_templateRecordCountStreamProvider).asData?.value ??
+          const <String, int>{};
     });
+
+final StreamProvider<Map<String, int>> _templateRecordCountStreamProvider =
+    StreamProvider<Map<String, int>>((Ref ref) {
+      final String? projectId = ref.watch(currentProjectProvider);
+      if (projectId == null || projectId.isEmpty) {
+        return Stream<Map<String, int>>.value(const <String, int>{});
+      }
+      return ref
+          .watch(projectRepositoryProvider)
+          .watchTemplateRecordCounts(projectId, statuses: capturedItemStatuses);
+    }, retry: (int _, Object _) => null);
 
 const String _deleteReason = 'Removed from the project.';
 

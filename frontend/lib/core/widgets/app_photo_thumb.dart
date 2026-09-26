@@ -25,6 +25,8 @@ class AppPhotoThumb extends StatelessWidget {
     this.statusLabel,
     this.onTap,
     this.onLongPress,
+    this.quarterTurns = 0,
+    this.onSelectedChanged,
   });
 
   /// Photo to render. Only [PhotoAsset.thumbPath] is decoded.
@@ -46,6 +48,15 @@ class AppPhotoThumb extends StatelessWidget {
 
   /// Starts multi-select. Null means long-press does nothing.
   final VoidCallback? onLongPress;
+
+  /// Clockwise quarter turns of the saved rotation. Only the image turns;
+  /// badges stay upright.
+  final int quarterTurns;
+
+  /// Toggles [selected] from a checkbox at the top-start corner, a 48dp
+  /// target beside the long press. Null draws no checkbox and marks a
+  /// selected thumb with a tick instead.
+  final ValueChanged<bool>? onSelectedChanged;
 
   bool get _interactive => onTap != null || onLongPress != null;
 
@@ -85,7 +96,13 @@ class AppPhotoThumb extends StatelessWidget {
     final Widget stack = Stack(
       fit: StackFit.expand,
       children: <Widget>[
-        _subject(colors, decodeEdge),
+        if (quarterTurns % 4 == 0)
+          _subject(colors, decodeEdge)
+        else
+          RotatedBox(
+            quarterTurns: quarterTurns,
+            child: _subject(colors, decodeEdge),
+          ),
         if (photo.photoType != null)
           Align(
             alignment: Alignment.topLeft,
@@ -102,7 +119,7 @@ class AppPhotoThumb extends StatelessWidget {
               child: _CaptionMark(),
             ),
           ),
-        if (selected)
+        if (selected && onSelectedChanged == null)
           Align(
             alignment: Alignment.topRight,
             child: Padding(
@@ -139,7 +156,7 @@ class AppPhotoThumb extends StatelessWidget {
           ? InkWell(onTap: onTap, onLongPress: onLongPress, child: stack)
           : stack,
     );
-    return Semantics(
+    final Widget thumb = Semantics(
       button: _interactive,
       selected: selected,
       image: true,
@@ -156,6 +173,38 @@ class AppPhotoThumb extends StatelessWidget {
           height: edge,
           child: AspectRatio(aspectRatio: 1, child: well),
         ),
+      ),
+    );
+    final ValueChanged<bool>? toggle = onSelectedChanged;
+    if (toggle == null) {
+      return thumb;
+    }
+    // The checkbox sits outside the thumb's merged semantics so a screen
+    // reader reaches it as its own control (FE-A11Y-02).
+    return SizedBox(
+      width: edge,
+      height: edge,
+      child: Stack(
+        children: <Widget>[
+          Positioned.fill(child: thumb),
+          PositionedDirectional(
+            top: 0,
+            start: 0,
+            child: SizedBox.square(
+              dimension: Sizes.minTapTarget,
+              child: Semantics(
+                label: Copy.photoSelect,
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: Checkbox(
+                    value: selected,
+                    onChanged: (bool? value) => toggle(value ?? false),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

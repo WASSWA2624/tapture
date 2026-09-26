@@ -157,6 +157,17 @@ abstract final class Copy {
   /// Placeholder when a cached thumb file is missing.
   static const String missingPhoto = 'Missing photo';
 
+  /// Semantic name of a thumbnail's selection checkbox.
+  static const String photoSelect = 'Select photo';
+
+  /// A stored photo's file could not be read for its thumbnail.
+  static const String photoUnreadable =
+      'That photo could not be read from this device.';
+
+  /// Recovery for [photoUnreadable].
+  static const String photoUnreadableRecovery =
+      'Capture the photo again, then try again.';
+
   /// Semantic name of a missing thumb, including its type.
   static String missingPhotoNamed(String type) => 'Missing photo, $type';
 
@@ -191,6 +202,22 @@ abstract final class Copy {
 
   /// Clears a derived crop or typed copy.
   static const String photoRevert = 'Revert';
+
+  /// The preview's caption line when a photo has none.
+  static const String photoNoCaption = 'No caption yet';
+
+  /// Opens the caption editor in the photo preview.
+  static const String photoCaptionEdit = 'Edit caption';
+
+  /// Removes a photo's caption in the preview.
+  static const String photoCaptionDelete = 'Delete caption';
+
+  /// What deleting a caption does.
+  static const String photoCaptionDeleteMessage =
+      'The caption is removed from this photo. You can undo it.';
+
+  /// Confirms a caption was removed, beside Undo.
+  static const String photoCaptionDeleted = 'Caption deleted.';
 
   /// Types words onto a derived copy of a photo.
   static const String photoTypeOn = 'Type on this photo';
@@ -460,13 +487,6 @@ abstract final class Copy {
     );
   }
 
-  /// Project-home association repositories could not be read.
-  static const String projectAssociationCountUnavailable =
-      'Association count unavailable';
-
-  /// Retries both context-level and template association counts.
-  static const String projectAssociationRetry = 'Retry association counts';
-
   /// Secondary empty-state action on the project list. Reserved for task 222
   /// once bundle import ships; the Projects empty state does not show it yet.
   static const String projectsImport = 'Import a project';
@@ -704,20 +724,33 @@ abstract final class Copy {
   /// Position of one captured record on the project list.
   static String projectRecordPosition(int position) => 'Record $position';
 
-  /// Photos filed on one captured record.
-  static String projectRecordPhotos(int count) => Intl.plural(
-    count,
-    zero: 'No photos',
-    one: '1 photo',
-    other: '$count photos',
-  );
-
   /// Empty project records list.
   static const String projectRecordsEmptyHeadline = 'No records here';
 
   /// Explains an empty project records filter.
   static const String projectRecordsEmptyMessage =
       'Captured records for this filter appear here.';
+
+  /// Prompt on the project home search: what it looks through.
+  static const String projectRecordsSearchHint = 'Search records';
+
+  /// A project home search that matched no record, naming the query.
+  static String projectRecordsNoMatch(String query) {
+    final String shown = query.trim();
+    if (shown.isEmpty) {
+      return 'No records match.';
+    }
+    return 'No records match "$shown".';
+  }
+
+  /// A choice sheet search that matched no option, naming the query.
+  static String choiceNoMatch(String query) {
+    final String shown = query.trim();
+    if (shown.isEmpty) {
+      return 'Nothing matches.';
+    }
+    return 'Nothing matches "$shown".';
+  }
 
   /// Overflow command that writes a project export.
   static const String projectExport = 'Export';
@@ -735,11 +768,76 @@ abstract final class Copy {
   /// Shares a finished export.
   static const String projectExportShare = 'Share';
 
-  /// Confirms the export file is stored.
-  static const String projectExportWrote = 'Export saved';
-
   /// Names the file that was stored.
   static String projectExportSaved(String fileName) => 'Saved $fileName.';
+
+  /// Says the share sheet reaches other apps (Android and iOS).
+  static const String projectExportShareHint =
+      'Send the file to email, chat and other apps on this device.';
+
+  /// Export summary section: the project itself.
+  static const String exportSectionProject = 'Project';
+
+  /// Export summary section: records by status.
+  static const String exportSectionRecords = 'Records';
+
+  /// Export summary section: records per template.
+  static const String exportSectionTemplates = 'Templates';
+
+  /// Export summary section: the file the export writes.
+  static const String exportSectionFile = 'File';
+
+  /// Audio clips filed on the exported records.
+  static String exportAudioClips(int n) => Intl.plural(
+    n,
+    zero: 'No audio clips',
+    one: '1 audio clip',
+    other: '$n audio clips',
+  );
+
+  /// When the exported records were captured. [first] and [last] are
+  /// locale-formatted dates; one date when they are the same day.
+  static String exportCapturedBetween(String first, String last) {
+    if (first == last) {
+      return 'Captured $first';
+    }
+    return 'Captured $first to $last';
+  }
+
+  /// Exported records not processed yet.
+  static String exportUnprocessedCount(int n) => Intl.plural(
+    n,
+    zero: 'No unprocessed records',
+    one: '1 unprocessed record',
+    other: '$n unprocessed records',
+  );
+
+  /// Exported records waiting for a person to review.
+  static String exportNeedsReviewCount(int n) => Intl.plural(
+    n,
+    zero: 'No records need review',
+    one: '1 record needs review',
+    other: '$n records need review',
+  );
+
+  /// Exported records already approved.
+  static String exportApprovedCount(int n) => Intl.plural(
+    n,
+    zero: 'No approved records',
+    one: '1 approved record',
+    other: '$n approved records',
+  );
+
+  /// The export's file format.
+  static const String exportFileFormat = 'Excel workbook (.xlsx)';
+
+  /// What the workbook holds, column by column.
+  static const String exportFileColumns =
+      'One row per record: number, status and photo count';
+
+  /// Where the export file is saved: the Exports folder under [place], the
+  /// short Downloads label.
+  static String exportSavedTo(String place) => 'Saved to $place › Exports';
 
   /// Shown while the workbook is written.
   static const String projectExportProgress = 'Writing the export';
@@ -764,6 +862,31 @@ abstract final class Copy {
   static const String recordArchiveMessage =
       'The photos stay on this device. The record leaves this list.';
 
+  /// Title of a record's page when no value names it.
+  static const String recordDetailTitle = 'Record';
+
+  /// A record with no caption, on its page.
+  static const String recordNoCaption = 'No caption';
+
+  /// A template field the record holds no value for.
+  static const String recordFieldEmpty = 'Not entered';
+
+  /// Record page section: its field values.
+  static const String recordSectionFields = 'Fields';
+
+  /// Opens the template-field editor from a record's page.
+  static const String recordEditFields = 'Edit fields';
+
+  /// When a record was captured. [when] is a locale-formatted date and time.
+  static String recordCapturedAt(String when) => 'Captured $when';
+
+  /// A record's page after it was deleted elsewhere.
+  static const String recordGoneHeadline = 'This record is no longer here';
+
+  /// What to do when a record's page has nothing to show.
+  static const String recordGoneMessage =
+      'It was deleted or is not on this device. Go back to the list.';
+
   /// Primary action on the open-project home when a record already exists.
   static const String continueCapturing = 'Continue capturing';
 
@@ -773,44 +896,12 @@ abstract final class Copy {
   /// Home primary action after at least one record.
   static const String captureMore = 'Capture more';
 
-  /// Review card on the project home.
-  static const String homeReview = 'Needs review';
-
-  /// Process card on the project home.
-  static const String homeProcess = 'Ready to process';
-
-  /// Export card on the project home.
-  static const String homeExport = 'Ready to export';
-
-  /// Share card on the project home.
-  static const String homeShare = 'Exports to share';
-
   /// Headline when the project home has no open project.
   static const String homeEmptyHeadline = 'No project open';
 
   /// Body when the project home has no open project.
   static const String homeEmptyMessage =
       'Open a project to see what to do next.';
-
-  /// How many records are waiting for review.
-  static String homeReviewPending(int n) {
-    return Intl.plural(n, zero: 'None', one: '1 record', other: '$n records');
-  }
-
-  /// How many records are waiting to be processed.
-  static String homeProcessPending(int n) {
-    return Intl.plural(n, zero: 'None', one: '1 record', other: '$n records');
-  }
-
-  /// How many records are waiting to be exported.
-  static String homeExportPending(int n) {
-    return Intl.plural(n, zero: 'None', one: '1 record', other: '$n records');
-  }
-
-  /// How many finished files are waiting to be shared.
-  static String homeSharePending(int n) {
-    return Intl.plural(n, zero: 'None', one: '1 export', other: '$n exports');
-  }
 
   /// Shell destination: capture. Visually dominant in the four-destination bar.
   static const String navCapture = 'Capture';
@@ -1232,6 +1323,12 @@ abstract final class Copy {
 
   /// Primary action that opens the add-field flow. Task 095 owns the sheet.
   static const String templatesAddField = 'Add a field';
+
+  /// Heading of one field row on the new-template page.
+  static String templateFieldRowTitle(int n) => 'Field $n';
+
+  /// Removes one field row from the new-template page.
+  static const String templateFieldRowRemove = 'Remove this field';
 
   /// Opens the editor for one field. Task 095 owns the sheet.
   static const String templatesEditField = 'Edit field';
@@ -1976,6 +2073,10 @@ abstract final class Copy {
   /// Primary save that also enqueues analysis.
   static const String captureSaveAndAnalyse = 'Save and process';
 
+  /// Why Save and process is off while the device is offline.
+  static const String captureProcessNeedsNetwork =
+      'Save raw now. Process it once this device is online.';
+
   /// Raw save with no processing.
   static const String captureSaveRaw = 'Save raw';
 
@@ -2096,29 +2197,8 @@ abstract final class Copy {
   /// Audio group on the capture surface.
   static const String captureAudioSection = 'Audio';
 
-  /// Photo caption sheet title.
-  static const String capturePhotoCaption = 'Photo caption';
-
   /// Removes one draft photo from the capture tray.
   static const String captureRemovePhoto = 'Remove photo';
-
-  /// Opens the caption for one thumbnail.
-  static const String captureCaptionAction = 'Caption';
-
-  /// Caption scope: this photo.
-  static String captionScopeThis(int n) => 'This photo ($n)';
-
-  /// Heading of the caption target choice.
-  static const String captionScopeLabel = 'Apply to';
-
-  /// Caption scope: selected photos.
-  static String captionScopeSelected(int n) => 'Selected photos ($n)';
-
-  /// Caption scope: all photos.
-  static const String captionScopeAllPrefix = 'All photos';
-
-  /// Caption scope all with count.
-  static String captionScopeAll(int n) => 'All photos ($n)';
 
   /// Append caption mode.
   static const String captionAppend = 'Append';

@@ -18,6 +18,7 @@ import 'package:tapture/core/files/files.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/projects/presentation/project_list_screen.dart';
@@ -56,6 +57,90 @@ void main() {
       },
     );
   }
+
+  for (final ({double width, double height, double keyboard}) shot
+      in <({double width, double height, double keyboard})>[
+        (width: 393, height: 886, keyboard: 300),
+        (width: 800, height: 886, keyboard: 300),
+        (width: 1200, height: 886, keyboard: 300),
+        // The rail needs its four destinations' height; a taller landscape
+        // keyboard overflows it, which is tracked in its own task.
+        (width: 886, height: 393, keyboard: 40),
+      ]) {
+    testWidgets(
+      'at ${shot.width} x ${shot.height} dp an open keyboard shrinks a shell '
+      'page once',
+      (WidgetTester tester) async {
+        final FakeProjectRepository repo = await _seedProjects(<String>[
+          'Alpha',
+        ]);
+        addTearDown(repo.dispose);
+        tester.view.padding = const FakeViewPadding(top: 24);
+        tester.view.viewPadding = const FakeViewPadding(top: 24);
+        addTearDown(tester.view.resetPadding);
+        addTearDown(tester.view.resetViewPadding);
+        final GoRouter router = await _pump(
+          tester,
+          width: shot.width,
+          height: shot.height,
+          repo: repo,
+          projectId: 'project-1',
+        );
+        router.go(AppRoutes.project('project-1'));
+        await tester.pumpAndSettle();
+        tester.view.viewInsets = FakeViewPadding(bottom: shot.keyboard);
+        addTearDown(tester.view.resetViewInsets);
+        await tester.pumpAndSettle();
+
+        final Finder home = find.byKey(const ValueKey<String>('route-project'));
+        final BuildContext page = tester.element(home);
+        expect(MediaQuery.viewInsetsOf(page).bottom, 0);
+        expect(MediaQuery.paddingOf(page).top, 0);
+        final double keyboardTop = shot.height - shot.keyboard;
+        final Rect footer = tester.getRect(
+          find.descendant(of: home, matching: find.byType(AppPrimaryAction)),
+        );
+        expect(footer.bottom, lessThanOrEqualTo(keyboardTop));
+        expect(footer.bottom, greaterThanOrEqualTo(keyboardTop - Space.x2));
+        final Rect search = tester.getRect(
+          find.byKey(const ValueKey<String>('home-search')),
+        );
+        expect(search.bottom, lessThanOrEqualTo(footer.top));
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
+  testWidgets('a sheet opened in a branch keeps its list above the keyboard', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = await _seedProjects(<String>['Alpha']);
+    addTearDown(repo.dispose);
+    await _pump(tester, width: 393, height: 886, repo: repo);
+    await tester.pumpAndSettle();
+    tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+    addTearDown(tester.view.resetViewInsets);
+    await tester.pumpAndSettle();
+
+    final BuildContext page = tester.element(find.byType(ProjectListScreen));
+    unawaited(
+      showAppSheet<void>(
+        page,
+        title: 'Pick',
+        builder: (BuildContext _) => ListView(
+          children: const <Widget>[
+            ListTile(title: Text('Option one')),
+            ListTile(title: Text('Option two')),
+          ],
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final Rect option = tester.getRect(find.text('Option one'));
+    expect(option.height, greaterThan(0));
+    expect(option.bottom, lessThanOrEqualTo(886 - 300));
+  });
 
   testWidgets('medium width uses a navigation rail', (
     WidgetTester tester,

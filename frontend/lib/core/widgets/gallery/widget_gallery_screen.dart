@@ -865,6 +865,18 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
             ),
             size: edge,
           ),
+          AppPhotoThumb(
+            photo: const PhotoAsset(sha256: 'tick', hasCaption: true),
+            size: edge,
+            selected: true,
+            onTap: _noop,
+            onSelectedChanged: (bool _) {},
+          ),
+          AppPhotoThumb(
+            photo: const PhotoAsset(sha256: 'turn', thumbPath: '/turned.jpg'),
+            size: edge,
+            quarterTurns: 1,
+          ),
         ],
       ),
       const SizedBox(height: Space.x6),
