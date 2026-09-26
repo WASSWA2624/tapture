@@ -1,0 +1,1512 @@
+{
+  "category": "LAB",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "lab_laboratory_sample_registration",
+      "name": "templates.lab_laboratory_sample_registration.name",
+      "title": "Laboratory sample registration",
+      "code": "LAB-001",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "request_reference",
+          "label": "templates.catalogue.request_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_sample_collection_record",
+      "name": "templates.lab_sample_collection_record.name",
+      "title": "Sample collection record",
+      "code": "LAB-002",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "collector",
+          "label": "templates.catalogue.collector",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_sample_chain_of_custody",
+      "name": "templates.lab_sample_chain_of_custody.name",
+      "title": "Sample chain-of-custody",
+      "code": "LAB-003",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "sample_seal",
+          "label": "templates.catalogue.sample_seal",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transfer_parties",
+          "label": "templates.catalogue.transfer_parties",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transfer_conditions",
+          "label": "templates.catalogue.transfer_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_specimen_reception_checklist",
+      "name": "templates.lab_specimen_reception_checklist.name",
+      "title": "Specimen reception checklist",
+      "code": "LAB-004",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "label_match",
+          "label": "templates.catalogue.label_match",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "container_condition",
+          "label": "templates.catalogue.container_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_decision",
+          "label": "templates.catalogue.acceptance_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_sample_rejection_record",
+      "name": "templates.lab_sample_rejection_record.name",
+      "title": "Sample rejection record",
+      "code": "LAB-005",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "requester_notified",
+          "label": "templates.catalogue.requester_notified",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "replacement_request",
+          "label": "templates.catalogue.replacement_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_laboratory_worklist",
+      "name": "templates.lab_laboratory_worklist.name",
+      "title": "Laboratory worklist",
+      "code": "LAB-006",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_tests",
+          "label": "templates.catalogue.requested_tests",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sample_queue",
+          "label": "templates.catalogue.sample_queue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_bench",
+          "label": "templates.catalogue.assigned_bench",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_test_result_transcription_review",
+      "name": "templates.lab_test_result_transcription_review.name",
+      "title": "Test result transcription review",
+      "code": "LAB-007",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "source_report",
+          "label": "templates.catalogue.source_report",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transcribed_values",
+          "label": "templates.catalogue.transcribed_values",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reviewer_confirmation",
+          "label": "templates.catalogue.reviewer_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_laboratory_result_report_draft",
+      "name": "templates.lab_laboratory_result_report_draft.name",
+      "title": "Laboratory result report draft",
+      "code": "LAB-008",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_results",
+          "label": "templates.catalogue.authorized_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "method_reference",
+          "label": "templates.catalogue.method_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_signatory",
+          "label": "templates.catalogue.authorized_signatory",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_laboratory_reagent_inventory",
+      "name": "templates.lab_laboratory_reagent_inventory.name",
+      "title": "Laboratory reagent inventory",
+      "code": "LAB-009",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "reagent_name",
+          "label": "templates.catalogue.reagent_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "lot_number",
+          "label": "templates.catalogue.lot_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expiry_date",
+          "label": "templates.catalogue.expiry_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_reagent_preparation_log",
+      "name": "templates.lab_reagent_preparation_log.name",
+      "title": "Reagent preparation log",
+      "code": "LAB-010",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "preparation_method",
+          "label": "templates.catalogue.preparation_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "component_lots",
+          "label": "templates.catalogue.component_lots",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "prepared_by",
+          "label": "templates.catalogue.prepared_by",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_quality_control_run_record",
+      "name": "templates.lab_quality_control_run_record.name",
+      "title": "Quality control run record",
+      "code": "LAB-011",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "control_material",
+          "label": "templates.catalogue.control_material",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "control_limits_ref",
+          "label": "templates.catalogue.control_limits_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_external_quality_assessment_submission",
+      "name": "templates.lab_external_quality_assessment_submission.name",
+      "title": "External quality assessment submission",
+      "code": "LAB-012",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "scheme_reference",
+          "label": "templates.catalogue.scheme_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sample_reference",
+          "label": "templates.catalogue.sample_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_results",
+          "label": "templates.catalogue.authorized_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_analyzer_daily_checks",
+      "name": "templates.lab_analyzer_daily_checks.name",
+      "title": "Analyzer daily checks",
+      "code": "LAB-013",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "analyzer_status",
+          "label": "templates.catalogue.analyzer_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "daily_check_items",
+          "label": "templates.catalogue.daily_check_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_laboratory_calibration_curve_record",
+      "name": "templates.lab_laboratory_calibration_curve_record.name",
+      "title": "Laboratory calibration curve record",
+      "code": "LAB-014",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "standard_levels",
+          "label": "templates.catalogue.standard_levels",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "instrument_responses",
+          "label": "templates.catalogue.instrument_responses",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "fit_review",
+          "label": "templates.catalogue.fit_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_laboratory_instrument_service_history",
+      "name": "templates.lab_laboratory_instrument_service_history.name",
+      "title": "Laboratory instrument service history",
+      "code": "LAB-015",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "instrument_identifier",
+          "label": "templates.catalogue.instrument_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_action",
+          "label": "templates.catalogue.service_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "performance_verification",
+          "label": "templates.catalogue.performance_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_laboratory_temperature_monitoring",
+      "name": "templates.lab_laboratory_temperature_monitoring.name",
+      "title": "Laboratory temperature monitoring",
+      "code": "LAB-016",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "monitored_unit",
+          "label": "templates.catalogue.monitored_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "temperature",
+          "label": "templates.catalogue.temperature",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "degC",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "excursion_response",
+          "label": "templates.catalogue.excursion_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_environmental_monitoring_swab_register",
+      "name": "templates.lab_environmental_monitoring_swab_register.name",
+      "title": "Environmental monitoring swab register",
+      "code": "LAB-017",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "sampling_site",
+          "label": "templates.catalogue.sampling_site",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_method",
+          "label": "templates.catalogue.sampling_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_request",
+          "label": "templates.catalogue.test_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_water_testing_sample_record",
+      "name": "templates.lab_water_testing_sample_record.name",
+      "title": "Water testing sample record",
+      "code": "LAB-018",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "water_source",
+          "label": "templates.catalogue.water_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_conditions",
+          "label": "templates.catalogue.sampling_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_panel",
+          "label": "templates.catalogue.test_panel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_food_testing_sample_record",
+      "name": "templates.lab_food_testing_sample_record.name",
+      "title": "Food testing sample record",
+      "code": "LAB-019",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "product_batch",
+          "label": "templates.catalogue.product_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sample_storage",
+          "label": "templates.catalogue.sample_storage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_panel",
+          "label": "templates.catalogue.test_panel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_soil_testing_sample_record",
+      "name": "templates.lab_soil_testing_sample_record.name",
+      "title": "Soil testing sample record",
+      "code": "LAB-020",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "plot_reference",
+          "label": "templates.catalogue.plot_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_depth",
+          "label": "templates.catalogue.sampling_depth",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "m",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_panel",
+          "label": "templates.catalogue.test_panel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_material_testing_sample_record",
+      "name": "templates.lab_material_testing_sample_record.name",
+      "title": "Material testing sample record",
+      "code": "LAB-021",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "material_type",
+          "label": "templates.catalogue.material_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "batch_reference",
+          "label": "templates.catalogue.batch_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_standard_ref",
+          "label": "templates.catalogue.test_standard_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_pathology_specimen_tracking",
+      "name": "templates.lab_pathology_specimen_tracking.name",
+      "title": "Pathology specimen tracking",
+      "code": "LAB-022",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "specimen_reference",
+          "label": "templates.catalogue.specimen_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "processing_stage",
+          "label": "templates.catalogue.processing_stage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_custodian",
+          "label": "templates.catalogue.authorized_custodian",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_microscopy_image_annotation",
+      "name": "templates.lab_microscopy_image_annotation.name",
+      "title": "Microscopy image annotation",
+      "code": "LAB-023",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "slide_reference",
+          "label": "templates.catalogue.slide_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "image_region",
+          "label": "templates.catalogue.image_region",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expert_annotation",
+          "label": "templates.catalogue.expert_annotation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_laboratory_method_validation_plan",
+      "name": "templates.lab_laboratory_method_validation_plan.name",
+      "title": "Laboratory method validation plan",
+      "code": "LAB-024",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "validation_characteristics",
+          "label": "templates.catalogue.validation_characteristics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "study_design",
+          "label": "templates.catalogue.study_design",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_criteria_ref",
+          "label": "templates.catalogue.acceptance_criteria_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_laboratory_nonconformance_report",
+      "name": "templates.lab_laboratory_nonconformance_report.name",
+      "title": "Laboratory nonconformance report",
+      "code": "LAB-025",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "deviation_description",
+          "label": "templates.catalogue.deviation_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "affected_runs",
+          "label": "templates.catalogue.affected_runs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "containment",
+          "label": "templates.catalogue.containment",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_laboratory_corrective_action_verification",
+      "name": "templates.lab_laboratory_corrective_action_verification.name",
+      "title": "Laboratory corrective action verification",
+      "code": "LAB-026",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "root_cause_record",
+          "label": "templates.catalogue.root_cause_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "implemented_action",
+          "label": "templates.catalogue.implemented_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "effectiveness_evidence",
+          "label": "templates.catalogue.effectiveness_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_laboratory_biosafety_inspection",
+      "name": "templates.lab_laboratory_biosafety_inspection.name",
+      "title": "Laboratory biosafety inspection",
+      "code": "LAB-027",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_safety_criteria",
+          "label": "templates.catalogue.approved_safety_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_controls",
+          "label": "templates.catalogue.observed_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "gaps",
+          "label": "templates.catalogue.gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_sample_storage_location_register",
+      "name": "templates.lab_sample_storage_location_register.name",
+      "title": "Sample storage location register",
+      "code": "LAB-028",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "sample_reference",
+          "label": "templates.catalogue.sample_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_position",
+          "label": "templates.catalogue.storage_position",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "retention_rule",
+          "label": "templates.catalogue.retention_rule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_sample_disposal_authorization",
+      "name": "templates.lab_sample_disposal_authorization.name",
+      "title": "Sample disposal authorization",
+      "code": "LAB-029",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "sample_list",
+          "label": "templates.catalogue.sample_list",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "retention_completion",
+          "label": "templates.catalogue.retention_completion",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_disposal_route",
+          "label": "templates.catalogue.approved_disposal_route",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_laboratory_turnaround_time_analysis",
+      "name": "templates.lab_laboratory_turnaround_time_analysis.name",
+      "title": "Laboratory turnaround time analysis",
+      "code": "LAB-030",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "received_at",
+          "label": "templates.catalogue.received_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_at",
+          "label": "templates.catalogue.authorized_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delay_reasons",
+          "label": "templates.catalogue.delay_reasons",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_laboratory_training_competency_record",
+      "name": "templates.lab_laboratory_training_competency_record.name",
+      "title": "Laboratory training competency record",
+      "code": "LAB-031",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "method_training",
+          "label": "templates.catalogue.method_training",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_competency",
+          "label": "templates.catalogue.observed_competency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_assessor",
+          "label": "templates.catalogue.authorized_assessor",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "lab_laboratory_consumables_forecast",
+      "name": "templates.lab_laboratory_consumables_forecast.name",
+      "title": "Laboratory consumables forecast",
+      "code": "LAB-032",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_lab",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "test_volume",
+          "label": "templates.catalogue.test_volume",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "L",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consumption_rates",
+          "label": "templates.catalogue.consumption_rates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "procurement_lead_time_days",
+          "label": "templates.catalogue.procurement_lead_time_days",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

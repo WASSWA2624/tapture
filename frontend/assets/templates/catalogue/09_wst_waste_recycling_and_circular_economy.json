@@ -1,0 +1,1432 @@
+{
+  "category": "WST",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "wst_waste_generator_registration",
+      "name": "templates.wst_waste_generator_registration.name",
+      "title": "Waste generator registration",
+      "code": "WST-001",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "generator_type",
+          "label": "templates.catalogue.generator_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "declared_waste_streams",
+          "label": "templates.catalogue.declared_waste_streams",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_location",
+          "label": "templates.catalogue.service_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_waste_collection_route_plan",
+      "name": "templates.wst_waste_collection_route_plan.name",
+      "title": "Waste collection route plan",
+      "code": "WST-002",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "collection_stops",
+          "label": "templates.catalogue.collection_stops",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "scheduled_frequency",
+          "label": "templates.catalogue.scheduled_frequency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "vehicle_assignment",
+          "label": "templates.catalogue.vehicle_assignment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_waste_collection_completion",
+      "name": "templates.wst_waste_collection_completion.name",
+      "title": "Waste collection completion",
+      "code": "WST-003",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "collection_location",
+          "label": "templates.catalogue.collection_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "collected_quantity",
+          "label": "templates.catalogue.collected_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "collected_quantity_unit",
+          "label": "templates.catalogue.collected_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_exception",
+          "label": "templates.catalogue.service_exception",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_waste_container_inventory",
+      "name": "templates.wst_waste_container_inventory.name",
+      "title": "Waste container inventory",
+      "code": "WST-004",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "container_type",
+          "label": "templates.catalogue.container_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "capacity",
+          "label": "templates.catalogue.capacity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "capacity_unit",
+          "label": "templates.catalogue.capacity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_location",
+          "label": "templates.catalogue.assigned_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_waste_bin_condition_inspection",
+      "name": "templates.wst_waste_bin_condition_inspection.name",
+      "title": "Waste bin condition inspection",
+      "code": "WST-005",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "container_reference",
+          "label": "templates.catalogue.container_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visible_condition",
+          "label": "templates.catalogue.visible_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "replacement_need",
+          "label": "templates.catalogue.replacement_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_waste_segregation_audit",
+      "name": "templates.wst_waste_segregation_audit.name",
+      "title": "Waste segregation audit",
+      "code": "WST-006",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "waste_categories",
+          "label": "templates.catalogue.waste_categories",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_contamination",
+          "label": "templates.catalogue.observed_contamination",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "corrective_action",
+          "label": "templates.catalogue.corrective_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_waste_characterization_study",
+      "name": "templates.wst_waste_characterization_study.name",
+      "title": "Waste characterization study",
+      "code": "WST-007",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "sampling_method",
+          "label": "templates.catalogue.sampling_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "material_fractions",
+          "label": "templates.catalogue.material_fractions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_weights",
+          "label": "templates.catalogue.measured_weights",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_waste_weighing_ticket",
+      "name": "templates.wst_waste_weighing_ticket.name",
+      "title": "Waste weighing ticket",
+      "code": "WST-008",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_reference",
+          "label": "templates.catalogue.vehicle_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "gross_weight",
+          "label": "templates.catalogue.gross_weight",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "kg",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "tare_weight",
+          "label": "templates.catalogue.tare_weight",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "kg",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_waste_transfer_station_log",
+      "name": "templates.wst_waste_transfer_station_log.name",
+      "title": "Waste transfer station log",
+      "code": "WST-009",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "incoming_loads",
+          "label": "templates.catalogue.incoming_loads",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outgoing_loads",
+          "label": "templates.catalogue.outgoing_loads",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "facility_exceptions",
+          "label": "templates.catalogue.facility_exceptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_recyclable_materials_purchase",
+      "name": "templates.wst_recyclable_materials_purchase.name",
+      "title": "Recyclable materials purchase",
+      "code": "WST-010",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "material_type",
+          "label": "templates.catalogue.material_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accepted_weight",
+          "label": "templates.catalogue.accepted_weight",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "kg",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_price",
+          "label": "templates.catalogue.agreed_price",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "agreed_price_currency",
+          "label": "templates.catalogue.agreed_price_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_recycling_sorting_quality_check",
+      "name": "templates.wst_recycling_sorting_quality_check.name",
+      "title": "Recycling sorting quality check",
+      "code": "WST-011",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "material_batch",
+          "label": "templates.catalogue.material_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contamination_findings",
+          "label": "templates.catalogue.contamination_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "acceptance_result",
+          "label": "templates.catalogue.acceptance_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_material_recovery_production_log",
+      "name": "templates.wst_material_recovery_production_log.name",
+      "title": "Material recovery production log",
+      "code": "WST-012",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "input_material",
+          "label": "templates.catalogue.input_material",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recovered_outputs",
+          "label": "templates.catalogue.recovered_outputs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "residual_waste",
+          "label": "templates.catalogue.residual_waste",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_composting_process_log",
+      "name": "templates.wst_composting_process_log.name",
+      "title": "Composting process log",
+      "code": "WST-013",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "compost_batch",
+          "label": "templates.catalogue.compost_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_parameters",
+          "label": "templates.catalogue.approved_parameters",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_values",
+          "label": "templates.catalogue.observed_values",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_compost_product_quality_sample",
+      "name": "templates.wst_compost_product_quality_sample.name",
+      "title": "Compost product quality sample",
+      "code": "WST-014",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "batch_reference",
+          "label": "templates.catalogue.batch_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_method",
+          "label": "templates.catalogue.sampling_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "laboratory_request",
+          "label": "templates.catalogue.laboratory_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_landfill_cell_inspection",
+      "name": "templates.wst_landfill_cell_inspection.name",
+      "title": "Landfill cell inspection",
+      "code": "WST-015",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "cell_reference",
+          "label": "templates.catalogue.cell_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_conditions",
+          "label": "templates.catalogue.observed_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_followup",
+          "label": "templates.catalogue.authorized_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_landfill_leachate_sample",
+      "name": "templates.wst_landfill_leachate_sample.name",
+      "title": "Landfill leachate sample",
+      "code": "WST-016",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "sampling_point",
+          "label": "templates.catalogue.sampling_point",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_panel",
+          "label": "templates.catalogue.test_panel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custody_reference",
+          "label": "templates.catalogue.custody_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_hazardous_waste_manifest_evidence",
+      "name": "templates.wst_hazardous_waste_manifest_evidence.name",
+      "title": "Hazardous waste manifest evidence",
+      "code": "WST-017",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "waste_identifier",
+          "label": "templates.catalogue.waste_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_parties",
+          "label": "templates.catalogue.authorized_parties",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "shipment_evidence",
+          "label": "templates.catalogue.shipment_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_electronic_waste_intake",
+      "name": "templates.wst_electronic_waste_intake.name",
+      "title": "Electronic waste intake",
+      "code": "WST-018",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "device_types",
+          "label": "templates.catalogue.device_types",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "received_quantity",
+          "label": "templates.catalogue.received_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "received_quantity_unit",
+          "label": "templates.catalogue.received_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_erasure_requirement",
+          "label": "templates.catalogue.data_erasure_requirement",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_electronic_device_data_erasure_record",
+      "name": "templates.wst_electronic_device_data_erasure_record.name",
+      "title": "Electronic device data erasure record",
+      "code": "WST-019",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "device_identifier",
+          "label": "templates.catalogue.device_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_erasure_method",
+          "label": "templates.catalogue.approved_erasure_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_evidence",
+          "label": "templates.catalogue.verification_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_battery_recycling_intake",
+      "name": "templates.wst_battery_recycling_intake.name",
+      "title": "Battery recycling intake",
+      "code": "WST-020",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "battery_category",
+          "label": "templates.catalogue.battery_category",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity",
+          "label": "templates.catalogue.quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_storage_location",
+          "label": "templates.catalogue.safe_storage_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_medical_waste_pickup_record",
+      "name": "templates.wst_medical_waste_pickup_record.name",
+      "title": "Medical waste pickup record",
+      "code": "WST-021",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "sealed_container_refs",
+          "label": "templates.catalogue.sealed_container_refs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_handover",
+          "label": "templates.catalogue.authorized_handover",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "destination",
+          "label": "templates.catalogue.destination",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_waste_transport_inspection",
+      "name": "templates.wst_waste_transport_inspection.name",
+      "title": "Waste transport inspection",
+      "code": "WST-022",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_identifier",
+          "label": "templates.catalogue.vehicle_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "containment_condition",
+          "label": "templates.catalogue.containment_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_documents",
+          "label": "templates.catalogue.required_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_illegal_dumping_report",
+      "name": "templates.wst_illegal_dumping_report.name",
+      "title": "Illegal dumping report",
+      "code": "WST-023",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "dumping_location",
+          "label": "templates.catalogue.dumping_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_waste",
+          "label": "templates.catalogue.observed_waste",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "photo_evidence",
+          "label": "templates.catalogue.photo_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_community_cleanup_event_record",
+      "name": "templates.wst_community_cleanup_event_record.name",
+      "title": "Community cleanup event record",
+      "code": "WST-024",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "cleanup_location",
+          "label": "templates.catalogue.cleanup_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "collected_materials",
+          "label": "templates.catalogue.collected_materials",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "aggregate_participation",
+          "label": "templates.catalogue.aggregate_participation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_reusable_packaging_circulation",
+      "name": "templates.wst_reusable_packaging_circulation.name",
+      "title": "Reusable packaging circulation",
+      "code": "WST-025",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "container_identifier",
+          "label": "templates.catalogue.container_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "current_holder",
+          "label": "templates.catalogue.current_holder",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reuse_count",
+          "label": "templates.catalogue.reuse_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_repair_and_reuse_intake",
+      "name": "templates.wst_repair_and_reuse_intake.name",
+      "title": "Repair and reuse intake",
+      "code": "WST-026",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "item_description",
+          "label": "templates.catalogue.item_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "repair_need",
+          "label": "templates.catalogue.repair_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "owner_authorization",
+          "label": "templates.catalogue.owner_authorization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_circular_product_design_brief",
+      "name": "templates.wst_circular_product_design_brief.name",
+      "title": "Circular product design brief",
+      "code": "WST-027",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "material_inputs",
+          "label": "templates.catalogue.material_inputs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "repairability_goals",
+          "label": "templates.catalogue.repairability_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recovery_pathways",
+          "label": "templates.catalogue.recovery_pathways",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_waste_diversion_calculation_inputs",
+      "name": "templates.wst_waste_diversion_calculation_inputs.name",
+      "title": "Waste diversion calculation inputs",
+      "code": "WST-028",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "generated_weight",
+          "label": "templates.catalogue.generated_weight",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "kg",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_diverted_weight",
+          "label": "templates.catalogue.verified_diverted_weight",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "kg",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "boundary_assumptions",
+          "label": "templates.catalogue.boundary_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_waste_contractor_performance",
+      "name": "templates.wst_waste_contractor_performance.name",
+      "title": "Waste contractor performance",
+      "code": "WST-029",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "service_schedule",
+          "label": "templates.catalogue.service_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_collections",
+          "label": "templates.catalogue.verified_collections",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "complaints",
+          "label": "templates.catalogue.complaints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "wst_recycling_impact_report",
+      "name": "templates.wst_recycling_impact_report.name",
+      "title": "Recycling impact report",
+      "code": "WST-030",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_wst",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_material_flows",
+          "label": "templates.catalogue.verified_material_flows",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "calculation_methods",
+          "label": "templates.catalogue.calculation_methods",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

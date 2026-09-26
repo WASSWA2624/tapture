@@ -1,0 +1,1822 @@
+{
+  "category": "EDU",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "edu_school_registration_profile",
+      "name": "templates.edu_school_registration_profile.name",
+      "title": "School registration profile",
+      "code": "EDU-001",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "school_type",
+          "label": "templates.catalogue.school_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "offered_levels",
+          "label": "templates.catalogue.offered_levels",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_details",
+          "label": "templates.catalogue.contact_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_student_enrollment_application",
+      "name": "templates.edu_student_enrollment_application.name",
+      "title": "Student enrollment application",
+      "code": "EDU-002",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "student_reference",
+          "label": "templates.catalogue.student_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_level",
+          "label": "templates.catalogue.requested_level",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "guardian_authority",
+          "label": "templates.catalogue.guardian_authority",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_student_enrollment_register",
+      "name": "templates.edu_student_enrollment_register.name",
+      "title": "Student enrollment register",
+      "code": "EDU-003",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "enrollment_reference",
+          "label": "templates.catalogue.enrollment_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "class_assignment",
+          "label": "templates.catalogue.class_assignment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "enrollment_status",
+          "label": "templates.catalogue.enrollment_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_guardian_contact_record",
+      "name": "templates.edu_guardian_contact_record.name",
+      "title": "Guardian contact record",
+      "code": "EDU-004",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "guardian_relationship",
+          "label": "templates.catalogue.guardian_relationship",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_preferences",
+          "label": "templates.catalogue.contact_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_collection",
+          "label": "templates.catalogue.authorized_collection",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_daily_learner_attendance",
+      "name": "templates.edu_daily_learner_attendance.name",
+      "title": "Daily learner attendance",
+      "code": "EDU-005",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "attendance_date",
+          "label": "templates.catalogue.attendance_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "class_list",
+          "label": "templates.catalogue.class_list",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attendance_status",
+          "label": "templates.catalogue.attendance_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_teacher_attendance_log",
+      "name": "templates.edu_teacher_attendance_log.name",
+      "title": "Teacher attendance log",
+      "code": "EDU-006",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "staff_reference",
+          "label": "templates.catalogue.staff_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "teaching_date",
+          "label": "templates.catalogue.teaching_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attendance_exceptions",
+          "label": "templates.catalogue.attendance_exceptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_class_timetable",
+      "name": "templates.edu_class_timetable.name",
+      "title": "Class timetable",
+      "code": "EDU-007",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "subjects",
+          "label": "templates.catalogue.subjects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "teaching_slots",
+          "label": "templates.catalogue.teaching_slots",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_rooms",
+          "label": "templates.catalogue.assigned_rooms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_lesson_plan",
+      "name": "templates.edu_lesson_plan.name",
+      "title": "Lesson plan",
+      "code": "EDU-008",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "learning_objectives",
+          "label": "templates.catalogue.learning_objectives",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assessment_method",
+          "label": "templates.catalogue.assessment_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_lesson_observation",
+      "name": "templates.edu_lesson_observation.name",
+      "title": "Lesson observation",
+      "code": "EDU-009",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "observation_criteria",
+          "label": "templates.catalogue.observation_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "teaching_evidence",
+          "label": "templates.catalogue.teaching_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "feedback",
+          "label": "templates.catalogue.feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_learning_assessment_rubric",
+      "name": "templates.edu_learning_assessment_rubric.name",
+      "title": "Learning assessment rubric",
+      "code": "EDU-010",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "competencies",
+          "label": "templates.catalogue.competencies",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "performance_descriptors",
+          "label": "templates.catalogue.performance_descriptors",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "scoring_rules",
+          "label": "templates.catalogue.scoring_rules",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_learner_assessment_results",
+      "name": "templates.edu_learner_assessment_results.name",
+      "title": "Learner assessment results",
+      "code": "EDU-011",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "assessment_reference",
+          "label": "templates.catalogue.assessment_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_scores",
+          "label": "templates.catalogue.observed_scores",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "teacher_review",
+          "label": "templates.catalogue.teacher_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_student_report_card_draft",
+      "name": "templates.edu_student_report_card_draft.name",
+      "title": "Student report card draft",
+      "code": "EDU-012",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_results",
+          "label": "templates.catalogue.verified_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "teacher_comments",
+          "label": "templates.catalogue.teacher_comments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "authorized_signoff",
+          "label": "templates.catalogue.authorized_signoff",
+          "type": "signature",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_parent_teacher_meeting_record",
+      "name": "templates.edu_parent_teacher_meeting_record.name",
+      "title": "Parent teacher meeting record",
+      "code": "EDU-013",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "learner_progress",
+          "label": "templates.catalogue.learner_progress",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_support",
+          "label": "templates.catalogue.agreed_support",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "followup_date",
+          "label": "templates.catalogue.followup_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_individual_learning_support_plan",
+      "name": "templates.edu_individual_learning_support_plan.name",
+      "title": "Individual learning support plan",
+      "code": "EDU-014",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "functional_learning_needs",
+          "label": "templates.catalogue.functional_learning_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_adjustments",
+          "label": "templates.catalogue.agreed_adjustments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_schedule",
+          "label": "templates.catalogue.review_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_school_safeguarding_concern_intake",
+      "name": "templates.edu_school_safeguarding_concern_intake.name",
+      "title": "School safeguarding concern intake",
+      "code": "EDU-015",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "minimum_necessary_concern",
+          "label": "templates.catalogue.minimum_necessary_concern",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_reporting_route",
+          "label": "templates.catalogue.safe_reporting_route",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restricted_handler",
+          "label": "templates.catalogue.restricted_handler",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_student_counselling_referral",
+      "name": "templates.edu_student_counselling_referral.name",
+      "title": "Student counselling referral",
+      "code": "EDU-016",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "support_request",
+          "label": "templates.catalogue.support_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent_scope",
+          "label": "templates.catalogue.consent_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_recipient",
+          "label": "templates.catalogue.qualified_recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_school_transfer_documentation",
+      "name": "templates.edu_school_transfer_documentation.name",
+      "title": "School transfer documentation",
+      "code": "EDU-017",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_enrollment_history",
+          "label": "templates.catalogue.verified_enrollment_history",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "release_authority",
+          "label": "templates.catalogue.release_authority",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "receiving_school",
+          "label": "templates.catalogue.receiving_school",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_school_fee_invoice",
+      "name": "templates.edu_school_fee_invoice.name",
+      "title": "School fee invoice",
+      "code": "EDU-018",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "fee_items",
+          "label": "templates.catalogue.fee_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "billing_period",
+          "label": "templates.catalogue.billing_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_amounts",
+          "label": "templates.catalogue.approved_amounts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_school_fee_payment_reconciliation",
+      "name": "templates.edu_school_fee_payment_reconciliation.name",
+      "title": "School fee payment reconciliation",
+      "code": "EDU-019",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "learner_account",
+          "label": "templates.catalogue.learner_account",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "receipts",
+          "label": "templates.catalogue.receipts",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outstanding_balance",
+          "label": "templates.catalogue.outstanding_balance",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "outstanding_balance_currency",
+          "label": "templates.catalogue.outstanding_balance_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_scholarship_application",
+      "name": "templates.edu_scholarship_application.name",
+      "title": "Scholarship application",
+      "code": "EDU-020",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "eligibility_evidence",
+          "label": "templates.catalogue.eligibility_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "education_goals",
+          "label": "templates.catalogue.education_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_support",
+          "label": "templates.catalogue.required_support",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_scholarship_award_tracking",
+      "name": "templates.edu_scholarship_award_tracking.name",
+      "title": "Scholarship award tracking",
+      "code": "EDU-021",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "award_reference",
+          "label": "templates.catalogue.award_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "funding_conditions",
+          "label": "templates.catalogue.funding_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "progress_evidence",
+          "label": "templates.catalogue.progress_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_library_book_issue_and_return",
+      "name": "templates.edu_library_book_issue_and_return.name",
+      "title": "Library book issue and return",
+      "code": "EDU-022",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "book_identifier",
+          "label": "templates.catalogue.book_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "borrower_reference",
+          "label": "templates.catalogue.borrower_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_due_date",
+          "label": "templates.catalogue.return_due_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_school_textbook_inventory",
+      "name": "templates.edu_school_textbook_inventory.name",
+      "title": "School textbook inventory",
+      "code": "EDU-023",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "title",
+          "label": "templates.catalogue.title",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "edition",
+          "label": "templates.catalogue.edition",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "usable_copy_count",
+          "label": "templates.catalogue.usable_copy_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_school_laboratory_inventory",
+      "name": "templates.edu_school_laboratory_inventory.name",
+      "title": "School laboratory inventory",
+      "code": "EDU-024",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "apparatus_type",
+          "label": "templates.catalogue.apparatus_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_location",
+          "label": "templates.catalogue.storage_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition",
+          "label": "templates.catalogue.condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_school_infrastructure_inspection",
+      "name": "templates.edu_school_infrastructure_inspection.name",
+      "title": "School infrastructure inspection",
+      "code": "EDU-025",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "classroom_condition",
+          "label": "templates.catalogue.classroom_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sanitation",
+          "label": "templates.catalogue.sanitation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessibility_findings",
+          "label": "templates.catalogue.accessibility_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_school_meal_delivery_log",
+      "name": "templates.edu_school_meal_delivery_log.name",
+      "title": "School meal delivery log",
+      "code": "EDU-026",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "meal_date",
+          "label": "templates.catalogue.meal_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "aggregate_servings",
+          "label": "templates.catalogue.aggregate_servings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_quality",
+          "label": "templates.catalogue.delivery_quality",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_school_transport_route_register",
+      "name": "templates.edu_school_transport_route_register.name",
+      "title": "School transport route register",
+      "code": "EDU-027",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "route_stops",
+          "label": "templates.catalogue.route_stops",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_vehicle",
+          "label": "templates.catalogue.assigned_vehicle",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_contacts",
+          "label": "templates.catalogue.authorized_contacts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_educational_trip_permission",
+      "name": "templates.edu_educational_trip_permission.name",
+      "title": "Educational trip permission",
+      "code": "EDU-028",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "trip_purpose",
+          "label": "templates.catalogue.trip_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "guardian_decision",
+          "label": "templates.catalogue.guardian_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "support_requirements",
+          "label": "templates.catalogue.support_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_extracurricular_activity_register",
+      "name": "templates.edu_extracurricular_activity_register.name",
+      "title": "Extracurricular activity register",
+      "code": "EDU-029",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "activity_type",
+          "label": "templates.catalogue.activity_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_reference",
+          "label": "templates.catalogue.participant_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "permission_status",
+          "label": "templates.catalogue.permission_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_school_incident_report",
+      "name": "templates.edu_school_incident_report.name",
+      "title": "School incident report",
+      "code": "EDU-030",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "event_details",
+          "label": "templates.catalogue.event_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "immediate_safety_action",
+          "label": "templates.catalogue.immediate_safety_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restricted_followup",
+          "label": "templates.catalogue.restricted_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_teacher_professional_development",
+      "name": "templates.edu_teacher_professional_development.name",
+      "title": "Teacher professional development",
+      "code": "EDU-031",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "training_topic",
+          "label": "templates.catalogue.training_topic",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participation_evidence",
+          "label": "templates.catalogue.participation_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "classroom_application",
+          "label": "templates.catalogue.classroom_application",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_vocational_practical_assessment",
+      "name": "templates.edu_vocational_practical_assessment.name",
+      "title": "Vocational practical assessment",
+      "code": "EDU-032",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "trade_competency",
+          "label": "templates.catalogue.trade_competency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "demonstrated_task",
+          "label": "templates.catalogue.demonstrated_task",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_assessor",
+          "label": "templates.catalogue.qualified_assessor",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_apprenticeship_placement_record",
+      "name": "templates.edu_apprenticeship_placement_record.name",
+      "title": "Apprenticeship placement record",
+      "code": "EDU-033",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "host_organization",
+          "label": "templates.catalogue.host_organization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "learning_goals",
+          "label": "templates.catalogue.learning_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supervision_plan",
+          "label": "templates.catalogue.supervision_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_curriculum_resource_review",
+      "name": "templates.edu_curriculum_resource_review.name",
+      "title": "Curriculum resource review",
+      "code": "EDU-034",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "curriculum_reference",
+          "label": "templates.catalogue.curriculum_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "resource_alignment",
+          "label": "templates.catalogue.resource_alignment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessibility_notes",
+          "label": "templates.catalogue.accessibility_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_school_quality_assurance_report",
+      "name": "templates.edu_school_quality_assurance_report.name",
+      "title": "School quality assurance report",
+      "code": "EDU-035",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "inspection_evidence",
+          "label": "templates.catalogue.inspection_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_priorities",
+          "label": "templates.catalogue.improvement_priorities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "action_owners",
+          "label": "templates.catalogue.action_owners",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_school_improvement_plan",
+      "name": "templates.edu_school_improvement_plan.name",
+      "title": "School improvement plan",
+      "code": "EDU-036",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "priority_goals",
+          "label": "templates.catalogue.priority_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "planned_actions",
+          "label": "templates.catalogue.planned_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "progress_measures",
+          "label": "templates.catalogue.progress_measures",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_exam_administration_checklist",
+      "name": "templates.edu_exam_administration_checklist.name",
+      "title": "Exam administration checklist",
+      "code": "EDU-037",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "exam_materials",
+          "label": "templates.catalogue.exam_materials",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_invigilators",
+          "label": "templates.catalogue.authorized_invigilators",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_arrangements",
+          "label": "templates.catalogue.access_arrangements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "edu_certificate_issuance_record",
+      "name": "templates.edu_certificate_issuance_record.name",
+      "title": "Certificate issuance record",
+      "code": "EDU-038",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_edu",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_achievement",
+          "label": "templates.catalogue.verified_achievement",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "certificate_reference",
+          "label": "templates.catalogue.certificate_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issuing_authority",
+          "label": "templates.catalogue.issuing_authority",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

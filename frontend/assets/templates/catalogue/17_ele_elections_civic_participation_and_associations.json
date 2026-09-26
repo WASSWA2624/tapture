@@ -1,0 +1,1370 @@
+{
+  "category": "ELE",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "ele_election_administrative_planning",
+      "name": "templates.ele_election_administrative_planning.name",
+      "title": "Election administrative planning",
+      "code": "ELE-001",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "official_rules_source",
+          "label": "templates.catalogue.official_rules_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "key_dates",
+          "label": "templates.catalogue.key_dates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "responsible_officers",
+          "label": "templates.catalogue.responsible_officers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_polling_venue_inventory",
+      "name": "templates.ele_polling_venue_inventory.name",
+      "title": "Polling venue inventory",
+      "code": "ELE-002",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "venue_identifier",
+          "label": "templates.catalogue.venue_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_capacity",
+          "label": "templates.catalogue.verified_capacity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_capacity_unit",
+          "label": "templates.catalogue.verified_capacity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessibility_features",
+          "label": "templates.catalogue.accessibility_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_polling_venue_readiness_inspection",
+      "name": "templates.ele_polling_venue_readiness_inspection.name",
+      "title": "Polling venue readiness inspection",
+      "code": "ELE-003",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "official_checklist",
+          "label": "templates.catalogue.official_checklist",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_conditions",
+          "label": "templates.catalogue.observed_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "open_issues",
+          "label": "templates.catalogue.open_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_election_materials_inventory",
+      "name": "templates.ele_election_materials_inventory.name",
+      "title": "Election materials inventory",
+      "code": "ELE-004",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "material_type",
+          "label": "templates.catalogue.material_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_quantity",
+          "label": "templates.catalogue.authorized_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_quantity_unit",
+          "label": "templates.catalogue.authorized_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_location",
+          "label": "templates.catalogue.storage_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_election_materials_dispatch",
+      "name": "templates.ele_election_materials_dispatch.name",
+      "title": "Election materials dispatch",
+      "code": "ELE-005",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_destination",
+          "label": "templates.catalogue.authorized_destination",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sealed_package_refs",
+          "label": "templates.catalogue.sealed_package_refs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "handover_confirmation",
+          "label": "templates.catalogue.handover_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_election_materials_return",
+      "name": "templates.ele_election_materials_return.name",
+      "title": "Election materials return",
+      "code": "ELE-006",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "issued_package_refs",
+          "label": "templates.catalogue.issued_package_refs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "returned_counts",
+          "label": "templates.catalogue.returned_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reconciliation",
+          "label": "templates.catalogue.reconciliation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_polling_staff_training_record",
+      "name": "templates.ele_polling_staff_training_record.name",
+      "title": "Polling staff training record",
+      "code": "ELE-007",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "official_training_version",
+          "label": "templates.catalogue.official_training_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "role_authorization",
+          "label": "templates.catalogue.role_authorization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_election_observer_accreditation_intake",
+      "name": "templates.ele_election_observer_accreditation_intake.name",
+      "title": "Election observer accreditation intake",
+      "code": "ELE-008",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "organization_reference",
+          "label": "templates.catalogue.organization_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "official_criteria",
+          "label": "templates.catalogue.official_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_documents",
+          "label": "templates.catalogue.verified_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_election_observer_assignment",
+      "name": "templates.ele_election_observer_assignment.name",
+      "title": "Election observer assignment",
+      "code": "ELE-009",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_scope",
+          "label": "templates.catalogue.authorized_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_location",
+          "label": "templates.catalogue.assigned_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "conduct_requirements",
+          "label": "templates.catalogue.conduct_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_nonpartisan_election_observation",
+      "name": "templates.ele_nonpartisan_election_observation.name",
+      "title": "Nonpartisan election observation",
+      "code": "ELE-010",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "official_observation_criteria",
+          "label": "templates.catalogue.official_observation_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "firsthand_facts",
+          "label": "templates.catalogue.firsthand_facts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evidence",
+          "label": "templates.catalogue.evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_polling_accessibility_feedback",
+      "name": "templates.ele_polling_accessibility_feedback.name",
+      "title": "Polling accessibility feedback",
+      "code": "ELE-011",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "voluntary_experience",
+          "label": "templates.catalogue.voluntary_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_barriers",
+          "label": "templates.catalogue.observed_barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "location_scope",
+          "label": "templates.catalogue.location_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_official_results_form_capture",
+      "name": "templates.ele_official_results_form_capture.name",
+      "title": "Official results form capture",
+      "code": "ELE-012",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "source_form",
+          "label": "templates.catalogue.source_form",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_totals",
+          "label": "templates.catalogue.reported_totals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "double_verification",
+          "label": "templates.catalogue.double_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_election_results_transcription_review",
+      "name": "templates.ele_election_results_transcription_review.name",
+      "title": "Election results transcription review",
+      "code": "ELE-013",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "official_source",
+          "label": "templates.catalogue.official_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transcribed_values",
+          "label": "templates.catalogue.transcribed_values",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "independent_confirmation",
+          "label": "templates.catalogue.independent_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_election_administrative_incident",
+      "name": "templates.ele_election_administrative_incident.name",
+      "title": "Election administrative incident",
+      "code": "ELE-014",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "factual_event",
+          "label": "templates.catalogue.factual_event",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_reporter",
+          "label": "templates.catalogue.authorized_reporter",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_route",
+          "label": "templates.catalogue.review_route",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_election_complaint_administration",
+      "name": "templates.ele_election_complaint_administration.name",
+      "title": "Election complaint administration",
+      "code": "ELE-015",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "complaint_details",
+          "label": "templates.catalogue.complaint_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "supporting_evidence",
+          "label": "templates.catalogue.supporting_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_process",
+          "label": "templates.catalogue.authorized_process",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_ballot_material_custody_record",
+      "name": "templates.ele_ballot_material_custody_record.name",
+      "title": "Ballot material custody record",
+      "code": "ELE-016",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "sealed_container",
+          "label": "templates.catalogue.sealed_container",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_transfer",
+          "label": "templates.catalogue.authorized_transfer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custody_confirmation",
+          "label": "templates.catalogue.custody_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_election_administrative_reconciliation",
+      "name": "templates.ele_election_administrative_reconciliation.name",
+      "title": "Election administrative reconciliation",
+      "code": "ELE-017",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "official_material_counts",
+          "label": "templates.catalogue.official_material_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_records",
+          "label": "templates.catalogue.verified_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "exceptions",
+          "label": "templates.catalogue.exceptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_public_candidate_forum_logistics",
+      "name": "templates.ele_public_candidate_forum_logistics.name",
+      "title": "Public candidate forum logistics",
+      "code": "ELE-018",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "published_participation_rules",
+          "label": "templates.catalogue.published_participation_rules",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "venue",
+          "label": "templates.catalogue.venue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessible_format",
+          "label": "templates.catalogue.accessible_format",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_civic_education_event_plan",
+      "name": "templates.ele_civic_education_event_plan.name",
+      "title": "Civic education event plan",
+      "code": "ELE-019",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "nonpartisan_content",
+          "label": "templates.catalogue.nonpartisan_content",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "official_sources",
+          "label": "templates.catalogue.official_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "audience_access",
+          "label": "templates.catalogue.audience_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_civic_education_attendance_totals",
+      "name": "templates.ele_civic_education_attendance_totals.name",
+      "title": "Civic education attendance totals",
+      "code": "ELE-020",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "event_reference",
+          "label": "templates.catalogue.event_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "nonidentifying_count",
+          "label": "templates.catalogue.nonidentifying_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "count_method",
+          "label": "templates.catalogue.count_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_civic_education_feedback",
+      "name": "templates.ele_civic_education_feedback.name",
+      "title": "Civic education feedback",
+      "code": "ELE-021",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "content_comprehension",
+          "label": "templates.catalogue.content_comprehension",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessibility",
+          "label": "templates.catalogue.accessibility",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "voluntary_suggestions",
+          "label": "templates.catalogue.voluntary_suggestions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_public_petition_intake",
+      "name": "templates.ele_public_petition_intake.name",
+      "title": "Public petition intake",
+      "code": "ELE-022",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "petition_subject",
+          "label": "templates.catalogue.petition_subject",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "submission_scope",
+          "label": "templates.catalogue.submission_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "privacy_notice",
+          "label": "templates.catalogue.privacy_notice",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_community_consultation_response",
+      "name": "templates.ele_community_consultation_response.name",
+      "title": "Community consultation response",
+      "code": "ELE-023",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "consultation_question",
+          "label": "templates.catalogue.consultation_question",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "voluntary_response",
+          "label": "templates.catalogue.voluntary_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "publication_choice",
+          "label": "templates.catalogue.publication_choice",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_participatory_budgeting_proposal",
+      "name": "templates.ele_participatory_budgeting_proposal.name",
+      "title": "Participatory budgeting proposal",
+      "code": "ELE-024",
+      "kind": "proposal",
+      "pack": "PROPOSAL",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "proposal_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_proposal"
+      ],
+      "fields": [
+        {
+          "field_key": "community_need",
+          "label": "templates.catalogue.community_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "project_scope",
+          "label": "templates.catalogue.project_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cost_evidence",
+          "label": "templates.catalogue.cost_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_participatory_budgeting_evaluation",
+      "name": "templates.ele_participatory_budgeting_evaluation.name",
+      "title": "Participatory budgeting evaluation",
+      "code": "ELE-025",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "published_criteria",
+          "label": "templates.catalogue.published_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposal_evidence",
+          "label": "templates.catalogue.proposal_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transparent_scoring",
+          "label": "templates.catalogue.transparent_scoring",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_association_election_nomination",
+      "name": "templates.ele_association_election_nomination.name",
+      "title": "Association election nomination",
+      "code": "ELE-026",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "role",
+          "label": "templates.catalogue.role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "eligibility_evidence",
+          "label": "templates.catalogue.eligibility_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "nominee_consent",
+          "label": "templates.catalogue.nominee_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_association_election_meeting_record",
+      "name": "templates.ele_association_election_meeting_record.name",
+      "title": "Association election meeting record",
+      "code": "ELE-027",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "association_rules",
+          "label": "templates.catalogue.association_rules",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_proceedings",
+          "label": "templates.catalogue.verified_proceedings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_result",
+          "label": "templates.catalogue.authorized_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ele_election_administration_after_action_report",
+      "name": "templates.ele_election_administration_after_action_report.name",
+      "title": "Election administration after-action report",
+      "code": "ELE-028",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ele",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_observations",
+          "label": "templates.catalogue.verified_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "process_gaps",
+          "label": "templates.catalogue.process_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

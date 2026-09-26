@@ -2,15 +2,18 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/template_assets.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
+import '../domain/shipped_template_entry.dart';
 import '../domain/template_repository.dart';
 import 'template_repository_impl.dart' show templateRepositoryProvider;
 
-/// Reads `assets/templates/`, validates each asset, and copies one into a
+/// Reads `assets/templates/` and the full catalogue under
+/// `assets/templates/catalogue/`, validates each asset, and copies one into a
 /// project as a version-1 [TemplateDef]. The packed JSON is never written.
 abstract interface class ShippedTemplateLoader {
   /// Production loader. [readAsset] is for tests that must not open
@@ -20,8 +23,18 @@ abstract interface class ShippedTemplateLoader {
     Future<String> Function(String path)? readAsset,
   }) = _AssetShippedTemplateLoader;
 
-  /// Every shipped template, groups resolved, labels still localisation keys.
+  /// The starter templates of §13.4, groups resolved, labels still
+  /// localisation keys.
   Future<Result<List<TemplateDef>>> library();
+
+  /// Every shipped template as a light row: the starter templates in §13.4
+  /// order, then the full catalogue in catalogue order. Fields stay
+  /// unresolved until [template] is asked for one.
+  Future<Result<List<ShippedTemplateEntry>>> entries();
+
+  /// One shipped template, starter or catalogue, with its groups resolved
+  /// and labels still localisation keys.
+  Future<Result<TemplateDef>> template(String templateKey);
 
   /// Writes an editable copy of [templateKey] onto [projectId] at version 1.
   Future<Result<TemplateDef>> copyToProject({
@@ -50,6 +63,12 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
   final TemplateRepository _templates;
   final Future<String> Function(String path) _read;
 
+  /// The catalogue index, built once off the UI thread and kept (FE-PERF-02).
+  Future<_Catalogue>? _catalogue;
+
+  /// Every field group, the four of §13.3 and the catalogue's, once read.
+  Future<Map<String, _Group>>? _allGroups;
+
   @override
   Future<Result<List<TemplateDef>>> library() async {
     try {
@@ -66,6 +85,29 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
         ),
       );
     }
+  }
+
+  @override
+  Future<Result<List<ShippedTemplateEntry>>> entries() async {
+    final Result<List<TemplateDef>> starters = await library();
+    switch (starters) {
+      case FailureResult<List<TemplateDef>>(:final Failure failure):
+        return FailureResult<List<ShippedTemplateEntry>>(failure);
+      case Success<List<TemplateDef>>(:final List<TemplateDef> value):
+        return _guard(() async {
+          final _Catalogue catalogue = await _catalogueIndex();
+          return <ShippedTemplateEntry>[
+            for (final TemplateDef template in value)
+              ShippedTemplateEntry.starter(template),
+            ...catalogue.entries,
+          ];
+        });
+    }
+  }
+
+  @override
+  Future<Result<TemplateDef>> template(String templateKey) {
+    return _guard(() => _resolve(templateKey));
   }
 
   @override
@@ -91,27 +133,117 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
         ),
       );
     }
-    final Result<List<TemplateDef>> loaded = await library();
+    final Result<TemplateDef> loaded = await template(templateKey);
     switch (loaded) {
-      case FailureResult<List<TemplateDef>>(:final Failure failure):
+      case FailureResult<TemplateDef>(:final Failure failure):
         return FailureResult<TemplateDef>(failure);
-      case Success<List<TemplateDef>>(:final List<TemplateDef> value):
-        TemplateDef? source;
-        for (final TemplateDef row in value) {
-          if (row.templateKey == templateKey) {
-            source = row;
-            break;
-          }
-        }
-        if (source == null) {
-          return const FailureResult<TemplateDef>(
-            ValidationFailure(
-              message: 'That shipped template is not on this device.',
-              recoveryAction: 'Pick another template from the library.',
-            ),
-          );
-        }
-        return _templates.save(_projectCopy(source, projectId, trimmed));
+      case Success<TemplateDef>(:final TemplateDef value):
+        return _templates.save(_projectCopy(value, projectId, trimmed));
+    }
+  }
+
+  /// Runs [load], turning what it throws into the same failures [library]
+  /// returns.
+  Future<Result<T>> _guard<T>(Future<T> Function() load) async {
+    try {
+      return Success<T>(await load());
+    } on Failure catch (failure) {
+      return FailureResult<T>(failure);
+    } on FormatException {
+      return FailureResult<T>(_corrupt);
+    } on Object catch (error) {
+      return FailureResult<T>(
+        StorageFailure(
+          message: 'The shipped templates could not be read.',
+          recoveryAction: Failure.from(error).recoveryAction ?? 'Try again.',
+        ),
+      );
+    }
+  }
+
+  /// [templateKey] resolved: a starter template from its own asset, a
+  /// catalogue template from its category's asset.
+  Future<TemplateDef> _resolve(String templateKey) async {
+    for (final TemplateDef starter in await _loadLibrary()) {
+      if (starter.templateKey == templateKey) {
+        return starter;
+      }
+    }
+    final _Catalogue catalogue = await _catalogueIndex();
+    final String? path = catalogue.assetOf[templateKey];
+    final Map<String, Object?>? asset = path == null
+        ? null
+        : _templateIn(_object(jsonDecode(await _read(path))), templateKey);
+    if (asset == null) {
+      throw const ValidationFailure(
+        message: 'That shipped template is not on this device.',
+        recoveryAction: 'Pick another template from the library.',
+      );
+    }
+    final _Schema schema = await _schema();
+    _assertAsset(asset, schema);
+    return _toDef(
+      asset,
+      await _groupsWithCatalogue(schema),
+      <String, Map<String, Object?>>{templateKey: asset},
+      schema,
+    );
+  }
+
+  /// The catalogue index, read once. A failed read is not kept, so the next
+  /// call tries again.
+  Future<_Catalogue> _catalogueIndex() async {
+    final Future<_Catalogue> pending = _catalogue ??= _loadCatalogue();
+    try {
+      return await pending;
+    } on Object {
+      _catalogue = null;
+      rethrow;
+    }
+  }
+
+  Future<_Catalogue> _loadCatalogue() async {
+    final String index = await _read(TemplateAssets.catalogueIndex);
+    final List<String> paths = <String>[
+      for (final Map<String, Object?> category in _objects(
+        _object(jsonDecode(index))['categories'],
+      ))
+        _string(category['asset']),
+    ];
+    final List<String> files = await Future.wait(<Future<String>>[
+      for (final String path in paths) _read(path),
+    ]);
+    final Result<_Catalogue> built =
+        await runIsolate<_CatalogueSource, _Catalogue>(_indexCatalogue, (
+          index: index,
+          groups: <String>[
+            await _read(TemplateAssets.groups),
+            await _read(TemplateAssets.catalogueGroups),
+          ],
+          paths: paths,
+          files: files,
+        ));
+    return switch (built) {
+      Success<_Catalogue>(:final _Catalogue value) => value,
+      FailureResult<_Catalogue>(:final Failure failure) => throw Failure.from(
+        failure,
+      ),
+    };
+  }
+
+  /// The four groups of §13.3 and the catalogue's, read once.
+  Future<Map<String, _Group>> _groupsWithCatalogue(_Schema schema) async {
+    final Future<Map<String, _Group>> pending = _allGroups ??= () async {
+      return <String, _Group>{
+        ...await _groups(schema),
+        ...await _groupsAt(TemplateAssets.catalogueGroups, schema),
+      };
+    }();
+    try {
+      return await pending;
+    } on Object {
+      _allGroups = null;
+      rethrow;
     }
   }
 
@@ -148,10 +280,12 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
     );
   }
 
-  Future<Map<String, _Group>> _groups(_Schema schema) async {
-    final Map<String, Object?> root = _object(
-      jsonDecode(await _read(TemplateAssets.groups)),
-    );
+  Future<Map<String, _Group>> _groups(_Schema schema) {
+    return _groupsAt(TemplateAssets.groups, schema);
+  }
+
+  Future<Map<String, _Group>> _groupsAt(String path, _Schema schema) async {
+    final Map<String, Object?> root = _object(jsonDecode(await _read(path)));
     if (root.isEmpty) {
       throw const CorruptionFailure(
         message: 'The inherited field groups could not be read.',
@@ -327,6 +461,9 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
       options: _optionsOf(raw['options']),
       group: _optional(raw['group']),
       requiredWhen: _optional(raw['required_when']),
+      stickable: raw['stickable'] == true,
+      refine: raw['refine'] == true,
+      autoFill: _autoFillOf(_string(raw['auto_fill'])),
       identity: false,
     );
   }
@@ -432,6 +569,20 @@ Requiredness _requirednessOf(String raw) {
   };
 }
 
+AutoFill? _autoFillOf(String raw) {
+  return switch (raw) {
+    'now' => AutoFill.now,
+    'today' => AutoFill.today,
+    'time' => AutoFill.time,
+    'sequence' => AutoFill.sequence,
+    'operator' => AutoFill.operator,
+    'device' => AutoFill.device,
+    'gps' => AutoFill.gps,
+    'context' => AutoFill.context,
+    _ => null,
+  };
+}
+
 InputMode? _modeOf(String raw) {
   return switch (raw) {
     'any' => InputMode.any,
@@ -498,6 +649,132 @@ typedef _Schema = ({
 });
 
 typedef _Group = ({InputMode mode, List<FieldDef> fields});
+
+/// The template keyed [templateKey] in one catalogue category asset.
+Map<String, Object?>? _templateIn(
+  Map<String, Object?> category,
+  String templateKey,
+) {
+  for (final Map<String, Object?> candidate in _objects(
+    category['templates'],
+  )) {
+    if (candidate['template_key'] == templateKey) {
+      return candidate;
+    }
+  }
+  return null;
+}
+
+/// What the isolate indexes: the index, the group files, and each category
+/// asset beside its path.
+typedef _CatalogueSource = ({
+  String index,
+  List<String> groups,
+  List<String> paths,
+  List<String> files,
+});
+
+/// The catalogue as the library lists it, and where each template lives.
+typedef _Catalogue = ({
+  List<ShippedTemplateEntry> entries,
+  Map<String, String> assetOf,
+});
+
+/// Builds the catalogue index off the UI thread (FE-PERF-02). Counts each
+/// template's resolved fields from group keys, without building a field.
+_Catalogue _indexCatalogue(_CatalogueSource source) {
+  final Map<String, Object?> index = _object(jsonDecode(source.index));
+  final Map<String, Set<String>> groupKeys = <String, Set<String>>{
+    for (final String text in source.groups)
+      for (final MapEntry<String, Object?> group in _object(
+        jsonDecode(text),
+      ).entries)
+        group.key: <String>{
+          for (final Map<String, Object?> field in _objects(
+            _object(group.value)['fields'],
+          ))
+            _string(field['field_key']),
+        },
+  };
+  final Map<String, ShippedRecordType> types = <String, ShippedRecordType>{
+    for (final Map<String, Object?> pack in _objects(index['packs']))
+      _string(pack['code']): ShippedRecordType(
+        code: _string(pack['code']),
+        title: _string(pack['title']),
+        kind: _string(pack['kind']),
+        capture: _string(pack['capture']),
+        aiAssistance: _string(pack['ai_assistance']),
+        outputs: _string(pack['outputs']),
+        review: _string(pack['review']),
+      ),
+  };
+  final Map<String, String> supergroups = <String, String>{
+    for (final Map<String, Object?> supergroup in _objects(
+      index['supergroups'],
+    ))
+      _string(supergroup['code']): _string(supergroup['title']),
+  };
+  final List<Map<String, Object?>> categories = _objects(index['categories']);
+  if (categories.length != source.files.length) {
+    throw const CorruptionFailure(
+      message: 'A shipped template could not be read.',
+    );
+  }
+  final List<ShippedTemplateEntry> entries = <ShippedTemplateEntry>[];
+  final Map<String, String> assetOf = <String, String>{};
+  for (int at = 0; at < categories.length; at++) {
+    final String supergroup = _string(categories[at]['supergroup']);
+    final ShippedCatalogueCategory category = ShippedCatalogueCategory(
+      code: _string(categories[at]['code']),
+      title: _string(categories[at]['title']),
+      supergroupCode: supergroup,
+      supergroupTitle: supergroups[supergroup] ?? '',
+    );
+    for (final Map<String, Object?> template in _objects(
+      _object(jsonDecode(source.files[at]))['templates'],
+    )) {
+      final String key = _string(template['template_key']);
+      if (!_snake.hasMatch(key) || assetOf.containsKey(key)) {
+        throw const ValidationFailure(
+          message: 'A shipped template has an invalid key.',
+          recoveryAction: 'Reinstall the app, then try again.',
+        );
+      }
+      final List<String> own = <String>[
+        for (final Map<String, Object?> field in _objects(template['fields']))
+          _string(field['field_key']),
+      ];
+      final Set<String> resolved = <String>{};
+      for (final String group in _strings(template['inherits_groups'])) {
+        final Set<String>? keys = groupKeys[group];
+        if (keys == null) {
+          throw const ValidationFailure(
+            message: 'A shipped template names an unknown field group.',
+            recoveryAction: 'Reinstall the app, then try again.',
+          );
+        }
+        resolved.addAll(keys);
+      }
+      resolved.addAll(own);
+      entries.add(
+        ShippedTemplateEntry(
+          templateKey: key,
+          kind: _string(template['kind']),
+          fieldCount: resolved.length,
+          title: _string(template['title']),
+          code: _string(template['code']),
+          category: category,
+          recordType: types[_string(template['pack'])],
+          privacy: _string(template['privacy']),
+          rollout: _string(template['rollout']),
+          fieldKeys: own,
+        ),
+      );
+      assetOf[key] = source.paths[at];
+    }
+  }
+  return (entries: entries, assetOf: assetOf);
+}
 
 final RegExp _snake = RegExp(r'^[a-z][a-z0-9]*(_[a-z0-9]+)*$');
 

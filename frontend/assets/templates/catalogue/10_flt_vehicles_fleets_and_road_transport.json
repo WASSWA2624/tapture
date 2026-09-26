@@ -1,0 +1,1697 @@
+{
+  "category": "FLT",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_master_inventory",
+      "name": "templates.flt_vehicle_master_inventory.name",
+      "title": "Vehicle master inventory",
+      "code": "FLT-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "registration_number",
+          "label": "templates.catalogue.registration_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "vehicle_identification_number",
+          "label": "templates.catalogue.vehicle_identification_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "make",
+          "label": "templates.catalogue.make",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "model",
+          "label": "templates.catalogue.model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_document_register",
+      "name": "templates.flt_vehicle_document_register.name",
+      "title": "Vehicle document register",
+      "code": "FLT-002",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "document_type",
+          "label": "templates.catalogue.document_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "document_reference",
+          "label": "templates.catalogue.document_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expiry_date",
+          "label": "templates.catalogue.expiry_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_acquisition_inspection",
+      "name": "templates.flt_vehicle_acquisition_inspection.name",
+      "title": "Vehicle acquisition inspection",
+      "code": "FLT-003",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_condition",
+          "label": "templates.catalogue.vehicle_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "odometer_km",
+          "label": "templates.catalogue.odometer_km",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_documents",
+          "label": "templates.catalogue.supporting_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_driver_registration",
+      "name": "templates.flt_driver_registration.name",
+      "title": "Driver registration",
+      "code": "FLT-004",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "driver_identifier",
+          "label": "templates.catalogue.driver_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorization_evidence",
+          "label": "templates.catalogue.authorization_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_preferences",
+          "label": "templates.catalogue.contact_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_driver_license_verification",
+      "name": "templates.flt_driver_license_verification.name",
+      "title": "Driver license verification",
+      "code": "FLT-005",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "license_reference",
+          "label": "templates.catalogue.license_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "permitted_classes",
+          "label": "templates.catalogue.permitted_classes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_date",
+          "label": "templates.catalogue.verification_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_daily_pre_trip_inspection",
+      "name": "templates.flt_vehicle_daily_pre_trip_inspection.name",
+      "title": "Vehicle daily pre-trip inspection",
+      "code": "FLT-006",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_checklist",
+          "label": "templates.catalogue.approved_checklist",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "odometer_km",
+          "label": "templates.catalogue.odometer_km",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "defect_restrictions",
+          "label": "templates.catalogue.defect_restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_trip_authorization",
+      "name": "templates.flt_vehicle_trip_authorization.name",
+      "title": "Vehicle trip authorization",
+      "code": "FLT-007",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "trip_purpose",
+          "label": "templates.catalogue.trip_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "route",
+          "label": "templates.catalogue.route",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_driver",
+          "label": "templates.catalogue.assigned_driver",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_journey_log",
+      "name": "templates.flt_vehicle_journey_log.name",
+      "title": "Vehicle journey log",
+      "code": "FLT-008",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "origin",
+          "label": "templates.catalogue.origin",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "destination",
+          "label": "templates.catalogue.destination",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "departure_at",
+          "label": "templates.catalogue.departure_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "arrival_at",
+          "label": "templates.catalogue.arrival_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_mileage_log",
+      "name": "templates.flt_vehicle_mileage_log.name",
+      "title": "Vehicle mileage log",
+      "code": "FLT-009",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "opening_odometer_km",
+          "label": "templates.catalogue.opening_odometer_km",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "closing_odometer_km",
+          "label": "templates.catalogue.closing_odometer_km",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "trip_reference",
+          "label": "templates.catalogue.trip_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_fleet_fuel_issue_voucher",
+      "name": "templates.flt_fleet_fuel_issue_voucher.name",
+      "title": "Fleet fuel issue voucher",
+      "code": "FLT-010",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_reference",
+          "label": "templates.catalogue.vehicle_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "fuel_quantity",
+          "label": "templates.catalogue.fuel_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "fuel_quantity_unit",
+          "label": "templates.catalogue.fuel_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "odometer_km",
+          "label": "templates.catalogue.odometer_km",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_fleet_fuel_consumption_review",
+      "name": "templates.flt_fleet_fuel_consumption_review.name",
+      "title": "Fleet fuel consumption review",
+      "code": "FLT-011",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "distance_traveled_km",
+          "label": "templates.catalogue.distance_traveled_km",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "fuel_used",
+          "label": "templates.catalogue.fuel_used",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "comparison_assumptions",
+          "label": "templates.catalogue.comparison_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_maintenance_request",
+      "name": "templates.flt_vehicle_maintenance_request.name",
+      "title": "Vehicle maintenance request",
+      "code": "FLT-012",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_symptoms",
+          "label": "templates.catalogue.reported_symptoms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "odometer_km",
+          "label": "templates.catalogue.odometer_km",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_urgency",
+          "label": "templates.catalogue.service_urgency",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "emergency",
+              "label": "templates.choices.priority.emergency"
+            },
+            {
+              "code": "high",
+              "label": "templates.choices.priority.high"
+            },
+            {
+              "code": "medium",
+              "label": "templates.choices.priority.medium"
+            },
+            {
+              "code": "low",
+              "label": "templates.choices.priority.low"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_scheduled_service",
+      "name": "templates.flt_vehicle_scheduled_service.name",
+      "title": "Vehicle scheduled service",
+      "code": "FLT-013",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "service_interval",
+          "label": "templates.catalogue.service_interval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_tasks",
+          "label": "templates.catalogue.completed_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_breakdown_report",
+      "name": "templates.flt_vehicle_breakdown_report.name",
+      "title": "Vehicle breakdown report",
+      "code": "FLT-014",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "breakdown_location",
+          "label": "templates.catalogue.breakdown_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_symptoms",
+          "label": "templates.catalogue.observed_symptoms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assistance_requested",
+          "label": "templates.catalogue.assistance_requested",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_roadside_assistance_record",
+      "name": "templates.flt_roadside_assistance_record.name",
+      "title": "Roadside assistance record",
+      "code": "FLT-015",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_reference",
+          "label": "templates.catalogue.vehicle_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assistance_details",
+          "label": "templates.catalogue.assistance_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "resolution",
+          "label": "templates.catalogue.resolution",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_repair_estimate",
+      "name": "templates.flt_vehicle_repair_estimate.name",
+      "title": "Vehicle repair estimate",
+      "code": "FLT-016",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "diagnosed_issue",
+          "label": "templates.catalogue.diagnosed_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_work",
+          "label": "templates.catalogue.proposed_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "parts_used",
+          "label": "templates.catalogue.parts_used",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "labour_hours",
+          "label": "templates.catalogue.labour_hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_repair_quality_check",
+      "name": "templates.flt_vehicle_repair_quality_check.name",
+      "title": "Vehicle repair quality check",
+      "code": "FLT-017",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_repair_scope",
+          "label": "templates.catalogue.approved_repair_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_test",
+          "label": "templates.catalogue.verification_test",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "release_authorization",
+          "label": "templates.catalogue.release_authorization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_tire_register",
+      "name": "templates.flt_vehicle_tire_register.name",
+      "title": "Vehicle tire register",
+      "code": "FLT-018",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "tire_identifier",
+          "label": "templates.catalogue.tire_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "fitment_position",
+          "label": "templates.catalogue.fitment_position",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_history",
+          "label": "templates.catalogue.service_history",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_tire_inspection_and_pressure_log",
+      "name": "templates.flt_tire_inspection_and_pressure_log.name",
+      "title": "Tire inspection and pressure log",
+      "code": "FLT-019",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "tire_position",
+          "label": "templates.catalogue.tire_position",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_pressure",
+          "label": "templates.catalogue.observed_pressure",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "tread_measurement",
+          "label": "templates.catalogue.tread_measurement",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_battery_replacement_record",
+      "name": "templates.flt_vehicle_battery_replacement_record.name",
+      "title": "Vehicle battery replacement record",
+      "code": "FLT-020",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "old_battery_ref",
+          "label": "templates.catalogue.old_battery_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "new_battery_ref",
+          "label": "templates.catalogue.new_battery_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "installation_date",
+          "label": "templates.catalogue.installation_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_road_traffic_incident_record",
+      "name": "templates.flt_road_traffic_incident_record.name",
+      "title": "Road traffic incident record",
+      "code": "FLT-021",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "factual_observations",
+          "label": "templates.catalogue.factual_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_driver_incident_statement",
+      "name": "templates.flt_driver_incident_statement.name",
+      "title": "Driver incident statement",
+      "code": "FLT-022",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "firsthand_account",
+          "label": "templates.catalogue.firsthand_account",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "supporting_evidence",
+          "label": "templates.catalogue.supporting_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "statement_confirmation",
+          "label": "templates.catalogue.statement_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_handover_checklist",
+      "name": "templates.flt_vehicle_handover_checklist.name",
+      "title": "Vehicle handover checklist",
+      "code": "FLT-023",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_condition",
+          "label": "templates.catalogue.vehicle_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "included_items",
+          "label": "templates.catalogue.included_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient_acknowledgement",
+          "label": "templates.catalogue.recipient_acknowledgement",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_return_checklist",
+      "name": "templates.flt_vehicle_return_checklist.name",
+      "title": "Vehicle return checklist",
+      "code": "FLT-024",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "return_odometer_km",
+          "label": "templates.catalogue.return_odometer_km",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition_changes",
+          "label": "templates.catalogue.condition_changes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outstanding_issues",
+          "label": "templates.catalogue.outstanding_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_passenger_trip_manifest",
+      "name": "templates.flt_passenger_trip_manifest.name",
+      "title": "Passenger trip manifest",
+      "code": "FLT-025",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "trip_reference",
+          "label": "templates.catalogue.trip_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_passenger_details",
+          "label": "templates.catalogue.minimum_passenger_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "access_controls",
+          "label": "templates.catalogue.access_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_school_bus_route_inspection",
+      "name": "templates.flt_school_bus_route_inspection.name",
+      "title": "School bus route inspection",
+      "code": "FLT-026",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "route_conditions",
+          "label": "templates.catalogue.route_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pickup_safety",
+          "label": "templates.catalogue.pickup_safety",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_review",
+          "label": "templates.catalogue.authorized_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_public_transport_schedule",
+      "name": "templates.flt_public_transport_schedule.name",
+      "title": "Public transport schedule",
+      "code": "FLT-027",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "routes",
+          "label": "templates.catalogue.routes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "departure_slots",
+          "label": "templates.catalogue.departure_slots",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_vehicles",
+          "label": "templates.catalogue.assigned_vehicles",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_utilization_report",
+      "name": "templates.flt_vehicle_utilization_report.name",
+      "title": "Vehicle utilization report",
+      "code": "FLT-028",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "available_days",
+          "label": "templates.catalogue.available_days",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "days",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "active_trips",
+          "label": "templates.catalogue.active_trips",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "idle_reasons",
+          "label": "templates.catalogue.idle_reasons",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_fleet_replacement_assessment",
+      "name": "templates.flt_fleet_replacement_assessment.name",
+      "title": "Fleet replacement assessment",
+      "code": "FLT-029",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "condition",
+          "label": "templates.catalogue.condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_costs",
+          "label": "templates.catalogue.maintenance_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "replacement_assumptions",
+          "label": "templates.catalogue.replacement_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_rental_vehicle_booking",
+      "name": "templates.flt_rental_vehicle_booking.name",
+      "title": "Rental vehicle booking",
+      "code": "FLT-030",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_class",
+          "label": "templates.catalogue.vehicle_class",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "rental_period",
+          "label": "templates.catalogue.rental_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_driver",
+          "label": "templates.catalogue.authorized_driver",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_rental_agreement_brief",
+      "name": "templates.flt_vehicle_rental_agreement_brief.name",
+      "title": "Vehicle rental agreement brief",
+      "code": "FLT-031",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_reference",
+          "label": "templates.catalogue.vehicle_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "rental_terms",
+          "label": "templates.catalogue.rental_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_conditions",
+          "label": "templates.catalogue.return_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_vehicle_wash_and_detailing_record",
+      "name": "templates.flt_vehicle_wash_and_detailing_record.name",
+      "title": "Vehicle wash and detailing record",
+      "code": "FLT-032",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "service_type",
+          "label": "templates.catalogue.service_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_tasks",
+          "label": "templates.catalogue.completed_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition_notes",
+          "label": "templates.catalogue.condition_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_fleet_compliance_evidence_review",
+      "name": "templates.flt_fleet_compliance_evidence_review.name",
+      "title": "Fleet compliance evidence review",
+      "code": "FLT-033",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "applicable_requirements_ref",
+          "label": "templates.catalogue.applicable_requirements_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_documents",
+          "label": "templates.catalogue.verified_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "open_gaps",
+          "label": "templates.catalogue.open_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "flt_transport_contractor_performance",
+      "name": "templates.flt_transport_contractor_performance.name",
+      "title": "Transport contractor performance",
+      "code": "FLT-034",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_flt",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "trip_delivery",
+          "label": "templates.catalogue.trip_delivery",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "incident_records",
+          "label": "templates.catalogue.incident_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "customer_feedback",
+          "label": "templates.catalogue.customer_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

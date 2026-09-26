@@ -1,0 +1,1495 @@
+{
+  "category": "SCI",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "sci_astronomy_observation_log",
+      "name": "templates.sci_astronomy_observation_log.name",
+      "title": "Astronomy observation log",
+      "code": "SCI-001",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "target_identifier",
+          "label": "templates.catalogue.target_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observation_time",
+          "label": "templates.catalogue.observation_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "instrument_configuration",
+          "label": "templates.catalogue.instrument_configuration",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_telescope_asset_inventory",
+      "name": "templates.sci_telescope_asset_inventory.name",
+      "title": "Telescope asset inventory",
+      "code": "SCI-002",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "telescope_model",
+          "label": "templates.catalogue.telescope_model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_location",
+          "label": "templates.catalogue.site_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_telescope_maintenance_record",
+      "name": "templates.sci_telescope_maintenance_record.name",
+      "title": "Telescope maintenance record",
+      "code": "SCI-003",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_service_scope",
+          "label": "templates.catalogue.approved_service_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "instrument_reference",
+          "label": "templates.catalogue.instrument_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification",
+          "label": "templates.catalogue.verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_astronomical_image_catalogue",
+      "name": "templates.sci_astronomical_image_catalogue.name",
+      "title": "Astronomical image catalogue",
+      "code": "SCI-004",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "observation_reference",
+          "label": "templates.catalogue.observation_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "image_metadata",
+          "label": "templates.catalogue.image_metadata",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "calibration_reference",
+          "label": "templates.catalogue.calibration_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_observatory_environmental_log",
+      "name": "templates.sci_observatory_environmental_log.name",
+      "title": "Observatory environmental log",
+      "code": "SCI-005",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "sky_conditions",
+          "label": "templates.catalogue.sky_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "weather_measurements",
+          "label": "templates.catalogue.weather_measurements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observation_quality",
+          "label": "templates.catalogue.observation_quality",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_satellite_data_acquisition_request",
+      "name": "templates.sci_satellite_data_acquisition_request.name",
+      "title": "Satellite data acquisition request",
+      "code": "SCI-006",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "area_of_interest",
+          "label": "templates.catalogue.area_of_interest",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "time_window",
+          "label": "templates.catalogue.time_window",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_usage_rights",
+          "label": "templates.catalogue.data_usage_rights",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_satellite_scene_metadata_review",
+      "name": "templates.sci_satellite_scene_metadata_review.name",
+      "title": "Satellite scene metadata review",
+      "code": "SCI-007",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "scene_identifier",
+          "label": "templates.catalogue.scene_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acquisition_time",
+          "label": "templates.catalogue.acquisition_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_flags",
+          "label": "templates.catalogue.quality_flags",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_remote_sensing_ground_truth_survey",
+      "name": "templates.sci_remote_sensing_ground_truth_survey.name",
+      "title": "Remote sensing ground truth survey",
+      "code": "SCI-008",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "surveyed_feature",
+          "label": "templates.catalogue.surveyed_feature",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "field_geometry",
+          "label": "templates.catalogue.field_geometry",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "Coordinates as WKT or GeoJSON."
+        },
+        {
+          "field_key": "verification_evidence",
+          "label": "templates.catalogue.verification_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_satellite_payload_test_evidence",
+      "name": "templates.sci_satellite_payload_test_evidence.name",
+      "title": "Satellite payload test evidence",
+      "code": "SCI-009",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_test_procedure",
+          "label": "templates.catalogue.approved_test_procedure",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "instrument_response",
+          "label": "templates.catalogue.instrument_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_space_component_traceability",
+      "name": "templates.sci_space_component_traceability.name",
+      "title": "Space component traceability",
+      "code": "SCI-010",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "component_serial",
+          "label": "templates.catalogue.component_serial",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_certification",
+          "label": "templates.catalogue.source_certification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assembly_reference",
+          "label": "templates.catalogue.assembly_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_space_hardware_inspection",
+      "name": "templates.sci_space_hardware_inspection.name",
+      "title": "Space hardware inspection",
+      "code": "SCI-011",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_specification",
+          "label": "templates.catalogue.approved_specification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_disposition",
+          "label": "templates.catalogue.authorized_disposition",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_space_mission_document_register",
+      "name": "templates.sci_space_mission_document_register.name",
+      "title": "Space mission document register",
+      "code": "SCI-012",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "document_type",
+          "label": "templates.catalogue.document_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_revision",
+          "label": "templates.catalogue.approved_revision",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "responsible_authority",
+          "label": "templates.catalogue.responsible_authority",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_space_mission_readiness_evidence",
+      "name": "templates.sci_space_mission_readiness_evidence.name",
+      "title": "Space mission readiness evidence",
+      "code": "SCI-013",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_readiness_criteria",
+          "label": "templates.catalogue.approved_readiness_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_records",
+          "label": "templates.catalogue.verification_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_signoff",
+          "label": "templates.catalogue.qualified_signoff",
+          "type": "signature",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_ground_station_asset_inventory",
+      "name": "templates.sci_ground_station_asset_inventory.name",
+      "title": "Ground station asset inventory",
+      "code": "SCI-014",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "antenna_or_system",
+          "label": "templates.catalogue.antenna_or_system",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_use",
+          "label": "templates.catalogue.authorized_use",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_ground_station_service_log",
+      "name": "templates.sci_ground_station_service_log.name",
+      "title": "Ground station service log",
+      "code": "SCI-015",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "service_interval",
+          "label": "templates.catalogue.service_interval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_operational_observations",
+          "label": "templates.catalogue.approved_operational_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "exceptions",
+          "label": "templates.catalogue.exceptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_satellite_telemetry_anomaly_review",
+      "name": "templates.sci_satellite_telemetry_anomaly_review.name",
+      "title": "Satellite telemetry anomaly review",
+      "code": "SCI-016",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_telemetry",
+          "label": "templates.catalogue.authorized_telemetry",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_anomaly",
+          "label": "templates.catalogue.observed_anomaly",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "engineering_review",
+          "label": "templates.catalogue.engineering_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_space_science_experiment_log",
+      "name": "templates.sci_space_science_experiment_log.name",
+      "title": "Space science experiment log",
+      "code": "SCI-017",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "experiment_reference",
+          "label": "templates.catalogue.experiment_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "conditions",
+          "label": "templates.catalogue.conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_observations",
+          "label": "templates.catalogue.verified_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_meteorological_station_register",
+      "name": "templates.sci_meteorological_station_register.name",
+      "title": "Meteorological station register",
+      "code": "SCI-018",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "station_identifier",
+          "label": "templates.catalogue.station_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "instrument_set",
+          "label": "templates.catalogue.instrument_set",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_metadata",
+          "label": "templates.catalogue.site_metadata",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_meteorological_instrument_calibration",
+      "name": "templates.sci_meteorological_instrument_calibration.name",
+      "title": "Meteorological instrument calibration",
+      "code": "SCI-019",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "reference_instrument",
+          "label": "templates.catalogue.reference_instrument",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_method",
+          "label": "templates.catalogue.test_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_weather_observation_record",
+      "name": "templates.sci_weather_observation_record.name",
+      "title": "Weather observation record",
+      "code": "SCI-020",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "observation_time",
+          "label": "templates.catalogue.observation_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_parameters",
+          "label": "templates.catalogue.measured_parameters",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_flags",
+          "label": "templates.catalogue.quality_flags",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_seismic_sensor_deployment",
+      "name": "templates.sci_seismic_sensor_deployment.name",
+      "title": "Seismic sensor deployment",
+      "code": "SCI-021",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "sensor_identifier",
+          "label": "templates.catalogue.sensor_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "location",
+          "label": "templates.catalogue.location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "installation_metadata",
+          "label": "templates.catalogue.installation_metadata",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_seismic_instrument_maintenance",
+      "name": "templates.sci_seismic_instrument_maintenance.name",
+      "title": "Seismic instrument maintenance",
+      "code": "SCI-022",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "sensor_reference",
+          "label": "templates.catalogue.sensor_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_tasks",
+          "label": "templates.catalogue.approved_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification",
+          "label": "templates.catalogue.verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_geophysical_survey_field_log",
+      "name": "templates.sci_geophysical_survey_field_log.name",
+      "title": "Geophysical survey field log",
+      "code": "SCI-023",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "survey_method",
+          "label": "templates.catalogue.survey_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_locations",
+          "label": "templates.catalogue.measurement_locations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "instrument_configuration",
+          "label": "templates.catalogue.instrument_configuration",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_hydrological_gauging_record",
+      "name": "templates.sci_hydrological_gauging_record.name",
+      "title": "Hydrological gauging record",
+      "code": "SCI-024",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "gauge_reference",
+          "label": "templates.catalogue.gauge_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "water_level",
+          "label": "templates.catalogue.water_level",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "flow_method",
+          "label": "templates.catalogue.flow_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_oceanographic_sample_collection",
+      "name": "templates.sci_oceanographic_sample_collection.name",
+      "title": "Oceanographic sample collection",
+      "code": "SCI-025",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "sample_location",
+          "label": "templates.catalogue.sample_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "depth",
+          "label": "templates.catalogue.depth",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "m",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_method",
+          "label": "templates.catalogue.sampling_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_ocean_buoy_telemetry_review",
+      "name": "templates.sci_ocean_buoy_telemetry_review.name",
+      "title": "Ocean buoy telemetry review",
+      "code": "SCI-026",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "sensor_reference",
+          "label": "templates.catalogue.sensor_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_series",
+          "label": "templates.catalogue.measurement_series",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_checks",
+          "label": "templates.catalogue.quality_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_glacier_observation_survey",
+      "name": "templates.sci_glacier_observation_survey.name",
+      "title": "Glacier observation survey",
+      "code": "SCI-027",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "survey_reference",
+          "label": "templates.catalogue.survey_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_geometry",
+          "label": "templates.catalogue.measured_geometry",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "Coordinates as WKT or GeoJSON."
+        },
+        {
+          "field_key": "method_uncertainty",
+          "label": "templates.catalogue.method_uncertainty",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_physical_science_experiment_record",
+      "name": "templates.sci_physical_science_experiment_record.name",
+      "title": "Physical science experiment record",
+      "code": "SCI-028",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "experimental_setup",
+          "label": "templates.catalogue.experimental_setup",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "conditions",
+          "label": "templates.catalogue.conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "raw_measurements",
+          "label": "templates.catalogue.raw_measurements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_metrology_calibration_certificate_intake",
+      "name": "templates.sci_metrology_calibration_certificate_intake.name",
+      "title": "Metrology calibration certificate intake",
+      "code": "SCI-029",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "instrument_reference",
+          "label": "templates.catalogue.instrument_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "certificate_source",
+          "label": "templates.catalogue.certificate_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "validity_end_date",
+          "label": "templates.catalogue.validity_end_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "validity_scope",
+          "label": "templates.catalogue.validity_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_scientific_instrument_booking",
+      "name": "templates.sci_scientific_instrument_booking.name",
+      "title": "Scientific instrument booking",
+      "code": "SCI-030",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "instrument",
+          "label": "templates.catalogue.instrument",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_experiment",
+          "label": "templates.catalogue.approved_experiment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_operator",
+          "label": "templates.catalogue.qualified_operator",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_scientific_data_release_checklist",
+      "name": "templates.sci_scientific_data_release_checklist.name",
+      "title": "Scientific data release checklist",
+      "code": "SCI-031",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "data_quality",
+          "label": "templates.catalogue.data_quality",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "metadata_completeness",
+          "label": "templates.catalogue.metadata_completeness",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "usage_permissions",
+          "label": "templates.catalogue.usage_permissions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "sci_citizen_science_observation",
+      "name": "templates.sci_citizen_science_observation.name",
+      "title": "Citizen science observation",
+      "code": "SCI-032",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_sci",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "voluntary_observer",
+          "label": "templates.catalogue.voluntary_observer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_phenomenon",
+          "label": "templates.catalogue.observed_phenomenon",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_evidence",
+          "label": "templates.catalogue.supporting_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

@@ -1,0 +1,1341 @@
+{
+  "category": "MAR",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "mar_vessel_master_inventory",
+      "name": "templates.mar_vessel_master_inventory.name",
+      "title": "Vessel master inventory",
+      "code": "MAR-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "vessel_identifier",
+          "label": "templates.catalogue.vessel_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "vessel_type",
+          "label": "templates.catalogue.vessel_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "registered_capacity",
+          "label": "templates.catalogue.registered_capacity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "registered_capacity_unit",
+          "label": "templates.catalogue.registered_capacity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_vessel_certificate_register",
+      "name": "templates.mar_vessel_certificate_register.name",
+      "title": "Vessel certificate register",
+      "code": "MAR-002",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "certificate_reference",
+          "label": "templates.catalogue.certificate_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expiry_date",
+          "label": "templates.catalogue.expiry_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_source",
+          "label": "templates.catalogue.verification_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_vessel_maintenance_record",
+      "name": "templates.mar_vessel_maintenance_record.name",
+      "title": "Vessel maintenance record",
+      "code": "MAR-003",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "asset_component",
+          "label": "templates.catalogue.asset_component",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_evidence",
+          "label": "templates.catalogue.completion_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_vessel_condition_survey",
+      "name": "templates.mar_vessel_condition_survey.name",
+      "title": "Vessel condition survey",
+      "code": "MAR-004",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "survey_scope",
+          "label": "templates.catalogue.survey_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_surveyor",
+          "label": "templates.catalogue.qualified_surveyor",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_vessel_voyage_log",
+      "name": "templates.mar_vessel_voyage_log.name",
+      "title": "Vessel voyage log",
+      "code": "MAR-005",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "departure_port",
+          "label": "templates.catalogue.departure_port",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "arrival_port",
+          "label": "templates.catalogue.arrival_port",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "voyage_events",
+          "label": "templates.catalogue.voyage_events",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_crew_sign_on_administration",
+      "name": "templates.mar_crew_sign_on_administration.name",
+      "title": "Crew sign-on administration",
+      "code": "MAR-006",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "crew_reference",
+          "label": "templates.catalogue.crew_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "role",
+          "label": "templates.catalogue.role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_documents",
+          "label": "templates.catalogue.authorized_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_passenger_boarding_register",
+      "name": "templates.mar_passenger_boarding_register.name",
+      "title": "Passenger boarding register",
+      "code": "MAR-007",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "voyage_reference",
+          "label": "templates.catalogue.voyage_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_passenger_details",
+          "label": "templates.catalogue.minimum_passenger_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "boarding_status",
+          "label": "templates.catalogue.boarding_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_boat_rental_handover",
+      "name": "templates.mar_boat_rental_handover.name",
+      "title": "Boat rental handover",
+      "code": "MAR-008",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "boat_identifier",
+          "label": "templates.catalogue.boat_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safety_equipment",
+          "label": "templates.catalogue.safety_equipment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient_acknowledgement",
+          "label": "templates.catalogue.recipient_acknowledgement",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_marine_safety_equipment_inventory",
+      "name": "templates.mar_marine_safety_equipment_inventory.name",
+      "title": "Marine safety equipment inventory",
+      "code": "MAR-009",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_type",
+          "label": "templates.catalogue.equipment_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_due_date",
+          "label": "templates.catalogue.service_due_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_vessel",
+          "label": "templates.catalogue.assigned_vessel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_life_saving_equipment_inspection",
+      "name": "templates.mar_life_saving_equipment_inspection.name",
+      "title": "Life-saving equipment inspection",
+      "code": "MAR-010",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_checklist",
+          "label": "templates.catalogue.approved_checklist",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_review",
+          "label": "templates.catalogue.authorized_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_port_berth_booking",
+      "name": "templates.mar_port_berth_booking.name",
+      "title": "Port berth booking",
+      "code": "MAR-011",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "vessel_reference",
+          "label": "templates.catalogue.vessel_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "arrival_window",
+          "label": "templates.catalogue.arrival_window",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "berth_requirements",
+          "label": "templates.catalogue.berth_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_port_arrival_documentation",
+      "name": "templates.mar_port_arrival_documentation.name",
+      "title": "Port arrival documentation",
+      "code": "MAR-012",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "vessel_details",
+          "label": "templates.catalogue.vessel_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "authorized_forms",
+          "label": "templates.catalogue.authorized_forms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_certificates",
+          "label": "templates.catalogue.supporting_certificates",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_port_cargo_receipt",
+      "name": "templates.mar_port_cargo_receipt.name",
+      "title": "Port cargo receipt",
+      "code": "MAR-013",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "cargo_reference",
+          "label": "templates.catalogue.cargo_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "received_quantity",
+          "label": "templates.catalogue.received_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "received_quantity_unit",
+          "label": "templates.catalogue.received_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition",
+          "label": "templates.catalogue.condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_port_cargo_release",
+      "name": "templates.mar_port_cargo_release.name",
+      "title": "Port cargo release",
+      "code": "MAR-014",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "cargo_reference",
+          "label": "templates.catalogue.cargo_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "release_authority",
+          "label": "templates.catalogue.release_authority",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_evidence",
+          "label": "templates.catalogue.verification_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_container_terminal_gate_event",
+      "name": "templates.mar_container_terminal_gate_event.name",
+      "title": "Container terminal gate event",
+      "code": "MAR-015",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "container_number",
+          "label": "templates.catalogue.container_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "vehicle_reference",
+          "label": "templates.catalogue.vehicle_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "entry_or_exit",
+          "label": "templates.catalogue.entry_or_exit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_cargo_tally_sheet",
+      "name": "templates.mar_cargo_tally_sheet.name",
+      "title": "Cargo tally sheet",
+      "code": "MAR-016",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "cargo_units",
+          "label": "templates.catalogue.cargo_units",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_count",
+          "label": "templates.catalogue.observed_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "discrepancies",
+          "label": "templates.catalogue.discrepancies",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_ship_loading_plan_evidence",
+      "name": "templates.mar_ship_loading_plan_evidence.name",
+      "title": "Ship loading plan evidence",
+      "code": "MAR-017",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_stowage_plan",
+          "label": "templates.catalogue.authorized_stowage_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cargo_list",
+          "label": "templates.catalogue.cargo_list",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_approval",
+          "label": "templates.catalogue.qualified_approval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_marine_cargo_damage_inspection",
+      "name": "templates.mar_marine_cargo_damage_inspection.name",
+      "title": "Marine cargo damage inspection",
+      "code": "MAR-018",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "cargo_reference",
+          "label": "templates.catalogue.cargo_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "damage_evidence",
+          "label": "templates.catalogue.damage_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "survey_notes",
+          "label": "templates.catalogue.survey_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_bunker_fuel_receipt_evidence",
+      "name": "templates.mar_bunker_fuel_receipt_evidence.name",
+      "title": "Bunker fuel receipt evidence",
+      "code": "MAR-019",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "supplier_delivery",
+          "label": "templates.catalogue.supplier_delivery",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "received_quantity",
+          "label": "templates.catalogue.received_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "received_quantity_unit",
+          "label": "templates.catalogue.received_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sample_reference",
+          "label": "templates.catalogue.sample_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_ballast_water_document_register",
+      "name": "templates.mar_ballast_water_document_register.name",
+      "title": "Ballast water document register",
+      "code": "MAR-020",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_plan_ref",
+          "label": "templates.catalogue.approved_plan_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operation_records",
+          "label": "templates.catalogue.operation_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_review",
+          "label": "templates.catalogue.authorized_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_port_waste_reception_record",
+      "name": "templates.mar_port_waste_reception_record.name",
+      "title": "Port waste reception record",
+      "code": "MAR-021",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "vessel_reference",
+          "label": "templates.catalogue.vessel_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "waste_type",
+          "label": "templates.catalogue.waste_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accepted_quantity",
+          "label": "templates.catalogue.accepted_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accepted_quantity_unit",
+          "label": "templates.catalogue.accepted_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_marine_pollution_observation",
+      "name": "templates.mar_marine_pollution_observation.name",
+      "title": "Marine pollution observation",
+      "code": "MAR-022",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_location",
+          "label": "templates.catalogue.observed_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visible_evidence",
+          "label": "templates.catalogue.visible_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_reporting",
+          "label": "templates.catalogue.authorized_reporting",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_waterway_navigation_aid_inventory",
+      "name": "templates.mar_waterway_navigation_aid_inventory.name",
+      "title": "Waterway navigation aid inventory",
+      "code": "MAR-023",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "aid_identifier",
+          "label": "templates.catalogue.aid_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "location",
+          "label": "templates.catalogue.location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operational_status",
+          "label": "templates.catalogue.operational_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_buoy_inspection_record",
+      "name": "templates.mar_buoy_inspection_record.name",
+      "title": "Buoy inspection record",
+      "code": "MAR-024",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "buoy_identifier",
+          "label": "templates.catalogue.buoy_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visible_condition",
+          "label": "templates.catalogue.visible_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_need",
+          "label": "templates.catalogue.maintenance_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_ferry_landing_site_inspection",
+      "name": "templates.mar_ferry_landing_site_inspection.name",
+      "title": "Ferry landing site inspection",
+      "code": "MAR-025",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "landing_condition",
+          "label": "templates.catalogue.landing_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "passenger_access",
+          "label": "templates.catalogue.passenger_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safety_observations",
+          "label": "templates.catalogue.safety_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_dock_maintenance_work_order",
+      "name": "templates.mar_dock_maintenance_work_order.name",
+      "title": "Dock maintenance work order",
+      "code": "MAR-026",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "dock_section",
+          "label": "templates.catalogue.dock_section",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_work",
+          "label": "templates.catalogue.required_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_evidence",
+          "label": "templates.catalogue.completion_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_marine_survey_photographic_register",
+      "name": "templates.mar_marine_survey_photographic_register.name",
+      "title": "Marine survey photographic register",
+      "code": "MAR-027",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "survey_reference",
+          "label": "templates.catalogue.survey_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "photo_location",
+          "label": "templates.catalogue.photo_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expert_caption",
+          "label": "templates.catalogue.expert_caption",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mar_port_service_performance_report",
+      "name": "templates.mar_port_service_performance_report.name",
+      "title": "Port service performance report",
+      "code": "MAR-028",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mar",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "service_times",
+          "label": "templates.catalogue.service_times",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "documented_exceptions",
+          "label": "templates.catalogue.documented_exceptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_actions",
+          "label": "templates.catalogue.improvement_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

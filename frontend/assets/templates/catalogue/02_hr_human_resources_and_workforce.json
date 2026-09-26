@@ -1,0 +1,1755 @@
+{
+  "category": "HR",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "hr_job_requisition",
+      "name": "templates.hr_job_requisition.name",
+      "title": "Job requisition",
+      "code": "HR-001",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "role_title",
+          "label": "templates.catalogue.role_title",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "headcount_reason",
+          "label": "templates.catalogue.headcount_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_budget",
+          "label": "templates.catalogue.approved_budget",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "approved_budget_currency",
+          "label": "templates.catalogue.approved_budget_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_job_description",
+      "name": "templates.hr_job_description.name",
+      "title": "Job description",
+      "code": "HR-002",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "role_purpose",
+          "label": "templates.catalogue.role_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "responsibilities",
+          "label": "templates.catalogue.responsibilities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "essential_requirements",
+          "label": "templates.catalogue.essential_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_candidate_application_intake",
+      "name": "templates.hr_candidate_application_intake.name",
+      "title": "Candidate application intake",
+      "code": "HR-003",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "candidate_name",
+          "label": "templates.catalogue.candidate_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "experience_summary",
+          "label": "templates.catalogue.experience_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "candidate_consent",
+          "label": "templates.catalogue.candidate_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_cv_extraction_and_verification",
+      "name": "templates.hr_cv_extraction_and_verification.name",
+      "title": "CV extraction and verification",
+      "code": "HR-004",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "employment_history",
+          "label": "templates.catalogue.employment_history",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualifications",
+          "label": "templates.catalogue.qualifications",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_status",
+          "label": "templates.catalogue.verification_status",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "unverified",
+              "label": "templates.choices.verification_status.unverified"
+            },
+            {
+              "code": "verified",
+              "label": "templates.choices.verification_status.verified"
+            },
+            {
+              "code": "disputed",
+              "label": "templates.choices.verification_status.disputed"
+            },
+            {
+              "code": "not_applicable",
+              "label": "templates.choices.verification_status.not_applicable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_interview_schedule",
+      "name": "templates.hr_interview_schedule.name",
+      "title": "Interview schedule",
+      "code": "HR-005",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "interview_panel",
+          "label": "templates.catalogue.interview_panel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "candidate_slots",
+          "label": "templates.catalogue.candidate_slots",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assessment_topics",
+          "label": "templates.catalogue.assessment_topics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_structured_interview_scorecard",
+      "name": "templates.hr_structured_interview_scorecard.name",
+      "title": "Structured interview scorecard",
+      "code": "HR-006",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "job_related_criteria",
+          "label": "templates.catalogue.job_related_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_evidence",
+          "label": "templates.catalogue.observed_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "interviewer_notes",
+          "label": "templates.catalogue.interviewer_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_candidate_reference_check",
+      "name": "templates.hr_candidate_reference_check.name",
+      "title": "Candidate reference check",
+      "code": "HR-007",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "reference_consent",
+          "label": "templates.catalogue.reference_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "referee_relationship",
+          "label": "templates.catalogue.referee_relationship",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_statements",
+          "label": "templates.catalogue.verified_statements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_employment_offer_drafting",
+      "name": "templates.hr_employment_offer_drafting.name",
+      "title": "Employment offer drafting",
+      "code": "HR-008",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "offered_role",
+          "label": "templates.catalogue.offered_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "compensation",
+          "label": "templates.catalogue.compensation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "start_date",
+          "label": "templates.catalogue.start_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_employee_onboarding_checklist",
+      "name": "templates.hr_employee_onboarding_checklist.name",
+      "title": "Employee onboarding checklist",
+      "code": "HR-009",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "onboarding_tasks",
+          "label": "templates.catalogue.onboarding_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "responsible_owners",
+          "label": "templates.catalogue.responsible_owners",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_evidence",
+          "label": "templates.catalogue.completion_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_employee_master_record",
+      "name": "templates.hr_employee_master_record.name",
+      "title": "Employee master record",
+      "code": "HR-010",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "employment_identifier",
+          "label": "templates.catalogue.employment_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "work_contact",
+          "label": "templates.catalogue.work_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "employment_terms",
+          "label": "templates.catalogue.employment_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_emergency_contact_record",
+      "name": "templates.hr_emergency_contact_record.name",
+      "title": "Emergency contact record",
+      "code": "HR-011",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "contact_relationship",
+          "label": "templates.catalogue.contact_relationship",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_number",
+          "label": "templates.catalogue.contact_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_restrictions",
+          "label": "templates.catalogue.access_restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_attendance_record",
+      "name": "templates.hr_attendance_record.name",
+      "title": "Attendance record",
+      "code": "HR-012",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "work_date",
+          "label": "templates.catalogue.work_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "clock_events",
+          "label": "templates.catalogue.clock_events",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attendance_exception",
+          "label": "templates.catalogue.attendance_exception",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_timesheet",
+      "name": "templates.hr_timesheet.name",
+      "title": "Timesheet",
+      "code": "HR-013",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "work_activity",
+          "label": "templates.catalogue.work_activity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "hours_worked",
+          "label": "templates.catalogue.hours_worked",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "project_allocation",
+          "label": "templates.catalogue.project_allocation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_leave_request",
+      "name": "templates.hr_leave_request.name",
+      "title": "Leave request",
+      "code": "HR-014",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "leave_type",
+          "label": "templates.catalogue.leave_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_dates",
+          "label": "templates.catalogue.requested_dates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "handover_plan",
+          "label": "templates.catalogue.handover_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_overtime_request",
+      "name": "templates.hr_overtime_request.name",
+      "title": "Overtime request",
+      "code": "HR-015",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "overtime_reason",
+          "label": "templates.catalogue.overtime_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "planned_hours",
+          "label": "templates.catalogue.planned_hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "hours",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approver",
+          "label": "templates.catalogue.approver",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_shift_roster",
+      "name": "templates.hr_shift_roster.name",
+      "title": "Shift roster",
+      "code": "HR-016",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "shift_pattern",
+          "label": "templates.catalogue.shift_pattern",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_staff",
+          "label": "templates.catalogue.assigned_staff",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "coverage_gaps",
+          "label": "templates.catalogue.coverage_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_remote_work_agreement",
+      "name": "templates.hr_remote_work_agreement.name",
+      "title": "Remote work agreement",
+      "code": "HR-017",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "work_arrangement",
+          "label": "templates.catalogue.work_arrangement",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "availability_expectations",
+          "label": "templates.catalogue.availability_expectations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "equipment_custody",
+          "label": "templates.catalogue.equipment_custody",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_performance_objectives_plan",
+      "name": "templates.hr_performance_objectives_plan.name",
+      "title": "Performance objectives plan",
+      "code": "HR-018",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_objectives",
+          "label": "templates.catalogue.agreed_objectives",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_date",
+          "label": "templates.catalogue.review_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_performance_review",
+      "name": "templates.hr_performance_review.name",
+      "title": "Performance review",
+      "code": "HR-019",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "objective_results",
+          "label": "templates.catalogue.objective_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "work_evidence",
+          "label": "templates.catalogue.work_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "development_needs",
+          "label": "templates.catalogue.development_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_training_needs_assessment",
+      "name": "templates.hr_training_needs_assessment.name",
+      "title": "Training needs assessment",
+      "code": "HR-020",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "role_requirements",
+          "label": "templates.catalogue.role_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_skill_gaps",
+          "label": "templates.catalogue.observed_skill_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "priority_training",
+          "label": "templates.catalogue.priority_training",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_employee_learning_record",
+      "name": "templates.hr_employee_learning_record.name",
+      "title": "Employee learning record",
+      "code": "HR-021",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "course_reference",
+          "label": "templates.catalogue.course_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_competency_assessment",
+      "name": "templates.hr_competency_assessment.name",
+      "title": "Competency assessment",
+      "code": "HR-022",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "competency_standard",
+          "label": "templates.catalogue.competency_standard",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "practical_evidence",
+          "label": "templates.catalogue.practical_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assessor",
+          "label": "templates.catalogue.assessor",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_employee_grievance_intake",
+      "name": "templates.hr_employee_grievance_intake.name",
+      "title": "Employee grievance intake",
+      "code": "HR-023",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "grievance_summary",
+          "label": "templates.catalogue.grievance_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "preferred_contact",
+          "label": "templates.catalogue.preferred_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_resolution",
+          "label": "templates.catalogue.requested_resolution",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_workplace_misconduct_report",
+      "name": "templates.hr_workplace_misconduct_report.name",
+      "title": "Workplace misconduct report",
+      "code": "HR-024",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_conduct",
+          "label": "templates.catalogue.reported_conduct",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "event_details",
+          "label": "templates.catalogue.event_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "confidentiality_needs",
+          "label": "templates.catalogue.confidentiality_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_disciplinary_hearing_record",
+      "name": "templates.hr_disciplinary_hearing_record.name",
+      "title": "Disciplinary hearing record",
+      "code": "HR-025",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "allegation_notice",
+          "label": "templates.catalogue.allegation_notice",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "employee_response",
+          "label": "templates.catalogue.employee_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evidence_reviewed",
+          "label": "templates.catalogue.evidence_reviewed",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_employee_welfare_request",
+      "name": "templates.hr_employee_welfare_request.name",
+      "title": "Employee welfare request",
+      "code": "HR-026",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "assistance_category",
+          "label": "templates.catalogue.assistance_category",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_required_details",
+          "label": "templates.catalogue.minimum_required_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "authorized_recipient",
+          "label": "templates.catalogue.authorized_recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_workplace_accommodation_request",
+      "name": "templates.hr_workplace_accommodation_request.name",
+      "title": "Workplace accommodation request",
+      "code": "HR-027",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "functional_work_need",
+          "label": "templates.catalogue.functional_work_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_adjustment",
+          "label": "templates.catalogue.requested_adjustment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_date",
+          "label": "templates.catalogue.review_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_employee_engagement_survey",
+      "name": "templates.hr_employee_engagement_survey.name",
+      "title": "Employee engagement survey",
+      "code": "HR-028",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "survey_topics",
+          "label": "templates.catalogue.survey_topics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "anonymous_responses",
+          "label": "templates.catalogue.anonymous_responses",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_suggestions",
+          "label": "templates.catalogue.improvement_suggestions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_staff_deployment_record",
+      "name": "templates.hr_staff_deployment_record.name",
+      "title": "Staff deployment record",
+      "code": "HR-029",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "assignment_location",
+          "label": "templates.catalogue.assignment_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assignment_period",
+          "label": "templates.catalogue.assignment_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supervisor",
+          "label": "templates.catalogue.supervisor",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_travel_authorization",
+      "name": "templates.hr_travel_authorization.name",
+      "title": "Travel authorization",
+      "code": "HR-030",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "travel_purpose",
+          "label": "templates.catalogue.travel_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "itinerary",
+          "label": "templates.catalogue.itinerary",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "estimated_budget",
+          "label": "templates.catalogue.estimated_budget",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "estimated_budget_currency",
+          "label": "templates.catalogue.estimated_budget_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_employee_expense_entitlement_review",
+      "name": "templates.hr_employee_expense_entitlement_review.name",
+      "title": "Employee expense entitlement review",
+      "code": "HR-031",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "policy_reference",
+          "label": "templates.catalogue.policy_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "eligibility_evidence",
+          "label": "templates.catalogue.eligibility_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "decision",
+          "label": "templates.catalogue.decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_exit_interview",
+      "name": "templates.hr_exit_interview.name",
+      "title": "Exit interview",
+      "code": "HR-032",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "departure_reason",
+          "label": "templates.catalogue.departure_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "workplace_feedback",
+          "label": "templates.catalogue.workplace_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "consented_followup",
+          "label": "templates.catalogue.consented_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_employee_clearance_checklist",
+      "name": "templates.hr_employee_clearance_checklist.name",
+      "title": "Employee clearance checklist",
+      "code": "HR-033",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "returned_assets",
+          "label": "templates.catalogue.returned_assets",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_removal",
+          "label": "templates.catalogue.access_removal",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outstanding_obligations",
+          "label": "templates.catalogue.outstanding_obligations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_employment_verification_letter",
+      "name": "templates.hr_employment_verification_letter.name",
+      "title": "Employment verification letter",
+      "code": "HR-034",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_employment_period",
+          "label": "templates.catalogue.verified_employment_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "job_title",
+          "label": "templates.catalogue.job_title",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_signatory",
+          "label": "templates.catalogue.authorized_signatory",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_hr_case_management_register",
+      "name": "templates.hr_hr_case_management_register.name",
+      "title": "HR case management register",
+      "code": "HR-035",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "case_category",
+          "label": "templates.catalogue.case_category",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_handler",
+          "label": "templates.catalogue.assigned_handler",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "case_stage",
+          "label": "templates.catalogue.case_stage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hr_succession_planning_worksheet",
+      "name": "templates.hr_succession_planning_worksheet.name",
+      "title": "Succession planning worksheet",
+      "code": "HR-036",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hr",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "critical_roles",
+          "label": "templates.catalogue.critical_roles",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "readiness_evidence",
+          "label": "templates.catalogue.readiness_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "development_actions",
+          "label": "templates.catalogue.development_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

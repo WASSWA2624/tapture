@@ -1,0 +1,1678 @@
+{
+  "category": "HOP",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "hop_hospital_facility_profile",
+      "name": "templates.hop_hospital_facility_profile.name",
+      "title": "Hospital facility profile",
+      "code": "HOP-001",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "facility_level",
+          "label": "templates.catalogue.facility_level",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_packages",
+          "label": "templates.catalogue.service_packages",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operating_hours",
+          "label": "templates.catalogue.operating_hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "hours",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_clinical_department_readiness",
+      "name": "templates.hop_clinical_department_readiness.name",
+      "title": "Clinical department readiness",
+      "code": "HOP-002",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "required_resources",
+          "label": "templates.catalogue.required_resources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "available_resources",
+          "label": "templates.catalogue.available_resources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_gaps",
+          "label": "templates.catalogue.service_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_hospital_bed_inventory",
+      "name": "templates.hop_hospital_bed_inventory.name",
+      "title": "Hospital bed inventory",
+      "code": "HOP-003",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "bed_type",
+          "label": "templates.catalogue.bed_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "ward",
+          "label": "templates.catalogue.ward",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operational_status",
+          "label": "templates.catalogue.operational_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_medical_device_acceptance_test",
+      "name": "templates.hop_medical_device_acceptance_test.name",
+      "title": "Medical device acceptance test",
+      "code": "HOP-004",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "device_specification",
+          "label": "templates.catalogue.device_specification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_test_protocol",
+          "label": "templates.catalogue.acceptance_test_protocol",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_results",
+          "label": "templates.catalogue.test_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_biomedical_service_inspection",
+      "name": "templates.hop_biomedical_service_inspection.name",
+      "title": "Biomedical service inspection",
+      "code": "HOP-005",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "device_identifier",
+          "label": "templates.catalogue.device_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_manual_ref",
+          "label": "templates.catalogue.service_manual_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "inspection_results",
+          "label": "templates.catalogue.inspection_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_medical_device_electrical_safety_record",
+      "name": "templates.hop_medical_device_electrical_safety_record.name",
+      "title": "Medical device electrical safety record",
+      "code": "HOP-006",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "test_protocol",
+          "label": "templates.catalogue.test_protocol",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_results",
+          "label": "templates.catalogue.measured_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_medical_equipment_user_competency",
+      "name": "templates.hop_medical_equipment_user_competency.name",
+      "title": "Medical equipment user competency",
+      "code": "HOP-007",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "device_model",
+          "label": "templates.catalogue.device_model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "demonstrated_tasks",
+          "label": "templates.catalogue.demonstrated_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assessor_authorization",
+          "label": "templates.catalogue.assessor_authorization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_medical_gas_system_inspection",
+      "name": "templates.hop_medical_gas_system_inspection.name",
+      "title": "Medical gas system inspection",
+      "code": "HOP-008",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "gas_supply_type",
+          "label": "templates.catalogue.gas_supply_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "alarm_checks",
+          "label": "templates.catalogue.alarm_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_certificate",
+          "label": "templates.catalogue.service_certificate",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_oxygen_concentrator_inspection",
+      "name": "templates.hop_oxygen_concentrator_inspection.name",
+      "title": "Oxygen concentrator inspection",
+      "code": "HOP-009",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "device_serial",
+          "label": "templates.catalogue.device_serial",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "performance_test_ref",
+          "label": "templates.catalogue.performance_test_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_readings",
+          "label": "templates.catalogue.observed_readings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_autoclave_cycle_record",
+      "name": "templates.hop_autoclave_cycle_record.name",
+      "title": "Autoclave cycle record",
+      "code": "HOP-010",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "cycle_identifier",
+          "label": "templates.catalogue.cycle_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "load_reference",
+          "label": "templates.catalogue.load_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cycle_parameters",
+          "label": "templates.catalogue.cycle_parameters",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_sterilization_load_release",
+      "name": "templates.hop_sterilization_load_release.name",
+      "title": "Sterilization load release",
+      "code": "HOP-011",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "cycle_evidence",
+          "label": "templates.catalogue.cycle_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "indicator_results",
+          "label": "templates.catalogue.indicator_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_release",
+          "label": "templates.catalogue.authorized_release",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_sterile_instrument_set_register",
+      "name": "templates.hop_sterile_instrument_set_register.name",
+      "title": "Sterile instrument set register",
+      "code": "HOP-012",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "set_identifier",
+          "label": "templates.catalogue.set_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "instrument_contents",
+          "label": "templates.catalogue.instrument_contents",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "processing_status",
+          "label": "templates.catalogue.processing_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_cold_chain_device_inventory",
+      "name": "templates.hop_cold_chain_device_inventory.name",
+      "title": "Cold chain device inventory",
+      "code": "HOP-013",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "storage_device",
+          "label": "templates.catalogue.storage_device",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "temperature_monitor",
+          "label": "templates.catalogue.temperature_monitor",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "backup_power",
+          "label": "templates.catalogue.backup_power",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_vaccine_refrigerator_review",
+      "name": "templates.hop_vaccine_refrigerator_review.name",
+      "title": "Vaccine refrigerator review",
+      "code": "HOP-014",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "temperature_history",
+          "label": "templates.catalogue.temperature_history",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_arrangement",
+          "label": "templates.catalogue.storage_arrangement",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "excursion_actions",
+          "label": "templates.catalogue.excursion_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_radiology_room_readiness",
+      "name": "templates.hop_radiology_room_readiness.name",
+      "title": "Radiology room readiness",
+      "code": "HOP-015",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_status",
+          "label": "templates.catalogue.equipment_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "room_controls",
+          "label": "templates.catalogue.room_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_test_evidence",
+          "label": "templates.catalogue.authorized_test_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_dental_equipment_inventory",
+      "name": "templates.hop_dental_equipment_inventory.name",
+      "title": "Dental equipment inventory",
+      "code": "HOP-016",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "dental_unit_type",
+          "label": "templates.catalogue.dental_unit_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessory_list",
+          "label": "templates.catalogue.accessory_list",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_due_date",
+          "label": "templates.catalogue.service_due_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_laboratory_analyzer_installation",
+      "name": "templates.hop_laboratory_analyzer_installation.name",
+      "title": "Laboratory analyzer installation",
+      "code": "HOP-017",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "analyzer_model",
+          "label": "templates.catalogue.analyzer_model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "utility_requirements",
+          "label": "templates.catalogue.utility_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "installation_acceptance",
+          "label": "templates.catalogue.installation_acceptance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_dialysis_equipment_maintenance",
+      "name": "templates.hop_dialysis_equipment_maintenance.name",
+      "title": "Dialysis equipment maintenance",
+      "code": "HOP-018",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "device_model",
+          "label": "templates.catalogue.device_model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_service_tasks",
+          "label": "templates.catalogue.approved_service_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_test_results",
+          "label": "templates.catalogue.authorized_test_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_theatre_readiness_checklist",
+      "name": "templates.hop_theatre_readiness_checklist.name",
+      "title": "Theatre readiness checklist",
+      "code": "HOP-019",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_availability",
+          "label": "templates.catalogue.equipment_availability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consumables_availability",
+          "label": "templates.catalogue.consumables_availability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "open_defects",
+          "label": "templates.catalogue.open_defects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_hospital_laundry_inspection",
+      "name": "templates.hop_hospital_laundry_inspection.name",
+      "title": "Hospital laundry inspection",
+      "code": "HOP-020",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "workflow_separation",
+          "label": "templates.catalogue.workflow_separation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "equipment_condition",
+          "label": "templates.catalogue.equipment_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "clean_linen_storage",
+          "label": "templates.catalogue.clean_linen_storage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_hospital_kitchen_hygiene_inspection",
+      "name": "templates.hop_hospital_kitchen_hygiene_inspection.name",
+      "title": "Hospital kitchen hygiene inspection",
+      "code": "HOP-021",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "food_storage",
+          "label": "templates.catalogue.food_storage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cleaning_records",
+          "label": "templates.catalogue.cleaning_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "hygiene_findings",
+          "label": "templates.catalogue.hygiene_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_healthcare_waste_segregation_check",
+      "name": "templates.hop_healthcare_waste_segregation_check.name",
+      "title": "Healthcare waste segregation check",
+      "code": "HOP-022",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "waste_streams",
+          "label": "templates.catalogue.waste_streams",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "container_labeling",
+          "label": "templates.catalogue.container_labeling",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "segregation_findings",
+          "label": "templates.catalogue.segregation_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_ward_cleaning_verification",
+      "name": "templates.hop_ward_cleaning_verification.name",
+      "title": "Ward cleaning verification",
+      "code": "HOP-023",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "cleaning_zone",
+          "label": "templates.catalogue.cleaning_zone",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cleaning_schedule",
+          "label": "templates.catalogue.cleaning_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_evidence",
+          "label": "templates.catalogue.verification_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_hospital_water_system_log",
+      "name": "templates.hop_hospital_water_system_log.name",
+      "title": "Hospital water system log",
+      "code": "HOP-024",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "sampling_point",
+          "label": "templates.catalogue.sampling_point",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_test_panel",
+          "label": "templates.catalogue.approved_test_panel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "results_reference",
+          "label": "templates.catalogue.results_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_facility_generator_service_record",
+      "name": "templates.hop_facility_generator_service_record.name",
+      "title": "Facility generator service record",
+      "code": "HOP-025",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "generator_identifier",
+          "label": "templates.catalogue.generator_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "run_hours",
+          "label": "templates.catalogue.run_hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "hours",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_tasks",
+          "label": "templates.catalogue.service_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_ambulance_readiness_check",
+      "name": "templates.hop_ambulance_readiness_check.name",
+      "title": "Ambulance readiness check",
+      "code": "HOP-026",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_condition",
+          "label": "templates.catalogue.vehicle_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_kit",
+          "label": "templates.catalogue.required_kit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "equipment_function_checks",
+          "label": "templates.catalogue.equipment_function_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_hospital_consumables_demand_plan",
+      "name": "templates.hop_hospital_consumables_demand_plan.name",
+      "title": "Hospital consumables demand plan",
+      "code": "HOP-027",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "service_volume_count",
+          "label": "templates.catalogue.service_volume_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consumption_history",
+          "label": "templates.catalogue.consumption_history",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "planning_assumptions",
+          "label": "templates.catalogue.planning_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_medical_equipment_replacement_prioritization",
+      "name": "templates.hop_medical_equipment_replacement_prioritization.name",
+      "title": "Medical equipment replacement prioritization",
+      "code": "HOP-028",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "clinical_criticality",
+          "label": "templates.catalogue.clinical_criticality",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "repair_history",
+          "label": "templates.catalogue.repair_history",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "replacement_evidence",
+          "label": "templates.catalogue.replacement_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_hospital_utilities_outage_record",
+      "name": "templates.hop_hospital_utilities_outage_record.name",
+      "title": "Hospital utilities outage record",
+      "code": "HOP-029",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "affected_services",
+          "label": "templates.catalogue.affected_services",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outage_duration",
+          "label": "templates.catalogue.outage_duration",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "minutes",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "continuity_actions",
+          "label": "templates.catalogue.continuity_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_patient_transport_coordination",
+      "name": "templates.hop_patient_transport_coordination.name",
+      "title": "Patient transport coordination",
+      "code": "HOP-030",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "transport_reference",
+          "label": "templates.catalogue.transport_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "mobility_support",
+          "label": "templates.catalogue.mobility_support",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "handover_role",
+          "label": "templates.catalogue.handover_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_healthcare_service_complaint",
+      "name": "templates.hop_healthcare_service_complaint.name",
+      "title": "Healthcare service complaint",
+      "code": "HOP-031",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "service_issue",
+          "label": "templates.catalogue.service_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_contact_details",
+          "label": "templates.catalogue.minimum_contact_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "resolution_request",
+          "label": "templates.catalogue.resolution_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_facility_accreditation_evidence_pack",
+      "name": "templates.hop_facility_accreditation_evidence_pack.name",
+      "title": "Facility accreditation evidence pack",
+      "code": "HOP-032",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "applicable_criteria",
+          "label": "templates.catalogue.applicable_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_evidence",
+          "label": "templates.catalogue.verified_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outstanding_gaps",
+          "label": "templates.catalogue.outstanding_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_biomedical_technician_field_service_report",
+      "name": "templates.hop_biomedical_technician_field_service_report.name",
+      "title": "Biomedical technician field service report",
+      "code": "HOP-033",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "device_fault",
+          "label": "templates.catalogue.device_fault",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_work",
+          "label": "templates.catalogue.completed_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "remaining_restrictions",
+          "label": "templates.catalogue.remaining_restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_medical_equipment_donation_needs_assessment",
+      "name": "templates.hop_medical_equipment_donation_needs_assessment.name",
+      "title": "Medical equipment donation needs assessment",
+      "code": "HOP-034",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "service_need",
+          "label": "templates.catalogue.service_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "local_support",
+          "label": "templates.catalogue.local_support",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "installation_constraints",
+          "label": "templates.catalogue.installation_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hop_hospital_daily_operations_brief",
+      "name": "templates.hop_hospital_daily_operations_brief.name",
+      "title": "Hospital daily operations brief",
+      "code": "HOP-035",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hop",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "service_capacity",
+          "label": "templates.catalogue.service_capacity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_capacity_unit",
+          "label": "templates.catalogue.service_capacity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "resource_constraints",
+          "label": "templates.catalogue.resource_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operational_actions",
+          "label": "templates.catalogue.operational_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

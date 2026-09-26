@@ -1,0 +1,1642 @@
+{
+  "category": "UNI",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "uni_general_observation",
+      "name": "templates.uni_general_observation.name",
+      "title": "General observation",
+      "code": "UNI-001",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "observation_category",
+          "label": "templates.catalogue.observation_category",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_details",
+          "label": "templates.catalogue.observed_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_freeform_multimedia_notebook",
+      "name": "templates.uni_freeform_multimedia_notebook.name",
+      "title": "Freeform multimedia notebook",
+      "code": "UNI-002",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "entry_subject",
+          "label": "templates.catalogue.entry_subject",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "media_sequence",
+          "label": "templates.catalogue.media_sequence",
+          "type": "photo_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "The photos and clips in the order they were taken."
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_photographic_evidence_record",
+      "name": "templates.uni_photographic_evidence_record.name",
+      "title": "Photographic evidence record",
+      "code": "UNI-003",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "photo_subject",
+          "label": "templates.catalogue.photo_subject",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "viewpoint",
+          "label": "templates.catalogue.viewpoint",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "caption",
+          "label": "templates.catalogue.caption",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_voice_field_note",
+      "name": "templates.uni_voice_field_note.name",
+      "title": "Voice field note",
+      "code": "UNI-004",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "spoken_note",
+          "label": "templates.catalogue.spoken_note",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transcript_language",
+          "label": "templates.catalogue.transcript_language",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_video_observation_record",
+      "name": "templates.uni_video_observation_record.name",
+      "title": "Video observation record",
+      "code": "UNI-005",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "clip_subject",
+          "label": "templates.catalogue.clip_subject",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "start_offset",
+          "label": "templates.catalogue.start_offset",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "end_offset",
+          "label": "templates.catalogue.end_offset",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_document_intake_and_indexing",
+      "name": "templates.uni_document_intake_and_indexing.name",
+      "title": "Document intake and indexing",
+      "code": "UNI-006",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "document_type",
+          "label": "templates.catalogue.document_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "document_date",
+          "label": "templates.catalogue.document_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_business_card_capture",
+      "name": "templates.uni_business_card_capture.name",
+      "title": "Business card capture",
+      "code": "UNI-007",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "contact_name",
+          "label": "templates.catalogue.contact_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "organization_name",
+          "label": "templates.catalogue.organization_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_channels",
+          "label": "templates.catalogue.contact_channels",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_qr_or_barcode_identification",
+      "name": "templates.uni_qr_or_barcode_identification.name",
+      "title": "QR or barcode identification",
+      "code": "UNI-008",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "code_value",
+          "label": "templates.catalogue.code_value",
+          "type": "barcode",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "code_symbology",
+          "label": "templates.catalogue.code_symbology",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "matched_record",
+          "label": "templates.catalogue.matched_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_gps_point_observation",
+      "name": "templates.uni_gps_point_observation.name",
+      "title": "GPS point observation",
+      "code": "UNI-009",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "point_geometry",
+          "label": "templates.catalogue.point_geometry",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "Coordinates as WKT or GeoJSON."
+        },
+        {
+          "field_key": "position_accuracy",
+          "label": "templates.catalogue.position_accuracy",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "location_purpose",
+          "label": "templates.catalogue.location_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_route_or_transect_capture",
+      "name": "templates.uni_route_or_transect_capture.name",
+      "title": "Route or transect capture",
+      "code": "UNI-010",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "track_geometry",
+          "label": "templates.catalogue.track_geometry",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "Coordinates as WKT or GeoJSON."
+        },
+        {
+          "field_key": "sampling_interval",
+          "label": "templates.catalogue.sampling_interval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "route_purpose",
+          "label": "templates.catalogue.route_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_area_or_boundary_capture",
+      "name": "templates.uni_area_or_boundary_capture.name",
+      "title": "Area or boundary capture",
+      "code": "UNI-011",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "polygon_geometry",
+          "label": "templates.catalogue.polygon_geometry",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "Coordinates as WKT or GeoJSON."
+        },
+        {
+          "field_key": "boundary_method",
+          "label": "templates.catalogue.boundary_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "area_unit",
+          "label": "templates.catalogue.area_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_time_stamped_activity_log",
+      "name": "templates.uni_time_stamped_activity_log.name",
+      "title": "Time-stamped activity log",
+      "code": "UNI-012",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "activity_start_at",
+          "label": "templates.catalogue.activity_start_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "activity_end_at",
+          "label": "templates.catalogue.activity_end_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "activity_category",
+          "label": "templates.catalogue.activity_category",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_daily_field_journal",
+      "name": "templates.uni_daily_field_journal.name",
+      "title": "Daily field journal",
+      "code": "UNI-013",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "work_date",
+          "label": "templates.catalogue.work_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "activities",
+          "label": "templates.catalogue.activities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "constraints",
+          "label": "templates.catalogue.constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_person_registration",
+      "name": "templates.uni_person_registration.name",
+      "title": "Person registration",
+      "code": "UNI-014",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "contact_preferences",
+          "label": "templates.catalogue.contact_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "collection_purpose",
+          "label": "templates.catalogue.collection_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_organization_registration",
+      "name": "templates.uni_organization_registration.name",
+      "title": "Organization registration",
+      "code": "UNI-015",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "legal_name",
+          "label": "templates.catalogue.legal_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "registration_reference",
+          "label": "templates.catalogue.registration_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "business_activity",
+          "label": "templates.catalogue.business_activity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_site_registration",
+      "name": "templates.uni_site_registration.name",
+      "title": "Site registration",
+      "code": "UNI-016",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "site_type",
+          "label": "templates.catalogue.site_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "street_address",
+          "label": "templates.catalogue.street_address",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "House, plot and street only; the location fields hold the rest."
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_household_registration",
+      "name": "templates.uni_household_registration.name",
+      "title": "Household registration",
+      "code": "UNI-017",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "household_reference",
+          "label": "templates.catalogue.household_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "member_count",
+          "label": "templates.catalogue.member_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent_scope",
+          "label": "templates.catalogue.consent_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_generic_item_catalogue",
+      "name": "templates.uni_generic_item_catalogue.name",
+      "title": "Generic item catalogue",
+      "code": "UNI-018",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "item_category",
+          "label": "templates.catalogue.item_category",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "external_identifier",
+          "label": "templates.catalogue.external_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_document_to_table_extraction",
+      "name": "templates.uni_document_to_table_extraction.name",
+      "title": "Document-to-table extraction",
+      "code": "UNI-019",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "source_document",
+          "label": "templates.catalogue.source_document",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "column_mapping",
+          "label": "templates.catalogue.column_mapping",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "extraction_batch",
+          "label": "templates.catalogue.extraction_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_spreadsheet_import_mapping",
+      "name": "templates.uni_spreadsheet_import_mapping.name",
+      "title": "Spreadsheet import mapping",
+      "code": "UNI-020",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "source_columns",
+          "label": "templates.catalogue.source_columns",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "target_fields",
+          "label": "templates.catalogue.target_fields",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "duplicate_policy",
+          "label": "templates.catalogue.duplicate_policy",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_historical_record_digitization",
+      "name": "templates.uni_historical_record_digitization.name",
+      "title": "Historical record digitization",
+      "code": "UNI-021",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "archive_reference",
+          "label": "templates.catalogue.archive_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "original_date",
+          "label": "templates.catalogue.original_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transcription_notes",
+          "label": "templates.catalogue.transcription_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_evidence_chain_of_custody_record",
+      "name": "templates.uni_evidence_chain_of_custody_record.name",
+      "title": "Evidence chain-of-custody record",
+      "code": "UNI-022",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "evidence_reference",
+          "label": "templates.catalogue.evidence_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "handover_from",
+          "label": "templates.catalogue.handover_from",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "handover_to",
+          "label": "templates.catalogue.handover_to",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_record_correction_request",
+      "name": "templates.uni_record_correction_request.name",
+      "title": "Record correction request",
+      "code": "UNI-023",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "target_record",
+          "label": "templates.catalogue.target_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_change",
+          "label": "templates.catalogue.proposed_change",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "change_reason",
+          "label": "templates.catalogue.change_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_duplicate_record_review",
+      "name": "templates.uni_duplicate_record_review.name",
+      "title": "Duplicate record review",
+      "code": "UNI-024",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "candidate_records",
+          "label": "templates.catalogue.candidate_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "matching_evidence",
+          "label": "templates.catalogue.matching_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "merge_decision",
+          "label": "templates.catalogue.merge_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_data_quality_review",
+      "name": "templates.uni_data_quality_review.name",
+      "title": "Data quality review",
+      "code": "UNI-025",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "validation_rule",
+          "label": "templates.catalogue.validation_rule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "failed_records",
+          "label": "templates.catalogue.failed_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "resolution",
+          "label": "templates.catalogue.resolution",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_consent_and_permission_record",
+      "name": "templates.uni_consent_and_permission_record.name",
+      "title": "Consent and permission record",
+      "code": "UNI-026",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "consent_scope",
+          "label": "templates.catalogue.consent_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "notice_version",
+          "label": "templates.catalogue.notice_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "withdrawal_route",
+          "label": "templates.catalogue.withdrawal_route",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_contact_update_request",
+      "name": "templates.uni_contact_update_request.name",
+      "title": "Contact update request",
+      "code": "UNI-027",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "contact_reference",
+          "label": "templates.catalogue.contact_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "changed_channels",
+          "label": "templates.catalogue.changed_channels",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_method",
+          "label": "templates.catalogue.verification_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_anonymous_feedback_submission",
+      "name": "templates.uni_anonymous_feedback_submission.name",
+      "title": "Anonymous feedback submission",
+      "code": "UNI-028",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "feedback_topic",
+          "label": "templates.catalogue.feedback_topic",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "feedback_text",
+          "label": "templates.catalogue.feedback_text",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "optional_reply_channel",
+          "label": "templates.catalogue.optional_reply_channel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_translation_and_transcription_review",
+      "name": "templates.uni_translation_and_transcription_review.name",
+      "title": "Translation and transcription review",
+      "code": "UNI-029",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "source_language",
+          "label": "templates.catalogue.source_language",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "target_language",
+          "label": "templates.catalogue.target_language",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reviewed_text",
+          "label": "templates.catalogue.reviewed_text",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_attachment_catalogue",
+      "name": "templates.uni_attachment_catalogue.name",
+      "title": "Attachment catalogue",
+      "code": "UNI-030",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "attachment_type",
+          "label": "templates.catalogue.attachment_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "file_reference",
+          "label": "templates.catalogue.file_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "parent_record",
+          "label": "templates.catalogue.parent_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_record_relationship_mapping",
+      "name": "templates.uni_record_relationship_mapping.name",
+      "title": "Record relationship mapping",
+      "code": "UNI-031",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "source_record",
+          "label": "templates.catalogue.source_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "relationship_type",
+          "label": "templates.catalogue.relationship_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "target_record",
+          "label": "templates.catalogue.target_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_bulk_verification_campaign",
+      "name": "templates.uni_bulk_verification_campaign.name",
+      "title": "Bulk verification campaign",
+      "code": "UNI-032",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "record_population",
+          "label": "templates.catalogue.record_population",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_method",
+          "label": "templates.catalogue.verification_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_team",
+          "label": "templates.catalogue.assigned_team",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_data_export_request",
+      "name": "templates.uni_data_export_request.name",
+      "title": "Data export request",
+      "code": "UNI-033",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "dataset_scope",
+          "label": "templates.catalogue.dataset_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "destination",
+          "label": "templates.catalogue.destination",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "redaction_profile",
+          "label": "templates.catalogue.redaction_profile",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_record_retention_review",
+      "name": "templates.uni_record_retention_review.name",
+      "title": "Record retention review",
+      "code": "UNI-034",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "retention_rule",
+          "label": "templates.catalogue.retention_rule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_date",
+          "label": "templates.catalogue.review_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "disposal_decision",
+          "label": "templates.catalogue.disposal_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "uni_template_change_request",
+      "name": "templates.uni_template_change_request.name",
+      "title": "Template change request",
+      "code": "UNI-035",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_uni",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "template_reference",
+          "label": "templates.catalogue.template_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_fields",
+          "label": "templates.catalogue.requested_fields",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "compatibility_impact",
+          "label": "templates.catalogue.compatibility_impact",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

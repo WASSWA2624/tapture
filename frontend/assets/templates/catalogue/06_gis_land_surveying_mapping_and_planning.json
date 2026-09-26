@@ -1,0 +1,1524 @@
+{
+  "category": "GIS",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "gis_land_parcel_field_record",
+      "name": "templates.gis_land_parcel_field_record.name",
+      "title": "Land parcel field record",
+      "code": "GIS-001",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "parcel_identifier",
+          "label": "templates.catalogue.parcel_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_use",
+          "label": "templates.catalogue.observed_use",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "boundary_evidence",
+          "label": "templates.catalogue.boundary_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_boundary_monument_inventory",
+      "name": "templates.gis_boundary_monument_inventory.name",
+      "title": "Boundary monument inventory",
+      "code": "GIS-002",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "monument_identifier",
+          "label": "templates.catalogue.monument_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "monument_type",
+          "label": "templates.catalogue.monument_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "survey_coordinates",
+          "label": "templates.catalogue.survey_coordinates",
+          "type": "gps_location",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_boundary_verification_visit",
+      "name": "templates.gis_boundary_verification_visit.name",
+      "title": "Boundary verification visit",
+      "code": "GIS-003",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "survey_instruction",
+          "label": "templates.catalogue.survey_instruction",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_markers",
+          "label": "templates.catalogue.observed_markers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "professional_notes",
+          "label": "templates.catalogue.professional_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_gnss_survey_point_capture",
+      "name": "templates.gis_gnss_survey_point_capture.name",
+      "title": "GNSS survey point capture",
+      "code": "GIS-004",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "coordinate_values",
+          "label": "templates.catalogue.coordinate_values",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "fix_quality",
+          "label": "templates.catalogue.fix_quality",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accuracy_estimate",
+          "label": "templates.catalogue.accuracy_estimate",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_survey_control_network_record",
+      "name": "templates.gis_survey_control_network_record.name",
+      "title": "Survey control network record",
+      "code": "GIS-005",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "control_point",
+          "label": "templates.catalogue.control_point",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reference_system",
+          "label": "templates.catalogue.reference_system",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_date",
+          "label": "templates.catalogue.verification_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_topographic_feature_survey",
+      "name": "templates.gis_topographic_feature_survey.name",
+      "title": "Topographic feature survey",
+      "code": "GIS-006",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "feature_type",
+          "label": "templates.catalogue.feature_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_geometry",
+          "label": "templates.catalogue.measured_geometry",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "Coordinates as WKT or GeoJSON."
+        },
+        {
+          "field_key": "elevation",
+          "label": "templates.catalogue.elevation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_land_use_observation",
+      "name": "templates.gis_land_use_observation.name",
+      "title": "Land use observation",
+      "code": "GIS-007",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_land_use",
+          "label": "templates.catalogue.observed_land_use",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "feature_extent",
+          "label": "templates.catalogue.feature_extent",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observation_date",
+          "label": "templates.catalogue.observation_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_land_cover_classification_review",
+      "name": "templates.gis_land_cover_classification_review.name",
+      "title": "Land cover classification review",
+      "code": "GIS-008",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "imagery_reference",
+          "label": "templates.catalogue.imagery_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_class",
+          "label": "templates.catalogue.proposed_class",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "human_verification",
+          "label": "templates.catalogue.human_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_property_address_verification",
+      "name": "templates.gis_property_address_verification.name",
+      "title": "Property address verification",
+      "code": "GIS-009",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "stated_address",
+          "label": "templates.catalogue.stated_address",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_location",
+          "label": "templates.catalogue.observed_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_evidence",
+          "label": "templates.catalogue.verification_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_building_footprint_capture",
+      "name": "templates.gis_building_footprint_capture.name",
+      "title": "Building footprint capture",
+      "code": "GIS-010",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "footprint_geometry",
+          "label": "templates.catalogue.footprint_geometry",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "Coordinates as WKT or GeoJSON."
+        },
+        {
+          "field_key": "capture_method",
+          "label": "templates.catalogue.capture_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accuracy_notes",
+          "label": "templates.catalogue.accuracy_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_utility_asset_mapping",
+      "name": "templates.gis_utility_asset_mapping.name",
+      "title": "Utility asset mapping",
+      "code": "GIS-011",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "utility_feature",
+          "label": "templates.catalogue.utility_feature",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_geometry",
+          "label": "templates.catalogue.observed_geometry",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "Coordinates as WKT or GeoJSON."
+        },
+        {
+          "field_key": "verification_source",
+          "label": "templates.catalogue.verification_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_road_corridor_mapping",
+      "name": "templates.gis_road_corridor_mapping.name",
+      "title": "Road corridor mapping",
+      "code": "GIS-012",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "centerline_geometry",
+          "label": "templates.catalogue.centerline_geometry",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "Coordinates as WKT or GeoJSON."
+        },
+        {
+          "field_key": "chainage_reference",
+          "label": "templates.catalogue.chainage_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "survey_method",
+          "label": "templates.catalogue.survey_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_right_of_way_survey_evidence",
+      "name": "templates.gis_right_of_way_survey_evidence.name",
+      "title": "Right-of-way survey evidence",
+      "code": "GIS-013",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "corridor_reference",
+          "label": "templates.catalogue.corridor_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_features",
+          "label": "templates.catalogue.observed_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_documents",
+          "label": "templates.catalogue.supporting_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_planning_application_intake",
+      "name": "templates.gis_planning_application_intake.name",
+      "title": "Planning application intake",
+      "code": "GIS-014",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "proposed_development",
+          "label": "templates.catalogue.proposed_development",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_documents",
+          "label": "templates.catalogue.site_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "applicant_authority",
+          "label": "templates.catalogue.applicant_authority",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_development_control_inspection",
+      "name": "templates.gis_development_control_inspection.name",
+      "title": "Development control inspection",
+      "code": "GIS-015",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_plan_ref",
+          "label": "templates.catalogue.approved_plan_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_development",
+          "label": "templates.catalogue.observed_development",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_notes",
+          "label": "templates.catalogue.review_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_zoning_evidence_review",
+      "name": "templates.gis_zoning_evidence_review.name",
+      "title": "Zoning evidence review",
+      "code": "GIS-016",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "applicable_plan_ref",
+          "label": "templates.catalogue.applicable_plan_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_use",
+          "label": "templates.catalogue.proposed_use",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "professional_interpretation",
+          "label": "templates.catalogue.professional_interpretation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_informal_settlement_survey",
+      "name": "templates.gis_informal_settlement_survey.name",
+      "title": "Informal settlement survey",
+      "code": "GIS-017",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "consent_purpose",
+          "label": "templates.catalogue.consent_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_access",
+          "label": "templates.catalogue.service_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "nonidentifying_household_data",
+          "label": "templates.catalogue.nonidentifying_household_data",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_land_dispute_evidence_register",
+      "name": "templates.gis_land_dispute_evidence_register.name",
+      "title": "Land dispute evidence register",
+      "code": "GIS-018",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "disputed_parcel",
+          "label": "templates.catalogue.disputed_parcel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "party_submissions",
+          "label": "templates.catalogue.party_submissions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restricted_review",
+          "label": "templates.catalogue.restricted_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_cadastral_document_digitization",
+      "name": "templates.gis_cadastral_document_digitization.name",
+      "title": "Cadastral document digitization",
+      "code": "GIS-019",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "source_plan",
+          "label": "templates.catalogue.source_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "survey_reference",
+          "label": "templates.catalogue.survey_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_extracted_fields",
+          "label": "templates.catalogue.verified_extracted_fields",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_land_acquisition_needs_assessment",
+      "name": "templates.gis_land_acquisition_needs_assessment.name",
+      "title": "Land acquisition needs assessment",
+      "code": "GIS-020",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "project_footprint",
+          "label": "templates.catalogue.project_footprint",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_interests",
+          "label": "templates.catalogue.affected_interests",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_resettlement_survey_administration",
+      "name": "templates.gis_resettlement_survey_administration.name",
+      "title": "Resettlement survey administration",
+      "code": "GIS-021",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "consented_household_ref",
+          "label": "templates.catalogue.consented_household_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_assets",
+          "label": "templates.catalogue.affected_assets",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "support_needs",
+          "label": "templates.catalogue.support_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_compensation_evidence_schedule",
+      "name": "templates.gis_compensation_evidence_schedule.name",
+      "title": "Compensation evidence schedule",
+      "code": "GIS-022",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_asset",
+          "label": "templates.catalogue.verified_asset",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "valuation_source",
+          "label": "templates.catalogue.valuation_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "entitlement_review_ref",
+          "label": "templates.catalogue.entitlement_review_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_drone_mapping_mission_record",
+      "name": "templates.gis_drone_mapping_mission_record.name",
+      "title": "Drone mapping mission record",
+      "code": "GIS-023",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_flight_area",
+          "label": "templates.catalogue.authorized_flight_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "survey_objectives",
+          "label": "templates.catalogue.survey_objectives",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_handling",
+          "label": "templates.catalogue.data_handling",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_georeferenced_photo_register",
+      "name": "templates.gis_georeferenced_photo_register.name",
+      "title": "Georeferenced photo register",
+      "code": "GIS-024",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "photo_location",
+          "label": "templates.catalogue.photo_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "view_direction",
+          "label": "templates.catalogue.view_direction",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accuracy_note",
+          "label": "templates.catalogue.accuracy_note",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "information_source",
+          "label": "templates.catalogue.information_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_map_feature_correction_request",
+      "name": "templates.gis_map_feature_correction_request.name",
+      "title": "Map feature correction request",
+      "code": "GIS-025",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "feature_reference",
+          "label": "templates.catalogue.feature_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_geometry_change",
+          "label": "templates.catalogue.proposed_geometry_change",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evidence",
+          "label": "templates.catalogue.evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_spatial_data_quality_review",
+      "name": "templates.gis_spatial_data_quality_review.name",
+      "title": "Spatial data quality review",
+      "code": "GIS-026",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "topology_checks",
+          "label": "templates.catalogue.topology_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attribute_checks",
+          "label": "templates.catalogue.attribute_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accuracy_assessment",
+          "label": "templates.catalogue.accuracy_assessment",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_gis_layer_metadata",
+      "name": "templates.gis_gis_layer_metadata.name",
+      "title": "GIS layer metadata",
+      "code": "GIS-027",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "layer_purpose",
+          "label": "templates.catalogue.layer_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_date",
+          "label": "templates.catalogue.source_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "usage_restrictions",
+          "label": "templates.catalogue.usage_restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_environmental_buffer_survey",
+      "name": "templates.gis_environmental_buffer_survey.name",
+      "title": "Environmental buffer survey",
+      "code": "GIS-028",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "feature_reference",
+          "label": "templates.catalogue.feature_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "surveyed_extent",
+          "label": "templates.catalogue.surveyed_extent",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "applicable_buffer_source",
+          "label": "templates.catalogue.applicable_buffer_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_urban_service_accessibility_mapping",
+      "name": "templates.gis_urban_service_accessibility_mapping.name",
+      "title": "Urban service accessibility mapping",
+      "code": "GIS-029",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "service_locations",
+          "label": "templates.catalogue.service_locations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "travel_assumptions",
+          "label": "templates.catalogue.travel_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "coverage_gaps",
+          "label": "templates.catalogue.coverage_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_community_participatory_mapping",
+      "name": "templates.gis_community_participatory_mapping.name",
+      "title": "Community participatory mapping",
+      "code": "GIS-030",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "participant_consent",
+          "label": "templates.catalogue.participant_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "community_features",
+          "label": "templates.catalogue.community_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "validation_notes",
+          "label": "templates.catalogue.validation_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_survey_equipment_calibration",
+      "name": "templates.gis_survey_equipment_calibration.name",
+      "title": "Survey equipment calibration",
+      "code": "GIS-031",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "instrument_reference",
+          "label": "templates.catalogue.instrument_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_method",
+          "label": "templates.catalogue.test_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "calibration_results",
+          "label": "templates.catalogue.calibration_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "gis_land_survey_report_draft",
+      "name": "templates.gis_land_survey_report_draft.name",
+      "title": "Land survey report draft",
+      "code": "GIS-032",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_gis",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "qualified_surveyor_findings",
+          "label": "templates.catalogue.qualified_surveyor_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "methods",
+          "label": "templates.catalogue.methods",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

@@ -1,0 +1,1519 @@
+{
+  "category": "MIN",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "min_mine_site_asset_register",
+      "name": "templates.min_mine_site_asset_register.name",
+      "title": "Mine site asset register",
+      "code": "MIN-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "asset_type",
+          "label": "templates.catalogue.asset_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operating_area",
+          "label": "templates.catalogue.operating_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition",
+          "label": "templates.catalogue.condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_geological_outcrop_observation",
+      "name": "templates.min_geological_outcrop_observation.name",
+      "title": "Geological outcrop observation",
+      "code": "MIN-002",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "rock_description",
+          "label": "templates.catalogue.rock_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "location",
+          "label": "templates.catalogue.location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "geologist_notes",
+          "label": "templates.catalogue.geologist_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_geological_sample_collection",
+      "name": "templates.min_geological_sample_collection.name",
+      "title": "Geological sample collection",
+      "code": "MIN-003",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "sampling_method",
+          "label": "templates.catalogue.sampling_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "location",
+          "label": "templates.catalogue.location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_drill_core_logging",
+      "name": "templates.min_drill_core_logging.name",
+      "title": "Drill core logging",
+      "code": "MIN-004",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "borehole_reference",
+          "label": "templates.catalogue.borehole_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "depth_interval",
+          "label": "templates.catalogue.depth_interval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "geologist_observations",
+          "label": "templates.catalogue.geologist_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_core_sample_custody",
+      "name": "templates.min_core_sample_custody.name",
+      "title": "Core sample custody",
+      "code": "MIN-005",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "sample_reference",
+          "label": "templates.catalogue.sample_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custodian",
+          "label": "templates.catalogue.custodian",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_location",
+          "label": "templates.catalogue.storage_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_assay_result_intake",
+      "name": "templates.min_assay_result_intake.name",
+      "title": "Assay result intake",
+      "code": "MIN-006",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "laboratory_reference",
+          "label": "templates.catalogue.laboratory_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_results",
+          "label": "templates.catalogue.reported_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "geologist_review",
+          "label": "templates.catalogue.geologist_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_mineral_resource_evidence_index",
+      "name": "templates.min_mineral_resource_evidence_index.name",
+      "title": "Mineral resource evidence index",
+      "code": "MIN-007",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "source_report",
+          "label": "templates.catalogue.source_report",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_author",
+          "label": "templates.catalogue.qualified_author",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_quarry_production_log",
+      "name": "templates.min_quarry_production_log.name",
+      "title": "Quarry production log",
+      "code": "MIN-008",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "material_type",
+          "label": "templates.catalogue.material_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "produced_quantity",
+          "label": "templates.catalogue.produced_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "produced_quantity_unit",
+          "label": "templates.catalogue.produced_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_basis",
+          "label": "templates.catalogue.measurement_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_excavation_progress_survey",
+      "name": "templates.min_excavation_progress_survey.name",
+      "title": "Excavation progress survey",
+      "code": "MIN-009",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "survey_area",
+          "label": "templates.catalogue.survey_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_geometry",
+          "label": "templates.catalogue.measured_geometry",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "Coordinates as WKT or GeoJSON."
+        },
+        {
+          "field_key": "volume_method",
+          "label": "templates.catalogue.volume_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_stockpile_volume_survey",
+      "name": "templates.min_stockpile_volume_survey.name",
+      "title": "Stockpile volume survey",
+      "code": "MIN-010",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "stockpile_identifier",
+          "label": "templates.catalogue.stockpile_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "survey_points",
+          "label": "templates.catalogue.survey_points",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "calculation_assumptions",
+          "label": "templates.catalogue.calculation_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_material_haulage_ticket",
+      "name": "templates.min_material_haulage_ticket.name",
+      "title": "Material haulage ticket",
+      "code": "MIN-011",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "material_load",
+          "label": "templates.catalogue.material_load",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "origin",
+          "label": "templates.catalogue.origin",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "destination",
+          "label": "templates.catalogue.destination",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_weight",
+          "label": "templates.catalogue.measured_weight",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "kg",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_weighbridge_ticket_capture",
+      "name": "templates.min_weighbridge_ticket_capture.name",
+      "title": "Weighbridge ticket capture",
+      "code": "MIN-012",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_reference",
+          "label": "templates.catalogue.vehicle_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "gross_weight",
+          "label": "templates.catalogue.gross_weight",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "kg",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "tare_weight",
+          "label": "templates.catalogue.tare_weight",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "kg",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_mining_equipment_pre_start_check",
+      "name": "templates.min_mining_equipment_pre_start_check.name",
+      "title": "Mining equipment pre-start check",
+      "code": "MIN-013",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "machine_reference",
+          "label": "templates.catalogue.machine_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_check_items",
+          "label": "templates.catalogue.approved_check_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restrictions",
+          "label": "templates.catalogue.restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_mine_plant_maintenance_work_order",
+      "name": "templates.min_mine_plant_maintenance_work_order.name",
+      "title": "Mine plant maintenance work order",
+      "code": "MIN-014",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_fault",
+          "label": "templates.catalogue.equipment_fault",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_evidence",
+          "label": "templates.catalogue.completion_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_mine_site_safety_observation",
+      "name": "templates.min_mine_site_safety_observation.name",
+      "title": "Mine site safety observation",
+      "code": "MIN-015",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "work_area",
+          "label": "templates.catalogue.work_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_hazard",
+          "label": "templates.catalogue.observed_hazard",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_escalation",
+          "label": "templates.catalogue.authorized_escalation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_mine_worker_training_record",
+      "name": "templates.min_mine_worker_training_record.name",
+      "title": "Mine worker training record",
+      "code": "MIN-016",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "task_authorization",
+          "label": "templates.catalogue.task_authorization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "training_evidence",
+          "label": "templates.catalogue.training_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "competency_review",
+          "label": "templates.catalogue.competency_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_ground_condition_observation",
+      "name": "templates.min_ground_condition_observation.name",
+      "title": "Ground condition observation",
+      "code": "MIN-017",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_cracking",
+          "label": "templates.catalogue.observed_cracking",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "location",
+          "label": "templates.catalogue.location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_groundwater_monitoring_borehole",
+      "name": "templates.min_groundwater_monitoring_borehole.name",
+      "title": "Groundwater monitoring borehole",
+      "code": "MIN-018",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "borehole_reference",
+          "label": "templates.catalogue.borehole_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "water_level",
+          "label": "templates.catalogue.water_level",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_method",
+          "label": "templates.catalogue.measurement_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_mine_water_quality_sample",
+      "name": "templates.min_mine_water_quality_sample.name",
+      "title": "Mine water quality sample",
+      "code": "MIN-019",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "sampling_point",
+          "label": "templates.catalogue.sampling_point",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_test_panel",
+          "label": "templates.catalogue.approved_test_panel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "laboratory_reference",
+          "label": "templates.catalogue.laboratory_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_dust_exposure_measurement_record",
+      "name": "templates.min_dust_exposure_measurement_record.name",
+      "title": "Dust exposure measurement record",
+      "code": "MIN-020",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "sampling_method",
+          "label": "templates.catalogue.sampling_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_interpretation",
+          "label": "templates.catalogue.qualified_interpretation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_noise_monitoring_at_mine_site",
+      "name": "templates.min_noise_monitoring_at_mine_site.name",
+      "title": "Noise monitoring at mine site",
+      "code": "MIN-021",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "measurement_location",
+          "label": "templates.catalogue.measurement_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_levels",
+          "label": "templates.catalogue.observed_levels",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_duration",
+          "label": "templates.catalogue.measurement_duration",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "minutes",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_tailings_facility_inspection_evidence",
+      "name": "templates.min_tailings_facility_inspection_evidence.name",
+      "title": "Tailings facility inspection evidence",
+      "code": "MIN-022",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_inspection_scope",
+          "label": "templates.catalogue.approved_inspection_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_conditions",
+          "label": "templates.catalogue.observed_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_engineer_review",
+          "label": "templates.catalogue.qualified_engineer_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_mine_rehabilitation_plan",
+      "name": "templates.min_mine_rehabilitation_plan.name",
+      "title": "Mine rehabilitation plan",
+      "code": "MIN-023",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "disturbed_areas",
+          "label": "templates.catalogue.disturbed_areas",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restoration_actions",
+          "label": "templates.catalogue.restoration_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "monitoring_criteria",
+          "label": "templates.catalogue.monitoring_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_mine_rehabilitation_monitoring",
+      "name": "templates.min_mine_rehabilitation_monitoring.name",
+      "title": "Mine rehabilitation monitoring",
+      "code": "MIN-024",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "rehabilitation_plot",
+          "label": "templates.catalogue.rehabilitation_plot",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_indicators",
+          "label": "templates.catalogue.observed_indicators",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_method",
+          "label": "templates.catalogue.measurement_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_mining_permit_evidence_register",
+      "name": "templates.min_mining_permit_evidence_register.name",
+      "title": "Mining permit evidence register",
+      "code": "MIN-025",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "authorization_reference",
+          "label": "templates.catalogue.authorization_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "permitted_scope",
+          "label": "templates.catalogue.permitted_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "validity_period",
+          "label": "templates.catalogue.validity_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_community_grievance_intake_for_extractives",
+      "name": "templates.min_community_grievance_intake_for_extractives.name",
+      "title": "Community grievance intake for extractives",
+      "code": "MIN-026",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_impact",
+          "label": "templates.catalogue.reported_impact",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_contact",
+          "label": "templates.catalogue.safe_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "resolution_request",
+          "label": "templates.catalogue.resolution_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_mineral_shipment_traceability",
+      "name": "templates.min_mineral_shipment_traceability.name",
+      "title": "Mineral shipment traceability",
+      "code": "MIN-027",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "material_batch",
+          "label": "templates.catalogue.material_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "origin_evidence",
+          "label": "templates.catalogue.origin_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "shipment_documents",
+          "label": "templates.catalogue.shipment_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_mining_contractor_performance_review",
+      "name": "templates.min_mining_contractor_performance_review.name",
+      "title": "Mining contractor performance review",
+      "code": "MIN-028",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "contract_scope",
+          "label": "templates.catalogue.contract_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_evidence",
+          "label": "templates.catalogue.delivery_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safety_record_source",
+          "label": "templates.catalogue.safety_record_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_mineral_royalty_supporting_schedule",
+      "name": "templates.min_mineral_royalty_supporting_schedule.name",
+      "title": "Mineral royalty supporting schedule",
+      "code": "MIN-029",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "jurisdiction",
+          "label": "templates.catalogue.jurisdiction",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_production",
+          "label": "templates.catalogue.verified_production",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "applicable_basis_ref",
+          "label": "templates.catalogue.applicable_basis_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_mine_closure_evidence_pack",
+      "name": "templates.min_mine_closure_evidence_pack.name",
+      "title": "Mine closure evidence pack",
+      "code": "MIN-030",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "closure_requirements_ref",
+          "label": "templates.catalogue.closure_requirements_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_actions",
+          "label": "templates.catalogue.verified_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "remaining_obligations",
+          "label": "templates.catalogue.remaining_obligations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_geotechnical_test_request",
+      "name": "templates.min_geotechnical_test_request.name",
+      "title": "Geotechnical test request",
+      "code": "MIN-031",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "material_sample",
+          "label": "templates.catalogue.material_sample",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_test",
+          "label": "templates.catalogue.requested_test",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "project_reference",
+          "label": "templates.catalogue.project_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "min_quarry_customer_delivery_report",
+      "name": "templates.min_quarry_customer_delivery_report.name",
+      "title": "Quarry customer delivery report",
+      "code": "MIN-032",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_min",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "delivered_material",
+          "label": "templates.catalogue.delivered_material",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_evidence",
+          "label": "templates.catalogue.quality_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_exceptions",
+          "label": "templates.catalogue.delivery_exceptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

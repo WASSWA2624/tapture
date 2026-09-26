@@ -1,0 +1,1553 @@
+{
+  "category": "PER",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "per_personal_document_organizer",
+      "name": "templates.per_personal_document_organizer.name",
+      "title": "Personal document organizer",
+      "code": "PER-001",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "document_type",
+          "label": "templates.catalogue.document_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expiry_date",
+          "label": "templates.catalogue.expiry_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "secure_file_reference",
+          "label": "templates.catalogue.secure_file_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_household_belongings_inventory",
+      "name": "templates.per_household_belongings_inventory.name",
+      "title": "Household belongings inventory",
+      "code": "PER-002",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "item_description",
+          "label": "templates.catalogue.item_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "purchase_evidence",
+          "label": "templates.catalogue.purchase_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_location",
+          "label": "templates.catalogue.storage_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_home_insurance_evidence_pack",
+      "name": "templates.per_home_insurance_evidence_pack.name",
+      "title": "Home insurance evidence pack",
+      "code": "PER-003",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_inventory",
+          "label": "templates.catalogue.verified_inventory",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition_photos",
+          "label": "templates.catalogue.condition_photos",
+          "type": "photo_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "valuation_sources",
+          "label": "templates.catalogue.valuation_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_household_appliance_warranty_register",
+      "name": "templates.per_household_appliance_warranty_register.name",
+      "title": "Household appliance warranty register",
+      "code": "PER-004",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "appliance_reference",
+          "label": "templates.catalogue.appliance_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "warranty_terms",
+          "label": "templates.catalogue.warranty_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expiry_date",
+          "label": "templates.catalogue.expiry_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_household_maintenance_calendar",
+      "name": "templates.per_household_maintenance_calendar.name",
+      "title": "Household maintenance calendar",
+      "code": "PER-005",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "maintenance_tasks",
+          "label": "templates.catalogue.maintenance_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recommended_schedule_ref",
+          "label": "templates.catalogue.recommended_schedule_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_person",
+          "label": "templates.catalogue.assigned_person",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_home_renovation_planning",
+      "name": "templates.per_home_renovation_planning.name",
+      "title": "Home renovation planning",
+      "code": "PER-006",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "desired_changes",
+          "label": "templates.catalogue.desired_changes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "budget_assumptions",
+          "label": "templates.catalogue.budget_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contractor_quotes",
+          "label": "templates.catalogue.contractor_quotes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_personal_expense_capture",
+      "name": "templates.per_personal_expense_capture.name",
+      "title": "Personal expense capture",
+      "code": "PER-007",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "expense_date",
+          "label": "templates.catalogue.expense_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "category",
+          "label": "templates.catalogue.category",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "receipt",
+          "label": "templates.catalogue.receipt",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_household_budget_worksheet",
+      "name": "templates.per_household_budget_worksheet.name",
+      "title": "Household budget worksheet",
+      "code": "PER-008",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "expected_income",
+          "label": "templates.catalogue.expected_income",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "expected_income_currency",
+          "label": "templates.catalogue.expected_income_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "planned_costs",
+          "label": "templates.catalogue.planned_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "savings_goals",
+          "label": "templates.catalogue.savings_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_family_shared_purchase_list",
+      "name": "templates.per_family_shared_purchase_list.name",
+      "title": "Family shared purchase list",
+      "code": "PER-009",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "needed_item",
+          "label": "templates.catalogue.needed_item",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity",
+          "label": "templates.catalogue.quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity_unit",
+          "label": "templates.catalogue.quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_buyer",
+          "label": "templates.catalogue.assigned_buyer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_personal_receipt_archive",
+      "name": "templates.per_personal_receipt_archive.name",
+      "title": "Personal receipt archive",
+      "code": "PER-010",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "merchant",
+          "label": "templates.catalogue.merchant",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "purchase_date",
+          "label": "templates.catalogue.purchase_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "warranty_link",
+          "label": "templates.catalogue.warranty_link",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_personal_travel_document_checklist",
+      "name": "templates.per_personal_travel_document_checklist.name",
+      "title": "Personal travel document checklist",
+      "code": "PER-011",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "official_requirements_source",
+          "label": "templates.catalogue.official_requirements_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "held_documents",
+          "label": "templates.catalogue.held_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expiry_dates",
+          "label": "templates.catalogue.expiry_dates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_family_event_planning",
+      "name": "templates.per_family_event_planning.name",
+      "title": "Family event planning",
+      "code": "PER-012",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "event_purpose",
+          "label": "templates.catalogue.event_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "guest_permissions",
+          "label": "templates.catalogue.guest_permissions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "logistics",
+          "label": "templates.catalogue.logistics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_wedding_planning_brief",
+      "name": "templates.per_wedding_planning_brief.name",
+      "title": "Wedding planning brief",
+      "code": "PER-013",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "preferences",
+          "label": "templates.catalogue.preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_bookings",
+          "label": "templates.catalogue.service_bookings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "budget",
+          "label": "templates.catalogue.budget",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_family_reunion_registration",
+      "name": "templates.per_family_reunion_registration.name",
+      "title": "Family reunion registration",
+      "code": "PER-014",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "voluntary_contact",
+          "label": "templates.catalogue.voluntary_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attendance_preferences",
+          "label": "templates.catalogue.attendance_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "privacy_choices",
+          "label": "templates.catalogue.privacy_choices",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_personal_appointment_tracker",
+      "name": "templates.per_personal_appointment_tracker.name",
+      "title": "Personal appointment tracker",
+      "code": "PER-015",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "appointment_type",
+          "label": "templates.catalogue.appointment_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "scheduled_time",
+          "label": "templates.catalogue.scheduled_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reminder_preference",
+          "label": "templates.catalogue.reminder_preference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_personal_learning_goals",
+      "name": "templates.per_personal_learning_goals.name",
+      "title": "Personal learning goals",
+      "code": "PER-016",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "learning_objective",
+          "label": "templates.catalogue.learning_objective",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "planned_activities",
+          "label": "templates.catalogue.planned_activities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "progress_evidence",
+          "label": "templates.catalogue.progress_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_personal_project_notebook",
+      "name": "templates.per_personal_project_notebook.name",
+      "title": "Personal project notebook",
+      "code": "PER-017",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "project_goal",
+          "label": "templates.catalogue.project_goal",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "progress_notes",
+          "label": "templates.catalogue.progress_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "next_actions",
+          "label": "templates.catalogue.next_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_personal_portfolio_builder",
+      "name": "templates.per_personal_portfolio_builder.name",
+      "title": "Personal portfolio builder",
+      "code": "PER-018",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_work",
+          "label": "templates.catalogue.verified_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_images",
+          "label": "templates.catalogue.approved_images",
+          "type": "photo_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_preferences",
+          "label": "templates.catalogue.contact_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_job_application_tracker",
+      "name": "templates.per_job_application_tracker.name",
+      "title": "Job application tracker",
+      "code": "PER-019",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "role_reference",
+          "label": "templates.catalogue.role_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "submitted_documents",
+          "label": "templates.catalogue.submitted_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "application_status",
+          "label": "templates.catalogue.application_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_cv_and_cover_letter_drafting_brief",
+      "name": "templates.per_cv_and_cover_letter_drafting_brief.name",
+      "title": "CV and cover letter drafting brief",
+      "code": "PER-020",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_experience",
+          "label": "templates.catalogue.verified_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "role_requirements",
+          "label": "templates.catalogue.role_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_documents",
+          "label": "templates.catalogue.source_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_scholarship_personal_statement_brief",
+      "name": "templates.per_scholarship_personal_statement_brief.name",
+      "title": "Scholarship personal statement brief",
+      "code": "PER-021",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_background",
+          "label": "templates.catalogue.verified_background",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "application_prompt",
+          "label": "templates.catalogue.application_prompt",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "word_limit",
+          "label": "templates.catalogue.word_limit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_personal_reference_request",
+      "name": "templates.per_personal_reference_request.name",
+      "title": "Personal reference request",
+      "code": "PER-022",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "reference_purpose",
+          "label": "templates.catalogue.reference_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_relationship",
+          "label": "templates.catalogue.verified_relationship",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient_consent",
+          "label": "templates.catalogue.recipient_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_family_history_interview",
+      "name": "templates.per_family_history_interview.name",
+      "title": "Family history interview",
+      "code": "PER-023",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "participant_consent",
+          "label": "templates.catalogue.participant_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "narrative",
+          "label": "templates.catalogue.narrative",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "publication_permissions",
+          "label": "templates.catalogue.publication_permissions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_private_photo_album_captions",
+      "name": "templates.per_private_photo_album_captions.name",
+      "title": "Private photo album captions",
+      "code": "PER-024",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "photo_reference",
+          "label": "templates.catalogue.photo_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "user_provided_context",
+          "label": "templates.catalogue.user_provided_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "caption",
+          "label": "templates.catalogue.caption",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_voice_journal_entry",
+      "name": "templates.per_voice_journal_entry.name",
+      "title": "Voice journal entry",
+      "code": "PER-025",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "recording_reference",
+          "label": "templates.catalogue.recording_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "user_tags",
+          "label": "templates.catalogue.user_tags",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transcript_preference",
+          "label": "templates.catalogue.transcript_preference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_pet_home_care_schedule",
+      "name": "templates.per_pet_home_care_schedule.name",
+      "title": "Pet home care schedule",
+      "code": "PER-026",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "owner_instructions",
+          "label": "templates.catalogue.owner_instructions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "care_tasks",
+          "label": "templates.catalogue.care_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_contact",
+          "label": "templates.catalogue.authorized_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_house_sitter_handover",
+      "name": "templates.per_house_sitter_handover.name",
+      "title": "House sitter handover",
+      "code": "PER-027",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_responsibilities",
+          "label": "templates.catalogue.agreed_responsibilities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "essential_contacts",
+          "label": "templates.catalogue.essential_contacts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_controls",
+          "label": "templates.catalogue.access_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_borrowed_belongings_register",
+      "name": "templates.per_borrowed_belongings_register.name",
+      "title": "Borrowed belongings register",
+      "code": "PER-028",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "item_reference",
+          "label": "templates.catalogue.item_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "borrower",
+          "label": "templates.catalogue.borrower",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_due_date",
+          "label": "templates.catalogue.return_due_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_personal_emergency_information_card",
+      "name": "templates.per_personal_emergency_information_card.name",
+      "title": "Personal emergency information card",
+      "code": "PER-029",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "voluntarily_selected_information",
+          "label": "templates.catalogue.voluntarily_selected_information",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_access",
+          "label": "templates.catalogue.authorized_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_date",
+          "label": "templates.catalogue.review_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_digital_account_legacy_instructions",
+      "name": "templates.per_digital_account_legacy_instructions.name",
+      "title": "Digital account legacy instructions",
+      "code": "PER-030",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "account_aliases",
+          "label": "templates.catalogue.account_aliases",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_process",
+          "label": "templates.catalogue.authorized_process",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "no_password_storage",
+          "label": "templates.catalogue.no_password_storage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_personal_data_export_inventory",
+      "name": "templates.per_personal_data_export_inventory.name",
+      "title": "Personal data export inventory",
+      "code": "PER-031",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "data_source",
+          "label": "templates.catalogue.data_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "export_date",
+          "label": "templates.catalogue.export_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "retention_preference",
+          "label": "templates.catalogue.retention_preference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "per_personal_subscription_tracker",
+      "name": "templates.per_personal_subscription_tracker.name",
+      "title": "Personal subscription tracker",
+      "code": "PER-032",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_per",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "service_name",
+          "label": "templates.catalogue.service_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "renewal_date",
+          "label": "templates.catalogue.renewal_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cancelation_terms_source",
+          "label": "templates.catalogue.cancelation_terms_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

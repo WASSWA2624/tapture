@@ -1,0 +1,1480 @@
+{
+  "category": "SPO",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "spo_sports_club_membership_application",
+      "name": "templates.spo_sports_club_membership_application.name",
+      "title": "Sports club membership application",
+      "code": "SPO-001",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "membership_type",
+          "label": "templates.catalogue.membership_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_contact",
+          "label": "templates.catalogue.participant_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_athlete_registration",
+      "name": "templates.spo_athlete_registration.name",
+      "title": "Athlete registration",
+      "code": "SPO-002",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "athlete_reference",
+          "label": "templates.catalogue.athlete_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "team_assignment",
+          "label": "templates.catalogue.team_assignment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "guardian_authority_when_needed",
+          "label": "templates.catalogue.guardian_authority_when_needed",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_sports_participation_consent",
+      "name": "templates.spo_sports_participation_consent.name",
+      "title": "Sports participation consent",
+      "code": "SPO-003",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "activity_information",
+          "label": "templates.catalogue.activity_information",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_choice",
+          "label": "templates.catalogue.participant_choice",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_contact",
+          "label": "templates.catalogue.authorized_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_sports_training_plan",
+      "name": "templates.spo_sports_training_plan.name",
+      "title": "Sports training plan",
+      "code": "SPO-004",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "coach_approved_goals",
+          "label": "templates.catalogue.coach_approved_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "session_activities",
+          "label": "templates.catalogue.session_activities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_schedule",
+          "label": "templates.catalogue.review_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_training_attendance_record",
+      "name": "templates.spo_training_attendance_record.name",
+      "title": "Training attendance record",
+      "code": "SPO-005",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "session_reference",
+          "label": "templates.catalogue.session_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_code",
+          "label": "templates.catalogue.participant_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attendance",
+          "label": "templates.catalogue.attendance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_coach_observation_record",
+      "name": "templates.spo_coach_observation_record.name",
+      "title": "Coach observation record",
+      "code": "SPO-006",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "skill_focus",
+          "label": "templates.catalogue.skill_focus",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_performance",
+          "label": "templates.catalogue.observed_performance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "development_feedback",
+          "label": "templates.catalogue.development_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_athlete_performance_measurement",
+      "name": "templates.spo_athlete_performance_measurement.name",
+      "title": "Athlete performance measurement",
+      "code": "SPO-007",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_test_protocol",
+          "label": "templates.catalogue.approved_test_protocol",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_result",
+          "label": "templates.catalogue.observed_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_reviewer",
+          "label": "templates.catalogue.qualified_reviewer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_sports_equipment_inventory",
+      "name": "templates.spo_sports_equipment_inventory.name",
+      "title": "Sports equipment inventory",
+      "code": "SPO-008",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_type",
+          "label": "templates.catalogue.equipment_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition",
+          "label": "templates.catalogue.condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_location",
+          "label": "templates.catalogue.assigned_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_sports_equipment_issue_and_return",
+      "name": "templates.spo_sports_equipment_issue_and_return.name",
+      "title": "Sports equipment issue and return",
+      "code": "SPO-009",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_reference",
+          "label": "templates.catalogue.equipment_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient",
+          "label": "templates.catalogue.recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_status",
+          "label": "templates.catalogue.return_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_playing_field_condition_inspection",
+      "name": "templates.spo_playing_field_condition_inspection.name",
+      "title": "Playing field condition inspection",
+      "code": "SPO-010",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "surface_condition",
+          "label": "templates.catalogue.surface_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "facility_features",
+          "label": "templates.catalogue.facility_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_need",
+          "label": "templates.catalogue.maintenance_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_sports_venue_booking",
+      "name": "templates.spo_sports_venue_booking.name",
+      "title": "Sports venue booking",
+      "code": "SPO-011",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "sport_type",
+          "label": "templates.catalogue.sport_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "booking_period",
+          "label": "templates.catalogue.booking_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "equipment_needs",
+          "label": "templates.catalogue.equipment_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_tournament_planning",
+      "name": "templates.spo_tournament_planning.name",
+      "title": "Tournament planning",
+      "code": "SPO-012",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "competition_format",
+          "label": "templates.catalogue.competition_format",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "teams",
+          "label": "templates.catalogue.teams",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "schedule_constraints",
+          "label": "templates.catalogue.schedule_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_match_fixture_record",
+      "name": "templates.spo_match_fixture_record.name",
+      "title": "Match fixture record",
+      "code": "SPO-013",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "opponents",
+          "label": "templates.catalogue.opponents",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "venue",
+          "label": "templates.catalogue.venue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "scheduled_time",
+          "label": "templates.catalogue.scheduled_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_match_result_verification",
+      "name": "templates.spo_match_result_verification.name",
+      "title": "Match result verification",
+      "code": "SPO-014",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "official_result_source",
+          "label": "templates.catalogue.official_result_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "score",
+          "label": "templates.catalogue.score",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "points",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_confirmation",
+          "label": "templates.catalogue.authorized_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_match_official_assignment",
+      "name": "templates.spo_match_official_assignment.name",
+      "title": "Match official assignment",
+      "code": "SPO-015",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "event_reference",
+          "label": "templates.catalogue.event_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_official",
+          "label": "templates.catalogue.qualified_official",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_role",
+          "label": "templates.catalogue.assigned_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_sports_event_attendance_count",
+      "name": "templates.spo_sports_event_attendance_count.name",
+      "title": "Sports event attendance count",
+      "code": "SPO-016",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "count_location",
+          "label": "templates.catalogue.count_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "count_method",
+          "label": "templates.catalogue.count_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_number",
+          "label": "templates.catalogue.observed_number",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_sports_injury_incident_documentation",
+      "name": "templates.spo_sports_injury_incident_documentation.name",
+      "title": "Sports injury incident documentation",
+      "code": "SPO-017",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "factual_event",
+          "label": "templates.catalogue.factual_event",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "immediate_response",
+          "label": "templates.catalogue.immediate_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_care_referral",
+          "label": "templates.catalogue.qualified_care_referral",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_athlete_care_referral_administration",
+      "name": "templates.spo_athlete_care_referral_administration.name",
+      "title": "Athlete care referral administration",
+      "code": "SPO-018",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "consented_support_need",
+          "label": "templates.catalogue.consented_support_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_recipient",
+          "label": "templates.catalogue.qualified_recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_details",
+          "label": "templates.catalogue.minimum_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_sports_safeguarding_concern",
+      "name": "templates.spo_sports_safeguarding_concern.name",
+      "title": "Sports safeguarding concern",
+      "code": "SPO-019",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "minimum_necessary_concern",
+          "label": "templates.catalogue.minimum_necessary_concern",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_contact",
+          "label": "templates.catalogue.safe_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_handler",
+          "label": "templates.catalogue.authorized_handler",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_sports_travel_coordination",
+      "name": "templates.spo_sports_travel_coordination.name",
+      "title": "Sports travel coordination",
+      "code": "SPO-020",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "team_itinerary",
+          "label": "templates.catalogue.team_itinerary",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent_status",
+          "label": "templates.catalogue.consent_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "logistics_contacts",
+          "label": "templates.catalogue.logistics_contacts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_coach_qualification_register",
+      "name": "templates.spo_coach_qualification_register.name",
+      "title": "Coach qualification register",
+      "code": "SPO-021",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "qualification_reference",
+          "label": "templates.catalogue.qualification_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_source",
+          "label": "templates.catalogue.verification_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "renewal_date",
+          "label": "templates.catalogue.renewal_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_fitness_client_goals_intake",
+      "name": "templates.spo_fitness_client_goals_intake.name",
+      "title": "Fitness client goals intake",
+      "code": "SPO-022",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "self_stated_goals",
+          "label": "templates.catalogue.self_stated_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "preferences",
+          "label": "templates.catalogue.preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_coach_review",
+          "label": "templates.catalogue.qualified_coach_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_personal_training_session_log",
+      "name": "templates.spo_personal_training_session_log.name",
+      "title": "Personal training session log",
+      "code": "SPO-023",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_session_plan",
+          "label": "templates.catalogue.agreed_session_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_activities",
+          "label": "templates.catalogue.completed_activities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "client_feedback",
+          "label": "templates.catalogue.client_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_fitness_facility_equipment_check",
+      "name": "templates.spo_fitness_facility_equipment_check.name",
+      "title": "Fitness facility equipment check",
+      "code": "SPO-024",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_identifier",
+          "label": "templates.catalogue.equipment_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "manufacturer_criteria",
+          "label": "templates.catalogue.manufacturer_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restriction_status",
+          "label": "templates.catalogue.restriction_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_swimming_pool_water_test_record",
+      "name": "templates.spo_swimming_pool_water_test_record.name",
+      "title": "Swimming pool water test record",
+      "code": "SPO-025",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_test_method",
+          "label": "templates.catalogue.approved_test_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_values",
+          "label": "templates.catalogue.observed_values",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_swimming_pool_safety_inspection",
+      "name": "templates.spo_swimming_pool_safety_inspection.name",
+      "title": "Swimming pool safety inspection",
+      "code": "SPO-026",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_safety_criteria",
+          "label": "templates.catalogue.approved_safety_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_conditions",
+          "label": "templates.catalogue.observed_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "corrective_actions",
+          "label": "templates.catalogue.corrective_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_club_sponsorship_proposal",
+      "name": "templates.spo_club_sponsorship_proposal.name",
+      "title": "Club sponsorship proposal",
+      "code": "SPO-027",
+      "kind": "proposal",
+      "pack": "PROPOSAL",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "proposal_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_proposal"
+      ],
+      "fields": [
+        {
+          "field_key": "club_profile",
+          "label": "templates.catalogue.club_profile",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_audience",
+          "label": "templates.catalogue.verified_audience",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_benefits",
+          "label": "templates.catalogue.proposed_benefits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_sports_grant_application",
+      "name": "templates.spo_sports_grant_application.name",
+      "title": "Sports grant application",
+      "code": "SPO-028",
+      "kind": "proposal",
+      "pack": "PROPOSAL",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "proposal_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_proposal"
+      ],
+      "fields": [
+        {
+          "field_key": "development_goals",
+          "label": "templates.catalogue.development_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "implementation_plan",
+          "label": "templates.catalogue.implementation_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "budget",
+          "label": "templates.catalogue.budget",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_sports_event_volunteer_coordination",
+      "name": "templates.spo_sports_event_volunteer_coordination.name",
+      "title": "Sports event volunteer coordination",
+      "code": "SPO-029",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "assigned_roles",
+          "label": "templates.catalogue.assigned_roles",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "briefing_status",
+          "label": "templates.catalogue.briefing_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supervisor",
+          "label": "templates.catalogue.supervisor",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "spo_sports_program_evaluation",
+      "name": "templates.spo_sports_program_evaluation.name",
+      "title": "Sports program evaluation",
+      "code": "SPO-030",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_spo",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_outcomes",
+          "label": "templates.catalogue.agreed_outcomes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_feedback",
+          "label": "templates.catalogue.participant_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "verified_results",
+          "label": "templates.catalogue.verified_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

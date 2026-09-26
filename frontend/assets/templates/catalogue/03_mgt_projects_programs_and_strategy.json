@@ -1,0 +1,1613 @@
+{
+  "category": "MGT",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "mgt_project_concept_intake",
+      "name": "templates.mgt_project_concept_intake.name",
+      "title": "Project concept intake",
+      "code": "MGT-001",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "problem_statement",
+          "label": "templates.catalogue.problem_statement",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "proposed_solution",
+          "label": "templates.catalogue.proposed_solution",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expected_beneficiaries",
+          "label": "templates.catalogue.expected_beneficiaries",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_project_charter",
+      "name": "templates.mgt_project_charter.name",
+      "title": "Project charter",
+      "code": "MGT-002",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "project_objectives",
+          "label": "templates.catalogue.project_objectives",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "scope_boundaries",
+          "label": "templates.catalogue.scope_boundaries",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sponsor",
+          "label": "templates.catalogue.sponsor",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_project_stakeholder_register",
+      "name": "templates.mgt_project_stakeholder_register.name",
+      "title": "Project stakeholder register",
+      "code": "MGT-003",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "stakeholder_role",
+          "label": "templates.catalogue.stakeholder_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "engagement_needs",
+          "label": "templates.catalogue.engagement_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_permission",
+          "label": "templates.catalogue.contact_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_project_work_breakdown",
+      "name": "templates.mgt_project_work_breakdown.name",
+      "title": "Project work breakdown",
+      "code": "MGT-004",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "deliverables",
+          "label": "templates.catalogue.deliverables",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "work_packages",
+          "label": "templates.catalogue.work_packages",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_project_schedule",
+      "name": "templates.mgt_project_schedule.name",
+      "title": "Project schedule",
+      "code": "MGT-005",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "task_durations",
+          "label": "templates.catalogue.task_durations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "dependency_links",
+          "label": "templates.catalogue.dependency_links",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_project_budget",
+      "name": "templates.mgt_project_budget.name",
+      "title": "Project budget",
+      "code": "MGT-006",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "cost_categories",
+          "label": "templates.catalogue.cost_categories",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity_assumptions",
+          "label": "templates.catalogue.quantity_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "funding_sources",
+          "label": "templates.catalogue.funding_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_resource_allocation_plan",
+      "name": "templates.mgt_resource_allocation_plan.name",
+      "title": "Resource allocation plan",
+      "code": "MGT-007",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "required_skills",
+          "label": "templates.catalogue.required_skills",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_capacity",
+          "label": "templates.catalogue.assigned_capacity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_capacity_unit",
+          "label": "templates.catalogue.assigned_capacity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "availability_periods",
+          "label": "templates.catalogue.availability_periods",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_project_risk_log",
+      "name": "templates.mgt_project_risk_log.name",
+      "title": "Project risk log",
+      "code": "MGT-008",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "risk_description",
+          "label": "templates.catalogue.risk_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "response_owner",
+          "label": "templates.catalogue.response_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "mitigation_status",
+          "label": "templates.catalogue.mitigation_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_project_issue_log",
+      "name": "templates.mgt_project_issue_log.name",
+      "title": "Project issue log",
+      "code": "MGT-009",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "issue_description",
+          "label": "templates.catalogue.issue_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "priority",
+          "label": "templates.catalogue.priority",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "emergency",
+              "label": "templates.choices.priority.emergency"
+            },
+            {
+              "code": "high",
+              "label": "templates.choices.priority.high"
+            },
+            {
+              "code": "medium",
+              "label": "templates.choices.priority.medium"
+            },
+            {
+              "code": "low",
+              "label": "templates.choices.priority.low"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "resolution_owner",
+          "label": "templates.catalogue.resolution_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_project_decision_log",
+      "name": "templates.mgt_project_decision_log.name",
+      "title": "Project decision log",
+      "code": "MGT-010",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "decision_subject",
+          "label": "templates.catalogue.decision_subject",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "decision_rationale",
+          "label": "templates.catalogue.decision_rationale",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "decision_authority",
+          "label": "templates.catalogue.decision_authority",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_change_request",
+      "name": "templates.mgt_change_request.name",
+      "title": "Change request",
+      "code": "MGT-011",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_scope_change",
+          "label": "templates.catalogue.requested_scope_change",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cost_impact",
+          "label": "templates.catalogue.cost_impact",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "schedule_impact",
+          "label": "templates.catalogue.schedule_impact",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_project_status_update",
+      "name": "templates.mgt_project_status_update.name",
+      "title": "Project status update",
+      "code": "MGT-012",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "progress_summary",
+          "label": "templates.catalogue.progress_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "blocked_work",
+          "label": "templates.catalogue.blocked_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "next_steps",
+          "label": "templates.catalogue.next_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_milestone_acceptance",
+      "name": "templates.mgt_milestone_acceptance.name",
+      "title": "Milestone acceptance",
+      "code": "MGT-013",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "milestone_criteria",
+          "label": "templates.catalogue.milestone_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_evidence",
+          "label": "templates.catalogue.completion_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approver",
+          "label": "templates.catalogue.approver",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_deliverable_review",
+      "name": "templates.mgt_deliverable_review.name",
+      "title": "Deliverable review",
+      "code": "MGT-014",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "deliverable_version",
+          "label": "templates.catalogue.deliverable_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_criteria",
+          "label": "templates.catalogue.review_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_revisions",
+          "label": "templates.catalogue.required_revisions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_project_site_visit",
+      "name": "templates.mgt_project_site_visit.name",
+      "title": "Project site visit",
+      "code": "MGT-015",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "site_progress",
+          "label": "templates.catalogue.site_progress",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_constraints",
+          "label": "templates.catalogue.site_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "followup_actions",
+          "label": "templates.catalogue.followup_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_project_dependency_register",
+      "name": "templates.mgt_project_dependency_register.name",
+      "title": "Project dependency register",
+      "code": "MGT-016",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "upstream_dependency",
+          "label": "templates.catalogue.upstream_dependency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "downstream_work",
+          "label": "templates.catalogue.downstream_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "dependency_owner",
+          "label": "templates.catalogue.dependency_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_project_communication_plan",
+      "name": "templates.mgt_project_communication_plan.name",
+      "title": "Project communication plan",
+      "code": "MGT-017",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "audiences",
+          "label": "templates.catalogue.audiences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "channels",
+          "label": "templates.catalogue.channels",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reporting_frequency",
+          "label": "templates.catalogue.reporting_frequency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_project_governance_plan",
+      "name": "templates.mgt_project_governance_plan.name",
+      "title": "Project governance plan",
+      "code": "MGT-018",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "decision_forums",
+          "label": "templates.catalogue.decision_forums",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approval_routes",
+          "label": "templates.catalogue.approval_routes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "escalation_rules",
+          "label": "templates.catalogue.escalation_rules",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_benefits_realization_plan",
+      "name": "templates.mgt_benefits_realization_plan.name",
+      "title": "Benefits realization plan",
+      "code": "MGT-019",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "intended_benefits",
+          "label": "templates.catalogue.intended_benefits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_method",
+          "label": "templates.catalogue.measurement_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "benefit_owner",
+          "label": "templates.catalogue.benefit_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_portfolio_prioritization_worksheet",
+      "name": "templates.mgt_portfolio_prioritization_worksheet.name",
+      "title": "Portfolio prioritization worksheet",
+      "code": "MGT-020",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "strategic_fit",
+          "label": "templates.catalogue.strategic_fit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "resource_demand",
+          "label": "templates.catalogue.resource_demand",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "scoring_assumptions",
+          "label": "templates.catalogue.scoring_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_program_performance_report",
+      "name": "templates.mgt_program_performance_report.name",
+      "title": "Program performance report",
+      "code": "MGT-021",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "program_outcomes",
+          "label": "templates.catalogue.program_outcomes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_risks",
+          "label": "templates.catalogue.delivery_risks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "funding_status",
+          "label": "templates.catalogue.funding_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_strategy_workshop_capture",
+      "name": "templates.mgt_strategy_workshop_capture.name",
+      "title": "Strategy workshop capture",
+      "code": "MGT-022",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "strategic_questions",
+          "label": "templates.catalogue.strategic_questions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "options_discussed",
+          "label": "templates.catalogue.options_discussed",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_choices",
+          "label": "templates.catalogue.agreed_choices",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_strategic_plan",
+      "name": "templates.mgt_strategic_plan.name",
+      "title": "Strategic plan",
+      "code": "MGT-023",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "strategic_goals",
+          "label": "templates.catalogue.strategic_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "initiatives",
+          "label": "templates.catalogue.initiatives",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_annual_operating_plan",
+      "name": "templates.mgt_annual_operating_plan.name",
+      "title": "Annual operating plan",
+      "code": "MGT-024",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "annual_objectives",
+          "label": "templates.catalogue.annual_objectives",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "funded_activities",
+          "label": "templates.catalogue.funded_activities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accountable_owners",
+          "label": "templates.catalogue.accountable_owners",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_objective_and_key_result_tracker",
+      "name": "templates.mgt_objective_and_key_result_tracker.name",
+      "title": "Objective and key result tracker",
+      "code": "MGT-025",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "objective",
+          "label": "templates.catalogue.objective",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "key_result_measure",
+          "label": "templates.catalogue.key_result_measure",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "target_period",
+          "label": "templates.catalogue.target_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_business_case",
+      "name": "templates.mgt_business_case.name",
+      "title": "Business case",
+      "code": "MGT-026",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "options",
+          "label": "templates.catalogue.options",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cost_benefit_assumptions",
+          "label": "templates.catalogue.cost_benefit_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recommendation",
+          "label": "templates.catalogue.recommendation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_feasibility_study_intake",
+      "name": "templates.mgt_feasibility_study_intake.name",
+      "title": "Feasibility study intake",
+      "code": "MGT-027",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "feasibility_dimensions",
+          "label": "templates.catalogue.feasibility_dimensions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_sources",
+          "label": "templates.catalogue.data_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "constraints",
+          "label": "templates.catalogue.constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_lessons_learned_register",
+      "name": "templates.mgt_lessons_learned_register.name",
+      "title": "Lessons learned register",
+      "code": "MGT-028",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "lesson_context",
+          "label": "templates.catalogue.lesson_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_outcome",
+          "label": "templates.catalogue.observed_outcome",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recommended_change",
+          "label": "templates.catalogue.recommended_change",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_project_retrospective",
+      "name": "templates.mgt_project_retrospective.name",
+      "title": "Project retrospective",
+      "code": "MGT-029",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "what_worked",
+          "label": "templates.catalogue.what_worked",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "what_failed",
+          "label": "templates.catalogue.what_failed",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_actions",
+          "label": "templates.catalogue.improvement_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_project_closure_report",
+      "name": "templates.mgt_project_closure_report.name",
+      "title": "Project closure report",
+      "code": "MGT-030",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "delivered_scope",
+          "label": "templates.catalogue.delivered_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "remaining_obligations",
+          "label": "templates.catalogue.remaining_obligations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "handover_status",
+          "label": "templates.catalogue.handover_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_implementation_readiness_review",
+      "name": "templates.mgt_implementation_readiness_review.name",
+      "title": "Implementation readiness review",
+      "code": "MGT-031",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "readiness_criteria",
+          "label": "templates.catalogue.readiness_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "open_gaps",
+          "label": "templates.catalogue.open_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "go_live_decision",
+          "label": "templates.catalogue.go_live_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_transformation_initiative_tracker",
+      "name": "templates.mgt_transformation_initiative_tracker.name",
+      "title": "Transformation initiative tracker",
+      "code": "MGT-032",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "initiative_outcome",
+          "label": "templates.catalogue.initiative_outcome",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "adoption_metrics",
+          "label": "templates.catalogue.adoption_metrics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_status",
+          "label": "templates.catalogue.delivery_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_community_project_progress_check",
+      "name": "templates.mgt_community_project_progress_check.name",
+      "title": "Community project progress check",
+      "code": "MGT-033",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "planned_outputs",
+          "label": "templates.catalogue.planned_outputs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_outputs",
+          "label": "templates.catalogue.observed_outputs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "community_feedback",
+          "label": "templates.catalogue.community_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mgt_project_handover_pack",
+      "name": "templates.mgt_project_handover_pack.name",
+      "title": "Project handover pack",
+      "code": "MGT-034",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mgt",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "operational_documents",
+          "label": "templates.catalogue.operational_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "support_contacts",
+          "label": "templates.catalogue.support_contacts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_record",
+          "label": "templates.catalogue.acceptance_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

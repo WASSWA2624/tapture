@@ -1,0 +1,1646 @@
+{
+  "category": "RES",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "res_research_idea_intake",
+      "name": "templates.res_research_idea_intake.name",
+      "title": "Research idea intake",
+      "code": "RES-001",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "research_question",
+          "label": "templates.catalogue.research_question",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "motivation",
+          "label": "templates.catalogue.motivation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expected_contribution",
+          "label": "templates.catalogue.expected_contribution",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_research_protocol_draft",
+      "name": "templates.res_research_protocol_draft.name",
+      "title": "Research protocol draft",
+      "code": "RES-002",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "study_design",
+          "label": "templates.catalogue.study_design",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "methods",
+          "label": "templates.catalogue.methods",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "analysis_plan",
+          "label": "templates.catalogue.analysis_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_ethics_review_application_intake",
+      "name": "templates.res_ethics_review_application_intake.name",
+      "title": "Ethics review application intake",
+      "code": "RES-003",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "study_purpose",
+          "label": "templates.catalogue.study_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_risks",
+          "label": "templates.catalogue.participant_risks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent_materials",
+          "label": "templates.catalogue.consent_materials",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_research_consent_record",
+      "name": "templates.res_research_consent_record.name",
+      "title": "Research consent record",
+      "code": "RES-004",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_consent_version",
+          "label": "templates.catalogue.approved_consent_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_choices",
+          "label": "templates.catalogue.participant_choices",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "withdrawal_route",
+          "label": "templates.catalogue.withdrawal_route",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_participant_recruitment_log",
+      "name": "templates.res_participant_recruitment_log.name",
+      "title": "Participant recruitment log",
+      "code": "RES-005",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "recruitment_channel",
+          "label": "templates.catalogue.recruitment_channel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "eligibility_review",
+          "label": "templates.catalogue.eligibility_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent_status",
+          "label": "templates.catalogue.consent_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_interview_guide",
+      "name": "templates.res_interview_guide.name",
+      "title": "Interview guide",
+      "code": "RES-006",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "research_topics",
+          "label": "templates.catalogue.research_topics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "questions",
+          "label": "templates.catalogue.questions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "probing_guidance",
+          "label": "templates.catalogue.probing_guidance",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_research_interview_transcript",
+      "name": "templates.res_research_interview_transcript.name",
+      "title": "Research interview transcript",
+      "code": "RES-007",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "interview_reference",
+          "label": "templates.catalogue.interview_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consented_recording",
+          "label": "templates.catalogue.consented_recording",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reviewed_transcript",
+          "label": "templates.catalogue.reviewed_transcript",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_focus_group_discussion_record",
+      "name": "templates.res_focus_group_discussion_record.name",
+      "title": "Focus group discussion record",
+      "code": "RES-008",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "participant_codes",
+          "label": "templates.catalogue.participant_codes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "discussion_themes",
+          "label": "templates.catalogue.discussion_themes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent_boundaries",
+          "label": "templates.catalogue.consent_boundaries",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_survey_instrument_design",
+      "name": "templates.res_survey_instrument_design.name",
+      "title": "Survey instrument design",
+      "code": "RES-009",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "constructs",
+          "label": "templates.catalogue.constructs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "question_wording",
+          "label": "templates.catalogue.question_wording",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "skip_logic",
+          "label": "templates.catalogue.skip_logic",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_experiment_design_worksheet",
+      "name": "templates.res_experiment_design_worksheet.name",
+      "title": "Experiment design worksheet",
+      "code": "RES-010",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "hypotheses",
+          "label": "templates.catalogue.hypotheses",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "variables",
+          "label": "templates.catalogue.variables",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "comparison_groups",
+          "label": "templates.catalogue.comparison_groups",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_experiment_run_log",
+      "name": "templates.res_experiment_run_log.name",
+      "title": "Experiment run log",
+      "code": "RES-011",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "run_identifier",
+          "label": "templates.catalogue.run_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "conditions",
+          "label": "templates.catalogue.conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_laboratory_research_notebook",
+      "name": "templates.res_laboratory_research_notebook.name",
+      "title": "Laboratory research notebook",
+      "code": "RES-012",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "research_objective",
+          "label": "templates.catalogue.research_objective",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "method_reference",
+          "label": "templates.catalogue.method_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "raw_data_links",
+          "label": "templates.catalogue.raw_data_links",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_field_research_diary",
+      "name": "templates.res_field_research_diary.name",
+      "title": "Field research diary",
+      "code": "RES-013",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "field_context",
+          "label": "templates.catalogue.field_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reflexive_notes",
+          "label": "templates.catalogue.reflexive_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_data_collection_protocol",
+      "name": "templates.res_data_collection_protocol.name",
+      "title": "Data collection protocol",
+      "code": "RES-014",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "measurement_procedures",
+          "label": "templates.catalogue.measurement_procedures",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_checks",
+          "label": "templates.catalogue.quality_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_handling",
+          "label": "templates.catalogue.data_handling",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_research_dataset_dictionary",
+      "name": "templates.res_research_dataset_dictionary.name",
+      "title": "Research dataset dictionary",
+      "code": "RES-015",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "variable_name",
+          "label": "templates.catalogue.variable_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "variable_definition",
+          "label": "templates.catalogue.variable_definition",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "allowed_values",
+          "label": "templates.catalogue.allowed_values",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_qualitative_coding_framework",
+      "name": "templates.res_qualitative_coding_framework.name",
+      "title": "Qualitative coding framework",
+      "code": "RES-016",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "code_name",
+          "label": "templates.catalogue.code_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "definition",
+          "label": "templates.catalogue.definition",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "example_excerpt",
+          "label": "templates.catalogue.example_excerpt",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_qualitative_analysis_memo",
+      "name": "templates.res_qualitative_analysis_memo.name",
+      "title": "Qualitative analysis memo",
+      "code": "RES-017",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "analytic_question",
+          "label": "templates.catalogue.analytic_question",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_excerpts",
+          "label": "templates.catalogue.supporting_excerpts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "interpretive_limits",
+          "label": "templates.catalogue.interpretive_limits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_literature_evidence_extraction",
+      "name": "templates.res_literature_evidence_extraction.name",
+      "title": "Literature evidence extraction",
+      "code": "RES-018",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "source_citation",
+          "label": "templates.catalogue.source_citation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "study_findings",
+          "label": "templates.catalogue.study_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "quality_notes",
+          "label": "templates.catalogue.quality_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_systematic_review_screening",
+      "name": "templates.res_systematic_review_screening.name",
+      "title": "Systematic review screening",
+      "code": "RES-019",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "inclusion_criteria",
+          "label": "templates.catalogue.inclusion_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_record",
+          "label": "templates.catalogue.source_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "screening_decision",
+          "label": "templates.catalogue.screening_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_research_source_bibliography",
+      "name": "templates.res_research_source_bibliography.name",
+      "title": "Research source bibliography",
+      "code": "RES-020",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "publication_metadata",
+          "label": "templates.catalogue.publication_metadata",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "identifier",
+          "label": "templates.catalogue.identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_date",
+          "label": "templates.catalogue.access_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_statistical_analysis_request",
+      "name": "templates.res_statistical_analysis_request.name",
+      "title": "Statistical analysis request",
+      "code": "RES-021",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "analysis_question",
+          "label": "templates.catalogue.analysis_question",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "dataset_reference",
+          "label": "templates.catalogue.dataset_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assumptions",
+          "label": "templates.catalogue.assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_analysis_reproducibility_checklist",
+      "name": "templates.res_analysis_reproducibility_checklist.name",
+      "title": "Analysis reproducibility checklist",
+      "code": "RES-022",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "code_version",
+          "label": "templates.catalogue.code_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_version",
+          "label": "templates.catalogue.data_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "execution_environment",
+          "label": "templates.catalogue.execution_environment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_research_data_quality_assessment",
+      "name": "templates.res_research_data_quality_assessment.name",
+      "title": "Research data quality assessment",
+      "code": "RES-023",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "quality_dimensions",
+          "label": "templates.catalogue.quality_dimensions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "detected_issues",
+          "label": "templates.catalogue.detected_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "resolution",
+          "label": "templates.catalogue.resolution",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_research_results_report",
+      "name": "templates.res_research_results_report.name",
+      "title": "Research results report",
+      "code": "RES-024",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "methods",
+          "label": "templates.catalogue.methods",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_results",
+          "label": "templates.catalogue.verified_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_scientific_manuscript_drafting_brief",
+      "name": "templates.res_scientific_manuscript_drafting_brief.name",
+      "title": "Scientific manuscript drafting brief",
+      "code": "RES-025",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "target_structure",
+          "label": "templates.catalogue.target_structure",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_findings",
+          "label": "templates.catalogue.verified_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "author_contributions",
+          "label": "templates.catalogue.author_contributions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_peer_review_response_matrix",
+      "name": "templates.res_peer_review_response_matrix.name",
+      "title": "Peer review response matrix",
+      "code": "RES-026",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "reviewer_comment",
+          "label": "templates.catalogue.reviewer_comment",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response",
+          "label": "templates.catalogue.response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "manuscript_change",
+          "label": "templates.catalogue.manuscript_change",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_research_poster_content_brief",
+      "name": "templates.res_research_poster_content_brief.name",
+      "title": "Research poster content brief",
+      "code": "RES-027",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "research_message",
+          "label": "templates.catalogue.research_message",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_figures",
+          "label": "templates.catalogue.approved_figures",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_references",
+          "label": "templates.catalogue.source_references",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_research_dissemination_plan",
+      "name": "templates.res_research_dissemination_plan.name",
+      "title": "Research dissemination plan",
+      "code": "RES-028",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "audiences",
+          "label": "templates.catalogue.audiences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessible_formats",
+          "label": "templates.catalogue.accessible_formats",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "communication_schedule",
+          "label": "templates.catalogue.communication_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_data_sharing_request",
+      "name": "templates.res_data_sharing_request.name",
+      "title": "Data sharing request",
+      "code": "RES-029",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_dataset",
+          "label": "templates.catalogue.requested_dataset",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "permitted_purpose",
+          "label": "templates.catalogue.permitted_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "privacy_review",
+          "label": "templates.catalogue.privacy_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_research_data_management_plan",
+      "name": "templates.res_research_data_management_plan.name",
+      "title": "Research data management plan",
+      "code": "RES-030",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "data_types",
+          "label": "templates.catalogue.data_types",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_controls",
+          "label": "templates.catalogue.storage_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "retention_period",
+          "label": "templates.catalogue.retention_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sharing_permissions",
+          "label": "templates.catalogue.sharing_permissions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_research_equipment_booking",
+      "name": "templates.res_research_equipment_booking.name",
+      "title": "Research equipment booking",
+      "code": "RES-031",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "instrument_reference",
+          "label": "templates.catalogue.instrument_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_slot",
+          "label": "templates.catalogue.requested_slot",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "training_authorization",
+          "label": "templates.catalogue.training_authorization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_study_deviation_report",
+      "name": "templates.res_study_deviation_report.name",
+      "title": "Study deviation report",
+      "code": "RES-032",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "protocol_requirement",
+          "label": "templates.catalogue.protocol_requirement",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "actual_event",
+          "label": "templates.catalogue.actual_event",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_review",
+          "label": "templates.catalogue.authorized_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_research_replication_plan",
+      "name": "templates.res_research_replication_plan.name",
+      "title": "Research replication plan",
+      "code": "RES-033",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "original_claim",
+          "label": "templates.catalogue.original_claim",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "replication_method",
+          "label": "templates.catalogue.replication_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "success_criteria",
+          "label": "templates.catalogue.success_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_knowledge_article_creation",
+      "name": "templates.res_knowledge_article_creation.name",
+      "title": "Knowledge article creation",
+      "code": "RES-034",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "topic",
+          "label": "templates.catalogue.topic",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_steps",
+          "label": "templates.catalogue.verified_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_references",
+          "label": "templates.catalogue.source_references",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "res_institutional_knowledge_handover",
+      "name": "templates.res_institutional_knowledge_handover.name",
+      "title": "Institutional knowledge handover",
+      "code": "RES-035",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_res",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "critical_context",
+          "label": "templates.catalogue.critical_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintained_resources",
+          "label": "templates.catalogue.maintained_resources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "responsible_contacts",
+          "label": "templates.catalogue.responsible_contacts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

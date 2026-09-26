@@ -25,3 +25,19 @@ the same change:
 ```sh
 dart run build_runner build --delete-conflicting-outputs
 ```
+
+## Template catalogue generation
+
+The full template catalogue under `assets/templates/catalogue/` and the list of
+every shipped template in `../resources/template-library.md` are generated from
+`../resources/templates.md` (specification §13.7). The typed record-type packs
+and per-field corrections live in `tool/template_catalogue/`. After changing any
+of them, regenerate in the same change and check the result:
+
+```sh
+dart run tool/build_template_catalogue.dart
+dart run tool/check_templates.dart
+```
+
+`dart run tool/build_template_catalogue.dart --check` exits 1 when a committed
+file has drifted from its source.

@@ -1,0 +1,1021 @@
+{
+  "catalogue_version": "1.0.0",
+  "source": "resources/templates.md",
+  "template_count": 2349,
+  "supergroups": [
+    {
+      "code": "01",
+      "title": "Cross-sector foundations",
+      "categories": [
+        "UNI",
+        "AST",
+        "INV",
+        "PRC"
+      ]
+    },
+    {
+      "code": "02",
+      "title": "Business and governance",
+      "categories": [
+        "FIN",
+        "AUD",
+        "LEG",
+        "HR"
+      ]
+    },
+    {
+      "code": "03",
+      "title": "Collaboration and delivery",
+      "categories": [
+        "MGT",
+        "MTG",
+        "GRT",
+        "CRM"
+      ]
+    },
+    {
+      "code": "04",
+      "title": "Health and life sciences",
+      "categories": [
+        "HOP",
+        "CLN",
+        "LAB",
+        "PHM",
+        "PHE"
+      ]
+    },
+    {
+      "code": "05",
+      "title": "Education research and care",
+      "categories": [
+        "EDU",
+        "HED",
+        "RES",
+        "SOC"
+      ]
+    },
+    {
+      "code": "06",
+      "title": "Buildings land and infrastructure",
+      "categories": [
+        "REA",
+        "CON",
+        "CIV",
+        "GIS"
+      ]
+    },
+    {
+      "code": "07",
+      "title": "Agriculture and natural resources",
+      "categories": [
+        "AGR",
+        "LIV",
+        "AQU",
+        "FOR"
+      ]
+    },
+    {
+      "code": "08",
+      "title": "Production and industry",
+      "categories": [
+        "MFG",
+        "FOD",
+        "TEX",
+        "MIN"
+      ]
+    },
+    {
+      "code": "09",
+      "title": "Energy utilities and environment",
+      "categories": [
+        "ENE",
+        "OIL",
+        "WAT",
+        "WST"
+      ]
+    },
+    {
+      "code": "10",
+      "title": "Transport and supply chains",
+      "categories": [
+        "FLT",
+        "LOG",
+        "AVI",
+        "MAR",
+        "RAI"
+      ]
+    },
+    {
+      "code": "11",
+      "title": "Digital systems and communications",
+      "categories": [
+        "SWE",
+        "ICT",
+        "CYB",
+        "TEL"
+      ]
+    },
+    {
+      "code": "12",
+      "title": "Finance public administration and law",
+      "categories": [
+        "BNK",
+        "INS",
+        "GOV",
+        "JUS"
+      ]
+    },
+    {
+      "code": "13",
+      "title": "Risk resilience and sustainability",
+      "categories": [
+        "ENV",
+        "EMR",
+        "FIR",
+        "OSH"
+      ]
+    },
+    {
+      "code": "14",
+      "title": "Social impact culture and information",
+      "categories": [
+        "NPO",
+        "DEV",
+        "MED",
+        "ART"
+      ]
+    },
+    {
+      "code": "15",
+      "title": "Commerce hospitality and recreation",
+      "categories": [
+        "RET",
+        "HOS",
+        "TOU",
+        "SPO"
+      ]
+    },
+    {
+      "code": "16",
+      "title": "Professional specialist and personal services",
+      "categories": [
+        "PRO",
+        "FAC",
+        "PER",
+        "FAI",
+        "LIF"
+      ]
+    },
+    {
+      "code": "17",
+      "title": "Specialist and emerging domains",
+      "categories": [
+        "SCI",
+        "ACC",
+        "ELE",
+        "DEF",
+        "ADV"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "UNI",
+      "title": "Universal capture and records",
+      "supergroup": "01",
+      "asset": "assets/templates/catalogue/01_uni_universal_capture_and_records.json",
+      "context_group": "context_uni",
+      "template_count": 35
+    },
+    {
+      "code": "AST",
+      "title": "Assets and equipment",
+      "supergroup": "01",
+      "asset": "assets/templates/catalogue/01_ast_assets_and_equipment.json",
+      "context_group": "context_ast",
+      "template_count": 36
+    },
+    {
+      "code": "INV",
+      "title": "Inventory and warehousing",
+      "supergroup": "01",
+      "asset": "assets/templates/catalogue/01_inv_inventory_and_warehousing.json",
+      "context_group": "context_inv",
+      "template_count": 34
+    },
+    {
+      "code": "PRC",
+      "title": "Procurement and suppliers",
+      "supergroup": "01",
+      "asset": "assets/templates/catalogue/01_prc_procurement_and_suppliers.json",
+      "context_group": "context_prc",
+      "template_count": 32
+    },
+    {
+      "code": "FIN",
+      "title": "Finance accounting and expenses",
+      "supergroup": "02",
+      "asset": "assets/templates/catalogue/02_fin_finance_accounting_and_expenses.json",
+      "context_group": "context_fin",
+      "template_count": 36
+    },
+    {
+      "code": "AUD",
+      "title": "Audit risk and compliance",
+      "supergroup": "02",
+      "asset": "assets/templates/catalogue/02_aud_audit_risk_and_compliance.json",
+      "context_group": "context_aud",
+      "template_count": 36
+    },
+    {
+      "code": "LEG",
+      "title": "Legal contracts and governance",
+      "supergroup": "02",
+      "asset": "assets/templates/catalogue/02_leg_legal_contracts_and_governance.json",
+      "context_group": "context_leg",
+      "template_count": 35
+    },
+    {
+      "code": "HR",
+      "title": "Human resources and workforce",
+      "supergroup": "02",
+      "asset": "assets/templates/catalogue/02_hr_human_resources_and_workforce.json",
+      "context_group": "context_hr",
+      "template_count": 36
+    },
+    {
+      "code": "MGT",
+      "title": "Projects programs and strategy",
+      "supergroup": "03",
+      "asset": "assets/templates/catalogue/03_mgt_projects_programs_and_strategy.json",
+      "context_group": "context_mgt",
+      "template_count": 34
+    },
+    {
+      "code": "MTG",
+      "title": "Meetings events and coordination",
+      "supergroup": "03",
+      "asset": "assets/templates/catalogue/03_mtg_meetings_events_and_coordination.json",
+      "context_group": "context_mtg",
+      "template_count": 34
+    },
+    {
+      "code": "GRT",
+      "title": "Grants proposals and fundraising",
+      "supergroup": "03",
+      "asset": "assets/templates/catalogue/03_grt_grants_proposals_and_fundraising.json",
+      "context_group": "context_grt",
+      "template_count": 42
+    },
+    {
+      "code": "CRM",
+      "title": "Sales service and marketing",
+      "supergroup": "03",
+      "asset": "assets/templates/catalogue/03_crm_sales_service_and_marketing.json",
+      "context_group": "context_crm",
+      "template_count": 34
+    },
+    {
+      "code": "HOP",
+      "title": "Hospital and biomedical operations",
+      "supergroup": "04",
+      "asset": "assets/templates/catalogue/04_hop_hospital_and_biomedical_operations.json",
+      "context_group": "context_hop",
+      "template_count": 35
+    },
+    {
+      "code": "CLN",
+      "title": "Clinical care and patient services",
+      "supergroup": "04",
+      "asset": "assets/templates/catalogue/04_cln_clinical_care_and_patient_services.json",
+      "context_group": "context_cln",
+      "template_count": 36
+    },
+    {
+      "code": "LAB",
+      "title": "Laboratories and diagnostics",
+      "supergroup": "04",
+      "asset": "assets/templates/catalogue/04_lab_laboratories_and_diagnostics.json",
+      "context_group": "context_lab",
+      "template_count": 32
+    },
+    {
+      "code": "PHM",
+      "title": "Pharmacy and life sciences operations",
+      "supergroup": "04",
+      "asset": "assets/templates/catalogue/04_phm_pharmacy_and_life_sciences_operations.json",
+      "context_group": "context_phm",
+      "template_count": 30
+    },
+    {
+      "code": "PHE",
+      "title": "Public health and surveillance",
+      "supergroup": "04",
+      "asset": "assets/templates/catalogue/04_phe_public_health_and_surveillance.json",
+      "context_group": "context_phe",
+      "template_count": 30
+    },
+    {
+      "code": "EDU",
+      "title": "Schools and vocational learning",
+      "supergroup": "05",
+      "asset": "assets/templates/catalogue/05_edu_schools_and_vocational_learning.json",
+      "context_group": "context_edu",
+      "template_count": 38
+    },
+    {
+      "code": "HED",
+      "title": "Higher education and training",
+      "supergroup": "05",
+      "asset": "assets/templates/catalogue/05_hed_higher_education_and_training.json",
+      "context_group": "context_hed",
+      "template_count": 32
+    },
+    {
+      "code": "RES",
+      "title": "Research and knowledge management",
+      "supergroup": "05",
+      "asset": "assets/templates/catalogue/05_res_research_and_knowledge_management.json",
+      "context_group": "context_res",
+      "template_count": 35
+    },
+    {
+      "code": "SOC",
+      "title": "Social care and community services",
+      "supergroup": "05",
+      "asset": "assets/templates/catalogue/05_soc_social_care_and_community_services.json",
+      "context_group": "context_soc",
+      "template_count": 32
+    },
+    {
+      "code": "REA",
+      "title": "Real estate property and valuation",
+      "supergroup": "06",
+      "asset": "assets/templates/catalogue/06_rea_real_estate_property_and_valuation.json",
+      "context_group": "context_rea",
+      "template_count": 35
+    },
+    {
+      "code": "CON",
+      "title": "Construction and engineering projects",
+      "supergroup": "06",
+      "asset": "assets/templates/catalogue/06_con_construction_and_engineering_projects.json",
+      "context_group": "context_con",
+      "template_count": 38
+    },
+    {
+      "code": "CIV",
+      "title": "Civil infrastructure and public works",
+      "supergroup": "06",
+      "asset": "assets/templates/catalogue/06_civ_civil_infrastructure_and_public_works.json",
+      "context_group": "context_civ",
+      "template_count": 32
+    },
+    {
+      "code": "GIS",
+      "title": "Land surveying mapping and planning",
+      "supergroup": "06",
+      "asset": "assets/templates/catalogue/06_gis_land_surveying_mapping_and_planning.json",
+      "context_group": "context_gis",
+      "template_count": 32
+    },
+    {
+      "code": "AGR",
+      "title": "Crops farms and agribusiness",
+      "supergroup": "07",
+      "asset": "assets/templates/catalogue/07_agr_crops_farms_and_agribusiness.json",
+      "context_group": "context_agr",
+      "template_count": 38
+    },
+    {
+      "code": "LIV",
+      "title": "Livestock veterinary and animal care",
+      "supergroup": "07",
+      "asset": "assets/templates/catalogue/07_liv_livestock_veterinary_and_animal_care.json",
+      "context_group": "context_liv",
+      "template_count": 34
+    },
+    {
+      "code": "AQU",
+      "title": "Fisheries aquaculture and beekeeping",
+      "supergroup": "07",
+      "asset": "assets/templates/catalogue/07_aqu_fisheries_aquaculture_and_beekeeping.json",
+      "context_group": "context_aqu",
+      "template_count": 30
+    },
+    {
+      "code": "FOR",
+      "title": "Forestry conservation and biodiversity",
+      "supergroup": "07",
+      "asset": "assets/templates/catalogue/07_for_forestry_conservation_and_biodiversity.json",
+      "context_group": "context_for",
+      "template_count": 30
+    },
+    {
+      "code": "MFG",
+      "title": "Manufacturing production and quality",
+      "supergroup": "08",
+      "asset": "assets/templates/catalogue/08_mfg_manufacturing_production_and_quality.json",
+      "context_group": "context_mfg",
+      "template_count": 34
+    },
+    {
+      "code": "FOD",
+      "title": "Food beverage and processing",
+      "supergroup": "08",
+      "asset": "assets/templates/catalogue/08_fod_food_beverage_and_processing.json",
+      "context_group": "context_fod",
+      "template_count": 32
+    },
+    {
+      "code": "TEX",
+      "title": "Apparel textiles crafts and materials",
+      "supergroup": "08",
+      "asset": "assets/templates/catalogue/08_tex_apparel_textiles_crafts_and_materials.json",
+      "context_group": "context_tex",
+      "template_count": 30
+    },
+    {
+      "code": "MIN",
+      "title": "Mining quarrying and geology",
+      "supergroup": "08",
+      "asset": "assets/templates/catalogue/08_min_mining_quarrying_and_geology.json",
+      "context_group": "context_min",
+      "template_count": 32
+    },
+    {
+      "code": "ENE",
+      "title": "Power renewable energy and electrical",
+      "supergroup": "09",
+      "asset": "assets/templates/catalogue/09_ene_power_renewable_energy_and_electrical.json",
+      "context_group": "context_ene",
+      "template_count": 34
+    },
+    {
+      "code": "OIL",
+      "title": "Oil gas and fuel operations",
+      "supergroup": "09",
+      "asset": "assets/templates/catalogue/09_oil_oil_gas_and_fuel_operations.json",
+      "context_group": "context_oil",
+      "template_count": 30
+    },
+    {
+      "code": "WAT",
+      "title": "Water sanitation and irrigation",
+      "supergroup": "09",
+      "asset": "assets/templates/catalogue/09_wat_water_sanitation_and_irrigation.json",
+      "context_group": "context_wat",
+      "template_count": 34
+    },
+    {
+      "code": "WST",
+      "title": "Waste recycling and circular economy",
+      "supergroup": "09",
+      "asset": "assets/templates/catalogue/09_wst_waste_recycling_and_circular_economy.json",
+      "context_group": "context_wst",
+      "template_count": 30
+    },
+    {
+      "code": "FLT",
+      "title": "Vehicles fleets and road transport",
+      "supergroup": "10",
+      "asset": "assets/templates/catalogue/10_flt_vehicles_fleets_and_road_transport.json",
+      "context_group": "context_flt",
+      "template_count": 34
+    },
+    {
+      "code": "LOG",
+      "title": "Logistics freight and distribution",
+      "supergroup": "10",
+      "asset": "assets/templates/catalogue/10_log_logistics_freight_and_distribution.json",
+      "context_group": "context_log",
+      "template_count": 36
+    },
+    {
+      "code": "AVI",
+      "title": "Aviation airports and drone administration",
+      "supergroup": "10",
+      "asset": "assets/templates/catalogue/10_avi_aviation_airports_and_drone_administration.json",
+      "context_group": "context_avi",
+      "template_count": 28
+    },
+    {
+      "code": "MAR",
+      "title": "Maritime ports and inland waterways",
+      "supergroup": "10",
+      "asset": "assets/templates/catalogue/10_mar_maritime_ports_and_inland_waterways.json",
+      "context_group": "context_mar",
+      "template_count": 28
+    },
+    {
+      "code": "RAI",
+      "title": "Rail transit and mobility services",
+      "supergroup": "10",
+      "asset": "assets/templates/catalogue/10_rai_rail_transit_and_mobility_services.json",
+      "context_group": "context_rai",
+      "template_count": 28
+    },
+    {
+      "code": "SWE",
+      "title": "Software product and AI delivery",
+      "supergroup": "11",
+      "asset": "assets/templates/catalogue/11_swe_software_product_and_ai_delivery.json",
+      "context_group": "context_swe",
+      "template_count": 36
+    },
+    {
+      "code": "ICT",
+      "title": "IT service management and infrastructure",
+      "supergroup": "11",
+      "asset": "assets/templates/catalogue/11_ict_it_service_management_and_infrastructure.json",
+      "context_group": "context_ict",
+      "template_count": 34
+    },
+    {
+      "code": "CYB",
+      "title": "Cybersecurity privacy and data governance",
+      "supergroup": "11",
+      "asset": "assets/templates/catalogue/11_cyb_cybersecurity_privacy_and_data_governance.json",
+      "context_group": "context_cyb",
+      "template_count": 32
+    },
+    {
+      "code": "TEL",
+      "title": "Telecommunications networks and connectivity",
+      "supergroup": "11",
+      "asset": "assets/templates/catalogue/11_tel_telecommunications_networks_and_connectivity.json",
+      "context_group": "context_tel",
+      "template_count": 30
+    },
+    {
+      "code": "BNK",
+      "title": "Banking lending and financial services",
+      "supergroup": "12",
+      "asset": "assets/templates/catalogue/12_bnk_banking_lending_and_financial_services.json",
+      "context_group": "context_bnk",
+      "template_count": 32
+    },
+    {
+      "code": "INS",
+      "title": "Insurance claims and loss assessment",
+      "supergroup": "12",
+      "asset": "assets/templates/catalogue/12_ins_insurance_claims_and_loss_assessment.json",
+      "context_group": "context_ins",
+      "template_count": 34
+    },
+    {
+      "code": "GOV",
+      "title": "Government municipal and citizen services",
+      "supergroup": "12",
+      "asset": "assets/templates/catalogue/12_gov_government_municipal_and_citizen_services.json",
+      "context_group": "context_gov",
+      "template_count": 36
+    },
+    {
+      "code": "JUS",
+      "title": "Justice legal aid and public safety administration",
+      "supergroup": "12",
+      "asset": "assets/templates/catalogue/12_jus_justice_legal_aid_and_public_safety_administration.json",
+      "context_group": "context_jus",
+      "template_count": 30
+    },
+    {
+      "code": "ENV",
+      "title": "Environment climate and sustainability",
+      "supergroup": "13",
+      "asset": "assets/templates/catalogue/13_env_environment_climate_and_sustainability.json",
+      "context_group": "context_env",
+      "template_count": 34
+    },
+    {
+      "code": "EMR",
+      "title": "Emergencies disasters and humanitarian response",
+      "supergroup": "13",
+      "asset": "assets/templates/catalogue/13_emr_emergencies_disasters_and_humanitarian_response.json",
+      "context_group": "context_emr",
+      "template_count": 32
+    },
+    {
+      "code": "FIR",
+      "title": "Fire safety security and facilities protection",
+      "supergroup": "13",
+      "asset": "assets/templates/catalogue/13_fir_fire_safety_security_and_facilities_protection.json",
+      "context_group": "context_fir",
+      "template_count": 30
+    },
+    {
+      "code": "OSH",
+      "title": "Occupational safety quality and wellbeing",
+      "supergroup": "13",
+      "asset": "assets/templates/catalogue/13_osh_occupational_safety_quality_and_wellbeing.json",
+      "context_group": "context_osh",
+      "template_count": 32
+    },
+    {
+      "code": "NPO",
+      "title": "Nonprofits volunteers and community organizations",
+      "supergroup": "14",
+      "asset": "assets/templates/catalogue/14_npo_nonprofits_volunteers_and_community_organizations.json",
+      "context_group": "context_npo",
+      "template_count": 32
+    },
+    {
+      "code": "DEV",
+      "title": "Development surveys and monitoring evaluation",
+      "supergroup": "14",
+      "asset": "assets/templates/catalogue/14_dev_development_surveys_and_monitoring_evaluation.json",
+      "context_group": "context_dev",
+      "template_count": 34
+    },
+    {
+      "code": "MED",
+      "title": "Media journalism publishing and content",
+      "supergroup": "14",
+      "asset": "assets/templates/catalogue/14_med_media_journalism_publishing_and_content.json",
+      "context_group": "context_med",
+      "template_count": 32
+    },
+    {
+      "code": "ART",
+      "title": "Arts heritage museums and libraries",
+      "supergroup": "14",
+      "asset": "assets/templates/catalogue/14_art_arts_heritage_museums_and_libraries.json",
+      "context_group": "context_art",
+      "template_count": 32
+    },
+    {
+      "code": "RET",
+      "title": "Retail wholesale and e-commerce",
+      "supergroup": "15",
+      "asset": "assets/templates/catalogue/15_ret_retail_wholesale_and_e_commerce.json",
+      "context_group": "context_ret",
+      "template_count": 32
+    },
+    {
+      "code": "HOS",
+      "title": "Hotels restaurants catering and accommodation",
+      "supergroup": "15",
+      "asset": "assets/templates/catalogue/15_hos_hotels_restaurants_catering_and_accommodation.json",
+      "context_group": "context_hos",
+      "template_count": 32
+    },
+    {
+      "code": "TOU",
+      "title": "Travel tourism recreation and visitor services",
+      "supergroup": "15",
+      "asset": "assets/templates/catalogue/15_tou_travel_tourism_recreation_and_visitor_services.json",
+      "context_group": "context_tou",
+      "template_count": 30
+    },
+    {
+      "code": "SPO",
+      "title": "Sports fitness and recreation organizations",
+      "supergroup": "15",
+      "asset": "assets/templates/catalogue/15_spo_sports_fitness_and_recreation_organizations.json",
+      "context_group": "context_spo",
+      "template_count": 30
+    },
+    {
+      "code": "PRO",
+      "title": "Consulting professional and business services",
+      "supergroup": "16",
+      "asset": "assets/templates/catalogue/16_pro_consulting_professional_and_business_services.json",
+      "context_group": "context_pro",
+      "template_count": 30
+    },
+    {
+      "code": "FAC",
+      "title": "Facilities cleaning repairs and local services",
+      "supergroup": "16",
+      "asset": "assets/templates/catalogue/16_fac_facilities_cleaning_repairs_and_local_services.json",
+      "context_group": "context_fac",
+      "template_count": 30
+    },
+    {
+      "code": "PER",
+      "title": "Personal household family and everyday records",
+      "supergroup": "16",
+      "asset": "assets/templates/catalogue/16_per_personal_household_family_and_everyday_records.json",
+      "context_group": "context_per",
+      "template_count": 32
+    },
+    {
+      "code": "FAI",
+      "title": "Faith communities ceremonies and associations",
+      "supergroup": "16",
+      "asset": "assets/templates/catalogue/16_fai_faith_communities_ceremonies_and_associations.json",
+      "context_group": "context_fai",
+      "template_count": 28
+    },
+    {
+      "code": "LIF",
+      "title": "Beauty wellbeing ceremonies and end-of-life services",
+      "supergroup": "16",
+      "asset": "assets/templates/catalogue/16_lif_beauty_wellbeing_ceremonies_and_end_of_life_services.json",
+      "context_group": "context_lif",
+      "template_count": 30
+    },
+    {
+      "code": "SCI",
+      "title": "Space astronomy earth and physical sciences",
+      "supergroup": "17",
+      "asset": "assets/templates/catalogue/17_sci_space_astronomy_earth_and_physical_sciences.json",
+      "context_group": "context_sci",
+      "template_count": 32
+    },
+    {
+      "code": "ACC",
+      "title": "Accessibility inclusion and equitable services",
+      "supergroup": "17",
+      "asset": "assets/templates/catalogue/17_acc_accessibility_inclusion_and_equitable_services.json",
+      "context_group": "context_acc",
+      "template_count": 30
+    },
+    {
+      "code": "ELE",
+      "title": "Elections civic participation and associations",
+      "supergroup": "17",
+      "asset": "assets/templates/catalogue/17_ele_elections_civic_participation_and_associations.json",
+      "context_group": "context_ele",
+      "template_count": 28
+    },
+    {
+      "code": "DEF",
+      "title": "Defense peacekeeping and veteran administration",
+      "supergroup": "17",
+      "asset": "assets/templates/catalogue/17_def_defense_peacekeeping_and_veteran_administration.json",
+      "context_group": "context_def",
+      "template_count": 28
+    },
+    {
+      "code": "ADV",
+      "title": "Electronics advanced fabrication and industrial R&D",
+      "supergroup": "17",
+      "asset": "assets/templates/catalogue/17_adv_electronics_advanced_fabrication_and_industrial_r_and_d.json",
+      "context_group": "context_adv",
+      "template_count": 32
+    }
+  ],
+  "packs": [
+    {
+      "code": "AGREEMENT",
+      "title": "Agreement / approval",
+      "kind": "agreement",
+      "group": "pack_agreement",
+      "capture": "Documents; manual entry; explicit acknowledgements",
+      "ai_assistance": "Extract clauses and dates; compare with approved wording; prepare a source-grounded draft",
+      "outputs": "Agreement draft; obligations register; signed-evidence index",
+      "review": "Authorized signatory; legal review where applicable"
+    },
+    {
+      "code": "ASSESS",
+      "title": "Assessment / analysis",
+      "kind": "assessment",
+      "group": "pack_assess",
+      "capture": "Documents; observations; photos; measurements",
+      "ai_assistance": "Extract evidence; organize comparisons; calculate only with declared methods; propose review notes",
+      "outputs": "Assessment worksheet; findings report; evidence appendix",
+      "review": "Reviewer verifies evidence, assumptions and conclusions"
+    },
+    {
+      "code": "ASSET",
+      "title": "Register / master data",
+      "kind": "asset",
+      "group": "pack_asset",
+      "capture": "Label photos; barcode or QR; manual entry; existing registers",
+      "ai_assistance": "OCR visible labels; propose normalized fields; flag duplicates and unreadable values",
+      "outputs": "Asset register; asset card; inventory export; label sheet",
+      "review": "Verify identifiers against source; never infer serial numbers from appearance"
+    },
+    {
+      "code": "CASE",
+      "title": "Case-management workflow",
+      "kind": "case",
+      "group": "pack_case",
+      "capture": "Forms; documents; consented media; messages",
+      "ai_assistance": "Summarize supplied evidence; extract dates; suggest routing; redact selected copies",
+      "outputs": "Case file; chronology; action list; closure report",
+      "review": "Authorized handler; restricted access; no automated adverse decision"
+    },
+    {
+      "code": "CHECK",
+      "title": "Checklist / verification",
+      "kind": "checklist",
+      "group": "pack_check",
+      "capture": "Manual checks; photos; documents; instrument readings",
+      "ai_assistance": "Read supporting evidence; suggest item matches; highlight missing evidence",
+      "outputs": "Completed checklist; exception list; verification report",
+      "review": "Each pass or fail must have evidence or a documented reviewer basis"
+    },
+    {
+      "code": "COMM",
+      "title": "Communication draft",
+      "kind": "communication",
+      "group": "pack_comm",
+      "capture": "Approved records; documents; manually supplied instructions",
+      "ai_assistance": "Draft a message using verified facts and explicit recipient constraints",
+      "outputs": "Email draft; letter; notice; approved message",
+      "review": "Human approves content and recipients before any sending action"
+    },
+    {
+      "code": "DOC",
+      "title": "Generated document",
+      "kind": "document",
+      "group": "pack_doc",
+      "capture": "Documents; source records; approved brand assets",
+      "ai_assistance": "Build required structure; draft source-linked content; flag missing inputs",
+      "outputs": "Document draft; PDF or DOCX export; evidence index",
+      "review": "Review all facts, professional conclusions, formatting and signatures"
+    },
+    {
+      "code": "INCIDENT",
+      "title": "Incident workflow",
+      "kind": "incident",
+      "group": "pack_incident",
+      "capture": "Photos; explicit audio notes; manual observations; documents",
+      "ai_assistance": "Transcribe reports; build timeline; separate observations from allegations and inferred causes",
+      "outputs": "Incident report; evidence log; response actions; follow-up record",
+      "review": "Qualified review for high-impact incidents; do not infer blame"
+    },
+    {
+      "code": "INSPECT",
+      "title": "Inspection / field form",
+      "kind": "inspection",
+      "group": "pack_inspect",
+      "capture": "Photos; manual entry; measurements; optional GPS",
+      "ai_assistance": "Extract labels; organize photo observations; draft findings for inspector confirmation",
+      "outputs": "Inspection checklist; condition report; defect schedule; work requests",
+      "review": "Inspector validates findings; a photo alone is not certification"
+    },
+    {
+      "code": "LEARN",
+      "title": "Learning / competency record",
+      "kind": "learning",
+      "group": "pack_learn",
+      "capture": "Attendance; documents; practical observations; explicit acknowledgements",
+      "ai_assistance": "Extract attendance and certificate details; draft learning summaries",
+      "outputs": "Training register; competency record; certificate draft",
+      "review": "Qualified assessor verifies competency; never invent credentials"
+    },
+    {
+      "code": "LOG",
+      "title": "Activity / event log",
+      "kind": "log",
+      "group": "pack_log",
+      "capture": "Manual entry; time capture; media; instrument feeds",
+      "ai_assistance": "Transcribe notes; order events; flag inconsistent chronology",
+      "outputs": "Activity log; timeline; period summary",
+      "review": "Preserve original events and corrections; distinguish device and server times"
+    },
+    {
+      "code": "MAINT",
+      "title": "Maintenance workflow",
+      "kind": "maintenance",
+      "group": "pack_maint",
+      "capture": "Asset scan; photos; manuals; technician notes",
+      "ai_assistance": "Read identifiers and manuals; structure the service report; suggest follow-up for review",
+      "outputs": "Work order; service history; parts usage; maintenance report",
+      "review": "Qualified technician approves work and return to service"
+    },
+    {
+      "code": "MEASURE",
+      "title": "Measurement / calculation",
+      "kind": "measurement",
+      "group": "pack_measure",
+      "capture": "Manual instruments; device integrations; visible meter photos; optional GPS and capture time",
+      "ai_assistance": "OCR visible readings; normalize approved units; flag implausible values without changing raw readings",
+      "outputs": "Measurement log; trend dataset; reviewed calculation worksheet",
+      "review": "Verify units, calibration and method; no safety threshold inferred by AI"
+    },
+    {
+      "code": "MEET",
+      "title": "Meeting / collaboration",
+      "kind": "meeting",
+      "group": "pack_meet",
+      "capture": "Manual notes; explicitly consented audio; uploaded files",
+      "ai_assistance": "Transcribe; propose speaker labels; summarize; extract candidate decisions and action owners",
+      "outputs": "Minutes draft; attendance register; action tracker; follow-up draft",
+      "review": "Participants or chair confirm decisions and attributions"
+    },
+    {
+      "code": "OBS",
+      "title": "Observation / evidence capture",
+      "kind": "observation",
+      "group": "pack_obs",
+      "capture": "Photos; explicit audio captions; video; optional GPS and time",
+      "ai_assistance": "OCR or transcribe visible evidence; propose tags and captions; retain source links",
+      "outputs": "Observation record; photo sheet; annotated evidence bundle",
+      "review": "Observed, reported and inferred details must remain distinguishable"
+    },
+    {
+      "code": "PLAN",
+      "title": "Plan / schedule",
+      "kind": "plan",
+      "group": "pack_plan",
+      "capture": "Manual entry; existing records; requirement documents",
+      "ai_assistance": "Organize activities; draft a sequence; surface dependencies and missing assumptions",
+      "outputs": "Plan; schedule; assignment table; planning brief",
+      "review": "Owner confirms dates, resources and assumptions"
+    },
+    {
+      "code": "PROFILE",
+      "title": "Profile / intake",
+      "kind": "profile",
+      "group": "pack_profile",
+      "capture": "Manual entry; approved documents; contact imports",
+      "ai_assistance": "Extract supplied profile data; flag conflicts; reuse only approved facts",
+      "outputs": "Profile card; directory entry; intake summary",
+      "review": "Collect only necessary personal data; obtain required permissions"
+    },
+    {
+      "code": "PROPOSAL",
+      "title": "Proposal-generation workflow",
+      "kind": "proposal",
+      "group": "pack_proposal",
+      "capture": "Terms of reference; company profile; cost inputs; approved branding",
+      "ai_assistance": "Extract requirements; map evidence; draft sections; flag unsupported claims and unmet criteria",
+      "outputs": "Proposal draft; budget; compliance matrix; submission checklist",
+      "review": "No invented eligibility, qualifications, clients, outcomes, costs or signatures"
+    },
+    {
+      "code": "REG",
+      "title": "Register / master data",
+      "kind": "register",
+      "group": "pack_reg",
+      "capture": "Manual entry; documents; media; structured imports",
+      "ai_assistance": "Extract and normalize entries; detect possible duplicates; flag conflicting sources",
+      "outputs": "Searchable register; record card; spreadsheet export",
+      "review": "Verify authoritative source and permission to store data"
+    },
+    {
+      "code": "REPORT",
+      "title": "Generated report",
+      "kind": "report",
+      "group": "pack_report",
+      "capture": "Reviewed records; source documents; approved metrics",
+      "ai_assistance": "Aggregate verified data; draft narrative; cite evidence and disclose gaps",
+      "outputs": "Report draft; tables; annexes; management summary",
+      "review": "Human verifies calculations, claims and professional judgments"
+    },
+    {
+      "code": "REQUEST",
+      "title": "Request / approval workflow",
+      "kind": "request",
+      "group": "pack_request",
+      "capture": "Manual entry; documents; photos; existing records",
+      "ai_assistance": "Structure the request; extract supporting facts; flag missing information",
+      "outputs": "Request form; approval record; notification draft",
+      "review": "Authorization required before payments, submissions or external actions"
+    },
+    {
+      "code": "SAMPLE",
+      "title": "Sample / chain-of-custody",
+      "kind": "sample",
+      "group": "pack_sample",
+      "capture": "Barcode; field entry; optional GPS; labels; custody documents",
+      "ai_assistance": "Read sample labels; prepare custody paperwork; flag mismatches",
+      "outputs": "Sample register; chain-of-custody form; laboratory request",
+      "review": "Qualified sampling protocols and custody confirmation required"
+    },
+    {
+      "code": "SURVEY",
+      "title": "Survey / questionnaire",
+      "kind": "survey",
+      "group": "pack_survey",
+      "capture": "Manual interviews; self-completion; consented audio; optional GPS",
+      "ai_assistance": "Transcribe responses; classify open answers for review; summarize aggregate data",
+      "outputs": "Response dataset; survey summary; coded response table",
+      "review": "Preserve consent and sampling limits; do not infer sensitive traits"
+    },
+    {
+      "code": "TRACK",
+      "title": "Tracker / follow-up",
+      "kind": "tracker",
+      "group": "pack_track",
+      "capture": "Linked records; manual updates; imported events",
+      "ai_assistance": "Extract dates and commitments; propose status updates with evidence",
+      "outputs": "Tracker; overdue list; follow-up draft; completion report",
+      "review": "Status changes must be confirmed or tied to a trusted event"
+    },
+    {
+      "code": "TRANS",
+      "title": "Transaction / repeated line items",
+      "kind": "transaction",
+      "group": "pack_trans",
+      "capture": "Invoice or receipt photos; documents; barcode; manual entry",
+      "ai_assistance": "Extract header and line items; preserve units; reconcile computed and printed totals",
+      "outputs": "Transaction table; line-item export; reconciliation sheet; receipt or voucher draft",
+      "review": "Verify quantities, identifiers and monetary totals before posting"
+    },
+    {
+      "code": "VISIT",
+      "title": "Visit / field workflow",
+      "kind": "visit",
+      "group": "pack_visit",
+      "capture": "Field forms; photos; explicit audio notes; optional GPS",
+      "ai_assistance": "Transcribe notes; organize evidence; draft visit findings and follow-up",
+      "outputs": "Visit report; photo appendix; action tracker",
+      "review": "Field officer verifies observations and any attributed statements"
+    }
+  ]
+}

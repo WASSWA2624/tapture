@@ -1860,7 +1860,93 @@ abstract final class Copy {
   static const String shippedAddedToProject = 'Added to this project';
 
   /// Search hint on the shipped template library.
-  static const String shippedLibrarySearchHint = 'Search templates';
+  static const String shippedLibrarySearchHint =
+      'Search by name, code, category or field';
+
+  /// Heading over the starter templates of §13.4 when catalogue areas are
+  /// listed beside them.
+  static const String shippedStarterArea = 'Starter templates';
+
+  /// Heading of a catalogue area. [code] and [title] are catalogue data.
+  static String shippedAreaTitle(String code, String title) => '$code · $title';
+
+  /// Heading of a catalogue category. [code] and [title] are catalogue data.
+  static String shippedCatalogueCategoryTitle(String code, String title) {
+    return '$code — $title';
+  }
+
+  /// Row subtitle of a catalogue template: its code, its record type and how
+  /// many fields it holds. [code] and [recordType] are catalogue data.
+  static String shippedCatalogueSubtitle(
+    String code,
+    String recordType,
+    int fields,
+  ) {
+    return '$code · $recordType · ${fieldsCount(fields)}';
+  }
+
+  /// Title of the shipped library's filter sheet.
+  static const String shippedFiltersTitle = 'Library filters';
+
+  /// The area facet of the shipped library's filters.
+  static const String shippedAreaFilter = 'Area';
+
+  /// The record-type facet of the shipped library's filters.
+  static const String shippedRecordTypeFilter = 'Record type';
+
+  /// The tier facet of the shipped library's filters.
+  static const String shippedTierFilter = 'Tier';
+
+  /// Operator-facing name of a catalogue rollout tier.
+  static String shippedTierLabel(String rollout) {
+    return switch (rollout) {
+      'p0' => 'Foundation',
+      'p1' => 'Expansion',
+      'p2' => 'Specialist',
+      _ => rollout,
+    };
+  }
+
+  /// Operator-facing name of a catalogue template's suggested privacy.
+  static String shippedPrivacyLabel(String privacy) {
+    return switch (privacy) {
+      'internal' => 'Internal',
+      'confidential' => 'Confidential',
+      'restricted' => 'Restricted',
+      _ => privacy,
+    };
+  }
+
+  /// Preview row naming the catalogue category a template sits in.
+  static const String shippedCategoryLabel = 'Category';
+
+  /// Preview row naming a catalogue template's record type.
+  static const String shippedRecordTypeLabel = 'Record type';
+
+  /// Preview row giving a catalogue template's privacy and tier.
+  static const String shippedPrivacyTierLabel = 'Suggested privacy and tier';
+
+  /// A catalogue template's suggested privacy beside its tier.
+  static String shippedPrivacyTier(String privacy, String rollout) {
+    return '${shippedPrivacyLabel(privacy)} · ${shippedTierLabel(rollout)}';
+  }
+
+  /// Preview row: how evidence for the record type is captured.
+  static const String shippedCaptureLabel = 'Capture';
+
+  /// Preview row: what AI may do for the record type.
+  static const String shippedAiAssistanceLabel = 'AI assistance';
+
+  /// Preview row: what the record type produces.
+  static const String shippedOutputsLabel = 'Outputs';
+
+  /// Preview row: what a reviewer checks before approval.
+  static const String shippedReviewLabel = 'Review';
+
+  /// Preview subtitle of one field: its type and suggested requiredness.
+  static String shippedFieldSubtitle(String type, String requiredness) {
+    return '${fieldTypeLabel(type)} · $requiredness';
+  }
 
   /// Empty result for the shipped library search.
   static String shippedLibraryNoMatch(String query) {

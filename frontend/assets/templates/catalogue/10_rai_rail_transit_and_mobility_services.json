@@ -1,0 +1,1322 @@
+{
+  "category": "RAI",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "rai_rail_rolling_stock_inventory",
+      "name": "templates.rai_rail_rolling_stock_inventory.name",
+      "title": "Rail rolling stock inventory",
+      "code": "RAI-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_identifier",
+          "label": "templates.catalogue.vehicle_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "vehicle_type",
+          "label": "templates.catalogue.vehicle_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_status",
+          "label": "templates.catalogue.service_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_rail_vehicle_maintenance_record",
+      "name": "templates.rai_rail_vehicle_maintenance_record.name",
+      "title": "Rail vehicle maintenance record",
+      "code": "RAI-002",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_work_order",
+          "label": "templates.catalogue.approved_work_order",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_tasks",
+          "label": "templates.catalogue.completed_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_release",
+          "label": "templates.catalogue.authorized_release",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_rail_vehicle_defect_report",
+      "name": "templates.rai_rail_vehicle_defect_report.name",
+      "title": "Rail vehicle defect report",
+      "code": "RAI-003",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_identifier",
+          "label": "templates.catalogue.vehicle_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_defect",
+          "label": "templates.catalogue.observed_defect",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_rail_track_visual_inspection",
+      "name": "templates.rai_rail_track_visual_inspection.name",
+      "title": "Rail track visual inspection",
+      "code": "RAI-004",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "track_segment",
+          "label": "templates.catalogue.track_segment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_escalation",
+          "label": "templates.catalogue.authorized_escalation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_rail_track_geometry_evidence",
+      "name": "templates.rai_rail_track_geometry_evidence.name",
+      "title": "Rail track geometry evidence",
+      "code": "RAI-005",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "measurement_location",
+          "label": "templates.catalogue.measurement_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_method",
+          "label": "templates.catalogue.approved_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_results",
+          "label": "templates.catalogue.qualified_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_rail_bridge_inspection_register",
+      "name": "templates.rai_rail_bridge_inspection_register.name",
+      "title": "Rail bridge inspection register",
+      "code": "RAI-006",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "structure_reference",
+          "label": "templates.catalogue.structure_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "inspection_date",
+          "label": "templates.catalogue.inspection_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "engineer_report",
+          "label": "templates.catalogue.engineer_report",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_rail_signaling_asset_inventory",
+      "name": "templates.rai_rail_signaling_asset_inventory.name",
+      "title": "Rail signaling asset inventory",
+      "code": "RAI-007",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "signal_identifier",
+          "label": "templates.catalogue.signal_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "asset_type",
+          "label": "templates.catalogue.asset_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_location",
+          "label": "templates.catalogue.verified_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_rail_signaling_fault_intake",
+      "name": "templates.rai_rail_signaling_fault_intake.name",
+      "title": "Rail signaling fault intake",
+      "code": "RAI-008",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "asset_reference",
+          "label": "templates.catalogue.asset_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_fault",
+          "label": "templates.catalogue.reported_fault",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_response",
+          "label": "templates.catalogue.authorized_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_rail_station_condition_inspection",
+      "name": "templates.rai_rail_station_condition_inspection.name",
+      "title": "Rail station condition inspection",
+      "code": "RAI-009",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "station_zone",
+          "label": "templates.catalogue.station_zone",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition_findings",
+          "label": "templates.catalogue.condition_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "maintenance_needs",
+          "label": "templates.catalogue.maintenance_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_rail_platform_accessibility_check",
+      "name": "templates.rai_rail_platform_accessibility_check.name",
+      "title": "Rail platform accessibility check",
+      "code": "RAI-010",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "access_route",
+          "label": "templates.catalogue.access_route",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "boarding_interface",
+          "label": "templates.catalogue.boarding_interface",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_barriers",
+          "label": "templates.catalogue.observed_barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_transit_passenger_count",
+      "name": "templates.rai_transit_passenger_count.name",
+      "title": "Transit passenger count",
+      "code": "RAI-011",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "route_or_station",
+          "label": "templates.catalogue.route_or_station",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "count_interval",
+          "label": "templates.catalogue.count_interval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_counts",
+          "label": "templates.catalogue.observed_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_transit_service_timetable",
+      "name": "templates.rai_transit_service_timetable.name",
+      "title": "Transit service timetable",
+      "code": "RAI-012",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "service_route",
+          "label": "templates.catalogue.service_route",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "departure_slots",
+          "label": "templates.catalogue.departure_slots",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "vehicle_assignment",
+          "label": "templates.catalogue.vehicle_assignment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_transit_service_disruption_log",
+      "name": "templates.rai_transit_service_disruption_log.name",
+      "title": "Transit service disruption log",
+      "code": "RAI-013",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "affected_service",
+          "label": "templates.catalogue.affected_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "disruption_period",
+          "label": "templates.catalogue.disruption_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "passenger_communication",
+          "label": "templates.catalogue.passenger_communication",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_transit_customer_complaint",
+      "name": "templates.rai_transit_customer_complaint.name",
+      "title": "Transit customer complaint",
+      "code": "RAI-014",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "service_reference",
+          "label": "templates.catalogue.service_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_issue",
+          "label": "templates.catalogue.reported_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "resolution_request",
+          "label": "templates.catalogue.resolution_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_rail_freight_booking",
+      "name": "templates.rai_rail_freight_booking.name",
+      "title": "Rail freight booking",
+      "code": "RAI-015",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "cargo_description",
+          "label": "templates.catalogue.cargo_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "origin_terminal",
+          "label": "templates.catalogue.origin_terminal",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "destination_terminal",
+          "label": "templates.catalogue.destination_terminal",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_wagon_loading_verification",
+      "name": "templates.rai_wagon_loading_verification.name",
+      "title": "Wagon loading verification",
+      "code": "RAI-016",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "wagon_reference",
+          "label": "templates.catalogue.wagon_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_loading_plan",
+          "label": "templates.catalogue.authorized_loading_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_checks",
+          "label": "templates.catalogue.verified_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_rail_cargo_handover",
+      "name": "templates.rai_rail_cargo_handover.name",
+      "title": "Rail cargo handover",
+      "code": "RAI-017",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "cargo_reference",
+          "label": "templates.catalogue.cargo_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custody_change",
+          "label": "templates.catalogue.custody_change",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition_record",
+          "label": "templates.catalogue.condition_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_rail_worksite_authorization_evidence",
+      "name": "templates.rai_rail_worksite_authorization_evidence.name",
+      "title": "Rail worksite authorization evidence",
+      "code": "RAI-018",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_work_scope",
+          "label": "templates.catalogue.approved_work_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_protection_plan",
+          "label": "templates.catalogue.authorized_protection_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "permit_reference",
+          "label": "templates.catalogue.permit_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_rail_maintenance_material_issue",
+      "name": "templates.rai_rail_maintenance_material_issue.name",
+      "title": "Rail maintenance material issue",
+      "code": "RAI-019",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "material_reference",
+          "label": "templates.catalogue.material_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issued_quantity",
+          "label": "templates.catalogue.issued_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issued_quantity_unit",
+          "label": "templates.catalogue.issued_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "work_order",
+          "label": "templates.catalogue.work_order",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_rail_safety_briefing_attendance",
+      "name": "templates.rai_rail_safety_briefing_attendance.name",
+      "title": "Rail safety briefing attendance",
+      "code": "RAI-020",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_briefing",
+          "label": "templates.catalogue.approved_briefing",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "staff_attendance",
+          "label": "templates.catalogue.staff_attendance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorization_scope",
+          "label": "templates.catalogue.authorization_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_cable_car_asset_register",
+      "name": "templates.rai_cable_car_asset_register.name",
+      "title": "Cable car asset register",
+      "code": "RAI-021",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "system_component",
+          "label": "templates.catalogue.system_component",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "inspection_schedule",
+          "label": "templates.catalogue.inspection_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_cable_car_inspection_evidence",
+      "name": "templates.rai_cable_car_inspection_evidence.name",
+      "title": "Cable car inspection evidence",
+      "code": "RAI-022",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_checklist",
+          "label": "templates.catalogue.approved_checklist",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_findings",
+          "label": "templates.catalogue.qualified_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "operational_restrictions",
+          "label": "templates.catalogue.operational_restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_bike_share_station_inventory",
+      "name": "templates.rai_bike_share_station_inventory.name",
+      "title": "Bike share station inventory",
+      "code": "RAI-023",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "station_identifier",
+          "label": "templates.catalogue.station_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "dock_count",
+          "label": "templates.catalogue.dock_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operational_status",
+          "label": "templates.catalogue.operational_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_shared_bicycle_condition_report",
+      "name": "templates.rai_shared_bicycle_condition_report.name",
+      "title": "Shared bicycle condition report",
+      "code": "RAI-024",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "bike_identifier",
+          "label": "templates.catalogue.bike_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_defects",
+          "label": "templates.catalogue.observed_defects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_need",
+          "label": "templates.catalogue.maintenance_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_mobility_service_trip_feedback",
+      "name": "templates.rai_mobility_service_trip_feedback.name",
+      "title": "Mobility service trip feedback",
+      "code": "RAI-025",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "trip_reference",
+          "label": "templates.catalogue.trip_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_experience",
+          "label": "templates.catalogue.access_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_feedback",
+          "label": "templates.catalogue.service_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_parking_permit_application",
+      "name": "templates.rai_parking_permit_application.name",
+      "title": "Parking permit application",
+      "code": "RAI-026",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_reference",
+          "label": "templates.catalogue.vehicle_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_zone",
+          "label": "templates.catalogue.requested_zone",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "eligibility_evidence",
+          "label": "templates.catalogue.eligibility_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_accessible_transport_coordination",
+      "name": "templates.rai_accessible_transport_coordination.name",
+      "title": "Accessible transport coordination",
+      "code": "RAI-027",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "journey_details",
+          "label": "templates.catalogue.journey_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "functional_support_needs",
+          "label": "templates.catalogue.functional_support_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rai_urban_mobility_study_field_log",
+      "name": "templates.rai_urban_mobility_study_field_log.name",
+      "title": "Urban mobility study field log",
+      "code": "RAI-028",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rai",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "travel_mode",
+          "label": "templates.catalogue.travel_mode",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "trip_context",
+          "label": "templates.catalogue.trip_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_method",
+          "label": "templates.catalogue.sampling_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

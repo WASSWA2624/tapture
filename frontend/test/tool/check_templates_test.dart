@@ -40,6 +40,69 @@ void main() {
     });
   });
 
+  group('the catalogue folder', () {
+    test('every catalogue template is checked and counted', () async {
+      final _Run run = await _check(<String>[_shipped]);
+
+      expect(run.summary, contains('2372 asset(s)'));
+    });
+
+    test('a broken catalogue template is named at its own line', () async {
+      final Directory dir = Directory.systemTemp.createTempSync('tapture_cat_');
+      addTearDown(() => dir.deleteSync(recursive: true));
+      final Directory catalogue = Directory('${dir.path}/catalogue')
+        ..createSync();
+      const JsonEncoder json = JsonEncoder.withIndent('  ');
+      File('${catalogue.path}/_groups.json').writeAsStringSync(
+        json.convert(<String, Object?>{
+          'pack_fixture': <String, Object?>{
+            'input_mode': 'any',
+            'fields': <Object?>[
+              _catalogueField('fixture_reference', 'text'),
+              _catalogueField('fixture_cost', 'currency'),
+            ],
+          },
+        }),
+      );
+      final String category = json.convert(<String, Object?>{
+        'category': 'FIX',
+        'templates': <Object?>[
+          _catalogueTemplate('fix_first', <Object?>[
+            _catalogueField('first_note', 'long_text'),
+          ], 'pack_fixture'),
+          _catalogueTemplate('fix_second', <Object?>[
+            _catalogueField('second_note', 'long_text'),
+            _catalogueField('service_window', 'date'),
+          ], 'pack_missing'),
+        ],
+      });
+      File('${catalogue.path}/01_fix.json').writeAsStringSync(category);
+      final List<String> lines = category.split('\n');
+      final int window =
+          lines.indexWhere((String line) => line.contains('service_window')) +
+          1;
+
+      final _Run run = await _check(<String>[dir.path]);
+
+      expect(run.exitCode, 1);
+      expect(
+        run.violations,
+        contains(allOf(contains('01_fix.json:$window:'), contains('_date'))),
+      );
+      expect(run.violations, contains(contains('"pack_missing"')));
+      expect(
+        run.violations,
+        contains(
+          allOf(contains('_groups.json:'), contains('fixture_cost_currency')),
+        ),
+      );
+      expect(run.violations, isNot(contains(contains('first_note'))));
+      for (final String violation in run.violations) {
+        expect(violation, matches(_fileAndLine));
+      }
+    });
+  });
+
   group('a valid fixture', () {
     test('exits 0 and reports no violation', () async {
       final _Run run = await _checkFixture('valid.json');
@@ -233,6 +296,34 @@ void main() {
       expect(run.violations, contains(contains(_checker)));
     });
   });
+}
+
+/// One catalogue field with the keys every field must carry.
+Map<String, Object?> _catalogueField(String key, String type) {
+  return <String, Object?>{
+    'field_key': key,
+    'label': 'templates.catalogue.$key',
+    'type': type,
+    'required': 'OPTIONAL',
+  };
+}
+
+/// One catalogue template inheriting [pack] beside nothing else.
+Map<String, Object?> _catalogueTemplate(
+  String key,
+  List<Object?> fields,
+  String pack,
+) {
+  return <String, Object?>{
+    'schema_version': 1,
+    'template_key': key,
+    'name': 'templates.$key.name',
+    'kind': 'fixture',
+    'identity_fields': <String>[],
+    'inherits_groups': <String>[pack],
+    'fields': fields,
+    'child_rows': <Object?>[],
+  };
 }
 
 /// Copies [name] into a throwaway folder so the scan sees only that asset.

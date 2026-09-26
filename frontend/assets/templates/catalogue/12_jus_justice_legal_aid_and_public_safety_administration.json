@@ -1,0 +1,1436 @@
+{
+  "category": "JUS",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "jus_legal_aid_client_intake",
+      "name": "templates.jus_legal_aid_client_intake.name",
+      "title": "Legal aid client intake",
+      "code": "JUS-001",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "client_stated_issue",
+          "label": "templates.catalogue.client_stated_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_eligibility_evidence",
+          "label": "templates.catalogue.service_eligibility_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_legal_aid_referral_record",
+      "name": "templates.jus_legal_aid_referral_record.name",
+      "title": "Legal aid referral record",
+      "code": "JUS-002",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "consented_referral",
+          "label": "templates.catalogue.consented_referral",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "receiving_provider",
+          "label": "templates.catalogue.receiving_provider",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_case_details",
+          "label": "templates.catalogue.minimum_case_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_court_appointment_administration",
+      "name": "templates.jus_court_appointment_administration.name",
+      "title": "Court appointment administration",
+      "code": "JUS-003",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "case_reference",
+          "label": "templates.catalogue.case_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "hearing_date",
+          "label": "templates.catalogue.hearing_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_participants",
+          "label": "templates.catalogue.authorized_participants",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_court_document_intake_index",
+      "name": "templates.jus_court_document_intake_index.name",
+      "title": "Court document intake index",
+      "code": "JUS-004",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "document_reference",
+          "label": "templates.catalogue.document_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "filing_date",
+          "label": "templates.catalogue.filing_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_case_link",
+          "label": "templates.catalogue.verified_case_link",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_court_deadline_evidence_tracker",
+      "name": "templates.jus_court_deadline_evidence_tracker.name",
+      "title": "Court deadline evidence tracker",
+      "code": "JUS-005",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "order_reference",
+          "label": "templates.catalogue.order_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "deadline_basis",
+          "label": "templates.catalogue.deadline_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "responsible_professional",
+          "label": "templates.catalogue.responsible_professional",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_hearing_attendance_record",
+      "name": "templates.jus_hearing_attendance_record.name",
+      "title": "Hearing attendance record",
+      "code": "JUS-006",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "hearing_reference",
+          "label": "templates.catalogue.hearing_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_attendee",
+          "label": "templates.catalogue.authorized_attendee",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attendance_status",
+          "label": "templates.catalogue.attendance_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_court_order_compliance_tracker",
+      "name": "templates.jus_court_order_compliance_tracker.name",
+      "title": "Court order compliance tracker",
+      "code": "JUS-007",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_order",
+          "label": "templates.catalogue.verified_order",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_action",
+          "label": "templates.catalogue.required_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "compliance_evidence",
+          "label": "templates.catalogue.compliance_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_mediation_session_record",
+      "name": "templates.jus_mediation_session_record.name",
+      "title": "Mediation session record",
+      "code": "JUS-008",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "consenting_parties",
+          "label": "templates.catalogue.consenting_parties",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issues_discussed",
+          "label": "templates.catalogue.issues_discussed",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_next_steps",
+          "label": "templates.catalogue.agreed_next_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_victim_support_intake",
+      "name": "templates.jus_victim_support_intake.name",
+      "title": "Victim support intake",
+      "code": "JUS-009",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_support",
+          "label": "templates.catalogue.requested_support",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_contact",
+          "label": "templates.catalogue.safe_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent_scope",
+          "label": "templates.catalogue.consent_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_witness_support_coordination",
+      "name": "templates.jus_witness_support_coordination.name",
+      "title": "Witness support coordination",
+      "code": "JUS-010",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "support_needs",
+          "label": "templates.catalogue.support_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_contact",
+          "label": "templates.catalogue.authorized_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restricted_schedule",
+          "label": "templates.catalogue.restricted_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_public_safety_incident_intake",
+      "name": "templates.jus_public_safety_incident_intake.name",
+      "title": "Public safety incident intake",
+      "code": "JUS-011",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "factual_event_description",
+          "label": "templates.catalogue.factual_event_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "source",
+          "label": "templates.catalogue.source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_review",
+          "label": "templates.catalogue.authorized_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_incident_photograph_evidence",
+      "name": "templates.jus_incident_photograph_evidence.name",
+      "title": "Incident photograph evidence",
+      "code": "JUS-012",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "photo_reference",
+          "label": "templates.catalogue.photo_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custody_reference",
+          "label": "templates.catalogue.custody_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_evidence_receipt_and_custody",
+      "name": "templates.jus_evidence_receipt_and_custody.name",
+      "title": "Evidence receipt and custody",
+      "code": "JUS-013",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "evidence_identifier",
+          "label": "templates.catalogue.evidence_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_transfer",
+          "label": "templates.catalogue.authorized_transfer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "integrity_record",
+          "label": "templates.catalogue.integrity_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_evidence_storage_audit",
+      "name": "templates.jus_evidence_storage_audit.name",
+      "title": "Evidence storage audit",
+      "code": "JUS-014",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "storage_reference",
+          "label": "templates.catalogue.storage_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custody_logs",
+          "label": "templates.catalogue.custody_logs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_exceptions",
+          "label": "templates.catalogue.access_exceptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_lost_property_intake",
+      "name": "templates.jus_lost_property_intake.name",
+      "title": "Lost property intake",
+      "code": "JUS-015",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "item_description",
+          "label": "templates.catalogue.item_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "found_location",
+          "label": "templates.catalogue.found_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custody_reference",
+          "label": "templates.catalogue.custody_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_lost_property_claim_verification",
+      "name": "templates.jus_lost_property_claim_verification.name",
+      "title": "Lost property claim verification",
+      "code": "JUS-016",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "claimant_evidence",
+          "label": "templates.catalogue.claimant_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "item_match",
+          "label": "templates.catalogue.item_match",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_release",
+          "label": "templates.catalogue.authorized_release",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_missing_person_report_administration",
+      "name": "templates.jus_missing_person_report_administration.name",
+      "title": "Missing person report administration",
+      "code": "JUS-017",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "minimum_necessary_details",
+          "label": "templates.catalogue.minimum_necessary_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "authorized_reporting",
+          "label": "templates.catalogue.authorized_reporting",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restricted_access",
+          "label": "templates.catalogue.restricted_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_community_safety_concern_report",
+      "name": "templates.jus_community_safety_concern_report.name",
+      "title": "Community safety concern report",
+      "code": "JUS-018",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_concern",
+          "label": "templates.catalogue.reported_concern",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "location_scope",
+          "label": "templates.catalogue.location_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_response_contact",
+          "label": "templates.catalogue.safe_response_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_community_safety_meeting",
+      "name": "templates.jus_community_safety_meeting.name",
+      "title": "Community safety meeting",
+      "code": "JUS-019",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "community_issues",
+          "label": "templates.catalogue.community_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_noncoercive_actions",
+          "label": "templates.catalogue.agreed_noncoercive_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accountability",
+          "label": "templates.catalogue.accountability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_emergency_call_quality_review",
+      "name": "templates.jus_emergency_call_quality_review.name",
+      "title": "Emergency call quality review",
+      "code": "JUS-020",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_call_record",
+          "label": "templates.catalogue.authorized_call_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_criteria",
+          "label": "templates.catalogue.review_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_improvements",
+          "label": "templates.catalogue.service_improvements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_detention_facility_welfare_inspection",
+      "name": "templates.jus_detention_facility_welfare_inspection.name",
+      "title": "Detention facility welfare inspection",
+      "code": "JUS-021",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_welfare_criteria",
+          "label": "templates.catalogue.authorized_welfare_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_conditions",
+          "label": "templates.catalogue.observed_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "independent_review",
+          "label": "templates.catalogue.independent_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_custody_medical_referral_administration",
+      "name": "templates.jus_custody_medical_referral_administration.name",
+      "title": "Custody medical referral administration",
+      "code": "JUS-022",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_care_request",
+          "label": "templates.catalogue.authorized_care_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_necessary_details",
+          "label": "templates.catalogue.minimum_necessary_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "qualified_recipient",
+          "label": "templates.catalogue.qualified_recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_reintegration_support_intake",
+      "name": "templates.jus_reintegration_support_intake.name",
+      "title": "Reintegration support intake",
+      "code": "JUS-023",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "client_goals",
+          "label": "templates.catalogue.client_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "support_needs",
+          "label": "templates.catalogue.support_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_restorative_justice_agreement_administration",
+      "name": "templates.jus_restorative_justice_agreement_administration.name",
+      "title": "Restorative justice agreement administration",
+      "code": "JUS-024",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "voluntary_participation",
+          "label": "templates.catalogue.voluntary_participation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_actions",
+          "label": "templates.catalogue.agreed_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_process",
+          "label": "templates.catalogue.review_process",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_community_service_completion_record",
+      "name": "templates.jus_community_service_completion_record.name",
+      "title": "Community service completion record",
+      "code": "JUS-025",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_assignment",
+          "label": "templates.catalogue.authorized_assignment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_hours",
+          "label": "templates.catalogue.verified_hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "hours",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supervisor_confirmation",
+          "label": "templates.catalogue.supervisor_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_public_safety_equipment_maintenance",
+      "name": "templates.jus_public_safety_equipment_maintenance.name",
+      "title": "Public safety equipment maintenance",
+      "code": "JUS-026",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "nonweapon_asset",
+          "label": "templates.catalogue.nonweapon_asset",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_service_scope",
+          "label": "templates.catalogue.approved_service_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification",
+          "label": "templates.catalogue.verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_justice_service_complaint_intake",
+      "name": "templates.jus_justice_service_complaint_intake.name",
+      "title": "Justice service complaint intake",
+      "code": "JUS-027",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_service_issue",
+          "label": "templates.catalogue.reported_service_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_contact",
+          "label": "templates.catalogue.safe_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "independent_review",
+          "label": "templates.catalogue.independent_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_case_file_access_authorization",
+      "name": "templates.jus_case_file_access_authorization.name",
+      "title": "Case file access authorization",
+      "code": "JUS-028",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requester_role",
+          "label": "templates.catalogue.requester_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "legitimate_purpose",
+          "label": "templates.catalogue.legitimate_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_scope",
+          "label": "templates.catalogue.approved_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_case_closure_evidence_checklist",
+      "name": "templates.jus_case_closure_evidence_checklist.name",
+      "title": "Case closure evidence checklist",
+      "code": "JUS-029",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "required_case_records",
+          "label": "templates.catalogue.required_case_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_evidence",
+          "label": "templates.catalogue.completion_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_signoff",
+          "label": "templates.catalogue.authorized_signoff",
+          "type": "signature",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "jus_justice_program_performance_report",
+      "name": "templates.jus_justice_program_performance_report.name",
+      "title": "Justice program performance report",
+      "code": "JUS-030",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_jus",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "deidentified_service_metrics",
+          "label": "templates.catalogue.deidentified_service_metrics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outcome_evidence",
+          "label": "templates.catalogue.outcome_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

@@ -9,6 +9,7 @@ export 'data/template_repository_impl.dart' show templateRepositoryProvider;
 export 'data/xlsx_template_import.dart' show XlsxTemplateImport;
 export 'domain/field_def.dart';
 export 'domain/field_type_registry.dart';
+export 'domain/shipped_template_entry.dart';
 export 'domain/template_def.dart';
 export 'domain/template_repository.dart';
 export 'domain/template_row.dart';

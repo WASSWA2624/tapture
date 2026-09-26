@@ -1,0 +1,1727 @@
+{
+  "category": "AUD",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "aud_audit_engagement_planning",
+      "name": "templates.aud_audit_engagement_planning.name",
+      "title": "Audit engagement planning",
+      "code": "AUD-001",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "engagement_objective",
+          "label": "templates.catalogue.engagement_objective",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "audit_scope",
+          "label": "templates.catalogue.audit_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "resource_plan",
+          "label": "templates.catalogue.resource_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_audit_universe_register",
+      "name": "templates.aud_audit_universe_register.name",
+      "title": "Audit universe register",
+      "code": "AUD-002",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "auditable_entity",
+          "label": "templates.catalogue.auditable_entity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "inherent_risk",
+          "label": "templates.catalogue.inherent_risk",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "low",
+              "label": "templates.choices.risk_rating.low"
+            },
+            {
+              "code": "medium",
+              "label": "templates.choices.risk_rating.medium"
+            },
+            {
+              "code": "high",
+              "label": "templates.choices.risk_rating.high"
+            },
+            {
+              "code": "critical",
+              "label": "templates.choices.risk_rating.critical"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "last_review_date",
+          "label": "templates.catalogue.last_review_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_risk_assessment_worksheet",
+      "name": "templates.aud_risk_assessment_worksheet.name",
+      "title": "Risk assessment worksheet",
+      "code": "AUD-003",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "risk_event",
+          "label": "templates.catalogue.risk_event",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "likelihood_basis",
+          "label": "templates.catalogue.likelihood_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "impact_basis",
+          "label": "templates.catalogue.impact_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_risk_register",
+      "name": "templates.aud_risk_register.name",
+      "title": "Risk register",
+      "code": "AUD-004",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "risk_owner",
+          "label": "templates.catalogue.risk_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "existing_controls",
+          "label": "templates.catalogue.existing_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_plan",
+          "label": "templates.catalogue.response_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_control_catalogue",
+      "name": "templates.aud_control_catalogue.name",
+      "title": "Control catalogue",
+      "code": "AUD-005",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "control_objective",
+          "label": "templates.catalogue.control_objective",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "control_frequency",
+          "label": "templates.catalogue.control_frequency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "control_evidence",
+          "label": "templates.catalogue.control_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_audit_evidence_intake",
+      "name": "templates.aud_audit_evidence_intake.name",
+      "title": "Audit evidence intake",
+      "code": "AUD-006",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "evidence_description",
+          "label": "templates.catalogue.evidence_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "source_document",
+          "label": "templates.catalogue.source_document",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evidence_period",
+          "label": "templates.catalogue.evidence_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_invoice_audit_sampling",
+      "name": "templates.aud_invoice_audit_sampling.name",
+      "title": "Invoice audit sampling",
+      "code": "AUD-007",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "sampling_population",
+          "label": "templates.catalogue.sampling_population",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "selection_method",
+          "label": "templates.catalogue.selection_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sample_items",
+          "label": "templates.catalogue.sample_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_receipt_authenticity_review",
+      "name": "templates.aud_receipt_authenticity_review.name",
+      "title": "Receipt authenticity review",
+      "code": "AUD-008",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "receipt_features",
+          "label": "templates.catalogue.receipt_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "independent_checks",
+          "label": "templates.catalogue.independent_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "unresolved_flags",
+          "label": "templates.catalogue.unresolved_flags",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_control_design_assessment",
+      "name": "templates.aud_control_design_assessment.name",
+      "title": "Control design assessment",
+      "code": "AUD-009",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "control_design",
+          "label": "templates.catalogue.control_design",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expected_outcome",
+          "label": "templates.catalogue.expected_outcome",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "design_gaps",
+          "label": "templates.catalogue.design_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_control_operating_effectiveness_test",
+      "name": "templates.aud_control_operating_effectiveness_test.name",
+      "title": "Control operating effectiveness test",
+      "code": "AUD-010",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "test_steps",
+          "label": "templates.catalogue.test_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "tested_samples",
+          "label": "templates.catalogue.tested_samples",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_process_walkthrough",
+      "name": "templates.aud_process_walkthrough.name",
+      "title": "Process walkthrough",
+      "code": "AUD-011",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "process_steps",
+          "label": "templates.catalogue.process_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "interviewed_roles",
+          "label": "templates.catalogue.interviewed_roles",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "control_points",
+          "label": "templates.catalogue.control_points",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_audit_interview_notes",
+      "name": "templates.aud_audit_interview_notes.name",
+      "title": "Audit interview notes",
+      "code": "AUD-012",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "interview_topic",
+          "label": "templates.catalogue.interview_topic",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "interviewee_role",
+          "label": "templates.catalogue.interviewee_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "statements_to_verify",
+          "label": "templates.catalogue.statements_to_verify",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_audit_finding_record",
+      "name": "templates.aud_audit_finding_record.name",
+      "title": "Audit finding record",
+      "code": "AUD-013",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "criteria",
+          "label": "templates.catalogue.criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_condition",
+          "label": "templates.catalogue.observed_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cause",
+          "label": "templates.catalogue.cause",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "effect",
+          "label": "templates.catalogue.effect",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_audit_issue_rating_review",
+      "name": "templates.aud_audit_issue_rating_review.name",
+      "title": "Audit issue rating review",
+      "code": "AUD-014",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "rating_criteria",
+          "label": "templates.catalogue.rating_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_evidence",
+          "label": "templates.catalogue.supporting_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reviewer_rationale",
+          "label": "templates.catalogue.reviewer_rationale",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_corrective_action_plan",
+      "name": "templates.aud_corrective_action_plan.name",
+      "title": "Corrective action plan",
+      "code": "AUD-015",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "finding_reference",
+          "label": "templates.catalogue.finding_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "action_owner",
+          "label": "templates.catalogue.action_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "target_date",
+          "label": "templates.catalogue.target_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_audit_follow_up_verification",
+      "name": "templates.aud_audit_follow_up_verification.name",
+      "title": "Audit follow-up verification",
+      "code": "AUD-016",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_action",
+          "label": "templates.catalogue.agreed_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "implementation_evidence",
+          "label": "templates.catalogue.implementation_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "closure_result",
+          "label": "templates.catalogue.closure_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_internal_audit_report",
+      "name": "templates.aud_internal_audit_report.name",
+      "title": "Internal audit report",
+      "code": "AUD-017",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "scope_limitations",
+          "label": "templates.catalogue.scope_limitations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "findings",
+          "label": "templates.catalogue.findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "management_response",
+          "label": "templates.catalogue.management_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_regulatory_obligation_register",
+      "name": "templates.aud_regulatory_obligation_register.name",
+      "title": "Regulatory obligation register",
+      "code": "AUD-018",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "jurisdiction",
+          "label": "templates.catalogue.jurisdiction",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "obligation_reference",
+          "label": "templates.catalogue.obligation_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "compliance_owner",
+          "label": "templates.catalogue.compliance_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_compliance_evidence_checklist",
+      "name": "templates.aud_compliance_evidence_checklist.name",
+      "title": "Compliance evidence checklist",
+      "code": "AUD-019",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "obligation_reference",
+          "label": "templates.catalogue.obligation_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_evidence",
+          "label": "templates.catalogue.required_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_result",
+          "label": "templates.catalogue.verification_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_policy_exception_register",
+      "name": "templates.aud_policy_exception_register.name",
+      "title": "Policy exception register",
+      "code": "AUD-020",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "policy_reference",
+          "label": "templates.catalogue.policy_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_exception",
+          "label": "templates.catalogue.approved_exception",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expiry_date",
+          "label": "templates.catalogue.expiry_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_fraud_allegation_intake",
+      "name": "templates.aud_fraud_allegation_intake.name",
+      "title": "Fraud allegation intake",
+      "code": "AUD-021",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "allegation_summary",
+          "label": "templates.catalogue.allegation_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "supporting_material",
+          "label": "templates.catalogue.supporting_material",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restricted_access_scope",
+          "label": "templates.catalogue.restricted_access_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_whistleblowing_case_intake",
+      "name": "templates.aud_whistleblowing_case_intake.name",
+      "title": "Whistleblowing case intake",
+      "code": "AUD-022",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_concern",
+          "label": "templates.catalogue.reported_concern",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_contact_channel",
+          "label": "templates.catalogue.safe_contact_channel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "identity_protection",
+          "label": "templates.catalogue.identity_protection",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_conflict_of_interest_review",
+      "name": "templates.aud_conflict_of_interest_review.name",
+      "title": "Conflict-of-interest review",
+      "code": "AUD-023",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "declared_interest",
+          "label": "templates.catalogue.declared_interest",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_decision",
+          "label": "templates.catalogue.affected_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "mitigation_review",
+          "label": "templates.catalogue.mitigation_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_third_party_risk_assessment",
+      "name": "templates.aud_third_party_risk_assessment.name",
+      "title": "Third-party risk assessment",
+      "code": "AUD-024",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "service_criticality",
+          "label": "templates.catalogue.service_criticality",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_access",
+          "label": "templates.catalogue.data_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assurance_evidence",
+          "label": "templates.catalogue.assurance_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_operational_resilience_assessment",
+      "name": "templates.aud_operational_resilience_assessment.name",
+      "title": "Operational resilience assessment",
+      "code": "AUD-025",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "critical_service",
+          "label": "templates.catalogue.critical_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "dependencies",
+          "label": "templates.catalogue.dependencies",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "tolerable_disruption",
+          "label": "templates.catalogue.tolerable_disruption",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_business_continuity_test",
+      "name": "templates.aud_business_continuity_test.name",
+      "title": "Business continuity test",
+      "code": "AUD-026",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "test_scenario",
+          "label": "templates.catalogue.test_scenario",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recovery_results",
+          "label": "templates.catalogue.recovery_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "lessons",
+          "label": "templates.catalogue.lessons",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_insurance_coverage_gap_review",
+      "name": "templates.aud_insurance_coverage_gap_review.name",
+      "title": "Insurance coverage gap review",
+      "code": "AUD-027",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "exposure_inventory",
+          "label": "templates.catalogue.exposure_inventory",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "existing_cover",
+          "label": "templates.catalogue.existing_cover",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "uncovered_risks",
+          "label": "templates.catalogue.uncovered_risks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_access_rights_certification",
+      "name": "templates.aud_access_rights_certification.name",
+      "title": "Access rights certification",
+      "code": "AUD-028",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "user_entitlements",
+          "label": "templates.catalogue.user_entitlements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "business_justification",
+          "label": "templates.catalogue.business_justification",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_decision",
+          "label": "templates.catalogue.review_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_recordkeeping_compliance_review",
+      "name": "templates.aud_recordkeeping_compliance_review.name",
+      "title": "Recordkeeping compliance review",
+      "code": "AUD-029",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "required_records",
+          "label": "templates.catalogue.required_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "available_records",
+          "label": "templates.catalogue.available_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "retention_gaps",
+          "label": "templates.catalogue.retention_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_environmental_compliance_evidence",
+      "name": "templates.aud_environmental_compliance_evidence.name",
+      "title": "Environmental compliance evidence",
+      "code": "AUD-030",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "permit_reference",
+          "label": "templates.catalogue.permit_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "monitoring_records",
+          "label": "templates.catalogue.monitoring_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_quality_management_internal_audit",
+      "name": "templates.aud_quality_management_internal_audit.name",
+      "title": "Quality management internal audit",
+      "code": "AUD-031",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "process_criteria",
+          "label": "templates.catalogue.process_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "objective_evidence",
+          "label": "templates.catalogue.objective_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "nonconformities",
+          "label": "templates.catalogue.nonconformities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_supplier_compliance_audit",
+      "name": "templates.aud_supplier_compliance_audit.name",
+      "title": "Supplier compliance audit",
+      "code": "AUD-032",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "contract_requirements",
+          "label": "templates.catalogue.contract_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supplier_evidence",
+          "label": "templates.catalogue.supplier_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "findings",
+          "label": "templates.catalogue.findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_governance_effectiveness_review",
+      "name": "templates.aud_governance_effectiveness_review.name",
+      "title": "Governance effectiveness review",
+      "code": "AUD-033",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "decision_rights",
+          "label": "templates.catalogue.decision_rights",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "oversight_evidence",
+          "label": "templates.catalogue.oversight_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accountability_gaps",
+          "label": "templates.catalogue.accountability_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_audit_committee_briefing",
+      "name": "templates.aud_audit_committee_briefing.name",
+      "title": "Audit committee briefing",
+      "code": "AUD-034",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "major_findings",
+          "label": "templates.catalogue.major_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "overdue_actions",
+          "label": "templates.catalogue.overdue_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assurance_gaps",
+          "label": "templates.catalogue.assurance_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_regulatory_examination_response",
+      "name": "templates.aud_regulatory_examination_response.name",
+      "title": "Regulatory examination response",
+      "code": "AUD-035",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "regulator_questions",
+          "label": "templates.catalogue.regulator_questions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_responses",
+          "label": "templates.catalogue.verified_responses",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_exhibits",
+          "label": "templates.catalogue.supporting_exhibits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "aud_compliance_training_attestation",
+      "name": "templates.aud_compliance_training_attestation.name",
+      "title": "Compliance training attestation",
+      "code": "AUD-036",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_aud",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "training_version",
+          "label": "templates.catalogue.training_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_evidence",
+          "label": "templates.catalogue.completion_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attestation_text",
+          "label": "templates.catalogue.attestation_text",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

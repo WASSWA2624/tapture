@@ -1,0 +1,1599 @@
+{
+  "category": "MTG",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "mtg_meeting_request",
+      "name": "templates.mtg_meeting_request.name",
+      "title": "Meeting request",
+      "code": "MTG-001",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "meeting_purpose",
+          "label": "templates.catalogue.meeting_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_attendees",
+          "label": "templates.catalogue.proposed_attendees",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "preferred_times",
+          "label": "templates.catalogue.preferred_times",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_meeting_agenda",
+      "name": "templates.mtg_meeting_agenda.name",
+      "title": "Meeting agenda",
+      "code": "MTG-002",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "agenda_items",
+          "label": "templates.catalogue.agenda_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "item_owners",
+          "label": "templates.catalogue.item_owners",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "time_allocations",
+          "label": "templates.catalogue.time_allocations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_meeting_invitation",
+      "name": "templates.mtg_meeting_invitation.name",
+      "title": "Meeting invitation",
+      "code": "MTG-003",
+      "kind": "communication",
+      "pack": "COMM",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "communication_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_comm"
+      ],
+      "fields": [
+        {
+          "field_key": "meeting_at",
+          "label": "templates.catalogue.meeting_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "joining_details",
+          "label": "templates.catalogue.joining_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "response_request",
+          "label": "templates.catalogue.response_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_meeting_attendance_register",
+      "name": "templates.mtg_meeting_attendance_register.name",
+      "title": "Meeting attendance register",
+      "code": "MTG-004",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "attendee_name",
+          "label": "templates.catalogue.attendee_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attendance_mode",
+          "label": "templates.catalogue.attendance_mode",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attendance_confirmation",
+          "label": "templates.catalogue.attendance_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_meeting_consent_and_recording_notice",
+      "name": "templates.mtg_meeting_consent_and_recording_notice.name",
+      "title": "Meeting consent and recording notice",
+      "code": "MTG-005",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "recording_purpose",
+          "label": "templates.catalogue.recording_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_choices",
+          "label": "templates.catalogue.participant_choices",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "retention_period",
+          "label": "templates.catalogue.retention_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_meeting_notes_capture",
+      "name": "templates.mtg_meeting_notes_capture.name",
+      "title": "Meeting notes capture",
+      "code": "MTG-006",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "discussion_points",
+          "label": "templates.catalogue.discussion_points",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "action_items",
+          "label": "templates.catalogue.action_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_audio_meeting_transcription",
+      "name": "templates.mtg_audio_meeting_transcription.name",
+      "title": "Audio meeting transcription",
+      "code": "MTG-007",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "recording_reference",
+          "label": "templates.catalogue.recording_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "speaker_labels",
+          "label": "templates.catalogue.speaker_labels",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transcript_review",
+          "label": "templates.catalogue.transcript_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_meeting_minutes",
+      "name": "templates.mtg_meeting_minutes.name",
+      "title": "Meeting minutes",
+      "code": "MTG-008",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_discussion_summary",
+          "label": "templates.catalogue.approved_discussion_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "decisions",
+          "label": "templates.catalogue.decisions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_actions",
+          "label": "templates.catalogue.assigned_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_meeting_action_tracker",
+      "name": "templates.mtg_meeting_action_tracker.name",
+      "title": "Meeting action tracker",
+      "code": "MTG-009",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "action_description",
+          "label": "templates.catalogue.action_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "action_owner",
+          "label": "templates.catalogue.action_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "due_date",
+          "label": "templates.catalogue.due_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_meeting_decision_register",
+      "name": "templates.mtg_meeting_decision_register.name",
+      "title": "Meeting decision register",
+      "code": "MTG-010",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "decision_text",
+          "label": "templates.catalogue.decision_text",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "decision_authority",
+          "label": "templates.catalogue.decision_authority",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_recurring_meeting_plan",
+      "name": "templates.mtg_recurring_meeting_plan.name",
+      "title": "Recurring meeting plan",
+      "code": "MTG-011",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "recurrence_pattern",
+          "label": "templates.catalogue.recurrence_pattern",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "standing_agenda",
+          "label": "templates.catalogue.standing_agenda",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "facilitator",
+          "label": "templates.catalogue.facilitator",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_board_meeting_minutes",
+      "name": "templates.mtg_board_meeting_minutes.name",
+      "title": "Board meeting minutes",
+      "code": "MTG-012",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "quorum_record",
+          "label": "templates.catalogue.quorum_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "motions",
+          "label": "templates.catalogue.motions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "voting_outcomes",
+          "label": "templates.catalogue.voting_outcomes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_committee_meeting_record",
+      "name": "templates.mtg_committee_meeting_record.name",
+      "title": "Committee meeting record",
+      "code": "MTG-013",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "committee_mandate",
+          "label": "templates.catalogue.committee_mandate",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agenda_outcomes",
+          "label": "templates.catalogue.agenda_outcomes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "escalated_items",
+          "label": "templates.catalogue.escalated_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_team_stand_up_capture",
+      "name": "templates.mtg_team_stand_up_capture.name",
+      "title": "Team stand-up capture",
+      "code": "MTG-014",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "completed_work",
+          "label": "templates.catalogue.completed_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "planned_work",
+          "label": "templates.catalogue.planned_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "blockers",
+          "label": "templates.catalogue.blockers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_workshop_facilitation_plan",
+      "name": "templates.mtg_workshop_facilitation_plan.name",
+      "title": "Workshop facilitation plan",
+      "code": "MTG-015",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "workshop_objective",
+          "label": "templates.catalogue.workshop_objective",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "session_activities",
+          "label": "templates.catalogue.session_activities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "materials",
+          "label": "templates.catalogue.materials",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_workshop_output_capture",
+      "name": "templates.mtg_workshop_output_capture.name",
+      "title": "Workshop output capture",
+      "code": "MTG-016",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "activity_reference",
+          "label": "templates.catalogue.activity_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant_outputs",
+          "label": "templates.catalogue.participant_outputs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_themes",
+          "label": "templates.catalogue.agreed_themes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_conference_registration",
+      "name": "templates.mtg_conference_registration.name",
+      "title": "Conference registration",
+      "code": "MTG-017",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "participant_details",
+          "label": "templates.catalogue.participant_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "session_choices",
+          "label": "templates.catalogue.session_choices",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_requirements",
+          "label": "templates.catalogue.access_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_conference_program",
+      "name": "templates.mtg_conference_program.name",
+      "title": "Conference program",
+      "code": "MTG-018",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "session_schedule",
+          "label": "templates.catalogue.session_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "speaker_details",
+          "label": "templates.catalogue.speaker_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "venue_assignments",
+          "label": "templates.catalogue.venue_assignments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_event_budget",
+      "name": "templates.mtg_event_budget.name",
+      "title": "Event budget",
+      "code": "MTG-019",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "event_costs",
+          "label": "templates.catalogue.event_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expected_income",
+          "label": "templates.catalogue.expected_income",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "expected_income_currency",
+          "label": "templates.catalogue.expected_income_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contingency",
+          "label": "templates.catalogue.contingency",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_event_vendor_coordination",
+      "name": "templates.mtg_event_vendor_coordination.name",
+      "title": "Event vendor coordination",
+      "code": "MTG-020",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "vendor_service",
+          "label": "templates.catalogue.vendor_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_requirements",
+          "label": "templates.catalogue.delivery_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_person",
+          "label": "templates.catalogue.contact_person",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_venue_readiness_inspection",
+      "name": "templates.mtg_venue_readiness_inspection.name",
+      "title": "Venue readiness inspection",
+      "code": "MTG-021",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "layout_readiness",
+          "label": "templates.catalogue.layout_readiness",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_routes",
+          "label": "templates.catalogue.access_routes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safety_checks",
+          "label": "templates.catalogue.safety_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_event_run_of_show",
+      "name": "templates.mtg_event_run_of_show.name",
+      "title": "Event run-of-show",
+      "code": "MTG-022",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "sequence",
+          "label": "templates.catalogue.sequence",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cue_owner",
+          "label": "templates.catalogue.cue_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "timing",
+          "label": "templates.catalogue.timing",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_speaker_briefing_pack",
+      "name": "templates.mtg_speaker_briefing_pack.name",
+      "title": "Speaker briefing pack",
+      "code": "MTG-023",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "session_objective",
+          "label": "templates.catalogue.session_objective",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "audience_profile",
+          "label": "templates.catalogue.audience_profile",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "technical_requirements",
+          "label": "templates.catalogue.technical_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_visitor_sign_in",
+      "name": "templates.mtg_visitor_sign_in.name",
+      "title": "Visitor sign-in",
+      "code": "MTG-024",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "visitor_name",
+          "label": "templates.catalogue.visitor_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "host",
+          "label": "templates.catalogue.host",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visit_purpose",
+          "label": "templates.catalogue.visit_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_appointment_booking",
+      "name": "templates.mtg_appointment_booking.name",
+      "title": "Appointment booking",
+      "code": "MTG-025",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "service_type",
+          "label": "templates.catalogue.service_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "preferred_slot",
+          "label": "templates.catalogue.preferred_slot",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_channel",
+          "label": "templates.catalogue.contact_channel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_room_booking",
+      "name": "templates.mtg_room_booking.name",
+      "title": "Room booking",
+      "code": "MTG-026",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "room_requirements",
+          "label": "templates.catalogue.room_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "booking_period",
+          "label": "templates.catalogue.booking_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "host",
+          "label": "templates.catalogue.host",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_event_equipment_checklist",
+      "name": "templates.mtg_event_equipment_checklist.name",
+      "title": "Event equipment checklist",
+      "code": "MTG-027",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_list",
+          "label": "templates.catalogue.equipment_list",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "setup_test",
+          "label": "templates.catalogue.setup_test",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_status",
+          "label": "templates.catalogue.return_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_event_incident_log",
+      "name": "templates.mtg_event_incident_log.name",
+      "title": "Event incident log",
+      "code": "MTG-028",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "incident_location",
+          "label": "templates.catalogue.incident_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_persons_minimized",
+          "label": "templates.catalogue.affected_persons_minimized",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response",
+          "label": "templates.catalogue.response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_event_evaluation_survey",
+      "name": "templates.mtg_event_evaluation_survey.name",
+      "title": "Event evaluation survey",
+      "code": "MTG-029",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "session_ratings",
+          "label": "templates.catalogue.session_ratings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessibility_feedback",
+          "label": "templates.catalogue.accessibility_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "suggestions",
+          "label": "templates.catalogue.suggestions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_participant_certificate_data",
+      "name": "templates.mtg_participant_certificate_data.name",
+      "title": "Participant certificate data",
+      "code": "MTG-030",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "recipient_name",
+          "label": "templates.catalogue.recipient_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "event_name",
+          "label": "templates.catalogue.event_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_basis",
+          "label": "templates.catalogue.completion_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_meeting_follow_up_email",
+      "name": "templates.mtg_meeting_follow_up_email.name",
+      "title": "Meeting follow-up email",
+      "code": "MTG-031",
+      "kind": "communication",
+      "pack": "COMM",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "communication_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_comm"
+      ],
+      "fields": [
+        {
+          "field_key": "meeting_summary",
+          "label": "templates.catalogue.meeting_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "action_reminders",
+          "label": "templates.catalogue.action_reminders",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "next_meeting",
+          "label": "templates.catalogue.next_meeting",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_travel_delegation_coordination",
+      "name": "templates.mtg_travel_delegation_coordination.name",
+      "title": "Travel delegation coordination",
+      "code": "MTG-032",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "delegate_list",
+          "label": "templates.catalogue.delegate_list",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "itinerary",
+          "label": "templates.catalogue.itinerary",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "logistics_contacts",
+          "label": "templates.catalogue.logistics_contacts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_public_consultation_meeting_record",
+      "name": "templates.mtg_public_consultation_meeting_record.name",
+      "title": "Public consultation meeting record",
+      "code": "MTG-033",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "consultation_topic",
+          "label": "templates.catalogue.consultation_topic",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "views_received",
+          "label": "templates.catalogue.views_received",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_commitments",
+          "label": "templates.catalogue.response_commitments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "mtg_remote_meeting_technical_check",
+      "name": "templates.mtg_remote_meeting_technical_check.name",
+      "title": "Remote meeting technical check",
+      "code": "MTG-034",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_mtg",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "audio_test",
+          "label": "templates.catalogue.audio_test",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "video_test",
+          "label": "templates.catalogue.video_test",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "connection_backup",
+          "label": "templates.catalogue.connection_backup",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

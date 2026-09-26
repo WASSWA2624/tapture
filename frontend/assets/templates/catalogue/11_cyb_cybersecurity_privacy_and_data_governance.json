@@ -1,0 +1,1513 @@
+{
+  "category": "CYB",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "cyb_information_asset_classification",
+      "name": "templates.cyb_information_asset_classification.name",
+      "title": "Information asset classification",
+      "code": "CYB-001",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "data_categories",
+          "label": "templates.catalogue.data_categories",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "business_impact",
+          "label": "templates.catalogue.business_impact",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "classification_owner",
+          "label": "templates.catalogue.classification_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_security_risk_assessment",
+      "name": "templates.cyb_security_risk_assessment.name",
+      "title": "Security risk assessment",
+      "code": "CYB-002",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_system_scope",
+          "label": "templates.catalogue.authorized_system_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "threat_scenarios",
+          "label": "templates.catalogue.threat_scenarios",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "control_evidence",
+          "label": "templates.catalogue.control_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_security_control_evidence_register",
+      "name": "templates.cyb_security_control_evidence_register.name",
+      "title": "Security control evidence register",
+      "code": "CYB-003",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "control_reference",
+          "label": "templates.catalogue.control_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evidence_source",
+          "label": "templates.catalogue.evidence_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_date",
+          "label": "templates.catalogue.review_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_authorized_vulnerability_assessment_intake",
+      "name": "templates.cyb_authorized_vulnerability_assessment_intake.name",
+      "title": "Authorized vulnerability assessment intake",
+      "code": "CYB-004",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "written_authorization",
+          "label": "templates.catalogue.written_authorization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "target_scope",
+          "label": "templates.catalogue.target_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "testing_constraints",
+          "label": "templates.catalogue.testing_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_vulnerability_remediation_tracker",
+      "name": "templates.cyb_vulnerability_remediation_tracker.name",
+      "title": "Vulnerability remediation tracker",
+      "code": "CYB-005",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_finding",
+          "label": "templates.catalogue.verified_finding",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "remediation_owner",
+          "label": "templates.catalogue.remediation_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_status",
+          "label": "templates.catalogue.verification_status",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "unverified",
+              "label": "templates.choices.verification_status.unverified"
+            },
+            {
+              "code": "verified",
+              "label": "templates.choices.verification_status.verified"
+            },
+            {
+              "code": "disputed",
+              "label": "templates.choices.verification_status.disputed"
+            },
+            {
+              "code": "not_applicable",
+              "label": "templates.choices.verification_status.not_applicable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_security_incident_intake",
+      "name": "templates.cyb_security_incident_intake.name",
+      "title": "Security incident intake",
+      "code": "CYB-006",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_indicators",
+          "label": "templates.catalogue.observed_indicators",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_assets",
+          "label": "templates.catalogue.affected_assets",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_response",
+          "label": "templates.catalogue.authorized_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_security_incident_timeline",
+      "name": "templates.cyb_security_incident_timeline.name",
+      "title": "Security incident timeline",
+      "code": "CYB-007",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "event_at",
+          "label": "templates.catalogue.event_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_observation",
+          "label": "templates.catalogue.verified_observation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_action",
+          "label": "templates.catalogue.response_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_evidence_preservation_record",
+      "name": "templates.cyb_evidence_preservation_record.name",
+      "title": "Evidence preservation record",
+      "code": "CYB-008",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "evidence_reference",
+          "label": "templates.catalogue.evidence_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "integrity_hash",
+          "label": "templates.catalogue.integrity_hash",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_custody",
+          "label": "templates.catalogue.authorized_custody",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_phishing_report_intake",
+      "name": "templates.cyb_phishing_report_intake.name",
+      "title": "Phishing report intake",
+      "code": "CYB-009",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_message",
+          "label": "templates.catalogue.reported_message",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reporter_notes",
+          "label": "templates.catalogue.reporter_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "safe_attachment_reference",
+          "label": "templates.catalogue.safe_attachment_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_suspicious_account_activity_review",
+      "name": "templates.cyb_suspicious_account_activity_review.name",
+      "title": "Suspicious account activity review",
+      "code": "CYB-010",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_audit_logs",
+          "label": "templates.catalogue.authorized_audit_logs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "activity_context",
+          "label": "templates.catalogue.activity_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_outcome",
+          "label": "templates.catalogue.review_outcome",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_access_privilege_review",
+      "name": "templates.cyb_access_privilege_review.name",
+      "title": "Access privilege review",
+      "code": "CYB-011",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "assigned_entitlements",
+          "label": "templates.catalogue.assigned_entitlements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "business_need",
+          "label": "templates.catalogue.business_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reviewer_decision",
+          "label": "templates.catalogue.reviewer_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_privileged_access_request",
+      "name": "templates.cyb_privileged_access_request.name",
+      "title": "Privileged access request",
+      "code": "CYB-012",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_task",
+          "label": "templates.catalogue.authorized_task",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_duration_days",
+          "label": "templates.catalogue.requested_duration_days",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approver",
+          "label": "templates.catalogue.approver",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_security_exception_request",
+      "name": "templates.cyb_security_exception_request.name",
+      "title": "Security exception request",
+      "code": "CYB-013",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "control_gap",
+          "label": "templates.catalogue.control_gap",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "business_justification",
+          "label": "templates.catalogue.business_justification",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "compensating_controls",
+          "label": "templates.catalogue.compensating_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_security_awareness_training_record",
+      "name": "templates.cyb_security_awareness_training_record.name",
+      "title": "Security awareness training record",
+      "code": "CYB-014",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "training_topic",
+          "label": "templates.catalogue.training_topic",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "followup",
+          "label": "templates.catalogue.followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_third_party_security_questionnaire",
+      "name": "templates.cyb_third_party_security_questionnaire.name",
+      "title": "Third-party security questionnaire",
+      "code": "CYB-015",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "service_scope",
+          "label": "templates.catalogue.service_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "security_questions",
+          "label": "templates.catalogue.security_questions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_evidence",
+          "label": "templates.catalogue.supporting_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_vendor_security_review",
+      "name": "templates.cyb_vendor_security_review.name",
+      "title": "Vendor security review",
+      "code": "CYB-016",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "supplier_evidence",
+          "label": "templates.catalogue.supplier_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_exposure",
+          "label": "templates.catalogue.access_exposure",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_findings",
+          "label": "templates.catalogue.review_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_data_processing_inventory",
+      "name": "templates.cyb_data_processing_inventory.name",
+      "title": "Data processing inventory",
+      "code": "CYB-017",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "processing_purpose",
+          "label": "templates.catalogue.processing_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_categories",
+          "label": "templates.catalogue.data_categories",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_parties",
+          "label": "templates.catalogue.authorized_parties",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_privacy_impact_assessment_intake",
+      "name": "templates.cyb_privacy_impact_assessment_intake.name",
+      "title": "Privacy impact assessment intake",
+      "code": "CYB-018",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "processing_scope",
+          "label": "templates.catalogue.processing_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_people",
+          "label": "templates.catalogue.affected_people",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "privacy_risks",
+          "label": "templates.catalogue.privacy_risks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_data_subject_request_administration",
+      "name": "templates.cyb_data_subject_request_administration.name",
+      "title": "Data subject request administration",
+      "code": "CYB-019",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "request_type",
+          "label": "templates.catalogue.request_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "identity_verification_status",
+          "label": "templates.catalogue.identity_verification_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_scope",
+          "label": "templates.catalogue.response_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_consent_withdrawal_processing",
+      "name": "templates.cyb_consent_withdrawal_processing.name",
+      "title": "Consent withdrawal processing",
+      "code": "CYB-020",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "consent_reference",
+          "label": "templates.catalogue.consent_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_withdrawal",
+          "label": "templates.catalogue.requested_withdrawal",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "downstream_actions",
+          "label": "templates.catalogue.downstream_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_data_breach_assessment",
+      "name": "templates.cyb_data_breach_assessment.name",
+      "title": "Data breach assessment",
+      "code": "CYB-021",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "confirmed_facts",
+          "label": "templates.catalogue.confirmed_facts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_data_scope",
+          "label": "templates.catalogue.affected_data_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_legal_review",
+          "label": "templates.catalogue.authorized_legal_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_data_retention_schedule_design",
+      "name": "templates.cyb_data_retention_schedule_design.name",
+      "title": "Data retention schedule design",
+      "code": "CYB-022",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "record_categories",
+          "label": "templates.catalogue.record_categories",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "retention_basis_ref",
+          "label": "templates.catalogue.retention_basis_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "disposal_method",
+          "label": "templates.catalogue.disposal_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_data_deletion_verification",
+      "name": "templates.cyb_data_deletion_verification.name",
+      "title": "Data deletion verification",
+      "code": "CYB-023",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_scope",
+          "label": "templates.catalogue.authorized_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "deletion_evidence",
+          "label": "templates.catalogue.deletion_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_data_sharing_approval",
+      "name": "templates.cyb_data_sharing_approval.name",
+      "title": "Data sharing approval",
+      "code": "CYB-024",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "recipient",
+          "label": "templates.catalogue.recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "purpose",
+          "label": "templates.catalogue.purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_data_scope",
+          "label": "templates.catalogue.minimum_data_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_dataset_deidentification_review",
+      "name": "templates.cyb_dataset_deidentification_review.name",
+      "title": "Dataset deidentification review",
+      "code": "CYB-025",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "reidentification_risks",
+          "label": "templates.catalogue.reidentification_risks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_controls",
+          "label": "templates.catalogue.proposed_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_evidence",
+          "label": "templates.catalogue.review_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_encryption_configuration_evidence",
+      "name": "templates.cyb_encryption_configuration_evidence.name",
+      "title": "Encryption configuration evidence",
+      "code": "CYB-026",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "system_scope",
+          "label": "templates.catalogue.system_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_baseline",
+          "label": "templates.catalogue.approved_baseline",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_output",
+          "label": "templates.catalogue.verification_output",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_security_logging_coverage_review",
+      "name": "templates.cyb_security_logging_coverage_review.name",
+      "title": "Security logging coverage review",
+      "code": "CYB-027",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "critical_events",
+          "label": "templates.catalogue.critical_events",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "available_logs",
+          "label": "templates.catalogue.available_logs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "coverage_gaps",
+          "label": "templates.catalogue.coverage_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_secure_development_review",
+      "name": "templates.cyb_secure_development_review.name",
+      "title": "Secure development review",
+      "code": "CYB-028",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "application_scope",
+          "label": "templates.catalogue.application_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "security_requirements",
+          "label": "templates.catalogue.security_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_evidence",
+          "label": "templates.catalogue.test_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_ai_privacy_and_security_review",
+      "name": "templates.cyb_ai_privacy_and_security_review.name",
+      "title": "AI privacy and security review",
+      "code": "CYB-029",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "model_data_flows",
+          "label": "templates.catalogue.model_data_flows",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "untrusted_inputs",
+          "label": "templates.catalogue.untrusted_inputs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "control_evidence",
+          "label": "templates.catalogue.control_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_security_tabletop_exercise",
+      "name": "templates.cyb_security_tabletop_exercise.name",
+      "title": "Security tabletop exercise",
+      "code": "CYB-030",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "scenario",
+          "label": "templates.catalogue.scenario",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_decisions",
+          "label": "templates.catalogue.response_decisions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "lessons",
+          "label": "templates.catalogue.lessons",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_incident_postmortem_security_report",
+      "name": "templates.cyb_incident_postmortem_security_report.name",
+      "title": "Incident postmortem security report",
+      "code": "CYB-031",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_facts",
+          "label": "templates.catalogue.verified_facts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "control_gaps",
+          "label": "templates.catalogue.control_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "remediation_plan",
+          "label": "templates.catalogue.remediation_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "cyb_data_governance_stewardship_register",
+      "name": "templates.cyb_data_governance_stewardship_register.name",
+      "title": "Data governance stewardship register",
+      "code": "CYB-032",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_cyb",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "data_domain",
+          "label": "templates.catalogue.data_domain",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "steward",
+          "label": "templates.catalogue.steward",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_responsibilities",
+          "label": "templates.catalogue.quality_responsibilities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

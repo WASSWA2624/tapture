@@ -20,6 +20,7 @@ import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/settings/settings.dart';
 import 'package:tapture/features/templates/domain/shipped_template_category.dart';
+import 'package:tapture/features/templates/presentation/shipped_library_filter.dart';
 import 'package:tapture/features/templates/presentation/shipped_picker_screen.dart';
 import 'package:tapture/features/templates/templates.dart';
 
@@ -31,7 +32,8 @@ void main() {
   testWidgets('loading renders through AsyncValueView', (
     WidgetTester tester,
   ) async {
-    final Completer<List<TemplateDef>> pending = Completer<List<TemplateDef>>();
+    final Completer<List<ShippedTemplateEntry>> pending =
+        Completer<List<ShippedTemplateEntry>>();
     await _pump(
       tester,
       overrides: <Override>[
@@ -50,7 +52,7 @@ void main() {
       tester,
       overrides: <Override>[
         shippedLibraryProvider.overrideWith(
-          (Ref _) async => const <TemplateDef>[],
+          (Ref _) async => const <ShippedTemplateEntry>[],
         ),
       ],
     );
@@ -69,7 +71,7 @@ void main() {
       tester,
       overrides: <Override>[
         shippedLibraryProvider.overrideWith(
-          (Ref _) => Future<List<TemplateDef>>.error(
+          (Ref _) => Future<List<ShippedTemplateEntry>>.error(
             const StorageFailure(
               message: 'The shipped templates could not be read.',
               recoveryAction: 'Try again.',
@@ -95,7 +97,8 @@ void main() {
       tester,
       overrides: <Override>[
         shippedLibraryProvider.overrideWith(
-          (Ref _) => Future<List<TemplateDef>>.error(const NetworkFailure()),
+          (Ref _) =>
+              Future<List<ShippedTemplateEntry>>.error(const NetworkFailure()),
         ),
       ],
     );
@@ -260,7 +263,7 @@ void main() {
       tester,
       overrides: <Override>[
         shippedLibraryProvider.overrideWith(
-          (Ref _) async => <TemplateDef>[
+          (Ref _) async => <ShippedTemplateEntry>[
             for (final ShippedTemplateCategory category
                 in ShippedTemplateCategory.values.reversed)
               for (final String key in category.templateKeys) _shipped(key),
@@ -297,7 +300,7 @@ void main() {
         tester,
         overrides: <Override>[
           shippedLibraryProvider.overrideWith(
-            (Ref _) async => <TemplateDef>[
+            (Ref _) async => <ShippedTemplateEntry>[
               _shipped('generic_item'),
               _shipped('meter_reading'),
               _shipped('livestock_animal'),
@@ -338,18 +341,325 @@ void main() {
       expect(empty - search, lessThan(64));
     },
   );
+
+  group('the full catalogue', () {
+    testWidgets('lists under area and category headings after the starters', (
+      WidgetTester tester,
+    ) async {
+      _tall(tester);
+      await _pump(
+        tester,
+        overrides: <Override>[
+          shippedLibraryProvider.overrideWith(
+            (Ref _) async => <ShippedTemplateEntry>[
+              _shipped('generic_item'),
+              ..._catalogue,
+            ],
+          ),
+        ],
+      );
+      await tester.pumpAndSettle();
+
+      final List<String> headings = <String>[
+        for (final AppSectionHeader header
+            in tester.widgetList<AppSectionHeader>(
+              find.byType(AppSectionHeader),
+            ))
+          header.title,
+      ];
+      expect(headings, <String>[
+        Copy.shippedStarterArea,
+        Copy.shippedCategoryTitle('general'),
+        Copy.shippedAreaTitle('01', 'Cross-sector foundations'),
+        Copy.shippedCatalogueCategoryTitle(
+          'UNI',
+          'Universal capture and records',
+        ),
+        Copy.shippedAreaTitle('02', 'Business and governance'),
+        Copy.shippedCatalogueCategoryTitle(
+          'FIN',
+          'Finance accounting and expenses',
+        ),
+      ]);
+      expect(find.byType(AppListTile), findsNWidgets(4));
+      expect(
+        find.text(
+          Copy.shippedCatalogueSubtitle(
+            'UNI-001',
+            'Observation / evidence capture',
+            67,
+          ),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('search matches code, record type, category and fields', (
+      WidgetTester tester,
+    ) async {
+      _tall(tester);
+      await _pump(
+        tester,
+        overrides: <Override>[
+          shippedLibraryProvider.overrideWith(
+            (Ref _) async => <ShippedTemplateEntry>[
+              _shipped('generic_item'),
+              ..._catalogue,
+            ],
+          ),
+        ],
+      );
+      await tester.pumpAndSettle();
+
+      Future<List<String>> shownFor(String query) async {
+        await tester.enterText(find.byType(EditableText), query);
+        await tester.pump(const Duration(milliseconds: 400));
+        return <String>[
+          for (final AppListTile tile in tester.widgetList<AppListTile>(
+            find.byType(AppListTile),
+          ))
+            tile.title,
+        ];
+      }
+
+      expect(await shownFor('uni-002'), <String>['Voice field note']);
+      expect(await shownFor('transaction'), <String>['Invoice OCR intake']);
+      expect(await shownFor('finance'), <String>['Invoice OCR intake']);
+      expect(await shownFor('transcript language'), <String>[
+        'Voice field note',
+      ]);
+      expect(await shownFor('observation foundations'), <String>[
+        'General observation',
+        'Voice field note',
+      ]);
+    });
+
+    testWidgets('filters narrow by area, record type and tier', (
+      WidgetTester tester,
+    ) async {
+      _tall(tester);
+      await _pump(
+        tester,
+        overrides: <Override>[
+          shippedLibraryProvider.overrideWith(
+            (Ref _) async => <ShippedTemplateEntry>[
+              _shipped('generic_item'),
+              ..._catalogue,
+            ],
+          ),
+        ],
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const ValueKey<String>('search-filter')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey<String>('shipped-area-filter')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('shipped-record-type-filter')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('shipped-tier-filter')),
+        findsOneWidget,
+      );
+      await tester.tapAt(Offset.zero);
+      await tester.pumpAndSettle();
+
+      final ProviderContainer container = ProviderScope.containerOf(
+        tester.element(find.byType(ShippedPickerScreen)),
+      );
+      final ShippedLibraryFilter filter = container.read(
+        shippedLibraryFilterProvider.notifier,
+      );
+      filter.setRecordTypes(<String>{'OBS'});
+      await tester.pumpAndSettle();
+      expect(find.byType(AppListTile), findsNWidgets(2));
+      expect(find.widgetWithText(AppListTile, 'Generic'), findsNothing);
+
+      filter
+        ..clear()
+        ..setAreas(<String>{starterArea});
+      await tester.pumpAndSettle();
+      expect(find.byType(AppListTile), findsOneWidget);
+      expect(find.widgetWithText(AppListTile, 'Generic'), findsOneWidget);
+
+      filter
+        ..clear()
+        ..setTiers(<String>{'p2'});
+      await tester.pumpAndSettle();
+      expect(find.byType(AppListTile), findsOneWidget);
+      expect(
+        find.widgetWithText(AppListTile, 'Invoice OCR intake'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('preview shows what the template is and adds it by title', (
+      WidgetTester tester,
+    ) async {
+      _tall(tester);
+      final FakeShippedTemplateLoader loader = FakeShippedTemplateLoader()
+        ..rows.add(
+          const TemplateDef(
+            id: '',
+            templateKey: 'uni_general_observation',
+            name: 'templates.uni_general_observation.name',
+            version: 1,
+            fields: <FieldDef>[
+              FieldDef(
+                fieldKey: 'observation_subject',
+                label: 'templates.catalogue.observation_subject',
+                type: FieldType.text,
+                requiredness: Requiredness.required,
+                group: 'observation',
+              ),
+              FieldDef(
+                fieldKey: 'observation_category',
+                label: 'templates.catalogue.observation_category',
+                type: FieldType.text,
+                requiredness: Requiredness.recommended,
+                group: 'specific_details',
+              ),
+            ],
+            identityFieldKeys: <String>['observation_subject'],
+            rows: <TemplateRow>[],
+            kind: 'observation',
+            source: 'shipped',
+          ),
+        )
+        ..catalogue.add(_catalogue.first);
+      await _pump(
+        tester,
+        openProject: true,
+        withRouter: true,
+        overrides: <Override>[
+          shippedTemplateLoaderProvider.overrideWith((Ref _) => loader),
+        ],
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.widgetWithText(AppListTile, 'General observation'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('UNI-001 · Universal capture and records'), findsOne);
+      expect(find.text('Observation / evidence capture'), findsOneWidget);
+      expect(
+        find.text(Copy.shippedPrivacyTier('internal', 'p0')),
+        findsOneWidget,
+      );
+      expect(find.text(_observation.capture), findsOneWidget);
+      expect(find.text(_observation.review), findsOneWidget);
+      expect(
+        find.text(Copy.requiredColumnGroup('specific_details')),
+        findsOneWidget,
+      );
+      expect(find.text('Observation category'), findsOneWidget);
+      expect(
+        find.text(Copy.shippedFieldSubtitle('text', Copy.fieldRequired)),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.byType(AppPrimaryAction));
+      await tester.pumpAndSettle();
+
+      expect(loader.copies, hasLength(1));
+      expect(loader.copies.single.name, 'General observation');
+      expect(loader.copies.single.templateKey, 'uni_general_observation');
+    });
+  });
 }
 
-TemplateDef _shipped(String key) {
-  return TemplateDef(
-    id: key,
-    templateKey: key,
-    name: key,
-    version: 1,
-    fields: const <FieldDef>[],
-    identityFieldKeys: const <String>[],
-    rows: const <TemplateRow>[],
-    kind: key,
+const ShippedRecordType _observation = ShippedRecordType(
+  code: 'OBS',
+  title: 'Observation / evidence capture',
+  kind: 'observation',
+  capture: 'Photos; explicit audio captions; video; optional GPS and time',
+  aiAssistance: 'OCR or transcribe visible evidence',
+  outputs: 'Observation record; photo sheet',
+  review: 'Observed, reported and inferred details must remain distinguishable',
+);
+
+const ShippedCatalogueCategory _universal = ShippedCatalogueCategory(
+  code: 'UNI',
+  title: 'Universal capture and records',
+  supergroupCode: '01',
+  supergroupTitle: 'Cross-sector foundations',
+);
+
+/// Three catalogue rows across two areas, two record types and two tiers.
+const List<ShippedTemplateEntry> _catalogue = <ShippedTemplateEntry>[
+  ShippedTemplateEntry(
+    templateKey: 'uni_general_observation',
+    kind: 'observation',
+    fieldCount: 67,
+    title: 'General observation',
+    code: 'UNI-001',
+    category: _universal,
+    recordType: _observation,
+    privacy: 'internal',
+    rollout: 'p0',
+    fieldKeys: <String>['observation_category', 'observed_details'],
+  ),
+  ShippedTemplateEntry(
+    templateKey: 'uni_voice_field_note',
+    kind: 'observation',
+    fieldCount: 66,
+    title: 'Voice field note',
+    code: 'UNI-002',
+    category: _universal,
+    recordType: _observation,
+    privacy: 'internal',
+    rollout: 'p0',
+    fieldKeys: <String>['spoken_note', 'transcript_language'],
+  ),
+  ShippedTemplateEntry(
+    templateKey: 'fin_invoice_ocr_intake',
+    kind: 'transaction',
+    fieldCount: 70,
+    title: 'Invoice OCR intake',
+    code: 'FIN-001',
+    category: ShippedCatalogueCategory(
+      code: 'FIN',
+      title: 'Finance accounting and expenses',
+      supergroupCode: '02',
+      supergroupTitle: 'Business and governance',
+    ),
+    recordType: ShippedRecordType(
+      code: 'TRANS',
+      title: 'Transaction / repeated line items',
+      kind: 'transaction',
+    ),
+    privacy: 'confidential',
+    rollout: 'p2',
+    fieldKeys: <String>['invoice_number', 'supplier_name'],
+  ),
+];
+
+/// A surface tall enough that the builder lays out every row.
+void _tall(WidgetTester tester) {
+  tester.view.devicePixelRatio = 1;
+  tester.view.physicalSize = const Size(393, 4000);
+  addTearDown(() {
+    tester.view.resetPhysicalSize();
+    tester.view.resetDevicePixelRatio();
+  });
+}
+
+ShippedTemplateEntry _shipped(String key) {
+  return ShippedTemplateEntry.starter(
+    TemplateDef(
+      id: key,
+      templateKey: key,
+      name: key,
+      version: 1,
+      fields: const <FieldDef>[],
+      identityFieldKeys: const <String>[],
+      rows: const <TemplateRow>[],
+      kind: key,
+    ),
   );
 }
 

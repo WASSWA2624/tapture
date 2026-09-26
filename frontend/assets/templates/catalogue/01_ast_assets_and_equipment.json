@@ -1,0 +1,1719 @@
+{
+  "category": "AST",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "ast_equipment_master_inventory",
+      "name": "templates.ast_equipment_master_inventory.name",
+      "title": "Equipment master inventory",
+      "code": "AST-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_name",
+          "label": "templates.catalogue.equipment_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "manufacturer",
+          "label": "templates.catalogue.manufacturer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_asset_nameplate_capture",
+      "name": "templates.ast_asset_nameplate_capture.name",
+      "title": "Asset nameplate capture",
+      "code": "AST-002",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "nameplate_photo",
+          "label": "templates.catalogue.nameplate_photo",
+          "type": "photo_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "printed_model",
+          "label": "templates.catalogue.printed_model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "printed_serial",
+          "label": "templates.catalogue.printed_serial",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "unreadable_fields",
+          "label": "templates.catalogue.unreadable_fields",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_asset_commissioning_record",
+      "name": "templates.ast_asset_commissioning_record.name",
+      "title": "Asset commissioning record",
+      "code": "AST-003",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "acceptance_criteria",
+          "label": "templates.catalogue.acceptance_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "commissioning_results",
+          "label": "templates.catalogue.commissioning_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_date",
+          "label": "templates.catalogue.acceptance_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_asset_condition_assessment",
+      "name": "templates.ast_asset_condition_assessment.name",
+      "title": "Asset condition assessment",
+      "code": "AST-004",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "condition_grade",
+          "label": "templates.catalogue.condition_grade",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visible_defects",
+          "label": "templates.catalogue.visible_defects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "serviceability",
+          "label": "templates.catalogue.serviceability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_equipment_fault_report",
+      "name": "templates.ast_equipment_fault_report.name",
+      "title": "Equipment fault report",
+      "code": "AST-005",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "fault_symptoms",
+          "label": "templates.catalogue.fault_symptoms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "error_code",
+          "label": "templates.catalogue.error_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operating_state",
+          "label": "templates.catalogue.operating_state",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_preventive_maintenance_work_order",
+      "name": "templates.ast_preventive_maintenance_work_order.name",
+      "title": "Preventive maintenance work order",
+      "code": "AST-006",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "maintenance_interval",
+          "label": "templates.catalogue.maintenance_interval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_tasks",
+          "label": "templates.catalogue.required_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_corrective_maintenance_work_order",
+      "name": "templates.ast_corrective_maintenance_work_order.name",
+      "title": "Corrective maintenance work order",
+      "code": "AST-007",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_fault",
+          "label": "templates.catalogue.reported_fault",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "repair_action",
+          "label": "templates.catalogue.repair_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_equipment_calibration_record",
+      "name": "templates.ast_equipment_calibration_record.name",
+      "title": "Equipment calibration record",
+      "code": "AST-008",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "reference_standard",
+          "label": "templates.catalogue.reference_standard",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "as_found_readings",
+          "label": "templates.catalogue.as_found_readings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "as_left_readings",
+          "label": "templates.catalogue.as_left_readings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_asset_movement_and_transfer",
+      "name": "templates.ast_asset_movement_and_transfer.name",
+      "title": "Asset movement and transfer",
+      "code": "AST-009",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p0",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "origin_location",
+          "label": "templates.catalogue.origin_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "destination_location",
+          "label": "templates.catalogue.destination_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custodian_acceptance",
+          "label": "templates.catalogue.custodian_acceptance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_asset_issue_and_return",
+      "name": "templates.ast_asset_issue_and_return.name",
+      "title": "Asset issue and return",
+      "code": "AST-010",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "issued_to",
+          "label": "templates.catalogue.issued_to",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issue_date",
+          "label": "templates.catalogue.issue_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expected_return",
+          "label": "templates.catalogue.expected_return",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_asset_custody_acknowledgement",
+      "name": "templates.ast_asset_custody_acknowledgement.name",
+      "title": "Asset custody acknowledgement",
+      "code": "AST-011",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "custodian",
+          "label": "templates.catalogue.custodian",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "asset_list",
+          "label": "templates.catalogue.asset_list",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custody_conditions",
+          "label": "templates.catalogue.custody_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_asset_physical_verification",
+      "name": "templates.ast_asset_physical_verification.name",
+      "title": "Asset physical verification",
+      "code": "AST-012",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "expected_tag",
+          "label": "templates.catalogue.expected_tag",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_tag",
+          "label": "templates.catalogue.observed_tag",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_result",
+          "label": "templates.catalogue.verification_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_asset_tagging_campaign",
+      "name": "templates.ast_asset_tagging_campaign.name",
+      "title": "Asset tagging campaign",
+      "code": "AST-013",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "tag_scheme",
+          "label": "templates.catalogue.tag_scheme",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "asset_population",
+          "label": "templates.catalogue.asset_population",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "tag_assignment",
+          "label": "templates.catalogue.tag_assignment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_asset_warranty_register",
+      "name": "templates.ast_asset_warranty_register.name",
+      "title": "Asset warranty register",
+      "code": "AST-014",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "warranty_provider",
+          "label": "templates.catalogue.warranty_provider",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "coverage_terms",
+          "label": "templates.catalogue.coverage_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expiry_date",
+          "label": "templates.catalogue.expiry_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_service_contract_register",
+      "name": "templates.ast_service_contract_register.name",
+      "title": "Service contract register",
+      "code": "AST-015",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "service_provider",
+          "label": "templates.catalogue.service_provider",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "coverage_scope",
+          "label": "templates.catalogue.coverage_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_commitment",
+          "label": "templates.catalogue.response_commitment",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_spare_parts_catalogue",
+      "name": "templates.ast_spare_parts_catalogue.name",
+      "title": "Spare parts catalogue",
+      "code": "AST-016",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "part_number",
+          "label": "templates.catalogue.part_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "compatible_models",
+          "label": "templates.catalogue.compatible_models",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_stock",
+          "label": "templates.catalogue.minimum_stock",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_stock_unit",
+          "label": "templates.catalogue.minimum_stock_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_spare_parts_consumption",
+      "name": "templates.ast_spare_parts_consumption.name",
+      "title": "Spare parts consumption",
+      "code": "AST-017",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "part_reference",
+          "label": "templates.catalogue.part_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity_used",
+          "label": "templates.catalogue.quantity_used",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "work_order_ref",
+          "label": "templates.catalogue.work_order_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_equipment_utilization_log",
+      "name": "templates.ast_equipment_utilization_log.name",
+      "title": "Equipment utilization log",
+      "code": "AST-018",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "runtime_hours",
+          "label": "templates.catalogue.runtime_hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "hours",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "idle_hours",
+          "label": "templates.catalogue.idle_hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "hours",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "usage_counter",
+          "label": "templates.catalogue.usage_counter",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_equipment_downtime_log",
+      "name": "templates.ast_equipment_downtime_log.name",
+      "title": "Equipment downtime log",
+      "code": "AST-019",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "outage_start_at",
+          "label": "templates.catalogue.outage_start_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outage_end_at",
+          "label": "templates.catalogue.outage_end_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "downtime_reason",
+          "label": "templates.catalogue.downtime_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_equipment_safety_inspection",
+      "name": "templates.ast_equipment_safety_inspection.name",
+      "title": "Equipment safety inspection",
+      "code": "AST-020",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "hazard_checks",
+          "label": "templates.catalogue.hazard_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_evidence",
+          "label": "templates.catalogue.test_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restricted_use",
+          "label": "templates.catalogue.restricted_use",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_asset_acquisition_request",
+      "name": "templates.ast_asset_acquisition_request.name",
+      "title": "Asset acquisition request",
+      "code": "AST-021",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "operational_need",
+          "label": "templates.catalogue.operational_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "specification",
+          "label": "templates.catalogue.specification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "budget_ceiling",
+          "label": "templates.catalogue.budget_ceiling",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "budget_ceiling_currency",
+          "label": "templates.catalogue.budget_ceiling_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_asset_disposal_assessment",
+      "name": "templates.ast_asset_disposal_assessment.name",
+      "title": "Asset disposal assessment",
+      "code": "AST-022",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "disposal_reason",
+          "label": "templates.catalogue.disposal_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "residual_condition",
+          "label": "templates.catalogue.residual_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_method",
+          "label": "templates.catalogue.approved_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_asset_decommissioning_checklist",
+      "name": "templates.ast_asset_decommissioning_checklist.name",
+      "title": "Asset decommissioning checklist",
+      "code": "AST-023",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "isolation_confirmed",
+          "label": "templates.catalogue.isolation_confirmed",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_removed",
+          "label": "templates.catalogue.data_removed",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "disposal_partner",
+          "label": "templates.catalogue.disposal_partner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_donated_equipment_acceptance",
+      "name": "templates.ast_donated_equipment_acceptance.name",
+      "title": "Donated equipment acceptance",
+      "code": "AST-024",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "donor_reference",
+          "label": "templates.catalogue.donor_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "compatibility_checks",
+          "label": "templates.catalogue.compatibility_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "support_availability",
+          "label": "templates.catalogue.support_availability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_loaned_equipment_tracking",
+      "name": "templates.ast_loaned_equipment_tracking.name",
+      "title": "Loaned equipment tracking",
+      "code": "AST-025",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "lender",
+          "label": "templates.catalogue.lender",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "loan_terms",
+          "label": "templates.catalogue.loan_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_deadline_date",
+          "label": "templates.catalogue.return_deadline_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_equipment_installation_survey",
+      "name": "templates.ast_equipment_installation_survey.name",
+      "title": "Equipment installation survey",
+      "code": "AST-026",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "space_requirements",
+          "label": "templates.catalogue.space_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "power_requirements",
+          "label": "templates.catalogue.power_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_readiness",
+          "label": "templates.catalogue.site_readiness",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_tool_crib_inventory",
+      "name": "templates.ast_tool_crib_inventory.name",
+      "title": "Tool crib inventory",
+      "code": "AST-027",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "tool_type",
+          "label": "templates.catalogue.tool_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_bin",
+          "label": "templates.catalogue.storage_bin",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issue_controls",
+          "label": "templates.catalogue.issue_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_asset_replacement_plan",
+      "name": "templates.ast_asset_replacement_plan.name",
+      "title": "Asset replacement plan",
+      "code": "AST-028",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "remaining_service_life",
+          "label": "templates.catalogue.remaining_service_life",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "replacement_priority",
+          "label": "templates.catalogue.replacement_priority",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "emergency",
+              "label": "templates.choices.priority.emergency"
+            },
+            {
+              "code": "high",
+              "label": "templates.choices.priority.high"
+            },
+            {
+              "code": "medium",
+              "label": "templates.choices.priority.medium"
+            },
+            {
+              "code": "low",
+              "label": "templates.choices.priority.low"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "estimated_cost",
+          "label": "templates.catalogue.estimated_cost",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "estimated_cost_currency",
+          "label": "templates.catalogue.estimated_cost_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_asset_lifecycle_cost_worksheet",
+      "name": "templates.ast_asset_lifecycle_cost_worksheet.name",
+      "title": "Asset lifecycle cost worksheet",
+      "code": "AST-029",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "purchase_cost",
+          "label": "templates.catalogue.purchase_cost",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "purchase_cost_currency",
+          "label": "templates.catalogue.purchase_cost_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_costs",
+          "label": "templates.catalogue.service_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operating_costs",
+          "label": "templates.catalogue.operating_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_asset_loss_or_theft_record",
+      "name": "templates.ast_asset_loss_or_theft_record.name",
+      "title": "Asset loss or theft record",
+      "code": "AST-030",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "last_seen_time",
+          "label": "templates.catalogue.last_seen_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "last_known_location",
+          "label": "templates.catalogue.last_known_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "investigation_ref",
+          "label": "templates.catalogue.investigation_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_equipment_user_training_record",
+      "name": "templates.ast_equipment_user_training_record.name",
+      "title": "Equipment user training record",
+      "code": "AST-031",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_model",
+          "label": "templates.catalogue.equipment_model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "training_topics",
+          "label": "templates.catalogue.training_topics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "competency_observation",
+          "label": "templates.catalogue.competency_observation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_equipment_operating_procedure",
+      "name": "templates.ast_equipment_operating_procedure.name",
+      "title": "Equipment operating procedure",
+      "code": "AST-032",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "operating_steps",
+          "label": "templates.catalogue.operating_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_limits",
+          "label": "templates.catalogue.approved_limits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "shutdown_steps",
+          "label": "templates.catalogue.shutdown_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_maintenance_handover_report",
+      "name": "templates.ast_maintenance_handover_report.name",
+      "title": "Maintenance handover report",
+      "code": "AST-033",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "completed_work",
+          "label": "templates.catalogue.completed_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "open_defects",
+          "label": "templates.catalogue.open_defects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "handover_recipient",
+          "label": "templates.catalogue.handover_recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_asset_insurance_schedule",
+      "name": "templates.ast_asset_insurance_schedule.name",
+      "title": "Asset insurance schedule",
+      "code": "AST-034",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "insured_value",
+          "label": "templates.catalogue.insured_value",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "insured_value_currency",
+          "label": "templates.catalogue.insured_value_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "policy_reference",
+          "label": "templates.catalogue.policy_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "coverage_period",
+          "label": "templates.catalogue.coverage_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_mobile_plant_pre_use_check",
+      "name": "templates.ast_mobile_plant_pre_use_check.name",
+      "title": "Mobile plant pre-use check",
+      "code": "AST-035",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "operator_checks",
+          "label": "templates.catalogue.operator_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "hour_meter_hours",
+          "label": "templates.catalogue.hour_meter_hours",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "defect_restrictions",
+          "label": "templates.catalogue.defect_restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ast_asset_performance_dashboard_brief",
+      "name": "templates.ast_asset_performance_dashboard_brief.name",
+      "title": "Asset performance dashboard brief",
+      "code": "AST-036",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "internal",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ast",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "availability_period",
+          "label": "templates.catalogue.availability_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "failure_counts",
+          "label": "templates.catalogue.failure_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_backlog",
+          "label": "templates.catalogue.service_backlog",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

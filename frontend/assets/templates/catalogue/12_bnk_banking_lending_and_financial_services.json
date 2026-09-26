@@ -1,0 +1,1559 @@
+{
+  "category": "BNK",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "bnk_financial_service_customer_intake",
+      "name": "templates.bnk_financial_service_customer_intake.name",
+      "title": "Financial service customer intake",
+      "code": "BNK-001",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "customer_reference",
+          "label": "templates.catalogue.customer_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_service",
+          "label": "templates.catalogue.requested_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_permission",
+          "label": "templates.catalogue.contact_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_customer_identification_evidence_intake",
+      "name": "templates.bnk_customer_identification_evidence_intake.name",
+      "title": "Customer identification evidence intake",
+      "code": "BNK-002",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_document_types",
+          "label": "templates.catalogue.approved_document_types",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_evidence",
+          "label": "templates.catalogue.verification_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_status",
+          "label": "templates.catalogue.review_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_business_account_application",
+      "name": "templates.bnk_business_account_application.name",
+      "title": "Business account application",
+      "code": "BNK-003",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "business_profile",
+          "label": "templates.catalogue.business_profile",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_representatives",
+          "label": "templates.catalogue.authorized_representatives",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_documents",
+          "label": "templates.catalogue.required_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_account_document_completeness_review",
+      "name": "templates.bnk_account_document_completeness_review.name",
+      "title": "Account document completeness review",
+      "code": "BNK-004",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "required_documents",
+          "label": "templates.catalogue.required_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "received_documents",
+          "label": "templates.catalogue.received_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_gaps",
+          "label": "templates.catalogue.verification_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_loan_application_intake",
+      "name": "templates.bnk_loan_application_intake.name",
+      "title": "Loan application intake",
+      "code": "BNK-005",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_amount",
+          "label": "templates.catalogue.requested_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "requested_currency",
+          "label": "templates.catalogue.requested_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "loan_purpose",
+          "label": "templates.catalogue.loan_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "repayment_evidence",
+          "label": "templates.catalogue.repayment_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_business_lending_site_visit",
+      "name": "templates.bnk_business_lending_site_visit.name",
+      "title": "Business lending site visit",
+      "code": "BNK-006",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "business_operations",
+          "label": "templates.catalogue.business_operations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_assets",
+          "label": "templates.catalogue.verified_assets",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "applicant_statements",
+          "label": "templates.catalogue.applicant_statements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_loan_affordability_evidence",
+      "name": "templates.bnk_loan_affordability_evidence.name",
+      "title": "Loan affordability evidence",
+      "code": "BNK-007",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_income",
+          "label": "templates.catalogue.verified_income",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "verified_income_currency",
+          "label": "templates.catalogue.verified_income_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "declared_obligations",
+          "label": "templates.catalogue.declared_obligations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assessment_policy_ref",
+          "label": "templates.catalogue.assessment_policy_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_collateral_inspection",
+      "name": "templates.bnk_collateral_inspection.name",
+      "title": "Collateral inspection",
+      "code": "BNK-008",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "collateral_reference",
+          "label": "templates.catalogue.collateral_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "ownership_evidence",
+          "label": "templates.catalogue.ownership_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_collateral_valuation_intake",
+      "name": "templates.bnk_collateral_valuation_intake.name",
+      "title": "Collateral valuation intake",
+      "code": "BNK-009",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "asset_details",
+          "label": "templates.catalogue.asset_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "valuation_purpose",
+          "label": "templates.catalogue.valuation_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_valuer",
+          "label": "templates.catalogue.qualified_valuer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_credit_review_memorandum_draft",
+      "name": "templates.bnk_credit_review_memorandum_draft.name",
+      "title": "Credit review memorandum draft",
+      "code": "BNK-010",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_application_facts",
+          "label": "templates.catalogue.verified_application_facts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "policy_criteria",
+          "label": "templates.catalogue.policy_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_review",
+          "label": "templates.catalogue.authorized_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_loan_committee_meeting_record",
+      "name": "templates.bnk_loan_committee_meeting_record.name",
+      "title": "Loan committee meeting record",
+      "code": "BNK-011",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "applications_reviewed",
+          "label": "templates.catalogue.applications_reviewed",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evidence_considered",
+          "label": "templates.catalogue.evidence_considered",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_decisions",
+          "label": "templates.catalogue.authorized_decisions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_loan_offer_drafting_brief",
+      "name": "templates.bnk_loan_offer_drafting_brief.name",
+      "title": "Loan offer drafting brief",
+      "code": "BNK-012",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_terms",
+          "label": "templates.catalogue.approved_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "conditions",
+          "label": "templates.catalogue.conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_disclosures",
+          "label": "templates.catalogue.authorized_disclosures",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_loan_disbursement_checklist",
+      "name": "templates.bnk_loan_disbursement_checklist.name",
+      "title": "Loan disbursement checklist",
+      "code": "BNK-013",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approval_reference",
+          "label": "templates.catalogue.approval_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "conditions_met",
+          "label": "templates.catalogue.conditions_met",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_payee",
+          "label": "templates.catalogue.verified_payee",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_loan_repayment_record",
+      "name": "templates.bnk_loan_repayment_record.name",
+      "title": "Loan repayment record",
+      "code": "BNK-014",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "loan_reference",
+          "label": "templates.catalogue.loan_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "payment_amount",
+          "label": "templates.catalogue.payment_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "payment_currency",
+          "label": "templates.catalogue.payment_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "payment_date",
+          "label": "templates.catalogue.payment_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_loan_arrears_follow_up",
+      "name": "templates.bnk_loan_arrears_follow_up.name",
+      "title": "Loan arrears follow-up",
+      "code": "BNK-015",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "account_alias",
+          "label": "templates.catalogue.account_alias",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_outcome",
+          "label": "templates.catalogue.contact_outcome",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_next_steps",
+          "label": "templates.catalogue.agreed_next_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_loan_restructuring_request",
+      "name": "templates.bnk_loan_restructuring_request.name",
+      "title": "Loan restructuring request",
+      "code": "BNK-016",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "borrower_request",
+          "label": "templates.catalogue.borrower_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_circumstances",
+          "label": "templates.catalogue.verified_circumstances",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_terms",
+          "label": "templates.catalogue.proposed_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_group_savings_member_registration",
+      "name": "templates.bnk_group_savings_member_registration.name",
+      "title": "Group savings member registration",
+      "code": "BNK-017",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "member_reference",
+          "label": "templates.catalogue.member_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "group_ref",
+          "label": "templates.catalogue.group_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_savings_contribution_record",
+      "name": "templates.bnk_savings_contribution_record.name",
+      "title": "Savings contribution record",
+      "code": "BNK-018",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "member_reference",
+          "label": "templates.catalogue.member_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contribution_amount",
+          "label": "templates.catalogue.contribution_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "contribution_currency",
+          "label": "templates.catalogue.contribution_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "meeting_date",
+          "label": "templates.catalogue.meeting_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_savings_group_meeting_record",
+      "name": "templates.bnk_savings_group_meeting_record.name",
+      "title": "Savings group meeting record",
+      "code": "BNK-019",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "contributions",
+          "label": "templates.catalogue.contributions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_loans",
+          "label": "templates.catalogue.approved_loans",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "balance_confirmation",
+          "label": "templates.catalogue.balance_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_microfinance_field_visit",
+      "name": "templates.bnk_microfinance_field_visit.name",
+      "title": "Microfinance field visit",
+      "code": "BNK-020",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_business_observations",
+          "label": "templates.catalogue.verified_business_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "followup",
+          "label": "templates.catalogue.followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_financial_agent_outlet_inspection",
+      "name": "templates.bnk_financial_agent_outlet_inspection.name",
+      "title": "Financial agent outlet inspection",
+      "code": "BNK-021",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "outlet_condition",
+          "label": "templates.catalogue.outlet_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_records",
+          "label": "templates.catalogue.required_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_issues",
+          "label": "templates.catalogue.service_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_agent_float_reconciliation",
+      "name": "templates.bnk_agent_float_reconciliation.name",
+      "title": "Agent float reconciliation",
+      "code": "BNK-022",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "opening_float",
+          "label": "templates.catalogue.opening_float",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_transactions",
+          "label": "templates.catalogue.verified_transactions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "closing_balance",
+          "label": "templates.catalogue.closing_balance",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "closing_balance_currency",
+          "label": "templates.catalogue.closing_balance_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_financial_product_complaint_intake",
+      "name": "templates.bnk_financial_product_complaint_intake.name",
+      "title": "Financial product complaint intake",
+      "code": "BNK-023",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "product_reference",
+          "label": "templates.catalogue.product_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_issue",
+          "label": "templates.catalogue.reported_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_resolution",
+          "label": "templates.catalogue.requested_resolution",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_financial_transaction_exception_review",
+      "name": "templates.bnk_financial_transaction_exception_review.name",
+      "title": "Financial transaction exception review",
+      "code": "BNK-024",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "transaction_reference",
+          "label": "templates.catalogue.transaction_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "exception_evidence",
+          "label": "templates.catalogue.exception_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_resolution",
+          "label": "templates.catalogue.authorized_resolution",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_transaction_monitoring_alert_review",
+      "name": "templates.bnk_transaction_monitoring_alert_review.name",
+      "title": "Transaction monitoring alert review",
+      "code": "BNK-025",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_alert",
+          "label": "templates.catalogue.authorized_alert",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_context",
+          "label": "templates.catalogue.verified_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "specialist_decision",
+          "label": "templates.catalogue.specialist_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_investment_mandate_intake",
+      "name": "templates.bnk_investment_mandate_intake.name",
+      "title": "Investment mandate intake",
+      "code": "BNK-026",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "client_stated_objectives",
+          "label": "templates.catalogue.client_stated_objectives",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "constraints",
+          "label": "templates.catalogue.constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "licensed_advisor_review",
+          "label": "templates.catalogue.licensed_advisor_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_investment_due_diligence_evidence",
+      "name": "templates.bnk_investment_due_diligence_evidence.name",
+      "title": "Investment due diligence evidence",
+      "code": "BNK-027",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "source_documents",
+          "label": "templates.catalogue.source_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_metrics",
+          "label": "templates.catalogue.verified_metrics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "material_uncertainties",
+          "label": "templates.catalogue.material_uncertainties",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_investment_committee_memorandum_draft",
+      "name": "templates.bnk_investment_committee_memorandum_draft.name",
+      "title": "Investment committee memorandum draft",
+      "code": "BNK-028",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "investment_evidence",
+          "label": "templates.catalogue.investment_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "risks",
+          "label": "templates.catalogue.risks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_recommendation",
+          "label": "templates.catalogue.authorized_recommendation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_portfolio_reporting_data_intake",
+      "name": "templates.bnk_portfolio_reporting_data_intake.name",
+      "title": "Portfolio reporting data intake",
+      "code": "BNK-029",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "valuation_sources",
+          "label": "templates.catalogue.valuation_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "holdings",
+          "label": "templates.catalogue.holdings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reporting_date",
+          "label": "templates.catalogue.reporting_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_financial_disclosure_acknowledgement",
+      "name": "templates.bnk_financial_disclosure_acknowledgement.name",
+      "title": "Financial disclosure acknowledgement",
+      "code": "BNK-030",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "disclosure_version",
+          "label": "templates.catalogue.disclosure_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient",
+          "label": "templates.catalogue.recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acknowledgement_date",
+          "label": "templates.catalogue.acknowledgement_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_bank_branch_operational_checklist",
+      "name": "templates.bnk_bank_branch_operational_checklist.name",
+      "title": "Bank branch operational checklist",
+      "code": "BNK-031",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_controls",
+          "label": "templates.catalogue.approved_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "bnk_financial_service_accessibility_review",
+      "name": "templates.bnk_financial_service_accessibility_review.name",
+      "title": "Financial service accessibility review",
+      "code": "BNK-032",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_bnk",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "service_channel",
+          "label": "templates.catalogue.service_channel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_barriers",
+          "label": "templates.catalogue.observed_barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "customer_feedback",
+          "label": "templates.catalogue.customer_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

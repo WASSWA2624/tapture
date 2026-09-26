@@ -1,0 +1,1365 @@
+{
+  "category": "DEF",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "def_nonweapon_equipment_inventory",
+      "name": "templates.def_nonweapon_equipment_inventory.name",
+      "title": "Nonweapon equipment inventory",
+      "code": "DEF-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_identifier",
+          "label": "templates.catalogue.equipment_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "model",
+          "label": "templates.catalogue.model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition",
+          "label": "templates.catalogue.condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_nonweapon_equipment_maintenance",
+      "name": "templates.def_nonweapon_equipment_maintenance.name",
+      "title": "Nonweapon equipment maintenance",
+      "code": "DEF-002",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "asset_reference",
+          "label": "templates.catalogue.asset_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_service_tasks",
+          "label": "templates.catalogue.approved_service_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification",
+          "label": "templates.catalogue.verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_uniform_and_protective_clothing_issue",
+      "name": "templates.def_uniform_and_protective_clothing_issue.name",
+      "title": "Uniform and protective clothing issue",
+      "code": "DEF-003",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "item_type",
+          "label": "templates.catalogue.item_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_recipient",
+          "label": "templates.catalogue.authorized_recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity",
+          "label": "templates.catalogue.quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_administrative_personnel_record",
+      "name": "templates.def_administrative_personnel_record.name",
+      "title": "Administrative personnel record",
+      "code": "DEF-004",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "staff_identifier",
+          "label": "templates.catalogue.staff_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "administrative_role",
+          "label": "templates.catalogue.administrative_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_restrictions",
+          "label": "templates.catalogue.access_restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_personnel_training_completion",
+      "name": "templates.def_personnel_training_completion.name",
+      "title": "Personnel training completion",
+      "code": "DEF-005",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_course",
+          "label": "templates.catalogue.authorized_course",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_completion",
+          "label": "templates.catalogue.verified_completion",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualification_scope",
+          "label": "templates.catalogue.qualification_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_facility_accommodation_allocation",
+      "name": "templates.def_facility_accommodation_allocation.name",
+      "title": "Facility accommodation allocation",
+      "code": "DEF-006",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_staff_ref",
+          "label": "templates.catalogue.authorized_staff_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accommodation_needs",
+          "label": "templates.catalogue.accommodation_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_period",
+          "label": "templates.catalogue.assigned_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_base_facility_condition_inspection",
+      "name": "templates.def_base_facility_condition_inspection.name",
+      "title": "Base facility condition inspection",
+      "code": "DEF-007",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "nonsensitive_facility",
+          "label": "templates.catalogue.nonsensitive_facility",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_need",
+          "label": "templates.catalogue.maintenance_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_administrative_vehicle_service_log",
+      "name": "templates.def_administrative_vehicle_service_log.name",
+      "title": "Administrative vehicle service log",
+      "code": "DEF-008",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_identifier",
+          "label": "templates.catalogue.vehicle_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_service_scope",
+          "label": "templates.catalogue.approved_service_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion",
+          "label": "templates.catalogue.completion",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_medical_appointment_administration",
+      "name": "templates.def_medical_appointment_administration.name",
+      "title": "Medical appointment administration",
+      "code": "DEF-009",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_service_request",
+          "label": "templates.catalogue.authorized_service_request",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_details",
+          "label": "templates.catalogue.minimum_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "qualified_recipient",
+          "label": "templates.catalogue.qualified_recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_veteran_benefit_application_intake",
+      "name": "templates.def_veteran_benefit_application_intake.name",
+      "title": "Veteran benefit application intake",
+      "code": "DEF-010",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "published_eligibility",
+          "label": "templates.catalogue.published_eligibility",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_veteran_support_referral",
+      "name": "templates.def_veteran_support_referral.name",
+      "title": "Veteran support referral",
+      "code": "DEF-011",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "client_stated_needs",
+          "label": "templates.catalogue.client_stated_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consented_referral",
+          "label": "templates.catalogue.consented_referral",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "receiving_service",
+          "label": "templates.catalogue.receiving_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_veteran_skills_transition_assessment",
+      "name": "templates.def_veteran_skills_transition_assessment.name",
+      "title": "Veteran skills transition assessment",
+      "code": "DEF-012",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_skills",
+          "label": "templates.catalogue.verified_skills",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "civilian_goals",
+          "label": "templates.catalogue.civilian_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "training_needs",
+          "label": "templates.catalogue.training_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_veteran_employment_support_plan",
+      "name": "templates.def_veteran_employment_support_plan.name",
+      "title": "Veteran employment support plan",
+      "code": "DEF-013",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "client_goals",
+          "label": "templates.catalogue.client_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_support",
+          "label": "templates.catalogue.agreed_support",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "progress_review",
+          "label": "templates.catalogue.progress_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_family_welfare_assistance_intake",
+      "name": "templates.def_family_welfare_assistance_intake.name",
+      "title": "Family welfare assistance intake",
+      "code": "DEF-014",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "minimum_support_details",
+          "label": "templates.catalogue.minimum_support_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "safe_contact",
+          "label": "templates.catalogue.safe_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent",
+          "label": "templates.catalogue.consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_reintegration_program_attendance",
+      "name": "templates.def_reintegration_program_attendance.name",
+      "title": "Reintegration program attendance",
+      "code": "DEF-015",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "participant_code",
+          "label": "templates.catalogue.participant_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "session_ref",
+          "label": "templates.catalogue.session_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attendance",
+          "label": "templates.catalogue.attendance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_peacekeeping_civilian_engagement_record",
+      "name": "templates.def_peacekeeping_civilian_engagement_record.name",
+      "title": "Peacekeeping civilian engagement record",
+      "code": "DEF-016",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "consented_participants",
+          "label": "templates.catalogue.consented_participants",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "community_concerns",
+          "label": "templates.catalogue.community_concerns",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_actions",
+          "label": "templates.catalogue.agreed_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_humanitarian_civil_coordination_meeting",
+      "name": "templates.def_humanitarian_civil_coordination_meeting.name",
+      "title": "Humanitarian civil coordination meeting",
+      "code": "DEF-017",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_needs",
+          "label": "templates.catalogue.verified_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_roles",
+          "label": "templates.catalogue.authorized_roles",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_noncombat_support",
+          "label": "templates.catalogue.agreed_noncombat_support",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_peacekeeping_conduct_complaint",
+      "name": "templates.def_peacekeeping_conduct_complaint.name",
+      "title": "Peacekeeping conduct complaint",
+      "code": "DEF-018",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_concern",
+          "label": "templates.catalogue.reported_concern",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_contact",
+          "label": "templates.catalogue.safe_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "independent_review",
+          "label": "templates.catalogue.independent_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_noncombat_logistics_handover",
+      "name": "templates.def_noncombat_logistics_handover.name",
+      "title": "Noncombat logistics handover",
+      "code": "DEF-019",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "humanitarian_or_admin_goods",
+          "label": "templates.catalogue.humanitarian_or_admin_goods",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_recipient",
+          "label": "templates.catalogue.authorized_recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "confirmation",
+          "label": "templates.catalogue.confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_facility_environmental_inspection",
+      "name": "templates.def_facility_environmental_inspection.name",
+      "title": "Facility environmental inspection",
+      "code": "DEF-020",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "nonsensitive_site_scope",
+          "label": "templates.catalogue.nonsensitive_site_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_impacts",
+          "label": "templates.catalogue.observed_impacts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "corrective_actions",
+          "label": "templates.catalogue.corrective_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_administrative_expenditure_evidence",
+      "name": "templates.def_administrative_expenditure_evidence.name",
+      "title": "Administrative expenditure evidence",
+      "code": "DEF-021",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_expense",
+          "label": "templates.catalogue.approved_expense",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_document",
+          "label": "templates.catalogue.source_document",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_status",
+          "label": "templates.catalogue.review_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_official_travel_reimbursement_intake",
+      "name": "templates.def_official_travel_reimbursement_intake.name",
+      "title": "Official travel reimbursement intake",
+      "code": "DEF-022",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_trip",
+          "label": "templates.catalogue.authorized_trip",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_expenses",
+          "label": "templates.catalogue.verified_expenses",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approval_basis",
+          "label": "templates.catalogue.approval_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_service_history_verification_request",
+      "name": "templates.def_service_history_verification_request.name",
+      "title": "Service history verification request",
+      "code": "DEF-023",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_scope",
+          "label": "templates.catalogue.requested_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requester_authority",
+          "label": "templates.catalogue.requester_authority",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "official_source",
+          "label": "templates.catalogue.official_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_veteran_service_satisfaction_survey",
+      "name": "templates.def_veteran_service_satisfaction_survey.name",
+      "title": "Veteran service satisfaction survey",
+      "code": "DEF-024",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "voluntary_feedback",
+          "label": "templates.catalogue.voluntary_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "access_barriers",
+          "label": "templates.catalogue.access_barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "support_suggestions",
+          "label": "templates.catalogue.support_suggestions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_memorial_event_administration",
+      "name": "templates.def_memorial_event_administration.name",
+      "title": "Memorial event administration",
+      "code": "DEF-025",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "family_permissions",
+          "label": "templates.catalogue.family_permissions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "ceremony_schedule",
+          "label": "templates.catalogue.ceremony_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_participants",
+          "label": "templates.catalogue.approved_participants",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_civilian_protection_concern_referral",
+      "name": "templates.def_civilian_protection_concern_referral.name",
+      "title": "Civilian protection concern referral",
+      "code": "DEF-026",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "minimum_factual_details",
+          "label": "templates.catalogue.minimum_factual_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "safe_reporting_route",
+          "label": "templates.catalogue.safe_reporting_route",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_review",
+          "label": "templates.catalogue.authorized_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_community_support_project_monitoring",
+      "name": "templates.def_community_support_project_monitoring.name",
+      "title": "Community support project monitoring",
+      "code": "DEF-027",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_civilian_project",
+          "label": "templates.catalogue.approved_civilian_project",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_progress",
+          "label": "templates.catalogue.observed_progress",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "community_feedback",
+          "label": "templates.catalogue.community_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "def_administrative_document_access_review",
+      "name": "templates.def_administrative_document_access_review.name",
+      "title": "Administrative document access review",
+      "code": "DEF-028",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_def",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "requester_authority",
+          "label": "templates.catalogue.requester_authority",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "information_scope",
+          "label": "templates.catalogue.information_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "release_approval",
+          "label": "templates.catalogue.release_approval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

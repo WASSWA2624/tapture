@@ -1,0 +1,1522 @@
+{
+  "category": "HOS",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "hos_guest_reservation_intake",
+      "name": "templates.hos_guest_reservation_intake.name",
+      "title": "Guest reservation intake",
+      "code": "HOS-001",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "stay_dates",
+          "label": "templates.catalogue.stay_dates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "room_preferences",
+          "label": "templates.catalogue.room_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_permission",
+          "label": "templates.catalogue.contact_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_guest_check_in_record",
+      "name": "templates.hos_guest_check_in_record.name",
+      "title": "Guest check-in record",
+      "code": "HOS-002",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "booking_reference",
+          "label": "templates.catalogue.booking_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_required_guest_details",
+          "label": "templates.catalogue.minimum_required_guest_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "privacy_notice",
+          "label": "templates.catalogue.privacy_notice",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_guest_check_out_checklist",
+      "name": "templates.hos_guest_check_out_checklist.name",
+      "title": "Guest check-out checklist",
+      "code": "HOS-003",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "room_account",
+          "label": "templates.catalogue.room_account",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "returned_items",
+          "label": "templates.catalogue.returned_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "guest_confirmation",
+          "label": "templates.catalogue.guest_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_room_inventory",
+      "name": "templates.hos_room_inventory.name",
+      "title": "Room inventory",
+      "code": "HOS-004",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "room_type",
+          "label": "templates.catalogue.room_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "fixtures",
+          "label": "templates.catalogue.fixtures",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "operational_status",
+          "label": "templates.catalogue.operational_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_room_housekeeping_checklist",
+      "name": "templates.hos_room_housekeeping_checklist.name",
+      "title": "Room housekeeping checklist",
+      "code": "HOS-005",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "cleaning_tasks",
+          "label": "templates.catalogue.cleaning_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "linen_status",
+          "label": "templates.catalogue.linen_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_findings",
+          "label": "templates.catalogue.maintenance_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_room_condition_inspection",
+      "name": "templates.hos_room_condition_inspection.name",
+      "title": "Room condition inspection",
+      "code": "HOS-006",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "room_reference",
+          "label": "templates.catalogue.room_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "fixture_condition",
+          "label": "templates.catalogue.fixture_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "damage_evidence",
+          "label": "templates.catalogue.damage_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_lost_and_found_hotel_register",
+      "name": "templates.hos_lost_and_found_hotel_register.name",
+      "title": "Lost and found hotel register",
+      "code": "HOS-007",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "item_description",
+          "label": "templates.catalogue.item_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "found_location",
+          "label": "templates.catalogue.found_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custody",
+          "label": "templates.catalogue.custody",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_guest_maintenance_request",
+      "name": "templates.hos_guest_maintenance_request.name",
+      "title": "Guest maintenance request",
+      "code": "HOS-008",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "room_reference",
+          "label": "templates.catalogue.room_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_issue",
+          "label": "templates.catalogue.reported_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_permission",
+          "label": "templates.catalogue.access_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_hotel_linen_inventory",
+      "name": "templates.hos_hotel_linen_inventory.name",
+      "title": "Hotel linen inventory",
+      "code": "HOS-009",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "linen_type",
+          "label": "templates.catalogue.linen_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "usable_quantity",
+          "label": "templates.catalogue.usable_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "usable_quantity_unit",
+          "label": "templates.catalogue.usable_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "storage_location",
+          "label": "templates.catalogue.storage_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_laundry_batch_tracking",
+      "name": "templates.hos_laundry_batch_tracking.name",
+      "title": "Laundry batch tracking",
+      "code": "HOS-010",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "batch_identifier",
+          "label": "templates.catalogue.batch_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "item_counts",
+          "label": "templates.catalogue.item_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "processing_status",
+          "label": "templates.catalogue.processing_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_hotel_minibar_reconciliation",
+      "name": "templates.hos_hotel_minibar_reconciliation.name",
+      "title": "Hotel minibar reconciliation",
+      "code": "HOS-011",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "opening_items",
+          "label": "templates.catalogue.opening_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consumed_items",
+          "label": "templates.catalogue.consumed_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "closing_count",
+          "label": "templates.catalogue.closing_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_guest_complaint_resolution",
+      "name": "templates.hos_guest_complaint_resolution.name",
+      "title": "Guest complaint resolution",
+      "code": "HOS-012",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_issue",
+          "label": "templates.catalogue.reported_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_evidence",
+          "label": "templates.catalogue.service_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_resolution",
+          "label": "templates.catalogue.agreed_resolution",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_guest_experience_survey",
+      "name": "templates.hos_guest_experience_survey.name",
+      "title": "Guest experience survey",
+      "code": "HOS-013",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "stay_feedback",
+          "label": "templates.catalogue.stay_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "accessibility_experience",
+          "label": "templates.catalogue.accessibility_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvements",
+          "label": "templates.catalogue.improvements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_hotel_occupancy_forecast_inputs",
+      "name": "templates.hos_hotel_occupancy_forecast_inputs.name",
+      "title": "Hotel occupancy forecast inputs",
+      "code": "HOS-014",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "confirmed_bookings",
+          "label": "templates.catalogue.confirmed_bookings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "historical_pattern",
+          "label": "templates.catalogue.historical_pattern",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assumptions",
+          "label": "templates.catalogue.assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_hotel_event_booking",
+      "name": "templates.hos_hotel_event_booking.name",
+      "title": "Hotel event booking",
+      "code": "HOS-015",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "event_type",
+          "label": "templates.catalogue.event_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attendance_estimate",
+          "label": "templates.catalogue.attendance_estimate",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_requirements",
+          "label": "templates.catalogue.service_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_banquet_event_order",
+      "name": "templates.hos_banquet_event_order.name",
+      "title": "Banquet event order",
+      "code": "HOS-016",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_menu",
+          "label": "templates.catalogue.agreed_menu",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "setup_plan",
+          "label": "templates.catalogue.setup_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_schedule",
+          "label": "templates.catalogue.service_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_catering_quotation",
+      "name": "templates.hos_catering_quotation.name",
+      "title": "Catering quotation",
+      "code": "HOS-017",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "guest_count",
+          "label": "templates.catalogue.guest_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "menu_options",
+          "label": "templates.catalogue.menu_options",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pricing_assumptions",
+          "label": "templates.catalogue.pricing_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_catering_production_plan",
+      "name": "templates.hos_catering_production_plan.name",
+      "title": "Catering production plan",
+      "code": "HOS-018",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "menu_items",
+          "label": "templates.catalogue.menu_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "production_quantities",
+          "label": "templates.catalogue.production_quantities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_timing",
+          "label": "templates.catalogue.delivery_timing",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_restaurant_reservation",
+      "name": "templates.hos_restaurant_reservation.name",
+      "title": "Restaurant reservation",
+      "code": "HOS-019",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "party_size",
+          "label": "templates.catalogue.party_size",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "preferred_time",
+          "label": "templates.catalogue.preferred_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "voluntary_access_needs",
+          "label": "templates.catalogue.voluntary_access_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_restaurant_food_order",
+      "name": "templates.hos_restaurant_food_order.name",
+      "title": "Restaurant food order",
+      "code": "HOS-020",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "menu_items",
+          "label": "templates.catalogue.menu_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantities",
+          "label": "templates.catalogue.quantities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "customer_stated_requirements",
+          "label": "templates.catalogue.customer_stated_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_kitchen_opening_checklist",
+      "name": "templates.hos_kitchen_opening_checklist.name",
+      "title": "Kitchen opening checklist",
+      "code": "HOS-021",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_readiness",
+          "label": "templates.catalogue.equipment_readiness",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "food_storage",
+          "label": "templates.catalogue.food_storage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "hygiene_checks",
+          "label": "templates.catalogue.hygiene_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_kitchen_cleaning_log",
+      "name": "templates.hos_kitchen_cleaning_log.name",
+      "title": "Kitchen cleaning log",
+      "code": "HOS-022",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "cleaning_area",
+          "label": "templates.catalogue.cleaning_area",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "sqm",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_method",
+          "label": "templates.catalogue.approved_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification",
+          "label": "templates.catalogue.verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_restaurant_fridge_temperature_log",
+      "name": "templates.hos_restaurant_fridge_temperature_log.name",
+      "title": "Restaurant fridge temperature log",
+      "code": "HOS-023",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "fridge_identifier",
+          "label": "templates.catalogue.fridge_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "temperature",
+          "label": "templates.catalogue.temperature",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "degC",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_followup",
+          "label": "templates.catalogue.required_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_food_service_delivery_check",
+      "name": "templates.hos_food_service_delivery_check.name",
+      "title": "Food service delivery check",
+      "code": "HOS-024",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "received_items",
+          "label": "templates.catalogue.received_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "temperature_evidence",
+          "label": "templates.catalogue.temperature_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance",
+          "label": "templates.catalogue.acceptance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_restaurant_recipe_costing",
+      "name": "templates.hos_restaurant_recipe_costing.name",
+      "title": "Restaurant recipe costing",
+      "code": "HOS-025",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "ingredient_quantities",
+          "label": "templates.catalogue.ingredient_quantities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_unit_costs",
+          "label": "templates.catalogue.verified_unit_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "yield_assumptions",
+          "label": "templates.catalogue.yield_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_restaurant_stock_variance_review",
+      "name": "templates.hos_restaurant_stock_variance_review.name",
+      "title": "Restaurant stock variance review",
+      "code": "HOS-026",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "theoretical_usage",
+          "label": "templates.catalogue.theoretical_usage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "physical_stock",
+          "label": "templates.catalogue.physical_stock",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "variance_explanation",
+          "label": "templates.catalogue.variance_explanation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_restaurant_waste_log",
+      "name": "templates.hos_restaurant_waste_log.name",
+      "title": "Restaurant waste log",
+      "code": "HOS-027",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "waste_item",
+          "label": "templates.catalogue.waste_item",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity",
+          "label": "templates.catalogue.quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "waste_reason",
+          "label": "templates.catalogue.waste_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_restaurant_cash_reconciliation",
+      "name": "templates.hos_restaurant_cash_reconciliation.name",
+      "title": "Restaurant cash reconciliation",
+      "code": "HOS-028",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "sales_by_method",
+          "label": "templates.catalogue.sales_by_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cash_count",
+          "label": "templates.catalogue.cash_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "exceptions",
+          "label": "templates.catalogue.exceptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_hospitality_staff_shift_handover",
+      "name": "templates.hos_hospitality_staff_shift_handover.name",
+      "title": "Hospitality staff shift handover",
+      "code": "HOS-029",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "service_updates",
+          "label": "templates.catalogue.service_updates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "guest_requests",
+          "label": "templates.catalogue.guest_requests",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outstanding_tasks",
+          "label": "templates.catalogue.outstanding_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_hotel_accessibility_inspection",
+      "name": "templates.hos_hotel_accessibility_inspection.name",
+      "title": "Hotel accessibility inspection",
+      "code": "HOS-030",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "accessible_routes",
+          "label": "templates.catalogue.accessible_routes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "room_features",
+          "label": "templates.catalogue.room_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_barriers",
+          "label": "templates.catalogue.observed_barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_hotel_supplier_service_review",
+      "name": "templates.hos_hotel_supplier_service_review.name",
+      "title": "Hotel supplier service review",
+      "code": "HOS-031",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "agreed_service",
+          "label": "templates.catalogue.agreed_service",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_evidence",
+          "label": "templates.catalogue.delivery_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issues",
+          "label": "templates.catalogue.issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hos_hospitality_brand_standards_inspection",
+      "name": "templates.hos_hospitality_brand_standards_inspection.name",
+      "title": "Hospitality brand standards inspection",
+      "code": "HOS-032",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hos",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_standards",
+          "label": "templates.catalogue.approved_standards",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvements",
+          "label": "templates.catalogue.improvements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

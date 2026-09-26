@@ -1,0 +1,1576 @@
+{
+  "category": "FOD",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_product_specification",
+      "name": "templates.fod_food_product_specification.name",
+      "title": "Food product specification",
+      "code": "FOD-001",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "product_name",
+          "label": "templates.catalogue.product_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "ingredient_list",
+          "label": "templates.catalogue.ingredient_list",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_limits_ref",
+          "label": "templates.catalogue.approved_limits_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_ingredient_supplier_approval",
+      "name": "templates.fod_ingredient_supplier_approval.name",
+      "title": "Ingredient supplier approval",
+      "code": "FOD-002",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "supplier_documents",
+          "label": "templates.catalogue.supplier_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_history",
+          "label": "templates.catalogue.quality_history",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_status",
+          "label": "templates.catalogue.verification_status",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "unverified",
+              "label": "templates.choices.verification_status.unverified"
+            },
+            {
+              "code": "verified",
+              "label": "templates.choices.verification_status.verified"
+            },
+            {
+              "code": "disputed",
+              "label": "templates.choices.verification_status.disputed"
+            },
+            {
+              "code": "not_applicable",
+              "label": "templates.choices.verification_status.not_applicable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_raw_food_delivery_inspection",
+      "name": "templates.fod_raw_food_delivery_inspection.name",
+      "title": "Raw food delivery inspection",
+      "code": "FOD-003",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "delivery_batch",
+          "label": "templates.catalogue.delivery_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "temperature_evidence",
+          "label": "templates.catalogue.temperature_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_decision",
+          "label": "templates.catalogue.acceptance_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_ingredient_batch_traceability",
+      "name": "templates.fod_ingredient_batch_traceability.name",
+      "title": "Ingredient batch traceability",
+      "code": "FOD-004",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "ingredient_lot",
+          "label": "templates.catalogue.ingredient_lot",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supplier_reference",
+          "label": "templates.catalogue.supplier_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "use_in_batches",
+          "label": "templates.catalogue.use_in_batches",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_recipe_version_record",
+      "name": "templates.fod_food_recipe_version_record.name",
+      "title": "Food recipe version record",
+      "code": "FOD-005",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "recipe_identifier",
+          "label": "templates.catalogue.recipe_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "ingredient_quantities",
+          "label": "templates.catalogue.ingredient_quantities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_version",
+          "label": "templates.catalogue.approved_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_production_batch_sheet",
+      "name": "templates.fod_food_production_batch_sheet.name",
+      "title": "Food production batch sheet",
+      "code": "FOD-006",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "ingredient_lots",
+          "label": "templates.catalogue.ingredient_lots",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "production_steps_ref",
+          "label": "templates.catalogue.production_steps_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "output_quantity",
+          "label": "templates.catalogue.output_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "output_quantity_unit",
+          "label": "templates.catalogue.output_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_processing_temperature_log",
+      "name": "templates.fod_food_processing_temperature_log.name",
+      "title": "Food processing temperature log",
+      "code": "FOD-007",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "process_step",
+          "label": "templates.catalogue.process_step",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "temperature_reading",
+          "label": "templates.catalogue.temperature_reading",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "degC",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_critical_limit_ref",
+          "label": "templates.catalogue.approved_critical_limit_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_process_timing_log",
+      "name": "templates.fod_food_process_timing_log.name",
+      "title": "Food process timing log",
+      "code": "FOD-008",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "process_step",
+          "label": "templates.catalogue.process_step",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "start_time",
+          "label": "templates.catalogue.start_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "end_time",
+          "label": "templates.catalogue.end_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_safety_control_check",
+      "name": "templates.fod_food_safety_control_check.name",
+      "title": "Food safety control check",
+      "code": "FOD-009",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_hazard_plan",
+          "label": "templates.catalogue.approved_hazard_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "control_point",
+          "label": "templates.catalogue.control_point",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_result",
+          "label": "templates.catalogue.observed_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_allergen_control_checklist",
+      "name": "templates.fod_food_allergen_control_checklist.name",
+      "title": "Food allergen control checklist",
+      "code": "FOD-010",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "declared_allergens",
+          "label": "templates.catalogue.declared_allergens",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "segregation_controls",
+          "label": "templates.catalogue.segregation_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "label_verification",
+          "label": "templates.catalogue.label_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_allergen_label_review",
+      "name": "templates.fod_food_allergen_label_review.name",
+      "title": "Food allergen label review",
+      "code": "FOD-011",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_ingredient_list",
+          "label": "templates.catalogue.approved_ingredient_list",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "printed_label",
+          "label": "templates.catalogue.printed_label",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reviewer_confirmation",
+          "label": "templates.catalogue.reviewer_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_hygiene_inspection",
+      "name": "templates.fod_food_hygiene_inspection.name",
+      "title": "Food hygiene inspection",
+      "code": "FOD-012",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "hygiene_criteria",
+          "label": "templates.catalogue.hygiene_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_conditions",
+          "label": "templates.catalogue.observed_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "corrective_actions",
+          "label": "templates.catalogue.corrective_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_contact_surface_cleaning",
+      "name": "templates.fod_food_contact_surface_cleaning.name",
+      "title": "Food contact surface cleaning",
+      "code": "FOD-013",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "surface_reference",
+          "label": "templates.catalogue.surface_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_cleaning_method",
+          "label": "templates.catalogue.approved_cleaning_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification",
+          "label": "templates.catalogue.verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_sanitation_verification",
+      "name": "templates.fod_food_sanitation_verification.name",
+      "title": "Food sanitation verification",
+      "code": "FOD-014",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "cleaning_record",
+          "label": "templates.catalogue.cleaning_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "test_evidence",
+          "label": "templates.catalogue.test_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "release_status",
+          "label": "templates.catalogue.release_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_pest_control_observation",
+      "name": "templates.fod_food_pest_control_observation.name",
+      "title": "Food pest control observation",
+      "code": "FOD-015",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "observed_signs",
+          "label": "templates.catalogue.observed_signs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_area",
+          "label": "templates.catalogue.affected_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_followup",
+          "label": "templates.catalogue.approved_followup",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_cold_storage_monitoring",
+      "name": "templates.fod_food_cold_storage_monitoring.name",
+      "title": "Food cold storage monitoring",
+      "code": "FOD-016",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "storage_location",
+          "label": "templates.catalogue.storage_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "temperature",
+          "label": "templates.catalogue.temperature",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "degC",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "excursion_response",
+          "label": "templates.catalogue.excursion_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_shelf_life_evidence_register",
+      "name": "templates.fod_food_shelf_life_evidence_register.name",
+      "title": "Food shelf-life evidence register",
+      "code": "FOD-017",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "product_version",
+          "label": "templates.catalogue.product_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "study_reference",
+          "label": "templates.catalogue.study_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_claim",
+          "label": "templates.catalogue.authorized_claim",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_sensory_evaluation",
+      "name": "templates.fod_food_sensory_evaluation.name",
+      "title": "Food sensory evaluation",
+      "code": "FOD-018",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "sample_code",
+          "label": "templates.catalogue.sample_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evaluation_criteria",
+          "label": "templates.catalogue.evaluation_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "panel_results",
+          "label": "templates.catalogue.panel_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_laboratory_sample_request",
+      "name": "templates.fod_food_laboratory_sample_request.name",
+      "title": "Food laboratory sample request",
+      "code": "FOD-019",
+      "kind": "sample",
+      "pack": "SAMPLE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "sample_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_sample"
+      ],
+      "fields": [
+        {
+          "field_key": "product_batch",
+          "label": "templates.catalogue.product_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sample_conditions",
+          "label": "templates.catalogue.sample_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_product_recall_simulation",
+      "name": "templates.fod_product_recall_simulation.name",
+      "title": "Product recall simulation",
+      "code": "FOD-020",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "test_batch",
+          "label": "templates.catalogue.test_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "traceability_results",
+          "label": "templates.catalogue.traceability_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recovery_gaps",
+          "label": "templates.catalogue.recovery_gaps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_recall_action_log",
+      "name": "templates.fod_food_recall_action_log.name",
+      "title": "Food recall action log",
+      "code": "FOD-021",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "recall_reference",
+          "label": "templates.catalogue.recall_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "affected_products",
+          "label": "templates.catalogue.affected_products",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_actions",
+          "label": "templates.catalogue.verified_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_customer_complaint",
+      "name": "templates.fod_food_customer_complaint.name",
+      "title": "Food customer complaint",
+      "code": "FOD-022",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "product_reference",
+          "label": "templates.catalogue.product_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_issue",
+          "label": "templates.catalogue.reported_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_review",
+          "label": "templates.catalogue.quality_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_packaging_inspection",
+      "name": "templates.fod_food_packaging_inspection.name",
+      "title": "Food packaging inspection",
+      "code": "FOD-023",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "package_integrity",
+          "label": "templates.catalogue.package_integrity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "label_match",
+          "label": "templates.catalogue.label_match",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "lot_marking",
+          "label": "templates.catalogue.lot_marking",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_beverage_bottling_batch_record",
+      "name": "templates.fod_beverage_bottling_batch_record.name",
+      "title": "Beverage bottling batch record",
+      "code": "FOD-024",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "beverage_batch",
+          "label": "templates.catalogue.beverage_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "packaging_lot",
+          "label": "templates.catalogue.packaging_lot",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "yield_reconciliation",
+          "label": "templates.catalogue.yield_reconciliation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_bakery_production_sheet",
+      "name": "templates.fod_bakery_production_sheet.name",
+      "title": "Bakery production sheet",
+      "code": "FOD-025",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "recipe_reference",
+          "label": "templates.catalogue.recipe_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "production_quantity",
+          "label": "templates.catalogue.production_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "production_quantity_unit",
+          "label": "templates.catalogue.production_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_checks",
+          "label": "templates.catalogue.quality_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_dairy_processing_batch_record",
+      "name": "templates.fod_dairy_processing_batch_record.name",
+      "title": "Dairy processing batch record",
+      "code": "FOD-026",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "milk_lots",
+          "label": "templates.catalogue.milk_lots",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_process_ref",
+          "label": "templates.catalogue.approved_process_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "output_batch",
+          "label": "templates.catalogue.output_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_meat_processing_traceability",
+      "name": "templates.fod_meat_processing_traceability.name",
+      "title": "Meat processing traceability",
+      "code": "FOD-027",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "source_evidence",
+          "label": "templates.catalogue.source_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "processing_batch",
+          "label": "templates.catalogue.processing_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "dispatch_lot",
+          "label": "templates.catalogue.dispatch_lot",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_delivery_temperature_check",
+      "name": "templates.fod_food_delivery_temperature_check.name",
+      "title": "Food delivery temperature check",
+      "code": "FOD-028",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "delivery_reference",
+          "label": "templates.catalogue.delivery_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_temperature",
+          "label": "templates.catalogue.observed_temperature",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "degC",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_review",
+          "label": "templates.catalogue.acceptance_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_waste_measurement",
+      "name": "templates.fod_food_waste_measurement.name",
+      "title": "Food waste measurement",
+      "code": "FOD-029",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "waste_category",
+          "label": "templates.catalogue.waste_category",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_quantity",
+          "label": "templates.catalogue.measured_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_quantity_unit",
+          "label": "templates.catalogue.measured_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cause",
+          "label": "templates.catalogue.cause",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_donation_handover",
+      "name": "templates.fod_food_donation_handover.name",
+      "title": "Food donation handover",
+      "code": "FOD-030",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "donated_items",
+          "label": "templates.catalogue.donated_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_handling_evidence",
+          "label": "templates.catalogue.safe_handling_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient_organization",
+          "label": "templates.catalogue.recipient_organization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_certification_evidence_pack",
+      "name": "templates.fod_food_certification_evidence_pack.name",
+      "title": "Food certification evidence pack",
+      "code": "FOD-031",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "claimed_standard_ref",
+          "label": "templates.catalogue.claimed_standard_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_records",
+          "label": "templates.catalogue.verified_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approval_owner",
+          "label": "templates.catalogue.approval_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "fod_food_factory_quality_summary",
+      "name": "templates.fod_food_factory_quality_summary.name",
+      "title": "Food factory quality summary",
+      "code": "FOD-032",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_fod",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "quality_results",
+          "label": "templates.catalogue.quality_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "incidents",
+          "label": "templates.catalogue.incidents",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_actions",
+          "label": "templates.catalogue.improvement_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

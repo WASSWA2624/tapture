@@ -1,0 +1,1299 @@
+{
+  "category": "AVI",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "avi_aircraft_asset_register",
+      "name": "templates.avi_aircraft_asset_register.name",
+      "title": "Aircraft asset register",
+      "code": "AVI-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "registration",
+          "label": "templates.catalogue.registration",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "aircraft_type",
+          "label": "templates.catalogue.aircraft_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_aircraft_document_register",
+      "name": "templates.avi_aircraft_document_register.name",
+      "title": "Aircraft document register",
+      "code": "AVI-002",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "document_category",
+          "label": "templates.catalogue.document_category",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "validity_period",
+          "label": "templates.catalogue.validity_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_verification",
+          "label": "templates.catalogue.authorized_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_aircraft_maintenance_evidence_intake",
+      "name": "templates.avi_aircraft_maintenance_evidence_intake.name",
+      "title": "Aircraft maintenance evidence intake",
+      "code": "AVI-003",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_work_order",
+          "label": "templates.catalogue.approved_work_order",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_personnel",
+          "label": "templates.catalogue.authorized_personnel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "release_document",
+          "label": "templates.catalogue.release_document",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_aircraft_defect_reporting",
+      "name": "templates.avi_aircraft_defect_reporting.name",
+      "title": "Aircraft defect reporting",
+      "code": "AVI-004",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_defect",
+          "label": "templates.catalogue.reported_defect",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "aircraft_reference",
+          "label": "templates.catalogue.aircraft_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "licensed_review",
+          "label": "templates.catalogue.licensed_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_aviation_component_traceability",
+      "name": "templates.avi_aviation_component_traceability.name",
+      "title": "Aviation component traceability",
+      "code": "AVI-005",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "part_number",
+          "label": "templates.catalogue.part_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "serial_number",
+          "label": "templates.catalogue.serial_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_release_evidence",
+          "label": "templates.catalogue.authorized_release_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_ground_support_equipment_inventory",
+      "name": "templates.avi_ground_support_equipment_inventory.name",
+      "title": "Ground support equipment inventory",
+      "code": "AVI-006",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_type",
+          "label": "templates.catalogue.equipment_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_status",
+          "label": "templates.catalogue.service_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_ground_support_pre_use_check",
+      "name": "templates.avi_ground_support_pre_use_check.name",
+      "title": "Ground support pre-use check",
+      "code": "AVI-007",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_checklist",
+          "label": "templates.catalogue.approved_checklist",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restriction_status",
+          "label": "templates.catalogue.restriction_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_airport_facility_inspection",
+      "name": "templates.avi_airport_facility_inspection.name",
+      "title": "Airport facility inspection",
+      "code": "AVI-008",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "facility_zone",
+          "label": "templates.catalogue.facility_zone",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_actions",
+          "label": "templates.catalogue.required_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_runway_surface_observation",
+      "name": "templates.avi_runway_surface_observation.name",
+      "title": "Runway surface observation",
+      "code": "AVI-009",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "inspection_area",
+          "label": "templates.catalogue.inspection_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_defects",
+          "label": "templates.catalogue.observed_defects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_reporting_route",
+          "label": "templates.catalogue.authorized_reporting_route",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_airfield_lighting_fault_report",
+      "name": "templates.avi_airfield_lighting_fault_report.name",
+      "title": "Airfield lighting fault report",
+      "code": "AVI-010",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "light_identifier",
+          "label": "templates.catalogue.light_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_fault",
+          "label": "templates.catalogue.observed_fault",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_reference",
+          "label": "templates.catalogue.maintenance_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_airport_wildlife_observation",
+      "name": "templates.avi_airport_wildlife_observation.name",
+      "title": "Airport wildlife observation",
+      "code": "AVI-011",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "observation_location",
+          "label": "templates.catalogue.observation_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "species_candidate",
+          "label": "templates.catalogue.species_candidate",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_response",
+          "label": "templates.catalogue.authorized_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_foreign_object_debris_collection_log",
+      "name": "templates.avi_foreign_object_debris_collection_log.name",
+      "title": "Foreign object debris collection log",
+      "code": "AVI-012",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "collection_area",
+          "label": "templates.catalogue.collection_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_items",
+          "label": "templates.catalogue.observed_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "disposal_record",
+          "label": "templates.catalogue.disposal_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_airport_passenger_assistance_request",
+      "name": "templates.avi_airport_passenger_assistance_request.name",
+      "title": "Airport passenger assistance request",
+      "code": "AVI-013",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "flight_reference",
+          "label": "templates.catalogue.flight_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "functional_support_needs",
+          "label": "templates.catalogue.functional_support_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consent_scope",
+          "label": "templates.catalogue.consent_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_airport_accessibility_review",
+      "name": "templates.avi_airport_accessibility_review.name",
+      "title": "Airport accessibility review",
+      "code": "AVI-014",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "passenger_journey_stage",
+          "label": "templates.catalogue.passenger_journey_stage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_barriers",
+          "label": "templates.catalogue.observed_barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "improvement_actions",
+          "label": "templates.catalogue.improvement_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_aviation_training_completion_record",
+      "name": "templates.avi_aviation_training_completion_record.name",
+      "title": "Aviation training completion record",
+      "code": "AVI-015",
+      "kind": "learning",
+      "pack": "LEARN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "learning_record_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_learn"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_course",
+          "label": "templates.catalogue.approved_course",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorization_review",
+          "label": "templates.catalogue.authorization_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_crew_credential_expiry_tracker",
+      "name": "templates.avi_crew_credential_expiry_tracker.name",
+      "title": "Crew credential expiry tracker",
+      "code": "AVI-016",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "credential_type",
+          "label": "templates.catalogue.credential_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expiry_date",
+          "label": "templates.catalogue.expiry_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_source",
+          "label": "templates.catalogue.verification_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_aviation_occurrence_intake",
+      "name": "templates.avi_aviation_occurrence_intake.name",
+      "title": "Aviation occurrence intake",
+      "code": "AVI-017",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "factual_event_description",
+          "label": "templates.catalogue.factual_event_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "event_at",
+          "label": "templates.catalogue.event_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_safety_review",
+          "label": "templates.catalogue.authorized_safety_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_airport_contractor_work_authorization",
+      "name": "templates.avi_airport_contractor_work_authorization.name",
+      "title": "Airport contractor work authorization",
+      "code": "AVI-018",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "work_scope",
+          "label": "templates.catalogue.work_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_safety_controls",
+          "label": "templates.catalogue.approved_safety_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "permit_authority",
+          "label": "templates.catalogue.permit_authority",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_air_cargo_acceptance_checklist",
+      "name": "templates.avi_air_cargo_acceptance_checklist.name",
+      "title": "Air cargo acceptance checklist",
+      "code": "AVI-019",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "cargo_documents",
+          "label": "templates.catalogue.cargo_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "packaging_condition",
+          "label": "templates.catalogue.packaging_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_handling_review",
+          "label": "templates.catalogue.authorized_handling_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_air_cargo_handover",
+      "name": "templates.avi_air_cargo_handover.name",
+      "title": "Air cargo handover",
+      "code": "AVI-020",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "shipment_reference",
+          "label": "templates.catalogue.shipment_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custody_change",
+          "label": "templates.catalogue.custody_change",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition_confirmation",
+          "label": "templates.catalogue.condition_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_lost_baggage_intake",
+      "name": "templates.avi_lost_baggage_intake.name",
+      "title": "Lost baggage intake",
+      "code": "AVI-021",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "baggage_reference",
+          "label": "templates.catalogue.baggage_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "claimant_contact",
+          "label": "templates.catalogue.claimant_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "item_description",
+          "label": "templates.catalogue.item_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_drone_equipment_inventory",
+      "name": "templates.avi_drone_equipment_inventory.name",
+      "title": "Drone equipment inventory",
+      "code": "AVI-022",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "drone_model",
+          "label": "templates.catalogue.drone_model",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessory_list",
+          "label": "templates.catalogue.accessory_list",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_drone_flight_permission_evidence",
+      "name": "templates.avi_drone_flight_permission_evidence.name",
+      "title": "Drone flight permission evidence",
+      "code": "AVI-023",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "jurisdiction",
+          "label": "templates.catalogue.jurisdiction",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorization_scope",
+          "label": "templates.catalogue.authorization_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "validity_period",
+          "label": "templates.catalogue.validity_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_drone_survey_mission_plan",
+      "name": "templates.avi_drone_survey_mission_plan.name",
+      "title": "Drone survey mission plan",
+      "code": "AVI-024",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "survey_objective",
+          "label": "templates.catalogue.survey_objective",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_area",
+          "label": "templates.catalogue.authorized_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "privacy_controls",
+          "label": "templates.catalogue.privacy_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_drone_flight_log",
+      "name": "templates.avi_drone_flight_log.name",
+      "title": "Drone flight log",
+      "code": "AVI-025",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_mission",
+          "label": "templates.catalogue.authorized_mission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "flight_times",
+          "label": "templates.catalogue.flight_times",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "equipment_status",
+          "label": "templates.catalogue.equipment_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_drone_image_catalogue",
+      "name": "templates.avi_drone_image_catalogue.name",
+      "title": "Drone image catalogue",
+      "code": "AVI-026",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "mission_reference",
+          "label": "templates.catalogue.mission_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "image_location",
+          "label": "templates.catalogue.image_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_usage_rights",
+          "label": "templates.catalogue.data_usage_rights",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_drone_maintenance_record",
+      "name": "templates.avi_drone_maintenance_record.name",
+      "title": "Drone maintenance record",
+      "code": "AVI-027",
+      "kind": "maintenance",
+      "pack": "MAINT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "work_order_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_maint"
+      ],
+      "fields": [
+        {
+          "field_key": "device_identifier",
+          "label": "templates.catalogue.device_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_service_tasks",
+          "label": "templates.catalogue.approved_service_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification",
+          "label": "templates.catalogue.verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "avi_aviation_operational_document_review",
+      "name": "templates.avi_aviation_operational_document_review.name",
+      "title": "Aviation operational document review",
+      "code": "AVI-028",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_avi",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_document",
+          "label": "templates.catalogue.approved_document",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "revision",
+          "label": "templates.catalogue.revision",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_reviewer",
+          "label": "templates.catalogue.authorized_reviewer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

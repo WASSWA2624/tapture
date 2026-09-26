@@ -1,0 +1,1546 @@
+{
+  "category": "PRC",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "prc_supplier_registration",
+      "name": "templates.prc_supplier_registration.name",
+      "title": "Supplier registration",
+      "code": "PRC-001",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "supplier_name",
+          "label": "templates.catalogue.supplier_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "product_categories",
+          "label": "templates.catalogue.product_categories",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "business_references",
+          "label": "templates.catalogue.business_references",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_supplier_document_verification",
+      "name": "templates.prc_supplier_document_verification.name",
+      "title": "Supplier document verification",
+      "code": "PRC-002",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "required_documents",
+          "label": "templates.catalogue.required_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "document_validity",
+          "label": "templates.catalogue.document_validity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_source",
+          "label": "templates.catalogue.verification_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_purchase_requisition",
+      "name": "templates.prc_purchase_requisition.name",
+      "title": "Purchase requisition",
+      "code": "PRC-003",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_items",
+          "label": "templates.catalogue.requested_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "business_justification",
+          "label": "templates.catalogue.business_justification",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_by",
+          "label": "templates.catalogue.required_by",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_request_for_quotation",
+      "name": "templates.prc_request_for_quotation.name",
+      "title": "Request for quotation",
+      "code": "PRC-004",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "specification",
+          "label": "templates.catalogue.specification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supplier_questions",
+          "label": "templates.catalogue.supplier_questions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quotation_deadline_date",
+          "label": "templates.catalogue.quotation_deadline_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_request_for_proposal_pack",
+      "name": "templates.prc_request_for_proposal_pack.name",
+      "title": "Request for proposal pack",
+      "code": "PRC-005",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "scope_of_work",
+          "label": "templates.catalogue.scope_of_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evaluation_criteria",
+          "label": "templates.catalogue.evaluation_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "submission_instructions",
+          "label": "templates.catalogue.submission_instructions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_tender_opportunity_intake",
+      "name": "templates.prc_tender_opportunity_intake.name",
+      "title": "Tender opportunity intake",
+      "code": "PRC-006",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "tender_reference",
+          "label": "templates.catalogue.tender_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issuing_entity",
+          "label": "templates.catalogue.issuing_entity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "closing_at",
+          "label": "templates.catalogue.closing_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_bid_clarification_request",
+      "name": "templates.prc_bid_clarification_request.name",
+      "title": "Bid clarification request",
+      "code": "PRC-007",
+      "kind": "communication",
+      "pack": "COMM",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "communication_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_comm"
+      ],
+      "fields": [
+        {
+          "field_key": "question_reference",
+          "label": "templates.catalogue.question_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "clarification_question",
+          "label": "templates.catalogue.clarification_question",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "response_deadline_date",
+          "label": "templates.catalogue.response_deadline_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_supplier_quotation_capture",
+      "name": "templates.prc_supplier_quotation_capture.name",
+      "title": "Supplier quotation capture",
+      "code": "PRC-008",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "quoted_items",
+          "label": "templates.catalogue.quoted_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "unit_prices",
+          "label": "templates.catalogue.unit_prices",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quotation_validity",
+          "label": "templates.catalogue.quotation_validity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_bid_opening_record",
+      "name": "templates.prc_bid_opening_record.name",
+      "title": "Bid opening record",
+      "code": "PRC-009",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "received_bids",
+          "label": "templates.catalogue.received_bids",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "opening_time",
+          "label": "templates.catalogue.opening_time",
+          "type": "time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "witnesses",
+          "label": "templates.catalogue.witnesses",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_technical_evaluation_worksheet",
+      "name": "templates.prc_technical_evaluation_worksheet.name",
+      "title": "Technical evaluation worksheet",
+      "code": "PRC-010",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "criterion_scores",
+          "label": "templates.catalogue.criterion_scores",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evidence_references",
+          "label": "templates.catalogue.evidence_references",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "exceptions",
+          "label": "templates.catalogue.exceptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_commercial_comparison_worksheet",
+      "name": "templates.prc_commercial_comparison_worksheet.name",
+      "title": "Commercial comparison worksheet",
+      "code": "PRC-011",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "normalized_prices",
+          "label": "templates.catalogue.normalized_prices",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "tax_assumptions",
+          "label": "templates.catalogue.tax_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_costs",
+          "label": "templates.catalogue.delivery_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_supplier_due_diligence_review",
+      "name": "templates.prc_supplier_due_diligence_review.name",
+      "title": "Supplier due diligence review",
+      "code": "PRC-012",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "ownership_disclosures",
+          "label": "templates.catalogue.ownership_disclosures",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reference_checks",
+          "label": "templates.catalogue.reference_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "unresolved_issues",
+          "label": "templates.catalogue.unresolved_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_conflict_of_interest_declaration",
+      "name": "templates.prc_conflict_of_interest_declaration.name",
+      "title": "Conflict-of-interest declaration",
+      "code": "PRC-013",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "procurement_role",
+          "label": "templates.catalogue.procurement_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "declared_relationships",
+          "label": "templates.catalogue.declared_relationships",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "mitigation",
+          "label": "templates.catalogue.mitigation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_procurement_evaluation_report",
+      "name": "templates.prc_procurement_evaluation_report.name",
+      "title": "Procurement evaluation report",
+      "code": "PRC-014",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "evaluation_method",
+          "label": "templates.catalogue.evaluation_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "scoring_summary",
+          "label": "templates.catalogue.scoring_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "recommendation",
+          "label": "templates.catalogue.recommendation",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_purchase_order",
+      "name": "templates.prc_purchase_order.name",
+      "title": "Purchase order",
+      "code": "PRC-015",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "ordered_items",
+          "label": "templates.catalogue.ordered_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_prices",
+          "label": "templates.catalogue.agreed_prices",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_terms",
+          "label": "templates.catalogue.delivery_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_purchase_order_amendment",
+      "name": "templates.prc_purchase_order_amendment.name",
+      "title": "Purchase order amendment",
+      "code": "PRC-016",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "original_order",
+          "label": "templates.catalogue.original_order",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "changed_terms",
+          "label": "templates.catalogue.changed_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approval_reason",
+          "label": "templates.catalogue.approval_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_supplier_contract_intake",
+      "name": "templates.prc_supplier_contract_intake.name",
+      "title": "Supplier contract intake",
+      "code": "PRC-017",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "contract_scope",
+          "label": "templates.catalogue.contract_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "commercial_terms",
+          "label": "templates.catalogue.commercial_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "renewal_date",
+          "label": "templates.catalogue.renewal_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_supplier_onboarding_checklist",
+      "name": "templates.prc_supplier_onboarding_checklist.name",
+      "title": "Supplier onboarding checklist",
+      "code": "PRC-018",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "master_data_checks",
+          "label": "templates.catalogue.master_data_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "bank_verification",
+          "label": "templates.catalogue.bank_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_requirements",
+          "label": "templates.catalogue.access_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_supplier_delivery_performance",
+      "name": "templates.prc_supplier_delivery_performance.name",
+      "title": "Supplier delivery performance",
+      "code": "PRC-019",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "promised_date",
+          "label": "templates.catalogue.promised_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "actual_date",
+          "label": "templates.catalogue.actual_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_acceptance",
+          "label": "templates.catalogue.quality_acceptance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_supplier_site_assessment",
+      "name": "templates.prc_supplier_site_assessment.name",
+      "title": "Supplier site assessment",
+      "code": "PRC-020",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "production_capacity",
+          "label": "templates.catalogue.production_capacity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "production_capacity_unit",
+          "label": "templates.catalogue.production_capacity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_controls",
+          "label": "templates.catalogue.quality_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "site_findings",
+          "label": "templates.catalogue.site_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_procurement_exception_request",
+      "name": "templates.prc_procurement_exception_request.name",
+      "title": "Procurement exception request",
+      "code": "PRC-021",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "exception_type",
+          "label": "templates.catalogue.exception_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "compensating_controls",
+          "label": "templates.catalogue.compensating_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_single_source_justification",
+      "name": "templates.prc_single_source_justification.name",
+      "title": "Single-source justification",
+      "code": "PRC-022",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "source_reason",
+          "label": "templates.catalogue.source_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "alternatives_considered",
+          "label": "templates.catalogue.alternatives_considered",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "price_evidence",
+          "label": "templates.catalogue.price_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_framework_agreement_call_off",
+      "name": "templates.prc_framework_agreement_call_off.name",
+      "title": "Framework agreement call-off",
+      "code": "PRC-023",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "framework_ref",
+          "label": "templates.catalogue.framework_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "calloff_quantity",
+          "label": "templates.catalogue.calloff_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "calloff_quantity_unit",
+          "label": "templates.catalogue.calloff_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_rate_amount",
+          "label": "templates.catalogue.agreed_rate_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "agreed_rate_currency",
+          "label": "templates.catalogue.agreed_rate_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_rate_basis",
+          "label": "templates.catalogue.agreed_rate_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "Per hour, day, unit or item."
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_procurement_savings_analysis",
+      "name": "templates.prc_procurement_savings_analysis.name",
+      "title": "Procurement savings analysis",
+      "code": "PRC-024",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "baseline_price",
+          "label": "templates.catalogue.baseline_price",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "baseline_price_currency",
+          "label": "templates.catalogue.baseline_price_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "negotiated_price",
+          "label": "templates.catalogue.negotiated_price",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "negotiated_price_currency",
+          "label": "templates.catalogue.negotiated_price_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "realized_volume",
+          "label": "templates.catalogue.realized_volume",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "L",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_supplier_corrective_action_request",
+      "name": "templates.prc_supplier_corrective_action_request.name",
+      "title": "Supplier corrective action request",
+      "code": "PRC-025",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "nonconformance",
+          "label": "templates.catalogue.nonconformance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_action",
+          "label": "templates.catalogue.required_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_deadline_date",
+          "label": "templates.catalogue.verification_deadline_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_procurement_plan",
+      "name": "templates.prc_procurement_plan.name",
+      "title": "Procurement plan",
+      "code": "PRC-026",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "planned_purchases",
+          "label": "templates.catalogue.planned_purchases",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "budget_lines",
+          "label": "templates.catalogue.budget_lines",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "procurement_method",
+          "label": "templates.catalogue.procurement_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_supplier_complaint_record",
+      "name": "templates.prc_supplier_complaint_record.name",
+      "title": "Supplier complaint record",
+      "code": "PRC-027",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "complaint_details",
+          "label": "templates.catalogue.complaint_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "contract_reference",
+          "label": "templates.catalogue.contract_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "desired_resolution",
+          "label": "templates.catalogue.desired_resolution",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_contract_deliverable_acceptance",
+      "name": "templates.prc_contract_deliverable_acceptance.name",
+      "title": "Contract deliverable acceptance",
+      "code": "PRC-028",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "deliverable_reference",
+          "label": "templates.catalogue.deliverable_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_tests",
+          "label": "templates.catalogue.acceptance_tests",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_supplier_renewal_review",
+      "name": "templates.prc_supplier_renewal_review.name",
+      "title": "Supplier renewal review",
+      "code": "PRC-029",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "performance_history",
+          "label": "templates.catalogue.performance_history",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "commercial_changes",
+          "label": "templates.catalogue.commercial_changes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "renewal_decision",
+          "label": "templates.catalogue.renewal_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_import_purchase_checklist",
+      "name": "templates.prc_import_purchase_checklist.name",
+      "title": "Import purchase checklist",
+      "code": "PRC-030",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "shipping_terms",
+          "label": "templates.catalogue.shipping_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_certificates",
+          "label": "templates.catalogue.required_certificates",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "clearance_responsibility",
+          "label": "templates.catalogue.clearance_responsibility",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_supplier_bank_change_verification",
+      "name": "templates.prc_supplier_bank_change_verification.name",
+      "title": "Supplier bank change verification",
+      "code": "PRC-031",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_account",
+          "label": "templates.catalogue.requested_account",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "independent_callback",
+          "label": "templates.catalogue.independent_callback",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_result",
+          "label": "templates.catalogue.verification_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "prc_sustainable_procurement_assessment",
+      "name": "templates.prc_sustainable_procurement_assessment.name",
+      "title": "Sustainable procurement assessment",
+      "code": "PRC-032",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_prc",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "sourcing_evidence",
+          "label": "templates.catalogue.sourcing_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "product_lifecycle",
+          "label": "templates.catalogue.product_lifecycle",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "declared_claims",
+          "label": "templates.catalogue.declared_claims",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

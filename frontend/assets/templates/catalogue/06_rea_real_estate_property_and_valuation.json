@@ -1,0 +1,1712 @@
+{
+  "category": "REA",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "rea_property_master_record",
+      "name": "templates.rea_property_master_record.name",
+      "title": "Property master record",
+      "code": "REA-001",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "property_type",
+          "label": "templates.catalogue.property_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "street_address",
+          "label": "templates.catalogue.street_address",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "help": "House, plot and street only; the location fields hold the rest."
+        },
+        {
+          "field_key": "ownership_reference",
+          "label": "templates.catalogue.ownership_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_property_inspection_appointment",
+      "name": "templates.rea_property_inspection_appointment.name",
+      "title": "Property inspection appointment",
+      "code": "REA-002",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "inspection_purpose",
+          "label": "templates.catalogue.inspection_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_contact",
+          "label": "templates.catalogue.access_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_date",
+          "label": "templates.catalogue.requested_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_building_condition_survey",
+      "name": "templates.rea_building_condition_survey.name",
+      "title": "Building condition survey",
+      "code": "REA-003",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "building_elements",
+          "label": "templates.catalogue.building_elements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition_findings",
+          "label": "templates.catalogue.condition_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "defect_evidence",
+          "label": "templates.catalogue.defect_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_room_by_room_inspection",
+      "name": "templates.rea_room_by_room_inspection.name",
+      "title": "Room-by-room inspection",
+      "code": "REA-004",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "room_reference",
+          "label": "templates.catalogue.room_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "finishes_condition",
+          "label": "templates.catalogue.finishes_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "fixtures_condition",
+          "label": "templates.catalogue.fixtures_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_property_valuation_instruction",
+      "name": "templates.rea_property_valuation_instruction.name",
+      "title": "Property valuation instruction",
+      "code": "REA-005",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "valuation_purpose",
+          "label": "templates.catalogue.valuation_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "valuation_basis_ref",
+          "label": "templates.catalogue.valuation_basis_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "client_constraints",
+          "label": "templates.catalogue.client_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_property_valuation_field_capture",
+      "name": "templates.rea_property_valuation_field_capture.name",
+      "title": "Property valuation field capture",
+      "code": "REA-006",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "land_area",
+          "label": "templates.catalogue.land_area",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "ha",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "building_area",
+          "label": "templates.catalogue.building_area",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "sqm",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_condition",
+          "label": "templates.catalogue.observed_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "valuation_evidence",
+          "label": "templates.catalogue.valuation_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_comparable_property_evidence",
+      "name": "templates.rea_comparable_property_evidence.name",
+      "title": "Comparable property evidence",
+      "code": "REA-007",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "comparable_reference",
+          "label": "templates.catalogue.comparable_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_transaction_details",
+          "label": "templates.catalogue.verified_transaction_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "adjustment_rationale",
+          "label": "templates.catalogue.adjustment_rationale",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_rental_market_evidence_collection",
+      "name": "templates.rea_rental_market_evidence_collection.name",
+      "title": "Rental market evidence collection",
+      "code": "REA-008",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "property_characteristics",
+          "label": "templates.catalogue.property_characteristics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_rent",
+          "label": "templates.catalogue.observed_rent",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_date",
+          "label": "templates.catalogue.source_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_property_valuation_report_draft",
+      "name": "templates.rea_property_valuation_report_draft.name",
+      "title": "Property valuation report draft",
+      "code": "REA-009",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "qualified_valuer_inputs",
+          "label": "templates.catalogue.qualified_valuer_inputs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assumptions",
+          "label": "templates.catalogue.assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_comparables",
+          "label": "templates.catalogue.supporting_comparables",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_landlord_property_inventory",
+      "name": "templates.rea_landlord_property_inventory.name",
+      "title": "Landlord property inventory",
+      "code": "REA-010",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "included_items",
+          "label": "templates.catalogue.included_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "item_condition",
+          "label": "templates.catalogue.item_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "photo_references",
+          "label": "templates.catalogue.photo_references",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_tenant_move_in_inspection",
+      "name": "templates.rea_tenant_move_in_inspection.name",
+      "title": "Tenant move-in inspection",
+      "code": "REA-011",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "occupancy_start_date",
+          "label": "templates.catalogue.occupancy_start_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "existing_defects",
+          "label": "templates.catalogue.existing_defects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "tenant_acknowledgement",
+          "label": "templates.catalogue.tenant_acknowledgement",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_tenant_move_out_inspection",
+      "name": "templates.rea_tenant_move_out_inspection.name",
+      "title": "Tenant move-out inspection",
+      "code": "REA-012",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "occupancy_end_date",
+          "label": "templates.catalogue.occupancy_end_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition_changes",
+          "label": "templates.catalogue.condition_changes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "disputed_items",
+          "label": "templates.catalogue.disputed_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_rental_application_intake",
+      "name": "templates.rea_rental_application_intake.name",
+      "title": "Rental application intake",
+      "code": "REA-013",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "applicant_contact",
+          "label": "templates.catalogue.applicant_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_unit",
+          "label": "templates.catalogue.requested_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_eligibility_evidence",
+          "label": "templates.catalogue.minimum_eligibility_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_tenancy_register",
+      "name": "templates.rea_tenancy_register.name",
+      "title": "Tenancy register",
+      "code": "REA-014",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "tenant_reference",
+          "label": "templates.catalogue.tenant_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "lease_reference",
+          "label": "templates.catalogue.lease_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "occupancy_period",
+          "label": "templates.catalogue.occupancy_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_rent_collection_log",
+      "name": "templates.rea_rent_collection_log.name",
+      "title": "Rent collection log",
+      "code": "REA-015",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "rental_period",
+          "label": "templates.catalogue.rental_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "amount_paid",
+          "label": "templates.catalogue.amount_paid",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "receipt_reference",
+          "label": "templates.catalogue.receipt_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_rent_arrears_follow_up",
+      "name": "templates.rea_rent_arrears_follow_up.name",
+      "title": "Rent arrears follow-up",
+      "code": "REA-016",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "tenant_account",
+          "label": "templates.catalogue.tenant_account",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "outstanding_amount",
+          "label": "templates.catalogue.outstanding_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "outstanding_currency",
+          "label": "templates.catalogue.outstanding_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_payment_plan",
+          "label": "templates.catalogue.agreed_payment_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_property_maintenance_request",
+      "name": "templates.rea_property_maintenance_request.name",
+      "title": "Property maintenance request",
+      "code": "REA-017",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "affected_area",
+          "label": "templates.catalogue.affected_area",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_issue",
+          "label": "templates.catalogue.reported_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_arrangements",
+          "label": "templates.catalogue.access_arrangements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_property_service_charge_reconciliation",
+      "name": "templates.rea_property_service_charge_reconciliation.name",
+      "title": "Property service charge reconciliation",
+      "code": "REA-018",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "service_costs",
+          "label": "templates.catalogue.service_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "allocation_basis",
+          "label": "templates.catalogue.allocation_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "tenant_statements",
+          "label": "templates.catalogue.tenant_statements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_property_viewing_record",
+      "name": "templates.rea_property_viewing_record.name",
+      "title": "Property viewing record",
+      "code": "REA-019",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "prospect_consent",
+          "label": "templates.catalogue.prospect_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "viewed_units",
+          "label": "templates.catalogue.viewed_units",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "prospect_feedback",
+          "label": "templates.catalogue.prospect_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_property_listing_intake",
+      "name": "templates.rea_property_listing_intake.name",
+      "title": "Property listing intake",
+      "code": "REA-020",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_features",
+          "label": "templates.catalogue.verified_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_photos",
+          "label": "templates.catalogue.approved_photos",
+          "type": "photo_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "listing_terms",
+          "label": "templates.catalogue.listing_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_real_estate_agent_mandate",
+      "name": "templates.rea_real_estate_agent_mandate.name",
+      "title": "Real estate agent mandate",
+      "code": "REA-021",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "property_scope",
+          "label": "templates.catalogue.property_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agency_terms",
+          "label": "templates.catalogue.agency_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_marketing",
+          "label": "templates.catalogue.authorized_marketing",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_property_sale_due_diligence_checklist",
+      "name": "templates.rea_property_sale_due_diligence_checklist.name",
+      "title": "Property sale due diligence checklist",
+      "code": "REA-022",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "ownership_evidence",
+          "label": "templates.catalogue.ownership_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "encumbrance_evidence",
+          "label": "templates.catalogue.encumbrance_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "professional_review",
+          "label": "templates.catalogue.professional_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_lease_expiry_tracking",
+      "name": "templates.rea_lease_expiry_tracking.name",
+      "title": "Lease expiry tracking",
+      "code": "REA-023",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "lease_end_date",
+          "label": "templates.catalogue.lease_end_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "notice_period_ref",
+          "label": "templates.catalogue.notice_period_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "renewal_status",
+          "label": "templates.catalogue.renewal_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_property_insurance_inspection",
+      "name": "templates.rea_property_insurance_inspection.name",
+      "title": "Property insurance inspection",
+      "code": "REA-024",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "insured_features",
+          "label": "templates.catalogue.insured_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_hazards",
+          "label": "templates.catalogue.observed_hazards",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_changes",
+          "label": "templates.catalogue.verified_changes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_building_occupancy_survey",
+      "name": "templates.rea_building_occupancy_survey.name",
+      "title": "Building occupancy survey",
+      "code": "REA-025",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "occupied_units",
+          "label": "templates.catalogue.occupied_units",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "permitted_use",
+          "label": "templates.catalogue.permitted_use",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "vacancy_status",
+          "label": "templates.catalogue.vacancy_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_commercial_space_measurement",
+      "name": "templates.rea_commercial_space_measurement.name",
+      "title": "Commercial space measurement",
+      "code": "REA-026",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "measurement_method",
+          "label": "templates.catalogue.measurement_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_length_mm",
+          "label": "templates.catalogue.measured_length_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_width_mm",
+          "label": "templates.catalogue.measured_width_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_height_mm",
+          "label": "templates.catalogue.measured_height_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "area_calculation_basis",
+          "label": "templates.catalogue.area_calculation_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_property_energy_performance_survey",
+      "name": "templates.rea_property_energy_performance_survey.name",
+      "title": "Property energy performance survey",
+      "code": "REA-027",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "energy_records",
+          "label": "templates.catalogue.energy_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "building_fabric",
+          "label": "templates.catalogue.building_fabric",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assessment_limitations",
+          "label": "templates.catalogue.assessment_limitations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_property_accessibility_audit",
+      "name": "templates.rea_property_accessibility_audit.name",
+      "title": "Property accessibility audit",
+      "code": "REA-028",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "access_routes",
+          "label": "templates.catalogue.access_routes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "doors_condition",
+          "label": "templates.catalogue.doors_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "circulation_condition",
+          "label": "templates.catalogue.circulation_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_barriers",
+          "label": "templates.catalogue.observed_barriers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_building_defect_photographic_schedule",
+      "name": "templates.rea_building_defect_photographic_schedule.name",
+      "title": "Building defect photographic schedule",
+      "code": "REA-029",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "defect_location",
+          "label": "templates.catalogue.defect_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "photo_reference",
+          "label": "templates.catalogue.photo_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expert_commentary",
+          "label": "templates.catalogue.expert_commentary",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_property_handover_pack",
+      "name": "templates.rea_property_handover_pack.name",
+      "title": "Property handover pack",
+      "code": "REA-030",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "handover_inventory",
+          "label": "templates.catalogue.handover_inventory",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_drawings",
+          "label": "templates.catalogue.approved_drawings",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_contacts",
+          "label": "templates.catalogue.service_contacts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_homeowners_association_meeting_record",
+      "name": "templates.rea_homeowners_association_meeting_record.name",
+      "title": "Homeowners association meeting record",
+      "code": "REA-031",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "community_issues",
+          "label": "templates.catalogue.community_issues",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_decisions",
+          "label": "templates.catalogue.approved_decisions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "action_owners",
+          "label": "templates.catalogue.action_owners",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_property_sinking_fund_plan",
+      "name": "templates.rea_property_sinking_fund_plan.name",
+      "title": "Property sinking fund plan",
+      "code": "REA-032",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "major_future_works",
+          "label": "templates.catalogue.major_future_works",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cost_assumptions",
+          "label": "templates.catalogue.cost_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "funding_schedule",
+          "label": "templates.catalogue.funding_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_vacant_property_security_inspection",
+      "name": "templates.rea_vacant_property_security_inspection.name",
+      "title": "Vacant property security inspection",
+      "code": "REA-033",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "access_condition",
+          "label": "templates.catalogue.access_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visible_damage",
+          "label": "templates.catalogue.visible_damage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "followup_actions",
+          "label": "templates.catalogue.followup_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_property_boundary_concern_record",
+      "name": "templates.rea_property_boundary_concern_record.name",
+      "title": "Property boundary concern record",
+      "code": "REA-034",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_boundary_issue",
+          "label": "templates.catalogue.reported_boundary_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "survey_evidence",
+          "label": "templates.catalogue.survey_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "professional_referral",
+          "label": "templates.catalogue.professional_referral",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "rea_real_estate_portfolio_review",
+      "name": "templates.rea_real_estate_portfolio_review.name",
+      "title": "Real estate portfolio review",
+      "code": "REA-035",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_rea",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "property_performance",
+          "label": "templates.catalogue.property_performance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_liabilities",
+          "label": "templates.catalogue.maintenance_liabilities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "strategic_options",
+          "label": "templates.catalogue.strategic_options",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

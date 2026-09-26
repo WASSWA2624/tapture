@@ -1,0 +1,1981 @@
+{
+  "category": "GRT",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "grt_funding_opportunity_intake",
+      "name": "templates.grt_funding_opportunity_intake.name",
+      "title": "Funding opportunity intake",
+      "code": "GRT-001",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "funder_name",
+          "label": "templates.catalogue.funder_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "opportunity_title",
+          "label": "templates.catalogue.opportunity_title",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "closing_at",
+          "label": "templates.catalogue.closing_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_terms_of_reference_extraction",
+      "name": "templates.grt_terms_of_reference_extraction.name",
+      "title": "Terms of reference extraction",
+      "code": "GRT-002",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "source_document",
+          "label": "templates.catalogue.source_document",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_deliverables",
+          "label": "templates.catalogue.required_deliverables",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "eligibility_conditions",
+          "label": "templates.catalogue.eligibility_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_opportunity_eligibility_checklist",
+      "name": "templates.grt_opportunity_eligibility_checklist.name",
+      "title": "Opportunity eligibility checklist",
+      "code": "GRT-003",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "eligibility_criterion",
+          "label": "templates.catalogue.eligibility_criterion",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_evidence",
+          "label": "templates.catalogue.supporting_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "eligibility_status",
+          "label": "templates.catalogue.eligibility_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_bid_or_no_bid_assessment",
+      "name": "templates.grt_bid_or_no_bid_assessment.name",
+      "title": "Bid or no-bid assessment",
+      "code": "GRT-004",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "strategic_fit",
+          "label": "templates.catalogue.strategic_fit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_capacity",
+          "label": "templates.catalogue.delivery_capacity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_capacity_unit",
+          "label": "templates.catalogue.delivery_capacity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "application_cost",
+          "label": "templates.catalogue.application_cost",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "application_cost_currency",
+          "label": "templates.catalogue.application_cost_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_applicant_organization_profile",
+      "name": "templates.grt_applicant_organization_profile.name",
+      "title": "Applicant organization profile",
+      "code": "GRT-005",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "mission",
+          "label": "templates.catalogue.mission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "track_record",
+          "label": "templates.catalogue.track_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "registration_evidence",
+          "label": "templates.catalogue.registration_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_company_capability_statement",
+      "name": "templates.grt_company_capability_statement.name",
+      "title": "Company capability statement",
+      "code": "GRT-006",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "core_services",
+          "label": "templates.catalogue.core_services",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_projects",
+          "label": "templates.catalogue.verified_projects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "differentiators",
+          "label": "templates.catalogue.differentiators",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_brand_and_proposal_style_intake",
+      "name": "templates.grt_brand_and_proposal_style_intake.name",
+      "title": "Brand and proposal style intake",
+      "code": "GRT-007",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "logo_assets",
+          "label": "templates.catalogue.logo_assets",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "brand_colors",
+          "label": "templates.catalogue.brand_colors",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_contact_details",
+          "label": "templates.catalogue.approved_contact_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_proposal_requirements_matrix",
+      "name": "templates.grt_proposal_requirements_matrix.name",
+      "title": "Proposal requirements matrix",
+      "code": "GRT-008",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "required_section",
+          "label": "templates.catalogue.required_section",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_page",
+          "label": "templates.catalogue.source_page",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "word_or_page_limit",
+          "label": "templates.catalogue.word_or_page_limit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_proposal_evidence_library",
+      "name": "templates.grt_proposal_evidence_library.name",
+      "title": "Proposal evidence library",
+      "code": "GRT-009",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "claim",
+          "label": "templates.catalogue.claim",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_source",
+          "label": "templates.catalogue.supporting_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "permission_to_reuse",
+          "label": "templates.catalogue.permission_to_reuse",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_concept_note",
+      "name": "templates.grt_concept_note.name",
+      "title": "Concept note",
+      "code": "GRT-010",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "problem",
+          "label": "templates.catalogue.problem",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_intervention",
+          "label": "templates.catalogue.proposed_intervention",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "anticipated_results",
+          "label": "templates.catalogue.anticipated_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_expression_of_interest",
+      "name": "templates.grt_expression_of_interest.name",
+      "title": "Expression of interest",
+      "code": "GRT-011",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "relevant_experience",
+          "label": "templates.catalogue.relevant_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_approach",
+          "label": "templates.catalogue.proposed_approach",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "availability",
+          "label": "templates.catalogue.availability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_full_grant_proposal",
+      "name": "templates.grt_full_grant_proposal.name",
+      "title": "Full grant proposal",
+      "code": "GRT-012",
+      "kind": "proposal",
+      "pack": "PROPOSAL",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "proposal_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_proposal"
+      ],
+      "fields": [
+        {
+          "field_key": "funder_requirements",
+          "label": "templates.catalogue.funder_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "project_design",
+          "label": "templates.catalogue.project_design",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "budget",
+          "label": "templates.catalogue.budget",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "annexes",
+          "label": "templates.catalogue.annexes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_technical_proposal",
+      "name": "templates.grt_technical_proposal.name",
+      "title": "Technical proposal",
+      "code": "GRT-013",
+      "kind": "proposal",
+      "pack": "PROPOSAL",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "proposal_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_proposal"
+      ],
+      "fields": [
+        {
+          "field_key": "technical_approach",
+          "label": "templates.catalogue.technical_approach",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "deliverables",
+          "label": "templates.catalogue.deliverables",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_financial_proposal",
+      "name": "templates.grt_financial_proposal.name",
+      "title": "Financial proposal",
+      "code": "GRT-014",
+      "kind": "proposal",
+      "pack": "PROPOSAL",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "proposal_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_proposal"
+      ],
+      "fields": [
+        {
+          "field_key": "cost_lines",
+          "label": "templates.catalogue.cost_lines",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pricing_assumptions",
+          "label": "templates.catalogue.pricing_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "currency",
+          "label": "templates.catalogue.currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_research_funding_proposal",
+      "name": "templates.grt_research_funding_proposal.name",
+      "title": "Research funding proposal",
+      "code": "GRT-015",
+      "kind": "proposal",
+      "pack": "PROPOSAL",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "proposal_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_proposal"
+      ],
+      "fields": [
+        {
+          "field_key": "research_question",
+          "label": "templates.catalogue.research_question",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "methods",
+          "label": "templates.catalogue.methods",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "research_team",
+          "label": "templates.catalogue.research_team",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_community_project_proposal",
+      "name": "templates.grt_community_project_proposal.name",
+      "title": "Community project proposal",
+      "code": "GRT-016",
+      "kind": "proposal",
+      "pack": "PROPOSAL",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "proposal_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_proposal"
+      ],
+      "fields": [
+        {
+          "field_key": "community_priorities",
+          "label": "templates.catalogue.community_priorities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participation_plan",
+          "label": "templates.catalogue.participation_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "local_contributions",
+          "label": "templates.catalogue.local_contributions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_consultancy_proposal",
+      "name": "templates.grt_consultancy_proposal.name",
+      "title": "Consultancy proposal",
+      "code": "GRT-017",
+      "kind": "proposal",
+      "pack": "PROPOSAL",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "proposal_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_proposal"
+      ],
+      "fields": [
+        {
+          "field_key": "assignment_understanding",
+          "label": "templates.catalogue.assignment_understanding",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expert_inputs",
+          "label": "templates.catalogue.expert_inputs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_implementation_methodology",
+      "name": "templates.grt_implementation_methodology.name",
+      "title": "Implementation methodology",
+      "code": "GRT-018",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "delivery_stages",
+          "label": "templates.catalogue.delivery_stages",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "methods",
+          "label": "templates.catalogue.methods",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_controls",
+          "label": "templates.catalogue.quality_controls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_logical_framework",
+      "name": "templates.grt_logical_framework.name",
+      "title": "Logical framework",
+      "code": "GRT-019",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "objective_hierarchy",
+          "label": "templates.catalogue.objective_hierarchy",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "indicators",
+          "label": "templates.catalogue.indicators",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_sources",
+          "label": "templates.catalogue.verification_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_theory_of_change",
+      "name": "templates.grt_theory_of_change.name",
+      "title": "Theory of change",
+      "code": "GRT-020",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "causal_assumptions",
+          "label": "templates.catalogue.causal_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outputs",
+          "label": "templates.catalogue.outputs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outcomes",
+          "label": "templates.catalogue.outcomes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_monitoring_and_evaluation_plan",
+      "name": "templates.grt_monitoring_and_evaluation_plan.name",
+      "title": "Monitoring and evaluation plan",
+      "code": "GRT-021",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "indicators",
+          "label": "templates.catalogue.indicators",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_sources",
+          "label": "templates.catalogue.data_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_schedule",
+          "label": "templates.catalogue.measurement_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_proposal_workplan",
+      "name": "templates.grt_proposal_workplan.name",
+      "title": "Proposal workplan",
+      "code": "GRT-022",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "responsible_teams",
+          "label": "templates.catalogue.responsible_teams",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_grant_budget_narrative",
+      "name": "templates.grt_grant_budget_narrative.name",
+      "title": "Grant budget narrative",
+      "code": "GRT-023",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "cost_justifications",
+          "label": "templates.catalogue.cost_justifications",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "unit_cost_basis",
+          "label": "templates.catalogue.unit_cost_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "funding_restrictions",
+          "label": "templates.catalogue.funding_restrictions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_partner_contribution_record",
+      "name": "templates.grt_partner_contribution_record.name",
+      "title": "Partner contribution record",
+      "code": "GRT-024",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "partner_role",
+          "label": "templates.catalogue.partner_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cash_contribution",
+          "label": "templates.catalogue.cash_contribution",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "cash_contribution_currency",
+          "label": "templates.catalogue.cash_contribution_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "in_kind_contribution",
+          "label": "templates.catalogue.in_kind_contribution",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_team_cv_tailoring_brief",
+      "name": "templates.grt_team_cv_tailoring_brief.name",
+      "title": "Team CV tailoring brief",
+      "code": "GRT-025",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "role_requirements",
+          "label": "templates.catalogue.role_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_experience",
+          "label": "templates.catalogue.verified_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_cv",
+          "label": "templates.catalogue.source_cv",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_past_performance_reference_sheet",
+      "name": "templates.grt_past_performance_reference_sheet.name",
+      "title": "Past performance reference sheet",
+      "code": "GRT-026",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "completed_assignment",
+          "label": "templates.catalogue.completed_assignment",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_results",
+          "label": "templates.catalogue.verified_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reference_contact_permission",
+          "label": "templates.catalogue.reference_contact_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_letter_of_support_draft",
+      "name": "templates.grt_letter_of_support_draft.name",
+      "title": "Letter of support draft",
+      "code": "GRT-027",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "supporting_party",
+          "label": "templates.catalogue.supporting_party",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_commitment",
+          "label": "templates.catalogue.verified_commitment",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_signatory",
+          "label": "templates.catalogue.authorized_signatory",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_proposal_compliance_review",
+      "name": "templates.grt_proposal_compliance_review.name",
+      "title": "Proposal compliance review",
+      "code": "GRT-028",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "required_sections",
+          "label": "templates.catalogue.required_sections",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "format_limits",
+          "label": "templates.catalogue.format_limits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "missing_evidence",
+          "label": "templates.catalogue.missing_evidence",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_submission_readiness_checklist",
+      "name": "templates.grt_submission_readiness_checklist.name",
+      "title": "Submission readiness checklist",
+      "code": "GRT-029",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p0",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "required_attachments",
+          "label": "templates.catalogue.required_attachments",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "signature_status",
+          "label": "templates.catalogue.signature_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "deadline_timezone",
+          "label": "templates.catalogue.deadline_timezone",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_grant_application_submission_log",
+      "name": "templates.grt_grant_application_submission_log.name",
+      "title": "Grant application submission log",
+      "code": "GRT-030",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "submission_channel",
+          "label": "templates.catalogue.submission_channel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "submitted_version",
+          "label": "templates.catalogue.submitted_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "receipt_reference",
+          "label": "templates.catalogue.receipt_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_funder_clarification_response",
+      "name": "templates.grt_funder_clarification_response.name",
+      "title": "Funder clarification response",
+      "code": "GRT-031",
+      "kind": "communication",
+      "pack": "COMM",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "communication_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_comm"
+      ],
+      "fields": [
+        {
+          "field_key": "funder_question",
+          "label": "templates.catalogue.funder_question",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_response",
+          "label": "templates.catalogue.verified_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_attachment",
+          "label": "templates.catalogue.supporting_attachment",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_grant_award_agreement_intake",
+      "name": "templates.grt_grant_award_agreement_intake.name",
+      "title": "Grant award agreement intake",
+      "code": "GRT-032",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "award_amount",
+          "label": "templates.catalogue.award_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "award_currency",
+          "label": "templates.catalogue.award_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restricted_uses",
+          "label": "templates.catalogue.restricted_uses",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reporting_schedule",
+          "label": "templates.catalogue.reporting_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_grant_milestone_tracker",
+      "name": "templates.grt_grant_milestone_tracker.name",
+      "title": "Grant milestone tracker",
+      "code": "GRT-033",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "milestone",
+          "label": "templates.catalogue.milestone",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "disbursement_condition",
+          "label": "templates.catalogue.disbursement_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evidence_status",
+          "label": "templates.catalogue.evidence_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_donor_narrative_progress_report",
+      "name": "templates.grt_donor_narrative_progress_report.name",
+      "title": "Donor narrative progress report",
+      "code": "GRT-034",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "funded_activities",
+          "label": "templates.catalogue.funded_activities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_results",
+          "label": "templates.catalogue.verified_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "implementation_challenges",
+          "label": "templates.catalogue.implementation_challenges",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_donor_financial_report",
+      "name": "templates.grt_donor_financial_report.name",
+      "title": "Donor financial report",
+      "code": "GRT-035",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_budget",
+          "label": "templates.catalogue.approved_budget",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "approved_budget_currency",
+          "label": "templates.catalogue.approved_budget_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "eligible_costs",
+          "label": "templates.catalogue.eligible_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "remaining_funds",
+          "label": "templates.catalogue.remaining_funds",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_grant_amendment_request",
+      "name": "templates.grt_grant_amendment_request.name",
+      "title": "Grant amendment request",
+      "code": "GRT-036",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "proposed_change",
+          "label": "templates.catalogue.proposed_change",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "budget_impact",
+          "label": "templates.catalogue.budget_impact",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_fundraising_campaign_plan",
+      "name": "templates.grt_fundraising_campaign_plan.name",
+      "title": "Fundraising campaign plan",
+      "code": "GRT-037",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "campaign_goal",
+          "label": "templates.catalogue.campaign_goal",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "audience",
+          "label": "templates.catalogue.audience",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_messages",
+          "label": "templates.catalogue.approved_messages",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_donation_pledge_register",
+      "name": "templates.grt_donation_pledge_register.name",
+      "title": "Donation pledge register",
+      "code": "GRT-038",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "donor_reference",
+          "label": "templates.catalogue.donor_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "pledged_amount",
+          "label": "templates.catalogue.pledged_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "pledged_currency",
+          "label": "templates.catalogue.pledged_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "payment_schedule",
+          "label": "templates.catalogue.payment_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_donation_acknowledgement",
+      "name": "templates.grt_donation_acknowledgement.name",
+      "title": "Donation acknowledgement",
+      "code": "GRT-039",
+      "kind": "communication",
+      "pack": "COMM",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "communication_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_comm"
+      ],
+      "fields": [
+        {
+          "field_key": "donation_reference",
+          "label": "templates.catalogue.donation_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_amount",
+          "label": "templates.catalogue.verified_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "verified_currency",
+          "label": "templates.catalogue.verified_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "restricted_purpose",
+          "label": "templates.catalogue.restricted_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_sponsorship_proposal",
+      "name": "templates.grt_sponsorship_proposal.name",
+      "title": "Sponsorship proposal",
+      "code": "GRT-040",
+      "kind": "proposal",
+      "pack": "PROPOSAL",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "proposal_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_proposal"
+      ],
+      "fields": [
+        {
+          "field_key": "sponsorship_offer",
+          "label": "templates.catalogue.sponsorship_offer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "audience_evidence",
+          "label": "templates.catalogue.audience_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "benefit_commitments",
+          "label": "templates.catalogue.benefit_commitments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_grant_closeout_pack",
+      "name": "templates.grt_grant_closeout_pack.name",
+      "title": "Grant closeout pack",
+      "code": "GRT-041",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "final_results",
+          "label": "templates.catalogue.final_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "financial_reconciliation",
+          "label": "templates.catalogue.financial_reconciliation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "asset_disposition",
+          "label": "templates.catalogue.asset_disposition",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "grt_proposal_reusable_content_approval",
+      "name": "templates.grt_proposal_reusable_content_approval.name",
+      "title": "Proposal reusable content approval",
+      "code": "GRT-042",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_grt",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "content_block",
+          "label": "templates.catalogue.content_block",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "factual_owner",
+          "label": "templates.catalogue.factual_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "expiry_review",
+          "label": "templates.catalogue.expiry_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

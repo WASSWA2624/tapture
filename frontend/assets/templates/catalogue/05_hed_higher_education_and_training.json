@@ -1,0 +1,1533 @@
+{
+  "category": "HED",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "hed_university_program_enquiry",
+      "name": "templates.hed_university_program_enquiry.name",
+      "title": "University program enquiry",
+      "code": "HED-001",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "program_interest",
+          "label": "templates.catalogue.program_interest",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualification_summary",
+          "label": "templates.catalogue.qualification_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "contact_permission",
+          "label": "templates.catalogue.contact_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_university_admission_application",
+      "name": "templates.hed_university_admission_application.name",
+      "title": "University admission application",
+      "code": "HED-002",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "applicant_reference",
+          "label": "templates.catalogue.applicant_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "academic_documents",
+          "label": "templates.catalogue.academic_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "program_choice",
+          "label": "templates.catalogue.program_choice",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_academic_transcript_extraction",
+      "name": "templates.hed_academic_transcript_extraction.name",
+      "title": "Academic transcript extraction",
+      "code": "HED-003",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "institution_name",
+          "label": "templates.catalogue.institution_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "course_results",
+          "label": "templates.catalogue.course_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_status",
+          "label": "templates.catalogue.verification_status",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "unverified",
+              "label": "templates.choices.verification_status.unverified"
+            },
+            {
+              "code": "verified",
+              "label": "templates.choices.verification_status.verified"
+            },
+            {
+              "code": "disputed",
+              "label": "templates.choices.verification_status.disputed"
+            },
+            {
+              "code": "not_applicable",
+              "label": "templates.choices.verification_status.not_applicable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_credential_verification_record",
+      "name": "templates.hed_credential_verification_record.name",
+      "title": "Credential verification record",
+      "code": "HED-004",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "credential_reference",
+          "label": "templates.catalogue.credential_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "issuing_source",
+          "label": "templates.catalogue.issuing_source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_result",
+          "label": "templates.catalogue.verification_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_admission_review_checklist",
+      "name": "templates.hed_admission_review_checklist.name",
+      "title": "Admission review checklist",
+      "code": "HED-005",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "published_requirements",
+          "label": "templates.catalogue.published_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "submitted_evidence",
+          "label": "templates.catalogue.submitted_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reviewer_decision",
+          "label": "templates.catalogue.reviewer_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_course_registration",
+      "name": "templates.hed_course_registration.name",
+      "title": "Course registration",
+      "code": "HED-006",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "student_reference",
+          "label": "templates.catalogue.student_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "selected_courses",
+          "label": "templates.catalogue.selected_courses",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "prerequisite_review",
+          "label": "templates.catalogue.prerequisite_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_academic_advising_meeting",
+      "name": "templates.hed_academic_advising_meeting.name",
+      "title": "Academic advising meeting",
+      "code": "HED-007",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "study_goals",
+          "label": "templates.catalogue.study_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "progress_review",
+          "label": "templates.catalogue.progress_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_plan",
+          "label": "templates.catalogue.agreed_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_research_supervision_meeting",
+      "name": "templates.hed_research_supervision_meeting.name",
+      "title": "Research supervision meeting",
+      "code": "HED-008",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "research_progress",
+          "label": "templates.catalogue.research_progress",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "feedback",
+          "label": "templates.catalogue.feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "next_milestones",
+          "label": "templates.catalogue.next_milestones",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_thesis_proposal_submission",
+      "name": "templates.hed_thesis_proposal_submission.name",
+      "title": "Thesis proposal submission",
+      "code": "HED-009",
+      "kind": "proposal",
+      "pack": "PROPOSAL",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "proposal_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_proposal"
+      ],
+      "fields": [
+        {
+          "field_key": "research_problem",
+          "label": "templates.catalogue.research_problem",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supervision_team",
+          "label": "templates.catalogue.supervision_team",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_thesis_progress_tracking",
+      "name": "templates.hed_thesis_progress_tracking.name",
+      "title": "Thesis progress tracking",
+      "code": "HED-010",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "milestone",
+          "label": "templates.catalogue.milestone",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "submitted_evidence",
+          "label": "templates.catalogue.submitted_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supervisor_feedback",
+          "label": "templates.catalogue.supervisor_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_graduate_defense_scheduling",
+      "name": "templates.hed_graduate_defense_scheduling.name",
+      "title": "Graduate defense scheduling",
+      "code": "HED-011",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "candidate_reference",
+          "label": "templates.catalogue.candidate_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "panel",
+          "label": "templates.catalogue.panel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "defense_arrangements",
+          "label": "templates.catalogue.defense_arrangements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_dissertation_review_rubric",
+      "name": "templates.hed_dissertation_review_rubric.name",
+      "title": "Dissertation review rubric",
+      "code": "HED-012",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_criteria",
+          "label": "templates.catalogue.approved_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_evidence",
+          "label": "templates.catalogue.review_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "examiner_comments",
+          "label": "templates.catalogue.examiner_comments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_internship_application",
+      "name": "templates.hed_internship_application.name",
+      "title": "Internship application",
+      "code": "HED-013",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "placement_interest",
+          "label": "templates.catalogue.placement_interest",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_skills",
+          "label": "templates.catalogue.verified_skills",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "availability",
+          "label": "templates.catalogue.availability",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_internship_supervision_visit",
+      "name": "templates.hed_internship_supervision_visit.name",
+      "title": "Internship supervision visit",
+      "code": "HED-014",
+      "kind": "visit",
+      "pack": "VISIT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "visited_site_or_party",
+        "visit_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_visit"
+      ],
+      "fields": [
+        {
+          "field_key": "learning_activities",
+          "label": "templates.catalogue.learning_activities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supervisor_feedback",
+          "label": "templates.catalogue.supervisor_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "support_needs",
+          "label": "templates.catalogue.support_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_internship_completion_report",
+      "name": "templates.hed_internship_completion_report.name",
+      "title": "Internship completion report",
+      "code": "HED-015",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "completed_work",
+          "label": "templates.catalogue.completed_work",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "learning_outcomes",
+          "label": "templates.catalogue.learning_outcomes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_evidence",
+          "label": "templates.catalogue.verified_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_alumni_registration",
+      "name": "templates.hed_alumni_registration.name",
+      "title": "Alumni registration",
+      "code": "HED-016",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "graduation_details",
+          "label": "templates.catalogue.graduation_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "professional_updates",
+          "label": "templates.catalogue.professional_updates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "contact_preferences",
+          "label": "templates.catalogue.contact_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_continuing_education_course_intake",
+      "name": "templates.hed_continuing_education_course_intake.name",
+      "title": "Continuing education course intake",
+      "code": "HED-017",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "learning_goals",
+          "label": "templates.catalogue.learning_goals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "prior_experience",
+          "label": "templates.catalogue.prior_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_requirements",
+          "label": "templates.catalogue.access_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_training_session_attendance",
+      "name": "templates.hed_training_session_attendance.name",
+      "title": "Training session attendance",
+      "code": "HED-018",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "course_session",
+          "label": "templates.catalogue.course_session",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "participant",
+          "label": "templates.catalogue.participant",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completion_evidence",
+          "label": "templates.catalogue.completion_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_training_evaluation_survey",
+      "name": "templates.hed_training_evaluation_survey.name",
+      "title": "Training evaluation survey",
+      "code": "HED-019",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "course_relevance",
+          "label": "templates.catalogue.course_relevance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_feedback",
+          "label": "templates.catalogue.delivery_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "application_plans",
+          "label": "templates.catalogue.application_plans",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_training_certificate_generation",
+      "name": "templates.hed_training_certificate_generation.name",
+      "title": "Training certificate generation",
+      "code": "HED-020",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_completion",
+          "label": "templates.catalogue.verified_completion",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient_name",
+          "label": "templates.catalogue.recipient_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "certificate_reference",
+          "label": "templates.catalogue.certificate_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_course_design_brief",
+      "name": "templates.hed_course_design_brief.name",
+      "title": "Course design brief",
+      "code": "HED-021",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "target_learners",
+          "label": "templates.catalogue.target_learners",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "learning_outcomes",
+          "label": "templates.catalogue.learning_outcomes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assessment_strategy",
+          "label": "templates.catalogue.assessment_strategy",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_course_content_approval",
+      "name": "templates.hed_course_content_approval.name",
+      "title": "Course content approval",
+      "code": "HED-022",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "content_version",
+          "label": "templates.catalogue.content_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "academic_review",
+          "label": "templates.catalogue.academic_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessibility_review",
+          "label": "templates.catalogue.accessibility_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_learning_management_import_mapping",
+      "name": "templates.hed_learning_management_import_mapping.name",
+      "title": "Learning management import mapping",
+      "code": "HED-023",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "source_course_data",
+          "label": "templates.catalogue.source_course_data",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "target_fields",
+          "label": "templates.catalogue.target_fields",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "identity_mapping",
+          "label": "templates.catalogue.identity_mapping",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_university_accreditation_evidence",
+      "name": "templates.hed_university_accreditation_evidence.name",
+      "title": "University accreditation evidence",
+      "code": "HED-024",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "program_criteria",
+          "label": "templates.catalogue.program_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_evidence",
+          "label": "templates.catalogue.verified_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_owner",
+          "label": "templates.catalogue.review_owner",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_faculty_workload_allocation",
+      "name": "templates.hed_faculty_workload_allocation.name",
+      "title": "Faculty workload allocation",
+      "code": "HED-025",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "teaching_load",
+          "label": "templates.catalogue.teaching_load",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "research_commitments",
+          "label": "templates.catalogue.research_commitments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_assignments",
+          "label": "templates.catalogue.service_assignments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_academic_conference_abstract",
+      "name": "templates.hed_academic_conference_abstract.name",
+      "title": "Academic conference abstract",
+      "code": "HED-026",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "research_summary",
+          "label": "templates.catalogue.research_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "verified_findings",
+          "label": "templates.catalogue.verified_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "submission_constraints",
+          "label": "templates.catalogue.submission_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_student_financial_aid_review",
+      "name": "templates.hed_student_financial_aid_review.name",
+      "title": "Student financial aid review",
+      "code": "HED-027",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "published_criteria",
+          "label": "templates.catalogue.published_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "submitted_evidence",
+          "label": "templates.catalogue.submitted_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_notes",
+          "label": "templates.catalogue.review_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_exchange_program_application",
+      "name": "templates.hed_exchange_program_application.name",
+      "title": "Exchange program application",
+      "code": "HED-028",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "home_institution",
+          "label": "templates.catalogue.home_institution",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "study_plan",
+          "label": "templates.catalogue.study_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "mobility_requirements",
+          "label": "templates.catalogue.mobility_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_student_accommodation_request",
+      "name": "templates.hed_student_accommodation_request.name",
+      "title": "Student accommodation request",
+      "code": "HED-029",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "housing_preferences",
+          "label": "templates.catalogue.housing_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "functional_access_needs",
+          "label": "templates.catalogue.functional_access_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_period",
+          "label": "templates.catalogue.requested_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_campus_facility_booking",
+      "name": "templates.hed_campus_facility_booking.name",
+      "title": "Campus facility booking",
+      "code": "HED-030",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "facility_type",
+          "label": "templates.catalogue.facility_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "booking_dates",
+          "label": "templates.catalogue.booking_dates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "event_purpose",
+          "label": "templates.catalogue.event_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_university_community_engagement_report",
+      "name": "templates.hed_university_community_engagement_report.name",
+      "title": "University community engagement report",
+      "code": "HED-031",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "engagement_activity",
+          "label": "templates.catalogue.engagement_activity",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "partner_feedback",
+          "label": "templates.catalogue.partner_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "verified_results",
+          "label": "templates.catalogue.verified_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "hed_professional_licensing_evidence_portfolio",
+      "name": "templates.hed_professional_licensing_evidence_portfolio.name",
+      "title": "Professional licensing evidence portfolio",
+      "code": "HED-032",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_hed",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "required_competencies",
+          "label": "templates.catalogue.required_competencies",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_experience",
+          "label": "templates.catalogue.verified_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_documents",
+          "label": "templates.catalogue.supporting_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

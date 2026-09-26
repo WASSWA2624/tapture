@@ -839,6 +839,9 @@ review                  (§33, §37, §42)
 | 22 | **Incident / Issue** | `incident_report` | Accidents, damage, theft, breakdowns, complaints |
 | 23 | **Generic Item** | `generic_item` | Anything, in seconds, refined afterwards |
 
+The library also lists the full catalogue of §13.7: 2,349 further templates in 72 categories, built on the same
+groups and conventions.
+
 **Generic Item** exists so that a user can begin capturing anything within seconds and refine the template afterwards.
 Templates 2, 3, 4 and 5 are *derived* from Equipment / Asset (§11.1): they inherit its columns and add their own, so
 a mixed register still exports one consistent asset sheet where the templates overlap.
@@ -1669,6 +1672,41 @@ Replace                  import a spreadsheet instead, and map its columns to fi
 A project that trims Building / Facility to twelve required columns and Equipment / Asset to eight is using the
 library correctly. The columns exist so that nobody has to invent them under a tin roof at two in the afternoon; they
 are not a demand that every one of them be filled.
+
+### 13.7 The full catalogue
+
+Beside the 23 starter templates of §13.4 the library ships the full catalogue of `resources/templates.md`: 2,349
+templates in 72 categories under 17 areas, from universal capture and asset registers to clinical care, fisheries,
+elections and advanced fabrication. Every one of them is ordinary template data (§11.3) and is used, trimmed,
+re-required, extended and derived exactly as §13.6 describes.
+
+A catalogue template is composed, not written out in full, so the same column means the same thing everywhere:
+
+```text
+record_admin  location_context  evidence  review      the four groups of §13.3
+context_<category>                                    the category's shared context, stickable (§20)
+pack_<record type>                                    the fields every template of its record type shares
+own starter fields                                    what makes this template different
+```
+
+There are 26 record types (observation, inspection, checklist, register, asset, transaction, case, request,
+assessment, meeting, visit, sample, survey and more). Each pack names its identity fields (§40), its choice lists and
+its suggested requiredness, and carries the record type's guidance: how it is captured, what AI may do, what it
+produces and what a reviewer checks. A resolved catalogue template holds 62 to 72 columns, every one atomic (§13.1):
+money comes with its currency, a stated measure with its unit, sizes split into length, width and height, and a date
+is one date.
+
+The library lists the starter templates first, then the catalogue by area and category, each row with its code,
+record type and column count. Search matches a template's name, code, category, area, record type and its own field
+labels; filters narrow by area, record type and tier (foundation, expansion, specialist). The preview shows the
+category, record type, suggested privacy and tier, the guidance, and every resolved column under its group with its
+type and suggested requiredness; adding it writes an editable copy into the project at version 1.
+
+The catalogue assets under `frontend/assets/templates/catalogue/` and the readable list of every template,
+`resources/template-library.md`, are generated from `resources/templates.md` by
+`frontend/tool/build_template_catalogue.dart`, with the typed packs and per-field corrections beside it in
+`frontend/tool/template_catalogue/`. The template checker holds every catalogue template to §13.1, and a test fails
+when the committed assets drift from the source.
 
 ## 14. Multi-Template Projects & Automatic Template Detection
 

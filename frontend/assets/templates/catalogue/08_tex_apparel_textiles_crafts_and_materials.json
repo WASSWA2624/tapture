@@ -1,0 +1,1523 @@
+{
+  "category": "TEX",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "tex_garment_style_specification",
+      "name": "templates.tex_garment_style_specification.name",
+      "title": "Garment style specification",
+      "code": "TEX-001",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "style_code",
+          "label": "templates.catalogue.style_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "material_specification",
+          "label": "templates.catalogue.material_specification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "size_chart",
+          "label": "templates.catalogue.size_chart",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_garment_customer_measurement",
+      "name": "templates.tex_garment_customer_measurement.name",
+      "title": "Garment customer measurement",
+      "code": "TEX-002",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "measurement_purpose",
+          "label": "templates.catalogue.measurement_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consented_dimensions",
+          "label": "templates.catalogue.consented_dimensions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_tailoring_order_intake",
+      "name": "templates.tex_tailoring_order_intake.name",
+      "title": "Tailoring order intake",
+      "code": "TEX-003",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "garment_description",
+          "label": "templates.catalogue.garment_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "agreed_design",
+          "label": "templates.catalogue.agreed_design",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "delivery_date",
+          "label": "templates.catalogue.delivery_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_fabric_roll_inventory",
+      "name": "templates.tex_fabric_roll_inventory.name",
+      "title": "Fabric roll inventory",
+      "code": "TEX-004",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "fabric_type",
+          "label": "templates.catalogue.fabric_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "roll_identifier",
+          "label": "templates.catalogue.roll_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "usable_length",
+          "label": "templates.catalogue.usable_length",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "m",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_fabric_incoming_inspection",
+      "name": "templates.tex_fabric_incoming_inspection.name",
+      "title": "Fabric incoming inspection",
+      "code": "TEX-005",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "roll_reference",
+          "label": "templates.catalogue.roll_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "defect_observations",
+          "label": "templates.catalogue.defect_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "acceptance_criteria",
+          "label": "templates.catalogue.acceptance_criteria",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_fabric_cutting_plan",
+      "name": "templates.tex_fabric_cutting_plan.name",
+      "title": "Fabric cutting plan",
+      "code": "TEX-006",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "pattern_version",
+          "label": "templates.catalogue.pattern_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "size_distribution",
+          "label": "templates.catalogue.size_distribution",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "material_allowance",
+          "label": "templates.catalogue.material_allowance",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_cutting_batch_record",
+      "name": "templates.tex_cutting_batch_record.name",
+      "title": "Cutting batch record",
+      "code": "TEX-007",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "fabric_rolls",
+          "label": "templates.catalogue.fabric_rolls",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cut_piece_counts",
+          "label": "templates.catalogue.cut_piece_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cutting_date",
+          "label": "templates.catalogue.cutting_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_sewing_operation_record",
+      "name": "templates.tex_sewing_operation_record.name",
+      "title": "Sewing operation record",
+      "code": "TEX-008",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "operation_type",
+          "label": "templates.catalogue.operation_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "completed_units",
+          "label": "templates.catalogue.completed_units",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_observations",
+          "label": "templates.catalogue.quality_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_garment_in_line_inspection",
+      "name": "templates.tex_garment_in_line_inspection.name",
+      "title": "Garment in-line inspection",
+      "code": "TEX-009",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "inspection_point",
+          "label": "templates.catalogue.inspection_point",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "defect_findings",
+          "label": "templates.catalogue.defect_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "sample_count",
+          "label": "templates.catalogue.sample_count",
+          "type": "number",
+          "required": "RECOMMENDED",
+          "unit": "count",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_garment_final_inspection",
+      "name": "templates.tex_garment_final_inspection.name",
+      "title": "Garment final inspection",
+      "code": "TEX-010",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_specification",
+          "label": "templates.catalogue.approved_specification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_length_mm",
+          "label": "templates.catalogue.observed_length_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_width_mm",
+          "label": "templates.catalogue.observed_width_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_height_mm",
+          "label": "templates.catalogue.observed_height_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "acceptance_result",
+          "label": "templates.catalogue.acceptance_result",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_apparel_finishing_checklist",
+      "name": "templates.tex_apparel_finishing_checklist.name",
+      "title": "Apparel finishing checklist",
+      "code": "TEX-011",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "finishing_steps",
+          "label": "templates.catalogue.finishing_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "label_match",
+          "label": "templates.catalogue.label_match",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "packaging_checks",
+          "label": "templates.catalogue.packaging_checks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_textile_dye_batch_log",
+      "name": "templates.tex_textile_dye_batch_log.name",
+      "title": "Textile dye batch log",
+      "code": "TEX-012",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_recipe_ref",
+          "label": "templates.catalogue.approved_recipe_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "material_lots",
+          "label": "templates.catalogue.material_lots",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "batch_results",
+          "label": "templates.catalogue.batch_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_fabric_color_approval",
+      "name": "templates.tex_fabric_color_approval.name",
+      "title": "Fabric color approval",
+      "code": "TEX-013",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_color_reference",
+          "label": "templates.catalogue.approved_color_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sample_reference",
+          "label": "templates.catalogue.sample_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_decision",
+          "label": "templates.catalogue.review_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_fabric_shrinkage_test_record",
+      "name": "templates.tex_fabric_shrinkage_test_record.name",
+      "title": "Fabric shrinkage test record",
+      "code": "TEX-014",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "test_method",
+          "label": "templates.catalogue.test_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "before_length_mm",
+          "label": "templates.catalogue.before_length_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "before_width_mm",
+          "label": "templates.catalogue.before_width_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "before_height_mm",
+          "label": "templates.catalogue.before_height_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "after_length_mm",
+          "label": "templates.catalogue.after_length_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "after_width_mm",
+          "label": "templates.catalogue.after_width_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "after_height_mm",
+          "label": "templates.catalogue.after_height_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_textile_wash_test_record",
+      "name": "templates.tex_textile_wash_test_record.name",
+      "title": "Textile wash test record",
+      "code": "TEX-015",
+      "kind": "measurement",
+      "pack": "MEASURE",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "measurement_type",
+        "measurement_date",
+        "measurement_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_measure"
+      ],
+      "fields": [
+        {
+          "field_key": "test_protocol",
+          "label": "templates.catalogue.test_protocol",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_results",
+          "label": "templates.catalogue.observed_results",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_review",
+          "label": "templates.catalogue.quality_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_garment_fit_review",
+      "name": "templates.tex_garment_fit_review.name",
+      "title": "Garment fit review",
+      "code": "TEX-016",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "fit_sample",
+          "label": "templates.catalogue.fit_sample",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "consented_feedback",
+          "label": "templates.catalogue.consented_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "design_adjustments",
+          "label": "templates.catalogue.design_adjustments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_apparel_sample_approval",
+      "name": "templates.tex_apparel_sample_approval.name",
+      "title": "Apparel sample approval",
+      "code": "TEX-017",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "sample_version",
+          "label": "templates.catalogue.sample_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "customer_comments",
+          "label": "templates.catalogue.customer_comments",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "approval_status",
+          "label": "templates.catalogue.approval_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_apparel_order_costing",
+      "name": "templates.tex_apparel_order_costing.name",
+      "title": "Apparel order costing",
+      "code": "TEX-018",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "material_usage",
+          "label": "templates.catalogue.material_usage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "labor_assumptions",
+          "label": "templates.catalogue.labor_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "overhead_basis",
+          "label": "templates.catalogue.overhead_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_artisan_product_catalogue",
+      "name": "templates.tex_artisan_product_catalogue.name",
+      "title": "Artisan product catalogue",
+      "code": "TEX-019",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "craft_type",
+          "label": "templates.catalogue.craft_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "materials",
+          "label": "templates.catalogue.materials",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maker_attribution",
+          "label": "templates.catalogue.maker_attribution",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_craft_commission_brief",
+      "name": "templates.tex_craft_commission_brief.name",
+      "title": "Craft commission brief",
+      "code": "TEX-020",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_piece",
+          "label": "templates.catalogue.requested_piece",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "design_references",
+          "label": "templates.catalogue.design_references",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_budget",
+          "label": "templates.catalogue.agreed_budget",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "agreed_budget_currency",
+          "label": "templates.catalogue.agreed_budget_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_jewelry_material_intake",
+      "name": "templates.tex_jewelry_material_intake.name",
+      "title": "Jewelry material intake",
+      "code": "TEX-021",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "material_description",
+          "label": "templates.catalogue.material_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "measured_weight",
+          "label": "templates.catalogue.measured_weight",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "kg",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_evidence",
+          "label": "templates.catalogue.source_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_jewelry_repair_intake",
+      "name": "templates.tex_jewelry_repair_intake.name",
+      "title": "Jewelry repair intake",
+      "code": "TEX-022",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "item_description",
+          "label": "templates.catalogue.item_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "reported_damage",
+          "label": "templates.catalogue.reported_damage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "customer_authorization",
+          "label": "templates.catalogue.customer_authorization",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_footwear_production_specification",
+      "name": "templates.tex_footwear_production_specification.name",
+      "title": "Footwear production specification",
+      "code": "TEX-023",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "style_reference",
+          "label": "templates.catalogue.style_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "size",
+          "label": "templates.catalogue.size",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "material_components",
+          "label": "templates.catalogue.material_components",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_leather_quality_inspection",
+      "name": "templates.tex_leather_quality_inspection.name",
+      "title": "Leather quality inspection",
+      "code": "TEX-024",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "material_batch",
+          "label": "templates.catalogue.material_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "surface_defects",
+          "label": "templates.catalogue.surface_defects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quality_grade_basis",
+          "label": "templates.catalogue.quality_grade_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_furniture_fabrication_order",
+      "name": "templates.tex_furniture_fabrication_order.name",
+      "title": "Furniture fabrication order",
+      "code": "TEX-025",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_design",
+          "label": "templates.catalogue.approved_design",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "length_mm",
+          "label": "templates.catalogue.length_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "width_mm",
+          "label": "templates.catalogue.width_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "height_mm",
+          "label": "templates.catalogue.height_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "finish_requirements",
+          "label": "templates.catalogue.finish_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_woodworking_quality_check",
+      "name": "templates.tex_woodworking_quality_check.name",
+      "title": "Woodworking quality check",
+      "code": "TEX-026",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "drawing_reference",
+          "label": "templates.catalogue.drawing_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_length_mm",
+          "label": "templates.catalogue.observed_length_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_width_mm",
+          "label": "templates.catalogue.observed_width_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_height_mm",
+          "label": "templates.catalogue.observed_height_mm",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "finish_defects",
+          "label": "templates.catalogue.finish_defects",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_ceramics_production_batch",
+      "name": "templates.tex_ceramics_production_batch.name",
+      "title": "Ceramics production batch",
+      "code": "TEX-027",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "clay_batch",
+          "label": "templates.catalogue.clay_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_process_ref",
+          "label": "templates.catalogue.approved_process_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "yield",
+          "label": "templates.catalogue.yield",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "yield_unit",
+          "label": "templates.catalogue.yield_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_craft_market_sales_record",
+      "name": "templates.tex_craft_market_sales_record.name",
+      "title": "Craft market sales record",
+      "code": "TEX-028",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "product_reference",
+          "label": "templates.catalogue.product_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity_sold",
+          "label": "templates.catalogue.quantity_sold",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sales_amount",
+          "label": "templates.catalogue.sales_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "sales_currency",
+          "label": "templates.catalogue.sales_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_fashion_collection_planning",
+      "name": "templates.tex_fashion_collection_planning.name",
+      "title": "Fashion collection planning",
+      "code": "TEX-029",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "collection_theme",
+          "label": "templates.catalogue.collection_theme",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "styles",
+          "label": "templates.catalogue.styles",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "production_schedule",
+          "label": "templates.catalogue.production_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "tex_textile_waste_recovery_log",
+      "name": "templates.tex_textile_waste_recovery_log.name",
+      "title": "Textile waste recovery log",
+      "code": "TEX-030",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "internal",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_tex",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "waste_type",
+          "label": "templates.catalogue.waste_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity",
+          "label": "templates.catalogue.quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reuse_destination",
+          "label": "templates.catalogue.reuse_destination",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

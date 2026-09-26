@@ -8,6 +8,10 @@ final class FakeShippedTemplateLoader implements ShippedTemplateLoader {
   /// Templates [library] returns. Tests seed this instead of packing JSON.
   final List<TemplateDef> rows = <TemplateDef>[];
 
+  /// Catalogue rows [entries] lists after [rows]. Each resolves to the
+  /// [rows] template with the same key, so seed both for a preview or copy.
+  final List<ShippedTemplateEntry> catalogue = <ShippedTemplateEntry>[];
+
   /// When set, [library] returns this instead of [rows].
   Failure? loadFailure;
 
@@ -26,6 +30,42 @@ final class FakeShippedTemplateLoader implements ShippedTemplateLoader {
       return FailureResult<List<TemplateDef>>(forced);
     }
     return Success<List<TemplateDef>>(List<TemplateDef>.of(rows));
+  }
+
+  @override
+  Future<Result<List<ShippedTemplateEntry>>> entries() async {
+    final Failure? forced = loadFailure;
+    if (forced != null) {
+      return FailureResult<List<ShippedTemplateEntry>>(forced);
+    }
+    final Set<String> listed = <String>{
+      for (final ShippedTemplateEntry entry in catalogue) entry.templateKey,
+    };
+    return Success<List<ShippedTemplateEntry>>(<ShippedTemplateEntry>[
+      for (final TemplateDef row in rows)
+        if (!listed.contains(row.templateKey))
+          ShippedTemplateEntry.starter(row),
+      ...catalogue,
+    ]);
+  }
+
+  @override
+  Future<Result<TemplateDef>> template(String templateKey) async {
+    final Failure? forced = loadFailure;
+    if (forced != null) {
+      return FailureResult<TemplateDef>(forced);
+    }
+    for (final TemplateDef row in rows) {
+      if (row.templateKey == templateKey) {
+        return Success<TemplateDef>(row);
+      }
+    }
+    return const FailureResult<TemplateDef>(
+      ValidationFailure(
+        message: 'That shipped template is not on this device.',
+        recoveryAction: 'Pick another template from the library.',
+      ),
+    );
   }
 
   @override

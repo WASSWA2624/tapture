@@ -1,0 +1,1683 @@
+{
+  "category": "LEG",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "leg_legal_matter_intake",
+      "name": "templates.leg_legal_matter_intake.name",
+      "title": "Legal matter intake",
+      "code": "LEG-001",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "matter_type",
+          "label": "templates.catalogue.matter_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "parties",
+          "label": "templates.catalogue.parties",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_outcome",
+          "label": "templates.catalogue.requested_outcome",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_contract_metadata_extraction",
+      "name": "templates.leg_contract_metadata_extraction.name",
+      "title": "Contract metadata extraction",
+      "code": "LEG-002",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "contract_parties",
+          "label": "templates.catalogue.contract_parties",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "key_obligations",
+          "label": "templates.catalogue.key_obligations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_contract_review_request",
+      "name": "templates.leg_contract_review_request.name",
+      "title": "Contract review request",
+      "code": "LEG-003",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "contract_type",
+          "label": "templates.catalogue.contract_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "commercial_context",
+          "label": "templates.catalogue.commercial_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_deadline_date",
+          "label": "templates.catalogue.review_deadline_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_contract_clause_comparison",
+      "name": "templates.leg_contract_clause_comparison.name",
+      "title": "Contract clause comparison",
+      "code": "LEG-004",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "baseline_clause",
+          "label": "templates.catalogue.baseline_clause",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_clause",
+          "label": "templates.catalogue.proposed_clause",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_notes",
+          "label": "templates.catalogue.review_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_contract_obligations_tracker",
+      "name": "templates.leg_contract_obligations_tracker.name",
+      "title": "Contract obligations tracker",
+      "code": "LEG-005",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "obligation_text",
+          "label": "templates.catalogue.obligation_text",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "responsible_party",
+          "label": "templates.catalogue.responsible_party",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "due_date",
+          "label": "templates.catalogue.due_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_contract_renewal_notice",
+      "name": "templates.leg_contract_renewal_notice.name",
+      "title": "Contract renewal notice",
+      "code": "LEG-006",
+      "kind": "communication",
+      "pack": "COMM",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "communication_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_comm"
+      ],
+      "fields": [
+        {
+          "field_key": "contract_reference",
+          "label": "templates.catalogue.contract_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "notice_deadline_date",
+          "label": "templates.catalogue.notice_deadline_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_action",
+          "label": "templates.catalogue.proposed_action",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_non_disclosure_agreement_draft",
+      "name": "templates.leg_non_disclosure_agreement_draft.name",
+      "title": "Non-disclosure agreement draft",
+      "code": "LEG-007",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "disclosing_parties",
+          "label": "templates.catalogue.disclosing_parties",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "confidential_scope",
+          "label": "templates.catalogue.confidential_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "permitted_use",
+          "label": "templates.catalogue.permitted_use",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_service_agreement_draft",
+      "name": "templates.leg_service_agreement_draft.name",
+      "title": "Service agreement draft",
+      "code": "LEG-008",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "service_scope",
+          "label": "templates.catalogue.service_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "service_levels",
+          "label": "templates.catalogue.service_levels",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "payment_terms",
+          "label": "templates.catalogue.payment_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_memorandum_of_understanding_draft",
+      "name": "templates.leg_memorandum_of_understanding_draft.name",
+      "title": "Memorandum of understanding draft",
+      "code": "LEG-009",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "cooperation_objective",
+          "label": "templates.catalogue.cooperation_objective",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "party_contributions",
+          "label": "templates.catalogue.party_contributions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "duration",
+          "label": "templates.catalogue.duration",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "minutes",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_lease_agreement_drafting_brief",
+      "name": "templates.leg_lease_agreement_drafting_brief.name",
+      "title": "Lease agreement drafting brief",
+      "code": "LEG-010",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "leased_property",
+          "label": "templates.catalogue.leased_property",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "lease_term",
+          "label": "templates.catalogue.lease_term",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "rent_terms",
+          "label": "templates.catalogue.rent_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_employment_agreement_drafting_brief",
+      "name": "templates.leg_employment_agreement_drafting_brief.name",
+      "title": "Employment agreement drafting brief",
+      "code": "LEG-011",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "role",
+          "label": "templates.catalogue.role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "compensation_terms",
+          "label": "templates.catalogue.compensation_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "work_location",
+          "label": "templates.catalogue.work_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_partnership_agreement_drafting_brief",
+      "name": "templates.leg_partnership_agreement_drafting_brief.name",
+      "title": "Partnership agreement drafting brief",
+      "code": "LEG-012",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "contributions",
+          "label": "templates.catalogue.contributions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "decision_rights",
+          "label": "templates.catalogue.decision_rights",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "exit_terms",
+          "label": "templates.catalogue.exit_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_contract_signature_routing",
+      "name": "templates.leg_contract_signature_routing.name",
+      "title": "Contract signature routing",
+      "code": "LEG-013",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "signatories",
+          "label": "templates.catalogue.signatories",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "signing_order",
+          "label": "templates.catalogue.signing_order",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_version",
+          "label": "templates.catalogue.approved_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_board_meeting_pack",
+      "name": "templates.leg_board_meeting_pack.name",
+      "title": "Board meeting pack",
+      "code": "LEG-014",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "meeting_agenda",
+          "label": "templates.catalogue.meeting_agenda",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "decision_papers",
+          "label": "templates.catalogue.decision_papers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "prior_actions",
+          "label": "templates.catalogue.prior_actions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_board_resolution_draft",
+      "name": "templates.leg_board_resolution_draft.name",
+      "title": "Board resolution draft",
+      "code": "LEG-015",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "resolution_subject",
+          "label": "templates.catalogue.resolution_subject",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_decision",
+          "label": "templates.catalogue.proposed_decision",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "pending",
+              "label": "templates.choices.decision.pending"
+            },
+            {
+              "code": "approved",
+              "label": "templates.choices.decision.approved"
+            },
+            {
+              "code": "approved_with_conditions",
+              "label": "templates.choices.decision.approved_with_conditions"
+            },
+            {
+              "code": "deferred",
+              "label": "templates.choices.decision.deferred"
+            },
+            {
+              "code": "rejected",
+              "label": "templates.choices.decision.rejected"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "approval_record",
+          "label": "templates.catalogue.approval_record",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_company_statutory_records_register",
+      "name": "templates.leg_company_statutory_records_register.name",
+      "title": "Company statutory records register",
+      "code": "LEG-016",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "record_category",
+          "label": "templates.catalogue.record_category",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "filing_reference",
+          "label": "templates.catalogue.filing_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "renewal_date",
+          "label": "templates.catalogue.renewal_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_shareholder_communication_draft",
+      "name": "templates.leg_shareholder_communication_draft.name",
+      "title": "Shareholder communication draft",
+      "code": "LEG-017",
+      "kind": "communication",
+      "pack": "COMM",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "communication_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_comm"
+      ],
+      "fields": [
+        {
+          "field_key": "communication_purpose",
+          "label": "templates.catalogue.communication_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_information",
+          "label": "templates.catalogue.approved_information",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "recipient_group",
+          "label": "templates.catalogue.recipient_group",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_power_of_attorney_drafting_intake",
+      "name": "templates.leg_power_of_attorney_drafting_intake.name",
+      "title": "Power of attorney drafting intake",
+      "code": "LEG-018",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "grantor",
+          "label": "templates.catalogue.grantor",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_scope",
+          "label": "templates.catalogue.authorized_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "duration",
+          "label": "templates.catalogue.duration",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "minutes",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_legal_research_evidence_log",
+      "name": "templates.leg_legal_research_evidence_log.name",
+      "title": "Legal research evidence log",
+      "code": "LEG-019",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "research_question",
+          "label": "templates.catalogue.research_question",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authority_reference",
+          "label": "templates.catalogue.authority_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "relevance_notes",
+          "label": "templates.catalogue.relevance_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_litigation_document_chronology",
+      "name": "templates.leg_litigation_document_chronology.name",
+      "title": "Litigation document chronology",
+      "code": "LEG-020",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "event_date",
+          "label": "templates.catalogue.event_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "document_reference",
+          "label": "templates.catalogue.document_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "event_summary",
+          "label": "templates.catalogue.event_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_legal_evidence_index",
+      "name": "templates.leg_legal_evidence_index.name",
+      "title": "Legal evidence index",
+      "code": "LEG-021",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "exhibit_identifier",
+          "label": "templates.catalogue.exhibit_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source",
+          "label": "templates.catalogue.source",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authenticity_notes",
+          "label": "templates.catalogue.authenticity_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_witness_interview_record",
+      "name": "templates.leg_witness_interview_record.name",
+      "title": "Witness interview record",
+      "code": "LEG-022",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "interview_consent",
+          "label": "templates.catalogue.interview_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "statement",
+          "label": "templates.catalogue.statement",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "verification_notes",
+          "label": "templates.catalogue.verification_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_dispute_resolution_intake",
+      "name": "templates.leg_dispute_resolution_intake.name",
+      "title": "Dispute resolution intake",
+      "code": "LEG-023",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "disputed_issue",
+          "label": "templates.catalogue.disputed_issue",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "prior_attempts",
+          "label": "templates.catalogue.prior_attempts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_remedy",
+          "label": "templates.catalogue.requested_remedy",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_settlement_proposal_drafting_brief",
+      "name": "templates.leg_settlement_proposal_drafting_brief.name",
+      "title": "Settlement proposal drafting brief",
+      "code": "LEG-024",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "dispute_reference",
+          "label": "templates.catalogue.dispute_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_terms",
+          "label": "templates.catalogue.proposed_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approval_constraints",
+          "label": "templates.catalogue.approval_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_intellectual_property_register",
+      "name": "templates.leg_intellectual_property_register.name",
+      "title": "Intellectual property register",
+      "code": "LEG-025",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "ip_type",
+          "label": "templates.catalogue.ip_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "registration_reference",
+          "label": "templates.catalogue.registration_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "renewal_deadline_date",
+          "label": "templates.catalogue.renewal_deadline_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_trademark_application_information",
+      "name": "templates.leg_trademark_application_information.name",
+      "title": "Trademark application information",
+      "code": "LEG-026",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "mark_description",
+          "label": "templates.catalogue.mark_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "applicant",
+          "label": "templates.catalogue.applicant",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "goods_or_services",
+          "label": "templates.catalogue.goods_or_services",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_copyright_permission_request",
+      "name": "templates.leg_copyright_permission_request.name",
+      "title": "Copyright permission request",
+      "code": "LEG-027",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "work_reference",
+          "label": "templates.catalogue.work_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "intended_use",
+          "label": "templates.catalogue.intended_use",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "permission_scope",
+          "label": "templates.catalogue.permission_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_data_processing_agreement_brief",
+      "name": "templates.leg_data_processing_agreement_brief.name",
+      "title": "Data processing agreement brief",
+      "code": "LEG-028",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "processing_purpose",
+          "label": "templates.catalogue.processing_purpose",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_categories",
+          "label": "templates.catalogue.data_categories",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "party_roles",
+          "label": "templates.catalogue.party_roles",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_document_legal_hold_record",
+      "name": "templates.leg_document_legal_hold_record.name",
+      "title": "Document legal hold record",
+      "code": "LEG-029",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "hold_scope",
+          "label": "templates.catalogue.hold_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "custodians",
+          "label": "templates.catalogue.custodians",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "release_authority",
+          "label": "templates.catalogue.release_authority",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_legal_deadline_tracker",
+      "name": "templates.leg_legal_deadline_tracker.name",
+      "title": "Legal deadline tracker",
+      "code": "LEG-030",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "deadline_basis",
+          "label": "templates.catalogue.deadline_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "calculation_notes",
+          "label": "templates.catalogue.calculation_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "responsible_counsel",
+          "label": "templates.catalogue.responsible_counsel",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_corporate_policy_approval",
+      "name": "templates.leg_corporate_policy_approval.name",
+      "title": "Corporate policy approval",
+      "code": "LEG-031",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "policy_version",
+          "label": "templates.catalogue.policy_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reviewers",
+          "label": "templates.catalogue.reviewers",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "effective_date",
+          "label": "templates.catalogue.effective_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_delegation_of_authority_register",
+      "name": "templates.leg_delegation_of_authority_register.name",
+      "title": "Delegation of authority register",
+      "code": "LEG-032",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "decision_category",
+          "label": "templates.catalogue.decision_category",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_role",
+          "label": "templates.catalogue.authorized_role",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approval_limit",
+          "label": "templates.catalogue.approval_limit",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "approval_limit_currency",
+          "label": "templates.catalogue.approval_limit_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_regulatory_filing_preparation",
+      "name": "templates.leg_regulatory_filing_preparation.name",
+      "title": "Regulatory filing preparation",
+      "code": "LEG-033",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "filing_type",
+          "label": "templates.catalogue.filing_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reporting_period",
+          "label": "templates.catalogue.reporting_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_attachments",
+          "label": "templates.catalogue.required_attachments",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_land_transaction_document_intake",
+      "name": "templates.leg_land_transaction_document_intake.name",
+      "title": "Land transaction document intake",
+      "code": "LEG-034",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "property_reference",
+          "label": "templates.catalogue.property_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transaction_type",
+          "label": "templates.catalogue.transaction_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "ownership_evidence",
+          "label": "templates.catalogue.ownership_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "leg_legal_opinion_request",
+      "name": "templates.leg_legal_opinion_request.name",
+      "title": "Legal opinion request",
+      "code": "LEG-035",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_leg",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "question_presented",
+          "label": "templates.catalogue.question_presented",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "relevant_facts",
+          "label": "templates.catalogue.relevant_facts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_documents",
+          "label": "templates.catalogue.supporting_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

@@ -7,6 +7,13 @@ const String _defaultDir = 'assets/templates';
 /// Schema file that lists the allowed field types and the asset shape.
 const String _schemaName = '_schema.json';
 
+/// Subfolder of the full catalogue: one file per category, each holding many
+/// templates, plus the pack and context field groups they inherit.
+const String _catalogueDir = 'catalogue';
+
+/// Field groups file, at the root and inside the catalogue.
+const String _groupsName = '_groups.json';
+
 /// How to call this, printed when an argument is not a directory.
 const String _usage = 'usage: dart run tool/check_templates.dart [directory]';
 
@@ -342,6 +349,7 @@ typedef _ParsedAsset = ({
   List<String> inheritsGroups,
   Map<String, Object?> root,
   List<_Field> fields,
+  int lineOffset,
 });
 
 /// Reports every way the assets under [root] break the schema or §13.1.
@@ -379,31 +387,207 @@ List<_Violation> _findViolations(Directory root) {
       assets.add(parsed);
     }
   }
+  final Directory catalogue = Directory('${root.path}/$_catalogueDir');
+  if (catalogue.existsSync()) {
+    final File catalogueGroups = File('${catalogue.path}/$_groupsName');
+    if (catalogueGroups.existsSync()) {
+      groups.addAll(_groupKeysFrom(catalogueGroups));
+      found.addAll(_groupViolations(catalogueGroups, schema.types));
+    }
+    for (final File file in _assetFiles(catalogue)) {
+      assets.addAll(_parseCatalogue(file, found));
+    }
+  }
   final Map<String, _ParsedAsset> byKey = <String, _ParsedAsset>{
     for (final _ParsedAsset asset in assets) asset.templateKey: asset,
   };
   for (final _ParsedAsset asset in assets) {
     final Set<String> inherited = _inheritedKeys(asset, groups, byKey);
+    for (final String group in asset.inheritsGroups) {
+      if (!groups.containsKey(group)) {
+        found.add((
+          file: asset.path,
+          line: _lineOf(asset.source, '"$group"') + asset.lineOffset,
+          message:
+              'inherits_groups names "$group", which no group file '
+              'defines',
+        ));
+      }
+    }
     found.addAll(
-      _fieldRuleViolations(
-        asset.path,
-        asset.source,
-        asset.root,
-        asset.fields,
-        schema.types,
-        inherited,
+      _shifted(
+        _fieldRuleViolations(
+          asset.path,
+          asset.source,
+          asset.root,
+          asset.fields,
+          schema.types,
+          inherited,
+        ),
+        asset.lineOffset,
       ),
     );
   }
   return found;
 }
 
-/// How many assets [root] holds, ignoring `_*.json`.
+/// [violations] with every line moved down by [offset], for a template read
+/// from a slice of a larger catalogue file.
+Iterable<_Violation> _shifted(Iterable<_Violation> violations, int offset) {
+  if (offset == 0) {
+    return violations;
+  }
+  return violations.map(
+    (_Violation violation) => (
+      file: violation.file,
+      line: violation.line + offset,
+      message: violation.message,
+    ),
+  );
+}
+
+/// Every template of one catalogue file, each parsed from its own slice so
+/// a finding names the line inside that template.
+List<_ParsedAsset> _parseCatalogue(File file, List<_Violation> found) {
+  final String source = file.readAsStringSync();
+  final String path = _display(file);
+  final Map<String, Object?>? root = _asMap(_decode(source));
+  final Object? templates = root?['templates'];
+  if (templates is! List) {
+    found.add((
+      file: path,
+      line: 1,
+      message: 'a catalogue file needs a "templates" array',
+    ));
+    return <_ParsedAsset>[];
+  }
+  final List<String> lines = source.split('\n');
+  final List<int> starts = <int>[];
+  int from = 0;
+  for (final Object? item in templates) {
+    final String key = _asString(_asMap(item)?['template_key']) ?? '';
+    final int start = _lineIndexFrom(lines, '"template_key": "$key"', from);
+    starts.add(start < 0 ? from : start);
+    from = starts.last + 1;
+  }
+  final List<_ParsedAsset> parsed = <_ParsedAsset>[];
+  for (int index = 0; index < templates.length; index++) {
+    final Map<String, Object?>? template = _asMap(templates[index]);
+    if (template == null) {
+      found.add((
+        file: path,
+        line: starts[index] + 1,
+        message: 'a catalogue template is not an object',
+      ));
+      continue;
+    }
+    final int end = index + 1 < starts.length
+        ? starts[index + 1]
+        : lines.length;
+    final String slice = lines.sublist(starts[index], end).join('\n');
+    parsed.add(_parseRoot(path, slice, template, found, starts[index]));
+  }
+  return parsed;
+}
+
+/// Checks every field of every group in a catalogue `_groups.json` against
+/// the same rules as a template's own fields.
+List<_Violation> _groupViolations(File file, Set<String> types) {
+  final String source = file.readAsStringSync();
+  final String path = _display(file);
+  final Map<String, Object?>? root = _asMap(_decode(source));
+  if (root == null) {
+    return <_Violation>[
+      (file: path, line: 1, message: 'the group file is not a JSON object'),
+    ];
+  }
+  final List<String> lines = source.split('\n');
+  final List<_Violation> found = <_Violation>[];
+  for (final MapEntry<String, Object?> entry in root.entries) {
+    final int start = _lineIndexFrom(lines, '"${entry.key}": {', 0);
+    final int offset = start < 0 ? 0 : start;
+    final String slice = lines.sublist(offset).join('\n');
+    final List<_Field> fields = <_Field>[];
+    for (final Map<String, Object?> field in _fieldMaps(
+      _asMap(entry.value)?['fields'],
+    )) {
+      final String key = _asString(field['field_key']) ?? '';
+      final int line = _lineOfField(slice, key, field, 0);
+      for (final String name in _fieldKeys) {
+        if (!field.containsKey(name)) {
+          found.add((
+            file: path,
+            line: line + offset,
+            message: 'a field is missing "$name"',
+          ));
+        }
+      }
+      fields.add((
+        key: key,
+        label: _asString(field['label']) ?? '',
+        type: _asString(field['type']) ?? '',
+        requiredWhen: _asString(field['required_when']),
+        unit: _asString(field['unit']),
+        line: line,
+      ));
+    }
+    found.addAll(
+      _shifted(
+        _fieldRuleViolations(
+          path,
+          slice,
+          const <String, Object?>{},
+          fields,
+          types,
+          const <String>{},
+        ),
+        offset,
+      ),
+    );
+  }
+  return found;
+}
+
+/// Field objects in [value], skipping anything that is not one.
+List<Map<String, Object?>> _fieldMaps(Object? value) {
+  if (value is! List) {
+    return <Map<String, Object?>>[];
+  }
+  return <Map<String, Object?>>[
+    for (final Object? item in value) ?_asMap(item),
+  ];
+}
+
+/// Zero-based index of the first line at or after [from] holding [needle],
+/// or -1 when none does.
+int _lineIndexFrom(List<String> lines, String needle, int from) {
+  for (int index = from; index < lines.length; index++) {
+    if (lines[index].contains(needle)) {
+      return index;
+    }
+  }
+  return -1;
+}
+
+/// How many templates [root] holds: one per asset file, ignoring `_*.json`,
+/// plus every template in the catalogue's category files.
 int _assetCount(Directory root) {
   if (!root.existsSync()) {
     return 0;
   }
-  return _assetFiles(root).length;
+  int count = _assetFiles(root).length;
+  final Directory catalogue = Directory('${root.path}/$_catalogueDir');
+  if (catalogue.existsSync()) {
+    for (final File file in _assetFiles(catalogue)) {
+      final Object? templates = _asMap(
+        _decode(file.readAsStringSync()),
+      )?['templates'];
+      if (templates is List) {
+        count += templates.length;
+      }
+    }
+  }
+  return count;
 }
 
 /// JSON files in [root] that are templates, not schema or group lists.
@@ -571,7 +755,19 @@ _ParsedAsset? _parseAsset(File file, List<_Violation> found) {
     found.add((file: path, line: 1, message: 'the asset is not an object'));
     return null;
   }
-  found.addAll(_schemaViolations(path, source, root));
+  return _parseRoot(path, source, root, found, 0);
+}
+
+/// Parses one template object read from [source], whose first line is line
+/// [lineOffset] + 1 of the file, and records its schema violations.
+_ParsedAsset _parseRoot(
+  String path,
+  String source,
+  Map<String, Object?> root,
+  List<_Violation> found,
+  int lineOffset,
+) {
+  found.addAll(_shifted(_schemaViolations(path, source, root), lineOffset));
   final Object? rawFields = root['fields'];
   final List<_Field> fields = <_Field>[];
   if (rawFields is List) {
@@ -580,7 +776,7 @@ _ParsedAsset? _parseAsset(File file, List<_Violation> found) {
       if (map == null) {
         found.add((
           file: path,
-          line: _lineOf(source, '"fields"'),
+          line: _lineOf(source, '"fields"') + lineOffset,
           message: 'a field is not an object',
         ));
         continue;
@@ -609,11 +805,12 @@ _ParsedAsset? _parseAsset(File file, List<_Violation> found) {
   return (
     path: path,
     source: source,
-    templateKey: _asString(root['template_key']) ?? _basename(file.uri),
+    templateKey: _asString(root['template_key']) ?? _basename(Uri.file(path)),
     derivesFrom: _asString(root['derives_from']),
     inheritsGroups: inherits,
     root: root,
     fields: fields,
+    lineOffset: lineOffset,
   );
 }
 

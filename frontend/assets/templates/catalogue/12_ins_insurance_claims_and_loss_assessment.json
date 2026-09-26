@@ -1,0 +1,1613 @@
+{
+  "category": "INS",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "ins_insurance_prospect_intake",
+      "name": "templates.ins_insurance_prospect_intake.name",
+      "title": "Insurance prospect intake",
+      "code": "INS-001",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "requested_cover",
+          "label": "templates.catalogue.requested_cover",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "declared_risk_details",
+          "label": "templates.catalogue.declared_risk_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "contact_permission",
+          "label": "templates.catalogue.contact_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_insurance_application_evidence",
+      "name": "templates.ins_insurance_application_evidence.name",
+      "title": "Insurance application evidence",
+      "code": "INS-002",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "product_type",
+          "label": "templates.catalogue.product_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "applicant_declarations",
+          "label": "templates.catalogue.applicant_declarations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_documents",
+          "label": "templates.catalogue.supporting_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_insurance_policy_extraction",
+      "name": "templates.ins_insurance_policy_extraction.name",
+      "title": "Insurance policy extraction",
+      "code": "INS-003",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "policy_number",
+          "label": "templates.catalogue.policy_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "coverage_period",
+          "label": "templates.catalogue.coverage_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "policy_terms",
+          "label": "templates.catalogue.policy_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_policy_renewal_tracker",
+      "name": "templates.ins_policy_renewal_tracker.name",
+      "title": "Policy renewal tracker",
+      "code": "INS-004",
+      "kind": "tracker",
+      "pack": "TRACK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "tracker_reference",
+        "tracked_item"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_track"
+      ],
+      "fields": [
+        {
+          "field_key": "renewal_date",
+          "label": "templates.catalogue.renewal_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "updated_risk_details",
+          "label": "templates.catalogue.updated_risk_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "customer_response",
+          "label": "templates.catalogue.customer_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_insurance_coverage_comparison",
+      "name": "templates.ins_insurance_coverage_comparison.name",
+      "title": "Insurance coverage comparison",
+      "code": "INS-005",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "policy_wording_sources",
+          "label": "templates.catalogue.policy_wording_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "coverage_differences",
+          "label": "templates.catalogue.coverage_differences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "licensed_review",
+          "label": "templates.catalogue.licensed_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_insured_asset_schedule",
+      "name": "templates.ins_insured_asset_schedule.name",
+      "title": "Insured asset schedule",
+      "code": "INS-006",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "asset_description",
+          "label": "templates.catalogue.asset_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "declared_value",
+          "label": "templates.catalogue.declared_value",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "declared_value_currency",
+          "label": "templates.catalogue.declared_value_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "valuation_evidence",
+          "label": "templates.catalogue.valuation_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_property_risk_survey",
+      "name": "templates.ins_property_risk_survey.name",
+      "title": "Property risk survey",
+      "code": "INS-007",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "building_features",
+          "label": "templates.catalogue.building_features",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_hazards",
+          "label": "templates.catalogue.observed_hazards",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "survey_limitations",
+          "label": "templates.catalogue.survey_limitations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_motor_insurance_inspection",
+      "name": "templates.ins_motor_insurance_inspection.name",
+      "title": "Motor insurance inspection",
+      "code": "INS-008",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "vehicle_identifier",
+          "label": "templates.catalogue.vehicle_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "condition_photos",
+          "label": "templates.catalogue.condition_photos",
+          "type": "photo_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "valuation_reference",
+          "label": "templates.catalogue.valuation_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_insurance_claim_notification",
+      "name": "templates.ins_insurance_claim_notification.name",
+      "title": "Insurance claim notification",
+      "code": "INS-009",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "reported_event",
+          "label": "templates.catalogue.reported_event",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "policy_reference",
+          "label": "templates.catalogue.policy_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "initial_evidence",
+          "label": "templates.catalogue.initial_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_claim_document_checklist",
+      "name": "templates.ins_claim_document_checklist.name",
+      "title": "Claim document checklist",
+      "code": "INS-010",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "claim_type",
+          "label": "templates.catalogue.claim_type",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_documents",
+          "label": "templates.catalogue.required_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "received_evidence",
+          "label": "templates.catalogue.received_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_motor_accident_claim_evidence",
+      "name": "templates.ins_motor_accident_claim_evidence.name",
+      "title": "Motor accident claim evidence",
+      "code": "INS-011",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "incident_photos",
+          "label": "templates.catalogue.incident_photos",
+          "type": "photo_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_event_details",
+          "label": "templates.catalogue.verified_event_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "damage_description",
+          "label": "templates.catalogue.damage_description",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_property_damage_claim_inspection",
+      "name": "templates.ins_property_damage_claim_inspection.name",
+      "title": "Property damage claim inspection",
+      "code": "INS-012",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "affected_property",
+          "label": "templates.catalogue.affected_property",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visible_damage",
+          "label": "templates.catalogue.visible_damage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cause_uncertainties",
+          "label": "templates.catalogue.cause_uncertainties",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_fire_damage_survey_evidence",
+      "name": "templates.ins_fire_damage_survey_evidence.name",
+      "title": "Fire damage survey evidence",
+      "code": "INS-013",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "authorized_site_access",
+          "label": "templates.catalogue.authorized_site_access",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_damage",
+          "label": "templates.catalogue.observed_damage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_assessment",
+          "label": "templates.catalogue.qualified_assessment",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_flood_damage_survey_evidence",
+      "name": "templates.ins_flood_damage_survey_evidence.name",
+      "title": "Flood damage survey evidence",
+      "code": "INS-014",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "water_damage_extent",
+          "label": "templates.catalogue.water_damage_extent",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "asset_condition",
+          "label": "templates.catalogue.asset_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "event_sources",
+          "label": "templates.catalogue.event_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_theft_claim_evidence_index",
+      "name": "templates.ins_theft_claim_evidence_index.name",
+      "title": "Theft claim evidence index",
+      "code": "INS-015",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "claimed_items",
+          "label": "templates.catalogue.claimed_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "ownership_evidence",
+          "label": "templates.catalogue.ownership_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "official_report_ref",
+          "label": "templates.catalogue.official_report_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_equipment_breakdown_claim",
+      "name": "templates.ins_equipment_breakdown_claim.name",
+      "title": "Equipment breakdown claim",
+      "code": "INS-016",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "asset_identifier",
+          "label": "templates.catalogue.asset_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "fault_history",
+          "label": "templates.catalogue.fault_history",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_service_findings",
+          "label": "templates.catalogue.qualified_service_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_cargo_loss_claim_assessment",
+      "name": "templates.ins_cargo_loss_claim_assessment.name",
+      "title": "Cargo loss claim assessment",
+      "code": "INS-017",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "shipment_records",
+          "label": "templates.catalogue.shipment_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "damage_evidence",
+          "label": "templates.catalogue.damage_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "policy_review_ref",
+          "label": "templates.catalogue.policy_review_ref",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_agricultural_crop_damage_survey",
+      "name": "templates.ins_agricultural_crop_damage_survey.name",
+      "title": "Agricultural crop damage survey",
+      "code": "INS-018",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "affected_plot",
+          "label": "templates.catalogue.affected_plot",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measured_damage",
+          "label": "templates.catalogue.measured_damage",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "sampling_method",
+          "label": "templates.catalogue.sampling_method",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_livestock_insurance_claim_evidence",
+      "name": "templates.ins_livestock_insurance_claim_evidence.name",
+      "title": "Livestock insurance claim evidence",
+      "code": "INS-019",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "animal_identifier",
+          "label": "templates.catalogue.animal_identifier",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "event_evidence",
+          "label": "templates.catalogue.event_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "veterinary_report",
+          "label": "templates.catalogue.veterinary_report",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_health_insurance_claim_administration",
+      "name": "templates.ins_health_insurance_claim_administration.name",
+      "title": "Health insurance claim administration",
+      "code": "INS-020",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "claim_reference",
+          "label": "templates.catalogue.claim_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_documents",
+          "label": "templates.catalogue.authorized_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "minimum_patient_details",
+          "label": "templates.catalogue.minimum_patient_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_travel_insurance_claim_intake",
+      "name": "templates.ins_travel_insurance_claim_intake.name",
+      "title": "Travel insurance claim intake",
+      "code": "INS-021",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "insured_trip",
+          "label": "templates.catalogue.insured_trip",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_event",
+          "label": "templates.catalogue.reported_event",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_documents",
+          "label": "templates.catalogue.supporting_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_business_interruption_evidence",
+      "name": "templates.ins_business_interruption_evidence.name",
+      "title": "Business interruption evidence",
+      "code": "INS-022",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "interruption_period",
+          "label": "templates.catalogue.interruption_period",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_financial_records",
+          "label": "templates.catalogue.verified_financial_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_loss_adjuster_field_report",
+      "name": "templates.ins_loss_adjuster_field_report.name",
+      "title": "Loss adjuster field report",
+      "code": "INS-023",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "inspection_findings",
+          "label": "templates.catalogue.inspection_findings",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "supporting_evidence",
+          "label": "templates.catalogue.supporting_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assessment_limitations",
+          "label": "templates.catalogue.assessment_limitations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_repair_estimate_comparison",
+      "name": "templates.ins_repair_estimate_comparison.name",
+      "title": "Repair estimate comparison",
+      "code": "INS-024",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "supplier_estimates",
+          "label": "templates.catalogue.supplier_estimates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "scope_consistency",
+          "label": "templates.catalogue.scope_consistency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_costs",
+          "label": "templates.catalogue.verified_costs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_claim_reserve_review_inputs",
+      "name": "templates.ins_claim_reserve_review_inputs.name",
+      "title": "Claim reserve review inputs",
+      "code": "INS-025",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_loss_evidence",
+          "label": "templates.catalogue.verified_loss_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "uncertainty",
+          "label": "templates.catalogue.uncertainty",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_assumptions",
+          "label": "templates.catalogue.authorized_assumptions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_claims_settlement_approval",
+      "name": "templates.ins_claims_settlement_approval.name",
+      "title": "Claims settlement approval",
+      "code": "INS-026",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "assessment_reference",
+          "label": "templates.catalogue.assessment_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_amount",
+          "label": "templates.catalogue.proposed_amount",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "proposed_currency",
+          "label": "templates.catalogue.proposed_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_review",
+          "label": "templates.catalogue.authorized_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_claim_payment_confirmation",
+      "name": "templates.ins_claim_payment_confirmation.name",
+      "title": "Claim payment confirmation",
+      "code": "INS-027",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "claim_reference",
+          "label": "templates.catalogue.claim_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_recipient",
+          "label": "templates.catalogue.verified_recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "settlement_reference",
+          "label": "templates.catalogue.settlement_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_insurance_salvage_inventory",
+      "name": "templates.ins_insurance_salvage_inventory.name",
+      "title": "Insurance salvage inventory",
+      "code": "INS-028",
+      "kind": "asset",
+      "pack": "ASSET",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "item_identifier",
+        "serial_number"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_asset"
+      ],
+      "fields": [
+        {
+          "field_key": "salvaged_item",
+          "label": "templates.catalogue.salvaged_item",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_condition",
+          "label": "templates.catalogue.observed_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_disposition",
+          "label": "templates.catalogue.approved_disposition",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_insurance_subrogation_evidence",
+      "name": "templates.ins_insurance_subrogation_evidence.name",
+      "title": "Insurance subrogation evidence",
+      "code": "INS-029",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "event_reference",
+          "label": "templates.catalogue.event_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_documents",
+          "label": "templates.catalogue.supporting_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "legal_review",
+          "label": "templates.catalogue.legal_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_customer_claim_status_update",
+      "name": "templates.ins_customer_claim_status_update.name",
+      "title": "Customer claim status update",
+      "code": "INS-030",
+      "kind": "communication",
+      "pack": "COMM",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "communication_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_comm"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_status",
+          "label": "templates.catalogue.verified_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "outstanding_documents",
+          "label": "templates.catalogue.outstanding_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "next_steps",
+          "label": "templates.catalogue.next_steps",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_insurance_complaint_resolution",
+      "name": "templates.ins_insurance_complaint_resolution.name",
+      "title": "Insurance complaint resolution",
+      "code": "INS-031",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "complaint_reference",
+          "label": "templates.catalogue.complaint_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "review_evidence",
+          "label": "templates.catalogue.review_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_response",
+          "label": "templates.catalogue.authorized_response",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_broker_commission_reconciliation",
+      "name": "templates.ins_broker_commission_reconciliation.name",
+      "title": "Broker commission reconciliation",
+      "code": "INS-032",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "policy_records",
+          "label": "templates.catalogue.policy_records",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "agreed_rates",
+          "label": "templates.catalogue.agreed_rates",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "payment_evidence",
+          "label": "templates.catalogue.payment_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_insurance_fraud_concern_intake",
+      "name": "templates.ins_insurance_fraud_concern_intake.name",
+      "title": "Insurance fraud concern intake",
+      "code": "INS-033",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "factual_red_flags",
+          "label": "templates.catalogue.factual_red_flags",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evidence_sources",
+          "label": "templates.catalogue.evidence_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "specialist_review",
+          "label": "templates.catalogue.specialist_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ins_insurance_claims_performance_report",
+      "name": "templates.ins_insurance_claims_performance_report.name",
+      "title": "Insurance claims performance report",
+      "code": "INS-034",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "restricted",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ins",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "claim_counts",
+          "label": "templates.catalogue.claim_counts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "processing_intervals",
+          "label": "templates.catalogue.processing_intervals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "data_limitations",
+          "label": "templates.catalogue.data_limitations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

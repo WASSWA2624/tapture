@@ -1,0 +1,1503 @@
+{
+  "category": "MED",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "med_story_idea_pitch",
+      "name": "templates.med_story_idea_pitch.name",
+      "title": "Story idea pitch",
+      "code": "MED-001",
+      "kind": "proposal",
+      "pack": "PROPOSAL",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "proposal_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_proposal"
+      ],
+      "fields": [
+        {
+          "field_key": "story_question",
+          "label": "templates.catalogue.story_question",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "public_interest",
+          "label": "templates.catalogue.public_interest",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_plan",
+          "label": "templates.catalogue.source_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_reporting_assignment_brief",
+      "name": "templates.med_reporting_assignment_brief.name",
+      "title": "Reporting assignment brief",
+      "code": "MED-002",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "assignment_scope",
+          "label": "templates.catalogue.assignment_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_background",
+          "label": "templates.catalogue.verified_background",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "editorial_constraints",
+          "label": "templates.catalogue.editorial_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_reporter_field_notebook",
+      "name": "templates.med_reporter_field_notebook.name",
+      "title": "Reporter field notebook",
+      "code": "MED-003",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "firsthand_observations",
+          "label": "templates.catalogue.firsthand_observations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "source_references",
+          "label": "templates.catalogue.source_references",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_needs",
+          "label": "templates.catalogue.verification_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_interview_preparation_brief",
+      "name": "templates.med_interview_preparation_brief.name",
+      "title": "Interview preparation brief",
+      "code": "MED-004",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "interview_topics",
+          "label": "templates.catalogue.interview_topics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_background",
+          "label": "templates.catalogue.verified_background",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "questions",
+          "label": "templates.catalogue.questions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_recorded_interview_consent",
+      "name": "templates.med_recorded_interview_consent.name",
+      "title": "Recorded interview consent",
+      "code": "MED-005",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "recording_scope",
+          "label": "templates.catalogue.recording_scope",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "publication_permissions",
+          "label": "templates.catalogue.publication_permissions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "withdrawal_terms",
+          "label": "templates.catalogue.withdrawal_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_journalistic_interview_record",
+      "name": "templates.med_journalistic_interview_record.name",
+      "title": "Journalistic interview record",
+      "code": "MED-006",
+      "kind": "meeting",
+      "pack": "MEET",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "meeting_title",
+        "meeting_date"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_meet"
+      ],
+      "fields": [
+        {
+          "field_key": "source_alias",
+          "label": "templates.catalogue.source_alias",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_quotes",
+          "label": "templates.catalogue.verified_quotes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attribution_permission",
+          "label": "templates.catalogue.attribution_permission",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_source_contact_record",
+      "name": "templates.med_source_contact_record.name",
+      "title": "Source contact record",
+      "code": "MED-007",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "source_alias",
+          "label": "templates.catalogue.source_alias",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "safe_contact",
+          "label": "templates.catalogue.safe_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attribution_constraints",
+          "label": "templates.catalogue.attribution_constraints",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_fact_check_worksheet",
+      "name": "templates.med_fact_check_worksheet.name",
+      "title": "Fact-check worksheet",
+      "code": "MED-008",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "claim",
+          "label": "templates.catalogue.claim",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_evidence",
+          "label": "templates.catalogue.source_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verification_outcome",
+          "label": "templates.catalogue.verification_outcome",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_claim_verification_dossier",
+      "name": "templates.med_claim_verification_dossier.name",
+      "title": "Claim verification dossier",
+      "code": "MED-009",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "claim_context",
+          "label": "templates.catalogue.claim_context",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "primary_sources",
+          "label": "templates.catalogue.primary_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "remaining_uncertainty",
+          "label": "templates.catalogue.remaining_uncertainty",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_photojournalism_caption_record",
+      "name": "templates.med_photojournalism_caption_record.name",
+      "title": "Photojournalism caption record",
+      "code": "MED-010",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "photo_subject",
+          "label": "templates.catalogue.photo_subject",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_at",
+          "label": "templates.catalogue.verified_at",
+          "type": "date_time",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_place",
+          "label": "templates.catalogue.verified_place",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "editorial_caption",
+          "label": "templates.catalogue.editorial_caption",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_media_rights_and_release_record",
+      "name": "templates.med_media_rights_and_release_record.name",
+      "title": "Media rights and release record",
+      "code": "MED-011",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "asset_reference",
+          "label": "templates.catalogue.asset_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "rights_holder",
+          "label": "templates.catalogue.rights_holder",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "permitted_uses",
+          "label": "templates.catalogue.permitted_uses",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_news_article_drafting_brief",
+      "name": "templates.med_news_article_drafting_brief.name",
+      "title": "News article drafting brief",
+      "code": "MED-012",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_facts",
+          "label": "templates.catalogue.verified_facts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_attributions",
+          "label": "templates.catalogue.source_attributions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "editorial_angle",
+          "label": "templates.catalogue.editorial_angle",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_feature_article_outline",
+      "name": "templates.med_feature_article_outline.name",
+      "title": "Feature article outline",
+      "code": "MED-013",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "central_question",
+          "label": "templates.catalogue.central_question",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "section_plan",
+          "label": "templates.catalogue.section_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "supporting_evidence",
+          "label": "templates.catalogue.supporting_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_editorial_review_checklist",
+      "name": "templates.med_editorial_review_checklist.name",
+      "title": "Editorial review checklist",
+      "code": "MED-014",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "factual_accuracy",
+          "label": "templates.catalogue.factual_accuracy",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "fair_representation",
+          "label": "templates.catalogue.fair_representation",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "privacy_review",
+          "label": "templates.catalogue.privacy_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_correction_and_clarification_record",
+      "name": "templates.med_correction_and_clarification_record.name",
+      "title": "Correction and clarification record",
+      "code": "MED-015",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "published_item",
+          "label": "templates.catalogue.published_item",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_error",
+          "label": "templates.catalogue.verified_error",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_correction",
+          "label": "templates.catalogue.approved_correction",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_press_release_drafting",
+      "name": "templates.med_press_release_drafting.name",
+      "title": "Press release drafting",
+      "code": "MED-016",
+      "kind": "communication",
+      "pack": "COMM",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "communication_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_comm"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_announcement",
+          "label": "templates.catalogue.approved_announcement",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_details",
+          "label": "templates.catalogue.verified_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "media_contact",
+          "label": "templates.catalogue.media_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_media_monitoring_record",
+      "name": "templates.med_media_monitoring_record.name",
+      "title": "Media monitoring record",
+      "code": "MED-017",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "coverage_reference",
+          "label": "templates.catalogue.coverage_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "publication_date",
+          "label": "templates.catalogue.publication_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_summary",
+          "label": "templates.catalogue.verified_summary",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_podcast_episode_brief",
+      "name": "templates.med_podcast_episode_brief.name",
+      "title": "Podcast episode brief",
+      "code": "MED-018",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "episode_topic",
+          "label": "templates.catalogue.episode_topic",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "guest_permissions",
+          "label": "templates.catalogue.guest_permissions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "segment_plan",
+          "label": "templates.catalogue.segment_plan",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_podcast_transcript_review",
+      "name": "templates.med_podcast_transcript_review.name",
+      "title": "Podcast transcript review",
+      "code": "MED-019",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "recording_reference",
+          "label": "templates.catalogue.recording_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "transcript_text",
+          "label": "templates.catalogue.transcript_text",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "corrections",
+          "label": "templates.catalogue.corrections",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_video_production_brief",
+      "name": "templates.med_video_production_brief.name",
+      "title": "Video production brief",
+      "code": "MED-020",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "storyboard",
+          "label": "templates.catalogue.storyboard",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_script",
+          "label": "templates.catalogue.approved_script",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "production_requirements",
+          "label": "templates.catalogue.production_requirements",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_filming_location_release",
+      "name": "templates.med_filming_location_release.name",
+      "title": "Filming location release",
+      "code": "MED-021",
+      "kind": "agreement",
+      "pack": "AGREEMENT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "agreement_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_agreement"
+      ],
+      "fields": [
+        {
+          "field_key": "location",
+          "label": "templates.catalogue.location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_use",
+          "label": "templates.catalogue.authorized_use",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "conditions",
+          "label": "templates.catalogue.conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_film_shot_log",
+      "name": "templates.med_film_shot_log.name",
+      "title": "Film shot log",
+      "code": "MED-022",
+      "kind": "log",
+      "pack": "LOG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "activity_date",
+        "activity_type",
+        "start_time"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_log"
+      ],
+      "fields": [
+        {
+          "field_key": "scene_reference",
+          "label": "templates.catalogue.scene_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "take_number",
+          "label": "templates.catalogue.take_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "production_notes",
+          "label": "templates.catalogue.production_notes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_production_equipment_checkout",
+      "name": "templates.med_production_equipment_checkout.name",
+      "title": "Production equipment checkout",
+      "code": "MED-023",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "equipment_items",
+          "label": "templates.catalogue.equipment_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "assigned_crew",
+          "label": "templates.catalogue.assigned_crew",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_due_date",
+          "label": "templates.catalogue.return_due_date",
+          "type": "date",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_production_call_sheet",
+      "name": "templates.med_production_call_sheet.name",
+      "title": "Production call sheet",
+      "code": "MED-024",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "crew_schedule",
+          "label": "templates.catalogue.crew_schedule",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "locations",
+          "label": "templates.catalogue.locations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_contacts",
+          "label": "templates.catalogue.authorized_contacts",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_subtitle_and_caption_review",
+      "name": "templates.med_subtitle_and_caption_review.name",
+      "title": "Subtitle and caption review",
+      "code": "MED-025",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "media_reference",
+          "label": "templates.catalogue.media_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "timed_text",
+          "label": "templates.catalogue.timed_text",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessibility_review",
+          "label": "templates.catalogue.accessibility_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_translation_localization_brief",
+      "name": "templates.med_translation_localization_brief.name",
+      "title": "Translation localization brief",
+      "code": "MED-026",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "source_content",
+          "label": "templates.catalogue.source_content",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "target_locale",
+          "label": "templates.catalogue.target_locale",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "terminology_guide",
+          "label": "templates.catalogue.terminology_guide",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_book_manuscript_intake",
+      "name": "templates.med_book_manuscript_intake.name",
+      "title": "Book manuscript intake",
+      "code": "MED-027",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "manuscript_version",
+          "label": "templates.catalogue.manuscript_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "author_details",
+          "label": "templates.catalogue.author_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "rights_evidence",
+          "label": "templates.catalogue.rights_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_publishing_production_schedule",
+      "name": "templates.med_publishing_production_schedule.name",
+      "title": "Publishing production schedule",
+      "code": "MED-028",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "editing_stages",
+          "label": "templates.catalogue.editing_stages",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "design_tasks",
+          "label": "templates.catalogue.design_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "release_milestones",
+          "label": "templates.catalogue.release_milestones",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_proofreading_change_log",
+      "name": "templates.med_proofreading_change_log.name",
+      "title": "Proofreading change log",
+      "code": "MED-029",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "text_location",
+          "label": "templates.catalogue.text_location",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_correction",
+          "label": "templates.catalogue.proposed_correction",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approval",
+          "label": "templates.catalogue.approval",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_content_archive_catalogue",
+      "name": "templates.med_content_archive_catalogue.name",
+      "title": "Content archive catalogue",
+      "code": "MED-030",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "asset_metadata",
+          "label": "templates.catalogue.asset_metadata",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "rights_status",
+          "label": "templates.catalogue.rights_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reuse_conditions",
+          "label": "templates.catalogue.reuse_conditions",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_audience_research_survey",
+      "name": "templates.med_audience_research_survey.name",
+      "title": "Audience research survey",
+      "code": "MED-031",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "consented_feedback",
+          "label": "templates.catalogue.consented_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "content_preferences",
+          "label": "templates.catalogue.content_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "access_needs",
+          "label": "templates.catalogue.access_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "med_media_performance_report",
+      "name": "templates.med_media_performance_report.name",
+      "title": "Media performance report",
+      "code": "MED-032",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p2",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_med",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_metrics",
+          "label": "templates.catalogue.verified_metrics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "measurement_sources",
+          "label": "templates.catalogue.measurement_sources",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "attribution_limits",
+          "label": "templates.catalogue.attribution_limits",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}

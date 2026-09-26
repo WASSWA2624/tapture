@@ -1,0 +1,1625 @@
+{
+  "category": "RET",
+  "templates": [
+    {
+      "schema_version": 1,
+      "template_key": "ret_retail_product_listing",
+      "name": "templates.ret_retail_product_listing.name",
+      "title": "Retail product listing",
+      "code": "RET-001",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "product_name",
+          "label": "templates.catalogue.product_name",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stock_code",
+          "label": "templates.catalogue.stock_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_specifications",
+          "label": "templates.catalogue.verified_specifications",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_retail_product_photography",
+      "name": "templates.ret_retail_product_photography.name",
+      "title": "Retail product photography",
+      "code": "RET-002",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "product_reference",
+          "label": "templates.catalogue.product_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "image_view",
+          "label": "templates.catalogue.image_view",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "caption_text",
+          "label": "templates.catalogue.caption_text",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "usage_rights",
+          "label": "templates.catalogue.usage_rights",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_supplier_product_catalogue_import",
+      "name": "templates.ret_supplier_product_catalogue_import.name",
+      "title": "Supplier product catalogue import",
+      "code": "RET-003",
+      "kind": "register",
+      "pack": "REG",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "entry_identifier"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_reg"
+      ],
+      "fields": [
+        {
+          "field_key": "supplier_product_code",
+          "label": "templates.catalogue.supplier_product_code",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "product_attributes",
+          "label": "templates.catalogue.product_attributes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "source_version",
+          "label": "templates.catalogue.source_version",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_retail_price_label_verification",
+      "name": "templates.ret_retail_price_label_verification.name",
+      "title": "Retail price label verification",
+      "code": "RET-004",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "shelf_price",
+          "label": "templates.catalogue.shelf_price",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "shelf_price_currency",
+          "label": "templates.catalogue.shelf_price_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "system_price",
+          "label": "templates.catalogue.system_price",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "system_price_currency",
+          "label": "templates.catalogue.system_price_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "product_match",
+          "label": "templates.catalogue.product_match",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_retail_store_opening_checklist",
+      "name": "templates.ret_retail_store_opening_checklist.name",
+      "title": "Retail store opening checklist",
+      "code": "RET-005",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "store_readiness",
+          "label": "templates.catalogue.store_readiness",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "cash_float",
+          "label": "templates.catalogue.cash_float",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "cash_float_currency",
+          "label": "templates.catalogue.cash_float_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "equipment_status",
+          "label": "templates.catalogue.equipment_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_retail_store_closing_checklist",
+      "name": "templates.ret_retail_store_closing_checklist.name",
+      "title": "Retail store closing checklist",
+      "code": "RET-006",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "cash_security",
+          "label": "templates.catalogue.cash_security",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "stock_security",
+          "label": "templates.catalogue.stock_security",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "shutdown_tasks",
+          "label": "templates.catalogue.shutdown_tasks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_retail_sales_transaction",
+      "name": "templates.ret_retail_sales_transaction.name",
+      "title": "Retail sales transaction",
+      "code": "RET-007",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "sold_items",
+          "label": "templates.catalogue.sold_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantities",
+          "label": "templates.catalogue.quantities",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "payment_reference",
+          "label": "templates.catalogue.payment_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_point_of_sale_receipt_extraction",
+      "name": "templates.ret_point_of_sale_receipt_extraction.name",
+      "title": "Point-of-sale receipt extraction",
+      "code": "RET-008",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "receipt_number",
+          "label": "templates.catalogue.receipt_number",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_totals",
+          "label": "templates.catalogue.verified_totals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_retail_cash_drawer_reconciliation",
+      "name": "templates.ret_retail_cash_drawer_reconciliation.name",
+      "title": "Retail cash drawer reconciliation",
+      "code": "RET-009",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "expected_cash",
+          "label": "templates.catalogue.expected_cash",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "expected_cash_currency",
+          "label": "templates.catalogue.expected_cash_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "counted_cash",
+          "label": "templates.catalogue.counted_cash",
+          "type": "currency",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "counted_cash_currency",
+          "label": "templates.catalogue.counted_cash_currency",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "variance_reason",
+          "label": "templates.catalogue.variance_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_retail_daily_sales_summary",
+      "name": "templates.ret_retail_daily_sales_summary.name",
+      "title": "Retail daily sales summary",
+      "code": "RET-010",
+      "kind": "report",
+      "pack": "REPORT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "report_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_report"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_sales",
+          "label": "templates.catalogue.verified_sales",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "returns",
+          "label": "templates.catalogue.returns",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "payment_totals",
+          "label": "templates.catalogue.payment_totals",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_retail_stock_replenishment",
+      "name": "templates.ret_retail_stock_replenishment.name",
+      "title": "Retail stock replenishment",
+      "code": "RET-011",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "item_reference",
+          "label": "templates.catalogue.item_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "shelf_quantity",
+          "label": "templates.catalogue.shelf_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "shelf_quantity_unit",
+          "label": "templates.catalogue.shelf_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_quantity",
+          "label": "templates.catalogue.requested_quantity",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "requested_quantity_unit",
+          "label": "templates.catalogue.requested_quantity_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_shelf_stock_availability_audit",
+      "name": "templates.ret_shelf_stock_availability_audit.name",
+      "title": "Shelf stock availability audit",
+      "code": "RET-012",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "item_presence",
+          "label": "templates.catalogue.item_presence",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "display_condition",
+          "label": "templates.catalogue.display_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        },
+        {
+          "field_key": "replenishment_need",
+          "label": "templates.catalogue.replenishment_need",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_retail_shelf_planogram_check",
+      "name": "templates.ret_retail_shelf_planogram_check.name",
+      "title": "Retail shelf planogram check",
+      "code": "RET-013",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_layout",
+          "label": "templates.catalogue.approved_layout",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "observed_layout",
+          "label": "templates.catalogue.observed_layout",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "differences",
+          "label": "templates.catalogue.differences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_retail_promotion_setup",
+      "name": "templates.ret_retail_promotion_setup.name",
+      "title": "Retail promotion setup",
+      "code": "RET-014",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "approved_offer",
+          "label": "templates.catalogue.approved_offer",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "display_materials",
+          "label": "templates.catalogue.display_materials",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "price_verification",
+          "label": "templates.catalogue.price_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_customer_order_collection",
+      "name": "templates.ret_customer_order_collection.name",
+      "title": "Customer order collection",
+      "code": "RET-015",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "order_reference",
+          "label": "templates.catalogue.order_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "verified_recipient",
+          "label": "templates.catalogue.verified_recipient",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "collection_confirmation",
+          "label": "templates.catalogue.collection_confirmation",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "confirmed",
+              "label": "templates.choices.confirmation.confirmed"
+            },
+            {
+              "code": "pending",
+              "label": "templates.choices.confirmation.pending"
+            },
+            {
+              "code": "not_confirmed",
+              "label": "templates.choices.confirmation.not_confirmed"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_e_commerce_order_fulfillment",
+      "name": "templates.ret_e_commerce_order_fulfillment.name",
+      "title": "E-commerce order fulfillment",
+      "code": "RET-016",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "order_lines",
+          "label": "templates.catalogue.order_lines",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "picking_verification",
+          "label": "templates.catalogue.picking_verification",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "shipping_details",
+          "label": "templates.catalogue.shipping_details",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_product_return_intake",
+      "name": "templates.ret_product_return_intake.name",
+      "title": "Product return intake",
+      "code": "RET-017",
+      "kind": "case",
+      "pack": "CASE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "case_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_case"
+      ],
+      "fields": [
+        {
+          "field_key": "original_order",
+          "label": "templates.catalogue.original_order",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "return_reason",
+          "label": "templates.catalogue.return_reason",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "item_condition",
+          "label": "templates.catalogue.item_condition",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "new",
+              "label": "templates.choices.condition.new"
+            },
+            {
+              "code": "good",
+              "label": "templates.choices.condition.good"
+            },
+            {
+              "code": "fair",
+              "label": "templates.choices.condition.fair"
+            },
+            {
+              "code": "poor",
+              "label": "templates.choices.condition.poor"
+            },
+            {
+              "code": "unserviceable",
+              "label": "templates.choices.condition.unserviceable"
+            }
+          ],
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_refund_authorization",
+      "name": "templates.ret_refund_authorization.name",
+      "title": "Refund authorization",
+      "code": "RET-018",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "return_reference",
+          "label": "templates.catalogue.return_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "proposed_refund",
+          "label": "templates.catalogue.proposed_refund",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "policy_basis",
+          "label": "templates.catalogue.policy_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_product_exchange_record",
+      "name": "templates.ret_product_exchange_record.name",
+      "title": "Product exchange record",
+      "code": "RET-019",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "returned_item",
+          "label": "templates.catalogue.returned_item",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "replacement_item",
+          "label": "templates.catalogue.replacement_item",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "value_difference",
+          "label": "templates.catalogue.value_difference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_retail_product_defect_evidence",
+      "name": "templates.ret_retail_product_defect_evidence.name",
+      "title": "Retail product defect evidence",
+      "code": "RET-020",
+      "kind": "observation",
+      "pack": "OBS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "observation_subject",
+        "observed_at"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_obs"
+      ],
+      "fields": [
+        {
+          "field_key": "product_batch",
+          "label": "templates.catalogue.product_batch",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "visible_defect",
+          "label": "templates.catalogue.visible_defect",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "customer_report",
+          "label": "templates.catalogue.customer_report",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_warranty_service_intake",
+      "name": "templates.ret_warranty_service_intake.name",
+      "title": "Warranty service intake",
+      "code": "RET-021",
+      "kind": "request",
+      "pack": "REQUEST",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "request_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_request"
+      ],
+      "fields": [
+        {
+          "field_key": "product_reference",
+          "label": "templates.catalogue.product_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "purchase_evidence",
+          "label": "templates.catalogue.purchase_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "reported_fault",
+          "label": "templates.catalogue.reported_fault",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_customer_loyalty_enrollment",
+      "name": "templates.ret_customer_loyalty_enrollment.name",
+      "title": "Customer loyalty enrollment",
+      "code": "RET-022",
+      "kind": "profile",
+      "pack": "PROFILE",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "profile_reference",
+        "display_name"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_profile"
+      ],
+      "fields": [
+        {
+          "field_key": "contact_preferences",
+          "label": "templates.catalogue.contact_preferences",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "program_consent",
+          "label": "templates.catalogue.program_consent",
+          "type": "choice",
+          "required": "RECOMMENDED",
+          "options": [
+            {
+              "code": "given",
+              "label": "templates.choices.consent_status.given"
+            },
+            {
+              "code": "refused",
+              "label": "templates.choices.consent_status.refused"
+            },
+            {
+              "code": "withdrawn",
+              "label": "templates.choices.consent_status.withdrawn"
+            },
+            {
+              "code": "not_asked",
+              "label": "templates.choices.consent_status.not_asked"
+            }
+          ],
+          "group": "specific_details",
+          "input_mode": "manual_only"
+        },
+        {
+          "field_key": "member_reference",
+          "label": "templates.catalogue.member_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_gift_voucher_issue_and_redemption",
+      "name": "templates.ret_gift_voucher_issue_and_redemption.name",
+      "title": "Gift voucher issue and redemption",
+      "code": "RET-023",
+      "kind": "transaction",
+      "pack": "TRANS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "transaction_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_trans"
+      ],
+      "fields": [
+        {
+          "field_key": "voucher_reference",
+          "label": "templates.catalogue.voucher_reference",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "value",
+          "label": "templates.catalogue.value",
+          "type": "decimal",
+          "required": "RECOMMENDED",
+          "unit": "as_declared",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "value_unit",
+          "label": "templates.catalogue.value_unit",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "redemption_status",
+          "label": "templates.catalogue.redemption_status",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_wholesale_customer_quotation",
+      "name": "templates.ret_wholesale_customer_quotation.name",
+      "title": "Wholesale customer quotation",
+      "code": "RET-024",
+      "kind": "document",
+      "pack": "DOC",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "document_reference",
+        "approved_version"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_doc"
+      ],
+      "fields": [
+        {
+          "field_key": "bulk_items",
+          "label": "templates.catalogue.bulk_items",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "quantity_breaks",
+          "label": "templates.catalogue.quantity_breaks",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "payment_terms",
+          "label": "templates.catalogue.payment_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_wholesale_order_allocation",
+      "name": "templates.ret_wholesale_order_allocation.name",
+      "title": "Wholesale order allocation",
+      "code": "RET-025",
+      "kind": "plan",
+      "pack": "PLAN",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "plan_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_plan"
+      ],
+      "fields": [
+        {
+          "field_key": "customer_orders",
+          "label": "templates.catalogue.customer_orders",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "available_stock",
+          "label": "templates.catalogue.available_stock",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "allocation_rules",
+          "label": "templates.catalogue.allocation_rules",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_marketplace_seller_onboarding",
+      "name": "templates.ret_marketplace_seller_onboarding.name",
+      "title": "Marketplace seller onboarding",
+      "code": "RET-026",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "seller_documents",
+          "label": "templates.catalogue.seller_documents",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "product_categories",
+          "label": "templates.catalogue.product_categories",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "approved_terms",
+          "label": "templates.catalogue.approved_terms",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_marketplace_product_compliance_review",
+      "name": "templates.ret_marketplace_product_compliance_review.name",
+      "title": "Marketplace product compliance review",
+      "code": "RET-027",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "product_claims",
+          "label": "templates.catalogue.product_claims",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "required_evidence",
+          "label": "templates.catalogue.required_evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "qualified_review",
+          "label": "templates.catalogue.qualified_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_e_commerce_product_content_review",
+      "name": "templates.ret_e_commerce_product_content_review.name",
+      "title": "E-commerce product content review",
+      "code": "RET-028",
+      "kind": "checklist",
+      "pack": "CHECK",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "check_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_check"
+      ],
+      "fields": [
+        {
+          "field_key": "verified_attributes",
+          "label": "templates.catalogue.verified_attributes",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "image_rights",
+          "label": "templates.catalogue.image_rights",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "misleading_claim_check",
+          "label": "templates.catalogue.misleading_claim_check",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_retail_store_condition_inspection",
+      "name": "templates.ret_retail_store_condition_inspection.name",
+      "title": "Retail store condition inspection",
+      "code": "RET-029",
+      "kind": "inspection",
+      "pack": "INSPECT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "inspection_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_inspect"
+      ],
+      "fields": [
+        {
+          "field_key": "fixtures_condition",
+          "label": "templates.catalogue.fixtures_condition",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "accessibility",
+          "label": "templates.catalogue.accessibility",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "maintenance_needs",
+          "label": "templates.catalogue.maintenance_needs",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_retail_customer_feedback",
+      "name": "templates.ret_retail_customer_feedback.name",
+      "title": "Retail customer feedback",
+      "code": "RET-030",
+      "kind": "survey",
+      "pack": "SURVEY",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "survey_version",
+        "respondent_or_sample_code"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_survey"
+      ],
+      "fields": [
+        {
+          "field_key": "shopping_experience",
+          "label": "templates.catalogue.shopping_experience",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "product_feedback",
+          "label": "templates.catalogue.product_feedback",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details",
+          "refine": true
+        },
+        {
+          "field_key": "voluntary_contact",
+          "label": "templates.catalogue.voluntary_contact",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_retail_loss_incident",
+      "name": "templates.ret_retail_loss_incident.name",
+      "title": "Retail loss incident",
+      "code": "RET-031",
+      "kind": "incident",
+      "pack": "INCIDENT",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "incident_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_incident"
+      ],
+      "fields": [
+        {
+          "field_key": "factual_stock_discrepancy",
+          "label": "templates.catalogue.factual_stock_discrepancy",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "evidence",
+          "label": "templates.catalogue.evidence",
+          "type": "document_reference",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "authorized_review",
+          "label": "templates.catalogue.authorized_review",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    },
+    {
+      "schema_version": 1,
+      "template_key": "ret_retail_performance_comparison",
+      "name": "templates.ret_retail_performance_comparison.name",
+      "title": "Retail performance comparison",
+      "code": "RET-032",
+      "kind": "assessment",
+      "pack": "ASSESS",
+      "privacy": "confidential",
+      "rollout": "p1",
+      "identity_fields": [
+        "assessment_reference"
+      ],
+      "inherits_groups": [
+        "record_admin",
+        "location_context",
+        "evidence",
+        "review",
+        "context_ret",
+        "pack_assess"
+      ],
+      "fields": [
+        {
+          "field_key": "store_metrics",
+          "label": "templates.catalogue.store_metrics",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "period_basis",
+          "label": "templates.catalogue.period_basis",
+          "type": "text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        },
+        {
+          "field_key": "comparison_limitations",
+          "label": "templates.catalogue.comparison_limitations",
+          "type": "long_text",
+          "required": "RECOMMENDED",
+          "group": "specific_details"
+        }
+      ],
+      "child_rows": []
+    }
+  ]
+}
