@@ -23,8 +23,10 @@ export 'record_providers.dart';
 export 'record_selection.dart';
 export 'record_template_change.dart';
 export 'record_template_change_controller.dart';
+export 'records_active_filters.dart';
 export 'records_filter_sheet.dart';
 export 'records_list_controller.dart';
+export 'records_list_row.dart';
 export 'records_list_screen.dart';
 export 'records_list_view.dart';
 export 'records_page_providers.dart';
@@ -39,7 +41,8 @@ export 'recycle_bin_screen.dart';
 // records_list_view.dart (the paged list), records_list_controller.dart (the
 // per-project filter, sort and search, remembered across restarts),
 // records_page_providers.dart (count, page and facet reads),
-// records_filter_sheet.dart and records_sort_menu.dart.
+// records_list_row.dart and records_active_filters.dart (the rows and the
+// filter chips), records_filter_sheet.dart and records_sort_menu.dart.
 
 // Wave B, editing values (014 step 5): record_edit_screen.dart (the values
 // page), record_field_sheet.dart (the one-value sheet), and the controller,

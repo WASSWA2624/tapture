@@ -111,7 +111,9 @@ class _Facets extends ConsumerWidget {
     );
     final Clock clock = ref.watch(recordClockProvider);
     final AppColors colors = context.colors;
-    void apply(RecordFilter next) => controller.applyFilter(next);
+    void apply(RecordFilter Function(RecordFilter current) change) {
+      controller.updateFilter(change);
+    }
 
     final List<RecordStatus> statuses = <RecordStatus>[
       for (final RecordStatus status in RecordStatus.values)
@@ -132,7 +134,7 @@ class _Facets extends ConsumerWidget {
           ],
           value: filter.statuses,
           onChanged: (Set<RecordStatus> next) =>
-              apply(filter.copyWith(statuses: next)),
+              apply((RecordFilter current) => current.copyWith(statuses: next)),
         ),
       if (facets.templates.isNotEmpty)
         AppMultiChoiceField<String>(
@@ -148,8 +150,9 @@ class _Facets extends ConsumerWidget {
               ),
           ],
           value: filter.templateIds,
-          onChanged: (Set<String> next) =>
-              apply(filter.copyWith(templateIds: next)),
+          onChanged: (Set<String> next) => apply(
+            (RecordFilter current) => current.copyWith(templateIds: next),
+          ),
         ),
       for (final ({String key, String label, List<String> values}) level
           in facets.contextLevels)
@@ -163,7 +166,9 @@ class _Facets extends ConsumerWidget {
             ],
             value: filter.context[level.key] ?? const <String>{},
             onChanged: (Set<String> next) => apply(
-              filter.copyWith(context: _withLevel(filter, level.key, next)),
+              (RecordFilter current) => current.copyWith(
+                context: _withLevel(current, level.key, next),
+              ),
             ),
           ),
       AppDateField(
@@ -172,9 +177,9 @@ class _Facets extends ConsumerWidget {
         value: from,
         clock: clock,
         onChanged: (DateTime? picked) => apply(
-          picked == null
-              ? filter.copyWith(clearCapturedFrom: true)
-              : filter.copyWith(capturedFrom: _startOfDay(picked)),
+          (RecordFilter current) => picked == null
+              ? current.copyWith(clearCapturedFrom: true)
+              : current.copyWith(capturedFrom: _startOfDay(picked)),
         ),
       ),
       AppDateField(
@@ -183,9 +188,9 @@ class _Facets extends ConsumerWidget {
         value: to,
         clock: clock,
         onChanged: (DateTime? picked) => apply(
-          picked == null
-              ? filter.copyWith(clearCapturedTo: true)
-              : filter.copyWith(capturedTo: _endOfDay(picked)),
+          (RecordFilter current) => picked == null
+              ? current.copyWith(clearCapturedTo: true)
+              : current.copyWith(capturedTo: _endOfDay(picked)),
         ),
       ),
       if (facets.operators.isNotEmpty)
@@ -200,8 +205,9 @@ class _Facets extends ConsumerWidget {
               ),
           ],
           value: filter.operators,
-          onChanged: (Set<String> next) =>
-              apply(filter.copyWith(operators: next)),
+          onChanged: (Set<String> next) => apply(
+            (RecordFilter current) => current.copyWith(operators: next),
+          ),
         ),
       if (facets.conditions.isNotEmpty)
         AppMultiChoiceField<String>(
@@ -212,8 +218,9 @@ class _Facets extends ConsumerWidget {
               Choice<String>(code, code),
           ],
           value: filter.conditions,
-          onChanged: (Set<String> next) =>
-              apply(filter.copyWith(conditions: next)),
+          onChanged: (Set<String> next) => apply(
+            (RecordFilter current) => current.copyWith(conditions: next),
+          ),
         ),
       AppMultiChoiceField<RecordFlag>(
         key: const ValueKey<String>('records-filter-flags'),
@@ -224,7 +231,7 @@ class _Facets extends ConsumerWidget {
         ],
         value: filter.flags,
         onChanged: (Set<RecordFlag> next) =>
-            apply(filter.copyWith(flags: next)),
+            apply((RecordFilter current) => current.copyWith(flags: next)),
       ),
     ];
     return Column(

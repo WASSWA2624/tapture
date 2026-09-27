@@ -62,6 +62,12 @@ final class RecordsListController extends Notifier<RecordsListCriteria> {
     _remember();
   }
 
+  /// Changes the filter with [change], applied to the filter as it is now,
+  /// so a chip or a sheet built before another choice never undoes it.
+  void updateFilter(RecordFilter Function(RecordFilter current) change) {
+    applyFilter(change(state.filter));
+  }
+
   /// Orders the list by [sort] and remembers it for the project.
   void applySort(RecordSort sort) {
     if (sort == state.sort) {

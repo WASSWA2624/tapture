@@ -62,6 +62,15 @@ final class CountingRecords implements RecordRepository {
   /// When true, the count never answers, so the list stays loading.
   bool holdCount = false;
 
+  /// When true, the filter choices never arrive, so the sheet stays loading.
+  bool holdFacets = false;
+
+  /// When set, reading the filter choices fails with this.
+  Failure? facetsFailure;
+
+  /// How many times the filter choices were read.
+  int facetReads = 0;
+
   @override
   Stream<List<RecordSummary>> watchPage(
     String projectId, {
@@ -117,8 +126,19 @@ final class CountingRecords implements RecordRepository {
   Future<Result<RecordEntry?>> byId(String id) => inner.byId(id);
 
   @override
-  Future<Result<RecordFacets>> facets(String projectId) =>
-      inner.facets(projectId);
+  Future<Result<RecordFacets>> facets(String projectId) {
+    facetReads++;
+    final Failure? failure = facetsFailure;
+    if (failure != null) {
+      return Future<Result<RecordFacets>>.value(
+        FailureResult<RecordFacets>(failure),
+      );
+    }
+    if (holdFacets) {
+      return Completer<Result<RecordFacets>>().future;
+    }
+    return inner.facets(projectId);
+  }
 
   @override
   Stream<List<RecordHistoryEvent>> watchHistory(String id) =>
