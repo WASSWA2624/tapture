@@ -25,6 +25,14 @@ in bulk with the evidence beside either side; and an apply step that snapshots f
 transaction, records the merge with its counts and resolutions, keeps undo available until the snapshot is purged, and
 scans across the merge boundary afterwards for the same asset captured twice.
 
+Task [076](../23-hardening/076-resolve-project-capture-package-feedback.md) ships part of this phase ahead of it, and
+this task builds on those parts rather than replacing them: the package format, writer and reader
+(`core/bundle/`), import as a new project, the template compatibility check, a content-based merge with its preview
+and one-at-a-time conflicts, and duplicate decisions taken before a merge is written. This task still owns the
+bundle scopes, password protection, the secret-pattern scan over every entry, version vectors kept on every write,
+tombstone vectors, snapshots and undo, merge history, the Type a value and Decide later conflict choices, and
+registering the bundle extension so an incoming file opens the import flow.
+
 ## Files
 
 Bundle core:

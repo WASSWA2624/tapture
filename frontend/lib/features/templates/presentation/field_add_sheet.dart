@@ -464,7 +464,8 @@ class _FieldAdd extends Notifier<_FieldAddView> {
     );
   }
 
-  Future<void> save(
+  /// Validates and stores the field. Completes with whether it was stored.
+  Future<bool> save(
     BuildContext context,
     _FieldAddSheetState form,
     TemplateDef template,
@@ -472,7 +473,7 @@ class _FieldAdd extends Notifier<_FieldAddView> {
     final String label = form._label.text.trim();
     if (label.isEmpty) {
       state = state.copyWith(labelError: Copy.nameRequired);
-      return;
+      return false;
     }
     final String key = widgetKey(form, template, label);
     if (FieldAddSheet.packsTwoFacts(label, key: key) && !state.keepAnyway) {
@@ -480,7 +481,7 @@ class _FieldAdd extends Notifier<_FieldAddView> {
         labelError: null,
         twoFactsWarning: Copy.fieldTwoFactsWarning,
       );
-      return;
+      return false;
     }
     final Result<void> when = FieldAdvancedSection.validateRequiredWhen(
       form._requiredWhen.text,
@@ -491,22 +492,24 @@ class _FieldAdd extends Notifier<_FieldAddView> {
         requiredWhenError: when.failure.message,
         advanced: true,
       );
-      return;
+      return false;
     }
     final FieldDef field = _toField(form, key, label);
     final Result<TemplateDef> result = await ref
         .read(templateRepositoryProvider)
         .save(_write(template, field));
     if (!context.mounted) {
-      return;
+      return result is Success<TemplateDef>;
     }
     switch (result) {
       case Success<TemplateDef>():
         GoRouter.maybeOf(
           context,
         )?.go(TemplateLocations.detail(context, template.id));
+        return true;
       case FailureResult<TemplateDef>(:final Failure failure):
         state = state.copyWith(saveError: failure.message);
+        return false;
     }
   }
 

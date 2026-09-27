@@ -210,8 +210,9 @@ class _OperatorProfile extends AsyncNotifier<_OperatorProfileView> {
     );
   }
 
-  /// Validates and writes the single device-profile row.
-  Future<void> save({
+  /// Validates and writes the single device-profile row. Completes with
+  /// whether the row was stored.
+  Future<bool> save({
     required String name,
     required String initials,
     String? email,
@@ -254,7 +255,7 @@ class _OperatorProfile extends AsyncNotifier<_OperatorProfileView> {
         saveError: null,
         generation: current.generation,
       ));
-      return;
+      return false;
     }
     final OperatorProfile next = OperatorProfile(
       name: trimmedName,
@@ -274,6 +275,7 @@ class _OperatorProfile extends AsyncNotifier<_OperatorProfileView> {
           saveError: null,
           generation: current.generation + 1,
         ));
+        return true;
       case FailureResult<OperatorProfile>(:final failure):
         state = AsyncData<_OperatorProfileView>((
           profile: next,
@@ -283,6 +285,7 @@ class _OperatorProfile extends AsyncNotifier<_OperatorProfileView> {
           saveError: failure.message,
           generation: current.generation,
         ));
+        return false;
     }
   }
 

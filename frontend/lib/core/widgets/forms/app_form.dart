@@ -39,7 +39,11 @@ class AppForm extends StatefulWidget {
   final String submitLabel;
 
   /// Persist or apply. Ignored while a previous call is still running.
-  final Future<void> Function() onSubmit;
+  ///
+  /// Completes with true when the save landed: the form then forgets its
+  /// edits, so leaving no longer asks to discard them. False keeps the
+  /// unsaved guard, because the input has not been stored (FE-SIMP-09).
+  final Future<bool> Function() onSubmit;
 
   /// When true, leaving a dirty form prompts before popping.
   final bool guardUnsaved;
@@ -134,7 +138,10 @@ class _AppFormState extends State<AppForm> {
     }
     setState(() => _busy = true);
     try {
-      await widget.onSubmit();
+      final bool saved = await widget.onSubmit();
+      if (saved && mounted) {
+        setState(() => _edited = false);
+      }
     } finally {
       if (mounted) {
         setState(() => _busy = false);

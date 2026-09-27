@@ -12,6 +12,51 @@ import 'package:tapture/core/widgets/forms/focus_actions.dart';
 
 import '../../../support/a11y_matchers.dart';
 
+/// Opens a guarded one-field form whose save completes with [saves].
+Future<void> _pushGuarded(
+  WidgetTester tester,
+  TextEditingController name, {
+  required bool saves,
+}) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: buildTheme(brightness: Brightness.light),
+      home: Builder(
+        builder: (BuildContext context) {
+          return Scaffold(
+            body: Center(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) {
+                        return AppPage(
+                          title: 'Edit',
+                          body: AppForm(
+                            fields: <Widget>[
+                              AppTextField(label: 'Name', controller: name),
+                            ],
+                            submitLabel: 'Save',
+                            onSubmit: () async => saves,
+                            guardUnsaved: true,
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+                child: const Text('Open'),
+              ),
+            ),
+          );
+        },
+      ),
+    ),
+  );
+  await tester.tap(find.text('Open'));
+  await tester.pumpAndSettle();
+}
+
 void main() {
   testWidgets('leaving a dirty form prompts before popping', (
     WidgetTester tester,
@@ -38,7 +83,7 @@ void main() {
                                 AppTextField(label: 'Name', controller: name),
                               ],
                               submitLabel: 'Save',
-                              onSubmit: () async {},
+                              onSubmit: () async => true,
                               guardUnsaved: true,
                             ),
                           );
@@ -110,7 +155,7 @@ void main() {
                                 ),
                               ],
                               submitLabel: 'Save',
-                              onSubmit: () async {},
+                              onSubmit: () async => true,
                               guardUnsaved: true,
                             ),
                           );
@@ -148,6 +193,41 @@ void main() {
     expect(find.text('Edit'), findsNothing);
   });
 
+  testWidgets('a save that lands lets the page close without asking', (
+    WidgetTester tester,
+  ) async {
+    final TextEditingController name = TextEditingController();
+    addTearDown(name.dispose);
+    await _pushGuarded(tester, name, saves: true);
+
+    await tester.enterText(find.byType(TextField), 'Ada');
+    await tester.pump();
+    await tester.tap(find.byType(AppPrimaryAction));
+    await tester.pumpAndSettle();
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Discard changes?'), findsNothing);
+    expect(find.text('Edit'), findsNothing);
+  });
+
+  testWidgets('a save that fails keeps the unsaved guard', (
+    WidgetTester tester,
+  ) async {
+    final TextEditingController name = TextEditingController();
+    addTearDown(name.dispose);
+    await _pushGuarded(tester, name, saves: false);
+
+    await tester.enterText(find.byType(TextField), 'Ada');
+    await tester.pump();
+    await tester.tap(find.byType(AppPrimaryAction));
+    await tester.pumpAndSettle();
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Discard changes?'), findsOneWidget);
+  });
+
   testWidgets('submitting twice runs onSubmit once', (
     WidgetTester tester,
   ) async {
@@ -162,6 +242,7 @@ void main() {
         onSubmit: () async {
           calls += 1;
           await Future<void>.delayed(const Duration(milliseconds: 50));
+          return true;
         },
       ),
     );
@@ -192,7 +273,7 @@ void main() {
           ),
         ],
         submitLabel: 'Save',
-        onSubmit: () async {},
+        onSubmit: () async => true,
       ),
     );
 
@@ -231,7 +312,7 @@ void main() {
                 AppTextField(label: 'Notes', controller: last),
               ],
               submitLabel: 'Save',
-              onSubmit: () async {},
+              onSubmit: () async => true,
             ),
           ),
         ),
@@ -275,7 +356,7 @@ void main() {
           body: AppForm(
             fields: <Widget>[AppTextField(label: 'Name', controller: name)],
             submitLabel: 'Save',
-            onSubmit: () async {},
+            onSubmit: () async => true,
           ),
         ),
       ),
@@ -308,7 +389,7 @@ void main() {
               ),
             ],
             submitLabel: 'Save',
-            onSubmit: () async {},
+            onSubmit: () async => true,
           ),
         ),
       ),

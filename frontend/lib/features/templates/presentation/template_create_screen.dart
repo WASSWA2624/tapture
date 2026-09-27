@@ -108,13 +108,17 @@ class _TemplateCreateScreenState extends ConsumerState<TemplateCreateScreen> {
                 row.id: _labelFor(row.id).text,
             },
           );
-          if (created == null || !context.mounted) {
-            return;
+          if (created == null) {
+            return false;
+          }
+          if (!context.mounted) {
+            return true;
           }
           final GoRouter? router = GoRouter.maybeOf(context);
           if (router != null) {
             router.go(TemplateLocations.detail(context, created.id));
           }
+          return true;
         },
       ),
     );

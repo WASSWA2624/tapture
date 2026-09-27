@@ -113,6 +113,76 @@ void main() {
     expect(saved.folderName, 'test-project');
   });
 
+  testWidgets('a save says so, and leaving afterwards asks nothing', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    await _pump(tester, repo: repo, push: true);
+    await tester.pump();
+
+    await tester.enterText(find.byType(TextField).first, 'Beta');
+    await tester.pump();
+    await tester.tap(find.byType(AppPrimaryAction));
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text(Copy.projectSaved), findsOneWidget);
+    expect(repo.stored.single.name, 'Beta');
+    await tester.tap(find.byTooltip('Back'));
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.discardChangesTitle), findsNothing);
+    expect(find.text('open'), findsOneWidget);
+  });
+
+  testWidgets('saving a project as archived keeps the form open', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    await _pump(tester, repo: repo);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(Copy.projectStatusActive));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.projectStatusArchived).last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(AppPrimaryAction));
+    await tester.pumpAndSettle();
+
+    expect(repo.stored.single.status, ProjectStatus.archived);
+    expect(find.text(Copy.projectEditEmptyHeadline), findsNothing);
+    expect(
+      tester.widget<TextField>(find.byType(TextField).first).controller?.text,
+      'Alpha',
+    );
+  });
+
+  testWidgets('a second save starts from what the first one stored', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    _ok(await repo.create(aProject(name: 'Alpha')));
+    await _pump(tester, repo: repo);
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField).first, 'Beta');
+    await tester.pump();
+    await tester.tap(find.byType(AppPrimaryAction));
+    await tester.pumpAndSettle();
+    await _pickPhoto(tester);
+    await tester.enterText(find.byType(TextField).first, 'Gamma');
+    await tester.pump();
+    await tester.tap(find.byType(AppPrimaryAction));
+    await tester.pumpAndSettle();
+
+    expect(repo.stored.single.name, 'Gamma');
+    expect(repo.stored.single.settings.coverPhoto, isNotNull);
+  });
+
   testWidgets(
     'Name, Description and Organisation offer a labelled microphone',
     (WidgetTester tester) async {
@@ -216,7 +286,7 @@ Future<void> _pump(
   bool push = false,
   FakeSttService? speech,
 }) async {
-  const Widget screen = ProjectEditScreen();
+  const Widget screen = ProjectEditScreen(projectId: 'project-1');
   final Widget app = MaterialApp(
     theme: buildTheme(brightness: Brightness.light),
     home: push

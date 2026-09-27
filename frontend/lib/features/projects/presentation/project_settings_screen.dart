@@ -7,6 +7,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
@@ -193,9 +194,17 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
         ],
         submitLabel: Copy.save,
         onSubmit: () async {
-          await ref
+          final bool saved = await ref
               .read(_projectSettingsProvider.notifier)
               .submit(high: _high!.text, medium: _medium!.text);
+          if (saved && context.mounted) {
+            showAppSnack(
+              context,
+              Copy.projectSettingsSaved,
+              tone: SnackTone.success,
+            );
+          }
+          return saved;
         },
       ),
     );

@@ -485,8 +485,10 @@ List<RouteBase> get _routes {
                     GoRoute(
                       path: 'edit',
                       metadata: _projectScoped,
-                      builder: (BuildContext _, GoRouterState _) {
-                        return const ProjectEditScreen();
+                      builder: (BuildContext _, GoRouterState state) {
+                        return ProjectEditScreen(
+                          projectId: state.pathParameters['projectId']!,
+                        );
                       },
                     ),
                     GoRoute(

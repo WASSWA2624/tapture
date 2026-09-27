@@ -795,7 +795,7 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
           ),
         ],
         submitLabel: Copy.save,
-        onSubmit: () async {},
+        onSubmit: () async => true,
       ),
       const SizedBox(height: Space.x6),
     ];

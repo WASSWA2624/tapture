@@ -83,7 +83,7 @@ class _GalleryBodyState extends State<_GalleryBody> {
             AppTextField(label: 'Serial', controller: _serial),
           ],
           submitLabel: 'Save',
-          onSubmit: () async {},
+          onSubmit: () async => true,
         ),
         const SizedBox(height: Space.x8),
         const AppSectionHeader(title: 'Error summary'),
@@ -101,7 +101,7 @@ class _GalleryBodyState extends State<_GalleryBody> {
             ),
           ],
           submitLabel: 'Save',
-          onSubmit: () async {},
+          onSubmit: () async => true,
         ),
       ],
     );

@@ -395,7 +395,7 @@ class _AppLockForm extends Notifier<_LockView> {
     );
   }
 
-  Future<void> setPin({required String pin, required String confirm}) async {
+  Future<bool> setPin({required String pin, required String confirm}) async {
     final String? pinError = isAppLockPin(pin) ? null : Copy.appLockPinLength;
     final String? confirmError = pin == confirm
         ? null
@@ -411,7 +411,7 @@ class _AppLockForm extends Notifier<_LockView> {
         remaining: Duration.zero,
         busy: false,
       );
-      return;
+      return false;
     }
     final AppLock lock = ref.read(appLockProvider);
     state = _busy(lock);
@@ -428,7 +428,7 @@ class _AppLockForm extends Notifier<_LockView> {
         remaining: Duration.zero,
         busy: false,
       );
-      return;
+      return true;
     }
     final FailureResult<void> failed = result as FailureResult<void>;
     state = (
@@ -441,9 +441,10 @@ class _AppLockForm extends Notifier<_LockView> {
       remaining: lock.remainingBackoff,
       busy: false,
     );
+    return false;
   }
 
-  Future<void> changePin({
+  Future<bool> changePin({
     required String current,
     required String pin,
     required String confirm,
@@ -464,7 +465,7 @@ class _AppLockForm extends Notifier<_LockView> {
         remaining: Duration.zero,
         busy: false,
       );
-      return;
+      return false;
     }
     final AppLock lock = ref.read(appLockProvider);
     state = _busy(lock);
@@ -472,7 +473,7 @@ class _AppLockForm extends Notifier<_LockView> {
     if (attempt != LockAttempt.unlocked) {
       state = _fromAttempt(lock, attempt, currentError: Copy.appLockWrongPin);
       _followBackoff(lock);
-      return;
+      return false;
     }
     final Result<void> result = await lock.setPin(pin);
     if (result is Success<void>) {
@@ -487,7 +488,7 @@ class _AppLockForm extends Notifier<_LockView> {
         remaining: Duration.zero,
         busy: false,
       );
-      return;
+      return true;
     }
     final FailureResult<void> failed = result as FailureResult<void>;
     state = (
@@ -500,6 +501,7 @@ class _AppLockForm extends Notifier<_LockView> {
       remaining: lock.remainingBackoff,
       busy: false,
     );
+    return false;
   }
 
   Future<void> removePin(String current) async {

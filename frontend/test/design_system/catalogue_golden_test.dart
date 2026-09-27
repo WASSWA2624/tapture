@@ -430,7 +430,7 @@ void _ignoreSet(Set<String> value) {}
 
 void _ignoreFieldValue(FieldValue _) {}
 
-Future<void> _submit() async {}
+Future<bool> _submit() async => true;
 
 const FieldEditorBindings _fieldEditorBindings = (
   kindOf: _fieldEditorKind,

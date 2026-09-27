@@ -6,6 +6,10 @@
 
 Feedback FBK0000072 (prompt `prompts/feedback-23092026-2222/001-resolve-projects-capture-template-feedback.md`, decision D4(a)) adds project-menu Export on top of this contract: the selected project is the export scope, output stays local, and sharing happens only after an explicit action. Task 019 is not in this decision.
 
+Task [076](../23-hardening/076-resolve-project-capture-package-feedback.md), decision D13(a), makes that project-menu
+Export write the project package of task 019's format (`core/bundle/`), with the workbook inside as `records.xlsx`,
+so one ZIP both reads outside the app and imports into another Tapture app.
+
 Everything that turns captured work into files a reader can open without the app, every one of them written on the
 device. One serialisable `ExportRequest` — formats, scope, column options, extras and the resolved file list — so a
 stored request replays the same export exactly, and the pre-export gate that reports the incomplete and unapproved

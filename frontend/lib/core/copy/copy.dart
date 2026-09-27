@@ -676,6 +676,12 @@ abstract final class Copy {
   /// Title of the per-project settings form.
   static const String projectSettingsTitle = 'Project settings';
 
+  /// Confirms that the project details form was stored.
+  static const String projectSaved = 'Project saved';
+
+  /// Confirms that the project settings form was stored.
+  static const String projectSettingsSaved = 'Settings saved';
+
   /// When fieldwork started.
   static const String projectStartsOn = 'Starts';
 

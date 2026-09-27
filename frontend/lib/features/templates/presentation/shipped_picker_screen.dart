@@ -332,10 +332,14 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
         final TemplateDef? created = await ref
             .read(_shippedPickerProvider.notifier)
             .add(name: _name.text, templateKey: entry.templateKey);
-        if (created == null || router == null || !mounted) {
-          return;
+        if (created == null) {
+          return false;
+        }
+        if (router == null || !mounted) {
+          return true;
         }
         router.go(TemplateLocations.detail(context, created.id));
+        return true;
       },
     );
   }

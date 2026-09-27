@@ -17,6 +17,7 @@ import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
+import 'package:tapture/core/widgets/states/app_loading_state.dart';
 
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
@@ -26,9 +27,12 @@ import 'project_photo_field.dart';
 /// Details form: name, description, organisation, dates, status and the
 /// optional project photo.
 class ProjectEditScreen extends ConsumerStatefulWidget {
-  /// Creates the details form. The open project comes from
-  /// [currentProjectDetailsProvider]; this widget holds no id.
-  const ProjectEditScreen({super.key});
+  /// Creates the details form for the project the route names. It reads
+  /// [projectByIdProvider], so an archived project stays editable.
+  const ProjectEditScreen({required this.projectId, super.key});
+
+  /// Project the form edits.
+  final String projectId;
 
   @override
   ConsumerState<ProjectEditScreen> createState() => _ProjectEditScreenState();
@@ -51,12 +55,17 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Project? project = ref.watch(currentProjectDetailsProvider);
+    final AsyncValue<Project?> value = ref.watch(
+      projectByIdProvider(widget.projectId),
+    );
+    final Project? project = value.value;
     if (project == null) {
       return AppPage(
         key: const ValueKey<String>('route-project-edit'),
         title: Copy.projectEditTitle,
-        body: AppEmptyState(
+        body: value.isLoading
+            ? const AppSkeleton()
+            : AppEmptyState(
           icon: AppIcons.project,
           headline: Copy.projectEditEmptyHeadline,
           message: Copy.projectEditEmptyMessage,
@@ -149,13 +158,17 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen> {
         ],
         submitLabel: Copy.save,
         onSubmit: () async {
-          await ref
+          final bool saved = await ref
               .read(_projectEditProvider.notifier)
               .submit(
                 name: _name!.text,
                 description: _description!.text,
                 organisation: _organisation!.text,
               );
+          if (saved && context.mounted) {
+            showAppSnack(context, Copy.projectSaved, tone: SnackTone.success);
+          }
+          return saved;
         },
       ),
     );
@@ -181,6 +194,9 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen> {
 
   void _bind(Project project) {
     if (_boundId == project.id && _name != null) {
+      // The stored row moved on (this form saved, or another screen wrote
+      // it): the next save starts from it, while typed text stays.
+      ref.read(_projectEditProvider.notifier).follow(project);
       return;
     }
     _name?.dispose();
@@ -240,6 +256,12 @@ class _ProjectEdit extends Notifier<_ProjectEditView> {
       endsOn: project.endsOn,
       status: project.status,
     );
+  }
+
+  /// Takes [project] as the row the next save starts from, without
+  /// touching the form's values.
+  void follow(Project project) {
+    _source = project;
   }
 
   /// Stores [bytes] as the project's photo. Save keeps it, because the

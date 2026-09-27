@@ -55,3 +55,6 @@ Task 023, then 026–064 (40). Task 023 is one prompt for the hardening pass; 02
 - [ ] [073 — Keep resumed capture photos](073-keep-resumed-capture-photos.md)
 - [ ] [074 — Ship the full template catalogue](074-ship-full-template-catalogue.md)
 - [ ] [075 — Replace the starter templates with the catalogue](075-replace-starter-templates-with-catalogue.md)
+- [ ] [076 — Resolve project, capture and template feedback, and add project packages](076-resolve-project-capture-package-feedback.md)
+- [ ] [077 — Suggest shipped templates with AI](077-suggest-shipped-templates-with-ai.md)
+- [ ] [078 — Keep the device id in the storage root](078-keep-device-id-in-storage-root.md)

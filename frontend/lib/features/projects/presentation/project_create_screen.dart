@@ -106,8 +106,11 @@ class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen> {
                 organisation: _organisation.text,
                 sourceId: widget.sourceId,
               );
-          if (created == null || !context.mounted) {
-            return;
+          if (created == null) {
+            return false;
+          }
+          if (!context.mounted) {
+            return true;
           }
           final Uint8List? photo = _photo;
           if (photo != null) {
@@ -115,7 +118,7 @@ class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen> {
                 .read(projectRepositoryProvider)
                 .setCoverPhoto(created.id, photo);
             if (!context.mounted) {
-              return;
+              return true;
             }
             // The project stands without its photo; say why it is missing.
             if (stored case FailureResult<ProjectSettings>(:final failure)) {
@@ -126,6 +129,7 @@ class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen> {
           if (router != null) {
             router.go(_projectHome(created.id));
           }
+          return true;
         },
       ),
     );
