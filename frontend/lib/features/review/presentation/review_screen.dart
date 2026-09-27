@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -20,9 +21,10 @@ import '../domain/field_ordering.dart';
 ///
 /// Confident fields start collapsed. On an expanded window the evidence
 /// sits beside the fields. The size class comes from the breakpoint helper.
-final class ReviewScreen extends StatelessWidget {
-  /// Creates the review of [record]. Null [record] is the empty state.
+final class ReviewScreen extends ConsumerWidget {
+  /// Creates the review of [record], or of [recordId] loaded from the store.
   const ReviewScreen({
+    this.recordId,
     this.record,
     this.template,
     this.failure,
@@ -32,7 +34,10 @@ final class ReviewScreen extends StatelessWidget {
     super.key,
   });
 
-  /// The record being reviewed.
+  /// Loads this record when [record] is not passed in.
+  final String? recordId;
+
+  /// The record being reviewed. Null with no [recordId] is the empty state.
   final RecordEntry? record;
 
   /// The template that names the fields. Null shows values by key.
@@ -51,9 +56,45 @@ final class ReviewScreen extends StatelessWidget {
   final ValueChanged<bool>? onToggleConfident;
 
   @override
-  Widget build(BuildContext context) {
-    final Failure? failed = failure;
-    final RecordEntry? loaded = record;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final String? id = recordId;
+    if (record == null && failure == null && id != null) {
+      final AsyncValue<RecordEntry?> loaded = ref.watch(
+        recordEntryProvider(id),
+      );
+      return loaded.when(
+        loading: () =>
+            _page(context, loaded: null, failed: null, waiting: true),
+        error: (Object error, StackTrace _) =>
+            _page(context, loaded: null, failed: Failure.from(error)),
+        data: (RecordEntry? entry) {
+          if (entry == null || template != null) {
+            return _page(context, loaded: entry, failed: null, shape: template);
+          }
+          final AsyncValue<TemplateDef?> shape = ref.watch(
+            recordEditTemplateProvider(entry.templateId),
+          );
+          return shape.when(
+            loading: () =>
+                _page(context, loaded: null, failed: null, waiting: true),
+            error: (Object error, StackTrace _) =>
+                _page(context, loaded: null, failed: Failure.from(error)),
+            data: (TemplateDef? value) =>
+                _page(context, loaded: entry, failed: null, shape: value),
+          );
+        },
+      );
+    }
+    return _page(context, loaded: record, failed: failure, shape: template);
+  }
+
+  Widget _page(
+    BuildContext context, {
+    required RecordEntry? loaded,
+    required Failure? failed,
+    TemplateDef? shape,
+    bool waiting = false,
+  }) {
     return AppPage(
       key: const ValueKey<String>('route-review'),
       title: Copy.reviewTitle,
@@ -65,7 +106,9 @@ final class ReviewScreen extends StatelessWidget {
               expand: true,
               onPressed: onApprove,
             ),
-      body: failed != null
+      body: waiting
+          ? const SizedBox.shrink()
+          : failed != null
           ? AppErrorState(failure: failed)
           : loaded == null
           ? const AppEmptyState(
@@ -73,13 +116,13 @@ final class ReviewScreen extends StatelessWidget {
               headline: Copy.reviewEmptyHeadline,
               message: Copy.reviewEmptyMessage,
             )
-          : _body(context, loaded),
+          : _body(context, loaded, shape),
     );
   }
 
-  Widget _body(BuildContext context, RecordEntry loaded) {
-    final TemplateDef shape =
-        template ??
+  Widget _body(BuildContext context, RecordEntry loaded, TemplateDef? shape) {
+    final TemplateDef resolved =
+        shape ??
         TemplateDef(
           id: loaded.templateId,
           templateKey: loaded.templateId,
@@ -91,7 +134,7 @@ final class ReviewScreen extends StatelessWidget {
         );
     final List<(FieldValue, ReviewGroup)> ordered = orderForReview(
       loaded,
-      shape,
+      resolved,
     );
     final Widget fields = _Fields(
       ordered: ordered,

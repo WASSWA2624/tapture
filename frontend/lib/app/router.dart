@@ -47,8 +47,8 @@ import 'package:tapture/features/reference/presentation/dataset_browser_screen.d
 import 'package:tapture/features/reference/presentation/dataset_key_screen.dart';
 import 'package:tapture/features/reference/presentation/dataset_list_screen.dart';
 import 'package:tapture/features/reference/presentation/dataset_row_edit_screen.dart';
-import 'package:tapture/features/review/presentation/batch_review_screen.dart';
-import 'package:tapture/features/review/presentation/review_screen.dart';
+import 'package:tapture/features/review/presentation/batch_review_route.dart';
+import 'package:tapture/features/review/presentation/review_route.dart';
 import 'package:tapture/features/settings/presentation/ai_provider_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
 import 'package:tapture/features/settings/presentation/appearance_settings_screen.dart';
@@ -575,10 +575,8 @@ List<RouteBase> get _routes {
                       path: 'review',
                       metadata: _projectScoped,
                       builder: (BuildContext _, GoRouterState state) {
-                        return const BatchReviewScreen(
-                          recordIds: <String>[],
-                          index: 0,
-                          drafts: <String, String>{},
+                        return BatchReviewRoute(
+                          projectId: state.pathParameters['projectId']!,
                         );
                       },
                     ),
@@ -1070,8 +1068,8 @@ List<RouteBase> _recordRoutes({required bool inProject}) {
         GoRoute(
           path: 'review',
           metadata: scope,
-          builder: (BuildContext _, GoRouterState _) {
-            return const ReviewScreen();
+          builder: (BuildContext _, GoRouterState state) {
+            return ReviewRoute(recordId: state.pathParameters['recordId']);
           },
         ),
         GoRoute(

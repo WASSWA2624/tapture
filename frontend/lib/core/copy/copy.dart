@@ -5543,4 +5543,7 @@ abstract final class Copy {
   /// Empty confidence indicator explanation.
   static const String reviewNoConfidenceMessage =
       'This value has no confidence band yet.';
+
+  /// Audit line when review approves a record.
+  static const String reviewApprovedReason = 'Approved in review.';
 }

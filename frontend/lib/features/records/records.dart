@@ -14,6 +14,8 @@ export 'presentation/record_bulk_actions.dart';
 export 'presentation/record_delete_action.dart';
 export 'presentation/record_delete_controller.dart';
 export 'presentation/record_detail_screen.dart';
+export 'presentation/record_edit_controller.dart'
+    show recordEditTemplateProvider;
 export 'presentation/record_edit_screen.dart';
 export 'presentation/record_field_sheet.dart';
 export 'presentation/record_history_screen.dart';
