@@ -160,6 +160,7 @@ Widget _number({
     min: _ruleNum(field, 'min'),
     max: _ruleNum(field, 'max'),
     decimal: field.type != 'number',
+    initialValue: value is num ? value : num.tryParse(_asText(value)),
     onChanged: onChanged,
   );
 }

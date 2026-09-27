@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/shell_destination.dart';
 import 'package:tapture/app/shell_title.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
@@ -65,16 +66,22 @@ class _Chrome extends ConsumerWidget {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            const SafeArea(
+            SafeArea(
               bottom: false,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  StatusLine(),
-                  ContextBar(),
-                  ContextMaintenance(),
-                  OfflineBanner(),
+                  const StatusLine(),
+                  // On Capture every level shows, set or not, so a first
+                  // value can be set in place (FBK0000160, D10).
+                  ContextBar(
+                    showsEmptyLevels:
+                        shellDestinations[shell.currentIndex].path ==
+                        RoutePaths.captureRoot,
+                  ),
+                  const ContextMaintenance(),
+                  const OfflineBanner(),
                 ],
               ),
             ),

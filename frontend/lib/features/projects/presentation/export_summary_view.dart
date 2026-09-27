@@ -12,11 +12,13 @@ import 'package:tapture/features/exports/exports.dart';
 /// What a project export holds: the project, its records by status, the
 /// templates they use and the file it writes (FBK0000134).
 class ExportSummaryView extends StatelessWidget {
-  /// Creates the summary. [destination] is the short folder label where
+  /// Creates the summary. [estimatedBytes] is the package's expected size,
+  /// when known. [destination] is the short folder label where
   /// the file is copied, or null where the platform decides.
   const ExportSummaryView({
     required this.summary,
     required this.destination,
+    this.estimatedBytes,
     super.key,
   });
 
@@ -25,6 +27,9 @@ class ExportSummaryView extends StatelessWidget {
 
   /// Downloads folder label, without the Exports subfolder.
   final String? destination;
+
+  /// The package's expected size, shown before it is written.
+  final int? estimatedBytes;
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +78,8 @@ class ExportSummaryView extends StatelessWidget {
         const AppSectionHeader(title: Copy.exportSectionFile),
         _row(AppIcons.export, Copy.exportFileFormat),
         _row(AppIcons.columns, Copy.exportFileColumns),
+        if (estimatedBytes case final int bytes)
+          _row(AppIcons.save, Copy.exportPackageSize(bytes)),
         if (place != null) _row(AppIcons.folder, Copy.exportSavedTo(place)),
       ],
     );

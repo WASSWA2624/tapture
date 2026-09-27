@@ -8,6 +8,7 @@ import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
@@ -22,11 +23,14 @@ import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
 import 'captured_items.dart';
 import 'record_edit_sheet.dart';
+import 'record_field_sheet.dart';
 import 'record_thumb.dart';
 
 /// One record: its photos, caption, field values, audio and capture time,
-/// with its field editor and delete in the menu (FBK0000137), and Edit,
-/// which opens its photos and captions on the capture page (FBK0000148).
+/// with delete in the menu (FBK0000137), and Edit, which opens its photos
+/// and captions on the capture page (FBK0000148). A tap on a field fills it
+/// by hand, and Edit fields on the Fields heading fills them all
+/// (FBK0000162, D9).
 final class RecordDetailScreen extends ConsumerWidget {
   /// Creates the page for [recordId] on [projectId].
   const RecordDetailScreen({
@@ -55,12 +59,6 @@ final class RecordDetailScreen extends ConsumerWidget {
       overflow: detail == null
           ? const <AppOverflowAction>[]
           : <AppOverflowAction>[
-              AppOverflowAction(
-                label: Copy.recordEditFields,
-                icon: AppIcons.fields,
-                onTap: () =>
-                    unawaited(showRecordEditSheet(context, detail.row)),
-              ),
               AppOverflowAction(
                 label: Copy.recordDelete,
                 icon: AppIcons.delete,
@@ -145,17 +143,38 @@ class _RecordBody extends ConsumerWidget {
           style: AppText.body,
         ),
         const SizedBox(height: Space.x4),
-        const AppSectionHeader(title: Copy.recordSectionFields),
+        AppSectionHeader(
+          title: Copy.recordSectionFields,
+          // An icon beside the heading fits at 200 percent text on a
+          // phone, where a worded button would push the heading off.
+          action: entries.isEmpty
+              ? null
+              : AppIconButton(
+                  key: const ValueKey<String>('record-edit-fields'),
+                  icon: AppIcons.edit,
+                  tooltip: Copy.recordEditFields,
+                  semanticLabel: Copy.recordEditFields,
+                  onPressed: () =>
+                      unawaited(showRecordEditSheet(context, detail.row)),
+                ),
+        ),
         if (entries.isEmpty)
           const Text(Copy.recordEditNoFieldsHeadline, style: AppText.body)
         else
           for (final RecordEditEntry entry in entries)
             AppListTile(
+              key: ValueKey<String>('record-field-${entry.fieldKey}'),
               title: entry.label,
               subtitle: entry.initial.isEmpty
                   ? Copy.recordFieldEmpty
                   : entry.initial,
               dense: true,
+              trailing: const ExcludeSemantics(
+                child: Icon(AppIcons.edit, size: Space.x5),
+              ),
+              // A tap on a value edits it (FE-CONS-10).
+              onTap: () =>
+                  unawaited(showRecordFieldSheet(context, detail.row, entry)),
             ),
         const SizedBox(height: Space.x4),
         if (detail.audioClips > 0)

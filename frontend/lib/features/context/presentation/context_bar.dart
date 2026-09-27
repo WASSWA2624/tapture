@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
@@ -15,10 +19,18 @@ import 'context_picker_sheet.dart';
 import 'context_providers.dart';
 import 'pinned_fields_sheet.dart';
 
-/// Always-visible breadcrumb of current context values. Hidden when empty.
+/// Always-visible breadcrumb of current context values. Hidden when empty,
+/// except on Capture, where [showsEmptyLevels] lists every level so the
+/// first value can be set in place (FBK0000160, D10).
 class ContextBar extends ConsumerWidget {
-  /// Creates the bar.
-  const ContextBar({super.key});
+  /// Creates the bar. [showsEmptyLevels] shows every level of the open
+  /// project, set or not, and a way to its context levels.
+  const ContextBar({this.showsEmptyLevels = false, super.key});
+
+  /// When true, levels with no value show as "Set" chips naming the level, and a
+  /// Manage chip (or Set up context, with no levels) opens the project's
+  /// context levels.
+  final bool showsEmptyLevels;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,6 +42,9 @@ class ContextBar extends ConsumerWidget {
       projectContextProvider(projectId),
     );
     final ContextState? state = async.asData?.value;
+    if (state != null && showsEmptyLevels) {
+      return _EveryLevel(projectId: projectId, state: state);
+    }
     if (state == null || state.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -111,6 +126,86 @@ class ContextBar extends ConsumerWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Every level of the open project in one scrolling line: its value, or
+/// a "Set" chip naming the level when it has none, each opening the picker; the pinned
+/// values; and Manage, which opens the project's context levels.
+class _EveryLevel extends StatelessWidget {
+  const _EveryLevel({required this.projectId, required this.state});
+
+  final String projectId;
+  final ContextState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<ContextLevel> ordered = List<ContextLevel>.of(state.levels)
+      ..sort((ContextLevel a, ContextLevel b) => a.order.compareTo(b.order));
+    void manage() => unawaited(
+      GoRouter.of(context).push(RoutePaths.projectContext(projectId)),
+    );
+    final List<Widget> chips = <Widget>[
+      for (final ContextLevel level in ordered)
+        _chipFor(context, level, state.values[level.fieldKey] ?? ''),
+      for (final MapEntry<String, String> pin in state.pinned.entries)
+        if (pin.value.isNotEmpty)
+          AppChip(
+            label: '${pin.value} · ${Copy.contextPinMarker}',
+            icon: AppIcons.pin,
+            onTap: () =>
+                showPinnedFieldsSheet(context: context, projectId: projectId),
+          ),
+      if (ordered.isEmpty)
+        AppChip(
+          key: const ValueKey<String>('context-bar-set-up'),
+          label: Copy.contextSetUp,
+          icon: AppIcons.context,
+          onTap: manage,
+        )
+      else
+        AppChip(
+          key: const ValueKey<String>('context-bar-manage'),
+          label: Copy.contextManage,
+          icon: AppIcons.context,
+          onTap: manage,
+        ),
+    ];
+    return Material(
+      key: const ValueKey<String>('context-bar-every-level'),
+      color: context.colors.surface,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(
+          horizontal: Space.x3,
+          vertical: Space.x1,
+        ),
+        child: Row(
+          children: <Widget>[
+            for (int i = 0; i < chips.length; i++) ...<Widget>[
+              if (i > 0) const SizedBox(width: Space.x1),
+              chips[i],
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _chipFor(BuildContext context, ContextLevel level, String value) {
+    final String name = level.label.isEmpty ? level.fieldKey : level.label;
+    return AppChip(
+      key: ValueKey<String>('context-bar-level-${level.fieldKey}'),
+      label: value.isEmpty
+          ? Copy.contextSetLevel(name)
+          : Copy.contextLevelValue(name, value),
+      onTap: () => showContextPickerSheet(
+        context: context,
+        projectId: projectId,
+        level: level,
+        currentValue: value,
       ),
     );
   }

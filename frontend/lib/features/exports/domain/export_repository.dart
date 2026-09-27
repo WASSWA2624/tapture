@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:typed_data';
 
+import 'package:tapture/core/bundle/bundle_output.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -18,12 +18,20 @@ abstract interface class ExportRepository {
   /// Tombstones [id]. [reason] is required so a later audit can say why.
   Future<Result<void>> delete(String id, {required String reason});
 
-  /// Writes one new workbook for [projectId]. The file is stored before the
-  /// row. [cancel] drops a partial file and writes no row.
-  Future<Result<ExportedWorkbook>> exportProject(
+  /// Writes one new project package for [projectId]: every table and file
+  /// another Tapture app needs to open the project, with the workbook inside
+  /// as `records.xlsx` (task 076, D13). The file is stored before the row.
+  /// [cancel] drops a partial file and writes no row; [onProgress] reports
+  /// the share written, 0 to 1.
+  Future<Result<ExportedPackage>> exportProject(
     String projectId, {
     required CancellationToken cancel,
+    void Function(double)? onProgress,
   });
+
+  /// Bytes the package of [projectId] is expected to take, shown before the
+  /// export starts.
+  Future<Result<int>> estimatePackage(String projectId);
 
   /// What an export of [projectId] would hold: the records [exportProject]
   /// writes, with their photos, audio, statuses, templates and dates.
@@ -69,12 +77,12 @@ typedef ExportEntry = ({
   String status,
 });
 
-/// A workbook stored on this device. [bytes] are shared only after the
-/// operator asks.
-typedef ExportedWorkbook = ({
+/// A project package written on this device: a stored file on a device, or
+/// bytes in a browser. It is shared only after the operator asks.
+typedef ExportedPackage = ({
   String id,
   String projectId,
   int version,
   String fileName,
-  Uint8List bytes,
+  BundleOutput package,
 });

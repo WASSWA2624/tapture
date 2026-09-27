@@ -97,7 +97,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final FakeExportRepository exports = FakeExportRepository(
-      displayName: 'Testing-250926-190542.xlsx',
+      displayName: 'Testing-250926-190542.zip',
     )..summary = _summary;
     addTearDown(exports.dispose);
     var shared = 0;
@@ -107,7 +107,7 @@ void main() {
       overrides: <Override>[offlineNowProvider.overrideWith((Ref _) => true)],
       downloads: DownloadService.fake(
         canOpenExternally: true,
-        onOpenExternally: (String _, Uint8List _, String _) => shared++,
+        onOpenStoredExternally: (String _, String _, String _) => shared++,
       ),
     );
     expect(find.text(Copy.offlineWorking), findsOneWidget);
@@ -115,7 +115,7 @@ void main() {
     await tester.tap(find.text(Copy.projectExport));
     await tester.pumpAndSettle();
     expect(
-      find.text(Copy.projectExportSaved('Testing-250926-190542.xlsx')),
+      find.text(Copy.projectExportSaved('Testing-250926-190542.zip')),
       findsOneWidget,
     );
     expect(find.text('Testing'), findsOneWidget);
@@ -124,6 +124,53 @@ void main() {
     await tester.tap(find.text(Copy.projectExportShare));
     await tester.pumpAndSettle();
     expect(shared, 1);
+  });
+
+  testWidgets('the page names the package and its size before writing', (
+    WidgetTester tester,
+  ) async {
+    final FakeExportRepository exports = FakeExportRepository()
+      ..summary = _summary
+      ..estimate = 3 * 1024 * 1024;
+    addTearDown(exports.dispose);
+    await _pump(tester, exports: exports);
+
+    expect(find.text(Copy.exportFileFormat), findsOneWidget);
+    expect(find.text(Copy.exportFileColumns), findsOneWidget);
+    expect(find.text(Copy.exportPackageSize(3 * 1024 * 1024)), findsOneWidget);
+  });
+
+  testWidgets('a device saves the stored package; a browser saves its bytes', (
+    WidgetTester tester,
+  ) async {
+    for (final bool browser in <bool>[false, true]) {
+      final FakeExportRepository exports = FakeExportRepository()
+        ..summary = _summary
+        ..inMemory = browser;
+      addTearDown(exports.dispose);
+      final List<String> stored = <String>[];
+      final List<String> bytes = <String>[];
+      await _pump(
+        tester,
+        exports: exports,
+        downloads: DownloadService.fake(
+          onSaveStored: (String path, String _, String mime) {
+            expect(mime, 'application/zip');
+            stored.add(path);
+          },
+          onSave: (String name, Uint8List _, String mime) {
+            expect(mime, 'application/zip');
+            bytes.add(name);
+          },
+        ),
+      );
+      await tester.tap(find.text(Copy.projectExport));
+      await tester.pumpAndSettle();
+
+      expect(stored, browser ? isEmpty : hasLength(1));
+      expect(bytes, browser ? hasLength(1) : isEmpty);
+      await tester.pumpWidget(const SizedBox.shrink());
+    }
   });
 
   testWidgets('cancel leaves the export unwritten', (
@@ -146,7 +193,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final FakeExportRepository exports = FakeExportRepository(
-      displayName: 'Test-project-240926-110000.xlsx',
+      displayName: 'Test-project-240926-110000.zip',
     )..summary = _summary;
     addTearDown(exports.dispose);
     await _pump(
@@ -157,7 +204,7 @@ void main() {
     await tester.tap(find.text(Copy.projectExport));
     await tester.pumpAndSettle();
     expect(
-      find.text(Copy.projectExportSaved('Test-project-240926-110000.xlsx')),
+      find.text(Copy.projectExportSaved('Test-project-240926-110000.zip')),
       findsOneWidget,
     );
     expect(find.textContaining('could not save'), findsOneWidget);
@@ -281,12 +328,17 @@ final class _HoldExport implements ExportRepository {
       const Success<void>(null);
 
   @override
-  Future<Result<ExportedWorkbook>> exportProject(
+  Future<Result<int>> estimatePackage(String projectId) async =>
+      const Success<int>(0);
+
+  @override
+  Future<Result<ExportedPackage>> exportProject(
     String projectId, {
     required CancellationToken cancel,
+    void Function(double)? onProgress,
   }) {
     return cancel.whenCancelled.then(
-      (_) => const FailureResult<ExportedWorkbook>(CancelledFailure()),
+      (_) => const FailureResult<ExportedPackage>(CancelledFailure()),
     );
   }
 

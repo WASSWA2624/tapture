@@ -8,6 +8,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
+import 'package:tapture/core/widgets/fields/field_editor.dart';
 import 'package:tapture/features/projects/domain/project_repository.dart';
 import 'package:tapture/features/projects/presentation/record_edit_sheet.dart';
 import 'package:tapture/features/projects/projects.dart';
@@ -49,6 +50,19 @@ const List<FieldDef> _fields = <FieldDef>[
     label: 'Quantity',
     type: FieldType.number,
     sortOrder: 4,
+  ),
+  FieldDef(
+    fieldKey: 'visited_on',
+    label: 'Visited on',
+    type: FieldType.date,
+    sortOrder: 5,
+  ),
+  FieldDef(
+    fieldKey: 'condition',
+    label: 'Condition',
+    type: FieldType.choice,
+    options: <Object>['Good', 'Faulty'],
+    sortOrder: 6,
   ),
 ];
 
@@ -112,6 +126,75 @@ void main() {
     expect(quantity.raw, '2');
     expect(quantity.refined, '3');
     expect(find.byType(RecordEditSheet), findsNothing);
+  });
+
+  testWidgets('each field type gets its own input holding its value', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      row: _row(
+        fields: const <ProjectRecordFieldValue>[
+          (fieldKey: 'quantity', raw: '2', refined: '', approved: ''),
+          (
+            fieldKey: 'visited_on',
+            raw: '2026-09-20',
+            refined: '',
+            approved: '',
+          ),
+          (fieldKey: 'condition', raw: 'Faulty', refined: '', approved: ''),
+        ],
+      ),
+    );
+
+    expect(
+      find.byKey(const ValueKey<String>('field-editor-number-quantity')),
+      findsOneWidget,
+    );
+    expect(tester.widget<TextField>(_field('Quantity')).controller?.text, '2');
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey<String>('field-editor-choice-condition')),
+      100,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey<String>('record-edit-fields')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    expect(
+      find.byKey(const ValueKey<String>('field-editor-date-visited_on')),
+      findsOneWidget,
+    );
+    expect(find.text('Faulty'), findsOneWidget);
+  });
+
+  testWidgets('a picked choice is saved as its text', (
+    WidgetTester tester,
+  ) async {
+    final _Harness harness = await _pump(tester, row: _row());
+    final Finder choice = find.byKey(
+      const ValueKey<String>('field-editor-choice-condition'),
+    );
+    await tester.scrollUntilVisible(
+      choice,
+      100,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey<String>('record-edit-fields')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await tester.tap(choice);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Good').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Good'), findsOneWidget);
+    await tester.tap(find.text(Copy.save));
+    await tester.pumpAndSettle();
+
+    expect(harness.projects.addedFields['r1/condition'], 'Good');
   });
 
   testWidgets('a failed save keeps the sheet open with what was typed', (
@@ -196,6 +279,9 @@ Future<_Harness> _pump(
       overrides: <Override>[
         projectRepositoryProvider.overrideWith((Ref _) => projects),
         templateRepositoryProvider.overrideWith((Ref _) => templates),
+        fieldEditorBindingsProvider.overrideWithValue(
+          templateFieldEditorBindings,
+        ),
       ],
       child: MaterialApp(
         theme: buildTheme(brightness: Brightness.light),

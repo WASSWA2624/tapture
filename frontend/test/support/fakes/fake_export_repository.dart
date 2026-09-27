@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:tapture/core/bundle/bundle_output.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -80,13 +81,26 @@ final class FakeExportRepository implements ExportRepository {
     return const Success<void>(null);
   }
 
+  /// What [estimatePackage] reports.
+  int estimate = 4096;
+
+  /// Hands back an in-memory package, as a browser writes one, when true;
+  /// otherwise a stored one under `projects/fake/exports/`.
+  bool inMemory = false;
+
   @override
-  Future<Result<ExportedWorkbook>> exportProject(
+  Future<Result<int>> estimatePackage(String projectId) async {
+    return Success<int>(estimate);
+  }
+
+  @override
+  Future<Result<ExportedPackage>> exportProject(
     String projectId, {
     required CancellationToken cancel,
+    void Function(double)? onProgress,
   }) async {
     if (projectId.isEmpty) {
-      return const FailureResult<ExportedWorkbook>(
+      return const FailureResult<ExportedPackage>(
         ValidationFailure(
           message: 'An export needs a project.',
           recoveryAction: 'Open a project and export again.',
@@ -94,8 +108,9 @@ final class FakeExportRepository implements ExportRepository {
       );
     }
     if (cancel.isCancelled) {
-      return const FailureResult<ExportedWorkbook>(CancelledFailure());
+      return const FailureResult<ExportedPackage>(CancelledFailure());
     }
+    onProgress?.call(1);
     final int version =
         _rows.values
             .where((ExportEntry row) => row.projectId == projectId)
@@ -110,12 +125,18 @@ final class FakeExportRepository implements ExportRepository {
     );
     _rows[id] = stored;
     _emit();
-    return Success<ExportedWorkbook>((
+    return Success<ExportedPackage>((
       id: id,
       projectId: projectId,
       version: version,
-      fileName: displayName ?? '$id.xlsx',
-      bytes: Uint8List(0),
+      fileName: displayName ?? '$id.zip',
+      package: inMemory
+          ? InMemoryBundle(bytes: Uint8List(4), byteLength: 4, sha256: 'fake')
+          : StoredBundle(
+              relativePath: 'projects/fake/exports/$id.zip',
+              byteLength: 4,
+              sha256: 'fake',
+            ),
     ));
   }
 

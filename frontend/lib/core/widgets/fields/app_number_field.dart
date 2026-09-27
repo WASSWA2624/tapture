@@ -22,7 +22,11 @@ class AppNumberField extends StatefulWidget {
     this.max,
     this.decimal = false,
     this.enabled = true,
+    this.initialValue,
   });
+
+  /// The number the field starts with, such as a stored value.
+  final num? initialValue;
 
   /// Visible label; also the semantic name of the control (FE-A11Y-02).
   final String label;
@@ -51,7 +55,9 @@ class AppNumberField extends StatefulWidget {
 }
 
 class _AppNumberFieldState extends State<AppNumberField> {
-  final TextEditingController _controller = TextEditingController();
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.initialValue?.toString() ?? '',
+  );
   String? _errorText;
 
   @override

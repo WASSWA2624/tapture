@@ -38,6 +38,8 @@ import 'package:tapture/features/capture/domain/photo_rotate.dart';
 import 'package:tapture/features/capture/domain/save_and_analyse.dart';
 import 'package:tapture/features/capture/presentation/audio_recorder.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
+import 'package:tapture/features/capture/presentation/capture_guide_card.dart';
+import 'package:tapture/features/capture/presentation/capture_guide_state.dart';
 import 'package:tapture/features/capture/presentation/capture_recovery_prompt.dart';
 import 'package:tapture/features/capture/presentation/capture_target_fields.dart';
 import 'package:tapture/features/capture/presentation/gallery_picker.dart';
@@ -294,6 +296,17 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     }
     final bool needsChoice = !_editing && ready && templateId == null;
     final bool offline = ref.watch(offlineNowProvider);
+    // What the chosen template asks for (FBK0000157, D14).
+    CaptureGuide guide = const CaptureGuide(
+      photoFields: <String>[],
+      captionFields: <String>[],
+    );
+    for (final TemplateDef template in templates) {
+      if (template.id == templateId) {
+        guide = CaptureGuide.of(template);
+      }
+    }
+    final CaptureGuideView guideView = ref.watch(captureGuideStateProvider);
     final List<String> captionTargets = _captionTargets(session);
     final String title = _editing ? Copy.recordEditTitle : Copy.navCapture;
     final Widget? banner = widget.headroom;
@@ -344,9 +357,9 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                 // stay one height.
                 if (offline) ...<Widget>[
                   const SizedBox(height: Space.x1),
-                  Text(
+                  const Text(
                     Copy.captureProcessNeedsNetwork,
-                    key: const ValueKey<String>('capture-saves-offline'),
+                    key: ValueKey<String>('capture-saves-offline'),
                     style: AppText.caption,
                     textAlign: TextAlign.center,
                   ),
@@ -365,6 +378,10 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               templateId: templateId,
               onProjectSelected: _chooseProject,
             ),
+            _blockGap,
+          ],
+          if (!guide.isEmpty) ...<Widget>[
+            CaptureGuideCard(guide: guide),
             _blockGap,
           ],
           PhotoTray(
@@ -399,6 +416,15 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             // photo gets the text from the add button below (FBK0000155).
             value: session.recordCaption,
             resetKey: uiState.captionAdds,
+            guide: templateId == null || guideView.closedFor == templateId
+                ? const <String>[]
+                : guide.captionFields,
+            onCloseGuide: templateId == null
+                ? null
+                : () => ref
+                      .read(captureGuideStateProvider.notifier)
+                      .closePanelFor(templateId),
+            recorder: ref.watch(audioRecorderServiceProvider),
             onChanged: (String text) async {
               final Result<void> result = await controller.setCaption(
                 null,

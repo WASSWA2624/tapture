@@ -910,11 +910,17 @@ abstract final class Copy {
   );
 
   /// The export's file format.
-  static const String exportFileFormat = 'Excel workbook (.xlsx)';
+  static const String exportFileFormat = 'Project package (.zip)';
 
-  /// What the workbook holds, column by column.
+  /// What the package holds, for another Tapture app and for a reader.
   static const String exportFileColumns =
-      'One row per record: number, status and photo count';
+      'Everything another Tapture app needs to open this project: records, '
+      'photos, audio, templates, context, reference data and project '
+      'settings, with a workbook of the records. Unsaved capture drafts stay '
+      'on this device.';
+
+  /// How big the package is expected to be, before it is written.
+  static String exportPackageSize(int bytes) => 'About ${fileSize(bytes)}';
 
   /// Where the export file is saved: the Exports folder under [place], the
   /// short Downloads label.
@@ -1883,9 +1889,9 @@ abstract final class Copy {
   /// Visible association on a shipped template already copied in.
   static const String shippedAddedToProject = 'Added to this project';
 
-  /// Search hint on the shipped template library.
-  static const String shippedLibrarySearchHint =
-      'Search by name, code, category or field';
+  /// Search hint on the shipped template library, which ranks a name, a code
+  /// or a plain description of the work.
+  static const String shippedLibrarySearchHint = 'Search or describe your work';
 
   /// Heading of a catalogue area. [code] and [title] are catalogue data.
   static String shippedAreaTitle(String code, String title) => '$code · $title';
@@ -1893,6 +1899,11 @@ abstract final class Copy {
   /// Heading of a catalogue category. [code] and [title] are catalogue data.
   static String shippedCatalogueCategoryTitle(String code, String title) {
     return '$code — $title';
+  }
+
+  /// A collapsible catalogue category with how many templates it lists.
+  static String shippedCategoryHeading(String code, String title, int count) {
+    return '${shippedCatalogueCategoryTitle(code, title)} · $count';
   }
 
   /// Row subtitle of a catalogue template: its code, its record type and how
@@ -2203,6 +2214,19 @@ abstract final class Copy {
 
   /// Pin chip marker.
   static const String contextPinMarker = 'Pinned';
+
+  /// A context level with no value on Capture's bar; [level] is data.
+  static String contextSetLevel(String level) => 'Set $level';
+
+  /// A context level and its value on Capture's bar; both are data.
+  static String contextLevelValue(String level, String value) =>
+      '$level: $value';
+
+  /// Opens the project's context levels from Capture's bar.
+  static const String contextManage = 'Manage';
+
+  /// Opens the project's context levels when it has none yet.
+  static const String contextSetUp = 'Set up context';
 
   /// Remove one hierarchy level.
   static const String contextRemoveLevel = 'Remove level';
@@ -3692,4 +3716,21 @@ abstract final class Copy {
   static const String packageRejectedRecovery =
       'Nothing was imported. Export the project again on the other device, '
       'or update Tapture for a newer package.';
+
+  // Capture's guide (task 076).
+
+  /// The row under the Template select that opens the guide.
+  static const String captureGuideTitle = 'What to capture';
+
+  /// What the photos should show; the template's fields follow.
+  static const String captureGuidePhotos = 'Photos should show';
+
+  /// What to say or type in the caption; the template's fields follow.
+  static const String captureGuideCaption = 'Say or type in the caption';
+
+  /// A guide list's field labels, which are template data.
+  static String captureGuideItems(List<String> labels) => labels.join(' · ');
+
+  /// Closes the caption panel of the guide.
+  static const String captureGuideClose = 'Hide the caption guide';
 }

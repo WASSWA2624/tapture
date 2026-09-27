@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/bundle/bundle.dart';
 import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/base_dao.dart';
@@ -15,6 +16,7 @@ import 'package:tapture/core/export/xlsx_cell.dart';
 import 'package:tapture/core/export/xlsx_column.dart';
 import 'package:tapture/core/export/xlsx_encoder.dart';
 import 'package:tapture/core/export/xlsx_sheet.dart';
+import 'package:tapture/core/files/file_reader.dart';
 import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
@@ -22,8 +24,9 @@ import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/exports/domain/export_file_name.dart';
 import 'package:tapture/features/exports/domain/export_repository.dart';
 
-/// Device [ExportRepository]. A workbook is a new file under the project's
-/// `exports/` folder; the row is inserted only after that file exists.
+/// Device [ExportRepository]. An export is a new project package under the
+/// project's `exports/` folder, the workbook inside it; the row is inserted
+/// only after that file exists.
 final class ExportRepositoryImpl implements ExportRepository {
   /// Creates the repository over the local database and storage root.
   ExportRepositoryImpl({
@@ -33,12 +36,23 @@ final class ExportRepositoryImpl implements ExportRepository {
     required String deviceId,
     required IdService ids,
     FileWriter? writer,
+    BundleWriter? bundles,
   }) : _db = db,
        _storageRoot = storageRoot,
        _clock = clock,
        _deviceId = deviceId,
        _ids = ids,
        _writer = writer ?? FileWriter(storageRoot: storageRoot),
+       _bundles =
+           bundles ??
+           BundleWriter(
+             db: db,
+             storageRoot: storageRoot,
+             files: FileReader(storageRoot: storageRoot),
+             clock: clock,
+             ids: ids,
+             deviceId: deviceId,
+           ),
        _dao = _ExportDao(db, clock: clock, deviceId: deviceId, ids: ids);
 
   final sqlite.AppDatabase _db;
@@ -47,6 +61,7 @@ final class ExportRepositoryImpl implements ExportRepository {
   final String _deviceId;
   final IdService _ids;
   final FileWriter _writer;
+  final BundleWriter _bundles;
   final _ExportDao _dao;
 
   @override
@@ -105,19 +120,25 @@ final class ExportRepositoryImpl implements ExportRepository {
   }
 
   @override
-  Future<Result<ExportedWorkbook>> exportProject(
+  Future<Result<int>> estimatePackage(String projectId) {
+    return _bundles.estimate(projectId);
+  }
+
+  @override
+  Future<Result<ExportedPackage>> exportProject(
     String projectId, {
     required CancellationToken cancel,
+    void Function(double)? onProgress,
   }) async {
     if (cancel.isCancelled) {
-      return const FailureResult<ExportedWorkbook>(CancelledFailure());
+      return const FailureResult<ExportedPackage>(CancelledFailure());
     }
     final sqlite.Project? project =
         await (_db.select(_db.projects)
               ..where((sqlite.$ProjectsTable row) => row.id.equals(projectId)))
             .getSingleOrNull();
     if (project == null) {
-      return const FailureResult<ExportedWorkbook>(
+      return const FailureResult<ExportedPackage>(
         StorageFailure(message: 'The photo project was not found.'),
       );
     }
@@ -136,7 +157,7 @@ final class ExportRepositoryImpl implements ExportRepository {
         )
         .get();
     if (records.isEmpty) {
-      return const FailureResult<ExportedWorkbook>(
+      return const FailureResult<ExportedPackage>(
         ValidationFailure(
           message: 'Nothing to export',
           recoveryAction: 'Capture a record before exporting this project.',
@@ -156,44 +177,59 @@ final class ExportRepositoryImpl implements ExportRepository {
           ],
         ], cancel: cancel);
     if (encoded is FailureResult<Uint8List>) {
-      return FailureResult<ExportedWorkbook>(encoded.failure);
+      return FailureResult<ExportedPackage>(encoded.failure);
     }
     if (cancel.isCancelled) {
-      return const FailureResult<ExportedWorkbook>(CancelledFailure());
+      return const FailureResult<ExportedPackage>(CancelledFailure());
     }
-    final Uint8List bytes = (encoded as Success<Uint8List>).value;
+    // The workbook travels inside the package, for a reader outside the
+    // app (task 076, D13).
+    final Result<BundleOutput> written = await _bundles.write(
+      projectId: projectId,
+      cancel: cancel,
+      onProgress: onProgress,
+      extras: <String, List<int>>{
+        BundleFormat.workbook: (encoded as Success<Uint8List>).value,
+      },
+    );
+    if (written case FailureResult<BundleOutput>(:final Failure failure)) {
+      return FailureResult<ExportedPackage>(failure);
+    }
+    final BundleOutput package = (written as Success<BundleOutput>).value;
     final String id = _ids.newId();
-    final String storedName = '$id.xlsx';
-    final String relative =
-        'projects/${project.folderName}/exports/$storedName';
-    final String displayName = ExportFileName.build(
-      projectName: project.name,
-      local: _clock.nowUtc().toLocal(),
-    );
-    final Result<WrittenFile> written = await _writer.write(
-      Stream<List<int>>.value(bytes),
-      relative,
-    );
-    if (written is FailureResult<WrittenFile>) {
-      return FailureResult<ExportedWorkbook>(written.failure);
+    final String relative;
+    switch (package) {
+      case StoredBundle(:final String relativePath):
+        relative = relativePath;
+      case InMemoryBundle(:final Uint8List bytes):
+        // A browser keeps its copy where it keeps every project file.
+        relative =
+            'projects/${project.folderName}/exports/$id.'
+            '${BundleFormat.extension}';
+        final Result<WrittenFile> kept = await _writer.write(
+          Stream<List<int>>.value(bytes),
+          relative,
+        );
+        if (kept case FailureResult<WrittenFile>(:final Failure failure)) {
+          return FailureResult<ExportedPackage>(failure);
+        }
     }
-    final WrittenFile file = (written as Success<WrittenFile>).value;
     if (cancel.isCancelled) {
-      await _discard(file.relativePath);
-      return const FailureResult<ExportedWorkbook>(CancelledFailure());
+      await _discard(relative);
+      return const FailureResult<ExportedPackage>(CancelledFailure());
     }
     final Result<sqlite.ExportRow> row = await completeExport(
       _db,
       produce: () async => sqlite.ExportsCompanion(
         id: Value<String>(id),
         projectId: Value<String>(projectId),
-        formats: Value<String>(jsonEncode(<String>['xlsx'])),
+        formats: Value<String>(jsonEncode(<String>['bundle', 'xlsx'])),
         filters: Value<String>(
           jsonEncode(<String, String>{'project': projectId}),
         ),
         recordCount: Value<int>(records.length),
-        filePath: Value<String>(file.relativePath),
-        fileHash: Value<String>(file.sha256),
+        filePath: Value<String>(relative),
+        fileHash: Value<String>(package.sha256),
         createdBy: Value<String>(_deviceId),
       ),
       clock: _clock,
@@ -202,15 +238,19 @@ final class ExportRepositoryImpl implements ExportRepository {
     );
     switch (row) {
       case FailureResult<sqlite.ExportRow>(:final Failure failure):
-        await _discard(file.relativePath);
-        return FailureResult<ExportedWorkbook>(failure);
+        await _discard(relative);
+        return FailureResult<ExportedPackage>(failure);
       case Success<sqlite.ExportRow>(:final sqlite.ExportRow value):
-        return Success<ExportedWorkbook>((
+        return Success<ExportedPackage>((
           id: value.id,
           projectId: value.projectId,
           version: value.version,
-          fileName: displayName,
-          bytes: bytes,
+          fileName: ExportFileName.build(
+            projectName: project.name,
+            local: _clock.nowUtc().toLocal(),
+            extension: BundleFormat.extension,
+          ),
+          package: package,
         ));
     }
   }

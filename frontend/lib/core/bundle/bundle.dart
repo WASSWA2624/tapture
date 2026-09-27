@@ -10,3 +10,4 @@ export 'bundle_rejection.dart';
 export 'bundle_tables.dart';
 export 'bundle_writer.dart';
 export 'inspected_bundle.dart';
+export 'template_key.dart';

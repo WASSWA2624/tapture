@@ -14,11 +14,13 @@ import 'package:tapture/core/files/photo_thumbnails.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_photo_thumb.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
+import 'package:tapture/core/widgets/fields/field_editor.dart';
 import 'package:tapture/features/projects/domain/project_repository.dart';
 import 'package:tapture/features/projects/presentation/record_detail_screen.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/templates.dart';
 
+import '../../../support/a11y_matchers.dart';
 import '../../../support/factories.dart';
 import '../../templates/fakes/fake_template_repository.dart';
 import '../fakes/fake_project_repository.dart';
@@ -63,16 +65,60 @@ void main() {
     });
   }
 
-  testWidgets('Edit fields opens the field editor', (
+  testWidgets('Edit fields on the Fields heading opens the field editor', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, thumbPath: thumbPath);
+    final Finder button = find.byKey(
+      const ValueKey<String>('record-edit-fields'),
+    );
+    await tester.ensureVisible(button);
+    await tester.pumpAndSettle();
+    await tester.tap(button);
+    await tester.pumpAndSettle();
+    expect(find.byType(AppBottomSheet), findsOneWidget);
+    expect(find.text(Copy.recordEdit), findsWidgets);
+  });
+
+  testWidgets('the menu no longer carries Edit fields', (
     WidgetTester tester,
   ) async {
     await _pump(tester, thumbPath: thumbPath);
     await tester.tap(find.byType(AppOverflowMenu));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(Copy.recordEditFields));
+    expect(find.text(Copy.recordDelete), findsOneWidget);
+    expect(find.text(Copy.recordEditFields), findsNothing);
+  });
+
+  testWidgets('a tap on a field fills that one field by hand', (
+    WidgetTester tester,
+  ) async {
+    final _Harness harness = await _pump(tester, thumbPath: thumbPath);
+    final Finder row = find.byKey(
+      const ValueKey<String>('record-field-condition_note'),
+    );
+    await tester.ensureVisible(row);
     await tester.pumpAndSettle();
+    expect(row, meetsTapTarget());
+    await tester.tap(row);
+    await tester.pumpAndSettle();
+
     expect(find.byType(AppBottomSheet), findsOneWidget);
-    expect(find.text(Copy.recordEdit), findsWidgets);
+    await tester.enterText(
+      find.descendant(
+        of: find.byType(AppBottomSheet),
+        matching: find.byType(TextField),
+      ),
+      'Leaking at the valve',
+    );
+    await tester.tap(find.byKey(const ValueKey<String>('record-field-save')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AppBottomSheet), findsNothing);
+    expect(
+      harness.projects.addedFields['r1/condition_note'],
+      'Leaking at the valve',
+    );
   });
 
   testWidgets('Delete asks, archives the record and returns to the list', (
@@ -210,6 +256,9 @@ Future<_Harness> _pump(
       overrides: <Override>[
         projectRepositoryProvider.overrideWith((Ref _) => projects),
         templateRepositoryProvider.overrideWith((Ref _) => templates),
+        fieldEditorBindingsProvider.overrideWithValue(
+          templateFieldEditorBindings,
+        ),
         photoThumbnailsProvider.overrideWith(
           (Ref _) => PhotoThumbnails.fake(<String, String>{
             'projects/test-project/photos/a.jpg': thumbPath,

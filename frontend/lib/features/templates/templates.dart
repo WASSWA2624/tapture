@@ -7,6 +7,7 @@ export 'data/shipped_template_loader.dart'
 export 'data/template_json.dart' show TemplateJson;
 export 'data/template_repository_impl.dart' show templateRepositoryProvider;
 export 'data/xlsx_template_import.dart' show XlsxTemplateImport;
+export 'domain/capture_guide.dart';
 export 'domain/field_def.dart';
 export 'domain/field_type_registry.dart';
 export 'domain/shipped_template_entry.dart';

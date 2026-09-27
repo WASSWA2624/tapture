@@ -20,10 +20,16 @@ void main() {
 
     test('drops words too short to mean anything, keeping digits', () {
       expect(searchWords('I am going to count 5 laptops'), <String>[
-        'going',
         'count',
         '5',
         'laptops',
+      ]);
+    });
+
+    test('drops the connectives of a plain description', () {
+      expect(searchWords('the pumps and the valves'), <String>[
+        'pumps',
+        'valves',
       ]);
     });
 

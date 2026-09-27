@@ -23,6 +23,7 @@ import 'bundle_zip_stub.dart'
     if (dart.library.io) 'bundle_zip_io.dart'
     if (dart.library.js_interop) 'bundle_zip_web.dart'
     as platform;
+import 'template_key.dart';
 
 /// Writes a project package: every table and file another Tapture app
 /// needs to open the project (specification §45, task 076). On a device the
@@ -247,25 +248,6 @@ final class _BundleWriter implements BundleWriter {
           ),
     ];
   }
-}
-
-/// A template row's stable key, which lives in its detection JSON; empty
-/// when the template has none.
-String templateKeyOf(Map<String, Object?> template) {
-  final Object? detection = template['detection'];
-  if (detection is! String || detection.isEmpty) {
-    return '';
-  }
-  try {
-    final Object? decoded = jsonDecode(detection);
-    if (decoded is Map<String, Object?>) {
-      final Object? key = decoded['template_key'];
-      return key is String ? key : '';
-    }
-  } on FormatException {
-    return '';
-  }
-  return '';
 }
 
 String? _sessionProject(Object? counts) {

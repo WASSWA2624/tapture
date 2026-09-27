@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tapture/core/bundle/bundle.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/db/app_database.dart' hide Project;
 import 'package:tapture/core/db/tables/attachment_owners.dart';
@@ -10,8 +12,11 @@ import 'package:tapture/core/db/tables/photos.dart';
 import 'package:tapture/core/db/tables/records.dart';
 import 'package:tapture/core/db/tables/templates.dart';
 import 'package:tapture/core/db/tables/tombstones.dart';
+import 'package:tapture/core/device/device_identity.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/document_picker.dart';
+import 'package:tapture/core/files/file_reader.dart';
 import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
@@ -30,13 +35,13 @@ void main() {
     addTearDown(harness.close);
     await harness.record('captured');
 
-    final ExportedWorkbook first = _ok(
+    final ExportedPackage first = _ok(
       await harness.repo.exportProject(
         'project-1',
         cancel: CancellationToken(),
       ),
     );
-    final ExportedWorkbook second = _ok(
+    final ExportedPackage second = _ok(
       await harness.repo.exportProject(
         'project-1',
         cancel: CancellationToken(),
@@ -49,6 +54,7 @@ void main() {
     final String display = ExportFileName.build(
       projectName: 'Test project',
       local: local,
+      extension: 'zip',
     );
     expect(first.fileName, display);
     expect(second.fileName, display);
@@ -60,9 +66,44 @@ void main() {
     for (final ExportRow row in stored) {
       final String storedName = row.filePath.split('/').last;
       expect(storedName, isNot(display));
+      expect(storedName, endsWith('.zip'));
       expect(harness.file(storedName).existsSync(), isTrue);
+      expect(row.formats, contains('bundle'));
     }
   });
+
+  test(
+    'the export is one package a reader accepts, the workbook inside',
+    () async {
+      final _Harness harness = await _Harness.open();
+      addTearDown(harness.close);
+      await harness.record('captured', id: 'r1');
+
+      final ExportedPackage written = _ok(
+        await harness.repo.exportProject(
+          'project-1',
+          cancel: CancellationToken(),
+        ),
+      );
+      final StoredBundle stored = written.package as StoredBundle;
+      final File package = File('${harness.root.path}/${stored.relativePath}');
+      final InspectedBundle bundle = _ok(
+        await BundleReader.inspect(
+          PickedFile(package, written.fileName, package.lengthSync()),
+        ),
+      );
+      addTearDown(bundle.close);
+
+      expect(bundle.manifest.projectId, 'project-1');
+      expect(bundle.rowsOf('records').single['id'], 'r1');
+      final Uint8List workbook = _ok(
+        await bundle.readEntry(BundleFormat.workbook),
+      );
+      expect(workbook.take(2), <int>[0x50, 0x4B]);
+      final int estimate = _ok(await harness.repo.estimatePackage('project-1'));
+      expect(estimate, greaterThan(0));
+    },
+  );
 
   test('a display name keeps letters and digits and stamps the local time', () {
     expect(
@@ -83,18 +124,17 @@ void main() {
 
   test('a refused write leaves records and exports unchanged', () async {
     final _Harness harness = await _Harness.open(
-      writer: (StorageRoot storage) =>
-          FileWriter(storageRoot: storage, permissionDenied: true),
+      bundles: (BundleWriter real) => _RefusingBundles(),
     );
     addTearDown(harness.close);
     await harness.record('captured');
 
-    final Result<ExportedWorkbook> written = await harness.repo.exportProject(
+    final Result<ExportedPackage> written = await harness.repo.exportProject(
       'project-1',
       cancel: CancellationToken(),
     );
 
-    expect(written, isA<FailureResult<ExportedWorkbook>>());
+    expect(written, isA<FailureResult<ExportedPackage>>());
     expect(await harness.db.select(harness.db.exports).get(), isEmpty);
     expect(await harness.db.select(harness.db.records).get(), hasLength(1));
     expect(harness.exportDir.existsSync(), isFalse);
@@ -198,23 +238,22 @@ void main() {
     expect(summary.lastCapturedAt?.toUtc(), DateTime.utc(2026, 9, 25, 16));
   });
 
-  test('cancellation deletes a partial file and writes no row', () async {
+  test('cancellation deletes a finished file and writes no row', () async {
     final CancellationToken cancel = CancellationToken();
     final _Harness harness = await _Harness.open(
-      writer: (StorageRoot storage) =>
-          _CancelOnWrite(FileWriter(storageRoot: storage), cancel),
+      bundles: (BundleWriter real) => _CancelAfterWrite(real, cancel),
     );
     addTearDown(harness.close);
     await harness.record('captured');
 
-    final Result<ExportedWorkbook> written = await harness.repo.exportProject(
+    final Result<ExportedPackage> written = await harness.repo.exportProject(
       'project-1',
       cancel: cancel,
     );
 
-    expect(written, isA<FailureResult<ExportedWorkbook>>());
+    expect(written, isA<FailureResult<ExportedPackage>>());
     expect(
-      (written as FailureResult<ExportedWorkbook>).failure,
+      (written as FailureResult<ExportedPackage>).failure,
       isA<CancelledFailure>(),
     );
     expect(await harness.db.select(harness.db.exports).get(), isEmpty);
@@ -242,6 +281,7 @@ final class _Harness {
 
   static Future<_Harness> open({
     FileWriter Function(StorageRoot storage)? writer,
+    BundleWriter Function(BundleWriter real)? bundles,
   }) async {
     final AppDatabase db = AppDatabase.memory();
     final Directory documents = await Directory.systemTemp.createTemp(
@@ -257,6 +297,16 @@ final class _Harness {
     );
     final Project created = _ok(await projects.create(aProject()));
     final Directory root = _ok(await storage.resolve());
+    final BundleWriter real = BundleWriter(
+      db: db,
+      storageRoot: storage,
+      files: FileReader(storageRoot: storage),
+      clock: clock,
+      ids: UuidV7Service.sequence(clock),
+      deviceId: 'device-test',
+      device: () async => const DeviceDescriptor.fake(),
+      inBrowser: false,
+    );
     return _Harness(
       db: db,
       root: root,
@@ -268,6 +318,7 @@ final class _Harness {
         deviceId: 'device-test',
         ids: UuidV7Service.sequence(clock),
         writer: writer?.call(storage),
+        bundles: bundles == null ? real : bundles(real),
       ),
     );
   }
@@ -352,24 +403,52 @@ T _ok<T>(Result<T> result) {
   };
 }
 
-final class _CancelOnWrite implements FileWriter {
-  _CancelOnWrite(this._inner, this._cancel);
+/// Writes the real package, then cancels, as an operator tapping Cancel
+/// just as the file finishes would.
+final class _CancelAfterWrite implements BundleWriter {
+  _CancelAfterWrite(this._inner, this._cancel);
 
-  final FileWriter _inner;
+  final BundleWriter _inner;
   final CancellationToken _cancel;
 
   @override
-  Future<Result<WrittenFile>> write(
-    Stream<List<int>> bytes,
-    String relativePath,
-  ) async {
-    final Result<WrittenFile> written = await _inner.write(bytes, relativePath);
+  int get ceiling => _inner.ceiling;
+
+  @override
+  Future<Result<int>> estimate(String projectId) => _inner.estimate(projectId);
+
+  @override
+  Future<Result<BundleOutput>> write({
+    required String projectId,
+    required CancellationToken cancel,
+    void Function(double)? onProgress,
+    Map<String, List<int>> extras = const <String, List<int>>{},
+  }) async {
+    final Result<BundleOutput> written = await _inner.write(
+      projectId: projectId,
+      cancel: cancel,
+      onProgress: onProgress,
+      extras: extras,
+    );
     _cancel.cancel();
     return written;
   }
+}
+
+/// Refuses every write, as a full disk would.
+final class _RefusingBundles implements BundleWriter {
+  @override
+  int get ceiling => 0;
 
   @override
-  Future<Result<WrittenFile>> copyIn(File source, String relativePath) {
-    return _inner.copyIn(source, relativePath);
-  }
+  Future<Result<int>> estimate(String projectId) async =>
+      const FailureResult<int>(StorageFailure());
+
+  @override
+  Future<Result<BundleOutput>> write({
+    required String projectId,
+    required CancellationToken cancel,
+    void Function(double)? onProgress,
+    Map<String, List<int>> extras = const <String, List<int>>{},
+  }) async => const FailureResult<BundleOutput>(StorageFailure());
 }

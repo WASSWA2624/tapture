@@ -413,6 +413,10 @@ abstract final class AppConstants {
   static const ({int nativeMaxBytes, int nativeMaxUncompressedBytes}) bundles =
       (nativeMaxBytes: 4000000000, nativeMaxUncompressedBytes: 4400000000);
 
+  /// Capture's guide (task 076, W18): at most this many fields in each of
+  /// its lists, so it stays a glance, not a form.
+  static const ({int guideMaxFields}) capture = (guideMaxFields: 6);
+
   /// Searching lists and the template catalogue: a word shorter than
   /// [minWordLength] means nothing on its own and is skipped, unless it holds
   /// a digit, as a code's "001" does.

@@ -107,7 +107,7 @@ void main() {
     expect(find.text(const NetworkFailure().message), findsOneWidget);
   });
 
-  testWidgets('lists under area and category headings in catalogue order', (
+  testWidgets('opens as areas and collapsed, counted categories', (
     WidgetTester tester,
   ) async {
     _tall(tester);
@@ -127,16 +127,24 @@ void main() {
     ];
     expect(headings, <String>[
       Copy.shippedAreaTitle('01', 'Cross-sector foundations'),
-      Copy.shippedCatalogueCategoryTitle(
-        'UNI',
-        'Universal capture and records',
-      ),
+      Copy.shippedCategoryHeading('UNI', 'Universal capture and records', 2),
       Copy.shippedAreaTitle('02', 'Business and governance'),
-      Copy.shippedCatalogueCategoryTitle(
-        'FIN',
-        'Finance accounting and expenses',
-      ),
+      Copy.shippedCategoryHeading('FIN', 'Finance accounting and expenses', 1),
     ]);
+    expect(find.byType(AppListTile), findsNothing);
+    expect(
+      tester
+          .widget<AppSectionHeader>(
+            find.byKey(const ValueKey<String>('shipped-category-UNI')),
+          )
+          .expanded,
+      isFalse,
+    );
+
+    await tester.tap(
+      find.byKey(const ValueKey<String>('shipped-category-UNI')),
+    );
+    await tester.pumpAndSettle();
     expect(
       <String>[
         for (final AppListTile tile in tester.widgetList<AppListTile>(
@@ -144,8 +152,12 @@ void main() {
         ))
           tile.title,
       ],
-      <String>['General observation', 'Voice field note', 'Invoice OCR intake'],
+      <String>['General observation', 'Voice field note'],
     );
+    await tester.tap(
+      find.byKey(const ValueKey<String>('shipped-category-FIN')),
+    );
+    await tester.pumpAndSettle();
     expect(
       find.text(
         Copy.shippedCatalogueSubtitle(
@@ -161,6 +173,29 @@ void main() {
         .getTopLeft(find.byType(AppSectionHeader).first)
         .dy;
     expect(firstHeading, greaterThan(search));
+  });
+
+  testWidgets('at 360 dp and 200 percent text the groups do not clip', (
+    WidgetTester tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 780);
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await _pump(
+      tester,
+      overrides: <Override>[
+        shippedLibraryProvider.overrideWith((Ref _) async => _catalogue),
+      ],
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey<String>('shipped-category-UNI')));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.byType(AppListTile), findsWidgets);
   });
 
   testWidgets('search matches code, record type, category and fields', (
@@ -186,14 +221,23 @@ void main() {
       ];
     }
 
-    expect(await shownFor('uni-004'), <String>['Voice field note']);
+    expect((await shownFor('uni-004')).first, 'Voice field note');
     expect(await shownFor('transaction'), <String>['Invoice OCR intake']);
     expect(await shownFor('finance'), <String>['Invoice OCR intake']);
-    expect(await shownFor('transcript language'), <String>['Voice field note']);
+    expect((await shownFor('transcript language')).first, 'Voice field note');
     expect(await shownFor('observation foundations'), <String>[
       'General observation',
       'Voice field note',
     ]);
+    // A plain description finds and orders templates without every word.
+    expect(
+      (await shownFor('I will record voice notes of observations')).first,
+      'Voice field note',
+    );
+    expect(
+      find.byKey(const ValueKey<String>('shipped-category-UNI')),
+      findsNothing,
+    );
   });
 
   testWidgets('a search that matches nothing says so under the field', (
@@ -290,6 +334,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    await _openCategories(tester);
     await tester.tap(find.widgetWithText(AppListTile, 'General observation'));
     await tester.pumpAndSettle();
 
@@ -365,6 +410,7 @@ void main() {
           .onPressed,
       isNull,
     );
+    await _openCategories(tester);
     await tester.longPress(find.byType(AppListTile).at(0));
     await tester.longPress(find.byType(AppListTile).at(2));
     await tester.pump();
@@ -379,6 +425,21 @@ void main() {
       isTrue,
     );
   });
+}
+
+/// Opens every category of the library, as a person tapping each would.
+Future<void> _openCategories(WidgetTester tester) async {
+  final List<Finder> categories = <Finder>[
+    for (final AppSectionHeader header in tester.widgetList<AppSectionHeader>(
+      find.byType(AppSectionHeader),
+    ))
+      if (header.onToggle != null && header.expanded == false)
+        find.byKey(header.key!),
+  ];
+  for (final Finder category in categories) {
+    await tester.tap(category);
+    await tester.pumpAndSettle();
+  }
 }
 
 const ShippedRecordType _observation = ShippedRecordType(

@@ -330,8 +330,19 @@ final class _FakeDownloadService implements DownloadService {
       return FailureResult<void>(openExternallyFailure(fileName));
     }
     _onOpenStoredExternally?.call(relativePath, fileName, mimeType);
+    if (_openPermissionDenied) {
+      return const FailureResult<void>(
+        PermissionFailure(
+          message: Copy.projectOpenPermission,
+          recoveryAction: Copy.projectOpenPermissionRecovery,
+        ),
+      );
+    }
     if (_openCancel) {
       return const FailureResult<void>(CancelledFailure());
+    }
+    if (_openNoHandler) {
+      return FailureResult<void>(openExternallyNoHandlerFailure());
     }
     if (_fail || (!canOpenExternally && !canDownloadCopy)) {
       return FailureResult<void>(openExternallyFailure(fileName));

@@ -12,12 +12,13 @@ import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
-import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/templates/templates.dart';
 
 import '../domain/project_repository.dart';
 import 'record_edit_controller.dart';
+import 'record_field_draft.dart';
+import 'record_field_input.dart';
 
 /// Opens the editor for [row] as a sheet, or a side panel on expanded
 /// windows (FE-CONS-05).
@@ -29,8 +30,8 @@ Future<void> showRecordEditSheet(BuildContext context, ProjectRecordRow row) {
   );
 }
 
-/// Every editable field of a captured record's template, prefilled with what
-/// is stored, and one Save.
+/// Every editable field of a captured record's template, each in the input
+/// its type names, prefilled with what is stored, and one Save.
 class RecordEditSheet extends ConsumerStatefulWidget {
   /// Creates the editor for [row].
   const RecordEditSheet({required this.row, super.key});
@@ -54,6 +55,11 @@ class _RecordEditSheetState extends ConsumerState<RecordEditSheet> {
     super.dispose();
   }
 
+  String _valueOf(RecordEditEntry entry) {
+    return ref.read(recordFieldDraftProvider(widget.row.id))[entry.fieldKey] ??
+        entry.initial;
+  }
+
   TextEditingController _controllerFor(RecordEditEntry entry) {
     return _controllers.putIfAbsent(
       entry.fieldKey,
@@ -69,6 +75,7 @@ class _RecordEditSheetState extends ConsumerState<RecordEditSheet> {
     final RecordEditState state = ref.watch(
       recordEditControllerProvider(widget.row.id),
     );
+    ref.watch(recordFieldDraftProvider(widget.row.id));
     return AsyncValueView<TemplateDef?>(
       value: template,
       onRetry: () =>
@@ -104,15 +111,17 @@ class _RecordEditSheetState extends ConsumerState<RecordEditSheet> {
                       const SizedBox(height: Space.x3),
                   itemBuilder: (BuildContext context, int index) {
                     final RecordEditEntry entry = entries[index];
-                    return AppTextField(
-                      label: entry.label,
-                      controller: _controllerFor(entry),
-                      keyboardType: entry.keyboard,
-                      maxLines: entry.multiline ? _noteLines : 1,
-                      minLines: entry.multiline ? _noteLines ~/ 2 : null,
-                      textInputAction: index == entries.length - 1
-                          ? TextInputAction.done
-                          : TextInputAction.next,
+                    return RecordFieldInput(
+                      entry: entry,
+                      text: _valueOf(entry),
+                      controller: entry.field == null
+                          ? _controllerFor(entry)
+                          : null,
+                      onChanged: (String text) => ref
+                          .read(
+                            recordFieldDraftProvider(widget.row.id).notifier,
+                          )
+                          .set(entry.fieldKey, text),
                     );
                   },
                 ),
@@ -144,7 +153,7 @@ class _RecordEditSheetState extends ConsumerState<RecordEditSheet> {
         if (_changed(entry))
           (
             fieldKey: entry.fieldKey,
-            value: _controllerFor(entry).text,
+            value: _valueOf(entry),
             stored: entry.stored,
           ),
     ];
@@ -164,16 +173,21 @@ class _RecordEditSheetState extends ConsumerState<RecordEditSheet> {
     }
   }
 
-  bool _changed(RecordEditEntry entry) {
-    final String text = _controllerFor(entry).text;
-    if (!entry.stored) {
-      return text.trim().isNotEmpty;
-    }
-    return text != entry.initial;
-  }
+  bool _changed(RecordEditEntry entry) =>
+      recordFieldChanged(entry, _valueOf(entry));
 }
 
-/// One editable field on the sheet.
+/// Whether [text] is a change worth writing for [entry]: new text on a
+/// field with no stored row, or text that differs from what is stored.
+bool recordFieldChanged(RecordEditEntry entry, String text) {
+  if (!entry.stored) {
+    return text.trim().isNotEmpty;
+  }
+  return text != entry.initial;
+}
+
+/// One editable field on the sheet. [field] is null for a stored value the
+/// template no longer declares, which is edited as plain text.
 typedef RecordEditEntry = ({
   String fieldKey,
   String label,
@@ -181,6 +195,7 @@ typedef RecordEditEntry = ({
   bool stored,
   TextInputType? keyboard,
   bool multiline,
+  FieldDef? field,
 });
 
 /// The fields [row] can be edited in: [template]'s visible, person-entered
@@ -215,6 +230,7 @@ List<RecordEditEntry> recordEditEntries({
         stored: stored.containsKey(field.fieldKey),
         keyboard: _keyboardFor(field.type),
         multiline: field.type == FieldType.longText,
+        field: field,
       ),
     for (final ProjectRecordFieldValue field in row.fields)
       if (!declared.contains(field.fieldKey))
@@ -225,6 +241,7 @@ List<RecordEditEntry> recordEditEntries({
           stored: true,
           keyboard: null,
           multiline: false,
+          field: null,
         ),
   ];
 }
@@ -245,9 +262,6 @@ TextInputType? _keyboardFor(FieldType type) {
     _ => null,
   };
 }
-
-/// Visible lines of a long-text field before it scrolls inside itself.
-const int _noteLines = 4;
 
 /// The template a record was captured with; null when it was removed.
 final recordTemplateProvider = FutureProvider.autoDispose

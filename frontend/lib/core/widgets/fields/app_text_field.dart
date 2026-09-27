@@ -41,6 +41,7 @@ class AppTextField extends StatefulWidget {
     this.prefix,
     this.trailing,
     this.afterDictation,
+    this.onDictationChanged,
     this.clearable = false,
     this.enabled = true,
     this.readOnly = false,
@@ -90,6 +91,10 @@ class AppTextField extends StatefulWidget {
 
   /// Trailing slot placed immediately after the microphone.
   final Widget? afterDictation;
+
+  /// Told true when dictation into this field starts and false when it
+  /// stops, so a screen can show help while a person speaks.
+  final ValueChanged<bool>? onDictationChanged;
 
   /// When true, a labelled clear control appears once the field has text.
   final bool clearable;
@@ -157,10 +162,21 @@ class _AppTextFieldState extends State<AppTextField> {
     onFailure: (Failure failure) => _explain(failure),
   );
 
+  bool _wasDictating = false;
+
   @override
   void initState() {
     super.initState();
     widget.controller.addListener(_onUserEdit);
+    _dictation.addListener(_onDictation);
+  }
+
+  void _onDictation() {
+    final bool active = _dictation.isActive;
+    if (active != _wasDictating) {
+      _wasDictating = active;
+      widget.onDictationChanged?.call(active);
+    }
   }
 
   @override
@@ -181,6 +197,7 @@ class _AppTextFieldState extends State<AppTextField> {
   @override
   void dispose() {
     widget.controller.removeListener(_onUserEdit);
+    _dictation.removeListener(_onDictation);
     // Cancels a listen still running, so leaving never keeps the microphone.
     _dictation.dispose();
     super.dispose();

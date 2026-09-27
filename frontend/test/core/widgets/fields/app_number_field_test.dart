@@ -21,6 +21,28 @@ void main() {
     expect(values, <num?>[12]);
   });
 
+  testWidgets('a stored number shows as the starting text', (
+    WidgetTester tester,
+  ) async {
+    num? latest;
+    await _pump(
+      tester,
+      AppNumberField(
+        label: 'Count',
+        initialValue: 12,
+        onChanged: (num? value) => latest = value,
+      ),
+    );
+
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller?.text,
+      '12',
+    );
+    await tester.enterText(find.byType(TextField), '13');
+    await tester.pump();
+    expect(latest, 13);
+  });
+
   testWidgets('an out-of-range value uses the shared error style', (
     WidgetTester tester,
   ) async {

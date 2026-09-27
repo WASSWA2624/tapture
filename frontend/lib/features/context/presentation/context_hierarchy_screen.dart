@@ -142,8 +142,7 @@ class _ContextHierarchyScreenState
                       for (final TemplateDef template in loaded)
                         Choice<String>(template.id, template.name),
                     ],
-                    onChanged: (String id) =>
-                        setState(() => _templateId = id),
+                    onChanged: (String id) => setState(() => _templateId = id),
                   ),
                 ),
                 const SizedBox(height: Space.x3),

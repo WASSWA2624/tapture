@@ -20,12 +20,14 @@ String foldSearchText(String input) {
 /// The folded words of [input] worth matching on: split on anything that is
 /// not a letter or a digit, keeping a word shorter than
 /// `AppConstants.search.minWordLength` only when it holds a digit, as the
-/// "001" of a code does.
+/// "001" of a code does, and dropping the English connectives a plain
+/// description carries ("the", "and"…), which would match everything.
 List<String> searchWords(String input) {
   return <String>[
     for (final String word in foldSearchText(input).split(_separators))
-      if (word.length >= AppConstants.search.minWordLength ||
-          (word.isNotEmpty && word.contains(_digit)))
+      if ((word.length >= AppConstants.search.minWordLength ||
+              (word.isNotEmpty && word.contains(_digit))) &&
+          !_connectives.contains(word))
         word,
   ];
 }
@@ -45,6 +47,28 @@ String searchStem(String word) {
 final RegExp _separators = RegExp(r'[^\p{L}\p{N}]+', unicode: true);
 final RegExp _digit = RegExp(r'\p{N}', unicode: true);
 const List<String> _suffixes = <String>['ing', 'ed', 'es', 's'];
+
+/// English words that join a description rather than describe the work.
+const Set<String> _connectives = <String>{
+  'and',
+  'the',
+  'for',
+  'with',
+  'from',
+  'into',
+  'that',
+  'this',
+  'are',
+  'was',
+  'our',
+  'all',
+  'any',
+  'per',
+  'its',
+  'their',
+  'going',
+  'will',
+};
 const int _minimumStem = 3;
 
 int _baseLetter(int rune) {

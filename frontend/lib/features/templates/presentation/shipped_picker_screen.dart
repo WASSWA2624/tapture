@@ -7,6 +7,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/normalise/search_text.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
@@ -24,15 +25,19 @@ import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/presentation/template_locations.dart';
 
 import '../domain/field_def.dart';
+import '../domain/shipped_search_document.dart';
 import '../domain/shipped_template_entry.dart';
+import '../domain/shipped_template_ranking.dart';
 import '../domain/template_def.dart';
 import '../templates.dart' show shippedTemplateLoaderProvider;
+import 'shipped_library_expanded.dart';
 import 'shipped_library_filter.dart';
 import 'template_list_screen.dart';
 
-/// Picker for the shipped library, grouped by area and category, searchable
-/// and filterable; preview a template's fields, then copy it into the
-/// project.
+/// Picker for the shipped library: areas and collapsible, counted
+/// categories to browse (FBK0000161, D11), a search that ranks a name, a
+/// code or a plain description of the work (D12), and filters; preview a
+/// template's fields, then copy it into the project.
 class ShippedPickerScreen extends ConsumerStatefulWidget {
   /// Creates the library picker.
   const ShippedPickerScreen({super.key});
@@ -48,11 +53,11 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
   final Set<String> _picked = <String>{};
   bool _saving = false;
 
-  /// The list [_search] was built for, so a reload rebuilds it.
+  /// The list [_documents] was built for, so a reload rebuilds it.
   List<ShippedTemplateEntry>? _indexed;
 
-  /// Lower-case text search matches against, keyed by template key.
-  Map<String, String> _search = const <String, String>{};
+  /// Searchable words per template, in catalogue order.
+  List<ShippedSearchDocument> _documents = const <ShippedSearchDocument>[];
 
   @override
   void dispose() {
@@ -126,12 +131,18 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
     );
   }
 
-  void _togglePicked(String templateKey, bool picked) {
+  void _togglePicked(ShippedTemplateEntry entry, bool picked) {
+    if (picked) {
+      // A category holding a ticked template stays open.
+      ref
+          .read(shippedLibraryExpandedProvider.notifier)
+          .open(entry.category.code);
+    }
     setState(() {
       if (picked) {
-        _picked.add(templateKey);
+        _picked.add(entry.templateKey);
       } else {
-        _picked.remove(templateKey);
+        _picked.remove(entry.templateKey);
       }
     });
   }
@@ -190,19 +201,25 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
     final ShippedLibraryFilterState filter = ref.watch(
       shippedLibraryFilterProvider,
     );
-    final Map<String, String> search = _searchIndex(rows);
-    final List<String> terms = <String>[
-      for (final String term in _query.toLowerCase().split(_whitespace))
-        if (term.isNotEmpty) term,
-    ];
+    final bool searching = searchWords(_query).isNotEmpty;
+    final Map<String, ShippedTemplateEntry> byKey =
+        <String, ShippedTemplateEntry>{
+          for (final ShippedTemplateEntry entry in rows)
+            entry.templateKey: entry,
+        };
     final List<ShippedTemplateEntry> shown = <ShippedTemplateEntry>[
-      for (final ShippedTemplateEntry entry in rows)
-        if (ShippedLibraryFilter.matches(entry, filter) &&
-            terms.every(search[entry.templateKey]!.contains))
-          entry,
+      for (final String key in ShippedTemplateRanking.rank(
+        _query,
+        _searchIndex(rows),
+      ))
+        if (ShippedLibraryFilter.matches(byKey[key]!, filter)) byKey[key]!,
     ];
-    final List<_Row> items = _rows(shown);
     final int active = ShippedLibraryFilter.activeCount(filter);
+    final List<_Row> items = searching || active > 0
+        ? <_Row>[
+            for (final ShippedTemplateEntry entry in shown) _Template(entry),
+          ]
+        : _rows(shown, ref.watch(shippedLibraryExpandedProvider));
     final double gutter = AppPage.gutter(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -216,7 +233,7 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
             onFilter: () =>
                 unawaited(showShippedLibraryFilters(context, ref, rows)),
             activeFilterCount: active,
-            resultCount: terms.isEmpty && active == 0 ? null : shown.length,
+            resultCount: !searching && active == 0 ? null : shown.length,
           ),
         ),
         Expanded(
@@ -230,8 +247,23 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
                   itemCount: items.length,
                   itemBuilder: (BuildContext _, int index) {
                     return switch (items[index]) {
-                      _Heading(:final String title, :final bool dense) =>
-                        AppSectionHeader(title: title, dense: dense),
+                      _Heading(:final String title) => AppSectionHeader(
+                        title: title,
+                      ),
+                      _Category(
+                        :final String code,
+                        :final String title,
+                        :final bool expanded,
+                      ) =>
+                        AppSectionHeader(
+                          key: ValueKey<String>('shipped-category-$code'),
+                          title: title,
+                          dense: true,
+                          expanded: expanded,
+                          onToggle: () => ref
+                              .read(shippedLibraryExpandedProvider.notifier)
+                              .toggle(code),
+                        ),
                       _Template(:final ShippedTemplateEntry entry) =>
                         _libraryRow(entry, attached),
                     };
@@ -242,18 +274,25 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
     );
   }
 
-  /// Search text per template: its name, code, category, area, record type,
-  /// kind and its own field labels, built once per loaded list.
-  Map<String, String> _searchIndex(List<ShippedTemplateEntry> rows) {
+  /// Searchable words per template: its name, code, category, area, record
+  /// type and kind, its own field labels, and how its record type is
+  /// captured, assisted and output. Built once per loaded list.
+  List<ShippedSearchDocument> _searchIndex(List<ShippedTemplateEntry> rows) {
     if (identical(rows, _indexed)) {
-      return _search;
+      return _documents;
     }
     _indexed = rows;
-    _search = <String, String>{
+    _documents = <ShippedSearchDocument>[
       for (final ShippedTemplateEntry entry in rows)
-        entry.templateKey: _searchText(entry),
-    };
-    return _search;
+        ShippedSearchDocument.of(
+          entry,
+          fieldLabels: <String>[
+            for (final String key in entry.fieldKeys)
+              Copy.shippedLabel('templates.$key'),
+          ],
+        ),
+    ];
+    return _documents;
   }
 
   Widget _libraryRow(ShippedTemplateEntry entry, Set<String> attached) {
@@ -273,14 +312,11 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
           ? const Icon(AppIcons.success)
           : Checkbox(
               value: picked,
-              onChanged: (bool? value) =>
-                  _togglePicked(entry.templateKey, value ?? false),
+              onChanged: (bool? value) => _togglePicked(entry, value ?? false),
             ),
       onTap: () =>
           ref.read(_shippedPickerProvider.notifier).preview(entry.templateKey),
-      onLongPress: isAttached
-          ? null
-          : () => _togglePicked(entry.templateKey, !picked),
+      onLongPress: isAttached ? null : () => _togglePicked(entry, !picked),
     );
   }
 
@@ -410,32 +446,24 @@ String _requiredness(Requiredness requiredness) {
   };
 }
 
-String _searchText(ShippedTemplateEntry entry) {
-  final ShippedCatalogueCategory category = entry.category;
-  return <String>[
-    entry.title,
-    entry.templateKey,
-    entry.kind,
-    entry.code,
-    category.code,
-    category.title,
-    category.supergroupTitle,
-    entry.recordType.title,
-    for (final String key in entry.fieldKeys)
-      Copy.shippedLabel('templates.$key'),
-  ].join('\n').toLowerCase();
-}
-
-/// One line of the library list: a heading or a template.
+/// One line of the library list: an area heading, a category that opens and
+/// closes, or a template.
 sealed class _Row {
   const _Row();
 }
 
 final class _Heading extends _Row {
-  const _Heading(this.title, {required this.dense});
+  const _Heading(this.title);
 
   final String title;
-  final bool dense;
+}
+
+final class _Category extends _Row {
+  const _Category(this.code, this.title, {required this.expanded});
+
+  final String code;
+  final String title;
+  final bool expanded;
 }
 
 final class _Template extends _Row {
@@ -444,9 +472,14 @@ final class _Template extends _Row {
   final ShippedTemplateEntry entry;
 }
 
-/// [shown] as list lines, in catalogue order, under a heading per area and
-/// per category.
-List<_Row> _rows(List<ShippedTemplateEntry> shown) {
+/// [shown] as list lines, in catalogue order: each area's heading, then its
+/// categories with their counts, each listing its templates only while it
+/// is in [expanded]. The list stays lazy (FE-PERF-03).
+List<_Row> _rows(List<ShippedTemplateEntry> shown, Set<String> expanded) {
+  final Map<String, int> counts = <String, int>{};
+  for (final ShippedTemplateEntry entry in shown) {
+    counts.update(entry.category.code, (int n) => n + 1, ifAbsent: () => 1);
+  }
   final List<_Row> rows = <_Row>[];
   String? area;
   String? section;
@@ -461,20 +494,27 @@ List<_Row> _rows(List<ShippedTemplateEntry> shown) {
             category.supergroupCode,
             category.supergroupTitle,
           ),
-          dense: false,
         ),
       );
     }
+    final bool open = expanded.contains(category.code);
     if (category.code != section) {
       section = category.code;
       rows.add(
-        _Heading(
-          Copy.shippedCatalogueCategoryTitle(category.code, category.title),
-          dense: true,
+        _Category(
+          category.code,
+          Copy.shippedCategoryHeading(
+            category.code,
+            category.title,
+            counts[category.code]!,
+          ),
+          expanded: open,
         ),
       );
     }
-    rows.add(_Template(entry));
+    if (open) {
+      rows.add(_Template(entry));
+    }
   }
   return rows;
 }
@@ -498,8 +538,6 @@ ShippedTemplateEntry? _selected(List<ShippedTemplateEntry>? rows, String? key) {
   }
   return null;
 }
-
-final RegExp _whitespace = RegExp(r'\s+');
 
 /// Live shipped library: every shipped template as a light
 /// row. The picker is the only reader.

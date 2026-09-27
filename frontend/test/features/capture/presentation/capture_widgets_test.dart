@@ -277,10 +277,9 @@ void main() {
         ];
 
     for (final ({String name, Size size, bool paired}) layout in layouts) {
-      testWidgets('in ${layout.name} the selects and saves '
-          '${layout.paired ? 'share a row' : 'stack in order'}', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('in ${layout.name} the selects '
+          '${layout.paired ? 'share a row' : 'stack in order'} and the saves '
+          'share one level row', (WidgetTester tester) async {
         await pumpReady(tester, size: layout.size);
 
         final Rect project = tester.getRect(projectField);
@@ -291,15 +290,16 @@ void main() {
           expect(project.top, template.top);
           expect(project.right, lessThan(template.left));
           expect(project.height, template.height);
-          expect(raw.top, primary.top);
-          expect(raw.right, lessThan(primary.left));
-          expect(primary.width, greaterThan(raw.width));
         } else {
           expect(project.bottom, lessThan(template.top));
           expect(project.left, template.left);
-          expect(raw.bottom, lessThan(primary.top));
-          expect(raw.width, primary.width);
         }
+        // One row at every width, the two the same size, the primary at the
+        // end (FBK0000158, task 076 D4).
+        expect(raw.top, primary.top);
+        expect(raw.right, lessThan(primary.left));
+        expect(raw.width, closeTo(primary.width, 0.5));
+        expect(raw.height, primary.height);
         expect(projectField, meetsTapTarget());
         expect(templateField, meetsTapTarget());
         expect(saveRaw, meetsTapTarget());

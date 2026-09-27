@@ -1,13 +1,15 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/core/bundle/bundle_format.dart';
+import 'package:tapture/core/bundle/bundle_output.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/core/export/xlsx_encoder.dart';
 import 'package:tapture/core/files/download_service.dart';
 import 'package:tapture/core/network/offline_now.dart';
 import 'package:tapture/core/widgets/app_button.dart';
@@ -23,8 +25,10 @@ import 'package:tapture/features/exports/exports.dart';
 
 import 'export_summary_view.dart';
 
-/// Summarises what an export of [projectId] holds, writes one new workbook,
-/// and shares it only on request.
+/// Summarises what an export of [projectId] holds and how big its package
+/// will be, writes one new project package, and shares it only on request
+/// (task 076, D13). On a device the stored package is copied in chunks; a
+/// browser hands over the bytes it built (D6).
 final class ProjectExportScreen extends ConsumerStatefulWidget {
   /// Creates the export page for [projectId].
   const ProjectExportScreen({required this.projectId, super.key});
@@ -41,7 +45,7 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
   CancellationToken? _cancel;
   bool _busy = false;
   Failure? _failure;
-  ExportedWorkbook? _saved;
+  ExportedPackage? _saved;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +55,10 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
     final bool offline = ref.watch(offlineNowProvider);
     final DownloadService downloads = ref.watch(downloadServiceProvider);
     final bool hasRecords = (summary.asData?.value.records ?? 0) > 0;
+    final int? estimate = ref
+        .watch(_packageEstimateProvider(widget.projectId))
+        .asData
+        ?.value;
     return AppPage(
       key: const ValueKey<String>('route-project-export'),
       title: Copy.projectExportTitle,
@@ -75,7 +83,7 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
               onRetry: () => setState(() => _failure = null),
             );
           }
-          final ExportedWorkbook? saved = _saved;
+          final ExportedPackage? saved = _saved;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -98,6 +106,7 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
               ExportSummaryView(
                 summary: loaded,
                 destination: downloads.destination,
+                estimatedBytes: saved == null ? estimate : null,
               ),
             ],
           );
@@ -109,7 +118,7 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
   /// Export before a save, Cancel while writing, and Share afterwards: the
   /// page's one primary action sits in reach (FE-SIMP-01).
   Widget _footer(DownloadService downloads) {
-    final ExportedWorkbook? saved = _saved;
+    final ExportedPackage? saved = _saved;
     if (saved != null) {
       return AppPrimaryAction(
         label: Copy.projectExportShare,
@@ -151,7 +160,7 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
       _busy = true;
       _failure = null;
     });
-    final Result<ExportedWorkbook> written = await repository.exportProject(
+    final Result<ExportedPackage> written = await repository.exportProject(
       widget.projectId,
       cancel: cancel,
     );
@@ -159,26 +168,34 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
       return;
     }
     switch (written) {
-      case FailureResult<ExportedWorkbook>(:final Failure failure):
+      case FailureResult<ExportedPackage>(:final Failure failure):
         setState(() {
           _busy = false;
           _cancel = null;
           _failure = failure is CancelledFailure ? null : failure;
         });
-      case Success<ExportedWorkbook>(:final ExportedWorkbook value):
+      case Success<ExportedPackage>(:final ExportedPackage value):
         setState(() {
           _busy = false;
           _cancel = null;
           _saved = value;
         });
-        final Result<String?> copy = await ref
-            .read(downloadServiceProvider)
-            .save(
+        final DownloadService downloads = ref.read(downloadServiceProvider);
+        final Result<String?> copy = switch (value.package) {
+          StoredBundle(:final String relativePath) =>
+            await downloads.saveStored(
+              relativePath: relativePath,
               fileName: value.fileName,
-              bytes: value.bytes,
-              mimeType: XlsxEncoder.mimeType,
+              mimeType: BundleFormat.mimeType,
               subfolder: 'Exports',
-            );
+            ),
+          InMemoryBundle(:final Uint8List bytes) => await downloads.save(
+            fileName: value.fileName,
+            bytes: bytes,
+            mimeType: BundleFormat.mimeType,
+            subfolder: 'Exports',
+          ),
+        };
         if (!mounted) {
           return;
         }
@@ -190,14 +207,21 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
 
   /// Opens the share sheet. A dismissed sheet says nothing; any other
   /// failure says why (FE-CONS-11).
-  Future<void> _share(ExportedWorkbook saved) async {
-    final Result<void> shared = await ref
-        .read(downloadServiceProvider)
-        .openExternally(
+  Future<void> _share(ExportedPackage saved) async {
+    final DownloadService downloads = ref.read(downloadServiceProvider);
+    final Result<void> shared = switch (saved.package) {
+      StoredBundle(:final String relativePath) =>
+        await downloads.openStoredExternally(
+          relativePath: relativePath,
           fileName: saved.fileName,
-          bytes: saved.bytes,
-          mimeType: XlsxEncoder.mimeType,
-        );
+          mimeType: BundleFormat.mimeType,
+        ),
+      InMemoryBundle(:final Uint8List bytes) => await downloads.openExternally(
+        fileName: saved.fileName,
+        bytes: bytes,
+        mimeType: BundleFormat.mimeType,
+      ),
+    };
     if (!mounted) {
       return;
     }
@@ -222,6 +246,19 @@ final _exportSummaryProvider = StreamProvider.autoDispose
         return Stream<ExportSummary>.error(_filesUnavailable);
       }
       return repository.watchSummary(projectId);
+    }, retry: (int _, Object _) => null);
+
+/// How big the project's package is expected to be; nothing while unknown.
+final _packageEstimateProvider = FutureProvider.autoDispose
+    .family<int?, String>((Ref ref, String projectId) async {
+      final ExportRepository? repository = ref.watch(exportRepositoryProvider);
+      if (repository == null) {
+        return null;
+      }
+      return switch (await repository.estimatePackage(projectId)) {
+        Success<int>(:final int value) => value,
+        FailureResult<int>() => null,
+      };
     }, retry: (int _, Object _) => null);
 
 const StorageFailure _filesUnavailable = StorageFailure(
