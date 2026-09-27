@@ -7,6 +7,7 @@ export 'columns.dart';
 export 'encryption.dart';
 export 'integrity_check.dart';
 export 'migrations.dart';
+export 'record_schema.dart';
 export 'tables/attachments.dart';
 export 'tables/audit_log.dart';
 export 'tables/captions.dart';

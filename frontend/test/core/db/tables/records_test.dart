@@ -4,7 +4,9 @@ import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:tapture/core/db/app_database.dart';
+import 'package:tapture/core/db/tables/audit_log.dart';
 import 'package:tapture/core/db/tables/records.dart';
+import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
@@ -204,9 +206,213 @@ void main() {
         'gps_lon',
         'approved_at',
         'approved_by',
+        'record_number',
       ]),
     );
   });
+
+  group('writeRecordStatus', () {
+    late RecordRow record;
+
+    setUp(() async {
+      record = _ok(
+        await upsertRecord(
+          db,
+          row: _record(projectId: 'p1', identityHash: 'h1', capturedAt: t0),
+          clock: FixedClock(t0),
+          deviceId: 'device-a',
+          ids: ids,
+        ),
+      );
+    });
+
+    test(
+      'moves the status, bumps rev and appends one status audit row',
+      () async {
+        await writeRecordStatus(
+          db,
+          recordId: record.id,
+          status: 'needsReview',
+          previousStatus: 'captured',
+          clock: FixedClock(t1),
+          deviceId: 'device-b',
+          operator: 'Ada',
+          reason: 'value edited',
+        );
+
+        final RecordRow stored = await _stored(db, record.id);
+        expect(stored.status, 'needsReview');
+        expect(stored.rev, record.rev + 1);
+        expect(stored.updatedAt.toUtc(), t1);
+        expect(stored.updatedByDevice, 'device-b');
+        expect(stored.approvedAt, isNull);
+        expect(stored.approvedBy, isNull);
+
+        final List<AuditLogData> audit = await db.select(db.auditLog).get();
+        expect(audit, hasLength(1));
+        expect(audit.single.entityType, 'records');
+        expect(audit.single.entityId, record.id);
+        expect(audit.single.action, AuditAction.updated);
+        expect(audit.single.fieldKey, recordStatusAuditKey);
+        expect(audit.single.previousValue, 'captured');
+        expect(audit.single.newValue, 'needsReview');
+        expect(audit.single.reason, 'value edited');
+        expect(audit.single.operator, 'Ada');
+        expect(audit.single.device, 'device-b');
+        expect(audit.single.at.toUtc(), t1);
+      },
+    );
+
+    test(
+      'approving stamps approved_at and approved_by, and leaving approved keeps them',
+      () async {
+        await writeRecordStatus(
+          db,
+          recordId: record.id,
+          status: 'approved',
+          previousStatus: 'needsReview',
+          clock: FixedClock(t1),
+          operator: 'Ada',
+        );
+        RecordRow stored = await _stored(db, record.id);
+        expect(stored.status, 'approved');
+        expect(stored.approvedAt?.toUtc(), t1);
+        expect(stored.approvedBy, 'Ada');
+
+        await writeRecordStatus(
+          db,
+          recordId: record.id,
+          status: 'needsReview',
+          previousStatus: 'approved',
+          clock: FixedClock(t2),
+          operator: 'Bo',
+        );
+        stored = await _stored(db, record.id);
+        expect(stored.status, 'needsReview');
+        expect(stored.approvedAt?.toUtc(), t1);
+        expect(stored.approvedBy, 'Ada');
+        expect(stored.rev, record.rev + 2);
+      },
+    );
+
+    test('legacy spellings are stored and audited canonically', () async {
+      await writeRecordStatus(
+        db,
+        recordId: record.id,
+        status: 'NEEDS_REVIEW',
+        previousStatus: 'CAPTURED',
+        clock: FixedClock(t1),
+      );
+      expect((await _stored(db, record.id)).status, 'needsReview');
+      final AuditLogData audit = await db.select(db.auditLog).getSingle();
+      expect(audit.previousValue, 'captured');
+      expect(audit.newValue, 'needsReview');
+    });
+
+    test(
+      'joins the caller transaction, so a later failure undoes the move and its audit',
+      () async {
+        final Result<void> result = await runInTransaction(db, () async {
+          await writeRecordStatus(
+            db,
+            recordId: record.id,
+            status: 'deleted',
+            previousStatus: 'captured',
+            clock: FixedClock(t1),
+          );
+          throw const StorageFailure(message: 'tombstone failed');
+        });
+
+        expect(result, isA<FailureResult<void>>());
+        expect((await _stored(db, record.id)).status, 'captured');
+        expect(await db.select(db.auditLog).get(), isEmpty);
+      },
+    );
+
+    test(
+      'a record that is not on this device fails without an audit row',
+      () async {
+        final Result<void> result = await runInTransaction(
+          db,
+          () => writeRecordStatus(
+            db,
+            recordId: 'missing',
+            status: 'approved',
+            previousStatus: 'needsReview',
+          ),
+        );
+
+        result.fold(
+          (Failure failure) => expect(failure, isA<StorageFailure>()),
+          (_) => fail('expected a failure'),
+        );
+        expect(await db.select(db.auditLog).get(), isEmpty);
+      },
+    );
+  });
+
+  test('canonicalRecordStatus folds case and underscores only', () {
+    expect(canonicalRecordStatus('NEEDS_REVIEW'), 'needsReview');
+    expect(canonicalRecordStatus('needs_review'), 'needsReview');
+    expect(canonicalRecordStatus('needsReview'), 'needsReview');
+    expect(canonicalRecordStatus('CAPTURED'), 'captured');
+    expect(canonicalRecordStatus('Deleted'), 'deleted');
+    expect(canonicalRecordStatus('needs review'), 'needs review');
+    expect(canonicalRecordStatus('exported'), 'exported');
+  });
+
+  test('a new record takes the next number in its project', () async {
+    final RecordRow first = _ok(
+      await upsertRecord(
+        db,
+        row: _record(projectId: 'p1', identityHash: 'n1', capturedAt: t0),
+        clock: FixedClock(t0),
+        deviceId: 'device-a',
+        ids: ids,
+      ),
+    );
+    final RecordRow second = _ok(
+      await upsertRecord(
+        db,
+        row: _record(projectId: 'p1', identityHash: 'n2', capturedAt: t0),
+        clock: FixedClock(t0),
+        deviceId: 'device-a',
+        ids: ids,
+      ),
+    );
+    final RecordRow other = _ok(
+      await upsertRecord(
+        db,
+        row: _record(projectId: 'p2', identityHash: 'n3', capturedAt: t0),
+        clock: FixedClock(t0),
+        deviceId: 'device-a',
+        ids: ids,
+      ),
+    );
+    expect(first.recordNumber, 1);
+    expect(second.recordNumber, 2);
+    expect(other.recordNumber, 1);
+
+    final RecordRow updated = _ok(
+      await upsertRecord(
+        db,
+        row: RecordsCompanion(
+          id: Value<String>(first.id),
+          status: const Value<String>('queued'),
+        ),
+        clock: FixedClock(t1),
+        deviceId: 'device-a',
+        ids: ids,
+      ),
+    );
+    expect(updated.recordNumber, 1);
+  });
+}
+
+Future<RecordRow> _stored(AppDatabase db, String id) {
+  return (db.select(
+    db.records,
+  )..where(($RecordsTable tbl) => tbl.id.equals(id))).getSingle();
 }
 
 RecordsCompanion _record({

@@ -125,6 +125,81 @@ void main() {
       ]),
     );
   });
+
+  test(
+    'removeTombstone lifts only the named tombstone and a repeat is a no-op',
+    () async {
+      await writeTombstone(
+        db,
+        entityType: 'records',
+        entityId: 'r1',
+        reason: 'deleted',
+        clock: FixedClock(t0),
+      );
+      await writeTombstone(
+        db,
+        entityType: 'photos',
+        entityId: 'r1',
+        reason: 'removed',
+        clock: FixedClock(t0),
+      );
+      await writeTombstone(
+        db,
+        entityType: 'records',
+        entityId: 'r2',
+        reason: 'deleted',
+        clock: FixedClock(t0),
+      );
+
+      await removeTombstone(db, entityType: 'records', entityId: 'r1');
+      await removeTombstone(db, entityType: 'records', entityId: 'r1');
+
+      final List<Tombstone> left =
+          await (db.select(db.tombstones)
+                ..orderBy(<OrderClauseGenerator<$TombstonesTable>>[
+                  ($TombstonesTable tbl) => OrderingTerm.asc(tbl.entityType),
+                  ($TombstonesTable tbl) => OrderingTerm.asc(tbl.entityId),
+                ]))
+              .get();
+      expect(
+        left.map((Tombstone row) => '${row.entityType}/${row.entityId}'),
+        <String>['photos/r1', 'records/r2'],
+      );
+    },
+  );
+
+  test('removeTombstone tells a watched tombstone query', () async {
+    await writeTombstone(
+      db,
+      entityType: 'records',
+      entityId: 'r1',
+      reason: 'deleted',
+      clock: FixedClock(t0),
+    );
+    final Stream<List<Tombstone>> watched = db.select(db.tombstones).watch();
+    final Future<void> emptied = expectLater(
+      watched.map((List<Tombstone> rows) => rows.length),
+      emitsThrough(0),
+    );
+    await removeTombstone(db, entityType: 'records', entityId: 'r1');
+    await emptied;
+  });
+
+  test('a restore inside a failed transaction keeps the tombstone', () async {
+    await writeTombstone(
+      db,
+      entityType: 'records',
+      entityId: 'r1',
+      reason: 'deleted',
+      clock: FixedClock(t0),
+    );
+    final Result<void> result = await runInTransaction(db, () async {
+      await removeTombstone(db, entityType: 'records', entityId: 'r1');
+      throw const StorageFailure(message: 'status write failed');
+    });
+    expect(result, isA<FailureResult<void>>());
+    expect(await db.select(db.tombstones).get(), hasLength(1));
+  });
 }
 
 final class _TombstoneDao extends BaseDao<Tombstones, Tombstone> {

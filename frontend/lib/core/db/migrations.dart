@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:tapture/core/errors/failure.dart';
 
 import 'app_database.dart';
+import 'record_schema.dart';
 
 /// One upgrade from `version - 1` to [version].
 typedef _UpgradeStep = Future<void> Function(Migrator migrator, AppDatabase db);
@@ -36,6 +37,7 @@ kUpgradeSteps = <int, _UpgradeStep>{
   18: migrateToV18,
   19: migrateToV19,
   20: migrateToV20,
+  21: migrateToV21,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -364,6 +366,56 @@ Future<void> migrateToV20(Migrator migrator, AppDatabase db) async {
   await migrator.alterTable(TableMigration(db.context));
 }
 
+/// Schema version 21: records (task 014).
+///
+/// Adds the nullable `records.record_number`, `record_fields.evidence_removed_at`
+/// and `record_fields.retired_at` columns, then runs [RecordSchema.ensure]:
+/// the list and trigger indexes, status spellings normalised to
+/// `RecordStatus.name` with triggers that keep them so, record numbers
+/// allocated per project by trigger and back-filled in capture order, and the
+/// device-local search index with its triggers and back-fill. Nothing is
+/// dropped: existing rows only gain a number and a canonical status spelling.
+Future<void> migrateToV21(Migrator migrator, AppDatabase db) async {
+  final List<QueryRow> tables = await db
+      .customSelect(
+        "SELECT name FROM sqlite_master WHERE type = 'table' "
+        "AND name IN ('records', 'record_fields')",
+      )
+      .get();
+  final Set<String> present = <String>{
+    for (final QueryRow row in tables) row.read<String>('name'),
+  };
+  if (present.contains('records')) {
+    final List<QueryRow> info = await db
+        .customSelect('PRAGMA table_info("records")')
+        .get();
+    final Set<String> columns = <String>{
+      for (final QueryRow row in info) row.read<String>('name'),
+    };
+    if (!columns.contains('record_number')) {
+      await migrator.addColumn(db.records, db.records.recordNumber);
+    }
+  }
+  if (present.contains('record_fields')) {
+    final List<QueryRow> info = await db
+        .customSelect('PRAGMA table_info("record_fields")')
+        .get();
+    final Set<String> columns = <String>{
+      for (final QueryRow row in info) row.read<String>('name'),
+    };
+    if (!columns.contains('evidence_removed_at')) {
+      await migrator.addColumn(
+        db.recordFields,
+        db.recordFields.evidenceRemovedAt,
+      );
+    }
+    if (!columns.contains('retired_at')) {
+      await migrator.addColumn(db.recordFields, db.recordFields.retiredAt);
+    }
+  }
+  await RecordSchema.ensure(db);
+}
+
 /// Expression index that serves pinned-first, then newest (FE-PERF-03).
 Future<void> ensureProjectsPinIndex(AppDatabase db) async {
   await db.customStatement(
@@ -392,6 +444,7 @@ MigrationStrategy appMigration(AppDatabase db) {
     onCreate: (Migrator migrator) async {
       await migrator.createAll();
       await ensureProjectsPinIndex(db);
+      await RecordSchema.ensure(db);
     },
     onUpgrade: (Migrator migrator, int from, int to) async {
       for (int version = from + 1; version <= to; version++) {

@@ -6,7 +6,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/migrations.dart';
+import 'package:tapture/core/db/record_schema.dart';
 import 'package:tapture/core/errors/failure.dart';
+
+import 'record_rows.dart';
 
 void main() {
   tearDown(clearExportAcknowledgement);
@@ -287,6 +290,148 @@ void main() {
   });
 
   test(
+    'version 21 normalises statuses, numbers records per project in capture order, builds the search index and can run twice',
+    () async {
+      expect(kDestructiveSteps.contains(21), isFalse);
+      final AppDatabase db = AppDatabase.memory();
+      addTearDown(db.close);
+      await db.customSelect('SELECT 1').get();
+      await _unwindVersion21(db);
+      final Set<String> recordColumns = (await _columnSets(db))['records']!;
+      expect(recordColumns.contains('record_number'), isFalse);
+
+      await _legacyRecord(db, 'a', projectId: 'p1', status: 'CAPTURED', at: 30);
+      await _legacyRecord(
+        db,
+        'b',
+        projectId: 'p1',
+        status: 'NEEDS_REVIEW',
+        at: 10,
+      );
+      await _legacyRecord(
+        db,
+        'd',
+        projectId: 'p1',
+        status: 'EXTRACTED',
+        at: 20,
+      );
+      await _legacyRecord(
+        db,
+        'c',
+        projectId: 'p1',
+        status: 'needs_review',
+        at: 20,
+      );
+      await _legacyRecord(db, 'e', projectId: 'p2', status: 'approved', at: 5);
+      await seedRow(db, 'record_fields', <String, Object?>{
+        'id': 'f1',
+        'record_id': 'a',
+        'field_key': 'model',
+        'value_raw': 'Grundfos CR-45',
+        'source': 'ocr',
+      });
+      await seedCaption(
+        db,
+        'c1',
+        ownerType: 'record',
+        ownerId: 'b',
+        text: 'Rusted valve',
+      );
+      await seedPhoto(db, 'ph1', recordId: 'e', projectId: 'p2', sha256: 'h1');
+      await seedRow(db, 'ocr_cache', <String, Object?>{
+        'id': 'o1',
+        'content_hash': 'h1',
+        'perceptual_hash': '00',
+        'recognised_text': 'SERIAL 99-ALPHA',
+        'blocks_json': '[]',
+      });
+      expect(await statusOf(db, 'a'), 'CAPTURED');
+      final Map<String, int> before = await _rowCounts(db);
+
+      await migrateToV21(Migrator(db), db);
+      await migrateToV21(Migrator(db), db);
+
+      final Map<String, Set<String>> columns = await _columnSets(db);
+      expect(columns['records'], contains('record_number'));
+      expect(
+        columns['record_fields'],
+        containsAll(<String>['evidence_removed_at', 'retired_at']),
+      );
+      final Map<String, int> after = await _rowCounts(db);
+      for (final String table in <String>[
+        'records',
+        'record_fields',
+        'captions',
+        'photos',
+        'ocr_cache',
+        'audit_log',
+      ]) {
+        expect(after[table], before[table], reason: table);
+      }
+      expect(after['record_search_docs'], 5);
+      expect(after['record_search'], 5);
+
+      expect(await statusOf(db, 'a'), 'captured');
+      expect(await statusOf(db, 'b'), 'needsReview');
+      expect(await statusOf(db, 'c'), 'needsReview');
+      expect(await statusOf(db, 'd'), 'extracted');
+      expect(await statusOf(db, 'e'), 'approved');
+
+      expect(await numberOf(db, 'b'), 1);
+      expect(await numberOf(db, 'c'), 2);
+      expect(await numberOf(db, 'd'), 3);
+      expect(await numberOf(db, 'a'), 4);
+      expect(await numberOf(db, 'e'), 1);
+
+      expect(await searchRecords(db, 'grundfos'), <String>['a']);
+      expect(await searchRecords(db, 'rusted'), <String>['b']);
+      expect(await searchRecords(db, '99-alpha'), <String>['e']);
+
+      await _legacyRecord(db, 'f', projectId: 'p1', status: 'FAILED', at: 1);
+      expect(await numberOf(db, 'f'), 5);
+      expect(await statusOf(db, 'f'), 'failed');
+      expect((await searchDoc(db, 'f'))?.projectId, 'p1');
+
+      final List<QueryRow> objects = await db
+          .customSelect('SELECT name FROM sqlite_master')
+          .get();
+      final Set<String> names = <String>{
+        for (final QueryRow row in objects) row.read<String>('name'),
+      };
+      expect(names, containsAll(RecordSchema.indexNames));
+      expect(names, containsAll(RecordSchema.triggerNames));
+      expect(names, contains(RecordSchema.searchSourceView));
+    },
+  );
+
+  test(
+    'an upgraded version 1 file and a fresh database hold the same indexes, triggers and views',
+    () async {
+      final Directory directory = Directory.systemTemp.createTempSync(
+        'tapture_migrate_schema_',
+      );
+      addTearDown(() {
+        if (directory.existsSync()) {
+          directory.deleteSync(recursive: true);
+        }
+      });
+      _seedVersion1(File('${directory.path}/tapture.sqlite'));
+      final AppDatabase upgraded = AppDatabase.open(
+        directoryPath: directory.path,
+      );
+      await upgraded.customSelect('SELECT 1').get();
+      final Set<String> upgradedSchema = await _schemaObjects(upgraded);
+      await upgraded.close();
+
+      final AppDatabase fresh = AppDatabase.memory();
+      addTearDown(fresh.close);
+      await fresh.customSelect('SELECT 1').get();
+
+      expect(upgradedSchema, await _schemaObjects(fresh));
+    },
+  );
+
+  test(
     'migrateToV16 is not a destructive step and a second run is a no-op',
     () async {
       expect(kDestructiveSteps.contains(16), isFalse);
@@ -380,6 +525,72 @@ Future<Map<String, int>> _rowCounts(AppDatabase db) async {
     counts[table] = row.read<int>('c');
   }
   return counts;
+}
+
+/// Every index, trigger and view with the SQL that made it, plus every
+/// table, so the two paths to head can be compared exactly.
+Future<Set<String>> _schemaObjects(AppDatabase db) async {
+  final List<QueryRow> rows = await db
+      .customSelect(
+        "SELECT type, name, tbl_name, sql FROM sqlite_master "
+        "WHERE name NOT LIKE 'sqlite_%'",
+      )
+      .get();
+  return <String>{
+    for (final QueryRow row in rows)
+      <String>[
+        row.read<String>('type'),
+        row.read<String>('name'),
+        row.read<String>('tbl_name'),
+        if (row.read<String>('type') != 'table') row.read<String?>('sql') ?? '',
+      ].join(' | '),
+  };
+}
+
+/// Returns a head database to its version 20 shape: no version 21 columns,
+/// indexes, triggers, view or search tables.
+Future<void> _unwindVersion21(AppDatabase db) async {
+  for (final String trigger in RecordSchema.triggerNames) {
+    await db.customStatement('DROP TRIGGER IF EXISTS $trigger');
+  }
+  await db.customStatement(
+    'DROP VIEW IF EXISTS ${RecordSchema.searchSourceView}',
+  );
+  await db.customStatement('DROP TABLE IF EXISTS ${RecordSchema.searchTable}');
+  await db.customStatement(
+    'DROP TABLE IF EXISTS ${RecordSchema.searchDocsTable}',
+  );
+  for (final String index in RecordSchema.indexNames) {
+    await db.customStatement('DROP INDEX IF EXISTS $index');
+  }
+  await db.customStatement('ALTER TABLE records DROP COLUMN record_number');
+  await db.customStatement(
+    'ALTER TABLE record_fields DROP COLUMN evidence_removed_at',
+  );
+  await db.customStatement('ALTER TABLE record_fields DROP COLUMN retired_at');
+}
+
+/// A record row as a version 20 device stored it: no number, and any status
+/// spelling.
+Future<void> _legacyRecord(
+  AppDatabase db,
+  String id, {
+  required String projectId,
+  required String status,
+  required int at,
+}) {
+  return seedRow(db, 'records', <String, Object?>{
+    'id': id,
+    'project_id': projectId,
+    'template_id': 't1',
+    'status': status,
+    'processing_mode': 'manual',
+    'context_json': '{}',
+    'identity_hash': 'hash-$id',
+    'source': 'capture',
+    'captured_at': at,
+    'captured_by': 'device-a',
+  });
 }
 
 Future<void> _insertProject(AppDatabase db) {

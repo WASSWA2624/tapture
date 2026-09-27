@@ -4,12 +4,17 @@ import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:tapture/core/db/app_database.dart';
+import 'package:tapture/core/db/tables/audit_log.dart';
 import 'package:tapture/core/db/tables/record_fields.dart';
 import 'package:tapture/core/db/tables/records.dart';
+import 'package:tapture/core/db/tables/tombstones.dart';
+import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
+
+import '../record_rows.dart';
 
 void main() {
   late AppDatabase db;
@@ -179,10 +184,319 @@ void main() {
           'verified',
           'verified_by',
           'verified_at',
+          'evidence_removed_at',
+          'retired_at',
         ]),
       );
     },
   );
+
+  group('value flags', () {
+    final DateTime t1 = t0.add(const Duration(minutes: 5));
+
+    test(
+      'evidence removed is set and cleared with a revision bump and one audit row each',
+      () async {
+        await seedField(
+          db,
+          'f1',
+          recordId: recordId,
+          fieldKey: 'serial',
+          raw: 'SN-1',
+        );
+
+        expect(
+          await setRecordFieldEvidenceRemoved(
+            db,
+            id: 'f1',
+            clock: FixedClock(t1),
+            deviceId: 'device-b',
+            operator: 'Ada',
+          ),
+          isTrue,
+        );
+        RecordField stored = await _field(db, 'f1');
+        expect(stored.evidenceRemovedAt?.toUtc(), t1);
+        expect(stored.rev, 2);
+        expect(stored.updatedByDevice, 'device-b');
+        expect(stored.valueRaw, 'SN-1');
+
+        expect(
+          await setRecordFieldEvidenceRemoved(db, id: 'f1'),
+          isFalse,
+          reason: 'already flagged',
+        );
+        expect(
+          await clearRecordFieldEvidenceRemoved(
+            db,
+            id: 'f1',
+            clock: FixedClock(t1),
+          ),
+          isTrue,
+        );
+        stored = await _field(db, 'f1');
+        expect(stored.evidenceRemovedAt, isNull);
+        expect(stored.rev, 3);
+
+        final List<AuditLogData> audit = await _flagAudit(db);
+        expect(audit, hasLength(2));
+        expect(audit.first.entityType, 'records');
+        expect(audit.first.entityId, recordId);
+        expect(audit.first.action, AuditAction.updated);
+        expect(audit.first.fieldKey, 'serial');
+        expect(audit.first.reason, evidenceRemovedAuditReason);
+        expect(audit.first.previousValue, 'false');
+        expect(audit.first.newValue, 'true');
+        expect(audit.first.operator, 'Ada');
+        expect(audit.last.previousValue, 'true');
+        expect(audit.last.newValue, 'false');
+      },
+    );
+
+    test(
+      'a retired value is kept, audited, and comes back when cleared',
+      () async {
+        await seedField(
+          db,
+          'f1',
+          recordId: recordId,
+          fieldKey: 'colour',
+          raw: 'Red',
+          refined: 'Crimson',
+        );
+
+        expect(
+          await setRecordFieldRetired(db, id: 'f1', clock: FixedClock(t1)),
+          isTrue,
+        );
+        RecordField stored = await _field(db, 'f1');
+        expect(stored.retiredAt?.toUtc(), t1);
+        expect(stored.valueRaw, 'Red');
+        expect(stored.valueRefined, 'Crimson');
+
+        expect(await setRecordFieldRetired(db, id: 'f1'), isFalse);
+        expect(await clearRecordFieldRetired(db, id: 'f1'), isTrue);
+        expect(await clearRecordFieldRetired(db, id: 'f1'), isFalse);
+        stored = await _field(db, 'f1');
+        expect(stored.retiredAt, isNull);
+
+        final List<AuditLogData> audit = await _flagAudit(db);
+        expect(audit.map((AuditLogData row) => row.reason), <String>[
+          retiredAuditReason,
+          retiredAuditReason,
+        ]);
+        expect(audit.map((AuditLogData row) => row.fieldKey).toSet(), <String>{
+          'colour',
+        });
+      },
+    );
+
+    test('a flag on a value that is not on this device fails', () async {
+      await expectLater(
+        setRecordFieldRetired(db, id: 'missing'),
+        throwsA(isA<StorageFailure>()),
+      );
+      expect(await _flagAudit(db), isEmpty);
+    });
+
+    test(
+      'a removed photo flags only values with no live photo evidence left, and its restore clears them',
+      () async {
+        await seedPhoto(db, 'ph1', recordId: recordId);
+        await seedPhoto(db, 'ph2', recordId: recordId);
+        await seedField(
+          db,
+          'f1',
+          recordId: recordId,
+          fieldKey: 'serial',
+          raw: 'SN-1',
+        );
+        await seedField(
+          db,
+          'f2',
+          recordId: recordId,
+          fieldKey: 'model',
+          raw: 'CR-45',
+          source: 'extraction',
+        );
+        await seedField(
+          db,
+          'f3',
+          recordId: recordId,
+          fieldKey: 'site',
+          raw: 'Depot',
+          source: 'TYPED',
+        );
+        await seedField(
+          db,
+          'f4',
+          recordId: recordId,
+          fieldKey: 'notes',
+          raw: 'ok',
+        );
+        await seedEvidence(db, 'e1', fieldId: 'f1', photoId: 'ph1');
+        await seedEvidence(db, 'e2', fieldId: 'f2', photoId: 'ph1');
+        await seedEvidence(db, 'e3', fieldId: 'f2', photoId: 'ph2');
+        await seedEvidence(db, 'e4', fieldId: 'f3', photoId: 'ph1');
+
+        final List<String> first = await db.transaction(() async {
+          await writeTombstone(
+            db,
+            entityType: 'photos',
+            entityId: 'ph1',
+            reason: 'removed',
+            clock: FixedClock(t1),
+          );
+          return flagEvidenceRemovedForPhoto(
+            db,
+            photoId: 'ph1',
+            clock: FixedClock(t1),
+            operator: 'Ada',
+          );
+        });
+        expect(first, <String>['serial']);
+        expect((await _field(db, 'f1')).evidenceRemovedAt?.toUtc(), t1);
+        expect((await _field(db, 'f2')).evidenceRemovedAt, isNull);
+        expect((await _field(db, 'f3')).evidenceRemovedAt, isNull);
+        expect((await _field(db, 'f4')).evidenceRemovedAt, isNull);
+        expect((await _field(db, 'f1')).valueRaw, 'SN-1');
+
+        await writeTombstone(
+          db,
+          entityType: 'photos',
+          entityId: 'ph2',
+          reason: 'removed',
+        );
+        expect(await flagEvidenceRemovedForPhoto(db, photoId: 'ph2'), <String>[
+          'model',
+        ]);
+        expect(
+          await flagEvidenceRemovedForPhoto(db, photoId: 'ph2'),
+          isEmpty,
+          reason: 'already flagged',
+        );
+
+        await removeTombstone(db, entityType: 'photos', entityId: 'ph1');
+        expect(await clearEvidenceRemovedForPhoto(db, photoId: 'ph1'), <String>[
+          'model',
+          'serial',
+        ]);
+        expect((await _field(db, 'f1')).evidenceRemovedAt, isNull);
+        expect((await _field(db, 'f2')).evidenceRemovedAt, isNull);
+        expect(
+          (await _flagAudit(db)).map((AuditLogData row) => row.fieldKey),
+          <String>['serial', 'model', 'model', 'serial'],
+        );
+      },
+    );
+
+    test(
+      'evidence on one photo of an edit chain stays live while another copy is live',
+      () async {
+        await seedPhoto(db, 'original', recordId: recordId);
+        await seedPhoto(
+          db,
+          'rotated',
+          recordId: recordId,
+          derivedFrom: 'original',
+        );
+        await seedField(
+          db,
+          'f1',
+          recordId: recordId,
+          fieldKey: 'serial',
+          raw: 'SN-1',
+        );
+        await seedField(
+          db,
+          'f2',
+          recordId: recordId,
+          fieldKey: 'model',
+          raw: 'CR',
+        );
+        await seedEvidence(db, 'e1', fieldId: 'f1', photoId: 'rotated');
+        await seedEvidence(db, 'e2', fieldId: 'f2', photoId: 'original');
+
+        await writeTombstone(
+          db,
+          entityType: 'photos',
+          entityId: 'rotated',
+          reason: 'Reverted to the original photo.',
+        );
+        expect(
+          await flagEvidenceRemovedForPhoto(db, photoId: 'rotated'),
+          isEmpty,
+        );
+
+        await writeTombstone(
+          db,
+          entityType: 'photos',
+          entityId: 'original',
+          reason: 'removed',
+        );
+        expect(
+          await flagEvidenceRemovedForPhoto(db, photoId: 'original'),
+          <String>['model', 'serial'],
+        );
+      },
+    );
+
+    test('an unfiled or unknown photo flags nothing', () async {
+      await seedPhoto(db, 'loose', recordId: null);
+      expect(await flagEvidenceRemovedForPhoto(db, photoId: 'loose'), isEmpty);
+      expect(await flagEvidenceRemovedForPhoto(db, photoId: 'ghost'), isEmpty);
+      expect(await clearEvidenceRemovedForPhoto(db, photoId: 'ghost'), isEmpty);
+    });
+
+    test('flags roll back with the transaction that wrote them', () async {
+      await seedPhoto(db, 'ph1', recordId: recordId);
+      await seedField(
+        db,
+        'f1',
+        recordId: recordId,
+        fieldKey: 'serial',
+        raw: 'SN-1',
+      );
+      await seedEvidence(db, 'e1', fieldId: 'f1', photoId: 'ph1');
+
+      final Result<void> result = await runInTransaction(db, () async {
+        await writeTombstone(
+          db,
+          entityType: 'photos',
+          entityId: 'ph1',
+          reason: 'removed',
+        );
+        await flagEvidenceRemovedForPhoto(db, photoId: 'ph1');
+        throw const StorageFailure(message: 'fail');
+      });
+
+      expect(result, isA<FailureResult<void>>());
+      expect((await _field(db, 'f1')).evidenceRemovedAt, isNull);
+      expect(await _flagAudit(db), isEmpty);
+    });
+  });
+}
+
+Future<RecordField> _field(AppDatabase db, String id) {
+  return (db.select(
+    db.recordFields,
+  )..where(($RecordFieldsTable tbl) => tbl.id.equals(id))).getSingle();
+}
+
+/// Audit rows written by the flag helpers, in write order.
+Future<List<AuditLogData>> _flagAudit(AppDatabase db) async {
+  final List<QueryRow> rows = await db
+      .customSelect(
+        'SELECT * FROM audit_log WHERE reason IN (?, ?) ORDER BY rowid',
+        variables: <Variable<Object>>[
+          const Variable<String>(evidenceRemovedAuditReason),
+          const Variable<String>(retiredAuditReason),
+        ],
+      )
+      .get();
+  return <AuditLogData>[
+    for (final QueryRow row in rows) db.auditLog.map(row.data),
+  ];
 }
 
 void _seedVersion1(File file) {

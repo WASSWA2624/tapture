@@ -7691,6 +7691,17 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _recordNumberMeta = const VerificationMeta(
+    'recordNumber',
+  );
+  @override
+  late final GeneratedColumn<int> recordNumber = GeneratedColumn<int>(
+    'record_number',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -7714,6 +7725,7 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
     gpsLon,
     approvedAt,
     approvedBy,
+    recordNumber,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -7895,6 +7907,15 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
         approvedBy.isAcceptableOrUnknown(data['approved_by']!, _approvedByMeta),
       );
     }
+    if (data.containsKey('record_number')) {
+      context.handle(
+        _recordNumberMeta,
+        recordNumber.isAcceptableOrUnknown(
+          data['record_number']!,
+          _recordNumberMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -7988,6 +8009,10 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
         DriftSqlType.string,
         data['${effectivePrefix}approved_by'],
       ),
+      recordNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}record_number'],
+      ),
     );
   }
 
@@ -8060,6 +8085,14 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
 
   /// Operator who approved it.
   final String? approvedBy;
+
+  /// Number shown in lists, counted per project from 1.
+  ///
+  /// Nullable so a package from an older build still inserts; the
+  /// `records_number_ai` trigger then allocates the next number in the
+  /// project. Not unique: two devices can number records independently until
+  /// a merge relabels them.
+  final int? recordNumber;
   const RecordRow({
     required this.id,
     required this.createdAt,
@@ -8082,6 +8115,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     this.gpsLon,
     this.approvedAt,
     this.approvedBy,
+    this.recordNumber,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -8120,6 +8154,9 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     }
     if (!nullToAbsent || approvedBy != null) {
       map['approved_by'] = Variable<String>(approvedBy);
+    }
+    if (!nullToAbsent || recordNumber != null) {
+      map['record_number'] = Variable<int>(recordNumber);
     }
     return map;
   }
@@ -8161,6 +8198,9 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       approvedBy: approvedBy == null && nullToAbsent
           ? const Value.absent()
           : Value(approvedBy),
+      recordNumber: recordNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recordNumber),
     );
   }
 
@@ -8191,6 +8231,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       gpsLon: serializer.fromJson<double?>(json['gpsLon']),
       approvedAt: serializer.fromJson<DateTime?>(json['approvedAt']),
       approvedBy: serializer.fromJson<String?>(json['approvedBy']),
+      recordNumber: serializer.fromJson<int?>(json['recordNumber']),
     );
   }
   @override
@@ -8218,6 +8259,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       'gpsLon': serializer.toJson<double?>(gpsLon),
       'approvedAt': serializer.toJson<DateTime?>(approvedAt),
       'approvedBy': serializer.toJson<String?>(approvedBy),
+      'recordNumber': serializer.toJson<int?>(recordNumber),
     };
   }
 
@@ -8243,6 +8285,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     Value<double?> gpsLon = const Value.absent(),
     Value<DateTime?> approvedAt = const Value.absent(),
     Value<String?> approvedBy = const Value.absent(),
+    Value<int?> recordNumber = const Value.absent(),
   }) => RecordRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -8271,6 +8314,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     gpsLon: gpsLon.present ? gpsLon.value : this.gpsLon,
     approvedAt: approvedAt.present ? approvedAt.value : this.approvedAt,
     approvedBy: approvedBy.present ? approvedBy.value : this.approvedBy,
+    recordNumber: recordNumber.present ? recordNumber.value : this.recordNumber,
   );
   RecordRow copyWithCompanion(RecordsCompanion data) {
     return RecordRow(
@@ -8319,6 +8363,9 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       approvedBy: data.approvedBy.present
           ? data.approvedBy.value
           : this.approvedBy,
+      recordNumber: data.recordNumber.present
+          ? data.recordNumber.value
+          : this.recordNumber,
     );
   }
 
@@ -8345,7 +8392,8 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
           ..write('gpsLat: $gpsLat, ')
           ..write('gpsLon: $gpsLon, ')
           ..write('approvedAt: $approvedAt, ')
-          ..write('approvedBy: $approvedBy')
+          ..write('approvedBy: $approvedBy, ')
+          ..write('recordNumber: $recordNumber')
           ..write(')'))
         .toString();
   }
@@ -8373,6 +8421,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     gpsLon,
     approvedAt,
     approvedBy,
+    recordNumber,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -8398,7 +8447,8 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
           other.gpsLat == this.gpsLat &&
           other.gpsLon == this.gpsLon &&
           other.approvedAt == this.approvedAt &&
-          other.approvedBy == this.approvedBy);
+          other.approvedBy == this.approvedBy &&
+          other.recordNumber == this.recordNumber);
 }
 
 class RecordsCompanion extends UpdateCompanion<RecordRow> {
@@ -8423,6 +8473,7 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
   final Value<double?> gpsLon;
   final Value<DateTime?> approvedAt;
   final Value<String?> approvedBy;
+  final Value<int?> recordNumber;
   final Value<int> rowid;
   const RecordsCompanion({
     this.id = const Value.absent(),
@@ -8446,6 +8497,7 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     this.gpsLon = const Value.absent(),
     this.approvedAt = const Value.absent(),
     this.approvedBy = const Value.absent(),
+    this.recordNumber = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   RecordsCompanion.insert({
@@ -8470,6 +8522,7 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     this.gpsLon = const Value.absent(),
     this.approvedAt = const Value.absent(),
     this.approvedBy = const Value.absent(),
+    this.recordNumber = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : createdAt = Value(createdAt),
        updatedAt = Value(updatedAt),
@@ -8505,6 +8558,7 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     Expression<double>? gpsLon,
     Expression<DateTime>? approvedAt,
     Expression<String>? approvedBy,
+    Expression<int>? recordNumber,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -8529,6 +8583,7 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
       if (gpsLon != null) 'gps_lon': gpsLon,
       if (approvedAt != null) 'approved_at': approvedAt,
       if (approvedBy != null) 'approved_by': approvedBy,
+      if (recordNumber != null) 'record_number': recordNumber,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -8555,6 +8610,7 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     Value<double?>? gpsLon,
     Value<DateTime?>? approvedAt,
     Value<String?>? approvedBy,
+    Value<int?>? recordNumber,
     Value<int>? rowid,
   }) {
     return RecordsCompanion(
@@ -8579,6 +8635,7 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
       gpsLon: gpsLon ?? this.gpsLon,
       approvedAt: approvedAt ?? this.approvedAt,
       approvedBy: approvedBy ?? this.approvedBy,
+      recordNumber: recordNumber ?? this.recordNumber,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -8649,6 +8706,9 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     if (approvedBy.present) {
       map['approved_by'] = Variable<String>(approvedBy.value);
     }
+    if (recordNumber.present) {
+      map['record_number'] = Variable<int>(recordNumber.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -8679,6 +8739,7 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
           ..write('gpsLon: $gpsLon, ')
           ..write('approvedAt: $approvedAt, ')
           ..write('approvedBy: $approvedBy, ')
+          ..write('recordNumber: $recordNumber, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -8907,6 +8968,29 @@ class $RecordFieldsTable extends RecordFields
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _evidenceRemovedAtMeta = const VerificationMeta(
+    'evidenceRemovedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> evidenceRemovedAt =
+      GeneratedColumn<DateTime>(
+        'evidence_removed_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _retiredAtMeta = const VerificationMeta(
+    'retiredAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> retiredAt = GeneratedColumn<DateTime>(
+    'retired_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -8929,6 +9013,8 @@ class $RecordFieldsTable extends RecordFields
     verified,
     verifiedBy,
     verifiedAt,
+    evidenceRemovedAt,
+    retiredAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -9083,6 +9169,21 @@ class $RecordFieldsTable extends RecordFields
         verifiedAt.isAcceptableOrUnknown(data['verified_at']!, _verifiedAtMeta),
       );
     }
+    if (data.containsKey('evidence_removed_at')) {
+      context.handle(
+        _evidenceRemovedAtMeta,
+        evidenceRemovedAt.isAcceptableOrUnknown(
+          data['evidence_removed_at']!,
+          _evidenceRemovedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('retired_at')) {
+      context.handle(
+        _retiredAtMeta,
+        retiredAt.isAcceptableOrUnknown(data['retired_at']!, _retiredAtMeta),
+      );
+    }
     return context;
   }
 
@@ -9176,6 +9277,14 @@ class $RecordFieldsTable extends RecordFields
         DriftSqlType.dateTime,
         data['${effectivePrefix}verified_at'],
       ),
+      evidenceRemovedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}evidence_removed_at'],
+      ),
+      retiredAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}retired_at'],
+      ),
     );
   }
 
@@ -9245,6 +9354,18 @@ class RecordField extends DataClass implements Insertable<RecordField> {
 
   /// When it was verified.
   final DateTime? verifiedAt;
+
+  /// When every photo this value was read from stopped being live.
+  ///
+  /// Null while at least one photo evidence row is live, or when the value
+  /// never had photo evidence. The value itself is never deleted.
+  final DateTime? evidenceRemovedAt;
+
+  /// When a template change left this value without a field to fill.
+  ///
+  /// Null while the record's template declares [fieldKey]. A retired value
+  /// is kept, never deleted, and comes back if the key maps again.
+  final DateTime? retiredAt;
   const RecordField({
     required this.id,
     required this.createdAt,
@@ -9266,6 +9387,8 @@ class RecordField extends DataClass implements Insertable<RecordField> {
     required this.verified,
     this.verifiedBy,
     this.verifiedAt,
+    this.evidenceRemovedAt,
+    this.retiredAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -9311,6 +9434,12 @@ class RecordField extends DataClass implements Insertable<RecordField> {
     }
     if (!nullToAbsent || verifiedAt != null) {
       map['verified_at'] = Variable<DateTime>(verifiedAt);
+    }
+    if (!nullToAbsent || evidenceRemovedAt != null) {
+      map['evidence_removed_at'] = Variable<DateTime>(evidenceRemovedAt);
+    }
+    if (!nullToAbsent || retiredAt != null) {
+      map['retired_at'] = Variable<DateTime>(retiredAt);
     }
     return map;
   }
@@ -9359,6 +9488,12 @@ class RecordField extends DataClass implements Insertable<RecordField> {
       verifiedAt: verifiedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(verifiedAt),
+      evidenceRemovedAt: evidenceRemovedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(evidenceRemovedAt),
+      retiredAt: retiredAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(retiredAt),
     );
   }
 
@@ -9388,6 +9523,10 @@ class RecordField extends DataClass implements Insertable<RecordField> {
       verified: serializer.fromJson<bool>(json['verified']),
       verifiedBy: serializer.fromJson<String?>(json['verifiedBy']),
       verifiedAt: serializer.fromJson<DateTime?>(json['verifiedAt']),
+      evidenceRemovedAt: serializer.fromJson<DateTime?>(
+        json['evidenceRemovedAt'],
+      ),
+      retiredAt: serializer.fromJson<DateTime?>(json['retiredAt']),
     );
   }
   @override
@@ -9414,6 +9553,8 @@ class RecordField extends DataClass implements Insertable<RecordField> {
       'verified': serializer.toJson<bool>(verified),
       'verifiedBy': serializer.toJson<String?>(verifiedBy),
       'verifiedAt': serializer.toJson<DateTime?>(verifiedAt),
+      'evidenceRemovedAt': serializer.toJson<DateTime?>(evidenceRemovedAt),
+      'retiredAt': serializer.toJson<DateTime?>(retiredAt),
     };
   }
 
@@ -9438,6 +9579,8 @@ class RecordField extends DataClass implements Insertable<RecordField> {
     bool? verified,
     Value<String?> verifiedBy = const Value.absent(),
     Value<DateTime?> verifiedAt = const Value.absent(),
+    Value<DateTime?> evidenceRemovedAt = const Value.absent(),
+    Value<DateTime?> retiredAt = const Value.absent(),
   }) => RecordField(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -9463,6 +9606,10 @@ class RecordField extends DataClass implements Insertable<RecordField> {
     verified: verified ?? this.verified,
     verifiedBy: verifiedBy.present ? verifiedBy.value : this.verifiedBy,
     verifiedAt: verifiedAt.present ? verifiedAt.value : this.verifiedAt,
+    evidenceRemovedAt: evidenceRemovedAt.present
+        ? evidenceRemovedAt.value
+        : this.evidenceRemovedAt,
+    retiredAt: retiredAt.present ? retiredAt.value : this.retiredAt,
   );
   RecordField copyWithCompanion(RecordFieldsCompanion data) {
     return RecordField(
@@ -9502,6 +9649,10 @@ class RecordField extends DataClass implements Insertable<RecordField> {
       verifiedAt: data.verifiedAt.present
           ? data.verifiedAt.value
           : this.verifiedAt,
+      evidenceRemovedAt: data.evidenceRemovedAt.present
+          ? data.evidenceRemovedAt.value
+          : this.evidenceRemovedAt,
+      retiredAt: data.retiredAt.present ? data.retiredAt.value : this.retiredAt,
     );
   }
 
@@ -9527,13 +9678,15 @@ class RecordField extends DataClass implements Insertable<RecordField> {
           ..write('promptVersion: $promptVersion, ')
           ..write('verified: $verified, ')
           ..write('verifiedBy: $verifiedBy, ')
-          ..write('verifiedAt: $verifiedAt')
+          ..write('verifiedAt: $verifiedAt, ')
+          ..write('evidenceRemovedAt: $evidenceRemovedAt, ')
+          ..write('retiredAt: $retiredAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     createdAt,
     updatedAt,
@@ -9554,7 +9707,9 @@ class RecordField extends DataClass implements Insertable<RecordField> {
     verified,
     verifiedBy,
     verifiedAt,
-  );
+    evidenceRemovedAt,
+    retiredAt,
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -9578,7 +9733,9 @@ class RecordField extends DataClass implements Insertable<RecordField> {
           other.promptVersion == this.promptVersion &&
           other.verified == this.verified &&
           other.verifiedBy == this.verifiedBy &&
-          other.verifiedAt == this.verifiedAt);
+          other.verifiedAt == this.verifiedAt &&
+          other.evidenceRemovedAt == this.evidenceRemovedAt &&
+          other.retiredAt == this.retiredAt);
 }
 
 class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
@@ -9602,6 +9759,8 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
   final Value<bool> verified;
   final Value<String?> verifiedBy;
   final Value<DateTime?> verifiedAt;
+  final Value<DateTime?> evidenceRemovedAt;
+  final Value<DateTime?> retiredAt;
   final Value<int> rowid;
   const RecordFieldsCompanion({
     this.id = const Value.absent(),
@@ -9624,6 +9783,8 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
     this.verified = const Value.absent(),
     this.verifiedBy = const Value.absent(),
     this.verifiedAt = const Value.absent(),
+    this.evidenceRemovedAt = const Value.absent(),
+    this.retiredAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   RecordFieldsCompanion.insert({
@@ -9647,6 +9808,8 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
     this.verified = const Value.absent(),
     this.verifiedBy = const Value.absent(),
     this.verifiedAt = const Value.absent(),
+    this.evidenceRemovedAt = const Value.absent(),
+    this.retiredAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : createdAt = Value(createdAt),
        updatedAt = Value(updatedAt),
@@ -9675,6 +9838,8 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
     Expression<bool>? verified,
     Expression<String>? verifiedBy,
     Expression<DateTime>? verifiedAt,
+    Expression<DateTime>? evidenceRemovedAt,
+    Expression<DateTime>? retiredAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -9698,6 +9863,8 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
       if (verified != null) 'verified': verified,
       if (verifiedBy != null) 'verified_by': verifiedBy,
       if (verifiedAt != null) 'verified_at': verifiedAt,
+      if (evidenceRemovedAt != null) 'evidence_removed_at': evidenceRemovedAt,
+      if (retiredAt != null) 'retired_at': retiredAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -9723,6 +9890,8 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
     Value<bool>? verified,
     Value<String?>? verifiedBy,
     Value<DateTime?>? verifiedAt,
+    Value<DateTime?>? evidenceRemovedAt,
+    Value<DateTime?>? retiredAt,
     Value<int>? rowid,
   }) {
     return RecordFieldsCompanion(
@@ -9746,6 +9915,8 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
       verified: verified ?? this.verified,
       verifiedBy: verifiedBy ?? this.verifiedBy,
       verifiedAt: verifiedAt ?? this.verifiedAt,
+      evidenceRemovedAt: evidenceRemovedAt ?? this.evidenceRemovedAt,
+      retiredAt: retiredAt ?? this.retiredAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -9813,6 +9984,12 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
     if (verifiedAt.present) {
       map['verified_at'] = Variable<DateTime>(verifiedAt.value);
     }
+    if (evidenceRemovedAt.present) {
+      map['evidence_removed_at'] = Variable<DateTime>(evidenceRemovedAt.value);
+    }
+    if (retiredAt.present) {
+      map['retired_at'] = Variable<DateTime>(retiredAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -9842,6 +10019,8 @@ class RecordFieldsCompanion extends UpdateCompanion<RecordField> {
           ..write('verified: $verified, ')
           ..write('verifiedBy: $verifiedBy, ')
           ..write('verifiedAt: $verifiedAt, ')
+          ..write('evidenceRemovedAt: $evidenceRemovedAt, ')
+          ..write('retiredAt: $retiredAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();

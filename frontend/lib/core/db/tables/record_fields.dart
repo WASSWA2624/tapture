@@ -60,6 +60,18 @@ class RecordFields extends Table with MergeColumns {
   /// When it was verified.
   DateTimeColumn get verifiedAt => dateTime().nullable()();
 
+  /// When every photo this value was read from stopped being live.
+  ///
+  /// Null while at least one photo evidence row is live, or when the value
+  /// never had photo evidence. The value itself is never deleted.
+  DateTimeColumn get evidenceRemovedAt => dateTime().nullable()();
+
+  /// When a template change left this value without a field to fill.
+  ///
+  /// Null while the record's template declares [fieldKey]. A retired value
+  /// is kept, never deleted, and comes back if the key maps again.
+  DateTimeColumn get retiredAt => dateTime().nullable()();
+
   @override
   List<Set<Column<Object>>> get uniqueKeys => <Set<Column<Object>>>[
     <Column<Object>>{recordId, fieldKey},
@@ -246,6 +258,393 @@ String? _auditNew(RecordField value, Map<String, Expression<Object>> columns) {
     return value.valueRefined;
   }
   return value.valueRaw;
+}
+
+/// Audit `reason` of a row that sets or clears
+/// [RecordFields.evidenceRemovedAt].
+///
+/// Value-flag audit rows sit on entity `records` with the record id, action
+/// updated, the value's own field key, and previous and new values `'false'`
+/// and `'true'` for the flag before and after. The reason names the flag, so
+/// the history tells a flag change from a value edit on the same key.
+const String evidenceRemovedAuditReason = 'evidenceRemoved';
+
+/// Audit `reason` of a row that sets or clears [RecordFields.retiredAt].
+/// Same shape as [evidenceRemovedAuditReason].
+const String retiredAuditReason = 'retired';
+
+/// Flags value [id] as having lost its photo evidence, inside the caller's
+/// transaction, with its own audit row ([evidenceRemovedAuditReason]).
+///
+/// Returns false, writing nothing, when the flag is already set. Bumps
+/// `rev` and `updated_at`; the value columns are never touched. Throws a
+/// [StorageFailure] when the value is not on this device.
+Future<bool> setRecordFieldEvidenceRemoved(
+  GeneratedDatabase db, {
+  required String id,
+  Clock? clock,
+  String? deviceId,
+  String? operator,
+}) {
+  return _writeFlag(
+    db,
+    id: id,
+    flag: _Flag.evidenceRemoved,
+    set: true,
+    clock: clock,
+    deviceId: deviceId,
+    operator: operator,
+  );
+}
+
+/// Clears the evidence-removed flag of value [id], inside the caller's
+/// transaction, with its own audit row. Returns false when it was not set.
+Future<bool> clearRecordFieldEvidenceRemoved(
+  GeneratedDatabase db, {
+  required String id,
+  Clock? clock,
+  String? deviceId,
+  String? operator,
+}) {
+  return _writeFlag(
+    db,
+    id: id,
+    flag: _Flag.evidenceRemoved,
+    set: false,
+    clock: clock,
+    deviceId: deviceId,
+    operator: operator,
+  );
+}
+
+/// Marks value [id] retired (its template no longer declares the key),
+/// inside the caller's transaction, with its own audit row
+/// ([retiredAuditReason]). The value is kept. Returns false when already
+/// retired. Throws a [StorageFailure] when the value is not on this device.
+Future<bool> setRecordFieldRetired(
+  GeneratedDatabase db, {
+  required String id,
+  Clock? clock,
+  String? deviceId,
+  String? operator,
+}) {
+  return _writeFlag(
+    db,
+    id: id,
+    flag: _Flag.retired,
+    set: true,
+    clock: clock,
+    deviceId: deviceId,
+    operator: operator,
+  );
+}
+
+/// Brings retired value [id] back (its key maps again), inside the caller's
+/// transaction, with its own audit row. Returns false when it was not
+/// retired.
+Future<bool> clearRecordFieldRetired(
+  GeneratedDatabase db, {
+  required String id,
+  Clock? clock,
+  String? deviceId,
+  String? operator,
+}) {
+  return _writeFlag(
+    db,
+    id: id,
+    flag: _Flag.retired,
+    set: false,
+    clock: clock,
+    deviceId: deviceId,
+    operator: operator,
+  );
+}
+
+/// Flags every value of photo [photoId]'s record whose photo evidence is no
+/// longer live, and returns their field keys in key order.
+///
+/// Call it after the photo's tombstone is written, in the same transaction.
+/// A value is flagged only when it has at least one photo evidence row and
+/// every such row points at a photo whose whole derivation family (the
+/// photo, the photos it was derived from and the photos derived from it)
+/// has no untombstoned member filed on this record. Typed, manual, context
+/// and default values are never flagged, values are never deleted, and each
+/// flag writes its own audit row. An unfiled or unknown photo flags nothing.
+Future<List<String>> flagEvidenceRemovedForPhoto(
+  GeneratedDatabase db, {
+  required String photoId,
+  Clock? clock,
+  String? deviceId,
+  String? operator,
+}) {
+  return _syncEvidenceFlags(
+    db,
+    photoId: photoId,
+    set: true,
+    clock: clock,
+    deviceId: deviceId,
+    operator: operator,
+  );
+}
+
+/// The inverse of [flagEvidenceRemovedForPhoto] for a restored photo: clears
+/// the flag on every value of the photo's record that has live photo
+/// evidence again, and returns their field keys in key order.
+///
+/// Call it after the photo's tombstone is lifted, in the same transaction.
+Future<List<String>> clearEvidenceRemovedForPhoto(
+  GeneratedDatabase db, {
+  required String photoId,
+  Clock? clock,
+  String? deviceId,
+  String? operator,
+}) {
+  return _syncEvidenceFlags(
+    db,
+    photoId: photoId,
+    set: false,
+    clock: clock,
+    deviceId: deviceId,
+    operator: operator,
+  );
+}
+
+/// The two value flags a helper above can write.
+enum _Flag {
+  evidenceRemoved('evidence_removed_at', evidenceRemovedAuditReason),
+  retired('retired_at', retiredAuditReason);
+
+  const _Flag(this.column, this.reason);
+
+  final String column;
+  final String reason;
+}
+
+/// Sources whose values were not read from a photo, so never flagged.
+const Set<String> _unflaggedSources = <String>{
+  'typed',
+  'manual',
+  'context',
+  'default',
+};
+
+Future<bool> _writeFlag(
+  GeneratedDatabase db, {
+  required String id,
+  required _Flag flag,
+  required bool set,
+  Clock? clock,
+  String? deviceId,
+  String? operator,
+}) {
+  final AppDatabase database = db as AppDatabase;
+  final DateTime now = (clock ?? const SystemClock()).nowUtc();
+  final String device = deviceId ?? '';
+  return database.transaction(() async {
+    final QueryRow? row = await database
+        .customSelect(
+          'SELECT record_id, field_key, ${flag.column} AS flagged '
+          'FROM record_fields WHERE id = ?',
+          variables: <Variable<Object>>[Variable<String>(id)],
+        )
+        .getSingleOrNull();
+    if (row == null) {
+      throw const StorageFailure(
+        message: 'That value is no longer on this device.',
+        recoveryAction: 'Refresh the record and try again.',
+      );
+    }
+    final bool was = row.data['flagged'] != null;
+    if (was == set) {
+      return false;
+    }
+    await database.customUpdate(
+      'UPDATE record_fields SET ${flag.column} = ?, updated_at = ?, '
+      'updated_by_device = ?, rev = rev + 1 WHERE id = ?',
+      variables: <Variable<Object>>[
+        Variable<DateTime>(set ? now : null),
+        Variable<DateTime>(now),
+        Variable<String>(device),
+        Variable<String>(id),
+      ],
+      updates: <TableInfo<dynamic, dynamic>>{database.recordFields},
+      updateKind: UpdateKind.update,
+    );
+    await appendAudit(
+      database,
+      entityType: 'records',
+      entityId: row.read<String>('record_id'),
+      action: AuditAction.updated,
+      fieldKey: row.read<String>('field_key'),
+      previousValue: '$was',
+      newValue: '$set',
+      reason: flag.reason,
+      clock: clock,
+      device: device,
+      operator: operator,
+    );
+    return true;
+  });
+}
+
+Future<List<String>> _syncEvidenceFlags(
+  GeneratedDatabase db, {
+  required String photoId,
+  required bool set,
+  Clock? clock,
+  String? deviceId,
+  String? operator,
+}) {
+  final AppDatabase database = db as AppDatabase;
+  return database.transaction(() async {
+    final QueryRow? photo = await database
+        .customSelect(
+          'SELECT record_id FROM photos WHERE id = ?',
+          variables: <Variable<Object>>[Variable<String>(photoId)],
+        )
+        .getSingleOrNull();
+    final String? recordId = photo?.read<String?>('record_id');
+    if (recordId == null) {
+      return const <String>[];
+    }
+    final List<String> changed = <String>[];
+    for (final _EvidenceState value in await _evidenceStates(
+      database,
+      recordId,
+    )) {
+      final bool due = set
+          ? !value.flagged && value.flaggable && !value.live
+          : value.flagged && value.live;
+      if (!due) {
+        continue;
+      }
+      final bool written = await _writeFlag(
+        database,
+        id: value.id,
+        flag: _Flag.evidenceRemoved,
+        set: set,
+        clock: clock,
+        deviceId: deviceId,
+        operator: operator,
+      );
+      if (written) {
+        changed.add(value.fieldKey);
+      }
+    }
+    return changed;
+  });
+}
+
+/// One value with photo evidence: whether it is flagged, whether it may be
+/// flagged at all, and whether any of its photo evidence is still live.
+typedef _EvidenceState = ({
+  String id,
+  String fieldKey,
+  bool flagged,
+  bool flaggable,
+  bool live,
+});
+
+/// Live values of [recordId] that have at least one photo evidence row.
+Future<List<_EvidenceState>> _evidenceStates(
+  AppDatabase db,
+  String recordId,
+) async {
+  final List<Variable<Object>> record = <Variable<Object>>[
+    Variable<String>(recordId),
+  ];
+  final List<QueryRow> fields = await db
+      .customSelect(
+        'SELECT f.id AS id, f.field_key AS field_key, f.source AS source, '
+        'f.evidence_removed_at AS flagged FROM record_fields f '
+        'WHERE f.record_id = ? AND NOT EXISTS (SELECT 1 FROM tombstones t '
+        "WHERE t.entity_type = 'record_fields' AND t.entity_id = f.id) "
+        'ORDER BY f.field_key, f.id',
+        variables: record,
+      )
+      .get();
+  final List<QueryRow> evidence = await db
+      .customSelect(
+        'SELECT e.record_field_id AS field_id, e.photo_id AS photo_id '
+        'FROM field_evidence e JOIN record_fields f '
+        'ON f.id = e.record_field_id WHERE f.record_id = ? '
+        'AND e.photo_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM '
+        "tombstones t WHERE t.entity_type = 'field_evidence' "
+        'AND t.entity_id = e.id)',
+        variables: record,
+      )
+      .get();
+  final List<QueryRow> photos = await db
+      .customSelect(
+        'SELECT p.id AS id, p.derived_from AS derived_from, '
+        'p.record_id AS record_id, EXISTS (SELECT 1 FROM tombstones t '
+        "WHERE t.entity_type = 'photos' AND t.entity_id = p.id) AS gone "
+        'FROM photos p WHERE p.record_id = ?1 OR p.id IN (SELECT e.photo_id '
+        'FROM field_evidence e JOIN record_fields f '
+        'ON f.id = e.record_field_id WHERE f.record_id = ?1)',
+        variables: record,
+      )
+      .get();
+  final Map<String, Set<String>> byField = <String, Set<String>>{};
+  for (final QueryRow row in evidence) {
+    byField
+        .putIfAbsent(row.read<String>('field_id'), () => <String>{})
+        .add(row.read<String>('photo_id'));
+  }
+  final _PhotoFamilies families = _PhotoFamilies(recordId, photos);
+  return <_EvidenceState>[
+    for (final QueryRow field in fields)
+      if (byField[field.read<String>('id')] case final Set<String> photoIds)
+        (
+          id: field.read<String>('id'),
+          fieldKey: field.read<String>('field_key'),
+          flagged: field.data['flagged'] != null,
+          flaggable: !_unflaggedSources.contains(
+            field.read<String>('source').toLowerCase(),
+          ),
+          live: photoIds.any(families.isLive),
+        ),
+  ];
+}
+
+/// Photos linked by `derived_from`, read for one record.
+final class _PhotoFamilies {
+  _PhotoFamilies(this._recordId, List<QueryRow> rows) {
+    for (final QueryRow row in rows) {
+      final String id = row.read<String>('id');
+      _usable[id] =
+          row.read<int>('gone') == 0 &&
+          row.read<String?>('record_id') == _recordId;
+      final String? parent = row.read<String?>('derived_from');
+      if (parent != null) {
+        _links.putIfAbsent(id, () => <String>{}).add(parent);
+        _links.putIfAbsent(parent, () => <String>{}).add(id);
+      }
+    }
+  }
+
+  final String _recordId;
+  final Map<String, bool> _usable = <String, bool>{};
+  final Map<String, Set<String>> _links = <String, Set<String>>{};
+
+  /// Whether [photoId] or any photo in its family is untombstoned and filed
+  /// on this record.
+  bool isLive(String photoId) {
+    final Set<String> seen = <String>{photoId};
+    final List<String> queue = <String>[photoId];
+    while (queue.isNotEmpty) {
+      final String id = queue.removeLast();
+      if (_usable[id] ?? false) {
+        return true;
+      }
+      for (final String next in _links[id] ?? const <String>{}) {
+        if (seen.add(next)) {
+          queue.add(next);
+        }
+      }
+    }
+    return false;
+  }
 }
 
 /// Marks a field deleted without removing the row, so evidence can still

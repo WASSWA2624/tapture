@@ -8,10 +8,13 @@ import 'package:tapture/core/db/tables/photos.dart';
 import 'package:tapture/core/db/tables/processing.dart';
 import 'package:tapture/core/db/tables/record_fields.dart';
 import 'package:tapture/core/db/tables/records.dart';
+import 'package:tapture/core/db/tables/tombstones.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
+
+import 'record_rows.dart';
 
 void main() {
   final DateTime t0 = DateTime.utc(2026, 9, 17, 8);
@@ -32,6 +35,36 @@ void main() {
     test('a clean database produces no findings', () async {
       final List<IntegrityFinding> findings = _ok(await runIntegrityCheck(db));
       expect(findings, isEmpty);
+    });
+
+    test(
+      'indexed records, their search documents and a deleted record with its tombstone produce no findings',
+      () async {
+        await seedRecord(db, 'r1');
+        await seedField(db, 'f1', recordId: 'r1', fieldKey: 'k', raw: 'Pump');
+        await seedRecord(db, 'r2', status: 'DELETED');
+        await writeTombstone(
+          db,
+          entityType: 'records',
+          entityId: 'r2',
+          reason: 'deleted',
+        );
+        expect(await statusOf(db, 'r2'), 'deleted');
+        expect(await searchRecords(db, 'pump'), <String>['r1']);
+
+        final List<IntegrityFinding> findings = _ok(
+          await runIntegrityCheck(db),
+        );
+        expect(findings, isEmpty);
+      },
+    );
+
+    test('a record stored as DELETED without a tombstone is found', () async {
+      await seedRecord(db, 'r1', status: 'DELETED');
+      final List<IntegrityFinding> findings = _ok(await runIntegrityCheck(db));
+      expect(findings, hasLength(1));
+      expect(findings.single.entityType, 'records');
+      expect(findings.single.entityId, 'r1');
     });
 
     test(

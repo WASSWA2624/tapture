@@ -4,6 +4,8 @@ import 'package:drift/drift.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/columns.dart';
+import 'package:tapture/core/db/record_schema.dart';
+import 'package:tapture/core/db/tables/audit_log.dart';
 import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -68,6 +70,14 @@ class Records extends Table with MergeColumns {
 
   /// Operator who approved it.
   TextColumn get approvedBy => text().nullable()();
+
+  /// Number shown in lists, counted per project from 1.
+  ///
+  /// Nullable so a package from an older build still inserts; the
+  /// `records_number_ai` trigger then allocates the next number in the
+  /// project. Not unique: two devices can number records independently until
+  /// a merge relabels them.
+  IntColumn get recordNumber => integer().nullable()();
 }
 
 /// Inserts or updates a record after refusing malformed [contextJson].
@@ -144,6 +154,95 @@ Future<Result<RecordRow?>> lookupRecordByIdentityHash(
     return FailureResult<RecordRow?>(storageFailureFrom(error));
   }
 }
+
+/// Audit `field_key` of every record status change, on entity `records`.
+const String recordStatusAuditKey = 'status';
+
+/// The stored spelling of [raw]: the matching [RecordSchema.statusNames]
+/// entry once case and `_` are folded (`NEEDS_REVIEW` reads `needsReview`),
+/// or [raw] unchanged when no status matches.
+String canonicalRecordStatus(String raw) {
+  final String folded = raw.replaceAll('_', '').toLowerCase();
+  for (final String name in RecordSchema.statusNames) {
+    if (name.toLowerCase() == folded) {
+      return name;
+    }
+  }
+  return raw;
+}
+
+/// Moves record [recordId] to [status] inside the caller's transaction.
+///
+/// Writes `status`, `updated_at`, `updated_by_device` and `rev + 1`; moving
+/// to `approved` also stamps `approved_at` and `approved_by` ([operator]),
+/// and leaving approved clears neither, so the history keeps them. Appends
+/// one audit row: entity `records`, action updated, field key
+/// [recordStatusAuditKey], [previousStatus] to [status], with [reason].
+/// Both statuses are stored in their canonical spelling.
+///
+/// The move is not validated here: callers check it with the record
+/// lifecycle first. Throws a [StorageFailure] when the record is not on this
+/// device, so the caller's transaction rolls back.
+Future<void> writeRecordStatus(
+  GeneratedDatabase db, {
+  required String recordId,
+  required String status,
+  required String previousStatus,
+  Clock? clock,
+  String? deviceId,
+  String? operator,
+  String? reason,
+}) async {
+  final AppDatabase database = db as AppDatabase;
+  final DateTime now = (clock ?? const SystemClock()).nowUtc();
+  final String device = deviceId ?? '';
+  final String next = canonicalRecordStatus(status);
+  final String previous = canonicalRecordStatus(previousStatus);
+  final bool approving = next == _approvedStatus;
+  await database.transaction(() async {
+    final int changed = await database.customUpdate(
+      approving
+          ? 'UPDATE records SET status = ?, updated_at = ?, '
+                'updated_by_device = ?, rev = rev + 1, approved_at = ?, '
+                'approved_by = ? WHERE id = ?'
+          : 'UPDATE records SET status = ?, updated_at = ?, '
+                'updated_by_device = ?, rev = rev + 1 WHERE id = ?',
+      variables: <Variable<Object>>[
+        Variable<String>(next),
+        Variable<DateTime>(now),
+        Variable<String>(device),
+        if (approving) ...<Variable<Object>>[
+          Variable<DateTime>(now),
+          Variable<String>(operator),
+        ],
+        Variable<String>(recordId),
+      ],
+      updates: <TableInfo<dynamic, dynamic>>{database.records},
+      updateKind: UpdateKind.update,
+    );
+    if (changed == 0) {
+      throw const StorageFailure(
+        message: 'That record is no longer on this device.',
+        recoveryAction: 'Refresh the list and try again.',
+      );
+    }
+    await appendAudit(
+      database,
+      entityType: 'records',
+      entityId: recordId,
+      action: AuditAction.updated,
+      fieldKey: recordStatusAuditKey,
+      previousValue: previous,
+      newValue: next,
+      reason: reason,
+      clock: clock,
+      device: device,
+      operator: operator,
+    );
+  });
+}
+
+const String _approvedStatus = 'approved';
 
 void _ensureContextJson(Insertable<RecordRow> row) {
   final Expression<Object>? expression = row.toColumns(false)['context_json'];
