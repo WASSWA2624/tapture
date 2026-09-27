@@ -102,36 +102,36 @@ enum RecordStatus {
 
 ## Definition of done
 
-- [ ] Manual records go DRAFT to NEEDS_REVIEW to APPROVED without touching processing states.
-- [ ] An illegal transition fails validation instead of being applied.
-- [ ] Tests: unit tests over the full transition table; repository tests against an in-memory database covering the
+- [x] Manual records go DRAFT to NEEDS_REVIEW to APPROVED without touching processing states.
+- [x] An illegal transition fails validation instead of being applied.
+- [x] Tests: unit tests over the full transition table; repository tests against an in-memory database covering the
       round-trip mapper, plus the fake later tests use.
-- [ ] Ten thousand records scroll smoothly.
-- [ ] Filters combine and clear in one tap; sorting works ascending and descending on all three keys.
-- [ ] Filter and sort survive a restart, per project.
-- [ ] Tests: widget tests of paging and the empty state, of `records_filter_sheet.dart` including its empty and
+- [x] Ten thousand records scroll smoothly.
+- [x] Filters combine and clear in one tap; sorting works ascending and descending on all three keys.
+- [x] Filter and sort survive a restart, per project.
+- [x] Tests: widget tests of paging and the empty state, of `records_filter_sheet.dart` including its empty and
       failure states, and of `records_sort_menu.dart`.
-- [ ] Tests: a scroll measurement backing the 10,000-row claim (FE-TEST-09).
-- [ ] A search over ten thousand records returns in under 300 milliseconds.
-- [ ] Editing, adding or deleting a record updates its search entry in the same transaction.
-- [ ] Tests: performance test with a seeded database asserting the search budget.
-- [ ] Tests: repository tests over index maintenance on insert, edit and delete.
-- [ ] Every value shows its source without extra taps.
-- [ ] Tests: widget test of `record_detail_screen.dart`, including its empty and failure states.
-- [ ] Nothing about a record is permanently frozen.
-- [ ] Values are never silently deleted when their evidence is removed, and unmapped values are retained as retired.
-- [ ] Tests: test of the status transition and audit entry on edit.
-- [ ] Tests: test of the evidence-removed flag.
-- [ ] Tests: widget test of `record_template_change.dart`, including its empty and failure states.
-- [ ] A reviewer can reconstruct every change without a server.
-- [ ] Tests: widget test of `record_history_screen.dart`, including its empty and failure states.
-- [ ] Files are retained until purge, so restore is always complete.
-- [ ] A tombstone a merge still needs is never purged, and nothing leaves storage without an explicit action or an
+- [x] Tests: a scroll measurement backing the 10,000-row claim (FE-TEST-09).
+- [x] A search over ten thousand records returns in under 300 milliseconds.
+- [x] Editing, adding or deleting a record updates its search entry in the same transaction.
+- [x] Tests: performance test with a seeded database asserting the search budget.
+- [x] Tests: repository tests over index maintenance on insert, edit and delete.
+- [x] Every value shows its source without extra taps.
+- [x] Tests: widget test of `record_detail_screen.dart`, including its empty and failure states.
+- [x] Nothing about a record is permanently frozen.
+- [x] Values are never silently deleted when their evidence is removed, and unmapped values are retained as retired.
+- [x] Tests: test of the status transition and audit entry on edit.
+- [x] Tests: test of the evidence-removed flag.
+- [x] Tests: widget test of `record_template_change.dart`, including its empty and failure states.
+- [x] A reviewer can reconstruct every change without a server.
+- [x] Tests: widget test of `record_history_screen.dart`, including its empty and failure states.
+- [x] Files are retained until purge, so restore is always complete.
+- [x] A tombstone a merge still needs is never purged, and nothing leaves storage without an explicit action or an
       expired window.
-- [ ] Tests: test of delete, undo and restore.
-- [ ] Tests: test that a recent deletion survives a purge run and an unmerged tombstone is skipped.
-- [ ] Tests: widget test of `recycle_bin_screen.dart`, including its empty and failure states.
-- [ ] A bulk action reports how many succeeded and how many failed.
-- [ ] A partial failure leaves the successful records changed and the failed ones untouched.
-- [ ] Tests: widget test of `record_bulk_actions.dart`, including its empty and failure states, plus a test of the
+- [x] Tests: test of delete, undo and restore.
+- [x] Tests: test that a recent deletion survives a purge run and an unmerged tombstone is skipped.
+- [x] Tests: widget test of `recycle_bin_screen.dart`, including its empty and failure states.
+- [x] A bulk action reports how many succeeded and how many failed.
+- [x] A partial failure leaves the successful records changed and the failed ones untouched.
+- [x] Tests: widget test of `record_bulk_actions.dart`, including its empty and failure states, plus a test of the
       partial-failure summary.

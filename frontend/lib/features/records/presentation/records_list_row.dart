@@ -43,6 +43,7 @@ final class RecordsListRow extends ConsumerWidget {
     this.pane = false,
     this.currentRecordId,
     this.onOpen,
+    this.onShown,
     super.key,
   });
 
@@ -68,6 +69,10 @@ final class RecordsListRow extends ConsumerWidget {
   /// Opens a record by id. Null pushes the record's page in its project.
   final ValueChanged<String>? onOpen;
 
+  /// Called once a row has been built, so Select all can tick the records
+  /// the list has shown. Null for the measuring prototype.
+  final ValueChanged<String>? onShown;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int size = AppConstants.lists.pageSize;
@@ -91,6 +96,7 @@ final class RecordsListRow extends ConsumerWidget {
         pane: pane,
         current: rows[offset].id == currentRecordId,
         onOpen: onOpen,
+        onShown: onShown,
       );
     }
     final Object? error = page.error;
@@ -141,6 +147,7 @@ class _SummaryRow extends ConsumerWidget {
     required this.pane,
     required this.current,
     required this.onOpen,
+    required this.onShown,
   });
 
   final RecordSummary summary;
@@ -148,6 +155,7 @@ class _SummaryRow extends ConsumerWidget {
   final bool pane;
   final bool current;
   final ValueChanged<String>? onOpen;
+  final ValueChanged<String>? onShown;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -172,7 +180,7 @@ class _SummaryRow extends ConsumerWidget {
       ref.read(recordSelectionProvider(projectId).notifier).toggle(id);
     }
 
-    return AppListTile(
+    final Widget tile = AppListTile(
       key: ValueKey<String>('record-row-$id'),
       title: summary.name.trim().isNotEmpty
           ? summary.name
@@ -218,6 +226,11 @@ class _SummaryRow extends ConsumerWidget {
               ],
             ),
     );
+    final ValueChanged<String>? note = onShown;
+    if (note == null) {
+      return tile;
+    }
+    return _ShownOnce(id: id, onShown: note, child: tile);
   }
 
   void _open(BuildContext context, String id) {
@@ -228,6 +241,51 @@ class _SummaryRow extends ConsumerWidget {
     }
     unawaited(context.push(RoutePaths.projectRecord(summary.projectId, id)));
   }
+}
+
+/// Notes [id] once it has been built, and again when the row is reused for
+/// a different record. The note runs after the frame, never during build.
+class _ShownOnce extends StatefulWidget {
+  const _ShownOnce({
+    required this.id,
+    required this.onShown,
+    required this.child,
+  });
+
+  final String id;
+  final ValueChanged<String> onShown;
+  final Widget child;
+
+  @override
+  State<_ShownOnce> createState() => _ShownOnceState();
+}
+
+class _ShownOnceState extends State<_ShownOnce> {
+  @override
+  void initState() {
+    super.initState();
+    _note();
+  }
+
+  @override
+  void didUpdateWidget(_ShownOnce oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.id != widget.id) {
+      _note();
+    }
+  }
+
+  void _note() {
+    final String id = widget.id;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && widget.id == id) {
+        widget.onShown(id);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 /// What every row measures against: the tallest a row can be, with every

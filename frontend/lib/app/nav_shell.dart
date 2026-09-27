@@ -17,6 +17,7 @@ import 'package:tapture/features/context/presentation/context_bar.dart';
 import 'package:tapture/features/context/presentation/context_maintenance.dart';
 import 'package:tapture/features/projects/presentation/project_list_toolbar.dart';
 import 'package:tapture/features/projects/projects.dart';
+import 'package:tapture/features/records/presentation/records_list_view.dart';
 
 /// The four-destination frame: bar on compact, rail on medium, rail plus a
 /// list pane on expanded. [shell] keeps each branch's stack (FE-RESP-03).
@@ -224,6 +225,10 @@ class _Pane extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool projects = index == 0;
+    final _OpenRecord? open = _openRecord(
+      GoRouterState.of(context).uri,
+      ref.watch(currentProjectProvider),
+    );
     return RepaintBoundary(
       key: const ValueKey<String>('nav-pane'),
       child: Material(
@@ -242,42 +247,99 @@ class _Pane extends ConsumerWidget {
               ),
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(
-                  Space.x3,
-                  Space.x1,
-                  Space.x3,
-                  Space.x2,
-                ),
-                child: Column(
+          child: open != null
+              ? RecordsListView(
+                  projectId: open.projectId,
+                  pane: true,
+                  currentRecordId: open.recordId,
+                  onOpen: (String id) => _openBeside(context, open, id),
+                )
+              : Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    if (projects && _paneHasRows(ref)) ...<Widget>[
-                      ProjectListActions.paneToolbar(context, ref),
-                      const SizedBox(height: Space.x2),
-                    ],
-                    if (projects) const ProjectListToolbar(),
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                        Space.x3,
+                        Space.x1,
+                        Space.x3,
+                        Space.x2,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          if (projects && _paneHasRows(ref)) ...<Widget>[
+                            ProjectListActions.paneToolbar(context, ref),
+                            const SizedBox(height: Space.x2),
+                          ],
+                          if (projects) const ProjectListToolbar(),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: projects
+                          ? const ProjectListView(filtered: true)
+                          : AppEmptyState(
+                              icon: shellDestinations[index].icon,
+                              headline: Copy.emptyHeadline,
+                              message: Copy.emptyMessage,
+                            ),
+                    ),
                   ],
                 ),
-              ),
-              Expanded(
-                child: projects
-                    ? const ProjectListView(filtered: true)
-                    : AppEmptyState(
-                        icon: shellDestinations[index].icon,
-                        headline: Copy.emptyHeadline,
-                        message: Copy.emptyMessage,
-                      ),
-              ),
-            ],
-          ),
         ),
       ),
     );
   }
+}
+
+/// A record open in the body, so the pane lists its project's records
+/// beside it (FE-RESP-05).
+class _OpenRecord {
+  const _OpenRecord({
+    required this.projectId,
+    required this.recordId,
+    required this.inProject,
+  });
+
+  final String projectId;
+  final String recordId;
+  final bool inProject;
+}
+
+/// The record [uri] is showing, with the project it belongs to. The Records
+/// destination uses the open project. A list with no record open returns
+/// null, so the pane keeps the destination's own list.
+_OpenRecord? _openRecord(Uri uri, String? currentProject) {
+  final List<String> parts = uri.pathSegments;
+  if (parts.length >= 2 && parts.first == 'records') {
+    if (currentProject == null || currentProject.isEmpty) {
+      return null;
+    }
+    return _OpenRecord(
+      projectId: currentProject,
+      recordId: parts[1],
+      inProject: false,
+    );
+  }
+  if (parts.length >= 4 && parts[0] == 'projects' && parts[2] == 'records') {
+    return _OpenRecord(
+      projectId: parts[1],
+      recordId: parts[3],
+      inProject: true,
+    );
+  }
+  return null;
+}
+
+/// Opens [id] in the same branch the pane was opened from.
+void _openBeside(BuildContext context, _OpenRecord open, String id) {
+  final String location = open.inProject
+      ? RoutePaths.projectRecord(open.projectId, id)
+      : RoutePaths.record(id);
+  if (GoRouterState.of(context).uri.path == location) {
+    return;
+  }
+  context.go(location);
 }
 
 bool _paneHasRows(WidgetRef ref) {

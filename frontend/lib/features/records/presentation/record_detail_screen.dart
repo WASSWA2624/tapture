@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tapture/app/router.dart' show AppRoutes;
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
@@ -129,22 +129,22 @@ class RecordDetailScreen extends ConsumerWidget {
   String get _valuesRoute {
     final String? project = projectId;
     return project == null
-        ? AppRoutes.recordValuesEdit(recordId)
-        : AppRoutes.projectRecordValuesEdit(project, recordId);
+        ? RoutePaths.recordValuesEdit(recordId)
+        : RoutePaths.projectRecordValuesEdit(project, recordId);
   }
 
   String get _historyRoute {
     final String? project = projectId;
     return project == null
-        ? AppRoutes.recordHistory(recordId)
-        : AppRoutes.projectRecordHistory(project, recordId);
+        ? RoutePaths.recordHistory(recordId)
+        : RoutePaths.projectRecordHistory(project, recordId);
   }
 
   String get _listRoute {
     final String? project = projectId;
     return project == null
-        ? AppRoutes.records
-        : AppRoutes.projectRecords(project);
+        ? RoutePaths.records
+        : RoutePaths.projectRecords(project);
   }
 
   /// The labelled commands of the menu. A record in the recycle bin has

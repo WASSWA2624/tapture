@@ -449,7 +449,37 @@ void main() {
         'project-1-record-3',
         'project-1-record-2',
       });
+      expect(find.text(Copy.recordsSelectedCount(2)), findsOneWidget);
     });
+
+    testWidgets(
+      'select all ticks every record the list has shown and the bar names them',
+      (WidgetTester tester) async {
+        fake.seedMany(3);
+        await pumpRecordsList(tester, records: records);
+        await tester.longPress(find.text('Record 1'));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const ValueKey<String>('records-bulk-bar')),
+          findsOneWidget,
+        );
+        await tester.tap(
+          find.byKey(const ValueKey<String>('records-bulk-select-all')),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          listContainer(tester).read(recordSelectionProvider('project-1')),
+          <String>{
+            'project-1-record-1',
+            'project-1-record-2',
+            'project-1-record-3',
+          },
+        );
+        expect(find.text(Copy.recordsSelectedCount(3)), findsOneWidget);
+      },
+    );
   });
 
   group('filters', () {

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tapture/app/router.dart' show AppRoutes;
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -34,7 +34,7 @@ abstract final class RecordPhotosEditor {
   }) async {
     final Object? outcome = await GoRouter.of(
       context,
-    ).push<Object?>(AppRoutes.projectRecordEdit(projectId, recordId));
+    ).push<Object?>(RoutePaths.projectRecordEdit(projectId, recordId));
     final int added = outcome is CaptureEditOutcome ? outcome.photosAdded : 0;
     if (added <= 0 || !context.mounted) {
       return;

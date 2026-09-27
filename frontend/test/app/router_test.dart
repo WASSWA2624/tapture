@@ -11,8 +11,8 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/capture/presentation/capture_screen.dart';
-import 'package:tapture/features/projects/presentation/record_detail_screen.dart';
 import 'package:tapture/features/projects/projects.dart';
+import 'package:tapture/features/records/presentation/record_detail_screen.dart';
 import 'package:tapture/features/settings/presentation/appearance_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/storage_settings_screen.dart';
 import 'package:tapture/features/settings/settings.dart';
@@ -219,6 +219,24 @@ void main() {
     expect(
       tester.widget<CaptureScreen>(find.byType(CaptureScreen).last).recordId,
       'r1',
+    );
+
+    await _go(tester, router, AppRoutes.projectRecordValuesEdit('p1', 'r1'));
+    expect(
+      find.byKey(const ValueKey<String>('route-record-values')),
+      findsOneWidget,
+    );
+
+    await _go(tester, router, AppRoutes.projectRecordHistory('p1', 'r1'));
+    expect(
+      find.byKey(const ValueKey<String>('route-record-history')),
+      findsOneWidget,
+    );
+
+    await _go(tester, router, AppRoutes.recycleBin);
+    expect(
+      find.byKey(const ValueKey<String>('route-recycle-bin')),
+      findsOneWidget,
     );
 
     await _go(tester, router, AppRoutes.more);

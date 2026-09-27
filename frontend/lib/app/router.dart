@@ -16,6 +16,7 @@ import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
+import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
@@ -32,9 +33,12 @@ import 'package:tapture/features/projects/presentation/project_export_screen.dar
 import 'package:tapture/features/projects/presentation/project_filters_screen.dart';
 import 'package:tapture/features/projects/presentation/project_home_screen.dart';
 import 'package:tapture/features/projects/presentation/project_list_screen.dart';
-import 'package:tapture/features/projects/presentation/project_records_screen.dart';
 import 'package:tapture/features/projects/presentation/project_settings_screen.dart';
-import 'package:tapture/features/projects/presentation/record_detail_screen.dart';
+import 'package:tapture/features/records/presentation/record_detail_screen.dart';
+import 'package:tapture/features/records/presentation/record_edit_screen.dart';
+import 'package:tapture/features/records/presentation/record_history_screen.dart';
+import 'package:tapture/features/records/presentation/records_list_screen.dart';
+import 'package:tapture/features/records/presentation/recycle_bin_screen.dart';
 import 'package:tapture/features/reference/data/dataset_csv_import.dart';
 import 'package:tapture/features/reference/presentation/dataset_browser_screen.dart';
 import 'package:tapture/features/reference/presentation/dataset_key_screen.dart';
@@ -539,34 +543,12 @@ List<RouteBase> get _routes {
                       path: 'records',
                       metadata: _projectScoped,
                       builder: (BuildContext _, GoRouterState state) {
-                        return ProjectRecordsScreen(
+                        return RecordsListScreen(
                           projectId: state.pathParameters['projectId']!,
+                          initialStatus: _statusQuery(state),
                         );
                       },
-                      routes: <RouteBase>[
-                        GoRoute(
-                          path: ':recordId',
-                          metadata: _projectScoped,
-                          builder: (BuildContext _, GoRouterState state) {
-                            return RecordDetailScreen(
-                              projectId: state.pathParameters['projectId']!,
-                              recordId: state.pathParameters['recordId']!,
-                            );
-                          },
-                          routes: <RouteBase>[
-                            GoRoute(
-                              path: 'edit',
-                              metadata: _projectScoped,
-                              builder: (BuildContext _, GoRouterState state) {
-                                return CaptureScreen(
-                                  projectId: state.pathParameters['projectId']!,
-                                  recordId: state.pathParameters['recordId']!,
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
+                      routes: _recordRoutes(inProject: true),
                     ),
                     GoRoute(
                       path: 'queue',
@@ -710,17 +692,10 @@ List<RouteBase> get _routes {
           routes: <RouteBase>[
             GoRoute(
               path: AppRoutes.records,
-              builder: (BuildContext _, GoRouterState _) {
-                return const _RoutePage(name: 'records');
+              builder: (BuildContext _, GoRouterState state) {
+                return RecordsListScreen(initialStatus: _statusQuery(state));
               },
-              routes: <RouteBase>[
-                GoRoute(
-                  path: ':recordId',
-                  builder: (BuildContext _, GoRouterState _) {
-                    return const _RoutePage(name: 'record');
-                  },
-                ),
-              ],
+              routes: _recordRoutes(inProject: false),
             ),
           ],
         ),
@@ -772,6 +747,12 @@ List<RouteBase> get _routes {
                   path: 'provider-key',
                   redirect: (BuildContext _, GoRouterState _) =>
                       AppRoutes.settingsAi,
+                ),
+                GoRoute(
+                  path: 'recycle-bin',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const RecycleBinScreen();
+                  },
                 ),
                 GoRoute(
                   path: 'about',
@@ -1003,6 +984,65 @@ Widget _notFound(BuildContext context, GoRouterState state) {
       ),
     ),
   );
+}
+
+/// One record and the pages that change it (task 014). [inProject] keeps
+/// the routes inside a project branch and behind the project-scope guard.
+List<RouteBase> _recordRoutes({required bool inProject}) {
+  final Map<String, dynamic>? scope = inProject ? _projectScoped : null;
+  return <RouteBase>[
+    GoRoute(
+      path: ':recordId',
+      metadata: scope,
+      builder: (BuildContext _, GoRouterState state) {
+        return RecordDetailScreen(
+          recordId: state.pathParameters['recordId']!,
+          projectId: inProject ? state.pathParameters['projectId'] : null,
+        );
+      },
+      routes: <RouteBase>[
+        if (inProject)
+          GoRoute(
+            path: 'edit',
+            metadata: _projectScoped,
+            builder: (BuildContext _, GoRouterState state) {
+              return CaptureScreen(
+                projectId: state.pathParameters['projectId']!,
+                recordId: state.pathParameters['recordId']!,
+              );
+            },
+          ),
+        GoRoute(
+          path: 'values',
+          metadata: scope,
+          builder: (BuildContext _, GoRouterState state) {
+            return RecordEditScreen(
+              recordId: state.pathParameters['recordId']!,
+            );
+          },
+        ),
+        GoRoute(
+          path: 'history',
+          metadata: scope,
+          builder: (BuildContext _, GoRouterState state) {
+            return RecordHistoryScreen(
+              recordId: state.pathParameters['recordId']!,
+            );
+          },
+        ),
+      ],
+    ),
+  ];
+}
+
+/// The `?filter=` status a records list opens on, or null when the route
+/// names none.
+RecordStatus? _statusQuery(GoRouterState state) {
+  final String? raw = state.uri.queryParameters[AppRoutes.filterQuery];
+  if (raw == null || raw.isEmpty) {
+    return null;
+  }
+  return RecordStatus.fromStored(raw);
 }
 
 class _RoutePage extends StatelessWidget {

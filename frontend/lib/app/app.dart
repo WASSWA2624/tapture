@@ -69,7 +69,7 @@ class TaptureApp extends ConsumerWidget {
                 return GlobalErrorPage(
                   failure: failure,
                   onRestart: retry,
-                  onOpenRecycleBin: () => router.go(AppRoutes.more),
+                  onOpenRecycleBin: () => router.go(AppRoutes.recycleBin),
                 );
               },
               child: child ?? const SizedBox.shrink(),

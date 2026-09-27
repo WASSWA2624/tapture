@@ -2643,8 +2643,7 @@ abstract final class Copy {
   /// Writes the diagnostics buffer to a shareable file.
   static const String exportLog = 'Export log';
 
-  /// Opens restored records. The destination is the recycle bin once 168
-  /// exists.
+  /// Opens the recycle bin.
   static const String openRecycleBin = 'Recycle bin';
 
   /// Settings root title.
@@ -4862,6 +4861,10 @@ abstract final class Copy {
 
   /// Title of the recycle bin page.
   static const String recycleBinTitle = 'Recycle bin';
+
+  /// Storage settings row that opens the recycle bin.
+  static const String recycleBinSettingsSubtitle =
+      'Restore a deleted record before it is removed for good.';
 
   /// The line above the recycle bin list: how long a deleted record stays
   /// restorable, [days] being the operator's window.

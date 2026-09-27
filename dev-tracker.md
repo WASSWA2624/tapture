@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**47 of 69 tasks complete (68%)** · last updated 2026-09-26
+**48 of 69 tasks complete (70%)** · last updated 2026-09-27
 
 `██████████████████████████░░░░░░░░░░░░`
 
@@ -343,9 +343,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 14 — Records
 
-*0 of 1 complete.*
+*1 of 1 complete.*
 
-- [ ] [014 — Records: find, read and change what was captured](dev-plan/14-records/014-records.md)
+- [x] [014 — Records: find, read and change what was captured](dev-plan/14-records/014-records.md)
 
 ### 15 — Data quality
 

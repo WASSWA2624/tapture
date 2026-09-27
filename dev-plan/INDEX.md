@@ -88,7 +88,7 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 
 *Find, read and change what has been captured, at any time after capture.*
 
-- [ ] [014 — Records: find, read and change what was captured](14-records/014-records.md)
+- [x] [014 — Records: find, read and change what was captured](14-records/014-records.md)
 
 ## 15 — Data quality
 

@@ -253,7 +253,10 @@ void main() {
       );
 
       await tester.enterText(
-        find.byKey(const ValueKey<String>('field-records')),
+        find.descendant(
+          of: find.byKey(const ValueKey<String>('records-search')),
+          matching: find.byType(EditableText),
+        ),
         'half typed',
       );
       expect(find.text('half typed'), findsOneWidget);
@@ -925,6 +928,28 @@ void main() {
       }
     },
   );
+
+  testWidgets('an open record sits beside its list at expanded width', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter router = await _pump(tester, width: 1200, projectId: 'p1');
+    router.go(AppRoutes.record('r1'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey<String>('route-record')), findsOneWidget);
+    expect(
+      find.descendant(
+        of: _pane(),
+        matching: find.byKey(const ValueKey<String>('records-search')),
+      ),
+      findsOneWidget,
+    );
+
+    await _setWidth(tester, 400);
+    await tester.pumpAndSettle();
+    expect(_pane(), findsNothing);
+    expect(find.byKey(const ValueKey<String>('route-record')), findsOneWidget);
+  });
 
   testWidgets('at 400 dp the project row is not forced to 280 dp', (
     WidgetTester tester,

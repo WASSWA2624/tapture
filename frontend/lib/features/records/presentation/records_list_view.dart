@@ -13,6 +13,8 @@ import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/record_filter.dart';
+import '../domain/record_sort.dart';
+import 'record_bulk_actions.dart';
 import 'records_active_filters.dart';
 import 'records_filter_sheet.dart';
 import 'records_list_controller.dart';
@@ -113,6 +115,15 @@ final class RecordsListView extends ConsumerWidget {
                   pane: pane,
                   currentRecordId: currentRecordId,
                   onOpen: onOpen,
+                  onShown: (String id) {
+                    ref
+                        .read(
+                          _shownProvider(
+                            _shownKey(projectId, criteria),
+                          ).notifier,
+                        )
+                        .note(id);
+                  },
                 ),
               );
               // The failure panel scrolls, so it is whole on a short window
@@ -123,8 +134,26 @@ final class RecordsListView extends ConsumerWidget {
             },
           ),
         ),
+        _BulkBar(projectId: projectId, criteria: criteria),
       ],
     );
+  }
+}
+
+/// The selection bar. It watches which rows have been on screen, so noting
+/// one does not rebuild the list.
+class _BulkBar extends ConsumerWidget {
+  const _BulkBar({required this.projectId, required this.criteria});
+
+  final String projectId;
+  final RecordsListCriteria criteria;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<String> shown = ref
+        .watch(_shownProvider(_shownKey(projectId, criteria)))
+        .toList(growable: false);
+    return RecordBulkActions(projectId: projectId, selectable: shown);
   }
 }
 
@@ -147,6 +176,7 @@ class _RecordRows extends StatelessWidget {
     required this.pane,
     required this.currentRecordId,
     required this.onOpen,
+    required this.onShown,
     super.key,
   });
 
@@ -156,6 +186,7 @@ class _RecordRows extends StatelessWidget {
   final bool pane;
   final String? currentRecordId;
   final ValueChanged<String>? onOpen;
+  final ValueChanged<String> onShown;
 
   @override
   Widget build(BuildContext context) {
@@ -172,6 +203,7 @@ class _RecordRows extends StatelessWidget {
             pane: pane,
             currentRecordId: currentRecordId,
             onOpen: onOpen,
+            onShown: onShown,
           );
         },
       ),
@@ -221,5 +253,38 @@ class _EmptyList extends StatelessWidget {
             onAction: controller.clearAll,
           );
     return SingleChildScrollView(child: state);
+  }
+}
+
+/// Which rows of one filtered list have been on screen. Select all ticks
+/// these, and a new filter or order starts empty.
+typedef _ShownKey = ({String projectId, RecordFilter filter, RecordSort sort});
+
+_ShownKey _shownKey(String projectId, RecordsListCriteria criteria) {
+  return (projectId: projectId, filter: criteria.filter, sort: criteria.sort);
+}
+
+final _shownProvider = NotifierProvider.autoDispose
+    .family<_ShownRecords, Set<String>, _ShownKey>(
+      _ShownRecords.new,
+      retry: (int _, Object _) => null,
+    );
+
+/// Record ids a list has built, in the order they first appeared.
+class _ShownRecords extends Notifier<Set<String>> {
+  _ShownRecords(this._key);
+
+  // ignore: unused_field, the family key isolates one filter's shown rows
+  final _ShownKey _key;
+
+  @override
+  Set<String> build() => const <String>{};
+
+  /// Remembers [id]. An id already remembered changes nothing.
+  void note(String id) {
+    if (state.contains(id)) {
+      return;
+    }
+    state = Set<String>.unmodifiable(<String>{...state, id});
   }
 }

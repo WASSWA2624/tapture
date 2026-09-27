@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tapture/app/router.dart' show AppRoutes;
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
@@ -256,7 +256,7 @@ class _RecordTemplateChangeState extends ConsumerState<RecordTemplateChange> {
     Navigator.of(context).pop();
     if (router != null) {
       unawaited(
-        router.push<void>(AppRoutes.projectTemplates(widget.projectId)),
+        router.push<void>(RoutePaths.projectTemplates(widget.projectId)),
       );
     }
   }

@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -101,6 +103,12 @@ class StorageSettingsScreen extends ConsumerWidget {
                 onTap: () {
                   unawaited(notifier.cycleRetention());
                 },
+              ),
+              AppListTile(
+                key: const ValueKey<String>('storage-recycle-bin'),
+                title: Copy.recycleBinTitle,
+                subtitle: Copy.recycleBinSettingsSubtitle,
+                onTap: () => context.go(RoutePaths.recycleBin),
               ),
             ],
           );
