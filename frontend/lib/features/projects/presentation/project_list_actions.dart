@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +9,7 @@ import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart'
     show AppOverflowAction;
+import 'package:tapture/features/merge/merge.dart' show startPackageImport;
 
 import 'project_list_filter.dart';
 
@@ -18,7 +21,10 @@ abstract final class ProjectListActions {
     'project-list-create',
   );
 
-  /// More menu holding Show archived.
+  /// Import a project, in the more menu.
+  static const ValueKey<String> importKey = ValueKey<String>('project-import');
+
+  /// More menu holding Import a project and Show archived.
   static const ValueKey<String> overflowKey = ValueKey<String>(
     'project-list-overflow',
   );
@@ -34,10 +40,17 @@ abstract final class ProjectListActions {
     return const <Widget>[];
   }
 
-  /// Labelled Show archived row. The check marks when the filter is on.
-  static List<AppOverflowAction> overflow(WidgetRef ref) {
+  /// Import a project (task 076, W19), then the labelled Show archived
+  /// row, whose check marks when the filter is on.
+  static List<AppOverflowAction> overflow(BuildContext context, WidgetRef ref) {
     final bool show = ref.watch(projectListShowArchivedProvider);
     return <AppOverflowAction>[
+      AppOverflowAction(
+        key: importKey,
+        label: Copy.projectsImport,
+        icon: AppIcons.import,
+        onTap: () => unawaited(startPackageImport(context, ref)),
+      ),
       AppOverflowAction(
         key: const ValueKey<String>('project-show-archived'),
         label: Copy.projectShowArchived,

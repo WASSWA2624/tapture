@@ -40,6 +40,16 @@ abstract final class RoutePaths {
   /// The project's read-only details page (task 076, D8).
   static String projectDetails(String projectId) =>
       '${project(projectId)}/details';
+
+  /// Merging an open package into the project (task 076, W21).
+  static String projectMerge(String projectId) => '${project(projectId)}/merge';
+
+  /// The merge's conflicts, one at a time. [conflictId] opens one.
+  static String projectMergeConflicts(String projectId, {String? conflictId}) =>
+      conflictId == null
+      ? '${projectMerge(projectId)}/conflicts'
+      : '${projectMerge(projectId)}/conflicts'
+            '?conflict=${Uri.encodeQueryComponent(conflictId)}';
   static String projectSettings(String projectId) =>
       '${project(projectId)}/settings';
   static String projectContext(String projectId) =>

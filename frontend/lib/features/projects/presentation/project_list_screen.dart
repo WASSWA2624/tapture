@@ -49,7 +49,7 @@ class ProjectListScreen extends ConsumerWidget {
       actions: expanded
           ? const <Widget>[]
           : ProjectListActions.barActions(context),
-      overflow: ProjectListActions.overflow(ref),
+      overflow: ProjectListActions.overflow(context, ref),
       inset: false,
       scrollable: false,
       footer: value.hasValue && !expanded

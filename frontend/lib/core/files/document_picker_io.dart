@@ -99,7 +99,7 @@ Future<Result<PickedDocument>> _channelPick(
     if (path is! String || path.isEmpty) {
       return const FailureResult<PickedDocument>(CancelledFailure());
     }
-    return _describe(File(path), picked?['name']);
+    return _describe(File(path), picked?['name'], isCopy: true);
   } on PlatformException catch (error) {
     if (error.code == 'cancelled') {
       return const FailureResult<PickedDocument>(CancelledFailure());
@@ -113,17 +113,23 @@ Future<Result<PickedDocument>> _fromProcess(ProcessResult result) async {
   if (result.exitCode != 0 || stdout is! String || stdout.trim().isEmpty) {
     return const FailureResult<PickedDocument>(CancelledFailure());
   }
-  return _describe(File(stdout.trim()), null);
+  return _describe(File(stdout.trim()), null, isCopy: false);
 }
 
-Future<Result<PickedDocument>> _describe(File file, Object? name) async {
+Future<Result<PickedDocument>> _describe(
+  File file,
+  Object? name, {
+  required bool isCopy,
+}) async {
   if (!file.existsSync()) {
     return const FailureResult<PickedDocument>(_failed);
   }
   final String shown = name is String && name.isNotEmpty
       ? name
       : file.uri.pathSegments.last;
-  return Success<PickedDocument>(PickedFile(file, shown, await file.length()));
+  return Success<PickedDocument>(
+    PickedFile(file, shown, await file.length(), isCopy: isCopy),
+  );
 }
 
 const StorageFailure _failed = StorageFailure(

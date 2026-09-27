@@ -22,6 +22,7 @@ import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/capture/capture.dart';
 import 'package:tapture/features/context/presentation/context_hierarchy_screen.dart';
 import 'package:tapture/features/context/presentation/context_preset_list.dart';
+import 'package:tapture/features/merge/merge.dart';
 import 'package:tapture/features/processing/presentation/queue_screen.dart';
 import 'package:tapture/features/projects/presentation/current_project.dart';
 import 'package:tapture/features/projects/presentation/project_create_screen.dart';
@@ -562,6 +563,27 @@ List<RouteBase> get _routes {
                           projectId: state.pathParameters['projectId']!,
                         );
                       },
+                    ),
+                    GoRoute(
+                      path: 'merge',
+                      metadata: _projectScoped,
+                      builder: (BuildContext _, GoRouterState state) {
+                        return MergePreviewScreen(
+                          projectId: state.pathParameters['projectId']!,
+                        );
+                      },
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: 'conflicts',
+                          metadata: _projectScoped,
+                          builder: (BuildContext _, GoRouterState state) {
+                            return ConflictScreen(
+                              projectId: state.pathParameters['projectId']!,
+                              conflictId: state.uri.queryParameters['conflict'],
+                            );
+                          },
+                        ),
+                      ],
                     ),
                     GoRoute(
                       path: 'context',

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:drift/drift.dart';
@@ -415,9 +414,7 @@ int _packages = 0;
 /// device would.
 Future<InspectedBundle> _package(BundleFixture fixture) async {
   _packages += 1;
-  final FixedClock clock = FixedClock(
-    DateTime.utc(2026, 9, 27, 9, _packages),
-  );
+  final FixedClock clock = FixedClock(DateTime.utc(2026, 9, 27, 9, _packages));
   final BundleWriter writer = BundleWriter(
     db: fixture.db,
     storageRoot: fixture.storageRoot,

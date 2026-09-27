@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:drift/drift.dart' show QueryRow, Table, TableInfo;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tapture/core/bundle/bundle.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -18,7 +19,7 @@ import '../../../support/processing_fixture.dart';
 
 /// The provider key reaches secure storage and nothing else: not a table,
 /// not a stored request summary, not a file under the storage root and not
-/// an entry inside an exported workbook.
+/// an entry inside an exported project package or its workbook.
 void main() {
   const String secret = 'sk-live-7Qe9-custody-probe';
 
@@ -54,7 +55,7 @@ void main() {
     }
     expect(provider.requests, hasLength(1), reason: 'the record went online');
 
-    final ExportedWorkbook workbook = _ok(
+    final ExportedPackage exported = _ok(
       await ExportRepositoryImpl(
         db: fixture.db,
         storageRoot: fixture.storageRoot,
@@ -77,16 +78,26 @@ void main() {
         );
       }
     }
-    expect(_text(workbook.bytes), isNot(contains(secret)));
-    for (final ArchiveFile entry in ZipDecoder().decodeBytes(workbook.bytes)) {
-      if (entry.isFile) {
-        expect(
-          _text(entry.content as List<int>),
-          isNot(contains(secret)),
-          reason: entry.name,
-        );
+    final Directory root = _ok(await fixture.storageRoot.resolve());
+    final StoredBundle stored = exported.package as StoredBundle;
+    final List<int> package = File(
+      '${root.path}/${stored.relativePath}',
+    ).readAsBytesSync();
+    expect(_text(package), isNot(contains(secret)));
+    void expectNoSecretIn(List<int> zip) {
+      for (final ArchiveFile entry in ZipDecoder().decodeBytes(zip)) {
+        if (!entry.isFile) {
+          continue;
+        }
+        final List<int> content = entry.content as List<int>;
+        expect(_text(content), isNot(contains(secret)), reason: entry.name);
+        if (entry.name.endsWith('.xlsx')) {
+          expectNoSecretIn(content);
+        }
       }
     }
+
+    expectNoSecretIn(package);
     for (final File file
         in fixture.documents.listSync(recursive: true).whereType<File>()) {
       expect(

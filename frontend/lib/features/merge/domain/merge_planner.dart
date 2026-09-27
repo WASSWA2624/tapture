@@ -227,6 +227,7 @@ final class _Planner {
       settled: _settled,
       conflicts: _conflicts,
       insertedRecords: <String>[...?_inserted['records']],
+      updatedRecords: _updatedRecords.toList(),
       counts: (
         newRecords: _inserted['records']?.length ?? 0,
         updatedRecords: _updatedRecords.length,

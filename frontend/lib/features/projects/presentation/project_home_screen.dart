@@ -16,6 +16,7 @@ import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/context/context.dart';
+import 'package:tapture/features/merge/merge.dart' show startPackageImport;
 import 'package:tapture/features/templates/templates.dart';
 
 import '../domain/project_repository.dart';
@@ -220,6 +221,14 @@ List<AppOverflowAction> _projectHomeMenu(
       label: Copy.projectExport,
       icon: AppIcons.export,
       onTap: () => context.push(RoutePaths.projectExports(project.id)),
+    ),
+    AppOverflowAction(
+      key: const ValueKey<String>('project-merge-package'),
+      label: Copy.mergePackage,
+      icon: AppIcons.import,
+      onTap: () => unawaited(
+        startPackageImport(context, ref, intoProjectId: project.id),
+      ),
     ),
     AppOverflowAction(
       label: Copy.projectsDuplicate,

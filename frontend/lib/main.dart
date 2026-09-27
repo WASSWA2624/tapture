@@ -25,7 +25,9 @@ import 'core/files/download_service.dart';
 import 'core/files/file_reader.dart';
 import 'core/files/file_writer.dart';
 import 'core/files/photo_picker.dart';
+import 'core/files/project_folders.dart';
 import 'core/files/screen_capture.dart';
+import 'core/files/storage_guard.dart';
 import 'core/files/storage_root.dart';
 import 'core/ids/uuid_service.dart';
 import 'core/lifecycle/lifecycle.dart';
@@ -40,6 +42,7 @@ import 'features/context/data/context_repository_impl.dart';
 import 'features/exports/data/export_repository_impl.dart';
 import 'features/feedback/feedback.dart';
 import 'features/feedback/presentation/feedback_providers.dart';
+import 'features/merge/merge.dart';
 import 'features/processing/data/notifications.dart';
 import 'features/processing/data/processing_repository_impl.dart';
 import 'features/processing/data/processing_stage_worker.dart';
@@ -175,6 +178,18 @@ Future<void> _run() async {
           clock: clock,
           deviceId: id,
           ids: ids,
+        );
+      }),
+      packageImportRepositoryProvider.overrideWith((Ref ref) {
+        return PackageImportRepositoryImpl(
+          db: db,
+          files: PackageFiles(storageRoot: storageRoot),
+          clock: clock,
+          deviceId: id,
+          ids: ids,
+          guard: kIsWeb ? null : ref.watch(storageGuardProvider),
+          // A browser has no folders; its files live in one store.
+          folders: kIsWeb ? null : ProjectFolders(storageRoot: storageRoot),
         );
       }),
       photoRepositoryProvider.overrideWith((Ref _) => capturePhotos),

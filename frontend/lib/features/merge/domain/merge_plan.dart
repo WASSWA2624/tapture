@@ -13,6 +13,7 @@ final class MergePlan {
     required this.conflicts,
     required this.counts,
     required this.insertedRecords,
+    this.updatedRecords = const <String>[],
   });
 
   /// Rows to insert, by SQL table, already moved to the target project.
@@ -43,6 +44,9 @@ final class MergePlan {
 
   /// Records the plan inserts, for the duplicate check.
   final List<String> insertedRecords;
+
+  /// Records already here whose values the plan changes or adds to.
+  final List<String> updatedRecords;
 
   /// Whether merging would change nothing, as a second merge of the same
   /// package does.

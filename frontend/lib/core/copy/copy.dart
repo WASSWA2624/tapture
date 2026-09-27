@@ -3990,4 +3990,47 @@ abstract final class Copy {
 
   /// Heading of the local side of a pair.
   static const String duplicateHere = 'On this device';
+
+  // The merge preview and its conflicts (task 076, W20 to W22).
+
+  /// Empty state when the merge screen opens with no package.
+  static const String mergeNoPackageHeadline = 'No package open';
+
+  /// Explains [mergeNoPackageHeadline].
+  static const String mergeNoPackageMessage =
+      'Choose Merge a package from the project menu to pick one.';
+
+  /// Heading over the compatibility report.
+  static const String mergeTemplatesHeading = 'Templates';
+
+  /// Heading over the preview's counts.
+  static const String mergeCountsHeading = 'What the merge does';
+
+  /// Shown when a template blocks the merge.
+  static const String mergeBlocked =
+      'This package cannot merge into this project until its templates match.';
+
+  /// A record with no caption, in the preview's lists.
+  static String mergeRecordUnnamed(String id) {
+    final String short = id.length > 8 ? id.substring(id.length - 8) : id;
+    return 'Record …$short';
+  }
+
+  /// A conflict's line in the preview: the record, then what differs.
+  static String mergeConflictLine(String record, String about) =>
+      '$record · $about';
+
+  /// A settled conflict's side, under its line.
+  static String mergeConflictChosen({required bool incoming}) =>
+      incoming ? 'Taking incoming' : "Keeping this device's";
+
+  /// A conflict not settled yet.
+  static const String mergeConflictOpen = 'Not settled yet';
+
+  /// The deletion side of a conflict that was changed rather than deleted.
+  static const String conflictChanged = 'Kept and changed';
+
+  /// The duplicate pair view's field line. [label] and [value] are data.
+  static String duplicateField(String label, String value) =>
+      '$label: ${value.isEmpty ? conflictEmpty : value}';
 }

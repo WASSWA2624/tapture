@@ -22,6 +22,12 @@ abstract interface class PackageImportRepository {
     required Map<String, List<Map<String, Object?>>> incoming,
   });
 
+  /// The templates and template fields of [projectId], by SQL table, for
+  /// checking a package against it without reading the whole project.
+  Future<Result<Map<String, List<Map<String, Object?>>>>> templatesOf(
+    String projectId,
+  );
+
   /// Imports [bundle] as the project it carries, keeping every id, `rev`,
   /// timestamp and device. [onProgress] reports 0–1 over the files.
   Future<Result<ImportedProject>> importAsNew(

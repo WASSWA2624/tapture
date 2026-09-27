@@ -151,6 +151,43 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
     }
   }
 
+  @override
+  Future<Result<Map<String, List<Map<String, Object?>>>>> templatesOf(
+    String projectId,
+  ) async {
+    try {
+      final List<QueryRow> templates = await _db
+          .customSelect(
+            'SELECT * FROM templates WHERE project_id = ?',
+            variables: <Variable<Object>>[Variable<String>(projectId)],
+          )
+          .get();
+      final List<QueryRow> fields = await _db
+          .customSelect(
+            'SELECT * FROM template_fields WHERE template_id IN '
+            '(SELECT id FROM templates WHERE project_id = ?)',
+            variables: <Variable<Object>>[Variable<String>(projectId)],
+          )
+          .get();
+      return Success<Map<String, List<Map<String, Object?>>>>(
+        <String, List<Map<String, Object?>>>{
+          'templates': <Map<String, Object?>>[
+            for (final QueryRow row in templates)
+              Map<String, Object?>.of(row.data),
+          ],
+          'template_fields': <Map<String, Object?>>[
+            for (final QueryRow row in fields)
+              Map<String, Object?>.of(row.data),
+          ],
+        },
+      );
+    } on Object catch (error) {
+      return FailureResult<Map<String, List<Map<String, Object?>>>>(
+        storageFailureFrom(error),
+      );
+    }
+  }
+
   /// Adds the global reference datasets [incoming] carries that this device
   /// holds but the project does not name, so their rows merge by key.
   Future<void> _addNamedDatasets(
