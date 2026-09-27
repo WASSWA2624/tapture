@@ -9,4 +9,7 @@ enum SettlementRule {
 
   /// A value beats an empty one nobody ever edited.
   valueBeatsUntouchedEmpty,
+
+  /// No rule decided. A person has to.
+  none,
 }

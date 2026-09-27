@@ -57,6 +57,16 @@ final class ConflictScreen extends ConsumerWidget {
     'conflict-take-all',
   );
 
+  /// Types a replacement value.
+  static const ValueKey<String> typeValueKey = ValueKey<String>(
+    'conflict-type-value',
+  );
+
+  /// Leaves this conflict for later.
+  static const ValueKey<String> decideLaterKey = ValueKey<String>(
+    'conflict-decide-later',
+  );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<MergeView?> value = ref.watch(
@@ -228,6 +238,22 @@ class _Conflict extends StatelessWidget {
             expand: true,
             onPressed: () => onChoose(ConflictChoice.theirs),
           ),
+        ),
+        const SizedBox(height: Space.x2),
+        AppButton(
+          key: ConflictScreen.typeValueKey,
+          label: Copy.conflictTypeValue,
+          variant: AppButtonVariant.secondary,
+          expand: true,
+          onPressed: () => onChoose(ConflictChoice.typed),
+        ),
+        const SizedBox(height: Space.x2),
+        AppButton(
+          key: ConflictScreen.decideLaterKey,
+          label: Copy.conflictDecideLater,
+          variant: AppButtonVariant.secondary,
+          expand: true,
+          onPressed: () => onChoose(ConflictChoice.later),
         ),
         if (view.unsettled.length > 1) ...<Widget>[
           const SizedBox(height: Space.x4),

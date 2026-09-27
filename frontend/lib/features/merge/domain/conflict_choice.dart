@@ -6,4 +6,10 @@ enum ConflictChoice {
 
   /// Take the incoming value; for a deletion, follow the other device.
   theirs,
+
+  /// Replace both with a value the person types.
+  typed,
+
+  /// Leave the conflict unsettled. The record cannot be approved.
+  later,
 }

@@ -6,6 +6,8 @@ void main() {
     expect(ConflictChoice.values.map((ConflictChoice c) => c.name), <String>[
       'mine',
       'theirs',
+      'typed',
+      'later',
     ]);
   });
 }

@@ -19,7 +19,8 @@ import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/merge/data/package_files.dart';
 import 'package:tapture/features/merge/data/package_import_repository_impl.dart';
 import 'package:tapture/features/merge/domain/domain.dart';
-import 'package:tapture/features/quality/quality.dart';
+import 'package:tapture/features/quality/quality.dart'
+    hide ConflictChoice, FieldConflict;
 
 import '../../../support/bundle_fixture.dart';
 

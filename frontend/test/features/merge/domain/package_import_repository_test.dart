@@ -2,7 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/features/merge/domain/domain.dart';
-import 'package:tapture/features/quality/quality.dart';
+import 'package:tapture/features/quality/quality.dart'
+    hide ConflictChoice, FieldConflict;
 
 import '../../../support/fakes/fake_package_import_repository.dart';
 

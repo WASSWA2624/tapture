@@ -354,6 +354,9 @@ abstract final class AppConstants {
     transcriptChunkBytes: 64 * 1024,
   );
 
+  /// Password sealing for a project bundle (task 019).
+  static const ({int iterations}) bundleSeal = (iterations: 1000);
+
   /// How exported multi-values are joined, in every format (task 018).
   static const ({String multiSeparator, double pdfBody}) exportValues = (
     multiSeparator: '; ',

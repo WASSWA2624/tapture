@@ -7,6 +7,7 @@ void main() {
       SettlementRule.verifiedBeatsUnverified,
       SettlementRule.scannedBeatsInferred,
       SettlementRule.valueBeatsUntouchedEmpty,
+      SettlementRule.none,
     ]);
   });
 

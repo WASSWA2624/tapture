@@ -5897,4 +5897,50 @@ abstract final class Copy {
 
   /// Stamp written into an incomplete export.
   static const String exportIncompleteStamp = 'Marked incomplete';
+
+  /// Types a replacement for a conflict.
+  static const String conflictTypeValue = 'Type a value';
+
+  /// Leaves a conflict unsettled.
+  static const String conflictDecideLater = 'Decide later';
+
+  /// Bundle scope section title.
+  static const String bundleScope = 'What to include';
+
+  /// The whole project.
+  static const String bundleScopeFull = 'Full project';
+
+  /// A date range of records.
+  static const String bundleScopeDates = 'Date range';
+
+  /// The current context subtree.
+  static const String bundleScopeContext = 'Current context';
+
+  /// Approved records only.
+  static const String bundleScopeApproved = 'Approved only';
+
+  /// Records without their photos.
+  static const String bundleScopeData = 'Data without photos';
+
+  /// Estimated bundle size.
+  static String bundleSize(String label) => 'About $label';
+
+  /// Shares the bundle file.
+  static const String bundleShare = 'Share bundle';
+
+  /// Opens a bundle that arrived from outside the app.
+  static const String bundleOpen = 'Open bundle';
+
+  /// Merge history title.
+  static const String mergeHistoryTitle = 'Merge history';
+
+  /// Empty merge history.
+  static const String mergeHistoryEmpty = 'No merges yet';
+
+  /// Empty merge history explanation.
+  static const String mergeHistoryEmptyMessage =
+      'A merge is kept here with its source, counts and how long undo lasts.';
+
+  /// Undo is still available.
+  static String mergeUndoUntil(String when) => 'Undo until $when';
 }

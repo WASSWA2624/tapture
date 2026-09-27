@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**52 of 69 tasks complete (75%)** · last updated 2026-09-28
+**53 of 69 tasks complete (77%)** · last updated 2026-09-28
 
 `██████████████████████████░░░░░░░░░░░░`
 
@@ -30,7 +30,7 @@ are in [RETIRED.md](dev-plan/RETIRED.md).
 | 16 — Review | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 17 — Meetings | 1 | 1 | `██████████████` 100% |
 | 18 — Export | 1 | 1 | `██████████████` 100% |
-| 19 — Bundles and merge | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
+| 19 — Bundles and merge | 1 | 1 | `██████████████` 100% |
 | 20 — Data import | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 21 — Cloud upload | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 22 — Privacy and security | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
@@ -373,9 +373,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 19 — Bundles and merge
 
-*0 of 1 complete.*
+*1 of 1 complete.*
 
-- [ ] [019 — Bundles and merge: a project leaves whole and rejoins safely](dev-plan/19-bundles-and-merge/019-bundles-and-merge.md)
+- [x] [019 — Bundles and merge: a project leaves whole and rejoins safely](dev-plan/19-bundles-and-merge/019-bundles-and-merge.md)
 
 ### 20 — Data import
 

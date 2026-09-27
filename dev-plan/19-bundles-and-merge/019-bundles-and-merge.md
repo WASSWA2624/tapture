@@ -274,82 +274,82 @@ class MergeUndo {
 
 ### Writing a bundle
 
-- [ ] The written layout matches the specification file for file, manifest field for field.
-- [ ] Every entry carries a checksum, and the manifest carries the version vectors and the lineage.
-- [ ] A bundle containing two thousand photos writes without memory exceeding its baseline budget.
-- [ ] Tests: schema test of a written manifest, a round-trip test writing then re-reading a seeded project, and a
+- [x] The written layout matches the specification file for file, manifest field for field.
+- [x] Every entry carries a checksum, and the manifest carries the version vectors and the lineage.
+- [x] A bundle containing two thousand photos writes without memory exceeding its baseline budget.
+- [x] Tests: schema test of a written manifest, a round-trip test writing then re-reading a seeded project, and a
       measured memory assertion for the two-thousand-photo case.
-- [ ] A data-only bundle of a large project is small enough to send by email, and its size is stated before writing.
-- [ ] Receiving a bundle by any transport lands in the same import screen.
-- [ ] Tests: widget tests of `bundle_scope_section.dart` covering each of the five scopes and the four states, and of
+- [x] A data-only bundle of a large project is small enough to send by email, and its size is stated before writing.
+- [x] Receiving a bundle by any transport lands in the same import screen.
+- [x] Tests: widget tests of `bundle_scope_section.dart` covering each of the five scopes and the four states, and of
       `bundle_share_actions.dart` asserting share and incoming-file handling both route through the wrapper.
-- [ ] A wrong password fails cleanly, leaving no extracted file behind.
-- [ ] The redaction check runs over every produced bundle and fails the write when a secret-shaped string appears.
-- [ ] Tests: unit tests of `bundle_encryption.dart` over correct and wrong passwords asserting no partial extraction,
+- [x] A wrong password fails cleanly, leaving no extracted file behind.
+- [x] The redaction check runs over every produced bundle and fails the write when a secret-shaped string appears.
+- [x] Tests: unit tests of `bundle_encryption.dart` over correct and wrong passwords asserting no partial extraction,
       and of `bundle_redaction.dart` with a fixture bundle seeded with a secret-shaped value.
 
 ### Reading one
 
-- [ ] A corrupted, tampered or newer-format bundle is refused before any row is written, with a message naming the
+- [x] A corrupted, tampered or newer-format bundle is refused before any row is written, with a message naming the
       check that failed.
-- [ ] An imported project is fully editable and exportable, with identifiers, record numbers and template versions
+- [x] An imported project is fully editable and exportable, with identifiers, record numbers and template versions
       unchanged.
-- [ ] An imported project carries the bundle's lineage, so a later merge knows where it came from.
-- [ ] Tests: unit tests of `bundle_reader.dart` over tampered fixtures for each `BundleRejection` value, and an
+- [x] An imported project carries the bundle's lineage, so a later merge knows where it came from.
+- [x] Tests: unit tests of `bundle_reader.dart` over tampered fixtures for each `BundleRejection` value, and an
       integration test importing a bundle written by this phase's own writer and comparing the result to the source
       project.
 
 ### The merge engine
 
-- [ ] Every pair of vectors classifies as exactly one `VectorRelation`, including empty vectors on either side.
-- [ ] No merge ever brings back an entity that was deliberately deleted later.
-- [ ] An edit made after a delete surfaces as a conflict for a person to settle, and a third device receiving the same
+- [x] Every pair of vectors classifies as exactly one `VectorRelation`, including empty vectors on either side.
+- [x] No merge ever brings back an entity that was deliberately deleted later.
+- [x] An edit made after a delete surfaces as a conflict for a person to settle, and a third device receiving the same
       delete twice reaches the same result.
-- [ ] Tests: unit tests of `version_vectors.dart` over all four relations and empty vectors, and of
+- [x] Tests: unit tests of `version_vectors.dart` over all four relations and empty vectors, and of
       `tombstone_merge.dart` over both orderings and a repeated delete, with no Flutter binding.
-- [ ] Planning the same bundle twice over an unchanged project produces an identical plan with nothing to apply.
-- [ ] Every automatic decision carries the rule that made it, and the fall-through produces a conflict rather than a
+- [x] Planning the same bundle twice over an unchanged project produces an identical plan with nothing to apply.
+- [x] Every automatic decision carries the rule that made it, and the fall-through produces a conflict rather than a
       guess.
-- [ ] One-sided field changes apply, identical values raise nothing, differing values escalate.
-- [ ] Tests: unit tests of `merge_entities.dart` over all four decisions and dependency ordering, `merge_fields.dart`
+- [x] One-sided field changes apply, identical values raise nothing, differing values escalate.
+- [x] Tests: unit tests of `merge_entities.dart` over all four decisions and dependency ordering, `merge_fields.dart`
       over the three field cases, and `merge_rules.dart` per rule plus the fall-through, with no Flutter binding.
-- [ ] The same photo imported twice occupies one file, with both sides' captions preserved.
-- [ ] Records keep the template version they were captured under, whichever template resolution is chosen.
-- [ ] A reference key whose attributes differ appears as a conflict, never as a silent overwrite.
-- [ ] Tests: unit tests of `merge_photos.dart` asserting a single stored file and merged captions,
+- [x] The same photo imported twice occupies one file, with both sides' captions preserved.
+- [x] Records keep the template version they were captured under, whichever template resolution is chosen.
+- [x] A reference key whose attributes differ appears as a conflict, never as a silent overwrite.
+- [x] Tests: unit tests of `merge_photos.dart` asserting a single stored file and merged captions,
       `merge_templates.dart` over same version, choose one and keep both, and `merge_reference.dart` over new,
       identical and differing rows, with no Flutter binding.
-- [ ] After merging two projects that each allocated the same numbers, every record number in the project is unique.
-- [ ] No reference breaks, and each relabelled record still shows the number it arrived with.
-- [ ] Tests: unit tests of `merge_numbering.dart` over full collision, partial collision and no collision, asserting
+- [x] After merging two projects that each allocated the same numbers, every record number in the project is unique.
+- [x] No reference breaks, and each relabelled record still shows the number it arrived with.
+- [x] Tests: unit tests of `merge_numbering.dart` over full collision, partial collision and no collision, asserting
       local records keep their numbers, with no Flutter binding.
 
 ### The operator's screens
 
-- [ ] Every category of the plan is shown with its count and can be expanded to the entities it covers.
-- [ ] The source device and the bundle's creation time are named before the operator confirms.
-- [ ] Cancelling leaves the project and its files entirely unchanged.
-- [ ] Tests: widget test of `merge_preview_screen.dart` over a plan with every category populated, an empty plan and a
+- [x] Every category of the plan is shown with its count and can be expanded to the entities it covers.
+- [x] The source device and the bundle's creation time are named before the operator confirms.
+- [x] Cancelling leaves the project and its files entirely unchanged.
+- [x] Tests: widget test of `merge_preview_screen.dart` over a plan with every category populated, an empty plan and a
       load failure, plus an assertion that cancelling writes nothing.
-- [ ] All four choices resolve a conflict, and typing a value is validated like any other edit.
-- [ ] A record with an unresolved conflict cannot be approved.
-- [ ] A bulk action appears in the audit log as one entry per conflict it settled, not as a single line.
-- [ ] Tests: widget tests of `conflict_screen.dart` over each of the four choices and the four states, and of
+- [x] All four choices resolve a conflict, and typing a value is validated like any other edit.
+- [x] A record with an unresolved conflict cannot be approved.
+- [x] A bulk action appears in the audit log as one entry per conflict it settled, not as a single line.
+- [x] Tests: widget tests of `conflict_screen.dart` over each of the four choices and the four states, and of
       `conflict_bulk_actions.dart` asserting per-conflict audit entries.
 
 ### Applying and undoing
 
-- [ ] A failure part-way through leaves the project exactly as it was, files included.
-- [ ] History lists every past merge with its source device, bundle id, timestamp, counts per category and
+- [x] A failure part-way through leaves the project exactly as it was, files included.
+- [x] History lists every past merge with its source device, bundle id, timestamp, counts per category and
       resolutions, and states the undo deadline.
-- [ ] Undo restores rows and files exactly, including deleted ones, and disappears once its snapshot is purged.
-- [ ] Tests: unit tests of `merge_apply.dart` simulating a mid-merge failure and of `merge_undo.dart` comparing
+- [x] Undo restores rows and files exactly, including deleted ones, and disappears once its snapshot is purged.
+- [x] Tests: unit tests of `merge_apply.dart` simulating a mid-merge failure and of `merge_undo.dart` comparing
       project state before the merge with state after undo, plus a widget test of `merge_history_screen.dart`
       covering the four states.
-- [ ] The scan runs automatically after every merge and lists candidate pairs with their scores for review.
-- [ ] Pairs survive a restart, and a merge whose scan finds nothing shows that plainly.
-- [ ] The scan never blocks the merge, and compares only across the merge boundary.
-- [ ] Tests: unit tests of `post_merge_scan.dart` over a fixture where the same asset was captured on both devices,
+- [x] The scan runs automatically after every merge and lists candidate pairs with their scores for review.
+- [x] Pairs survive a restart, and a merge whose scan finds nothing shows that plainly.
+- [x] The scan never blocks the merge, and compares only across the merge boundary.
+- [x] Tests: unit tests of `post_merge_scan.dart` over a fixture where the same asset was captured on both devices,
       asserting cross-boundary-only comparison, with no Flutter binding.
 
 ## Out of scope

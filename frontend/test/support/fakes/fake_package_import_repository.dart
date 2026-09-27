@@ -5,7 +5,8 @@ import 'package:tapture/core/bundle/bundle.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/features/merge/domain/domain.dart';
-import 'package:tapture/features/quality/quality.dart';
+import 'package:tapture/features/quality/quality.dart'
+    hide ConflictChoice, FieldConflict;
 
 /// In-memory [PackageImportRepository] for screen tests that must not open
 /// a database: [local] is every project's rows by project id, and each

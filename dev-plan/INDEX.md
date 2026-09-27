@@ -118,7 +118,7 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 
 *Collaboration that never touches the backend: a project leaves whole, by hand, and rejoins safely.*
 
-- [ ] [019 — Bundles and merge: a project leaves whole and rejoins safely](19-bundles-and-merge/019-bundles-and-merge.md)
+- [x] [019 — Bundles and merge: a project leaves whole and rejoins safely](19-bundles-and-merge/019-bundles-and-merge.md)
 
 ## 20 — Data import
 
