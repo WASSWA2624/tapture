@@ -5,13 +5,13 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/features/quality/quality.dart';
 
-import '../data/package_import_repository_impl.dart';
 import '../domain/compatibility_report.dart';
 import '../domain/conflict_choice.dart';
 import '../domain/merge_plan.dart';
 import '../domain/merge_planner.dart';
 import '../domain/package_import_repository.dart';
 import '../domain/template_compatibility.dart';
+import '../merge.dart' show packageImportRepositoryProvider;
 import 'merge_view.dart';
 import 'package_import_controller.dart';
 

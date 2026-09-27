@@ -9,9 +9,9 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/document_picker.dart';
 
-import '../data/package_import_repository_impl.dart';
 import '../domain/package_import_repository.dart';
 import '../domain/package_presence.dart';
+import '../merge.dart' show packageImportRepositoryProvider;
 import 'package_import_phase.dart';
 
 /// The package a person is bringing in, from pick to import or merge (task
@@ -22,22 +22,18 @@ final packageImportControllerProvider =
       PackageImportController.new,
     );
 
-/// The flow's phase, the open package, and the write's progress (0–1).
-typedef PackageImportView = ({
-  PackageImportPhase phase,
-  InspectedBundle? bundle,
-  double progress,
-});
-
 /// Picks, checks and imports project packages. Nothing is written before
 /// the person confirms (FE-STATE-07).
 class PackageImportController extends Notifier<PackageImportView> {
   PickedDocument? _picked;
   CancellationToken? _checking;
 
+  /// The open package, kept apart from [state] so disposal can close it.
+  InspectedBundle? _open;
+
   @override
   PackageImportView build() {
-    ref.onDispose(() => unawaited(_release(state.bundle)));
+    ref.onDispose(() => unawaited(_release(_open)));
     return _idle;
   }
 
@@ -90,6 +86,7 @@ class PackageImportController extends Notifier<PackageImportView> {
       case FailureResult<InspectedBundle>():
         await finish();
       case Success<InspectedBundle>(:final InspectedBundle value):
+        _open = value;
         state = (phase: PackageImportPhase.ready, bundle: value, progress: 0);
     }
     return first;
@@ -150,7 +147,8 @@ class PackageImportController extends Notifier<PackageImportView> {
 
   /// Closes the package and deletes the picker's copy of it.
   Future<void> finish() async {
-    final InspectedBundle? bundle = state.bundle;
+    final InspectedBundle? bundle = _open;
+    _open = null;
     _checking = null;
     state = _idle;
     await _release(bundle);
@@ -175,6 +173,13 @@ class PackageImportController extends Notifier<PackageImportView> {
     }
   }
 }
+
+/// The flow's phase, the open package, and the write's progress (0–1).
+typedef PackageImportView = ({
+  PackageImportPhase phase,
+  InspectedBundle? bundle,
+  double progress,
+});
 
 const PackageImportView _idle = (
   phase: PackageImportPhase.idle,

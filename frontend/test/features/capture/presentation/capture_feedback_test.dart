@@ -216,7 +216,11 @@ void main() {
         (name: 'medium portrait', size: const Size(800, 1000), scale: 1),
         (name: 'expanded landscape', size: const Size(1280, 800), scale: 1),
         (name: 'compact at 200 percent', size: const Size(360, 780), scale: 2),
-        (name: 'expanded at 200 percent', size: const Size(1280, 800), scale: 2),
+        (
+          name: 'expanded at 200 percent',
+          size: const Size(1280, 800),
+          scale: 2,
+        ),
       ]) {
     testWidgets('in ${layout.name} the saves share one level row', (
       WidgetTester tester,

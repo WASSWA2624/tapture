@@ -10,6 +10,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/features/context/context.dart';
 import 'package:tapture/features/context/presentation/context_bar.dart';
@@ -105,7 +106,12 @@ void main() {
       message: 'hier-write',
       recoveryAction: 'retry',
     );
-    await tester.tap(find.byTooltip(Copy.contextRemoveLevel));
+    // Remove sits in the level's one overflow menu (task 076, W3).
+    await tester.tap(
+      find.byKey(const ValueKey<String>('context-level-menu-a')),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.contextRemoveLevel));
     await tester.pumpAndSettle();
     expect(find.textContaining('hier-write'), findsWidgets);
     expect((await repo.load('p1')).valueOrNull?.levels, hasLength(1));
@@ -127,8 +133,10 @@ void main() {
     expect(find.text('B'), findsWidgets);
     expect(find.text('C'), findsWidgets);
 
+    // A level moves by its drag handle, not a long press on the row (task
+    // 076, W3).
     final TestGesture gesture = await tester.startGesture(
-      tester.getCenter(find.text('C').last),
+      tester.getCenter(find.byIcon(AppIcons.reorder).last),
     );
     await tester.pump(const Duration(milliseconds: 700));
     await gesture.moveBy(const Offset(0, -120));

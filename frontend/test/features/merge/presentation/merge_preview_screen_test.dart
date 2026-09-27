@@ -9,15 +9,13 @@ import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/bundle/inspected_bundle.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/features/merge/domain/domain.dart';
-import 'package:tapture/features/merge/presentation/conflict_screen.dart';
+import 'package:tapture/features/merge/merge.dart';
 import 'package:tapture/features/merge/presentation/duplicate_pair_sheet.dart';
 import 'package:tapture/features/merge/presentation/merge_controller.dart';
-import 'package:tapture/features/merge/presentation/merge_preview_screen.dart';
 import 'package:tapture/features/merge/presentation/merge_target_sheet.dart';
 import 'package:tapture/features/merge/presentation/merge_view.dart';
 import 'package:tapture/features/merge/presentation/package_import_controller.dart';
 import 'package:tapture/features/merge/presentation/package_import_phase.dart';
-import 'package:tapture/features/merge/merge.dart';
 import 'package:tapture/features/projects/projects.dart';
 
 import '../../../support/factories.dart';
@@ -172,12 +170,12 @@ void main() {
     expect(router.state.uri.path, '/projects/p1');
   });
 
-  testWidgets('both bulk choices confirm with their count and settle every '
-      'conflict', (WidgetTester tester) async {
-    for (final (Key bulk, ConflictChoice expected) in <(Key, ConflictChoice)>[
-      (ConflictScreen.takeAllKey, ConflictChoice.theirs),
-      (ConflictScreen.keepAllKey, ConflictChoice.mine),
-    ]) {
+  for (final (Key bulk, ConflictChoice expected) in <(Key, ConflictChoice)>[
+    (ConflictScreen.takeAllKey, ConflictChoice.theirs),
+    (ConflictScreen.keepAllKey, ConflictChoice.mine),
+  ]) {
+    testWidgets('the bulk ${expected.name} confirms with its count and '
+        'settles every conflict', (WidgetTester tester) async {
       final Tables local = here()
         ..['records']!.add(record('r3'))
         ..['record_fields']!.add(value('r3', 'C'));
@@ -220,8 +218,8 @@ void main() {
         expected,
       });
       expect(repository.merges.single.choices, hasLength(2));
-    }
-  });
+    });
+  }
 
   testWidgets('a package that holds nothing new says so and cannot merge', (
     WidgetTester tester,
@@ -342,6 +340,10 @@ void main() {
     );
     await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
+    await _until(
+      tester,
+      () => find.text('Z pumps project').evaluate().isNotEmpty,
+    );
 
     final double pumps = tester.getTopLeft(find.text('Z pumps project')).dy;
     final double meters = tester.getTopLeft(find.text('A meters project')).dy;

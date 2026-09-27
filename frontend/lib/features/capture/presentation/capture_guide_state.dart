@@ -8,10 +8,6 @@ final captureGuideStateProvider =
       CaptureGuideState.new,
     );
 
-/// The guide row's state: [open] shows its lists; [closedFor] is the
-/// template whose caption panel stays hidden until another is chosen.
-typedef CaptureGuideView = ({bool open, String? closedFor});
-
 /// Opens and closes Capture's guide.
 final class CaptureGuideState extends Notifier<CaptureGuideView> {
   @override
@@ -27,3 +23,7 @@ final class CaptureGuideState extends Notifier<CaptureGuideView> {
     state = (open: state.open, closedFor: templateId);
   }
 }
+
+/// The guide row's state: [open] shows its lists; [closedFor] is the
+/// template whose caption panel stays hidden until another is chosen.
+typedef CaptureGuideView = ({bool open, String? closedFor});

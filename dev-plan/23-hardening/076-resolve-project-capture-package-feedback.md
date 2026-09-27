@@ -38,7 +38,67 @@ Decisions D1–D17 use the defaults in that prompt, (a) in every case:
 
 FBK0000158 supersedes task 070's decision (W8, from FBK0000004) that Save and process is twice as wide.
 
+Deviations from the prompt, each smaller or safer than what it replaces:
+
+- W13: the record page's Fields heading carries "Edit fields" as an icon button with a tooltip, not a text button;
+  the text button overflowed the heading at 200 % text.
+- W16: the ranking also drops the English connectives ("and", "the", "with"…) a description carries, which would
+  otherwise match every template.
+- W21: a merge writes the new files straight to paths no other file uses (a path already on disk moves under
+  `_merged/`), each checked against the package's checksum, before the one transaction; any failure removes them.
+  This replaces the `imports/<bundleId>/` staging folder and the move after the commit, which could leave rows
+  pointing at files that never arrived.
+- W21: a person's "Keep this device's" is stored with the conflict, so merging the same package again raises
+  nothing; planning is `MergePlanner.plan(incoming, local, templateMapping, …)`, with the mapping taken from
+  W20's `CompatibilityReport`.
+- W22: the pair type is `PossibleDuplicate`, since Drift already names the stored row `DuplicatePair`. Only the
+  scoring moved to `core/normalise/fuzzy_matcher.dart`; its reference-row ranking became a generic `rank`.
+- W19: `PickedFile.isCopy` marks the picker's own copy on Android and iOS, so the flow deletes that copy and never
+  the operator's file on a desktop.
+
 ## Files
+
+- Plan: this task, [077](077-suggest-shipped-templates-with-ai.md), [078](078-keep-device-id-in-storage-root.md),
+  `dev-plan/23-hardening/README.md`, `dev-plan/INDEX.md`, `dev-plan/08-projects/008-projects.md`,
+  `dev-plan/18-export/018-export.md`, `dev-plan/19-bundles-and-merge/019-bundles-and-merge.md`,
+  `frontend/.rules/06-simplicity.md`
+- Native: `frontend/android/app/src/main/kotlin/com/tapture/app/MainActivity.kt`,
+  `frontend/ios/Runner/AppDelegate.swift`
+- App: `frontend/lib/main.dart`, `frontend/lib/app/nav_shell.dart`, `frontend/lib/app/route_paths.dart`,
+  `frontend/lib/app/router.dart`
+- Core: `frontend/lib/core/bundle/` (new: format, entry, manifest, tables, output, writer, zip jobs, reader,
+  rejection, inspected bundle, template key), `frontend/lib/core/files/` (document picker and its platforms,
+  picked document, file and bytes, archive problem, `file_validation.dart`, download service and its platforms),
+  `frontend/lib/core/normalise/` (`search_text.dart`, `fuzzy_matcher.dart` moved from `features/reference`),
+  `frontend/lib/core/constants/app_constants.dart`, `frontend/lib/core/copy/copy.dart`,
+  `frontend/lib/core/widgets/` (`app_list_tile.dart`, `app_section_header.dart`, `app_icons.dart`,
+  `forms/app_form.dart`, `responsive/responsive_pair.dart`, `fields/app_text_field.dart`,
+  `fields/app_number_field.dart`, `fields/field_editor.dart`, `gallery/widget_gallery_screen.dart`)
+- Capture: `capture_screen.dart`, `capture_guide_card.dart`, `capture_guide_state.dart`, `record_caption_field.dart`
+- Context: `context_bar.dart`, `context_hierarchy_screen.dart`
+- Exports: `export_repository.dart`, `export_repository_impl.dart`, `export_file_name.dart`
+- Merge: `features/merge/domain/` (compatibility, conflicts, settlement rules, plan and planner, import port,
+  presence), `features/merge/data/` (`package_files*.dart`, `package_import_repository_impl.dart`),
+  `features/merge/presentation/` (import controller, phase and flow, merge controller and view, preview, conflict
+  screen, duplicate pair sheet, target sheet, compatibility pill, labels), barrels
+- Projects: `current_project.dart`, `project_details_screen.dart`, `project_edit_screen.dart`,
+  `project_create_screen.dart`, `project_settings_screen.dart`, `project_home_screen.dart`,
+  `project_list_actions.dart`, `project_list_screen.dart`, `project_list_view.dart`, `project_list_filter.dart`,
+  `project_export_screen.dart`, `export_summary_view.dart`, `record_detail_screen.dart`, `record_edit_sheet.dart`,
+  `record_field_draft.dart`, `record_field_input.dart`, `record_field_sheet.dart`
+- Quality: `duplicate_signal.dart`, `duplicate_signals.dart`, `possible_duplicate.dart`, barrels
+- Reference: `domain/domain.dart` (the matcher moved out)
+- Settings: `app_lock_screen.dart`, `operator_profile_screen.dart`; Feedback: `give_feedback_screen.dart`
+- Templates: `capture_guide.dart`, `shipped_search_document.dart`, `shipped_template_ranking.dart`,
+  `shipped_library_expanded.dart`, `shipped_picker_screen.dart`, `template_create_screen.dart`,
+  `field_add_sheet.dart`, `templates.dart`
+- Tests: `test/core/bundle/`, `test/core/files/document_picker_test.dart`, `download_service_test.dart`,
+  `test/core/normalise/search_text_test.dart`, the widget tests of the list tile, section header, number field,
+  form and responsive pair, their gallery goldens and the catalogue golden, `test/app/nav_shell_test.dart`, capture,
+  context, exports, merge (planner, compatibility, repository, preview, import flow), processing
+  (`key_custody_test.dart`), projects, quality, reference and templates suites, and
+  `test/support/bundle_fixture.dart`, `fakes/fake_export_repository.dart`,
+  `fakes/fake_package_import_repository.dart`
 
 ## Definition of done
 

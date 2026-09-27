@@ -38,7 +38,10 @@ void main() {
         failure: StorageFailure(message: 'Busy.'),
       ).pick(extensions: const <String>['zip'], mimeType: 'application/zip');
 
-      expect((result as FailureResult<PickedDocument>).failure.message, 'Busy.');
+      expect(
+        (result as FailureResult<PickedDocument>).failure.message,
+        'Busy.',
+      );
     });
 
     test('a picked file reports the size it was given', () {

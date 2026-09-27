@@ -352,8 +352,10 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
           },
         );
       });
-      if (stored case FailureResult<void>(:final Failure failure)) {
-        throw failure;
+      if (stored case FailureResult<void>(
+        failure: final Failure writeFailure,
+      )) {
+        throw writeFailure;
       }
       return Success<ImportedProject>((projectId: projectId, records: records));
     } on Object catch (error) {
@@ -484,8 +486,10 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
           await _pair(pair, projectId, skipped: skipped, chooser: chooser);
         }
       });
-      if (stored case FailureResult<void>(:final Failure failure)) {
-        throw failure;
+      if (stored case FailureResult<void>(
+        failure: final Failure writeFailure,
+      )) {
+        throw writeFailure;
       }
       return Success<MergeOutcome>((
         sessionId: sessionId,
@@ -1021,7 +1025,8 @@ Iterable<List<String>> _chunks(List<String> ids) sync* {
 T _valueOf<T>(Result<T> result) {
   return switch (result) {
     Success<T>(:final T value) => value,
-    FailureResult<T>(:final Failure failure) => throw failure,
+    FailureResult<T>(failure: final Failure resultFailure) =>
+      throw resultFailure,
   };
 }
 

@@ -6,6 +6,7 @@ import 'package:crypto/crypto.dart' as crypto;
 import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/file_writer.dart';
 
 import 'bundle_entry.dart';
 import 'bundle_format.dart';
@@ -40,7 +41,7 @@ Future<Result<BundleOutput>> zipBundle(BundleZipJob job) async {
       );
   switch (zipped) {
     case FailureResult<List<Object>>(:final Failure failure):
-      _discard(part);
+      await _discard(part);
       return FailureResult<BundleOutput>(failure);
     case Success<List<Object>>(:final List<Object> value):
       return Success<BundleOutput>(
@@ -53,11 +54,9 @@ Future<Result<BundleOutput>> zipBundle(BundleZipJob job) async {
   }
 }
 
-void _discard(File part) {
+Future<void> _discard(File part) async {
   try {
-    if (part.existsSync()) {
-      part.deleteSync();
-    }
+    await discardUnpublishedFile(part);
   } on Object {
     // A leftover .part is never read as a package; cleanup removes it.
   }
@@ -142,9 +141,9 @@ Future<List<Object>> _zipToDisk(Map<String, Object?> job) async {
     );
     await zip.close();
     closed = true;
-    if (finished.existsSync()) {
-      finished.deleteSync();
-    }
+    // A package with this name was never recorded as this export; the
+    // rename replaces it whole.
+    await discardUnpublishedFile(finished);
     part.renameSync(finished.path);
     final crypto.Digest whole = await crypto.sha256
         .bind(finished.openRead())
@@ -158,7 +157,7 @@ Future<List<Object>> _zipToDisk(Map<String, Object?> job) async {
         // The encoder may already be broken; the file is removed below.
       }
     }
-    _discard(part);
+    await _discard(part);
     rethrow;
   }
 }

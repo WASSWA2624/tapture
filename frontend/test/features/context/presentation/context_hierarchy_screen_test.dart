@@ -89,10 +89,7 @@ void main() {
           expect(rows, findsNWidgets(_levels.length));
           final double gutter = AppPage.gutter(tester.element(rows.first));
           expect(tester.getTopLeft(rows.first).dx, gutter);
-          expect(
-            tester.getTopRight(rows.first).dx,
-            size.width - gutter,
-          );
+          expect(tester.getTopRight(rows.first).dx, size.width - gutter);
           expect(
             find.descendant(of: rows, matching: find.byIcon(AppIcons.reorder)),
             findsNWidgets(_levels.length),

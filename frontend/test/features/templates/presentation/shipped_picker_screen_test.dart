@@ -191,7 +191,9 @@ void main() {
       ],
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey<String>('shipped-category-UNI')));
+    await tester.tap(
+      find.byKey(const ValueKey<String>('shipped-category-UNI')),
+    );
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);

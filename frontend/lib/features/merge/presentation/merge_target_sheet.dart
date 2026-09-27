@@ -12,13 +12,13 @@ import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/projects/projects.dart';
 
-import '../data/package_import_repository_impl.dart';
 import '../domain/compatibility_issue.dart';
 import '../domain/compatibility_report.dart';
 import '../domain/compatibility_status.dart';
 import '../domain/package_import_repository.dart';
 import '../domain/template_compatibility.dart';
 import '../domain/template_match.dart';
+import '../merge.dart' show packageImportRepositoryProvider;
 import 'compatibility_pill.dart';
 import 'package_import_controller.dart';
 

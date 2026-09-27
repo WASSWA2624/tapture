@@ -68,9 +68,12 @@ final class MergePreviewScreen extends ConsumerWidget {
       canPop: !(view?.applying ?? false),
       onPopInvokedWithResult: (bool didPop, Object? _) {
         if (didPop) {
-          unawaited(
-            ref.read(packageImportControllerProvider.notifier).finish(),
+          // A page the router removes pops while it rebuilds; close the
+          // package once that frame is done.
+          final PackageImportController flow = ref.read(
+            packageImportControllerProvider.notifier,
           );
+          unawaited(Future<void>.microtask(flow.finish));
         }
       },
       child: AppPage(
