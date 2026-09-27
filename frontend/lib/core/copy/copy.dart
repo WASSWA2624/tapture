@@ -4027,6 +4027,22 @@ abstract final class Copy {
   /// A conflict not settled yet.
   static const String mergeConflictOpen = 'Not settled yet';
 
+  /// The project details that differ in the package, kept as on this device.
+  static String mergeProjectKept(List<String> columns) {
+    final List<String> labels = <String>[
+      for (final String column in columns)
+        switch (column) {
+          'name' => projectName,
+          'client' => projectOrganisation,
+          'status' => projectStatus,
+          'started_at' => projectStartsOn,
+          'completed_at' => projectEndsOn,
+          _ => projectSettingsTitle,
+        },
+    ];
+    return 'Project details kept as on this device: ${labels.join(', ')}';
+  }
+
   /// The deletion side of a conflict that was changed rather than deleted.
   static const String conflictChanged = 'Kept and changed';
 

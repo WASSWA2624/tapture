@@ -138,12 +138,14 @@ final class MergePreviewScreen extends ConsumerWidget {
       case FailureResult<MergeOutcome>(:final Failure failure):
         showAppSnack(context, failure.message, tone: SnackTone.error);
       case Success<MergeOutcome>():
-        await ref.read(packageImportControllerProvider.notifier).finish();
-        if (!context.mounted) {
-          return;
-        }
+        // Leave first, then close the package, so the preview never shows
+        // an empty state on its way out.
+        final PackageImportController flow = ref.read(
+          packageImportControllerProvider.notifier,
+        );
         showAppSnack(context, Copy.mergeDone, tone: SnackTone.success);
         context.go(RoutePaths.project(projectId));
+        unawaited(Future<void>.microtask(flow.finish));
     }
   }
 }
@@ -189,6 +191,12 @@ class _Preview extends ConsumerWidget {
           for (final TemplateMatch match in view.report.templates)
             _TemplateRow(match: match),
         ],
+        if (view.plan.projectKept.isNotEmpty)
+          AppListTile(
+            key: const ValueKey<String>('merge-project-kept'),
+            dense: true,
+            title: Copy.mergeProjectKept(view.plan.projectKept),
+          ),
         if (!view.report.canMerge)
           const _Note(text: Copy.mergeBlocked, error: true)
         else if (view.plan.isEmpty)

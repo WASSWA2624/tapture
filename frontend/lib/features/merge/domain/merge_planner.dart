@@ -228,6 +228,7 @@ final class _Planner {
       conflicts: _conflicts,
       insertedRecords: <String>[...?_inserted['records']],
       updatedRecords: _updatedRecords.toList(),
+      projectKept: _projectKept(),
       counts: (
         newRecords: _inserted['records']?.length ?? 0,
         updatedRecords: _updatedRecords.length,
@@ -238,6 +239,21 @@ final class _Planner {
         elsewhere: _elsewhere,
       ),
     );
+  }
+
+  /// The project row's differing columns, when the package is this very
+  /// project; another project's row naturally differs and is not listed.
+  List<String> _projectKept() {
+    final List<Map<String, Object?>> mine = _mine('projects');
+    final List<Map<String, Object?>> theirs = _theirs('projects');
+    if (target != source || mine.isEmpty || theirs.isEmpty) {
+      return const <String>[];
+    }
+    return <String>[
+      for (final String column in _projectColumns)
+        if ('${mine.first[column] ?? ''}' != '${theirs.first[column] ?? ''}')
+          column,
+    ];
   }
 
   /// Levels union by field key and are appended after this device's;
@@ -731,6 +747,16 @@ final class _Planner {
     return '';
   }
 }
+
+/// The project columns a person would recognise as its details.
+const List<String> _projectColumns = <String>[
+  'name',
+  'client',
+  'status',
+  'started_at',
+  'completed_at',
+  'settings',
+];
 
 /// §47's rules for two differing values, in order. Returns the rule and
 /// whether the incoming value wins, or null when a person must decide.

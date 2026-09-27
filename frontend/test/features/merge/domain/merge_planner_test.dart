@@ -407,6 +407,25 @@ void main() {
       expect(other.inserts['records'], isNull);
     });
 
+    test('the project row never merges; its differing details are listed '
+        'for the same project only', () {
+      final Tables incoming = <String, List<Map<String, Object?>>>{
+        'projects': <Map<String, Object?>>[
+          <String, Object?>{'id': 'p1', 'name': 'Pumps north', 'client': 'X'},
+        ],
+      };
+      final Tables local = <String, List<Map<String, Object?>>>{
+        'projects': <Map<String, Object?>>[
+          <String, Object?>{'id': 'p1', 'name': 'Pumps', 'client': 'X'},
+        ],
+      };
+      final MergePlan same = plan(incoming, local);
+      expect(same.projectKept, <String>['name']);
+      expect(same.isEmpty, isTrue);
+      expect(same.inserts['projects'], isNull);
+      expect(plan(incoming, local, source: 'p9').projectKept, isEmpty);
+    });
+
     test('reference rows add absent keys and keep this device\'s values', () {
       final MergePlan result = plan(
         <String, List<Map<String, Object?>>>{

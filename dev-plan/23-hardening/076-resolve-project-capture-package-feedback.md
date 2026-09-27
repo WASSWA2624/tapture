@@ -48,6 +48,9 @@ Deviations from the prompt, each smaller or safer than what it replaces:
   `_merged/`), each checked against the package's checksum, before the one transaction; any failure removes them.
   This replaces the `imports/<bundleId>/` staging folder and the move after the commit, which could leave rows
   pointing at files that never arrived.
+- W21: the apply step is `PackageImportRepositoryImpl.merge`, beside the import it shares its file copy, row
+  insert and rollback with, rather than a separate `merge_apply_impl.dart`; its tests are in
+  `package_import_repository_impl_test.dart`.
 - W21: a person's "Keep this device's" is stored with the conflict, so merging the same package again raises
   nothing; planning is `MergePlanner.plan(incoming, local, templateMapping, …)`, with the mapping taken from
   W20's `CompatibilityReport`.
@@ -102,31 +105,48 @@ Deviations from the prompt, each smaller or safer than what it replaces:
 
 ## Definition of done
 
-- [ ] W1 — A project save reports "Project saved" and leaving asks nothing; a failed save keeps its guard; an
+- [x] W1 — A project save reports "Project saved" and leaving asks nothing; a failed save keeps its guard; an
       archived project stays editable; every `AppForm` returns its outcome.
-- [ ] W2 — The expanded pane's border is drawn in front of its rows; the open project's row carries the current
+- [x] W2 — The expanded pane's border is drawn in front of its rows; the open project's row carries the current
       marker (fill, start bar, title colour, selected semantics).
-- [ ] W3 — Project contexts is inset by the gutter, has no diagram, no default drag handles and one overflow menu
+- [x] W3 — Project contexts is inset by the gutter, has no diagram, no default drag handles and one overflow menu
       per level row.
-- [ ] W4 — `ResponsivePair.stacksOnCompact` and `matchesHeights`.
-- [ ] W5 — `foldSearchText`, `searchWords` and `searchStem` in `core/normalise/search_text.dart`.
-- [ ] W6 — `AppSectionHeader.expanded`/`onToggle` and `AppIcons.collapse`.
-- [ ] W7 — `DocumentPicker` on Android, iOS, Windows, macOS, Linux and web.
-- [ ] W8 — `DownloadService.saveStored` and `openStoredExternally`, exports folder only.
-- [ ] W9 — `BundleWriter` writes the package on native (streamed) and web (in memory).
-- [ ] W10 — `BundleReader.inspect` refuses each `BundleRejection` and accepts a written package.
-- [ ] W11 — A read-only project details page; the form is "Edit project" and returns to it after a save.
-- [ ] W12 — Capture's saves share one equal row at every width; the offline line sits under the row.
-- [ ] W13 — A tap on a record field edits it with a typed input; "Edit fields" sits on the Fields heading.
-- [ ] W14 — On Capture the context bar shows every level, set or not, plus Manage or Set up context.
-- [ ] W15 — The shipped library groups templates into collapsible, counted categories.
-- [ ] W16 — The shipped library ranks a description by relevance, offline.
-- [ ] W17 — Export writes the package with `records.xlsx` inside, delivered as a stored file on native.
-- [ ] W18 — Capture shows a guide built from the template, and the caption panel while typing or recording.
-- [ ] W19 — "Import a project" imports a package as a new project, all or nothing.
-- [ ] W20 — A compatibility report precedes every merge; an incompatible target cannot be chosen.
-- [ ] W21 — A package merges into a project after a preview and a person's conflict choices, all or nothing.
-- [ ] W22 — The merge preview checks for possible duplicates, and a person decides each pair.
-- [ ] Tests:
-- [ ] [077](077-suggest-shipped-templates-with-ai.md) and [078](078-keep-device-id-in-storage-root.md) are in the
+- [x] W4 — `ResponsivePair.stacksOnCompact` and `matchesHeights`.
+- [x] W5 — `foldSearchText`, `searchWords` and `searchStem` in `core/normalise/search_text.dart`.
+- [x] W6 — `AppSectionHeader.expanded`/`onToggle` and `AppIcons.collapse`.
+- [x] W7 — `DocumentPicker` on Android, iOS, Windows, macOS, Linux and web.
+- [x] W8 — `DownloadService.saveStored` and `openStoredExternally`, exports folder only.
+- [x] W9 — `BundleWriter` writes the package on native (streamed) and web (in memory).
+- [x] W10 — `BundleReader.inspect` refuses each `BundleRejection` and accepts a written package.
+- [x] W11 — A read-only project details page; the form is "Edit project" and returns to it after a save.
+- [x] W12 — Capture's saves share one equal row at every width; the offline line sits under the row.
+- [x] W13 — A tap on a record field edits it with a typed input; "Edit fields" sits on the Fields heading.
+- [x] W14 — On Capture the context bar shows every level, set or not, plus Manage or Set up context.
+- [x] W15 — The shipped library groups templates into collapsible, counted categories.
+- [x] W16 — The shipped library ranks a description by relevance, offline.
+- [x] W17 — Export writes the package with `records.xlsx` inside, delivered as a stored file on native.
+- [x] W18 — Capture shows a guide built from the template, and the caption panel while typing or recording.
+- [x] W19 — "Import a project" imports a package as a new project, all or nothing.
+- [x] W20 — A compatibility report precedes every merge; an incompatible target cannot be chosen.
+- [x] W21 — A package merges into a project after a preview and a person's conflict choices, all or nothing.
+- [x] W22 — The merge preview checks for possible duplicates, and a person decides each pair.
+- [x] Tests: every item has its own, and every new `domain/`, `data/` and screen file its mirrored test; the
+      merge suite covers each planner rule and tombstone ordering, an import compared row for row and file for
+      file, a failure part way leaving rows and files unchanged, a second merge of the same package planning
+      nothing, and each conflict choice writing one audit entry.
+- [x] Goldens regenerated with `--update-goldens`, only these (local images, git-ignored):
+      - W2: `test/design_system/app_list_tile/goldens/app_list_tile_{light,dark,outdoor}.png`,
+        `test/app/goldens/nav_pane_{empty,projects,header_text2}_{light,dark,outdoor}.png`,
+        `test/features/projects/presentation/goldens/project_list_numbered_pinned{,_text2}_{light,dark,outdoor}.png`;
+      - W3: `test/features/context/presentation/goldens/context_hierarchy{,_text2}_{light,dark,outdoor,system}.png`;
+      - W4: `test/design_system/responsive_pair/goldens/responsive_pair_row_compact_{light,dark,outdoor}.png`
+        (the file's other three sets were rewritten unchanged);
+      - W6: `test/design_system/app_section_header/goldens/app_section_header_{light,dark,outdoor}.png`;
+      - W14: `test/features/context/presentation/goldens/context_bar_{320,600,1024,320_text2}.png`;
+      - W17: `test/features/projects/presentation/goldens/export_summary_{light,dark,outdoor}.png`.
+- [x] `dart run tool/verify.dart --fast` fails only the gates that failed before this task, with the same
+      findings: test presence (45 missing, down from 47), and the guardrail tests' architecture errors and state
+      findings, naming, the structure list's missing `core/location`, and the CRLF misses of the dependency and
+      catalogue checks. Format, analyzer, dependency allowlist, structure, plan and templates pass.
+- [x] [077](077-suggest-shipped-templates-with-ai.md) and [078](078-keep-device-id-in-storage-root.md) are in the
       plan.

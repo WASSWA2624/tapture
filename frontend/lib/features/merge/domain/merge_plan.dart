@@ -14,6 +14,7 @@ final class MergePlan {
     required this.counts,
     required this.insertedRecords,
     this.updatedRecords = const <String>[],
+    this.projectKept = const <String>[],
   });
 
   /// Rows to insert, by SQL table, already moved to the target project.
@@ -47,6 +48,10 @@ final class MergePlan {
 
   /// Records already here whose values the plan changes or adds to.
   final List<String> updatedRecords;
+
+  /// The project row's columns that differ in the package. The row never
+  /// merges: this device's values are kept, and the preview lists these.
+  final List<String> projectKept;
 
   /// Whether merging would change nothing, as a second merge of the same
   /// package does.
