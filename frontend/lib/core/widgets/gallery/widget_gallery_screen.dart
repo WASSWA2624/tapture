@@ -399,6 +399,20 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         end: AppButton(label: Copy.save, expand: true, onPressed: _noop),
         endFlex: 2,
       ),
+      const SizedBox(height: Space.x4),
+      // One level row at every width, even shares.
+      const ResponsivePair(
+        stacksOnCompact: false,
+        matchesHeights: true,
+        gap: Space.x2,
+        start: AppButton(
+          label: Copy.cancel,
+          variant: AppButtonVariant.secondary,
+          expand: true,
+          onPressed: _noop,
+        ),
+        end: AppButton(label: Copy.save, expand: true, onPressed: _noop),
+      ),
       const SizedBox(height: Space.x6),
     ];
   }
@@ -805,6 +819,17 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
     final double edge = AppConstants.images.thumbnailEdge.toDouble();
     return <Widget>[
       const AppSectionHeader(title: Copy.galleryContainers),
+      // Collapsible headings, closed and open.
+      const AppSectionHeader(
+        title: Copy.galleryContainers,
+        expanded: false,
+        onToggle: _noop,
+      ),
+      const AppSectionHeader(
+        title: Copy.galleryContainers,
+        expanded: true,
+        onToggle: _noop,
+      ),
       const AppCard(child: Text(Copy.galleryContainers)),
       const SizedBox(height: Space.x4),
       const AppCard(onTap: _noop, child: Text(Copy.galleryContainers)),
@@ -815,6 +840,12 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         status: const AppStatusPill(status: RecordStatus.draft),
         onTap: _noop,
         onLongPress: _noop,
+      ),
+      const AppListTile(
+        title: 'Boiler B',
+        subtitle: 'Open beside this list',
+        current: true,
+        onTap: _noop,
       ),
       const AppListTile(
         title: 'Boiler A',

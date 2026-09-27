@@ -173,6 +173,11 @@ void main() {
     await tester.pump();
     await tester.tap(find.byType(AppPrimaryAction));
     await tester.pumpAndSettle();
+    // The confirmation floats over the save bar; clear it for the next tap.
+    ScaffoldMessenger.of(
+      tester.element(find.byType(TextField).first),
+    ).removeCurrentSnackBar();
+    await tester.pumpAndSettle();
     await _pickPhoto(tester);
     await tester.enterText(find.byType(TextField).first, 'Gamma');
     await tester.pump();

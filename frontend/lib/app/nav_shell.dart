@@ -222,7 +222,11 @@ class _Pane extends ConsumerWidget {
       child: Material(
         color: context.colors.surface,
         clipBehavior: Clip.hardEdge,
+        // In front: every list row paints an opaque fill that would
+        // otherwise cover the pane's edge (FBK0000007).
         child: DecoratedBox(
+          key: const ValueKey<String>('nav-pane-border'),
+          position: DecorationPosition.foreground,
           decoration: BoxDecoration(
             border: BorderDirectional(
               end: BorderSide(

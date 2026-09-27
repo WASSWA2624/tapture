@@ -68,6 +68,12 @@ Future<void> _pumpGallery(WidgetTester tester, ThemeData theme) async {
               onLongPress: _ignore,
             ),
             AppListTile(
+              title: 'Current',
+              subtitle: 'Plant 3',
+              current: true,
+              onTap: _ignore,
+            ),
+            AppListTile(
               title: 'With status',
               subtitle: 'Plant 3',
               status: AppStatusPill.badge(status: RecordStatus.draft),

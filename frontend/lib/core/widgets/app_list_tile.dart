@@ -18,9 +18,15 @@ class AppListTile extends StatelessWidget {
     this.status,
     this.dense = false,
     this.selected = false,
+    this.current = false,
     this.onTap,
     this.onLongPress,
   });
+
+  /// Key of the bar a [current] row draws on its start edge.
+  static const ValueKey<String> currentMarkKey = ValueKey<String>(
+    'app-list-tile-current',
+  );
 
   /// Leading slot (avatar, thumbnail, type icon).
   final Widget? leading;
@@ -44,6 +50,12 @@ class AppListTile extends StatelessWidget {
   /// Multi-select highlight. A tick is shown as well as a tint
   /// (FE-A11Y-05).
   final bool selected;
+
+  /// The item the page beside this list shows. Drawn with the tint, a bar
+  /// on the start edge and the title in the primary colour, and announced
+  /// as selected, so it never rests on colour alone (FE-A11Y-05). It is
+  /// independent of [selected], which is multi-select.
+  final bool current;
 
   /// Opens the row. Null means the row is not tappable.
   final VoidCallback? onTap;
@@ -90,7 +102,9 @@ class AppListTile extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: (dense ? AppText.label : AppText.bodyStrong)
-                          .copyWith(color: foreground),
+                          .copyWith(
+                            color: current ? colors.primary : foreground,
+                          ),
                     ),
                     if (subtitle != null) ...<Widget>[
                       const SizedBox(height: Space.x0),
@@ -117,19 +131,32 @@ class AppListTile extends StatelessWidget {
         ),
       ),
     );
-    final Widget row = interactive
+    final Widget body = interactive
         ? InkWell(onTap: onTap, onLongPress: onLongPress, child: content)
         : content;
+    // Drawn in front, so the ink and the fill never cover the mark.
+    final Widget row = current
+        ? DecoratedBox(
+            key: currentMarkKey,
+            position: DecorationPosition.foreground,
+            decoration: BoxDecoration(
+              border: BorderDirectional(
+                start: BorderSide(color: colors.primary, width: Space.x1),
+              ),
+            ),
+            child: body,
+          )
+        : body;
     return Semantics(
       button: onTap != null,
-      selected: selected,
+      selected: selected || current,
       enabled: interactive,
       label: title,
       hint: subtitle,
       onTap: onTap,
       onLongPress: onLongPress,
       child: Material(
-        color: selected ? colors.surfaceVariant : colors.surface,
+        color: selected || current ? colors.surfaceVariant : colors.surface,
         clipBehavior: Clip.hardEdge,
         child: Column(
           mainAxisSize: MainAxisSize.min,

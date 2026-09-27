@@ -673,6 +673,9 @@ abstract final class Copy {
   /// Title of the project details form.
   static const String projectEditTitle = 'Project details';
 
+  /// Heading over the template whose fields the context levels come from.
+  static const String contextLevelSource = 'Suggest levels from';
+
   /// Title of the per-project settings form.
   static const String projectSettingsTitle = 'Project settings';
 
@@ -3611,4 +3614,19 @@ abstract final class Copy {
   static String processingNotificationBody(int succeeded, int failed) {
     return '$succeeded succeeded, $failed failed';
   }
+
+  // Documents picked from the device (task 076).
+
+  /// A document the picker could not hand over.
+  static const String documentPickFailed = 'That file could not be opened.';
+
+  /// A chosen file above what this device can open in one piece.
+  static String documentTooLarge(int bytes, int ceiling) {
+    return 'That file is ${fileSize(bytes)}; this device opens files up to '
+        '${fileSize(ceiling)}.';
+  }
+
+  /// What to do about a file that is too large.
+  static const String documentTooLargeRecovery =
+      'Open it in the Tapture app on a phone or computer instead.';
 }

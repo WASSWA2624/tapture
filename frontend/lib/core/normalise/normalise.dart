@@ -3,5 +3,6 @@ library;
 
 export 'choices.dart';
 export 'dates.dart';
+export 'search_text.dart';
 export 'spoken_text.dart';
 export 'units.dart';

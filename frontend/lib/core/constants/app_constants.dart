@@ -406,6 +406,11 @@ abstract final class AppConstants {
     buttonStartY: 0.78,
   );
 
+  /// Searching lists and the template catalogue: a word shorter than
+  /// [minWordLength] means nothing on its own and is skipped, unless it holds
+  /// a digit, as a code's "001" does.
+  static const ({int minWordLength}) search = (minWordLength: 3);
+
   /// Project files in a browser, which has no file system: the IndexedDB
   /// store `FileWriter` and `FileReader` keep them in, keyed by their path
   /// under the storage root.

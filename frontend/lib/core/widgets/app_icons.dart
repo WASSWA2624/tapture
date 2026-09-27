@@ -24,8 +24,11 @@ abstract final class AppIcons {
   /// Opens the row's detail. Mirrors in right-to-left layouts.
   static const IconData open = Icons.chevron_right;
 
-  /// Opens a list of choices below the control.
+  /// Opens a list of choices below the control, or a closed section.
   static const IconData expand = Icons.expand_more;
+
+  /// Closes a section that [expand] opened.
+  static const IconData collapse = Icons.expand_less;
 
   /// Moves an item up one place.
   static const IconData moveUp = Icons.keyboard_arrow_up;

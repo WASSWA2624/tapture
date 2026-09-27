@@ -17,11 +17,15 @@ import android.provider.OpenableColumns
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.io.File
+import java.io.FileInputStream
 import java.util.concurrent.Executors
 
 private const val CHANNEL = "com.tapture.app/files"
 private const val SAVE_AS_REQUEST = 7101
 private const val PICK_DIR_REQUEST = 7102
+private const val PICK_DOC_REQUEST = 7103
+private const val COPY_CHUNK = 64 * 1024
 private val io = Executors.newSingleThreadExecutor()
 private val main = Handler(Looper.getMainLooper())
 
@@ -30,6 +34,7 @@ class MainActivity : FlutterActivity() {
     private var saveAsBytes: ByteArray? = null
     private var saveAsFileName: String? = null
     private var pickDirResult: MethodChannel.Result? = null
+    private var pickDocResult: MethodChannel.Result? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -53,6 +58,14 @@ class MainActivity : FlutterActivity() {
                     "publicDocumentsPath" -> publicDocumentsPath(result)
                     "volumeStats" -> volumeStats(call.argument("path"), result)
                     "pickDirectory" -> pickDirectory(result)
+                    "pickDocument" -> pickDocument(call.argument("mimeType"), result)
+                    "saveFileToDownloads" -> saveFileToDownloads(
+                        call.argument("sourcePath"),
+                        call.argument("fileName"),
+                        call.argument("mimeType"),
+                        call.argument("subfolder"),
+                        result,
+                    )
                     else -> result.notImplemented()
                 }
             }
@@ -94,6 +107,10 @@ class MainActivity : FlutterActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_DIR_REQUEST) {
             finishPickDirectory(resultCode, data)
+            return
+        }
+        if (requestCode == PICK_DOC_REQUEST) {
+            finishPickDocument(resultCode, data)
             return
         }
         if (requestCode != SAVE_AS_REQUEST) {
@@ -218,6 +235,132 @@ class MainActivity : FlutterActivity() {
             return
         }
         pending.success(path)
+    }
+
+    /// Opens the system document picker for one file of [mimeType].
+    private fun pickDocument(mimeType: String?, result: MethodChannel.Result) {
+        if (pickDocResult != null) {
+            result.error("busy", "A file pick is already open.", null)
+            return
+        }
+        pickDocResult = result
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = if (mimeType.isNullOrEmpty()) "*/*" else mimeType
+        }
+        try {
+            @Suppress("DEPRECATION")
+            startActivityForResult(intent, PICK_DOC_REQUEST)
+        } catch (_: Exception) {
+            pickDocResult = null
+            result.error("pick_failed", "Could not open a file picker.", null)
+        }
+    }
+
+    /// Copies the chosen document into the app cache in chunks, so Dart reads
+    /// a plain file whatever provider the document came from.
+    private fun finishPickDocument(resultCode: Int, data: Intent?) {
+        val pending = pickDocResult
+        pickDocResult = null
+        if (pending == null) {
+            return
+        }
+        val uri: Uri? = data?.data
+        if (resultCode != Activity.RESULT_OK || uri == null) {
+            pending.error("cancelled", "The pick was cancelled.", null)
+            return
+        }
+        io.execute {
+            try {
+                val name = displayName(uri) ?: "document"
+                val folder = File(cacheDir, "imports").apply { mkdirs() }
+                val safe = name.replace(Regex("[^A-Za-z0-9._-]"), "_")
+                val target = File(folder, "${System.currentTimeMillis()}-$safe")
+                contentResolver.openInputStream(uri)?.use { input ->
+                    target.outputStream().use { output ->
+                        input.copyTo(output, COPY_CHUNK)
+                    }
+                } ?: error("stream")
+                main.post {
+                    pending.success(
+                        hashMapOf(
+                            "path" to target.absolutePath,
+                            "name" to name,
+                            "byteLength" to target.length(),
+                        ),
+                    )
+                }
+            } catch (_: Exception) {
+                main.post { pending.error("pick_failed", "Could not read that file.", null) }
+            }
+        }
+    }
+
+    /// Streams a stored file into the shared Downloads folder, so a package
+    /// larger than memory is never read whole.
+    private fun saveFileToDownloads(
+        sourcePath: String?,
+        fileName: String?,
+        mimeType: String?,
+        subfolder: String?,
+        result: MethodChannel.Result,
+    ) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || sourcePath == null ||
+            fileName == null
+        ) {
+            result.error("unsupported", "Shared downloads need Android 10 or later.", null)
+            return
+        }
+        val source = File(sourcePath)
+        if (!source.isFile) {
+            result.error("write_failed", "Could not write the download.", null)
+            return
+        }
+        val relative = if (subfolder == "Exports") {
+            "Download/Tapture/Exports"
+        } else {
+            "Download/Tapture"
+        }
+        copyOnQ(source, fileName, mimeType, relative, result)
+    }
+
+    @SuppressLint("NewApi")
+    private fun copyOnQ(
+        source: File,
+        fileName: String,
+        mimeType: String?,
+        relativePath: String,
+        result: MethodChannel.Result,
+    ) {
+        io.execute {
+            try {
+                val values = ContentValues().apply {
+                    put(MediaStore.Downloads.DISPLAY_NAME, fileName)
+                    put(MediaStore.Downloads.MIME_TYPE, mimeType ?: "application/octet-stream")
+                    put(MediaStore.Downloads.RELATIVE_PATH, relativePath)
+                    put(MediaStore.Downloads.IS_PENDING, 1)
+                }
+                val resolver = contentResolver
+                val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+                    ?: error("insert")
+                resolver.openOutputStream(uri)?.use { output ->
+                    FileInputStream(source).use { input -> input.copyTo(output, COPY_CHUNK) }
+                } ?: error("stream")
+                values.clear()
+                values.put(MediaStore.Downloads.IS_PENDING, 0)
+                resolver.update(uri, values, null, null)
+                val name = resolver.query(
+                    uri,
+                    arrayOf(MediaStore.Downloads.DISPLAY_NAME),
+                    null,
+                    null,
+                    null,
+                )?.use { if (it.moveToFirst()) it.getString(0) else fileName } ?: fileName
+                main.post { result.success("$relativePath/$name") }
+            } catch (_: Exception) {
+                main.post { result.error("write_failed", "Could not write the download.", null) }
+            }
+        }
     }
 
     private fun treeUriToPath(uri: Uri): String? {

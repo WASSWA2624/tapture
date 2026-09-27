@@ -52,6 +52,57 @@ void main() {
     expect(find.byIcon(Icons.edit_note), findsOneWidget);
   });
 
+  testWidgets('the current row is marked by a start bar and announced', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle semantics = tester.ensureSemantics();
+    await _pump(
+      tester,
+      Column(
+        children: <Widget>[
+          AppListTile(title: 'Open', current: true, onTap: () {}),
+          AppListTile(title: 'Other', onTap: () {}),
+        ],
+      ),
+    );
+
+    final Finder mark = find.byKey(AppListTile.currentMarkKey);
+    expect(mark, findsOneWidget);
+    final DecoratedBox bar = tester.widget<DecoratedBox>(mark);
+    expect(bar.position, DecorationPosition.foreground);
+    // A start-edge border follows the reading direction, so the bar sits
+    // on the right under a right-to-left locale (FE-L10N-05).
+    final BorderDirectional border =
+        (bar.decoration as BoxDecoration).border! as BorderDirectional;
+    expect(border.start.width, Space.x1);
+    expect(border.end, BorderSide.none);
+    expect(
+      tester.getSemantics(find.byType(AppListTile).first),
+      matchesSemantics(
+        label: 'Open',
+        isSelected: true,
+        hasSelectedState: true,
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasTapAction: true,
+      ),
+    );
+    expect(find.byIcon(Icons.check), findsNothing);
+    semantics.dispose();
+  });
+
+  testWidgets('a current row can also be ticked for multi-select', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      const AppListTile(title: 'Open', current: true, selected: true),
+    );
+    expect(find.byKey(AppListTile.currentMarkKey), findsOneWidget);
+    expect(find.byIcon(Icons.check), findsOneWidget);
+  });
+
   testWidgets('a dense row stays usable at 200 percent text scale', (
     WidgetTester tester,
   ) async {

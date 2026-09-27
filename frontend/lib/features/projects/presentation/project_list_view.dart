@@ -38,6 +38,7 @@ class ProjectListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ProjectListCriteria criteria = ref.watch(projectListCriteriaProvider);
+    final String? openId = ref.watch(currentProjectProvider);
     final AsyncValue<List<ProjectListRow>> value = ref.watch(
       filtered ? projectListFilteredProvider : projectListProvider,
     );
@@ -61,6 +62,7 @@ class ProjectListView extends ConsumerWidget {
                     child: _leading(rows[index].project, index + 1),
                   ),
                   title: rows[index].project.name,
+                  current: rows[index].project.id == openId,
                   subtitle: Copy.projectListSubtitle(
                     records: rows[index].recordCount,
                     unprocessed: rows[index].unprocessedCount,

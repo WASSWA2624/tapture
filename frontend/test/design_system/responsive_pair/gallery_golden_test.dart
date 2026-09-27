@@ -33,6 +33,41 @@ void main() {
       }
     }
 
+    for (final ({String name, ThemeData theme}) mode in _modes) {
+      testWidgets('a row on compact in ${mode.name}', (
+        WidgetTester tester,
+      ) async {
+        await _pumpGallery(tester, mode.theme, width: 360, rowOnly: true);
+        await tester.pump();
+        await expectLater(
+          find.byKey(_surface),
+          matchesGoldenFile(
+            'goldens/responsive_pair_row_compact_${mode.name}.png',
+          ),
+        );
+        await expectNoA11yIssues(tester);
+      });
+    }
+
+    testWidgets('a compact row stays level and whole at 200 percent text', (
+      WidgetTester tester,
+    ) async {
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await _pumpGallery(
+        tester,
+        buildTheme(brightness: Brightness.light),
+        width: 360,
+        rowOnly: true,
+      );
+      expect(tester.takeException(), isNull);
+      expect(
+        tester.getSize(find.byType(AppButton)).height,
+        tester.getSize(find.byType(AppPrimaryAction)).height,
+      );
+      await expectNoA11yIssues(tester);
+    });
+
     for (final ({String name, double width}) size in _sizes) {
       testWidgets('${size.name} stays whole at 200 percent text', (
         WidgetTester tester,
@@ -72,6 +107,7 @@ Future<void> _pumpGallery(
   WidgetTester tester,
   ThemeData theme, {
   required double width,
+  bool rowOnly = false,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = Size(width, 600);
@@ -94,44 +130,63 @@ Future<void> _pumpGallery(
             padding: const EdgeInsets.all(Space.x4),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                // Two selects, even shares.
-                ResponsivePair(
-                  start: AppChoiceField<String>(
-                    label: Copy.captureProjectLabel,
-                    options: const <Choice<String>>[
-                      Choice<String>('a', 'Alpha'),
+              children: rowOnly
+                  ? <Widget>[
+                      // Two saves in one level row, even at compact width.
+                      ResponsivePair(
+                        stacksOnCompact: false,
+                        matchesHeights: true,
+                        gap: Space.x2,
+                        start: AppButton(
+                          label: Copy.captureSaveRaw,
+                          variant: AppButtonVariant.secondary,
+                          expand: true,
+                          onPressed: () {},
+                        ),
+                        end: AppPrimaryAction(
+                          label: Copy.captureSaveAndAnalyse,
+                          onPressed: () {},
+                        ),
+                      ),
+                    ]
+                  : <Widget>[
+                      // Two selects, even shares.
+                      ResponsivePair(
+                        start: AppChoiceField<String>(
+                          label: Copy.captureProjectLabel,
+                          options: const <Choice<String>>[
+                            Choice<String>('a', 'Alpha'),
+                          ],
+                          value: 'a',
+                          alwaysSheet: true,
+                          onChanged: (_) {},
+                        ),
+                        end: AppChoiceField<String>(
+                          label: Copy.capturePickTemplate,
+                          options: const <Choice<String>>[
+                            Choice<String>('b', 'Bravo'),
+                          ],
+                          value: 'b',
+                          alwaysSheet: true,
+                          onChanged: (_) {},
+                        ),
+                      ),
+                      const SizedBox(height: Space.x6),
+                      // Two saves, the primary twice the secondary.
+                      ResponsivePair(
+                        endFlex: 2,
+                        start: AppButton(
+                          label: Copy.captureSaveRaw,
+                          variant: AppButtonVariant.secondary,
+                          expand: true,
+                          onPressed: () {},
+                        ),
+                        end: AppPrimaryAction(
+                          label: Copy.captureSaveAndAnalyse,
+                          onPressed: () {},
+                        ),
+                      ),
                     ],
-                    value: 'a',
-                    alwaysSheet: true,
-                    onChanged: (_) {},
-                  ),
-                  end: AppChoiceField<String>(
-                    label: Copy.capturePickTemplate,
-                    options: const <Choice<String>>[
-                      Choice<String>('b', 'Bravo'),
-                    ],
-                    value: 'b',
-                    alwaysSheet: true,
-                    onChanged: (_) {},
-                  ),
-                ),
-                const SizedBox(height: Space.x6),
-                // Two saves, the primary twice the secondary.
-                ResponsivePair(
-                  endFlex: 2,
-                  start: AppButton(
-                    label: Copy.captureSaveRaw,
-                    variant: AppButtonVariant.secondary,
-                    expand: true,
-                    onPressed: () {},
-                  ),
-                  end: AppPrimaryAction(
-                    label: Copy.captureSaveAndAnalyse,
-                    onPressed: () {},
-                  ),
-                ),
-              ],
             ),
           ),
         ),

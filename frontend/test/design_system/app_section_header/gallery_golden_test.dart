@@ -57,6 +57,17 @@ Future<void> _pumpGallery(WidgetTester tester, ThemeData theme) async {
                 onPressed: _ignore,
               ),
             ),
+            SizedBox(height: Space.x4),
+            AppSectionHeader(
+              title: 'Assets · 34',
+              expanded: false,
+              onToggle: _ignore,
+            ),
+            AppSectionHeader(
+              title: 'Inventory · 30',
+              expanded: true,
+              onToggle: _ignore,
+            ),
           ],
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 
@@ -31,6 +32,68 @@ void main() {
     await tester.tap(find.byTooltip('Filter records'));
     await tester.pump();
     expect(pressed, isTrue);
+  });
+
+  testWidgets('a collapsible heading toggles and says whether it is open', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle semantics = tester.ensureSemantics();
+    bool open = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildTheme(brightness: Brightness.light),
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return AppSectionHeader(
+                title: 'Assets',
+                expanded: open,
+                onToggle: () => setState(() => open = !open),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(AppIcons.expand), findsOneWidget);
+    expect(find.byType(AppSectionHeader), meetsTapTarget());
+    expect(
+      tester.getSemantics(find.byType(AppSectionHeader)),
+      matchesSemantics(
+        label: 'Assets',
+        isHeader: true,
+        isButton: true,
+        hasExpandedState: true,
+        isExpanded: false,
+        hasTapAction: true,
+      ),
+    );
+
+    await tester.tap(find.byType(AppSectionHeader));
+    await tester.pump();
+    expect(open, isTrue);
+    expect(find.byIcon(AppIcons.collapse), findsOneWidget);
+    expect(
+      tester.getSemantics(find.byType(AppSectionHeader)),
+      matchesSemantics(
+        label: 'Assets',
+        isHeader: true,
+        isButton: true,
+        hasExpandedState: true,
+        isExpanded: true,
+        hasTapAction: true,
+      ),
+    );
+    semantics.dispose();
+  });
+
+  testWidgets('a plain heading has no toggle glyph', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, const AppSectionHeader(title: 'Records'));
+    expect(find.byIcon(AppIcons.expand), findsNothing);
+    expect(find.byIcon(AppIcons.collapse), findsNothing);
   });
 
   testWidgets('the heading stays usable at 200 percent text scale', (

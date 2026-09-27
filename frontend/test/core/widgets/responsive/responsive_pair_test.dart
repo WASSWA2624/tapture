@@ -46,6 +46,50 @@ void main() {
     );
   });
 
+  testWidgets('a pair that keeps its row shares it on compact too', (
+    WidgetTester tester,
+  ) async {
+    await _pumpPair(tester, width: 360, stacksOnCompact: false);
+
+    final Rect start = tester.getRect(find.byKey(_start));
+    final Rect end = tester.getRect(find.byKey(_end));
+    expect(start.top, end.top);
+    expect(start.width, end.width);
+    expect(start.right + Space.x3, end.left);
+    expect(start.width + end.width + Space.x3, 360);
+  });
+
+  testWidgets('matched heights give both sides the taller height', (
+    WidgetTester tester,
+  ) async {
+    await _pumpPair(
+      tester,
+      width: 360,
+      stacksOnCompact: false,
+      matchesHeights: true,
+      taller: true,
+    );
+
+    expect(tester.getRect(find.byKey(_start)).height, 96);
+    expect(tester.getRect(find.byKey(_end)).height, 96);
+  });
+
+  testWidgets('a compact row keeps start on the right under right-to-left', (
+    WidgetTester tester,
+  ) async {
+    await _pumpPair(
+      tester,
+      width: 360,
+      stacksOnCompact: false,
+      direction: TextDirection.rtl,
+    );
+
+    expect(
+      tester.getRect(find.byKey(_start)).left,
+      greaterThan(tester.getRect(find.byKey(_end)).left),
+    );
+  });
+
   testWidgets('under right-to-left start sits on the right', (
     WidgetTester tester,
   ) async {
@@ -63,6 +107,8 @@ Future<void> _pumpPair(
   required double width,
   int endFlex = 1,
   bool taller = false,
+  bool stacksOnCompact = true,
+  bool matchesHeights = false,
   TextDirection direction = TextDirection.ltr,
 }) async {
   tester.view.devicePixelRatio = 1;
@@ -79,6 +125,8 @@ Future<void> _pumpPair(
           alignment: Alignment.topCenter,
           child: ResponsivePair(
             endFlex: endFlex,
+            stacksOnCompact: stacksOnCompact,
+            matchesHeights: matchesHeights,
             start: const SizedBox(key: _start, height: 48),
             end: SizedBox(key: _end, height: taller ? 96 : 48),
           ),

@@ -4,6 +4,12 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/theme_controller.dart';
+import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
+import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/features/context/context.dart';
 import 'package:tapture/features/context/presentation/context_hierarchy_screen.dart';
 import 'package:tapture/features/templates/templates.dart';
@@ -50,7 +56,96 @@ void main() {
       }
     },
   );
+
+  for (final Size size in const <Size>[
+    Size(360, 780),
+    Size(780, 360),
+    Size(800, 1000),
+    Size(1280, 800),
+  ]) {
+    for (final double scale in <double>[1, 2]) {
+      testWidgets(
+        'saved levels at ${size.width.toInt()}x${size.height.toInt()} and '
+        '${scale}x text are inset, with one handle and one menu a row',
+        (WidgetTester tester) async {
+          final FakeContextRepository contexts = FakeContextRepository();
+          final FakeTemplateRepository templates = FakeTemplateRepository();
+          addTearDown(contexts.dispose);
+          addTearDown(templates.dispose);
+          await templates.save(_template);
+          await contexts.saveHierarchy('project-1', _levels);
+
+          await _pump(
+            tester,
+            contexts: contexts,
+            templates: templates,
+            mode: AppThemeMode.light,
+            textScale: scale,
+            size: size,
+          );
+
+          expect(tester.takeException(), isNull);
+          final Finder rows = find.byType(AppListTile);
+          expect(rows, findsNWidgets(_levels.length));
+          final double gutter = AppPage.gutter(tester.element(rows.first));
+          expect(tester.getTopLeft(rows.first).dx, gutter);
+          expect(
+            tester.getTopRight(rows.first).dx,
+            size.width - gutter,
+          );
+          expect(
+            find.descendant(of: rows, matching: find.byIcon(AppIcons.reorder)),
+            findsNWidgets(_levels.length),
+          );
+          expect(find.byIcon(AppIcons.reorder), findsNWidgets(_levels.length));
+          expect(
+            find.descendant(of: rows, matching: find.byType(AppOverflowMenu)),
+            findsNWidgets(_levels.length),
+          );
+          // The level names appear once: no second, plain list above.
+          expect(find.text('District'), findsOneWidget);
+        },
+        // Desktop is where the list used to add a second handle.
+        variant: TargetPlatformVariant.only(TargetPlatform.windows),
+      );
+    }
+  }
+
+  testWidgets('a level is removed from its menu', (WidgetTester tester) async {
+    final FakeContextRepository contexts = FakeContextRepository();
+    final FakeTemplateRepository templates = FakeTemplateRepository();
+    addTearDown(contexts.dispose);
+    addTearDown(templates.dispose);
+    await templates.save(_template);
+    await contexts.saveHierarchy('project-1', _levels);
+    await _pump(
+      tester,
+      contexts: contexts,
+      templates: templates,
+      mode: AppThemeMode.light,
+      textScale: 1,
+    );
+
+    await tester.tap(
+      find.byKey(const ValueKey<String>('context-level-menu-facility')),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.contextRemoveLevel));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Facility'), findsNothing);
+    final ContextState stored =
+        ((await contexts.load('project-1')) as Success<ContextState>).value;
+    expect(stored.levels.map((ContextLevel level) => level.fieldKey), <String>[
+      'district',
+    ]);
+  });
 }
+
+const List<ContextLevel> _levels = <ContextLevel>[
+  ContextLevel(fieldKey: 'district', order: 0, label: 'District'),
+  ContextLevel(fieldKey: 'facility', order: 1, label: 'Facility'),
+];
 
 Future<void> _pump(
   WidgetTester tester, {
@@ -58,10 +153,11 @@ Future<void> _pump(
   required FakeTemplateRepository templates,
   required AppThemeMode mode,
   required double textScale,
+  Size size = const Size(400, 800),
 }) async {
   debugDisableShadows = true;
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(400, 800);
+  tester.view.physicalSize = size;
   tester.platformDispatcher.textScaleFactorTestValue = textScale;
   tester.platformDispatcher.localeTestValue = const Locale('en', 'US');
   tester.platformDispatcher.accessibilityFeaturesTestValue =

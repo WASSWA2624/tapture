@@ -4,22 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
-import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_button.dart';
-import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
-import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/templates.dart';
@@ -95,6 +94,7 @@ class _ContextHierarchyScreenState
     final AsyncValue<List<TemplateDef>> templates = ref.watch(
       contextHierarchyTemplatesProvider(projectId),
     );
+    final double gutter = AppPage.gutter(context);
     state.whenData((ContextState value) {
       if (!_loaded) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -118,31 +118,50 @@ class _ContextHierarchyScreenState
             ? null
             : () => unawaited(_save(projectId)),
       ),
+      // The body owns its scrolling, so it insets itself by the page
+      // gutter, as every fixed-body page does (FBK0000006, FE-RESP-04).
       body: Column(
+        key: const ValueKey<String>('context-hierarchy-body'),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          templates.maybeWhen(
+          ...templates.maybeWhen(
             data: (List<TemplateDef> loaded) {
               if (loaded.isEmpty) {
-                return const SizedBox.shrink();
+                return const <Widget>[];
               }
               final String selected = _templateId ?? loaded.first.id;
-              return AppRadioGroup<String>(
-                label: Copy.navTemplates,
-                value: selected,
-                options: <Choice<String>>[
-                  for (final TemplateDef template in loaded)
-                    Choice<String>(template.id, template.name),
-                ],
-                onChanged: (String id) => setState(() => _templateId = id),
-              );
+              return <Widget>[
+                const AppSectionHeader(title: Copy.contextLevelSource),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: gutter),
+                  child: AppRadioGroup<String>(
+                    label: Copy.contextLevelSource,
+                    showLabel: false,
+                    value: selected,
+                    options: <Choice<String>>[
+                      for (final TemplateDef template in loaded)
+                        Choice<String>(template.id, template.name),
+                    ],
+                    onChanged: (String id) =>
+                        setState(() => _templateId = id),
+                  ),
+                ),
+                const SizedBox(height: Space.x3),
+              ];
             },
-            orElse: () => const SizedBox.shrink(),
+            orElse: () => const <Widget>[SizedBox(height: Space.x3)],
           ),
-          if (_levels.isNotEmpty) _diagram(context),
           Expanded(
             child: _levels.isEmpty
-                ? _proposalView(context, projectId, templates)
+                ? Padding(
+                    padding: EdgeInsets.symmetric(horizontal: gutter),
+                    child: _proposalView(context, projectId, templates),
+                  )
                 : ReorderableListView.builder(
+                    // One drag control per row: the leading handle. The
+                    // default desktop handle sat over the row's menu.
+                    buildDefaultDragHandles: false,
+                    padding: EdgeInsets.symmetric(horizontal: gutter),
                     itemCount: _levels.length,
                     onReorderItem: (int oldIndex, int newIndex) {
                       setState(() {
@@ -170,21 +189,19 @@ class _ContextHierarchyScreenState
                           index: index,
                           child: const Icon(AppIcons.reorder),
                         ),
-                        trailing: _levelActions(
-                          context,
-                          projectId,
-                          index,
-                          level,
-                        ),
+                        trailing: _levelMenu(projectId, index, level),
                       );
                     },
                   ),
           ),
-          AppButton(
-            label: Copy.contextAddLevel,
-            variant: AppButtonVariant.secondary,
-            expand: true,
-            onPressed: () => unawaited(_addLevel(projectId)),
+          Padding(
+            padding: EdgeInsets.fromLTRB(gutter, Space.x3, gutter, Space.x0),
+            child: AppButton(
+              label: Copy.contextAddLevel,
+              variant: AppButtonVariant.secondary,
+              expand: true,
+              onPressed: () => unawaited(_addLevel(projectId)),
+            ),
           ),
         ],
       ),
@@ -365,89 +382,30 @@ class _ContextHierarchyScreenState
     await _persist(projectId);
   }
 
-  Widget _levelActions(
-    BuildContext context,
-    String projectId,
-    int index,
-    ContextLevel level,
-  ) {
-    final bool compact = context.sizeClass == SizeClass.compact;
-    void remove() {
-      setState(() {
-        _levels = <ContextLevel>[
-          for (final ContextLevel row in _levels)
-            if (row.fieldKey != level.fieldKey) row,
-        ];
-      });
-      unawaited(_persist(projectId));
-    }
-
-    if (compact) {
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          AppIconButton(
-            icon: AppIcons.edit,
-            outlined: false,
-            tooltip: Copy.templatesEdit,
-            semanticLabel: Copy.templatesEdit,
-            onPressed: () => unawaited(_editLevel(projectId, index)),
-          ),
-          AppIconButton(
-            icon: AppIcons.delete,
-            outlined: false,
-            tooltip: Copy.contextRemoveLevel,
-            semanticLabel: Copy.contextRemoveLevel,
-            onPressed: remove,
-          ),
-        ],
-      );
-    }
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        AppButton(
+  /// One menu per level at every width, as project rows carry, so the
+  /// row's actions never crowd its name (FBK0000006, FE-CONS-01).
+  Widget _levelMenu(String projectId, int index, ContextLevel level) {
+    return AppOverflowMenu(
+      key: ValueKey<String>('context-level-menu-${level.fieldKey}'),
+      items: <AppOverflowAction>[
+        AppOverflowAction(
           label: Copy.templatesEdit,
-          variant: AppButtonVariant.text,
-          onPressed: () => unawaited(_editLevel(projectId, index)),
+          icon: AppIcons.edit,
+          onTap: () => unawaited(_editLevel(projectId, index)),
         ),
-        AppButton(
-          label: Copy.recordDelete,
-          variant: AppButtonVariant.text,
-          onPressed: remove,
+        AppOverflowAction(
+          label: Copy.contextRemoveLevel,
+          icon: AppIcons.delete,
+          onTap: () {
+            setState(() {
+              _levels = <ContextLevel>[
+                for (final ContextLevel row in _levels)
+                  if (row.fieldKey != level.fieldKey) row,
+              ];
+            });
+            unawaited(_persist(projectId));
+          },
         ),
-      ],
-    );
-  }
-
-  Widget _diagram(BuildContext context) {
-    final Map<int, List<ContextLevel>> groups = <int, List<ContextLevel>>{};
-    for (final ContextLevel level in _levels) {
-      groups.putIfAbsent(level.order, () => <ContextLevel>[]).add(level);
-    }
-    final List<int> orders = groups.keys.toList()..sort();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        for (final int order in orders)
-          DecoratedBox(
-            decoration: BoxDecoration(
-              border: Border(left: BorderSide(color: context.colors.outline)),
-            ),
-            child: Padding(
-              padding: const EdgeInsetsDirectional.only(
-                start: Space.x2,
-                bottom: Space.x2,
-              ),
-              child: Wrap(
-                spacing: Space.x2,
-                children: <Widget>[
-                  for (final ContextLevel level in groups[order]!)
-                    Text(level.label.isEmpty ? level.fieldKey : level.label),
-                ],
-              ),
-            ),
-          ),
       ],
     );
   }

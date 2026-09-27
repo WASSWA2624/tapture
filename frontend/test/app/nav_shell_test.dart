@@ -453,6 +453,38 @@ void main() {
     );
   });
 
+  testWidgets('at 1200 dp the pane edge stays in front and marks the open row', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = await _seedProjects(<String>[
+      'Alpha',
+      'Beta',
+    ]);
+    addTearDown(repo.dispose);
+    await _pump(tester, width: 1200, repo: repo, projectId: 'project-1');
+    await tester.pumpAndSettle();
+
+    final DecoratedBox edge = tester.widget<DecoratedBox>(
+      find.byKey(const ValueKey<String>('nav-pane-border')),
+    );
+    expect(edge.position, DecorationPosition.foreground);
+    AppListTile row(String title) => tester.widget<AppListTile>(
+      find.descendant(
+        of: _pane(),
+        matching: find.widgetWithText(AppListTile, title),
+      ),
+    );
+    expect(row('Alpha').current, isTrue);
+    expect(row('Beta').current, isFalse);
+    expect(
+      find.descendant(
+        of: _pane(),
+        matching: find.byKey(AppListTile.currentMarkKey),
+      ),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('at 1200 dp the body shows the open project, not a second list', (
     WidgetTester tester,
   ) async {

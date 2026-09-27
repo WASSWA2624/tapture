@@ -7,6 +7,7 @@ import UniformTypeIdentifiers
   UIDocumentPickerDelegate
 {
   private var pickResult: FlutterResult?
+  private var pickingDocument = false
 
   override func application(
     _ application: UIApplication,
@@ -25,11 +26,14 @@ import UniformTypeIdentifiers
     }
     FlutterMethodChannel(name: "com.tapture.app/files", binaryMessenger: messenger)
       .setMethodCallHandler { [weak self] call, result in
-        guard call.method == "pickDirectory" else {
+        switch call.method {
+        case "pickDirectory":
+          self?.pickDirectory(result)
+        case "pickDocument":
+          self?.pickDocument(result)
+        default:
           result(FlutterMethodNotImplemented)
-          return
         }
-        self?.pickDirectory(result)
       }
   }
 
@@ -41,9 +45,29 @@ import UniformTypeIdentifiers
       return
     }
     pickResult = result
+    pickingDocument = false
     let picker = UIDocumentPickerViewController(
       forOpeningContentTypes: [UTType.folder],
       asCopy: false
+    )
+    picker.delegate = self
+    picker.allowsMultipleSelection = false
+    window?.rootViewController?.present(picker, animated: true)
+  }
+
+  /// One ZIP, copied into the app's sandbox so Dart reads a plain file.
+  private func pickDocument(_ result: @escaping FlutterResult) {
+    if pickResult != nil {
+      result(
+        FlutterError(code: "busy", message: "A file pick is already open.", details: nil)
+      )
+      return
+    }
+    pickResult = result
+    pickingDocument = true
+    let picker = UIDocumentPickerViewController(
+      forOpeningContentTypes: [UTType.zip],
+      asCopy: true
     )
     picker.delegate = self
     picker.allowsMultipleSelection = false
@@ -55,6 +79,14 @@ import UniformTypeIdentifiers
     didPickDocumentsAt urls: [URL]
   ) {
     let url = urls.first
+    if pickingDocument {
+      let size = (try? url?.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0
+      pickResult?(
+        url.map { ["path": $0.path, "name": $0.lastPathComponent, "byteLength": size] }
+      )
+      pickResult = nil
+      return
+    }
     _ = url?.startAccessingSecurityScopedResource()
     pickResult?(url?.path)
     pickResult = nil
