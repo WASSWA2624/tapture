@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**51 of 69 tasks complete (74%)** · last updated 2026-09-27
+**52 of 69 tasks complete (75%)** · last updated 2026-09-28
 
 `██████████████████████████░░░░░░░░░░░░`
 
@@ -29,7 +29,7 @@ are in [RETIRED.md](dev-plan/RETIRED.md).
 | 15 — Data quality | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 16 — Review | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 17 — Meetings | 1 | 1 | `██████████████` 100% |
-| 18 — Export | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
+| 18 — Export | 1 | 1 | `██████████████` 100% |
 | 19 — Bundles and merge | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 20 — Data import | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 21 — Cloud upload | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
@@ -367,9 +367,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 18 — Export
 
-*0 of 1 complete.*
+*1 of 1 complete.*
 
-- [ ] [018 — Export: XLSX, CSV, JSON, PDF and ZIP, all produced on device](dev-plan/18-export/018-export.md)
+- [x] [018 — Export: XLSX, CSV, JSON, PDF and ZIP, all produced on device](dev-plan/18-export/018-export.md)
 
 ### 19 — Bundles and merge
 

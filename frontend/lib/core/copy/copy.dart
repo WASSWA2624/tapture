@@ -5794,4 +5794,107 @@ abstract final class Copy {
 
   /// Audit line when a meeting is approved.
   static const String meetingApprovedReason = 'Approved in review.';
+
+  /// Deliverable export page title.
+  static const String exportTitle = 'Export';
+
+  /// Starts the export.
+  static const String exportRun = 'Export';
+
+  /// Scope section title.
+  static const String exportScope = 'What to include';
+
+  /// Approved records only.
+  static const String exportScopeApproved = 'Approved only';
+
+  /// Every record.
+  static const String exportScopeAll = 'All records';
+
+  /// The current context subtree.
+  static const String exportScopeContext = 'Current context';
+
+  /// A date range.
+  static const String exportScopeDates = 'Date range';
+
+  /// The records list filter.
+  static const String exportScopeFilter = 'Current filter';
+
+  /// How many records the scope selects.
+  static String exportCount(int count) => '$count records';
+
+  /// Options section title.
+  static const String exportOptions = 'Columns';
+
+  /// Raw value columns.
+  static const String exportRaw = 'Raw columns';
+
+  /// Refined value columns.
+  static const String exportRefined = 'Refined columns';
+
+  /// Confidence column.
+  static const String exportConfidence = 'Confidence';
+
+  /// Evidence column.
+  static const String exportEvidence = 'Evidence';
+
+  /// Collapsed extras.
+  static const String exportAdvanced = 'Advanced';
+
+  /// Photo reference mode.
+  static const String exportPhotoMode = 'Photo reference';
+
+  /// CSV delimiter.
+  static const String exportDelimiter = 'Delimiter';
+
+  /// Empty export headline.
+  static const String exportEmptyHeadline = 'Nothing to export';
+
+  /// Empty export explanation.
+  static const String exportEmptyMessage = 'This scope has no records yet.';
+
+  /// Progress: records.
+  static const String exportStageRecords = 'Records';
+
+  /// Progress: photos.
+  static const String exportStagePhotos = 'Photos';
+
+  /// Progress: reports.
+  static const String exportStageReports = 'Reports';
+
+  /// Progress: archive.
+  static const String exportStageArchive = 'Archive';
+
+  /// Stops an export and removes partial files.
+  static const String exportCancel = 'Cancel';
+
+  /// History page title.
+  static const String exportHistoryTitle = 'Export history';
+
+  /// Empty history headline.
+  static const String exportHistoryEmpty = 'No exports yet';
+
+  /// Empty history explanation.
+  static const String exportHistoryEmptyMessage =
+      'A finished export is kept here, with who made it and what it held.';
+
+  /// Shares a recorded file again.
+  static const String exportShare = 'Share';
+
+  /// The recorded file is gone.
+  static const String exportMissing = 'That file is no longer on this device.';
+
+  /// Offers to run the stored request again.
+  static const String exportRerun = 'Run this export again';
+
+  /// Gate: go fix the records.
+  static const String exportFixNow = 'Fix now';
+
+  /// Gate: leave the incomplete ones out.
+  static const String exportExclude = 'Leave them out';
+
+  /// Gate: export and mark the file incomplete.
+  static const String exportAnyway = 'Export anyway';
+
+  /// Stamp written into an incomplete export.
+  static const String exportIncompleteStamp = 'Marked incomplete';
 }

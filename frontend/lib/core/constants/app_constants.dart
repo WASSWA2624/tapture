@@ -354,6 +354,12 @@ abstract final class AppConstants {
     transcriptChunkBytes: 64 * 1024,
   );
 
+  /// How exported multi-values are joined, in every format (task 018).
+  static const ({String multiSeparator, double pdfBody}) exportValues = (
+    multiSeparator: '; ',
+    pdfBody: 11,
+  );
+
   /// Spreadsheet import: how many leading rows to score as a header, how
   /// many data rows to sample for type inference, the largest repeating
   /// set treated as a choice, and the shortest identifier.

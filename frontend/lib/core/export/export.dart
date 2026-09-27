@@ -1,9 +1,33 @@
 /// Writers that turn records into a file someone else can open.
 library;
 
+export 'csv_writer.dart';
+export 'export_dictionary.dart';
+export 'export_manifest.dart';
+export 'export_record.dart';
+export 'export_request.dart';
+export 'json_writer.dart';
+export 'pdf/inspection_report.dart';
+export 'pdf/minutes_report.dart';
+export 'pdf/pdf_engine.dart';
+export 'pdf/record_report.dart';
+export 'pdf/summary_report.dart';
+export 'pdf/variance_report.dart';
+export 'photo_index_sheet.dart';
+export 'photo_naming.dart';
+export 'photo_rename.dart';
+export 'renameable_photo.dart';
+export 'value_formatter.dart';
 export 'xlsx_book.dart';
 export 'xlsx_cell.dart';
 export 'xlsx_column.dart';
 export 'xlsx_encoder.dart';
 export 'xlsx_image.dart';
+export 'xlsx_multi_sheet.dart';
+export 'xlsx_photo_refs.dart';
+export 'xlsx_refined_columns.dart';
+export 'xlsx_row_targeting.dart';
 export 'xlsx_sheet.dart';
+export 'xlsx_template_copy.dart';
+export 'xlsx_writer.dart';
+export 'zip_package.dart';

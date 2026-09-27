@@ -112,7 +112,7 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 
 *Five formats, all produced on the device, all reproducible and all recorded.*
 
-- [ ] [018 — Export: XLSX, CSV, JSON, PDF and ZIP, all produced on device](18-export/018-export.md)
+- [x] [018 — Export: XLSX, CSV, JSON, PDF and ZIP, all produced on device](18-export/018-export.md)
 
 ## 19 — Bundles and merge
 

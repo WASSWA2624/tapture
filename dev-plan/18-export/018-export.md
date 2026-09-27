@@ -323,100 +323,100 @@ class ExportVersioning {
 
 ### The request and its options
 
-- [ ] An `ExportRequest` survives a JSON round trip unchanged, field for field, so a stored request replays the same
+- [x] An `ExportRequest` survives a JSON round trip unchanged, field for field, so a stored request replays the same
       export.
-- [ ] An export marked incomplete says so inside the produced file, not only in the app.
-- [ ] Each of `fixNow`, `excludeThem` and `exportAnyway` leads to the outcome it names.
-- [ ] Tests: unit tests of `export_request.dart` (round trip) and `export_validation.dart` (all three gate paths and
+- [x] An export marked incomplete says so inside the produced file, not only in the app.
+- [x] Each of `fixNow`, `excludeThem` and `exportAnyway` leads to the outcome it names.
+- [x] Tests: unit tests of `export_request.dart` (round trip) and `export_validation.dart` (all three gate paths and
       the clean path), with no Flutter binding.
-- [ ] The chosen scope shows a live record count before the export starts, and the count follows filter changes.
-- [ ] Refined columns arrive on by default for refined fields; the choice is remembered per project.
-- [ ] Tests: widget tests of `export_scope_section.dart` and `export_options_section.dart` covering each of the five
+- [x] The chosen scope shows a live record count before the export starts, and the count follows filter changes.
+- [x] Refined columns arrive on by default for refined fields; the choice is remembered per project.
+- [x] Tests: widget tests of `export_scope_section.dart` and `export_options_section.dart` covering each of the five
       scopes, the empty and failure states, and that saved options are restored.
 
 ### Shared formatting and naming
 
-- [ ] XLSX, CSV, JSON and PDF show the same value in the same way for every registry type.
-- [ ] An asset number such as `00734` exports as `00734` in all four formats.
-- [ ] Tests: table-driven unit tests of `value_formatter.dart` over every field type crossed with every target format,
+- [x] XLSX, CSV, JSON and PDF show the same value in the same way for every registry type.
+- [x] An asset number such as `00734` exports as `00734` in all four formats.
+- [x] Tests: table-driven unit tests of `value_formatter.dart` over every field type crossed with every target format,
       including null and multi-value cases.
-- [ ] Names match the specification examples exactly, and two photos in one record never collide.
-- [ ] A photo taken before identification ends up correctly named, with its original name still recoverable.
-- [ ] References from records, the manifest and the photo index still resolve after a rename.
-- [ ] Tests: unit tests of `photo_naming.dart` over the full token set and collision handling, and of
+- [x] Names match the specification examples exactly, and two photos in one record never collide.
+- [x] A photo taken before identification ends up correctly named, with its original name still recoverable.
+- [x] References from records, the manifest and the photo index still resolve after a rename.
+- [x] Tests: unit tests of `photo_naming.dart` over the full token set and collision handling, and of
       `photo_rename.dart` asserting path rows and references stay consistent after renaming, with no Flutter binding.
 
 ### The XLSX family
 
-- [ ] A five-thousand-record export finishes in under thirty seconds with visible progress and no dropped frames.
-- [ ] A multi-template project produces one validly named sheet per template, with no name collisions.
-- [ ] Raw and refined values appear side by side and neither is lost.
-- [ ] Tests: unit tests of `xlsx_writer.dart` reopening the output through a spreadsheet reader and asserting cell
+- [x] A five-thousand-record export finishes in under thirty seconds with visible progress and no dropped frames.
+- [x] A multi-template project produces one validly named sheet per template, with no name collisions.
+- [x] Raw and refined values appear side by side and neither is lost.
+- [x] Tests: unit tests of `xlsx_writer.dart` reopening the output through a spreadsheet reader and asserting cell
       types, the headers of both column pairs and the sheet names.
-- [ ] Tests: a measured test backing the thirty-second claim (FE-TEST-09).
-- [ ] The stored template file is byte-identical after every export.
-- [ ] Client formatting, formulas and sheet order survive in the copy, and anything lost is named in the summary.
-- [ ] A predefined row that no record matched stays visibly empty or marked not found, and is counted.
-- [ ] Tests: unit tests of `xlsx_template_copy.dart` hashing the template before and after a write, and of
+- [x] Tests: a measured test backing the thirty-second claim (FE-TEST-09).
+- [x] The stored template file is byte-identical after every export.
+- [x] Client formatting, formulas and sheet order survive in the copy, and anything lost is named in the summary.
+- [x] A predefined row that no record matched stays visibly empty or marked not found, and is counted.
+- [x] Tests: unit tests of `xlsx_template_copy.dart` hashing the template before and after a write, and of
       `xlsx_row_targeting.dart` over matched, unmatched and duplicate-match rows.
-- [ ] Switching reference mode changes only the photo column; every other column is byte-identical.
-- [ ] Every photo of every exported record appears exactly once on the index sheet, resolvable back to its file.
-- [ ] Tests: unit tests of `xlsx_photo_refs.dart` over all three modes and of `photo_index_sheet.dart` asserting one
+- [x] Switching reference mode changes only the photo column; every other column is byte-identical.
+- [x] Every photo of every exported record appears exactly once on the index sheet, resolvable back to its file.
+- [x] Tests: unit tests of `xlsx_photo_refs.dart` over all three modes and of `photo_index_sheet.dart` asserting one
       row per photo, including records with none.
 
 ### CSV, JSON and the data dictionary
 
-- [ ] A CSV file round-trips through a standard reader with delimiters, quotes and newlines intact.
-- [ ] A ten-thousand-record project exports to JSON without memory exceeding its baseline budget.
-- [ ] The dictionary describes every field present in the CSV and JSON output, so an analyst needs no other source.
-- [ ] Tests: unit tests of `csv_writer.dart` (round trip through a CSV reader), `json_writer.dart` (schema validation
+- [x] A CSV file round-trips through a standard reader with delimiters, quotes and newlines intact.
+- [x] A ten-thousand-record project exports to JSON without memory exceeding its baseline budget.
+- [x] The dictionary describes every field present in the CSV and JSON output, so an analyst needs no other source.
+- [x] Tests: unit tests of `csv_writer.dart` (round trip through a CSV reader), `json_writer.dart` (schema validation
       plus a measured memory assertion) and `data_dictionary.dart` (every exported field described), with no Flutter
       binding.
 
 ### The PDF family
 
-- [ ] Every report can be built from cover, header, footer and photo block without adding layout of its own.
-- [ ] A cancelled render leaves no partial file.
-- [ ] Tests: golden test of a rendered cover and body page through `pdf_engine.dart`, plus a unit test that
+- [x] Every report can be built from cover, header, footer and photo block without adding layout of its own.
+- [x] A cancelled render leaves no partial file.
+- [x] Tests: golden test of a rendered cover and body page through `pdf_engine.dart`, plus a unit test that
       cancellation deletes the target file.
-- [ ] A record's fields, photos with captions, context path and operator all appear, in both photo layouts.
-- [ ] An inspection row that was never captured appears as **Not found** rather than being omitted, and is counted on
+- [x] A record's fields, photos with captions, context path and operator all appear, in both photo layouts.
+- [x] An inspection row that was never captured appears as **Not found** rather than being omitted, and is counted on
       the cover.
-- [ ] Tests: golden tests of a rendered record page and inspection page, plus unit tests asserting inspection row
+- [x] Tests: golden tests of a rendered record page and inspection page, plus unit tests asserting inspection row
       order follows the predefined rows and that not-found rows are present.
-- [ ] Summary counts by context, template, condition and status agree with the same counts shown in the app.
-- [ ] The variance report names every missing and every not-in-register item, with its register key.
-- [ ] Tests: golden test of one page of each of the summary and variance reports, plus unit tests of
+- [x] Summary counts by context, template, condition and status agree with the same counts shown in the app.
+- [x] The variance report names every missing and every not-in-register item, with its register key.
+- [x] Tests: golden test of one page of each of the summary and variance reports, plus unit tests of
       `summary_report.dart` aggregation and of `variance_report.dart` section membership against a seeded fixture.
-- [ ] Attendance, agenda items, decisions, actions and the photo appendix all appear for a seeded meeting.
-- [ ] Both raw and refined minutes can be included, and a reader can always tell which is which.
-- [ ] Tests: golden test of a rendered minutes page, plus a unit test asserting raw and refined passages are labelled
+- [x] Attendance, agenda items, decisions, actions and the photo appendix all appear for a seeded meeting.
+- [x] Both raw and refined minutes can be included, and a reader can always tell which is which.
+- [x] Tests: golden test of a rendered minutes page, plus a unit test asserting raw and refined passages are labelled
       distinctly.
-- [ ] All five reports of A52 exist and share the one PDF foundation; none declares a font size, colour or layout of
+- [x] All five reports of A52 exist and share the one PDF foundation; none declares a font size, colour or layout of
       its own.
 
 ### The ZIP package
 
-- [ ] A four-hundred-megabyte package builds without memory exceeding its baseline budget.
-- [ ] Extracting the archive reproduces the documented folder layout exactly.
-- [ ] Every exported record appears once in the manifest with its sheet, row and photo paths.
-- [ ] The manifest matches the specification's example field for field, including the request that produced it.
-- [ ] Tests: unit tests of `zip_package.dart` asserting archive layout after extraction with a measured memory
+- [x] A four-hundred-megabyte package builds without memory exceeding its baseline budget.
+- [x] Extracting the archive reproduces the documented folder layout exactly.
+- [x] Every exported record appears once in the manifest with its sheet, row and photo paths.
+- [x] The manifest matches the specification's example field for field, including the request that produced it.
+- [x] Tests: unit tests of `zip_package.dart` asserting archive layout after extraction with a measured memory
       assertion, and a schema test of the manifest produced by `export_manifest.dart`.
 
 ### The screen and history
 
-- [ ] A default export needs one tap after opening the screen.
-- [ ] Each stage reports progress, and the interface stays responsive throughout.
-- [ ] A cancelled export leaves no partial output file or archive on disk.
-- [ ] Tests: widget tests of `export_screen.dart` and `export_progress.dart` covering the four states, the one-tap
+- [x] A default export needs one tap after opening the screen.
+- [x] Each stage reports progress, and the interface stays responsive throughout.
+- [x] A cancelled export leaves no partial output file or archive on disk.
+- [x] Tests: widget tests of `export_screen.dart` and `export_progress.dart` covering the four states, the one-tap
       default and a cancellation asserting no file remains.
-- [ ] A user can explain, months later, exactly what a given file contained and who produced it.
-- [ ] Every completed export writes its history row, and every record it included carries its `exportedAt` stamp.
-- [ ] A new export never destroys a previous one, and folder names are stable and dated.
-- [ ] Sharing from history reaches the system share sheet without rebuilding the file, and a recorded path since
+- [x] A user can explain, months later, exactly what a given file contained and who produced it.
+- [x] Every completed export writes its history row, and every record it included carries its `exportedAt` stamp.
+- [x] A new export never destroys a previous one, and folder names are stable and dated.
+- [x] Sharing from history reaches the system share sheet without rebuilding the file, and a recorded path since
       deleted shows plainly with an offer to re-run the request.
-- [ ] Tests: widget tests of `export_history_screen.dart` and `export_share_action.dart` covering the four states and
+- [x] Tests: widget tests of `export_history_screen.dart` and `export_share_action.dart` covering the four states and
       a missing file, plus unit tests of `export_versioning.dart` over repeated allocations on the same day, with no
       Flutter binding.
 
