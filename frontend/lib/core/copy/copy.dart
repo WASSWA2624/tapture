@@ -3629,4 +3629,29 @@ abstract final class Copy {
   /// What to do about a file that is too large.
   static const String documentTooLargeRecovery =
       'Open it in the Tapture app on a phone or computer instead.';
+
+  /// A stored export that is no longer where the app wrote it.
+  static const String storedFileMissing =
+      'That export is no longer on this device.';
+
+  // Project packages (task 076).
+
+  /// A package whose project is gone.
+  static const String packageProjectMissing =
+      'That project is no longer on this device.';
+
+  /// A package larger than this device writes or opens.
+  static String packageTooLarge(int bytes, int ceiling) {
+    return 'This project package would be ${fileSize(bytes)}; this device '
+        'handles packages up to ${fileSize(ceiling)}.';
+  }
+
+  /// What to do about a package that is too large.
+  static const String packageTooLargeRecovery =
+      'Export from the Tapture app on a phone or computer, which handles '
+      'larger packages.';
+
+  /// A package that could not be written.
+  static const String packageWriteFailed =
+      'The project package could not be written.';
 }

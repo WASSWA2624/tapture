@@ -45,11 +45,7 @@ final Provider<DocumentPicker> documentPickerProvider =
     });
 
 final class _FakeDocumentPicker implements DocumentPicker {
-  const _FakeDocumentPicker({
-    this.document,
-    this.failure,
-    this.canPick = true,
-  });
+  const _FakeDocumentPicker({this.document, this.failure, this.canPick = true});
 
   final PickedDocument? document;
   final Failure? failure;

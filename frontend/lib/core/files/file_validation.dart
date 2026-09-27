@@ -7,6 +7,10 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
+import 'archive_problem.dart';
+
+export 'archive_problem.dart';
+
 /// The one gate every file from outside the app passes before a parser sees
 /// it: extension, magic bytes, size and archive structure (FE-SEC-06).
 abstract interface class FileValidation {
@@ -22,8 +26,80 @@ abstract interface class FileValidation {
 
   /// Walks a ZIP central directory. Rejects absolute paths, `..` segments,
   /// symlinks and a declared uncompressed total above the ceiling.
-  Future<Result<void>> validateArchive(File archive);
+  /// [maxBytes] and [maxUncompressed] replace the import ceilings for a
+  /// caller with its own, such as a project package (task 076, D6).
+  Future<Result<void>> validateArchive(
+    File archive, {
+    int? maxBytes,
+    int? maxUncompressed,
+  });
 }
+
+/// Walks the ZIP central directory of the [length] bytes [read] returns
+/// (`read(offset, count)` hands back exactly [count] bytes or fewer at the
+/// end), and reports the first [ArchiveProblem], or null when the directory
+/// is safe to extract. The one walk behind [FileValidation.validateArchive]
+/// and the project package reader, over a file or over bytes in memory.
+ArchiveProblem? checkZipDirectory({
+  required int length,
+  required Uint8List Function(int offset, int count) read,
+  required int maxUncompressed,
+}) {
+  if (length < _eocdMin) {
+    return ArchiveProblem.notArchive;
+  }
+  final ({int offset, int size, int entries})? eocd = _eocdOf(read, length);
+  if (eocd == null ||
+      eocd.offset < 0 ||
+      eocd.size < 0 ||
+      eocd.offset + eocd.size > length) {
+    return ArchiveProblem.notArchive;
+  }
+  var position = eocd.offset;
+  var totalUncompressed = 0;
+  for (var seen = 0; seen < eocd.entries; seen++) {
+    final Uint8List head = read(position, _cdHead);
+    if (head.length < _cdHead || !_prefix(head, _cdSig)) {
+      return ArchiveProblem.notArchive;
+    }
+    final int madeBy = _u16(head, 4);
+    final int nameLen = _u16(head, 28);
+    final int extraLen = _u16(head, 30);
+    final int commentLen = _u16(head, 32);
+    final int external = _u32(head, 38);
+    final int uncompressed = _u32(head, 24);
+    final Uint8List nameBytes = nameLen == 0
+        ? Uint8List(0)
+        : read(position + _cdHead, nameLen);
+    if (nameBytes.length < nameLen) {
+      return ArchiveProblem.notArchive;
+    }
+    position += _cdHead + nameLen + extraLen + commentLen;
+    final String name;
+    try {
+      name = utf8.decode(nameBytes);
+    } on FormatException {
+      return ArchiveProblem.unsafePath;
+    }
+    if (_escapes(name)) {
+      return ArchiveProblem.unsafePath;
+    }
+    if (_isSymlink(madeBy, external)) {
+      return ArchiveProblem.link;
+    }
+    if (uncompressed == 0xFFFFFFFF) {
+      return ArchiveProblem.tooLarge;
+    }
+    totalUncompressed += uncompressed;
+    if (totalUncompressed > maxUncompressed) {
+      return ArchiveProblem.tooLarge;
+    }
+  }
+  return null;
+}
+
+/// Whether [header] opens the way a ZIP file does.
+bool looksLikeZip(Uint8List header) => _isZip(header);
 
 /// Kinds an imported file may claim, from its extension then its bytes.
 enum ImportKind {
@@ -84,7 +160,11 @@ final class _FileValidation implements FileValidation {
   }
 
   @override
-  Future<Result<void>> validateArchive(File archive) {
+  Future<Result<void>> validateArchive(
+    File archive, {
+    int? maxBytes,
+    int? maxUncompressed,
+  }) {
     return Result.captureAsync(() async {
       if (!archive.existsSync()) {
         throw _missing(archive);
@@ -93,14 +173,18 @@ final class _FileValidation implements FileValidation {
       if (length < _eocdMin) {
         throw _notArchive(archive);
       }
-      if (length > AppConstants.imports.bundleMaxBytes) {
+      if (length > (maxBytes ?? AppConstants.imports.bundleMaxBytes)) {
         throw _oversized(archive, ImportKind.bundle);
       }
       final Uint8List header = _sniff(archive, length);
       if (!_isZip(header)) {
         throw _notArchive(archive);
       }
-      _walkZip(archive, length);
+      _walkZip(
+        archive,
+        length,
+        maxUncompressed ?? AppConstants.imports.archiveUncompressedMaxBytes,
+      );
     });
   }
 }
@@ -196,55 +280,37 @@ bool _magicMatches(ImportKind kind, String ext, Uint8List header) {
   }
 }
 
-void _walkZip(File archive, int length) {
+void _walkZip(File archive, int length, int maxUncompressed) {
   final RandomAccessFile raf = archive.openSync();
   try {
-    final ({int offset, int size, int entries}) eocd = _eocd(raf, length);
-    if (eocd.offset < 0 || eocd.size < 0 || eocd.offset + eocd.size > length) {
-      throw _notArchive(archive);
-    }
-    raf.setPositionSync(eocd.offset);
-    var totalUncompressed = 0;
-    var seen = 0;
-    while (seen < eocd.entries) {
-      final Uint8List head = _readExact(raf, _cdHead);
-      if (!_prefix(head, _cdSig)) {
+    final ArchiveProblem? problem = checkZipDirectory(
+      length: length,
+      read: (int offset, int count) => _readAt(raf, offset, count),
+      maxUncompressed: maxUncompressed,
+    );
+    switch (problem) {
+      case null:
+        return;
+      case ArchiveProblem.notArchive:
         throw _notArchive(archive);
-      }
-      final int madeBy = _u16(head, 4);
-      final int nameLen = _u16(head, 28);
-      final int extraLen = _u16(head, 30);
-      final int commentLen = _u16(head, 32);
-      final int external = _u32(head, 38);
-      final int uncompressed = _u32(head, 24);
-      final Uint8List nameBytes = _readExact(raf, nameLen);
-      _skip(raf, extraLen + commentLen);
-      final String name = _zipName(nameBytes);
-      if (_escapes(name)) {
+      case ArchiveProblem.unsafePath:
         throw _traversal(archive);
-      }
-      if (_isSymlink(madeBy, external)) {
+      case ArchiveProblem.link:
         throw _symlink(archive);
-      }
-      if (uncompressed == 0xFFFFFFFF) {
+      case ArchiveProblem.tooLarge:
         throw _bomb(archive);
-      }
-      totalUncompressed += uncompressed;
-      if (totalUncompressed >
-          AppConstants.imports.archiveUncompressedMaxBytes) {
-        throw _bomb(archive);
-      }
-      seen += 1;
     }
   } finally {
     raf.closeSync();
   }
 }
 
-({int offset, int size, int entries}) _eocd(RandomAccessFile raf, int length) {
+({int offset, int size, int entries})? _eocdOf(
+  Uint8List Function(int offset, int count) read,
+  int length,
+) {
   final int window = min(length, _eocdMin + _maxComment);
-  raf.setPositionSync(length - window);
-  final Uint8List tail = _readExact(raf, window);
+  final Uint8List tail = read(length - window, window);
   for (var i = tail.length - _eocdMin; i >= 0; i--) {
     if (!_prefixAt(tail, i, _eocdSig)) {
       continue;
@@ -259,41 +325,25 @@ void _walkZip(File archive, int length) {
       offset: _u32(tail, i + 16),
     );
   }
-  throw _notArchive(File(raf.path));
+  return null;
 }
 
-Uint8List _readExact(RandomAccessFile raf, int n) {
-  if (n == 0) {
+/// Up to [count] bytes of [raf] from [offset]; fewer only at the end.
+Uint8List _readAt(RandomAccessFile raf, int offset, int count) {
+  if (count <= 0) {
     return Uint8List(0);
   }
-  final Uint8List buffer = Uint8List(n);
+  raf.setPositionSync(offset);
+  final Uint8List buffer = Uint8List(count);
   var filled = 0;
-  while (filled < n) {
+  while (filled < count) {
     final int got = raf.readIntoSync(buffer, filled);
     if (got == 0) {
-      throw _notArchive(File(raf.path));
+      return Uint8List.sublistView(buffer, 0, filled);
     }
     filled += got;
   }
   return buffer;
-}
-
-void _skip(RandomAccessFile raf, int n) {
-  if (n <= 0) {
-    return;
-  }
-  raf.setPositionSync(raf.positionSync() + n);
-}
-
-String _zipName(Uint8List bytes) {
-  try {
-    return utf8.decode(bytes);
-  } on FormatException {
-    throw const ValidationFailure(
-      message: 'The archive contains a name that is not valid.',
-      recoveryAction: 'Choose a different file and try again.',
-    );
-  }
 }
 
 bool _escapes(String name) {

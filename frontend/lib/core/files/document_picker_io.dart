@@ -123,9 +123,7 @@ Future<Result<PickedDocument>> _describe(File file, Object? name) async {
   final String shown = name is String && name.isNotEmpty
       ? name
       : file.uri.pathSegments.last;
-  return Success<PickedDocument>(
-    PickedFile(file, shown, await file.length()),
-  );
+  return Success<PickedDocument>(PickedFile(file, shown, await file.length()));
 }
 
 const StorageFailure _failed = StorageFailure(

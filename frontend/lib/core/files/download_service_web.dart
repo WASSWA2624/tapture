@@ -93,6 +93,27 @@ final class _BrowserDownloads implements DownloadService {
       return FailureResult<String?>(downloadFailure(fileName));
     }
   }
+
+  // A browser has no stored files: its exports are built in memory and
+  // saved through [save] (task 076, D6).
+  @override
+  Future<Result<String?>> saveStored({
+    required String relativePath,
+    required String fileName,
+    required String mimeType,
+    String? subfolder,
+  }) async {
+    return FailureResult<String?>(downloadFailure(fileName));
+  }
+
+  @override
+  Future<Result<void>> openStoredExternally({
+    required String relativePath,
+    required String fileName,
+    required String mimeType,
+  }) async {
+    return FailureResult<void>(openExternallyFailure(fileName));
+  }
 }
 
 @JS('Blob')

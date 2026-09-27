@@ -565,6 +565,196 @@ void main() {
     expect(failure?.recoveryAction, isNotEmpty);
     expect(_openCopies(cache), isEmpty);
   });
+
+  group('stored exports', () {
+    test('only a file in a project exports folder counts', () {
+      expect(isStoredExport('projects/site__ab12/exports/pack.zip'), isTrue);
+      expect(isStoredExport('projects/site__ab12/photos/a.jpg'), isFalse);
+      expect(isStoredExport('projects/site__ab12/exports/'), isFalse);
+      expect(isStoredExport('projects/../exports/pack.zip'), isFalse);
+      expect(isStoredExport('/etc/exports/pack.zip'), isFalse);
+      expect(
+        isStoredExport('projects/site__ab12/exports/old/pack.zip'),
+        isFalse,
+      );
+    });
+
+    test('a stored package is copied to Downloads byte for byte', () async {
+      final Directory root = _tempFolder();
+      final Directory folder = _tempFolder();
+      final File stored = File('${root.path}/projects/site/exports/pack.zip')
+        ..createSync(recursive: true)
+        ..writeAsBytesSync(List<int>.generate(300000, (int i) => i % 251));
+      final DownloadService downloads = folderDownloads(
+        () async => folder,
+        storageRoot: () async => root,
+      );
+
+      final String? place = _ok(
+        await downloads.saveStored(
+          relativePath: 'projects/site/exports/pack.zip',
+          fileName: 'SITE-270926.zip',
+          mimeType: 'application/zip',
+          subfolder: 'Exports',
+        ),
+      );
+
+      expect(
+        _slash(place),
+        _slash('${folder.path}/Tapture/Exports/SITE-270926.zip'),
+      );
+      expect(File(place!).readAsBytesSync(), stored.readAsBytesSync());
+      expect(File('$place.part').existsSync(), isFalse);
+      expect(stored.existsSync(), isTrue);
+    });
+
+    test(
+      'a stored path outside exports is refused, and nothing is written',
+      () async {
+        final Directory root = _tempFolder();
+        final Directory folder = _tempFolder();
+        File('${root.path}/projects/site/photos/a.jpg')
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(<int>[1]);
+        final DownloadService downloads = folderDownloads(
+          () async => folder,
+          storageRoot: () async => root,
+        );
+
+        final Result<String?> saved = await downloads.saveStored(
+          relativePath: 'projects/site/photos/a.jpg',
+          fileName: 'a.jpg',
+          mimeType: 'image/jpeg',
+        );
+        final Result<void> opened = await downloads.openStoredExternally(
+          relativePath: 'projects/site/photos/a.jpg',
+          fileName: 'a.jpg',
+          mimeType: 'image/jpeg',
+        );
+
+        expect(saved, isA<FailureResult<String?>>());
+        expect(opened, isA<FailureResult<void>>());
+        expect(Directory('${folder.path}/Tapture').existsSync(), isFalse);
+      },
+    );
+
+    test('a missing stored package fails without writing', () async {
+      final Directory root = _tempFolder();
+      final Directory folder = _tempFolder();
+      final DownloadService downloads = folderDownloads(
+        () async => folder,
+        storageRoot: () async => root,
+      );
+
+      final Result<String?> saved = await downloads.saveStored(
+        relativePath: 'projects/site/exports/gone.zip',
+        fileName: 'gone.zip',
+        mimeType: 'application/zip',
+      );
+
+      expect(saved, isA<FailureResult<String?>>());
+    });
+
+    test('the share sheet receives the stored file itself', () async {
+      final Directory root = _tempFolder();
+      final File stored = File('${root.path}/projects/site/exports/pack.zip')
+        ..createSync(recursive: true)
+        ..writeAsBytesSync(<int>[7, 8]);
+      String? sharedPath;
+      final DownloadService downloads = folderDownloads(
+        () async => _tempFolder(),
+        storageRoot: () async => root,
+        useShare: true,
+        share:
+            ({
+              required String path,
+              required String mimeType,
+              required String fileName,
+            }) async {
+              sharedPath = path;
+              return ExternalOpenOutcome.success;
+            },
+      );
+
+      _okVoid(
+        await downloads.openStoredExternally(
+          relativePath: 'projects/site/exports/pack.zip',
+          fileName: 'SITE.zip',
+          mimeType: 'application/zip',
+        ),
+      );
+
+      expect(_slash(sharedPath), _slash(stored.path));
+    });
+
+    test('Android streams through the channel with the source path', () async {
+      final Directory root = _tempFolder();
+      final File stored = File('${root.path}/projects/site/exports/pack.zip')
+        ..createSync(recursive: true)
+        ..writeAsBytesSync(<int>[1, 2]);
+      const MethodChannel channel = MethodChannel('com.tapture.app/files');
+      Map<Object?, Object?>? sent;
+      _onChannel(channel, (MethodCall call) async {
+        expect(call.method, 'saveFileToDownloads');
+        sent = call.arguments as Map<Object?, Object?>;
+        return 'Download/Tapture/Exports/SITE.zip';
+      });
+
+      final DownloadService downloads = androidDownloads(
+        channel: channel,
+        storageRoot: () async => root,
+        fallback: folderDownloads(() async => _tempFolder()),
+      );
+      final String? place = _ok(
+        await downloads.saveStored(
+          relativePath: 'projects/site/exports/pack.zip',
+          fileName: 'SITE.zip',
+          mimeType: 'application/zip',
+          subfolder: 'Exports',
+        ),
+      );
+
+      expect(place, 'Download/Tapture/Exports/SITE.zip');
+      expect(_slash(sent?['sourcePath'] as String?), _slash(stored.path));
+      expect(sent?['subfolder'], 'Exports');
+      expect(sent?.containsKey('bytes'), isFalse);
+    });
+
+    test('the fake reports stored calls and keeps the exports rule', () async {
+      final List<String> saved = <String>[];
+      final List<String> opened = <String>[];
+      final DownloadService fake = DownloadService.fake(
+        canOpenExternally: true,
+        onSaveStored: (String path, String _, String _) => saved.add(path),
+        onOpenStoredExternally: (String path, String _, String _) =>
+            opened.add(path),
+      );
+
+      _ok(
+        await fake.saveStored(
+          relativePath: 'projects/site/exports/pack.zip',
+          fileName: 'SITE.zip',
+          mimeType: 'application/zip',
+        ),
+      );
+      _okVoid(
+        await fake.openStoredExternally(
+          relativePath: 'projects/site/exports/pack.zip',
+          fileName: 'SITE.zip',
+          mimeType: 'application/zip',
+        ),
+      );
+      final Result<String?> refused = await fake.saveStored(
+        relativePath: 'projects/site/audio/a.wav',
+        fileName: 'a.wav',
+        mimeType: 'audio/wav',
+      );
+
+      expect(saved, <String>['projects/site/exports/pack.zip']);
+      expect(opened, <String>['projects/site/exports/pack.zip']);
+      expect(refused, isA<FailureResult<String?>>());
+    });
+  });
 }
 
 Directory _tempFolder() {

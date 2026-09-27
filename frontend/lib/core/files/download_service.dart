@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/path_sanitizer.dart';
 
 import 'download_service_stub.dart'
     if (dart.library.io) 'download_service_io.dart'
@@ -25,8 +26,10 @@ abstract interface class DownloadService {
   /// [canChooseLocation], [onSaveAs] and [saveAsCancel] stand in for Save
   /// to a folder. [canOpenExternally], [canDownloadCopy] and
   /// [onOpenExternally] stand in for Open with, and [canShareToApps] for a
-  /// platform share sheet. The fake never writes a
-  /// file and never receives a stored path (FE-TEST-03, FE-SEC-08).
+  /// platform share sheet. [onSaveStored] and [onOpenStoredExternally]
+  /// report the stored-file calls. The fake never writes a file, and takes a
+  /// stored path only from a project's exports folder (FE-TEST-03,
+  /// FE-SEC-08).
   factory DownloadService.fake({
     void Function(String fileName, Uint8List bytes, String mimeType)? onSave,
     bool fail = false,
@@ -45,6 +48,10 @@ abstract interface class DownloadService {
     bool openPermissionDenied = false,
     void Function(String fileName, Uint8List bytes, String mimeType)?
     onOpenExternally,
+    void Function(String relativePath, String fileName, String mimeType)?
+    onSaveStored,
+    void Function(String relativePath, String fileName, String mimeType)?
+    onOpenStoredExternally,
   }) {
     return _FakeDownloadService(
       onSave: onSave,
@@ -63,6 +70,8 @@ abstract interface class DownloadService {
       openNoHandler: openNoHandler,
       openPermissionDenied: openPermissionDenied,
       onOpenExternally: onOpenExternally,
+      onSaveStored: onSaveStored,
+      onOpenStoredExternally: onOpenStoredExternally,
     );
   }
 
@@ -112,12 +121,51 @@ abstract interface class DownloadService {
   bool get canShareToApps;
 
   /// Hands a copy of [bytes] named [fileName] to another app, or saves it
-  /// where the platform cannot open one. Never takes a stored path.
+  /// where the platform cannot open one. Never takes a stored path outside
+  /// a project's exports folder: those go through [openStoredExternally].
   Future<Result<void>> openExternally({
     required String fileName,
     required Uint8List bytes,
     required String mimeType,
   });
+
+  /// Saves the stored file at [relativePath] (under the storage root) as
+  /// [fileName], copying it in chunks so a package larger than memory is
+  /// never read whole (FE-PERF-07). Only a file in a project's `exports/`
+  /// folder is accepted ([isStoredExport]), so no original photo or
+  /// recording is ever handed out (FE-SEC-08). A browser has no stored files
+  /// and refuses.
+  Future<Result<String?>> saveStored({
+    required String relativePath,
+    required String fileName,
+    required String mimeType,
+    String? subfolder,
+  });
+
+  /// Hands the stored file at [relativePath] to another app, under the same
+  /// rule as [saveStored].
+  Future<Result<void>> openStoredExternally({
+    required String relativePath,
+    required String fileName,
+    required String mimeType,
+  });
+}
+
+/// Whether [relativePath] names a file in a project's exports folder,
+/// `projects/<folder>/exports/<file>`: the only stored files a
+/// [DownloadService] hands out.
+bool isStoredExport(String relativePath) {
+  final String safe;
+  try {
+    safe = safeRelativePath(relativePath);
+  } on Object {
+    return false;
+  }
+  final List<String> parts = safe.split('/');
+  return parts.length == 4 &&
+      parts[0] == 'projects' &&
+      parts[2] == 'exports' &&
+      parts[3].isNotEmpty;
 }
 
 /// Where a file is handed to the operator. Tests keep the fake.
@@ -144,6 +192,8 @@ final class _FakeDownloadService implements DownloadService {
     required this._openNoHandler,
     required this._openPermissionDenied,
     required this._onOpenExternally,
+    required this._onSaveStored,
+    required this._onOpenStoredExternally,
   });
 
   final void Function(String fileName, Uint8List bytes, String mimeType)?
@@ -159,6 +209,10 @@ final class _FakeDownloadService implements DownloadService {
   final bool _openPermissionDenied;
   final void Function(String fileName, Uint8List bytes, String mimeType)?
   _onOpenExternally;
+  final void Function(String relativePath, String fileName, String mimeType)?
+  _onSaveStored;
+  final void Function(String relativePath, String fileName, String mimeType)?
+  _onOpenStoredExternally;
 
   @override
   final String? destination;
@@ -242,6 +296,42 @@ final class _FakeDownloadService implements DownloadService {
     }
     if (_openNoHandler) {
       return FailureResult<void>(openExternallyNoHandlerFailure());
+    }
+    if (_fail || (!canOpenExternally && !canDownloadCopy)) {
+      return FailureResult<void>(openExternallyFailure(fileName));
+    }
+    return const Success<void>(null);
+  }
+
+  @override
+  Future<Result<String?>> saveStored({
+    required String relativePath,
+    required String fileName,
+    required String mimeType,
+    String? subfolder,
+  }) async {
+    if (_fail || !isStoredExport(relativePath)) {
+      return FailureResult<String?>(downloadFailure(fileName));
+    }
+    _onSaveStored?.call(relativePath, fileName, mimeType);
+    final String place = subfolder == null
+        ? 'downloads/$fileName'
+        : 'downloads/$subfolder/$fileName';
+    return Success<String?>(place);
+  }
+
+  @override
+  Future<Result<void>> openStoredExternally({
+    required String relativePath,
+    required String fileName,
+    required String mimeType,
+  }) async {
+    if (!isStoredExport(relativePath)) {
+      return FailureResult<void>(openExternallyFailure(fileName));
+    }
+    _onOpenStoredExternally?.call(relativePath, fileName, mimeType);
+    if (_openCancel) {
+      return const FailureResult<void>(CancelledFailure());
     }
     if (_fail || (!canOpenExternally && !canDownloadCopy)) {
       return FailureResult<void>(openExternallyFailure(fileName));

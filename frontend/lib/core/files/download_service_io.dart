@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/path_sanitizer.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/permissions/permissions_service.dart';
 
@@ -52,9 +53,11 @@ DownloadService androidDownloads({
   })?
   share,
   PermissionsService? permissions,
+  Future<Directory> Function()? storageRoot,
 }) {
   return _ChannelDownloads(
     channel: channel ?? _filesChannel,
+    root: storageRoot ?? _defaultStorageRoot,
     fallback:
         fallback ??
         folderDownloads(
@@ -64,6 +67,7 @@ DownloadService androidDownloads({
           permissions: permissions,
           checkStorage: true,
           useShare: true,
+          storageRoot: storageRoot,
         ),
   );
 }
@@ -87,9 +91,11 @@ DownloadService folderDownloads(
   PermissionsService? permissions,
   bool checkStorage = false,
   bool useShare = false,
+  Future<Directory> Function()? storageRoot,
 }) {
   return _FolderDownloads(
     folder,
+    root: storageRoot ?? _defaultStorageRoot,
     taptureSubfolder: taptureSubfolder,
     canOpenFolder: canOpenFolder ?? taptureSubfolder,
     destination:
@@ -121,6 +127,7 @@ Future<Directory> _downloadsFolder() async {
 final class _FolderDownloads implements DownloadService {
   _FolderDownloads(
     this._folder, {
+    required this._root,
     required this._taptureSubfolder,
     required this.canOpenFolder,
     required this.destination,
@@ -133,6 +140,7 @@ final class _FolderDownloads implements DownloadService {
   });
 
   final Future<Directory> Function() _folder;
+  final Future<Directory> Function() _root;
   final bool _taptureSubfolder;
   final Future<void> Function(String executable, List<String> arguments)? _open;
   final Future<Directory> Function()? _cacheDir;
@@ -231,6 +239,82 @@ final class _FolderDownloads implements DownloadService {
     );
   }
 
+  @override
+  Future<Result<String?>> saveStored({
+    required String relativePath,
+    required String fileName,
+    required String mimeType,
+    String? subfolder,
+  }) async {
+    if (!isStoredExport(relativePath)) {
+      return FailureResult<String?>(downloadFailure(fileName));
+    }
+    File? part;
+    try {
+      final File source = await _storedFile(_root, relativePath);
+      final Directory folder = await _targetFolder(subfolder: subfolder);
+      await folder.create(recursive: true);
+      final File target = _freeName(folder, fileName);
+      part = File('${target.path}$_partSuffix');
+      // Streamed, so the package is never held in memory (FE-PERF-07).
+      await source.openRead().pipe(part.openWrite());
+      await part.rename(target.path);
+      return Success<String?>(target.path);
+    } on Object {
+      await _deleteCopy(part);
+      return FailureResult<String?>(downloadFailure(fileName));
+    }
+  }
+
+  @override
+  Future<Result<void>> openStoredExternally({
+    required String relativePath,
+    required String fileName,
+    required String mimeType,
+  }) async {
+    if (!isStoredExport(relativePath)) {
+      return FailureResult<void>(openExternallyFailure(fileName));
+    }
+    try {
+      final File source = await _storedFile(_root, relativePath);
+      if (_checkStorage) {
+        final Result<PermissionState> granted =
+            await (_permissions ?? PermissionsService()).request(
+              AppPermission.storage,
+            );
+        if (granted case FailureResult<PermissionState>(:final failure)) {
+          return FailureResult<void>(failure);
+        }
+      }
+      if (_useShare) {
+        final ExternalOpenOutcome outcome = await (_share ?? _sharePlus)(
+          path: source.path,
+          mimeType: mimeType,
+          fileName: fileName,
+        );
+        return switch (outcome) {
+          ExternalOpenOutcome.success => const Success<void>(null),
+          ExternalOpenOutcome.dismissed => const FailureResult<void>(
+            CancelledFailure(),
+          ),
+          ExternalOpenOutcome.unavailable => FailureResult<void>(
+            openExternallyNoHandlerFailure(),
+          ),
+        };
+      }
+      await (_open ?? _runOpen)(_openExecutable, <String>[source.path]);
+      return const Success<void>(null);
+    } on Failure catch (failure) {
+      return FailureResult<void>(failure);
+    } on Object {
+      return FailureResult<void>(
+        _useShare
+            ? openExternallyFailure(fileName)
+            : openExternallyNoHandlerFailure(),
+      );
+    }
+  }
+
   Future<Directory> _targetFolder({String? subfolder}) async {
     final Directory base = await _folder();
     if (subfolder == 'Exports') {
@@ -241,10 +325,61 @@ final class _FolderDownloads implements DownloadService {
 }
 
 final class _ChannelDownloads implements DownloadService {
-  _ChannelDownloads({required this._channel, required this._fallback});
+  _ChannelDownloads({
+    required this._channel,
+    required this._root,
+    required this._fallback,
+  });
 
   final MethodChannel _channel;
+  final Future<Directory> Function() _root;
   final DownloadService _fallback;
+
+  @override
+  Future<Result<String?>> saveStored({
+    required String relativePath,
+    required String fileName,
+    required String mimeType,
+    String? subfolder,
+  }) async {
+    if (!isStoredExport(relativePath)) {
+      return FailureResult<String?>(downloadFailure(fileName));
+    }
+    try {
+      final File source = await _storedFile(_root, relativePath);
+      final Object? location = await _channel
+          .invokeMethod<Object>('saveFileToDownloads', <String, Object>{
+            'sourcePath': source.path,
+            'fileName': fileName,
+            'mimeType': mimeType,
+            'subfolder': ?subfolder,
+          });
+      if (location is String && location.isNotEmpty) {
+        return Success<String?>(location);
+      }
+    } on Object {
+      // Missing channel method, an old Android, or a refused copy.
+    }
+    return _fallback.saveStored(
+      relativePath: relativePath,
+      fileName: fileName,
+      mimeType: mimeType,
+      subfolder: subfolder,
+    );
+  }
+
+  @override
+  Future<Result<void>> openStoredExternally({
+    required String relativePath,
+    required String fileName,
+    required String mimeType,
+  }) {
+    return _fallback.openStoredExternally(
+      relativePath: relativePath,
+      fileName: fileName,
+      mimeType: mimeType,
+    );
+  }
 
   @override
   String? get destination => Copy.downloadsTaptureFolder;
@@ -470,6 +605,33 @@ Future<ExternalOpenOutcome> _sharePlus({
     ShareResultStatus.dismissed => ExternalOpenOutcome.dismissed,
     ShareResultStatus.unavailable => ExternalOpenOutcome.unavailable,
   };
+}
+
+/// The stored file at [relativePath] under the storage root, which must
+/// exist.
+Future<File> _storedFile(
+  Future<Directory> Function() root,
+  String relativePath,
+) async {
+  final Directory base = await root();
+  final File file = File('${base.path}/${safeRelativePath(relativePath)}');
+  if (!file.existsSync()) {
+    throw const StorageFailure(
+      message: Copy.storedFileMissing,
+      recoveryAction: Copy.tryAgain,
+    );
+  }
+  return file;
+}
+
+Future<Directory> _defaultStorageRoot() async {
+  final Result<Directory> root = await StorageRoot().resolve();
+  switch (root) {
+    case FailureResult<Directory>(:final Failure failure):
+      throw failure;
+    case Success<Directory>(:final Directory value):
+      return value;
+  }
 }
 
 Future<Directory> _defaultCacheDir() async {

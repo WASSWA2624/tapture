@@ -406,6 +406,13 @@ abstract final class AppConstants {
     buttonStartY: 0.78,
   );
 
+  /// Project packages (task 076, D6). On a device a package streams to
+  /// disk and stays under the ZIP32 limit, so no ZIP64 is needed; its entries
+  /// may uncompress to at most ten percent more. A browser builds and opens
+  /// packages in memory under the import ceilings instead.
+  static const ({int nativeMaxBytes, int nativeMaxUncompressedBytes}) bundles =
+      (nativeMaxBytes: 4000000000, nativeMaxUncompressedBytes: 4400000000);
+
   /// Searching lists and the template catalogue: a word shorter than
   /// [minWordLength] means nothing on its own and is skipped, unless it holds
   /// a digit, as a code's "001" does.

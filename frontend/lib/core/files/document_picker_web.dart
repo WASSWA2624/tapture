@@ -68,7 +68,9 @@ Future<_File?> _choose(List<String> extensions, String mimeType) {
     ((JSAny _) {
       final _FileList? files = input.files;
       if (!done.isCompleted) {
-        done.complete(files == null || files.length == 0 ? null : files.item(0));
+        done.complete(
+          files == null || files.length == 0 ? null : files.item(0),
+        );
       }
     }).toJS,
   );
