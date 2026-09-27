@@ -10,6 +10,8 @@ export 'record_bulk_actions.dart';
 export 'record_bulk_controller.dart';
 export 'record_delete_action.dart';
 export 'record_delete_controller.dart';
+export 'record_detail_controller.dart';
+export 'record_detail_screen.dart';
 export 'record_edit_controller.dart';
 export 'record_edit_screen.dart';
 export 'record_field_draft.dart';
@@ -17,6 +19,8 @@ export 'record_field_input.dart';
 export 'record_field_sheet.dart';
 export 'record_history_providers.dart';
 export 'record_history_screen.dart';
+export 'record_photo_providers.dart';
+export 'record_photo_viewer_screen.dart';
 export 'record_photos_editor.dart';
 export 'record_photos_editor_controller.dart';
 export 'record_providers.dart';
@@ -62,3 +66,9 @@ export 'recycle_bin_screen.dart';
 // empty now behind a typed confirm), and record_bulk_actions.dart and its
 // controller (approve, archive, delete, export and process again over a
 // selection, record by record, with a succeeded and failed summary).
+
+// Wave B, detail (014 step 4): record_detail_screen.dart (the record page)
+// and its controller (approve, send to review, archive and unarchive, each
+// checked with the lifecycle), and record_photo_viewer_screen.dart with
+// record_photo_providers.dart (the read-only full-size viewer, the one
+// place a saved photo's original is read).

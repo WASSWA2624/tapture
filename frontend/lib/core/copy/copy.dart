@@ -4244,6 +4244,14 @@ abstract final class Copy {
   /// Opens the page that edits the record's photos, captions and audio.
   static const String recordDetailEditPhotos = 'Edit photos and captions';
 
+  /// A status move asked for while another is still being written.
+  static const String recordDetailBusy =
+      'A change to this record is still being saved.';
+
+  /// What to do about [recordDetailBusy].
+  static const String recordDetailBusyAction =
+      'Wait for it to finish, then try again.';
+
   /// A record with no values and no fields to fill.
   static const String recordDetailNoValues = 'This record has no values yet.';
 

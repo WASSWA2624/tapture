@@ -13,6 +13,7 @@ export 'domain/domain.dart';
 export 'presentation/record_bulk_actions.dart';
 export 'presentation/record_delete_action.dart';
 export 'presentation/record_delete_controller.dart';
+export 'presentation/record_detail_screen.dart';
 export 'presentation/record_edit_screen.dart';
 export 'presentation/record_field_sheet.dart';
 export 'presentation/record_history_screen.dart';
@@ -31,7 +32,8 @@ export 'presentation/recycle_bin_screen.dart';
 // the page the router builds for `/records` (with `?filter=` as its
 // initialStatus) and `/projects/:id/records`, and records_list_view.dart,
 // the list itself, which the project home and the expanded nav-shell pane
-// embed (`RecordsListView(projectId:, pane: true, currentRecordId:, onOpen:)`).
+// embed (the pane as `RecordsListView(projectId:, pane: true,
+// currentRecordId:, onOpen:)`).
 
 // Wave B, editing values (014 step 5): record_edit_screen.dart, the values
 // page the router builds for `AppRoutes.recordValuesEdit`, and
@@ -57,6 +59,11 @@ export 'presentation/recycle_bin_screen.dart';
 // `AppRoutes.recycleBin`, and record_bulk_actions.dart, the selection's
 // action bar the records list places under its rows
 // (`RecordBulkActions(projectId:, selectable:, onExport:)`).
+
+// Wave B, detail (014 step 4): record_detail_screen.dart, the record page
+// the router builds for `/records/:recordId` (`RecordDetailScreen(recordId:)`)
+// and `/projects/:projectId/records/:recordId` (with `projectId:`, so its
+// links stay inside the project). It opens its photo viewer itself.
 
 // Wave C (task 014 integration): the Drift implementation main composes, and
 // the screens the router and nav shell build.
