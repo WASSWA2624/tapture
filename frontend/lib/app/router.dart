@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tapture/app/nav_shell.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/core/backend/backend_config.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/export/export_request.dart';
@@ -21,6 +22,9 @@ import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
+import 'package:tapture/features/account/presentation/backend_settings_screen.dart';
+import 'package:tapture/features/account/presentation/relay_settings_screen.dart';
+import 'package:tapture/features/account/presentation/sign_in_screen.dart';
 import 'package:tapture/features/capture/capture.dart';
 import 'package:tapture/features/cloud/presentation/destination_list_screen.dart';
 import 'package:tapture/features/cloud/presentation/upload_history_screen.dart';
@@ -843,6 +847,32 @@ List<RouteBase> get _routes {
                   path: 'privacy',
                   builder: (BuildContext _, GoRouterState _) {
                     return const EgressSummaryScreen();
+                  },
+                ),
+                GoRoute(
+                  path: 'account',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const BackendSettingsScreen(
+                      config: BackendConfig(baseUrl: ''),
+                    );
+                  },
+                ),
+                GoRoute(
+                  path: 'sign-in',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return SignInScreen(onSubmit: (_, _) async {});
+                  },
+                ),
+                GoRoute(
+                  path: 'relay',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const RelaySettingsScreen(
+                      enabled: false,
+                      neverRelay: false,
+                      queued: 0,
+                      sent: 0,
+                      purged: 0,
+                    );
                   },
                 ),
                 GoRoute(

@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**56 of 69 tasks complete (81%)** · last updated 2026-09-28
+**57 of 69 tasks complete (83%)** · last updated 2026-09-28
 
 `██████████████████████████░░░░░░░░░░░░`
 
@@ -35,7 +35,7 @@ are in [RETIRED.md](dev-plan/RETIRED.md).
 | 21 — Cloud upload | 1 | 1 | `██████████████` 100% |
 | 22 — Privacy and security | 1 | 1 | `██████████████` 100% |
 | 23 — Hardening | 34 | 45 | `███████████░░░` 76% |
-| 24 — The minimal backend | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
+| 24 — The minimal backend | 1 | 1 | `██████████████` 100% |
 | 25 — Testing and release | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | **Total** | **47** | **69** | `██████████████████████████░░░░░░░░░░░░` 68% |
 
@@ -449,7 +449,7 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 *0 of 1 complete.*
 
-- [ ] [024 — The minimal backend, and the app that runs on it](dev-plan/24-backend/024-minimal-backend.md)
+- [x] [024 — The minimal backend, and the app that runs on it](dev-plan/24-backend/024-minimal-backend.md)
 
 ### 25 — Testing and release
 

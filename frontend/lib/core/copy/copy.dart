@@ -6233,4 +6233,62 @@ abstract final class Copy {
   /// Settings row explanation.
   static const String privacySubtitle =
       'What can leave this device, and what never does.';
+
+  /// Settings row for the organisation server.
+  static const String backendSettingsTitle = 'Organisation';
+
+  /// Settings row explanation for the server address and grant.
+  static const String backendSettingsSubtitle =
+      'The server this device is enrolled with.';
+
+  /// Sign-in screen title.
+  static const String signInTitle = 'Sign in';
+
+  /// Sign-in action.
+  static const String signInAction = 'Sign in';
+
+  /// Email field.
+  static const String signInEmail = 'Email';
+
+  /// Password field.
+  static const String signInPassword = 'Password';
+
+  /// Organisation field on the sign-in screen.
+  static const String signInOrganisation = 'Organisation';
+
+  /// Quiet line when the server cannot be reached.
+  static const String backendUnreachable =
+      'The server cannot be reached. Work on this device continues.';
+
+  /// Shown when a grant has expired for relay or analysis.
+  static const String backendGrantExpired =
+      'The saved sign-in has expired for relay, analysis and role changes.';
+
+  /// Sign-out confirmation title.
+  static const String signOutTitle = 'Sign out';
+
+  /// Sign-out warning.
+  static const String signOutMessage =
+      'Signing back in needs a connection to the server.';
+
+  /// Relay control title.
+  static const String relayTitle = 'Change relay';
+
+  /// Relay is waiting for a project manager.
+  static const String relayOff = 'Relay is off until a project manager enables it.';
+
+  /// A never-relay project has no send action.
+  static const String relayNever = 'This project never uses the relay.';
+
+  /// Send action for an enabled relay.
+  static const String relaySend = 'Send changes';
+
+  /// Count of packages waiting to send.
+  static const String relayQueued = 'Queued';
+
+  /// Count of packages the server accepted.
+  static const String relaySent = 'Sent';
+
+  /// Count of packages the server has purged.
+  static const String relayPurged = 'Purged';
 }

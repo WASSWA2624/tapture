@@ -89,6 +89,9 @@ enum SecretKey {
 
   /// Symmetric key for optional at-rest database encryption (task 064).
   databaseEncryption,
+
+  /// Enrolment session: tokens, organisation id and grant expiry.
+  backendSession,
 }
 
 final class _SecureStorage implements SecureStorage {
@@ -219,5 +222,7 @@ String _name(SecretKey key) {
       return AppConstants.secrets.cloudRefresh;
     case SecretKey.databaseEncryption:
       return AppConstants.secrets.databaseEncryption;
+    case SecretKey.backendSession:
+      return AppConstants.secrets.backendSession;
   }
 }

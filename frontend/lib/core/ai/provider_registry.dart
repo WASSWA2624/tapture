@@ -4,6 +4,7 @@ import 'package:tapture/core/ai/ai_service.dart';
 import 'package:tapture/core/ai/model_descriptor.dart';
 import 'package:tapture/core/ai/provider_descriptor.dart';
 import 'package:tapture/core/ai/provider_key_custody.dart';
+import 'package:tapture/core/ai/proxy_ai_service.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -78,7 +79,7 @@ final class ProviderRegistry {
 
   /// A registry whose only entry is the keyless proxy.
   factory ProviderRegistry.keyless({AiService? proxy}) {
-    final AiService service = proxy ?? const AiService.unavailable();
+    final AiService service = proxy ?? ProxyAiService.unconfigured();
     return ProviderRegistry(
       descriptors: <ProviderDescriptor>[
         ProviderDescriptor(

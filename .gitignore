@@ -18,6 +18,10 @@ __pycache__/
 # Logs
 *.log
 
+# Backend build output. The source and the lockfile stay tracked.
+backend/node_modules/
+backend/dist/
+
 # Operator-captured photos and local app data. Branding and icons stay
 # tracked. Images under frontend/test are ignored in frontend/.gitignore.
 /Tapture/

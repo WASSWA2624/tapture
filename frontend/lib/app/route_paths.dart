@@ -32,6 +32,9 @@ abstract final class RoutePaths {
   static const String settingsFiles = '$more/files';
   static const String settingsSecurity = '$more/security';
   static const String settingsPrivacy = '$more/privacy';
+  static const String settingsAccount = '$more/account';
+  static const String settingsSignIn = '$more/sign-in';
+  static const String settingsRelay = '$more/relay';
   static const String settingsAbout = '$more/about';
   static const String settingsLicences = '$settingsAbout/licences';
 

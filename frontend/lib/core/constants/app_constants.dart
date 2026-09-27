@@ -148,6 +148,7 @@ abstract final class AppConstants {
     String cloudAccess,
     String cloudRefresh,
     String databaseEncryption,
+    String backendSession,
   })
   secrets = (
     pinSalt: 'tapture.pin.salt',
@@ -158,6 +159,7 @@ abstract final class AppConstants {
     cloudAccess: 'tapture.cloud.access',
     cloudRefresh: 'tapture.cloud.refresh',
     databaseEncryption: 'tapture.db.encryption',
+    backendSession: 'tapture.backend.session',
   );
 
   /// Ring buffer and observer limits for the logger (task 022).

@@ -124,6 +124,12 @@ Object _asError(Object error) {
 
 const List<_Section> _defaultSections = <_Section>[
   (
+    title: Copy.backendSettingsTitle,
+    subtitle: Copy.backendSettingsSubtitle,
+    route: RoutePaths.settingsAccount,
+    group: Copy.settingsGroupProfileCapture,
+  ),
+  (
     title: Copy.operatorProfileTitle,
     subtitle: Copy.settingsOperatorSubtitle,
     route: RoutePaths.settingsOperator,

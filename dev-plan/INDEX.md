@@ -201,7 +201,7 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 
 *The minimal backend of specification Part XI. It is **required**: accounts, authentication, roles, AI functionality and provider-key custody — the five things a single device cannot supply for itself, and nothing more. The change relay (§72) is the one optional capability inside this phase; every other task here is part of the MVP. Required to exist, never required to be reachable (§70.4).*
 
-- [ ] [024 — The minimal backend, and the app that runs on it](24-backend/024-minimal-backend.md)
+- [x] [024 — The minimal backend, and the app that runs on it](24-backend/024-minimal-backend.md)
 
 ## 25 — Testing and release
 

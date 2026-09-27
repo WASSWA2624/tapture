@@ -18,12 +18,13 @@ import 'package:tapture/features/settings/presentation/appearance_settings_scree
 import 'package:tapture/features/settings/presentation/settings_screen.dart';
 
 void main() {
-  testWidgets('the root lists exactly nine destinations in four groups', (
+  testWidgets('the root lists exactly ten destinations in four groups', (
     WidgetTester tester,
   ) async {
     await _pump(tester);
     await tester.pumpAndSettle();
 
+    expect(find.text(Copy.backendSettingsTitle), findsOneWidget);
     expect(find.text(Copy.operatorProfileTitle), findsOneWidget);
     expect(find.text(Copy.navCapture), findsOneWidget);
     expect(find.text(Copy.settingsAiTitle), findsOneWidget);
@@ -33,7 +34,7 @@ void main() {
     expect(find.text(Copy.settingsSecurityTitle), findsOneWidget);
     expect(find.text(Copy.privacyTitle), findsOneWidget);
     expect(find.text(Copy.settingsAboutTitle), findsWidgets);
-    expect(find.byType(AppListTile), findsNWidgets(9));
+    expect(find.byType(AppListTile), findsNWidgets(10));
 
     expect(find.text(Copy.navTemplates), findsNothing);
     expect(find.text(Copy.navQueue), findsNothing);

@@ -161,6 +161,7 @@ void main() {
       AppConstants.secrets.cloudAccess,
       AppConstants.secrets.cloudRefresh,
       AppConstants.secrets.databaseEncryption,
+      AppConstants.secrets.backendSession,
       AppConstants.preferences.themeMode,
     ];
 

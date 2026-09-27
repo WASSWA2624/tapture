@@ -555,154 +555,154 @@ abstract class OfflineAuthority {
 
 ### The server skeleton
 
-- [ ] The project builds and starts, serving nothing but a health route.
-- [ ] `npm run verify` exits non-zero when any single stage fails, and names which.
-- [ ] Tests: `backend/test/boot.test.ts` asserts the process starts and shuts down cleanly;
+- [x] The project builds and starts, serving nothing but a health route.
+- [x] `npm run verify` exits non-zero when any single stage fails, and names which.
+- [x] Tests: `backend/test/boot.test.ts` asserts the process starts and shuts down cleanly;
       `backend/test/tools/verify.test.ts` asserts exit-code aggregation across stages.
-- [ ] A missing secret stops the process at boot with a message naming the variable.
-- [ ] Nothing outside `config/` can read `process.env`, and lint proves it.
-- [ ] Tests: unit tests over valid, missing and malformed environments, including a value past its permitted maximum.
-- [ ] No forbidden pattern reaches the output, even when passed deliberately as a log field.
-- [ ] An unexpected exception returns a 500 envelope and logs the cause exactly once.
-- [ ] Tests: a leak test drives representative payloads and scans the emitted lines (BE-TEST-10); unit tests over the
+- [x] A missing secret stops the process at boot with a message naming the variable.
+- [x] Nothing outside `config/` can read `process.env`, and lint proves it.
+- [x] Tests: unit tests over valid, missing and malformed environments, including a value past its permitted maximum.
+- [x] No forbidden pattern reaches the output, even when passed deliberately as a log field.
+- [x] An unexpected exception returns a 500 envelope and logs the cause exactly once.
+- [x] Tests: a leak test drives representative payloads and scans the emitted lines (BE-TEST-10); unit tests over the
       envelope shape and the status mapping of every error code, asserting no internal detail appears in a response.
-- [ ] A deployment receives no traffic until readiness passes, and readiness fails when the database is absent.
-- [ ] Every log line for one request shares one identifier, and the client receives it.
-- [ ] Exceeding any configured limit returns 429 with a retry hint and records a security event.
-- [ ] Tests: route tests for liveness, readiness and version, and a test asserting context propagation across an async
+- [x] A deployment receives no traffic until readiness passes, and readiness fails when the database is absent.
+- [x] Every log line for one request shares one identifier, and the client receives it.
+- [x] Exceeding any configured limit returns 429 with a retry hint and records a security event.
+- [x] Tests: route tests for liveness, readiness and version, and a test asserting context propagation across an async
       boundary.
-- [ ] Tests: a rate-limit test per limited endpoint.
+- [x] Tests: a rate-limit test per limited endpoint.
 
 ### Schema and repositories
 
-- [ ] Shutdown drains the pool without dropping an in-flight transaction.
-- [ ] Migrations apply in order, record themselves, and never run implicitly at boot.
-- [ ] Upgrading from the last released schema preserves every row.
-- [ ] Tests: integration tests against an ephemeral database migrated from scratch for pool behaviour and drain
+- [x] Shutdown drains the pool without dropping an in-flight transaction.
+- [x] Migrations apply in order, record themselves, and never run implicitly at boot.
+- [x] Upgrading from the last released schema preserves every row.
+- [x] Tests: integration tests against an ephemeral database migrated from scratch for pool behaviour and drain
       (BE-TEST-03), and a migration test from the previous release schema with seeded data (BE-TEST-09).
-- [ ] A project row carries the client-generated identifier and there exists no column able to hold project content.
-- [ ] Email is unique per organisation and the device identifier is globally unique, enforced by constraint.
-- [ ] Tests: repository integration tests for user and device creation and lookup, and for membership with and without
+- [x] A project row carries the client-generated identifier and there exists no column able to hold project content.
+- [x] Email is unique per organisation and the device identifier is globally unique, enforced by constraint.
+- [x] Tests: repository integration tests for user and device creation and lookup, and for membership with and without
       a context scope, including the cross-organisation isolation case.
-- [ ] Every transient row carries created and expiry columns, and the purge query needs no exception for any of them.
-- [ ] No column on a package, acknowledgement or vector row can hold project content.
-- [ ] Tests: integration tests for package insert, acknowledgement and the expiry query, and a test proving an audit
+- [x] Every transient row carries created and expiry columns, and the purge query needs no exception for any of them.
+- [x] No column on a package, acknowledgement or vector row can hold project content.
+- [x] Tests: integration tests for package insert, acknowledgement and the expiry query, and a test proving an audit
       row cannot be updated or deleted.
-- [ ] A failure mid-transaction leaves no partial rows and surfaces a typed error, not a driver message.
-- [ ] Tests: an integration test with a deliberate mid-transaction failure across two tables, and a test asserting a
+- [x] A failure mid-transaction leaves no partial rows and surfaces a typed error, not a driver message.
+- [x] Tests: an integration test with a deliberate mid-transaction failure across two tables, and a test asserting a
       unique violation maps to the expected error code.
 
 ### Authentication and roles
 
-- [ ] A stored hash is irreversible and appears in no log, response or error path.
-- [ ] Self-service registration is off unless the organisation enables it, and neither register nor reset reveals
+- [x] A stored hash is irreversible and appears in no log, response or error path.
+- [x] Self-service registration is off unless the organisation enables it, and neither register nor reset reveals
       whether an address exists.
-- [ ] A changed or reset password invalidates every existing refresh-token family for that user.
-- [ ] Tests: unit tests for hashing, verification and a parameter change; route tests for success, duplicate address,
+- [x] A changed or reset password invalidates every existing refresh-token family for that user.
+- [x] Tests: unit tests for hashing, verification and a parameter change; route tests for success, duplicate address,
       registration disabled, wrong current password, expired reset token and replayed reset token.
-- [ ] Repeated failures lock the account and record a security event naming actor, address and time.
-- [ ] A wrong password and an unknown address are indistinguishable to the caller.
-- [ ] Tests: route tests for success, wrong password, unknown address, lockout, refusal while locked and the reset of
+- [x] Repeated failures lock the account and record a security event naming actor, address and time.
+- [x] A wrong password and an unknown address are indistinguishable to the caller.
+- [x] Tests: route tests for success, wrong password, unknown address, lockout, refusal while locked and the reset of
       the counter after success.
-- [ ] A stolen refresh token cannot be replayed after rotation; reuse kills the family and records a security event.
-- [ ] Signing out twice succeeds both times and revokes exactly one family.
-- [ ] A revoked device can neither refresh a token nor reach the relay.
-- [ ] Tests: unit tests for rotation, expiry, reuse detection and repeated sign-out; middleware tests for valid,
+- [x] A stolen refresh token cannot be replayed after rotation; reuse kills the family and records a security event.
+- [x] Signing out twice succeeds both times and revokes exactly one family.
+- [x] A revoked device can neither refresh a token nor reach the relay.
+- [x] Tests: unit tests for rotation, expiry, reuse detection and repeated sign-out; middleware tests for valid,
       expired, malformed and missing access tokens; route tests for enrol, list and revoke.
-- [ ] A user who cannot see a project receives 404, not 403.
-- [ ] Every capability is decided in one place, and no route contains a role comparison.
-- [ ] Tests: the full role-by-capability matrix as a table test, including the context-scoped cases.
+- [x] A user who cannot see a project receives 404, not 403.
+- [x] Every capability is decided in one place, and no route contains a role comparison.
+- [x] Tests: the full role-by-capability matrix as a table test, including the context-scoped cases.
 
 ### The organisation and project APIs
 
-- [ ] `GET /auth/me` returns the identity and grants the device caches, and never a credential or a provider key.
-- [ ] A non-administrator cannot list or modify organisation users, and learns nothing from the attempt.
-- [ ] Tests: route tests for each user endpoint across every role, including the unauthorised paths and cursor
+- [x] `GET /auth/me` returns the identity and grants the device caches, and never a credential or a provider key.
+- [x] A non-administrator cannot list or modify organisation users, and learns nothing from the attempt.
+- [x] Tests: route tests for each user endpoint across every role, including the unauthorised paths and cursor
       pagination over a page boundary.
-- [ ] Registering or updating a project stores no record, photo or template content.
-- [ ] An attempt to change a project identifier is refused, and the stored identifier is still the device's.
-- [ ] Relay settings change only for a project manager or administrator, and the change is audited.
-- [ ] Tests: route tests for registration, identifier-change refusal, and membership add and remove across roles, plus
+- [x] Registering or updating a project stores no record, photo or template content.
+- [x] An attempt to change a project identifier is refused, and the stored identifier is still the device's.
+- [x] Relay settings change only for a project manager or administrator, and the change is audited.
+- [x] Tests: route tests for registration, identifier-change refusal, and membership add and remove across roles, plus
       a test asserting no content column exists or is written.
 
 ### The optional change relay
 
-- [ ] The server never attempts to decrypt, unpack or inspect a package, and stores no metadata beyond the permitted
+- [x] The server never attempts to decrypt, unpack or inspect a package, and stores no metadata beyond the permitted
       list.
-- [ ] Replaying an upload with the same idempotency key creates nothing and returns the first result.
-- [ ] A non-member device receives 404 for a package that exists, and every access is logged.
-- [ ] Tests: route tests for upload success, oversize, relay-disabled project, never-relay project, replay, listing
+- [x] Replaying an upload with the same idempotency key creates nothing and returns the first result.
+- [x] A non-member device receives 404 for a package that exists, and every access is logged.
+- [x] Tests: route tests for upload success, oversize, relay-disabled project, never-relay project, replay, listing
       across a cursor boundary, download, and cross-project isolation.
-- [ ] A fully acknowledged package is gone immediately, not at the next job run.
-- [ ] Replaying an acknowledgement is a no-op, including after the package has been purged.
-- [ ] The vectors returned match exactly what was pushed and acknowledged.
-- [ ] Tests: unit tests over vector comparison; integration tests for partial acknowledgement, completion with
+- [x] A fully acknowledged package is gone immediately, not at the next job run.
+- [x] Replaying an acknowledgement is a no-op, including after the package has been purged.
+- [x] The vectors returned match exactly what was pushed and acknowledged.
+- [x] Tests: unit tests over vector comparison; integration tests for partial acknowledgement, completion with
       delete, idempotent replay, and a device revoked mid-flight no longer counting towards completeness.
-- [ ] Advancing the clock past the window removes packages that no device ever fetched, and reports how many and how
+- [x] Advancing the clock past the window removes packages that no device ever fetched, and reports how many and how
       old.
-- [ ] A configured retention window above the hard maximum stops the process at boot.
-- [ ] Exceeding a storage ceiling returns a clear, actionable error rather than filling the disk.
-- [ ] Tests: tests driving the injected clock across the acknowledgement and expiry paths, and quota tests below, at
+- [x] A configured retention window above the hard maximum stops the process at boot.
+- [x] Exceeding a storage ceiling returns a clear, actionable error rather than filling the disk.
+- [x] Tests: tests driving the injected clock across the acknowledgement and expiry paths, and quota tests below, at
       and above each ceiling.
 
 ### AI custody and the proxy
 
-- [ ] Adding a provider is one implementation and one configuration value, with no route change.
-- [ ] A key cannot be retrieved through any endpoint, including error paths.
-- [ ] Tests: a contract suite every implementation must pass, driven by the fake across success, failure, timeout and
+- [x] Adding a provider is one implementation and one configuration value, with no route change.
+- [x] A key cannot be retrieved through any endpoint, including error paths.
+- [x] Tests: a contract suite every implementation must pass, driven by the fake across success, failure, timeout and
       malformed output; a test scanning every route response and log line for key patterns.
-- [ ] No image, audio or extracted text is written to disk, database or cache, and no log line contains payload
+- [x] No image, audio or extracted text is written to disk, database or cache, and no log line contains payload
       content.
-- [ ] A runaway client cannot exceed the organisation budget, because the limit is not on the client.
-- [ ] A dead provider returns a typed, queueable error within the timeout rather than hanging a field device.
-- [ ] Tests: route tests asserting nothing is persisted and that logging is metadata-only; quota tests below, at and
+- [x] A runaway client cannot exceed the organisation budget, because the limit is not on the client.
+- [x] A dead provider returns a typed, queueable error within the timeout rather than hanging a field device.
+- [x] Tests: route tests asserting nothing is persisted and that logging is metadata-only; quota tests below, at and
       above each limit; timeout, retry and breaker-transition tests against the fake provider.
 
 ### Audit and the API contract
 
-- [ ] Every privileged action is attributable to an actor and a time, and rolling back the action rolls back its row.
-- [ ] Storage growing while purge counts stay flat is visible immediately.
-- [ ] Tests: tests asserting exactly one row per action with actor, target and outcome, and tests asserting each
+- [x] Every privileged action is attributable to an actor and a time, and rolling back the action rolls back its row.
+- [x] Storage growing while purge counts stay flat is visible immediately.
+- [x] Tests: tests asserting exactly one row per action with actor, target and outcome, and tests asserting each
       counter moves for its event and that no label leaks a forbidden field.
-- [ ] The document and the server never disagree, because a test proves it on every run.
-- [ ] A route changed without the document fails continuous integration, and the fixture proves it.
-- [ ] Tests: the contract suite green against the running server and red against the drift fixture, reporting every
+- [x] The document and the server never disagree, because a test proves it on every run.
+- [x] A route changed without the document fails continuous integration, and the fixture proves it.
+- [x] Tests: the contract suite green against the running server and red against the drift fixture, reporting every
       mismatch with route and field rather than stopping at the first.
 
 ### Shipping the server
 
-- [ ] An operator can leave the product entirely, taking everything the server holds, in one command.
-- [ ] Destroy cannot run without an explicit organisation name and a second confirmation.
-- [ ] The runbook states plainly that server backups contain accounts and metadata, never projects.
-- [ ] A red pipeline blocks merging.
-- [ ] Tests: command tests over a seeded database for export and destroy; a smoke test that builds the image and
+- [x] An operator can leave the product entirely, taking everything the server holds, in one command.
+- [x] Destroy cannot run without an explicit organisation name and a second confirmation.
+- [x] The runbook states plainly that server backups contain accounts and metadata, never projects.
+- [x] A red pipeline blocks merging.
+- [x] Tests: command tests over a seeded database for export and destroy; a smoke test that builds the image and
       passes its health check; a pipeline run proving the gate fails when any single stage fails.
 
 ### The app side
 
-- [ ] A signed-in device works for the full cached period with no connectivity and never shows a sign-in screen again.
-- [ ] An unreachable server changes nothing about what the app will let a user do, and says so in one quiet line.
-- [ ] No token, key or organisation identifier is written anywhere but secure storage.
-- [ ] Records captured before enrolment keep their operator attribution and gain the account identity.
-- [ ] Tests: unit tests over the enrolment state machine and over sign-in, silent refresh, expiry and offline fallback.
-- [ ] Tests: a test asserting no credential reaches the database, a log or an export, and a test for operator-profile
+- [x] A signed-in device works for the full cached period with no connectivity and never shows a sign-in screen again.
+- [x] An unreachable server changes nothing about what the app will let a user do, and says so in one quiet line.
+- [x] No token, key or organisation identifier is written anywhere but secure storage.
+- [x] Records captured before enrolment keep their operator attribution and gain the account identity.
+- [x] Tests: unit tests over the enrolment state machine and over sign-in, silent refresh, expiry and offline fallback.
+- [x] Tests: a test asserting no credential reaches the database, a log or an export, and a test for operator-profile
       reconciliation.
-- [ ] The interface never offers an action the server will refuse, and the role matrix exists in exactly one place.
-- [ ] A device 45 days offline, past both cache lifetimes, still captures, reviews, edits and exports the projects it
+- [x] The interface never offers an action the server will refuse, and the role matrix exists in exactly one place.
+- [x] A device 45 days offline, past both cache lifetimes, still captures, reviews, edits and exports the projects it
       holds, and refuses only relay, the AI proxy and a role change, saying which in plain language.
-- [ ] No code path anywhere in the app blocks capture on an authority check.
-- [ ] Tests: a table test per role over the capability list, compared against the server's matrix; unit tests over all
+- [x] No code path anywhere in the app blocks capture on an authority check.
+- [x] Tests: a table test per role over the capability list, compared against the server's matrix; unit tests over all
       four authority states and every capability; a clock-advance test proving expiry never disables capture or
       export.
-- [ ] Relayed packages merge through exactly the same preview and conflict path as a hand-carried bundle.
-- [ ] Relay is off until a project manager turns it on, and a never-relay project offers no way to send.
-- [ ] What has been queued, sent and purged is always visible for a project.
-- [ ] Tests: an integration test relaying between two local databases through a fake server, including a replayed
+- [x] Relayed packages merge through exactly the same preview and conflict path as a hand-carried bundle.
+- [x] Relay is off until a project manager turns it on, and a never-relay project offers no way to send.
+- [x] What has been queued, sent and purged is always visible for a project.
+- [x] Tests: an integration test relaying between two local databases through a fake server, including a replayed
       push, plus widget tests for each relay control and the queue view.
-- [ ] A fresh install performs AI extraction with no key ever entered on the device.
-- [ ] Choosing the proxy or a device key changes no code in any feature that uses AI.
-- [ ] No response, error path or log line can bring a provider key onto the device.
-- [ ] Tests: the same interface suite the direct provider passes, run against the proxy with a fake server, including
+- [x] A fresh install performs AI extraction with no key ever entered on the device.
+- [x] Choosing the proxy or a device key changes no code in any feature that uses AI.
+- [x] No response, error path or log line can bring a provider key onto the device.
+- [x] Tests: the same interface suite the direct provider passes, run against the proxy with a fake server, including
       timeout, breaker-open and quota-exceeded responses queueing rather than failing the capture.
 
 ## Out of scope
