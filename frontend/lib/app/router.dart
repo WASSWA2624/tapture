@@ -829,7 +829,7 @@ List<RouteBase> get _routes {
                 GoRoute(
                   path: 'uploads',
                   builder: (BuildContext _, GoRouterState _) {
-                    return const UploadHistoryScreen();
+                    return const UploadHistoryScreen(live: true);
                   },
                 ),
                 GoRoute(

@@ -109,7 +109,7 @@ void main() {
       final Result<Uri> cancelled = await s3.send(
         destination,
         (
-          length: 100,
+          length: 1 << 30,
           read: (int offset, int length) async {
             reads.add(offset);
             expect(length <= 8, isTrue);

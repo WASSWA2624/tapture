@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:tapture/core/cloud/cloud_destination.dart';
+import 'package:tapture/core/cloud/cloud_file_range.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -33,6 +34,9 @@ final class UploadRunner {
   final Future<void> Function(Duration delay) _wait;
   final int _maxAttempts;
   final Map<String, CancellationToken> _tokens = <String, CancellationToken>{};
+
+  /// Bytes of [path], read one slice at a time off the UI isolate.
+  CloudBytes openFile(String path, int length) => cloudFile(path, length);
 
   /// Sends [file] to [to]. Writes an interrupted history row first.
   Stream<UploadProgress> start({
