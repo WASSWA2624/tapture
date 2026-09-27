@@ -4217,6 +4217,156 @@ abstract final class Copy {
 
   // Records: detail and history (014).
 
+  // The record page (014 step 4). Field labels, values, context values,
+  // operators, devices, providers and models it shows are data and pass
+  // through these strings unchanged (FE-L10N-07).
+
+  /// Leaves the page of a record that is not on this device for the list.
+  static const String recordDetailBackToList = 'Back to the list';
+
+  /// Above a record in the recycle bin: why it cannot be changed, and what
+  /// to do first.
+  static const String recordDetailDeletedNotice =
+      'This record is in the recycle bin. Restore it to change it again.';
+
+  /// Sends the record shown to review, the step before it is approved.
+  static const String recordDetailSendToReview = 'Send to review';
+
+  /// Once the record shown waits for review.
+  static const String recordDetailSentToReview = 'Record sent to review';
+
+  /// Menu row that brings the record shown back from the archive.
+  static const String recordDetailUnarchive = 'Unarchive record';
+
+  /// Once the record shown is back from the archive.
+  static const String recordDetailUnarchived = 'Record back from the archive';
+
+  /// Opens the page that edits the record's photos, captions and audio.
+  static const String recordDetailEditPhotos = 'Edit photos and captions';
+
+  /// A record with no values and no fields to fill.
+  static const String recordDetailNoValues = 'This record has no values yet.';
+
+  /// Heading over the context in force when the record was captured.
+  static const String recordDetailContextTitle = 'Context';
+
+  /// A record captured with no context in force.
+  static const String recordDetailContextEmpty =
+      'No context was set when this record was captured.';
+
+  /// Heading over the count of the record's values by where they came from.
+  static const String recordDetailProvenanceTitle =
+      'Where the values came from';
+
+  /// How many of the record's values came from one source, or carry one
+  /// mark.
+  static String recordDetailValuesCount(int n) {
+    return Intl.plural(
+      n,
+      zero: 'No values',
+      one: '1 value',
+      other: '$n values',
+    );
+  }
+
+  /// The values a person confirmed.
+  static const String recordDetailVerified = 'Confirmed by a person';
+
+  /// The providers, models and methods that read the record's values.
+  static const String recordDetailReadBy = 'Read by';
+
+  /// Heading over when the record was captured, changed, approved and
+  /// exported.
+  static const String recordDetailDatesTitle = 'Dates';
+
+  /// When the record was captured, and on which device.
+  static const String recordDetailCaptured = 'Captured';
+
+  /// When the record last changed.
+  static const String recordDetailUpdated = 'Last changed';
+
+  /// When the record was last approved, and by whom.
+  static const String recordDetailApproved = 'Approved';
+
+  /// When the record was last exported.
+  static const String recordDetailExported = 'Exported';
+
+  /// A record that has never been exported.
+  static const String recordDetailNotExported = 'Not exported yet';
+
+  /// When something happened to the record, [at] in local time, and who or
+  /// which device did it ([by], data) when that is known.
+  static String recordDetailWhen(DateTime at, {String by = ''}) {
+    final String when = DateFormat.yMMMd().add_jm().format(at);
+    final String who = by.trim();
+    return who.isEmpty ? when : '$when · $who';
+  }
+
+  /// One of the record's photos by its 1-based [position] among [total].
+  static String recordPhotoPosition(int position, int total) {
+    return 'Photo $position of $total';
+  }
+
+  /// A value typed by a person, or corrected by hand.
+  static const String recordSourceTyped = 'Typed';
+
+  /// A value read from a photo's text on this device.
+  static const String recordSourceOcr = 'Read from photo';
+
+  /// A value an AI model read from a photo.
+  static const String recordSourceAiPhoto = 'AI from photo';
+
+  /// A value an AI model read from captions or spoken notes.
+  static const String recordSourceAiText = 'AI from notes';
+
+  /// A value spoken aloud and written down.
+  static const String recordSourceSpeech = 'Dictated';
+
+  /// A value scanned from a barcode or QR code.
+  static const String recordSourceBarcode = 'Barcode';
+
+  /// A value looked up in a reference list.
+  static const String recordSourceLookup = 'Looked up';
+
+  /// A value taken from the context in force at capture.
+  static const String recordSourceContext = 'From context';
+
+  /// A value the template filled in by default.
+  static const String recordSourceDefault = 'Filled in';
+
+  /// A value that arrived in an imported table or package.
+  static const String recordSourceImported = 'Imported';
+
+  /// A reading the processing was sure of.
+  static const String recordBandHigh = 'High confidence';
+
+  /// A reading the processing was fairly sure of.
+  static const String recordBandMedium = 'Medium confidence';
+
+  /// A reading a person should check.
+  static const String recordBandLow = 'Low confidence';
+
+  /// A confidence with no stored band: [score], 0 to 1, as a percentage.
+  static String recordBandScore(double score) {
+    return '${NumberFormat.percentPattern().format(score)} confidence';
+  }
+
+  /// What a screen reader hears after a value: where it came from, how sure
+  /// the reading was when that is known, and its marks.
+  static String recordValueMarks({
+    required String source,
+    String band = '',
+    bool evidenceRemoved = false,
+    bool retired = false,
+  }) {
+    return <String>[
+      'Source: $source',
+      if (band.isNotEmpty) band,
+      if (evidenceRemoved) recordValueEvidenceRemoved,
+      if (retired) recordValueRetired,
+    ].join(', ');
+  }
+
   // The history page (014 step 6). Field labels, template names, values,
   // package names, providers, models, operators and devices it shows are
   // data and pass through these strings unchanged (FE-L10N-07).
