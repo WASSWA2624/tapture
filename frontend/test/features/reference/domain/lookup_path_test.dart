@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tapture/features/reference/domain/fuzzy_matcher.dart';
+import 'package:tapture/core/normalise/fuzzy_matcher.dart';
 import 'package:tapture/features/reference/domain/lookup_binding.dart';
 import 'package:tapture/features/reference/domain/lookup_matcher.dart';
 import 'package:tapture/features/reference/domain/lookup_prefill.dart';
@@ -56,13 +56,14 @@ void main() {
       ),
       lessThan(0.4),
     );
-    final List<({ReferenceRow row, double score})> ranked = FuzzyMatcher.rank(
-      rows: rows,
+    final List<({ReferenceRow item, double score})> ranked = FuzzyMatcher.rank(
+      items: rows,
       query: 'Acme Supply',
-      column: 'name',
+      textOf: (ReferenceRow row) => row.values['name'] ?? '',
       threshold: 0.5,
+      normalise: LookupMatcher.normalise,
     );
-    expect(ranked.first.row.id, '1');
+    expect(ranked.first.item.id, '1');
   });
 
   test('prefill skips verified fields and unlink detaches one field only', () {

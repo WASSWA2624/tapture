@@ -1,44 +1,60 @@
-import 'lookup_matcher.dart';
-import 'reference_row.dart';
+import 'search_text.dart';
 
-/// Scored fuzzy fallback for a near-miss lookup.
+/// Scored fuzzy comparison of two texts, shared by reference lookups and
+/// the duplicate check (FE-STR-09).
 ///
-/// Never fills silently — the caller shows a suggestion when the score clears
-/// the binding threshold.
+/// Never fills or merges silently: a caller shows a suggestion, or asks a
+/// person, when a score clears its threshold.
 abstract final class FuzzyMatcher {
-  /// Returns rows whose score against [query] on [column] meets [threshold],
-  /// highest score first. Score is 0–1 from edit distance and token overlap.
-  static List<({ReferenceRow row, double score})> rank({
-    required List<ReferenceRow> rows,
+  /// Returns [items] whose text scores against [query] at [threshold] or
+  /// above, highest score first. [textOf] reads an item's text, and
+  /// [normalise] shapes both sides first ([plain] unless given). Score is
+  /// 0–1 from edit distance and token overlap.
+  static List<({T item, double score})> rank<T>({
+    required Iterable<T> items,
     required String query,
-    required String column,
+    required String Function(T item) textOf,
     required double threshold,
+    String Function(String text) normalise = plain,
   }) {
-    final String needle = LookupMatcher.normalise(query);
+    final String needle = normalise(query);
     if (needle.isEmpty) {
-      return const <({ReferenceRow row, double score})>[];
+      return <({T item, double score})>[];
     }
-    final List<({ReferenceRow row, double score})> hits =
-        <({ReferenceRow row, double score})>[];
-    for (final ReferenceRow row in rows) {
-      final String hay = LookupMatcher.normalise(
-        row.values[column] ?? (column.isEmpty ? row.key : ''),
-      );
+    final List<({T item, double score})> hits = <({T item, double score})>[];
+    for (final T item in items) {
+      final String hay = normalise(textOf(item));
       if (hay.isEmpty) {
         continue;
       }
       final double score = scorePair(needle, hay);
       if (score >= threshold) {
-        hits.add((row: row, score: score));
+        hits.add((item: item, score: score));
       }
     }
     hits.sort(
-      (
-        ({ReferenceRow row, double score}) a,
-        ({ReferenceRow row, double score}) b,
-      ) => b.score.compareTo(a.score),
+      (({T item, double score}) a, ({T item, double score}) b) =>
+          b.score.compareTo(a.score),
     );
     return hits;
+  }
+
+  /// How alike two texts read, 0–1, once both are [plain].
+  static double similarity(String left, String right) {
+    final String a = plain(left);
+    final String b = plain(right);
+    if (a.isEmpty || b.isEmpty) {
+      return a == b ? 1 : 0;
+    }
+    return scorePair(a, b);
+  }
+
+  /// Folded with [foldSearchText], every run of anything but letters and
+  /// digits one space, trimmed.
+  static String plain(String text) {
+    return foldSearchText(
+      text,
+    ).replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ').trim();
   }
 
   /// Combined normalised edit-distance and token-overlap score in 0–1.

@@ -3733,4 +3733,261 @@ abstract final class Copy {
 
   /// Closes the caption panel of the guide.
   static const String captureGuideClose = 'Hide the caption guide';
+
+  // Importing and merging project packages (task 076, W19 to W22).
+
+  /// Shown while a chosen package is opened and checked.
+  static const String importChecking = 'Checking the package…';
+
+  /// Title of the sheet that describes a package before it is imported.
+  static const String importSheetTitle = 'Import a project';
+
+  /// Where and when the package was made. [device] is package data.
+  static String importFrom(String device, DateTime exportedAt) {
+    final String when = DateFormat.yMMMd().add_jm().format(
+      exportedAt.toLocal(),
+    );
+    return 'Exported $when on ${device.isEmpty ? 'another device' : device}';
+  }
+
+  /// What the package holds.
+  static String importHolds(int records, int photos, int bytes) {
+    return '${recordsCount(records)} · ${photosCount(photos)} · '
+        '${fileSize(bytes)}';
+  }
+
+  /// How many photos a package or a count covers.
+  static String photosCount(int n) {
+    return Intl.plural(
+      n,
+      zero: 'No photos',
+      one: '1 photo',
+      other: '$n photos',
+    );
+  }
+
+  /// Primary action of the import sheet.
+  static const String importAsNewProject = 'Import as a new project';
+
+  /// Secondary action of the import sheet: merge into a project here.
+  static const String importMergeInto = 'Merge into a project…';
+
+  /// Shown while a package's files are copied in.
+  static const String importCopying = 'Importing the project…';
+
+  /// Announced once the project is in.
+  static String importDone(int records) =>
+      'Project imported: ${recordsCount(records)}';
+
+  /// A package whose project was deleted on this device is refused.
+  static const String importProjectDeletedHere =
+      'This project was deleted on this device. A merge never brings back '
+      'what was deleted.';
+
+  /// Recovery for [importProjectDeletedHere].
+  static const String importProjectDeletedHereRecovery =
+      'Restore the project from the recycle bin, or import on another device.';
+
+  /// A package whose project is already here does not import a second copy.
+  static const String importProjectAlreadyHere =
+      'This project is already on this device.';
+
+  /// Recovery for [importProjectAlreadyHere].
+  static const String importProjectAlreadyHereRecovery =
+      'Merge the package into it instead.';
+
+  /// Too little room for the package's files.
+  static const String importNoRoom =
+      'There is not enough free space on this device for this package.';
+
+  /// Recovery for [importNoRoom].
+  static const String importNoRoomRecovery =
+      'Free some space, then import again.';
+
+  /// A file in the package did not arrive as it left.
+  static const String importFileChanged =
+      'A file in this package did not copy correctly.';
+
+  /// Recovery for any import or merge that stopped part way.
+  static const String importFailedRecovery =
+      'Nothing was changed. Try again, or export the package again.';
+
+  /// Project home overflow item and the merge screen's title.
+  static const String mergePackage = 'Merge a package';
+
+  /// Title of the sheet that chooses which project a package merges into.
+  static const String mergeTargetTitle = 'Merge into which project?';
+
+  /// No local project can take the package.
+  static const String mergeTargetNone =
+      'No project on this device uses the templates this package needs.';
+
+  /// A compatibility status, as its pill reads.
+  static String compatibilityStatus(String status) {
+    return switch (status) {
+      'compatible' => 'Compatible',
+      'compatibleWithDifferences' => 'Compatible, with differences',
+      _ => 'Not compatible',
+    };
+  }
+
+  /// One named compatibility finding. [field] is template data.
+  static String compatibilityIssue(String issue, String field) {
+    return switch (issue) {
+      'noMatch' => 'No matching template here',
+      'missingField' => '$field holds values but is not in the template here',
+      'typeCannotHold' => '$field here cannot hold the incoming values',
+      'otherVersion' => 'Another version of the template',
+      'localOnlyFields' => 'Only here: $field',
+      'changedRequiredness' => '$field is required on one side only',
+      'changedLabel' => '$field has another label here',
+      'changedOptions' => '$field offers other choices here',
+      'changedType' => '$field has another type here',
+      _ => '$field is not in the template here, and holds no values',
+    };
+  }
+
+  /// A template's line in the compatibility report. [name] is template data.
+  static String compatibilityTemplate(String name, String status) =>
+      '$name: ${compatibilityStatus(status)}';
+
+  /// The merge preview's count headings (specification §48.1).
+  static String mergeCount(String count, int n) {
+    final String label = switch (count) {
+      'newRecords' => 'New records',
+      'updatedRecords' => 'Records this merge changes',
+      'newPhotos' => 'New photos',
+      'photosHere' => 'Photos already on this device',
+      'deletions' => 'Deletions to apply',
+      'conflicts' => 'Conflicts to settle',
+      'duplicates' => 'Possible duplicates',
+      'kept' => 'Values kept as on this device',
+      _ => 'Already in another project here',
+    };
+    return '$label: $n';
+  }
+
+  /// Primary merge action while conflicts remain.
+  static String mergeSettleConflicts(int n) {
+    return Intl.plural(
+      n,
+      one: 'Settle 1 conflict',
+      other: 'Settle $n conflicts',
+    );
+  }
+
+  /// Primary merge action once every conflict is settled.
+  static const String mergeApply = 'Merge';
+
+  /// Shown while a merge is written.
+  static const String mergeApplying = 'Merging…';
+
+  /// Announced once a merge is written.
+  static const String mergeDone = 'Merged';
+
+  /// A second merge of the same package.
+  static const String mergeNothing =
+      'Nothing to merge: this project already holds everything in the package.';
+
+  /// Switch on the merge preview that runs the duplicate check.
+  static const String mergeCheckDuplicates = 'Check for possible duplicates';
+
+  /// Helper under [mergeCheckDuplicates].
+  static const String mergeCheckDuplicatesHelper =
+      'Lists incoming records that look like ones already here. You decide '
+      'for each.';
+
+  /// Shown while the duplicate check runs.
+  static const String mergeCheckingDuplicates = 'Looking for duplicates…';
+
+  /// Title of the conflict screen, as "Conflict 3 of 7".
+  static String conflictProgress(int index, int total) =>
+      'Conflict $index of $total';
+
+  /// What a conflict is about. [field] is template data.
+  static String conflictKind(String kind, String field) {
+    return switch (kind) {
+      'value' => field,
+      'caption' => 'Caption',
+      'status' => 'Status',
+      'deletedThere' => 'Deleted on the other device',
+      _ => 'Deleted on this device',
+    };
+  }
+
+  /// Explains a deletion conflict.
+  static String conflictDeletion(String kind) {
+    return kind == 'deletedThere'
+        ? 'The other device deleted this, but it was changed here since.'
+        : 'This device deleted this, but the other device changed it since.';
+  }
+
+  /// Heading of this device's side of a conflict.
+  static const String conflictThisDevice = 'This device';
+
+  /// Heading of the incoming side of a conflict.
+  static const String conflictIncoming = 'Incoming';
+
+  /// Who last wrote a side, and when. [device] is data.
+  static String conflictWrittenBy(String device, DateTime? at) {
+    final String when = at == null
+        ? ''
+        : ' · ${DateFormat.yMMMd().add_jm().format(at.toLocal())}';
+    return '${device.isEmpty ? 'Unknown device' : device}$when';
+  }
+
+  /// A side of a deletion conflict.
+  static const String conflictDeleted = 'Deleted';
+
+  /// An empty value on one side.
+  static const String conflictEmpty = 'Empty';
+
+  /// Keeps this device's side of one conflict.
+  static const String conflictKeepMine = "Keep this device's";
+
+  /// Takes the incoming side of one conflict.
+  static const String conflictTakeIncoming = 'Take incoming';
+
+  /// Second control: keep this device's side of every remaining conflict.
+  static String mergeKeepAllMine(int n) => "Keep this device's for all $n";
+
+  /// Second control: take the incoming side of every remaining conflict.
+  static String mergeTakeAllIncoming(int n) => 'Take incoming for all $n';
+
+  /// Confirms a bulk choice with its count.
+  static String mergeBulkConfirm(int n, {required bool incoming}) {
+    final String side = incoming ? 'the incoming value' : "this device's value";
+    return Intl.plural(
+      n,
+      one: 'Use $side for 1 conflict?',
+      other: 'Use $side for all $n conflicts?',
+    );
+  }
+
+  /// Title of the possible-duplicate view.
+  static const String duplicateTitle = 'Possible duplicate';
+
+  /// Why a pair was listed.
+  static String duplicateSignal(String signal) {
+    return switch (signal) {
+      'identity' => 'Same identity fields',
+      'photo' => 'Same photo',
+      _ => 'Same place, close in time, similar caption',
+    };
+  }
+
+  /// Keeps both records: the default.
+  static const String duplicateKeepBoth = 'Keep both';
+
+  /// Leaves the incoming record out of the merge.
+  static const String duplicateSkipIncoming = "Don't import this record";
+
+  /// Marks a pair whose incoming record is left out.
+  static const String duplicateSkipped = 'Not imported';
+
+  /// Heading of the incoming side of a pair.
+  static const String duplicateIncoming = 'Incoming record';
+
+  /// Heading of the local side of a pair.
+  static const String duplicateHere = 'On this device';
 }

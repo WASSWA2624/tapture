@@ -24,6 +24,9 @@ enum CompatibilityIssue {
   /// A field has another label on each side.
   changedLabel(blocks: false),
 
+  /// A choice field offers other options on each side.
+  changedOptions(blocks: false),
+
   /// A field has another type on each side, and the local one holds the
   /// incoming values.
   changedType(blocks: false),

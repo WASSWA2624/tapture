@@ -422,6 +422,16 @@ abstract final class AppConstants {
   /// a digit, as a code's "001" does.
   static const ({int minWordLength}) search = (minWordLength: 3);
 
+  /// Merging a package (task 076, W22): an incoming record captured within
+  /// [duplicateWindow] of a local one, with the same context and a caption
+  /// at least [duplicateCaptionSimilarity] alike, is shown as a possible
+  /// duplicate. A person decides; nothing is merged by it.
+  static const ({Duration duplicateWindow, double duplicateCaptionSimilarity})
+  merge = (
+    duplicateWindow: Duration(hours: 24),
+    duplicateCaptionSimilarity: 0.9,
+  );
+
   /// Project files in a browser, which has no file system: the IndexedDB
   /// store `FileWriter` and `FileReader` keep them in, keyed by their path
   /// under the storage root.

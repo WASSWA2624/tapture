@@ -150,6 +150,9 @@ abstract final class TemplateCompatibility {
       if (_label(here) != label) {
         issues.add((issue: CompatibilityIssue.changedLabel, field: label));
       }
+      if ('${field['options'] ?? '[]'}' != '${here['options'] ?? '[]'}') {
+        issues.add((issue: CompatibilityIssue.changedOptions, field: label));
+      }
       if (field['required'] != here['required']) {
         issues.add((
           issue: CompatibilityIssue.changedRequiredness,
